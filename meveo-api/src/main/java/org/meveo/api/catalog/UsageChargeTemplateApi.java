@@ -37,315 +37,308 @@ import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 @Stateless
 public class UsageChargeTemplateApi extends BaseApi {
 
-	@Inject
-	private UsageChargeTemplateService usageChargeTemplateService;
+    @Inject
+    private UsageChargeTemplateService usageChargeTemplateService;
 
-	@Inject
-	private InvoiceSubCategoryService invoiceSubCategoryService;
+    @Inject
+    private InvoiceSubCategoryService invoiceSubCategoryService;
 
-	@Inject
-	private CatMessagesService catMessagesService;
+    @Inject
+    private CatMessagesService catMessagesService;
 
-	@Inject
-	private TriggeredEDRTemplateService triggeredEDRTemplateService;
+    @Inject
+    private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
-	public void create(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException {
-		
-		validate(postData);
-		
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-			Provider provider = currentUser.getProvider();
+    public void create(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException {
 
-			// check if code already exists
-			if (usageChargeTemplateService.findByCode(postData.getCode(), provider) != null) {
-				throw new EntityAlreadyExistsException(UsageChargeTemplate.class, postData.getCode());
-			}
+        validate(postData);
 
-			InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
-			if (invoiceSubCategory == null) {
-				throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
-			}
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
+            missingParameters.add("invoiceSubCategory");
+        }
 
-			if (provider.getTradingLanguages() != null) {
-				if (postData.getLanguageDescriptions() != null) {
-					for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-						boolean match = false;
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-						for (TradingLanguage tl : provider.getTradingLanguages()) {
-							if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
-								match = true;
-								break;
-							}
-						}
+        Provider provider = currentUser.getProvider();
 
-						if (!match) {
-							throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
-						}
-					}
-				}
-			}
+        // check if code already exists
+        if (usageChargeTemplateService.findByCode(postData.getCode(), provider) != null) {
+            throw new EntityAlreadyExistsException(UsageChargeTemplate.class, postData.getCode());
+        }
 
-			if(postData.getRoundingModeDtoEnum() == null){
-				postData.setRoundingModeDtoEnum(RoundingModeDtoEnum.NEAREST);
-			}
-			UsageChargeTemplate chargeTemplate = new UsageChargeTemplate();
-			chargeTemplate.setCode(postData.getCode());
-			chargeTemplate.setDescription(postData.getDescription());
-			chargeTemplate.setDisabled(postData.isDisabled());
-			chargeTemplate.setAmountEditable(postData.getAmountEditable());
-			chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
-			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
-			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
-			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
-			chargeTemplate.setPriority(postData.getPriority());
-			chargeTemplate.setFilterParam1(postData.getFilterParam1());
-			chargeTemplate.setFilterParam2(postData.getFilterParam2());
-			chargeTemplate.setFilterParam3(postData.getFilterParam3());
-			chargeTemplate.setFilterParam4(postData.getFilterParam4());
-			chargeTemplate.setFilterExpression(postData.getFilterExpression());
-			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-			chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
-			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
-			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
-			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
-            if (postData.getRoundingModeDtoEnum() != null) {
-                chargeTemplate.setRoundingMode(RoundingModeEnum.valueOf(postData.getRoundingModeDtoEnum().name()));
+        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
+        if (invoiceSubCategory == null) {
+            throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
+        }
+
+        if (provider.getTradingLanguages() != null) {
+            if (postData.getLanguageDescriptions() != null) {
+                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                    boolean match = false;
+
+                    for (TradingLanguage tl : provider.getTradingLanguages()) {
+                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
+                            match = true;
+                            break;
+                        }
+                    }
+
+                    if (!match) {
+                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
+                    }
+                }
             }
-			
-			if (postData.getTriggeredEdrs() != null) {
-				List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
+        }
 
-				for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
-					TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode(), provider);
-					if (triggeredEdrTemplate == null) {
-						throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
-					}
+        if (postData.getRoundingModeDtoEnum() == null) {
+            postData.setRoundingModeDtoEnum(RoundingModeDtoEnum.NEAREST);
+        }
+        UsageChargeTemplate chargeTemplate = new UsageChargeTemplate();
+        chargeTemplate.setCode(postData.getCode());
+        chargeTemplate.setDescription(postData.getDescription());
+        chargeTemplate.setDisabled(postData.isDisabled());
+        chargeTemplate.setAmountEditable(postData.getAmountEditable());
+        chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
+        chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
+        chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
+        chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+        chargeTemplate.setPriority(postData.getPriority());
+        chargeTemplate.setFilterParam1(postData.getFilterParam1());
+        chargeTemplate.setFilterParam2(postData.getFilterParam2());
+        chargeTemplate.setFilterParam3(postData.getFilterParam3());
+        chargeTemplate.setFilterParam4(postData.getFilterParam4());
+        chargeTemplate.setFilterExpression(postData.getFilterExpression());
+        chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
+        chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
+        chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
+        chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
+        chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+        if (postData.getRoundingModeDtoEnum() != null) {
+            chargeTemplate.setRoundingMode(RoundingModeEnum.valueOf(postData.getRoundingModeDtoEnum().name()));
+        }
 
-					edrTemplates.add(triggeredEdrTemplate);
-				}
+        if (postData.getTriggeredEdrs() != null) {
+            List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
 
-				chargeTemplate.setEdrTemplates(edrTemplates);
-			}
-			
+            for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
+                TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode(), provider);
+                if (triggeredEdrTemplate == null) {
+                    throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
+                }
 
-            usageChargeTemplateService.create(chargeTemplate, currentUser, provider);
-            
-			// populate customFields
-            try {
-                populateCustomFields(postData.getCustomFields(), chargeTemplate, true, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+                edrTemplates.add(triggeredEdrTemplate);
             }
 
+            chargeTemplate.setEdrTemplates(edrTemplates);
+        }
 
-			// create cat messages
-			if (postData.getLanguageDescriptions() != null) {
-				for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-					CatMessages catMessages = new CatMessages(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(), ld.getDescription());
+        usageChargeTemplateService.create(chargeTemplate, currentUser, provider);
 
-					catMessagesService.create(catMessages, currentUser, provider);
-				}
-			}
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-				missingParameters.add("invoiceSubCategory");
-			}
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), chargeTemplate, true, currentUser);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
+        // create cat messages
+        if (postData.getLanguageDescriptions() != null) {
+            for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                CatMessages catMessages = new CatMessages(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(), ld.getDescription());
 
-	public void update(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException {
-		
-		validate(postData);
-		
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-			Provider provider = currentUser.getProvider();
-
-			// check if code already exists
-			UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(postData.getCode(), provider);
-			if (chargeTemplate == null) {
-				throw new EntityDoesNotExistsException(UsageChargeTemplate.class, postData.getCode());
-			}
-
-			InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
-			if (invoiceSubCategory == null) {
-				throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
-			}
-
-			if (provider.getTradingLanguages() != null) {
-				if (postData.getLanguageDescriptions() != null) {
-					for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-						boolean match = false;
-
-						for (TradingLanguage tl : provider.getTradingLanguages()) {
-							if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
-								match = true;
-								break;
-							}
-						}
-
-						if (!match) {
-							throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
-						}
-					}
-				}
-			}
-			if(postData.getRoundingModeDtoEnum() == null){
-				postData.setRoundingModeDtoEnum(RoundingModeDtoEnum.NEAREST);
-			}
-			chargeTemplate.setDescription(postData.getDescription());
-			chargeTemplate.setDisabled(postData.isDisabled());
-			chargeTemplate.setAmountEditable(postData.getAmountEditable());
-			chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
-			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
-			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
-			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
-			chargeTemplate.setPriority(postData.getPriority());
-			chargeTemplate.setFilterParam1(postData.getFilterParam1());
-			chargeTemplate.setFilterParam2(postData.getFilterParam2());
-			chargeTemplate.setFilterParam3(postData.getFilterParam3());
-			chargeTemplate.setFilterParam4(postData.getFilterParam4());
-			chargeTemplate.setFilterExpression(postData.getFilterExpression());
-			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-			chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
-			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
-			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
-			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
-            if (postData.getRoundingModeDtoEnum() != null) {
-                chargeTemplate.setRoundingMode(RoundingModeEnum.valueOf(postData.getRoundingModeDtoEnum().name()));
+                catMessagesService.create(catMessages, currentUser, provider);
             }
-			
-			if (provider.getTradingLanguages() != null) {
-				if (postData.getLanguageDescriptions() != null) {
-					for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-						boolean match = false;
+        }
+    }
 
-						for (TradingLanguage tl : provider.getTradingLanguages()) {
-							if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
-								match = true;
-								break;
-							}
-						}
+    public void update(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException {
 
-						if (!match) {
-							throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
-						}
-					}
+        validate(postData);
 
-					// create cat messages
-					for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-						CatMessages catMsg = catMessagesService.getCatMessages(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode());
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
+            missingParameters.add("invoiceSubCategory");
+        }
 
-						if (catMsg != null) {
-							catMsg.setDescription(ld.getDescription());
-							catMessagesService.update(catMsg, currentUser);
-						} else {
-							CatMessages catMessages = new CatMessages(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(),
-									ld.getDescription());
-							catMessagesService.create(catMessages, currentUser, provider);
-						}
-					}
-				}
-			}
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			if (postData.getTriggeredEdrs() != null) {
-				List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
+        Provider provider = currentUser.getProvider();
 
-				for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
-					TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode(), provider);
-					if (triggeredEdrTemplate == null) {
-						throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
-					}
+        // check if code already exists
+        UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(postData.getCode(), provider);
+        if (chargeTemplate == null) {
+            throw new EntityDoesNotExistsException(UsageChargeTemplate.class, postData.getCode());
+        }
 
-					edrTemplates.add(triggeredEdrTemplate);
-				}
+        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
+        if (invoiceSubCategory == null) {
+            throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
+        }
 
-				chargeTemplate.setEdrTemplates(edrTemplates);
-			}
+        if (provider.getTradingLanguages() != null) {
+            if (postData.getLanguageDescriptions() != null) {
+                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                    boolean match = false;
 
-			chargeTemplate = usageChargeTemplateService.update(chargeTemplate, currentUser);
-            
-			// populate customFields
-            try {
-                populateCustomFields(postData.getCustomFields(), chargeTemplate, false, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+                    for (TradingLanguage tl : provider.getTradingLanguages()) {
+                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
+                            match = true;
+                            break;
+                        }
+                    }
+
+                    if (!match) {
+                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
+                    }
+                }
+            }
+        }
+        if (postData.getRoundingModeDtoEnum() == null) {
+            postData.setRoundingModeDtoEnum(RoundingModeDtoEnum.NEAREST);
+        }
+        chargeTemplate.setDescription(postData.getDescription());
+        chargeTemplate.setDisabled(postData.isDisabled());
+        chargeTemplate.setAmountEditable(postData.getAmountEditable());
+        chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
+        chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
+        chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
+        chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+        chargeTemplate.setPriority(postData.getPriority());
+        chargeTemplate.setFilterParam1(postData.getFilterParam1());
+        chargeTemplate.setFilterParam2(postData.getFilterParam2());
+        chargeTemplate.setFilterParam3(postData.getFilterParam3());
+        chargeTemplate.setFilterParam4(postData.getFilterParam4());
+        chargeTemplate.setFilterExpression(postData.getFilterExpression());
+        chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
+        chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
+        chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
+        chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
+        chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+        if (postData.getRoundingModeDtoEnum() != null) {
+            chargeTemplate.setRoundingMode(RoundingModeEnum.valueOf(postData.getRoundingModeDtoEnum().name()));
+        }
+
+        if (provider.getTradingLanguages() != null) {
+            if (postData.getLanguageDescriptions() != null) {
+                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                    boolean match = false;
+
+                    for (TradingLanguage tl : provider.getTradingLanguages()) {
+                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
+                            match = true;
+                            break;
+                        }
+                    }
+
+                    if (!match) {
+                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
+                    }
+                }
+
+                // create cat messages
+                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                    CatMessages catMsg = catMessagesService.getCatMessages(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode());
+
+                    if (catMsg != null) {
+                        catMsg.setDescription(ld.getDescription());
+                        catMessagesService.update(catMsg, currentUser);
+                    } else {
+                        CatMessages catMessages = new CatMessages(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(),
+                            ld.getDescription());
+                        catMessagesService.create(catMessages, currentUser, provider);
+                    }
+                }
+            }
+        }
+
+        if (postData.getTriggeredEdrs() != null) {
+            List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
+
+            for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
+                TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode(), provider);
+                if (triggeredEdrTemplate == null) {
+                    throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
+                }
+
+                edrTemplates.add(triggeredEdrTemplate);
             }
 
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-				missingParameters.add("invoiceSubCategory");
-			}
+            chargeTemplate.setEdrTemplates(edrTemplates);
+        }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
+        chargeTemplate = usageChargeTemplateService.update(chargeTemplate, currentUser);
 
-	public UsageChargeTemplateDto find(String code, Provider provider) throws MeveoApiException {
-		UsageChargeTemplateDto result = new UsageChargeTemplateDto();
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), chargeTemplate, false, currentUser);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
+    }
 
-		if (!StringUtils.isBlank(code)) {
-			// check if code already exists
-			UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(code, provider, Arrays.asList("invoiceSubCategory"));
-			if (chargeTemplate == null) {
-				throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
-			}
+    public UsageChargeTemplateDto find(String code, Provider provider) throws MeveoApiException {
 
-			result = new UsageChargeTemplateDto(chargeTemplate, customFieldInstanceService.getCustomFieldInstances(chargeTemplate));
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("usageChargeTemplateCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-			for (CatMessages msg : catMessagesService.getCatMessagesList(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId())) {
-				languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
-			}
+        UsageChargeTemplateDto result = new UsageChargeTemplateDto();
 
-			result.setLanguageDescriptions(languageDescriptions);
-		} else {
-			if (StringUtils.isBlank(code)) {
-				missingParameters.add("usageChargeTemplateCode");
-			}
+        // check if code already exists
+        UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(code, provider, Arrays.asList("invoiceSubCategory"));
+        if (chargeTemplate == null) {
+            throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
+        }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
+        result = new UsageChargeTemplateDto(chargeTemplate, customFieldInstanceService.getCustomFieldInstances(chargeTemplate));
 
-		return result;
-	}
+        List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
+        for (CatMessages msg : catMessagesService.getCatMessagesList(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId())) {
+            languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
+        }
 
-	public void remove(String code, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(code)) {
-			// check if code already exists
-			UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(code, provider, Arrays.asList("invoiceSubCategory"));
-			if (chargeTemplate == null) {
-				throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
-			}
+        result.setLanguageDescriptions(languageDescriptions);
 
-			// remove cat messages
-			catMessagesService.batchRemove(UsageChargeTemplate.class.getSimpleName(), chargeTemplate.getId(), provider);
+        return result;
+    }
 
-			usageChargeTemplateService.remove(chargeTemplate);
-		} else {
-			if (StringUtils.isBlank(code)) {
-				missingParameters.add("usageChargeTemplateCode");
-			}
+    public void remove(String code, Provider provider) throws MeveoApiException {
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
-	
-	public void createOrUpdate(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException {
-		
-		if (usageChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-			create(postData, currentUser);
-		} else {
-			update(postData, currentUser);
-		}
-	}
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("usageChargeTemplateCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        // check if code already exists
+        UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(code, provider, Arrays.asList("invoiceSubCategory"));
+        if (chargeTemplate == null) {
+            throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
+        }
+
+        // remove cat messages
+        catMessagesService.batchRemove(UsageChargeTemplate.class.getSimpleName(), chargeTemplate.getId(), provider);
+
+        usageChargeTemplateService.remove(chargeTemplate);
+    }
+
+    public void createOrUpdate(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+
+        if (usageChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+            create(postData, currentUser);
+        } else {
+            update(postData, currentUser);
+        }
+    }
 }

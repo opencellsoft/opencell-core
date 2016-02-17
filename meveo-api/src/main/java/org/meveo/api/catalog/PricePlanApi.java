@@ -36,262 +36,263 @@ import org.meveo.service.catalog.impl.PricePlanMatrixService;
 @Stateless
 public class PricePlanApi extends BaseApi {
 
-	@Inject
-	private ChargeTemplateServiceAll chargeTemplateServiceAll;
+    @Inject
+    private ChargeTemplateServiceAll chargeTemplateServiceAll;
 
-	@Inject
-	private SellerService sellerService;
+    @Inject
+    private SellerService sellerService;
 
-	@Inject
-	private TradingCountryService tradingCountryService;
+    @Inject
+    private TradingCountryService tradingCountryService;
 
-	@Inject
-	private TradingCurrencyService tradingCurrencyService;
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
 
-	@Inject
-	private OfferTemplateService offerTemplateService;
+    @Inject
+    private OfferTemplateService offerTemplateService;
 
-	@Inject
-	private PricePlanMatrixService pricePlanMatrixService;
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
 
-	@Inject
-	private CalendarService calendarService;
+    @Inject
+    private CalendarService calendarService;
 
-	public void create(PricePlanDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getEventCode()) && !StringUtils.isBlank(postData.getCode())) {
-			Provider provider = currentUser.getProvider();
+    public void create(PricePlanDto postData, User currentUser) throws MeveoApiException {
 
-			// search for eventCode
-			if (chargeTemplateServiceAll.findByCode(postData.getEventCode(), provider) == null) {
-				throw new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode());
-			}
+        if (StringUtils.isBlank(postData.getEventCode())) {
+            missingParameters.add("eventCode");
+        }
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
 
-			if (pricePlanMatrixService.findByCode(postData.getCode(), provider) != null) {
-				throw new EntityAlreadyExistsException(PricePlanMatrix.class, postData.getCode());
-			}
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			PricePlanMatrix pricePlanMatrix = new PricePlanMatrix();
-			pricePlanMatrix.setCode(postData.getCode());
-			pricePlanMatrix.setProvider(provider);
-			pricePlanMatrix.setEventCode(postData.getEventCode());
+        Provider provider = currentUser.getProvider();
 
-			if (!StringUtils.isBlank(postData.getSeller())) {
-				Seller seller = sellerService.findByCode(postData.getSeller(), provider);
-				if (seller == null) {
-					throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
-				}
-				pricePlanMatrix.setSeller(seller);
-			}
+        // search for eventCode
+        if (chargeTemplateServiceAll.findByCode(postData.getEventCode(), provider) == null) {
+            throw new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode());
+        }
 
-			if (!StringUtils.isBlank(postData.getCountry())) {
-				TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry(), provider);
-				if (tradingCountry == null) {
-					throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
-				}
-				pricePlanMatrix.setTradingCountry(tradingCountry);
-			}
+        if (pricePlanMatrixService.findByCode(postData.getCode(), provider) != null) {
+            throw new EntityAlreadyExistsException(PricePlanMatrix.class, postData.getCode());
+        }
 
-			if (!StringUtils.isBlank(postData.getCurrency())) {
-				TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency(), provider);
-				if (tradingCurrency == null) {
-					throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
-				}
-				pricePlanMatrix.setTradingCurrency(tradingCurrency);
-			}
+        PricePlanMatrix pricePlanMatrix = new PricePlanMatrix();
+        pricePlanMatrix.setCode(postData.getCode());
+        pricePlanMatrix.setProvider(provider);
+        pricePlanMatrix.setEventCode(postData.getEventCode());
 
-			if (!StringUtils.isBlank(postData.getOfferTemplate())) {
-				OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), provider);
-				if (offerTemplate == null) {
-					throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate());
-				}
-				pricePlanMatrix.setOfferTemplate(offerTemplate);
-			}
+        if (!StringUtils.isBlank(postData.getSeller())) {
+            Seller seller = sellerService.findByCode(postData.getSeller(), provider);
+            if (seller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+            }
+            pricePlanMatrix.setSeller(seller);
+        }
 
-			if (!StringUtils.isBlank(postData.getValidityCalendarCode())) {
-				Calendar calendar = calendarService.findByCode(postData.getValidityCalendarCode(), provider);
-				if (calendar == null) {
-					throw new EntityDoesNotExistsException(Calendar.class, postData.getValidityCalendarCode());
-				}
-				pricePlanMatrix.setValidityCalendar(calendar);
-			}
+        if (!StringUtils.isBlank(postData.getCountry())) {
+            TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry(), provider);
+            if (tradingCountry == null) {
+                throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
+            }
+            pricePlanMatrix.setTradingCountry(tradingCountry);
+        }
 
-			pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
-			pricePlanMatrix.setMaxQuantity(postData.getMaxQuantity());
-			pricePlanMatrix.setStartSubscriptionDate(postData.getStartSubscriptionDate());
-			pricePlanMatrix.setEndSubscriptionDate(postData.getEndSubscriptionDate());
-			pricePlanMatrix.setStartRatingDate(postData.getStartRatingDate());
-			pricePlanMatrix.setEndRatingDate(postData.getEndRatingDate());
-			pricePlanMatrix.setMinSubscriptionAgeInMonth(postData.getMinSubscriptionAgeInMonth());
-			pricePlanMatrix.setMaxSubscriptionAgeInMonth(postData.getMaxSubscriptionAgeInMonth());
-			pricePlanMatrix.setAmountWithoutTax(postData.getAmountWithoutTax());
-			pricePlanMatrix.setAmountWithTax(postData.getAmountWithTax());
-			pricePlanMatrix.setAmountWithoutTaxEL(postData.getAmountWithoutTaxEL());
-			pricePlanMatrix.setAmountWithTaxEL(postData.getAmountWithTaxEL());
-			pricePlanMatrix.setPriority(postData.getPriority());
-			pricePlanMatrix.setCriteria1Value(postData.getCriteria1());
-			pricePlanMatrix.setCriteria2Value(postData.getCriteria2());
-			pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
-			pricePlanMatrix.setDescription(postData.getDescription());
-			pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
+        if (!StringUtils.isBlank(postData.getCurrency())) {
+            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency(), provider);
+            if (tradingCurrency == null) {
+                throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
+            }
+            pricePlanMatrix.setTradingCurrency(tradingCurrency);
+        }
 
-			pricePlanMatrixService.create(pricePlanMatrix, currentUser, provider);
-		} else {
-			if (StringUtils.isBlank(postData.getEventCode())) {
-				missingParameters.add("eventCode");
-			}
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+        if (!StringUtils.isBlank(postData.getOfferTemplate())) {
+            OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), provider);
+            if (offerTemplate == null) {
+                throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate());
+            }
+            pricePlanMatrix.setOfferTemplate(offerTemplate);
+        }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
+        if (!StringUtils.isBlank(postData.getValidityCalendarCode())) {
+            Calendar calendar = calendarService.findByCode(postData.getValidityCalendarCode(), provider);
+            if (calendar == null) {
+                throw new EntityDoesNotExistsException(Calendar.class, postData.getValidityCalendarCode());
+            }
+            pricePlanMatrix.setValidityCalendar(calendar);
+        }
 
-	public void update(PricePlanDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getEventCode()) && !StringUtils.isBlank(postData.getCode())) {
-			Provider provider = currentUser.getProvider();
+        pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
+        pricePlanMatrix.setMaxQuantity(postData.getMaxQuantity());
+        pricePlanMatrix.setStartSubscriptionDate(postData.getStartSubscriptionDate());
+        pricePlanMatrix.setEndSubscriptionDate(postData.getEndSubscriptionDate());
+        pricePlanMatrix.setStartRatingDate(postData.getStartRatingDate());
+        pricePlanMatrix.setEndRatingDate(postData.getEndRatingDate());
+        pricePlanMatrix.setMinSubscriptionAgeInMonth(postData.getMinSubscriptionAgeInMonth());
+        pricePlanMatrix.setMaxSubscriptionAgeInMonth(postData.getMaxSubscriptionAgeInMonth());
+        pricePlanMatrix.setAmountWithoutTax(postData.getAmountWithoutTax());
+        pricePlanMatrix.setAmountWithTax(postData.getAmountWithTax());
+        pricePlanMatrix.setAmountWithoutTaxEL(postData.getAmountWithoutTaxEL());
+        pricePlanMatrix.setAmountWithTaxEL(postData.getAmountWithTaxEL());
+        pricePlanMatrix.setPriority(postData.getPriority());
+        pricePlanMatrix.setCriteria1Value(postData.getCriteria1());
+        pricePlanMatrix.setCriteria2Value(postData.getCriteria2());
+        pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
+        pricePlanMatrix.setDescription(postData.getDescription());
+        pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
 
-			// search for eventCode
-			if (chargeTemplateServiceAll.findByCode(postData.getEventCode(), provider) == null) {
-				throw new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode());
-			}
+        pricePlanMatrixService.create(pricePlanMatrix, currentUser, provider);
+    }
 
-			// search for price plan
-			PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(postData.getCode(), provider);
-			if (pricePlanMatrix == null) {
-				throw new EntityDoesNotExistsException(PricePlanMatrix.class, postData.getCode());
-			}
-			pricePlanMatrix.setEventCode(postData.getEventCode());
+    public void update(PricePlanDto postData, User currentUser) throws MeveoApiException {
 
-			if (!StringUtils.isBlank(postData.getSeller())) {
-				Seller seller = sellerService.findByCode(postData.getSeller(), provider);
-				if (seller == null) {
-					throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
-				}
-				pricePlanMatrix.setSeller(seller);
-			}
+        if (StringUtils.isBlank(postData.getEventCode())) {
+            missingParameters.add("eventCode");
+        }
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
 
-			if (!StringUtils.isBlank(postData.getCountry())) {
-				TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry(), provider);
-				if (tradingCountry == null) {
-					throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
-				}
-				pricePlanMatrix.setTradingCountry(tradingCountry);
-			}
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			if (!StringUtils.isBlank(postData.getCurrency())) {
-				TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency(), provider);
-				if (tradingCurrency == null) {
-					throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
-				}
-				pricePlanMatrix.setTradingCurrency(tradingCurrency);
-			}
+        Provider provider = currentUser.getProvider();
 
-			if (!StringUtils.isBlank(postData.getOfferTemplate())) {
-				OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), provider);
-				if (offerTemplate == null) {
-					throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate());
-				}
-				pricePlanMatrix.setOfferTemplate(offerTemplate);
-			}
+        // search for eventCode
+        if (chargeTemplateServiceAll.findByCode(postData.getEventCode(), provider) == null) {
+            throw new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode());
+        }
 
-			if (!StringUtils.isBlank(postData.getValidityCalendarCode())) {
-				Calendar calendar = calendarService.findByCode(postData.getValidityCalendarCode(), provider);
-				if (calendar == null) {
-					throw new EntityDoesNotExistsException(Calendar.class, postData.getValidityCalendarCode());
-				}
-				pricePlanMatrix.setValidityCalendar(calendar);
-			} else {
-				pricePlanMatrix.setValidityCalendar(null);
-			}
+        // search for price plan
+        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(postData.getCode(), provider);
+        if (pricePlanMatrix == null) {
+            throw new EntityDoesNotExistsException(PricePlanMatrix.class, postData.getCode());
+        }
+        pricePlanMatrix.setEventCode(postData.getEventCode());
 
-			pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
-			pricePlanMatrix.setMaxQuantity(postData.getMaxQuantity());
-			pricePlanMatrix.setStartSubscriptionDate(postData.getStartSubscriptionDate());
-			pricePlanMatrix.setEndSubscriptionDate(postData.getEndSubscriptionDate());
-			pricePlanMatrix.setStartRatingDate(postData.getStartRatingDate());
-			pricePlanMatrix.setEndRatingDate(postData.getEndRatingDate());
-			pricePlanMatrix.setMinSubscriptionAgeInMonth(postData.getMinSubscriptionAgeInMonth());
-			pricePlanMatrix.setMaxSubscriptionAgeInMonth(postData.getMaxSubscriptionAgeInMonth());
-			pricePlanMatrix.setAmountWithoutTax(postData.getAmountWithoutTax());
-			pricePlanMatrix.setAmountWithTax(postData.getAmountWithTax());
-			pricePlanMatrix.setAmountWithoutTaxEL(postData.getAmountWithoutTaxEL());
-			pricePlanMatrix.setAmountWithTaxEL(postData.getAmountWithTaxEL());
-			pricePlanMatrix.setPriority(postData.getPriority());
-			pricePlanMatrix.setCriteria1Value(postData.getCriteria1());
-			pricePlanMatrix.setCriteria2Value(postData.getCriteria2());
-			pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
-			pricePlanMatrix.setDescription(postData.getDescription());
-			pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
+        if (!StringUtils.isBlank(postData.getSeller())) {
+            Seller seller = sellerService.findByCode(postData.getSeller(), provider);
+            if (seller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+            }
+            pricePlanMatrix.setSeller(seller);
+        }
 
-			pricePlanMatrixService.update(pricePlanMatrix, currentUser);
-		} else {
-			if (StringUtils.isBlank(postData.getEventCode())) {
-				missingParameters.add("eventCode");
-			}
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+        if (!StringUtils.isBlank(postData.getCountry())) {
+            TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry(), provider);
+            if (tradingCountry == null) {
+                throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
+            }
+            pricePlanMatrix.setTradingCountry(tradingCountry);
+        }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
-	
-	public PricePlanDto find(String pricePlanCode, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(pricePlanCode)) {
-			PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanCode, provider);
-			if (pricePlanMatrix == null) {
-				throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
-			}
+        if (!StringUtils.isBlank(postData.getCurrency())) {
+            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency(), provider);
+            if (tradingCurrency == null) {
+                throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
+            }
+            pricePlanMatrix.setTradingCurrency(tradingCurrency);
+        }
 
-			return new PricePlanDto(pricePlanMatrix);
-		} else {
-			missingParameters.add("pricePlanCode");
+        if (!StringUtils.isBlank(postData.getOfferTemplate())) {
+            OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), provider);
+            if (offerTemplate == null) {
+                throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate());
+            }
+            pricePlanMatrix.setOfferTemplate(offerTemplate);
+        }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
+        if (!StringUtils.isBlank(postData.getValidityCalendarCode())) {
+            Calendar calendar = calendarService.findByCode(postData.getValidityCalendarCode(), provider);
+            if (calendar == null) {
+                throw new EntityDoesNotExistsException(Calendar.class, postData.getValidityCalendarCode());
+            }
+            pricePlanMatrix.setValidityCalendar(calendar);
+        } else {
+            pricePlanMatrix.setValidityCalendar(null);
+        }
 
-	public void remove(String pricePlanCode, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(pricePlanCode)) {
-			PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanCode, provider);
-			if (pricePlanMatrix == null) {
-				throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
-			}
+        pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
+        pricePlanMatrix.setMaxQuantity(postData.getMaxQuantity());
+        pricePlanMatrix.setStartSubscriptionDate(postData.getStartSubscriptionDate());
+        pricePlanMatrix.setEndSubscriptionDate(postData.getEndSubscriptionDate());
+        pricePlanMatrix.setStartRatingDate(postData.getStartRatingDate());
+        pricePlanMatrix.setEndRatingDate(postData.getEndRatingDate());
+        pricePlanMatrix.setMinSubscriptionAgeInMonth(postData.getMinSubscriptionAgeInMonth());
+        pricePlanMatrix.setMaxSubscriptionAgeInMonth(postData.getMaxSubscriptionAgeInMonth());
+        pricePlanMatrix.setAmountWithoutTax(postData.getAmountWithoutTax());
+        pricePlanMatrix.setAmountWithTax(postData.getAmountWithTax());
+        pricePlanMatrix.setAmountWithoutTaxEL(postData.getAmountWithoutTaxEL());
+        pricePlanMatrix.setAmountWithTaxEL(postData.getAmountWithTaxEL());
+        pricePlanMatrix.setPriority(postData.getPriority());
+        pricePlanMatrix.setCriteria1Value(postData.getCriteria1());
+        pricePlanMatrix.setCriteria2Value(postData.getCriteria2());
+        pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
+        pricePlanMatrix.setDescription(postData.getDescription());
+        pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
 
-			pricePlanMatrixService.remove(pricePlanMatrix);
-		} else {
-			missingParameters.add("code");
+        pricePlanMatrixService.update(pricePlanMatrix, currentUser);
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
-	
-	public List<PricePlanDto> list(String eventCode, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(eventCode)) {
-			List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(eventCode, provider);
-			if (pricePlanMatrixes == null) {
-				throw new EntityDoesNotExistsException(PricePlanMatrix.class, eventCode);
-			}
-			
-			List<PricePlanDto> pricePlanDtos = new ArrayList<>();
-			for(PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-				pricePlanDtos.add(new PricePlanDto(pricePlanMatrix));
-			}
-			
-			return pricePlanDtos;
-		} else {
-			missingParameters.add("pricePlanCode");
+    }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
-	
-	public void createOrUpdate(PricePlanDto postData, User currentUser) throws MeveoApiException {
-		if (pricePlanMatrixService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-			create(postData, currentUser);
-		} else {
-			update(postData, currentUser);
-		}
-	}
+    public PricePlanDto find(String pricePlanCode, Provider provider) throws MeveoApiException {
+        if (StringUtils.isBlank(pricePlanCode)) {
+            missingParameters.add("pricePlanCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanCode, provider);
+        if (pricePlanMatrix == null) {
+            throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
+        }
+
+        return new PricePlanDto(pricePlanMatrix);
+    }
+
+    public void remove(String pricePlanCode, Provider provider) throws MeveoApiException {
+
+        if (StringUtils.isBlank(pricePlanCode)) {
+            missingParameters.add("pricePlanCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanCode, provider);
+        if (pricePlanMatrix == null) {
+            throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
+        }
+
+        pricePlanMatrixService.remove(pricePlanMatrix);
+    }
+
+    public List<PricePlanDto> list(String eventCode, Provider provider) throws MeveoApiException {
+        if (StringUtils.isBlank(eventCode)) {
+            missingParameters.add("eventCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(eventCode, provider);
+        if (pricePlanMatrixes == null) {
+            throw new EntityDoesNotExistsException(PricePlanMatrix.class, eventCode);
+        }
+
+        List<PricePlanDto> pricePlanDtos = new ArrayList<>();
+        for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+            pricePlanDtos.add(new PricePlanDto(pricePlanMatrix));
+        }
+
+        return pricePlanDtos;
+    }
+
+    public void createOrUpdate(PricePlanDto postData, User currentUser) throws MeveoApiException {
+        if (pricePlanMatrixService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+            create(postData, currentUser);
+        } else {
+            update(postData, currentUser);
+        }
+    }
 }

@@ -47,394 +47,365 @@ import org.meveo.service.catalog.impl.UsageChargeTemplateService;
  **/
 @Stateless
 public class ServiceTemplateApi extends BaseApi {
-	
-	@Inject
-	private ServiceTemplateService serviceTemplateService;
 
-	@Inject
-	private RecurringChargeTemplateService recurringChargeTemplateService;
+    @Inject
+    private ServiceTemplateService serviceTemplateService;
 
-	@Inject
-	private CalendarService calendarService;
-	
-	@Inject
-	private OneShotChargeTemplateService oneShotChargeTemplateService;
+    @Inject
+    private RecurringChargeTemplateService recurringChargeTemplateService;
 
-	@Inject
-	private UsageChargeTemplateService usageChargeTemplateService;
+    @Inject
+    private CalendarService calendarService;
 
-	@Inject
-	private WalletTemplateService walletTemplateService;
+    @Inject
+    private OneShotChargeTemplateService oneShotChargeTemplateService;
 
-	@Inject
-	private ServiceChargeTemplateRecurringService serviceChargeTemplateRecurringService;
+    @Inject
+    private UsageChargeTemplateService usageChargeTemplateService;
 
-	@Inject
-	private ServiceChargeTemplateSubscriptionService serviceChargeTemplateSubscriptionService;
+    @Inject
+    private WalletTemplateService walletTemplateService;
 
-	@Inject
-	private ServiceChargeTemplateTerminationService serviceChargeTemplateTerminationService;
+    @Inject
+    private ServiceChargeTemplateRecurringService serviceChargeTemplateRecurringService;
 
-	@Inject
-	private ServiceChargeTemplateUsageService serviceUsageChargeTemplateService;
+    @Inject
+    private ServiceChargeTemplateSubscriptionService serviceChargeTemplateSubscriptionService;
 
-	@SuppressWarnings("rawtypes")
-	@Inject
-	private CounterTemplateService counterTemplateService;
+    @Inject
+    private ServiceChargeTemplateTerminationService serviceChargeTemplateTerminationService;
 
-	private void createServiceChargeTemplateRecurring(ServiceTemplateDto postData, User currentUser,
-			ServiceTemplate serviceTemplate) throws MeveoApiException {
-		Provider provider = currentUser.getProvider();
+    @Inject
+    private ServiceChargeTemplateUsageService serviceUsageChargeTemplateService;
 
-		if (postData.getServiceChargeTemplateRecurrings() != null) {
-			for (ServiceChargeTemplateRecurringDto serviceChargeTemplateDto : postData
-					.getServiceChargeTemplateRecurrings().getServiceChargeTemplateRecurring()) {
-				List<WalletTemplate> wallets = new ArrayList<WalletTemplate>();
+    @SuppressWarnings("rawtypes")
+    @Inject
+    private CounterTemplateService counterTemplateService;
 
-				RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(
-						serviceChargeTemplateDto.getCode(), provider);
-				if (chargeTemplate == null) {
-					throw new EntityDoesNotExistsException(RecurringChargeTemplate.class,
-							serviceChargeTemplateDto.getCode());
-				}
+    private void createServiceChargeTemplateRecurring(ServiceTemplateDto postData, User currentUser, ServiceTemplate serviceTemplate) throws MeveoApiException {
+        Provider provider = currentUser.getProvider();
 
-				for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {					
-					if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
-						WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode, provider);
-						if (walletTemplate == null) {
-							throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
-						}
-						wallets.add(walletTemplate);
-					}
-				}
+        if (postData.getServiceChargeTemplateRecurrings() != null) {
+            for (ServiceChargeTemplateRecurringDto serviceChargeTemplateDto : postData.getServiceChargeTemplateRecurrings().getServiceChargeTemplateRecurring()) {
+                List<WalletTemplate> wallets = new ArrayList<WalletTemplate>();
 
-				ServiceChargeTemplateRecurring serviceChargeTemplate = new ServiceChargeTemplateRecurring();
-				serviceChargeTemplate.setChargeTemplate(chargeTemplate);
-				serviceChargeTemplate.setWalletTemplates(wallets);
-				serviceChargeTemplate.setServiceTemplate(serviceTemplate);
-				serviceChargeTemplate.setProvider(provider);
-				serviceChargeTemplateRecurringService.create(serviceChargeTemplate, currentUser, provider);
-			}
-		}
-	}
+                RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode(), provider);
+                if (chargeTemplate == null) {
+                    throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, serviceChargeTemplateDto.getCode());
+                }
 
-	private void createServiceChargeTemplateSubscription(ServiceTemplateDto postData, User currentUser,
-			ServiceTemplate serviceTemplate) throws MeveoApiException {
-		Provider provider = currentUser.getProvider();
+                for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {
+                    if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
+                        WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode, provider);
+                        if (walletTemplate == null) {
+                            throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
+                        }
+                        wallets.add(walletTemplate);
+                    }
+                }
 
-		if (postData.getServiceChargeTemplateSubscriptions() != null) {
-			for (ServiceChargeTemplateSubscriptionDto serviceChargeTemplateDto : postData
-					.getServiceChargeTemplateSubscriptions().getServiceChargeTemplateSubscription()) {
-				List<WalletTemplate> wallets = new ArrayList<WalletTemplate>();
-
-				OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(
-						serviceChargeTemplateDto.getCode(), provider);
-				if (chargeTemplate == null) {
-					throw new EntityDoesNotExistsException(OneShotChargeTemplate.class,
-							serviceChargeTemplateDto.getCode());
-				}
-
-				for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {					
-					if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
-						WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode, provider);
-						if (walletTemplate == null) {
-							throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
-						}
-						wallets.add(walletTemplate);
-					}
-				}
-
-				ServiceChargeTemplateSubscription serviceChargeTemplate = new ServiceChargeTemplateSubscription();
-				serviceChargeTemplate.setChargeTemplate(chargeTemplate);
-				serviceChargeTemplate.setWalletTemplates(wallets);
-				serviceChargeTemplate.setServiceTemplate(serviceTemplate);
-				serviceChargeTemplate.setProvider(provider);
-				serviceChargeTemplateSubscriptionService.create(serviceChargeTemplate, currentUser, provider);
-			}
-		}
-	}
-
-	private void createServiceChargeTemplateTermination(ServiceTemplateDto postData, User currentUser,
-			ServiceTemplate serviceTemplate) throws MeveoApiException {
-		Provider provider = currentUser.getProvider();
-
-		if (postData.getServiceChargeTemplateTerminations() != null) {
-			for (ServiceChargeTemplateTerminationDto serviceChargeTemplateDto : postData
-					.getServiceChargeTemplateTerminations().getServiceChargeTemplateTermination()) {
-				List<WalletTemplate> wallets = new ArrayList<WalletTemplate>();
-
-				OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(
-						serviceChargeTemplateDto.getCode(), provider);
-				if (chargeTemplate == null) {
-					throw new EntityDoesNotExistsException(OneShotChargeTemplate.class,
-							serviceChargeTemplateDto.getCode());
-				}
-
-				for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {					
-					if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
-						WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode, provider);
-						if (walletTemplate == null) {
-							throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
-						}
-						wallets.add(walletTemplate);
-					}
-				}
-
-				ServiceChargeTemplateTermination serviceChargeTemplate = new ServiceChargeTemplateTermination();
-				serviceChargeTemplate.setChargeTemplate(chargeTemplate);
-				serviceChargeTemplate.setWalletTemplates(wallets);
-				serviceChargeTemplate.setServiceTemplate(serviceTemplate);
-				serviceChargeTemplate.setProvider(provider);
-				serviceChargeTemplateTerminationService.create(serviceChargeTemplate, currentUser, provider);
-			}
-		}
-	}
-
-	private void createServiceChargeTemplateUsage(ServiceTemplateDto postData, User currentUser,
-			ServiceTemplate serviceTemplate) throws MeveoApiException {
-		Provider provider = currentUser.getProvider();
-
-		if (postData.getServiceChargeTemplateUsages() != null) {
-			for (ServiceUsageChargeTemplateDto serviceChargeTemplateDto : postData.getServiceChargeTemplateUsages()
-					.getServiceChargeTemplateUsage()) {
-				List<WalletTemplate> wallets = new ArrayList<WalletTemplate>();
-
-				UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(
-						serviceChargeTemplateDto.getCode(), provider);
-				if (chargeTemplate == null) {
-					throw new EntityDoesNotExistsException(UsageChargeTemplate.class,
-							serviceChargeTemplateDto.getCode());
-				}
-
-				for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {					
-					if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
-						WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode, provider);
-						if (walletTemplate == null) {
-							throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
-						}
-						wallets.add(walletTemplate);
-					}
-				}
-
-				ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();
-
-				// search for counter
-				if (!StringUtils.isBlank(serviceChargeTemplateDto.getCounterTemplate())) {
-					CounterTemplate counterTemplate = (CounterTemplate) counterTemplateService.findByCode(
-							serviceChargeTemplateDto.getCounterTemplate(), provider);
-					if (counterTemplate == null) {
-						throw new EntityDoesNotExistsException(CounterTemplate.class,
-								serviceChargeTemplateDto.getCounterTemplate());
-					}
-
-					serviceChargeTemplate.setCounterTemplate(counterTemplate);
-				}
-
-				serviceChargeTemplate.setChargeTemplate(chargeTemplate);
-				serviceChargeTemplate.setWalletTemplates(wallets);
-				serviceChargeTemplate.setServiceTemplate(serviceTemplate);
-				serviceChargeTemplate.setProvider(provider);
-				serviceUsageChargeTemplateService.create(serviceChargeTemplate, currentUser, provider);
-			}
-		}
-	}
-
-	public void create(ServiceTemplateDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
-			Provider provider = currentUser.getProvider();
-
-			// check if code already exists
-			if (serviceTemplateService.findByCode(postData.getCode(), provider) != null) {
-				throw new EntityAlreadyExistsException(ServiceTemplateService.class, postData.getCode());
-			}
-
-			Calendar invoicingCalendar = null;
-			if(postData.getInvoicingCalendar()!=null){
-				invoicingCalendar = calendarService.findByCode(
-						postData.getInvoicingCalendar(), provider);
-				if (invoicingCalendar == null) {
-					throw new EntityDoesNotExistsException(Calendar.class,
-							postData.getInvoicingCalendar());
-				}
-			}
-			
-			ServiceTemplate serviceTemplate = new ServiceTemplate();
-			serviceTemplate.setCode(postData.getCode());
-			serviceTemplate.setDescription(postData.getDescription());
-			serviceTemplate.setInvoicingCalendar(invoicingCalendar);
-			serviceTemplate.setProvider(provider);
-
-			
-		
-            serviceTemplateService.create(serviceTemplate, currentUser, provider);
-            
-            // populate customFields
-            try {
-                populateCustomFields(postData.getCustomFields(), serviceTemplate, true, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+                ServiceChargeTemplateRecurring serviceChargeTemplate = new ServiceChargeTemplateRecurring();
+                serviceChargeTemplate.setChargeTemplate(chargeTemplate);
+                serviceChargeTemplate.setWalletTemplates(wallets);
+                serviceChargeTemplate.setServiceTemplate(serviceTemplate);
+                serviceChargeTemplate.setProvider(provider);
+                serviceChargeTemplateRecurringService.create(serviceChargeTemplate, currentUser, provider);
             }
-			
-			// check for recurring charges
-			createServiceChargeTemplateRecurring(postData, currentUser, serviceTemplate);
+        }
+    }
 
-			// check for subscription charges
-			createServiceChargeTemplateSubscription(postData, currentUser, serviceTemplate);
+    private void createServiceChargeTemplateSubscription(ServiceTemplateDto postData, User currentUser, ServiceTemplate serviceTemplate) throws MeveoApiException {
+        Provider provider = currentUser.getProvider();
 
-			// check for termination charges
-			createServiceChargeTemplateTermination(postData, currentUser, serviceTemplate);
+        if (postData.getServiceChargeTemplateSubscriptions() != null) {
+            for (ServiceChargeTemplateSubscriptionDto serviceChargeTemplateDto : postData.getServiceChargeTemplateSubscriptions().getServiceChargeTemplateSubscription()) {
+                List<WalletTemplate> wallets = new ArrayList<WalletTemplate>();
 
-			// check for usage charges
-			createServiceChargeTemplateUsage(postData, currentUser, serviceTemplate);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+                OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode(), provider);
+                if (chargeTemplate == null) {
+                    throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, serviceChargeTemplateDto.getCode());
+                }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
+                for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {
+                    if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
+                        WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode, provider);
+                        if (walletTemplate == null) {
+                            throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
+                        }
+                        wallets.add(walletTemplate);
+                    }
+                }
 
-	public void update(ServiceTemplateDto postData, User currentUser) throws MeveoApiException {
-
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
-			Provider provider = currentUser.getProvider();
-			// check if code already exists
-			ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(postData.getCode(), provider);
-			if (serviceTemplate == null) {
-				throw new EntityDoesNotExistsException(ServiceTemplateService.class, postData.getCode());
-			}
-			serviceTemplate.setDescription(postData.getDescription());			
-
-			
-			Calendar invoicingCalendar = null;
-			if(postData.getInvoicingCalendar()!=null){
-				invoicingCalendar = calendarService.findByCode(
-						postData.getInvoicingCalendar(), provider);
-				if (invoicingCalendar == null) {
-					throw new EntityDoesNotExistsException(Calendar.class,
-							postData.getInvoicingCalendar());
-				}
-			}
-			serviceTemplate.setInvoicingCalendar(invoicingCalendar);
-			
-			setAllWalletTemplatesToNull(serviceTemplate);
-			
-
-			serviceTemplate = serviceTemplateService.update(serviceTemplate, currentUser);
-            
-			// populate customFields
-            try {
-                populateCustomFields(postData.getCustomFields(), serviceTemplate, false, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+                ServiceChargeTemplateSubscription serviceChargeTemplate = new ServiceChargeTemplateSubscription();
+                serviceChargeTemplate.setChargeTemplate(chargeTemplate);
+                serviceChargeTemplate.setWalletTemplates(wallets);
+                serviceChargeTemplate.setServiceTemplate(serviceTemplate);
+                serviceChargeTemplate.setProvider(provider);
+                serviceChargeTemplateSubscriptionService.create(serviceChargeTemplate, currentUser, provider);
             }
+        }
+    }
 
-			serviceChargeTemplateRecurringService.removeByServiceTemplate(serviceTemplate, provider);
-			serviceChargeTemplateSubscriptionService.removeByServiceTemplate(serviceTemplate, provider);
-			serviceChargeTemplateTerminationService.removeByServiceTemplate(serviceTemplate, provider);
-			serviceUsageChargeTemplateService.removeByServiceTemplate(serviceTemplate, provider);
+    private void createServiceChargeTemplateTermination(ServiceTemplateDto postData, User currentUser, ServiceTemplate serviceTemplate) throws MeveoApiException {
+        Provider provider = currentUser.getProvider();
 
-			// check for recurring charges
-			createServiceChargeTemplateRecurring(postData, currentUser, serviceTemplate);
+        if (postData.getServiceChargeTemplateTerminations() != null) {
+            for (ServiceChargeTemplateTerminationDto serviceChargeTemplateDto : postData.getServiceChargeTemplateTerminations().getServiceChargeTemplateTermination()) {
+                List<WalletTemplate> wallets = new ArrayList<WalletTemplate>();
 
-			// check for subscription charges
-			createServiceChargeTemplateSubscription(postData, currentUser, serviceTemplate);
+                OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode(), provider);
+                if (chargeTemplate == null) {
+                    throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, serviceChargeTemplateDto.getCode());
+                }
 
-			// check for termination charges
-			createServiceChargeTemplateTermination(postData, currentUser, serviceTemplate);
+                for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {
+                    if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
+                        WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode, provider);
+                        if (walletTemplate == null) {
+                            throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
+                        }
+                        wallets.add(walletTemplate);
+                    }
+                }
 
-			// check for usage charges
-			createServiceChargeTemplateUsage(postData, currentUser, serviceTemplate);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+                ServiceChargeTemplateTermination serviceChargeTemplate = new ServiceChargeTemplateTermination();
+                serviceChargeTemplate.setChargeTemplate(chargeTemplate);
+                serviceChargeTemplate.setWalletTemplates(wallets);
+                serviceChargeTemplate.setServiceTemplate(serviceTemplate);
+                serviceChargeTemplate.setProvider(provider);
+                serviceChargeTemplateTerminationService.create(serviceChargeTemplate, currentUser, provider);
+            }
+        }
+    }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
+    private void createServiceChargeTemplateUsage(ServiceTemplateDto postData, User currentUser, ServiceTemplate serviceTemplate) throws MeveoApiException {
+        Provider provider = currentUser.getProvider();
 
-	public ServiceTemplateDto find(String serviceTemplateCode, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(serviceTemplateCode)) {
-			ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateCode, provider);
-			if (serviceTemplate == null) {
-				throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateCode);
-			}
-			ServiceTemplateDto result = new ServiceTemplateDto(serviceTemplate, customFieldInstanceService.getCustomFieldInstances(serviceTemplate));
-			return result;
-		} else {
-			missingParameters.add("serviceTemplateCode");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
+        if (postData.getServiceChargeTemplateUsages() != null) {
+            for (ServiceUsageChargeTemplateDto serviceChargeTemplateDto : postData.getServiceChargeTemplateUsages().getServiceChargeTemplateUsage()) {
+                List<WalletTemplate> wallets = new ArrayList<WalletTemplate>();
 
-	private void setAllWalletTemplatesToNull(ServiceTemplate serviceTemplate) {
-		List<ServiceChargeTemplateRecurring> listRec = new ArrayList<ServiceChargeTemplateRecurring>();
-		for (ServiceChargeTemplateRecurring recurring : serviceTemplate.getServiceRecurringCharges()) {
-			recurring.setWalletTemplates(null);
-			listRec.add(recurring);
-		}
-		serviceTemplate.setServiceRecurringCharges(listRec);
+                UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode(), provider);
+                if (chargeTemplate == null) {
+                    throw new EntityDoesNotExistsException(UsageChargeTemplate.class, serviceChargeTemplateDto.getCode());
+                }
 
-		List<ServiceChargeTemplateSubscription> listSubs = new ArrayList<ServiceChargeTemplateSubscription>();
-		for (ServiceChargeTemplateSubscription subscription : serviceTemplate.getServiceSubscriptionCharges()) {
-			subscription.setWalletTemplates(null);
-			listSubs.add(subscription);
-		}
-		serviceTemplate.setServiceSubscriptionCharges(listSubs);
+                for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {
+                    if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
+                        WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode, provider);
+                        if (walletTemplate == null) {
+                            throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
+                        }
+                        wallets.add(walletTemplate);
+                    }
+                }
 
-		List<ServiceChargeTemplateTermination> listTerms = new ArrayList<ServiceChargeTemplateTermination>();
-		for (ServiceChargeTemplateTermination termination : serviceTemplate.getServiceTerminationCharges()) {
-			termination.setWalletTemplates(null);
-			listTerms.add(termination);
-		}
-		serviceTemplate.setServiceTerminationCharges(listTerms);
+                ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();
 
-		List<ServiceChargeTemplateUsage> listUsages = new ArrayList<ServiceChargeTemplateUsage>();
-		for (ServiceChargeTemplateUsage usage : serviceTemplate.getServiceUsageCharges()) {
-			usage.setWalletTemplates(null);
-			listUsages.add(usage);
-		}
-		serviceTemplate.setServiceUsageCharges(listUsages);
-	}
+                // search for counter
+                if (!StringUtils.isBlank(serviceChargeTemplateDto.getCounterTemplate())) {
+                    CounterTemplate counterTemplate = (CounterTemplate) counterTemplateService.findByCode(serviceChargeTemplateDto.getCounterTemplate(), provider);
+                    if (counterTemplate == null) {
+                        throw new EntityDoesNotExistsException(CounterTemplate.class, serviceChargeTemplateDto.getCounterTemplate());
+                    }
 
-	public void remove(String serviceTemplateCode, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(serviceTemplateCode)) {
-			ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateCode, provider);
-			if (serviceTemplate == null) {
-				throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateCode);
-			}
+                    serviceChargeTemplate.setCounterTemplate(counterTemplate);
+                }
 
-			setAllWalletTemplatesToNull(serviceTemplate);
+                serviceChargeTemplate.setChargeTemplate(chargeTemplate);
+                serviceChargeTemplate.setWalletTemplates(wallets);
+                serviceChargeTemplate.setServiceTemplate(serviceTemplate);
+                serviceChargeTemplate.setProvider(provider);
+                serviceUsageChargeTemplateService.create(serviceChargeTemplate, currentUser, provider);
+            }
+        }
+    }
 
-			// remove serviceChargeTemplateRecurring
-			serviceChargeTemplateRecurringService.removeByServiceTemplate(serviceTemplate, provider);
+    public void create(ServiceTemplateDto postData, User currentUser) throws MeveoApiException {
 
-			// remove serviceChargeTemplateSubscription
-			serviceChargeTemplateSubscriptionService.removeByServiceTemplate(serviceTemplate, provider);
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			// remove serviceChargeTemplateTermination
-			serviceChargeTemplateTerminationService.removeByServiceTemplate(serviceTemplate, provider);
+        Provider provider = currentUser.getProvider();
 
-			// remove serviceUsageChargeTemplate
-			serviceUsageChargeTemplateService.removeByServiceTemplate(serviceTemplate, provider);
+        // check if code already exists
+        if (serviceTemplateService.findByCode(postData.getCode(), provider) != null) {
+            throw new EntityAlreadyExistsException(ServiceTemplateService.class, postData.getCode());
+        }
 
-			serviceTemplateService.remove(serviceTemplate);
-		} else {
-			missingParameters.add("serviceTemplateCode");
+        Calendar invoicingCalendar = null;
+        if (postData.getInvoicingCalendar() != null) {
+            invoicingCalendar = calendarService.findByCode(postData.getInvoicingCalendar(), provider);
+            if (invoicingCalendar == null) {
+                throw new EntityDoesNotExistsException(Calendar.class, postData.getInvoicingCalendar());
+            }
+        }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
-	
-	public void createOrUpdate(ServiceTemplateDto postData, User currentUser) throws MeveoApiException {
-		if (serviceTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-			create(postData, currentUser);
-		} else {
-			update(postData, currentUser);
-		}
-	}
+        ServiceTemplate serviceTemplate = new ServiceTemplate();
+        serviceTemplate.setCode(postData.getCode());
+        serviceTemplate.setDescription(postData.getDescription());
+        serviceTemplate.setInvoicingCalendar(invoicingCalendar);
+        serviceTemplate.setProvider(provider);
+
+        serviceTemplateService.create(serviceTemplate, currentUser, provider);
+
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), serviceTemplate, true, currentUser);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
+
+        // check for recurring charges
+        createServiceChargeTemplateRecurring(postData, currentUser, serviceTemplate);
+
+        // check for subscription charges
+        createServiceChargeTemplateSubscription(postData, currentUser, serviceTemplate);
+
+        // check for termination charges
+        createServiceChargeTemplateTermination(postData, currentUser, serviceTemplate);
+
+        // check for usage charges
+        createServiceChargeTemplateUsage(postData, currentUser, serviceTemplate);
+    }
+
+    public void update(ServiceTemplateDto postData, User currentUser) throws MeveoApiException {
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        Provider provider = currentUser.getProvider();
+        // check if code already exists
+        ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(postData.getCode(), provider);
+        if (serviceTemplate == null) {
+            throw new EntityDoesNotExistsException(ServiceTemplateService.class, postData.getCode());
+        }
+        serviceTemplate.setDescription(postData.getDescription());
+
+        Calendar invoicingCalendar = null;
+        if (postData.getInvoicingCalendar() != null) {
+            invoicingCalendar = calendarService.findByCode(postData.getInvoicingCalendar(), provider);
+            if (invoicingCalendar == null) {
+                throw new EntityDoesNotExistsException(Calendar.class, postData.getInvoicingCalendar());
+            }
+        }
+        serviceTemplate.setInvoicingCalendar(invoicingCalendar);
+
+        setAllWalletTemplatesToNull(serviceTemplate);
+
+        serviceTemplate = serviceTemplateService.update(serviceTemplate, currentUser);
+
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), serviceTemplate, false, currentUser);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
+
+        serviceChargeTemplateRecurringService.removeByServiceTemplate(serviceTemplate, provider);
+        serviceChargeTemplateSubscriptionService.removeByServiceTemplate(serviceTemplate, provider);
+        serviceChargeTemplateTerminationService.removeByServiceTemplate(serviceTemplate, provider);
+        serviceUsageChargeTemplateService.removeByServiceTemplate(serviceTemplate, provider);
+
+        // check for recurring charges
+        createServiceChargeTemplateRecurring(postData, currentUser, serviceTemplate);
+
+        // check for subscription charges
+        createServiceChargeTemplateSubscription(postData, currentUser, serviceTemplate);
+
+        // check for termination charges
+        createServiceChargeTemplateTermination(postData, currentUser, serviceTemplate);
+
+        // check for usage charges
+        createServiceChargeTemplateUsage(postData, currentUser, serviceTemplate);
+    }
+
+    public ServiceTemplateDto find(String serviceTemplateCode, Provider provider) throws MeveoApiException {
+
+        if (StringUtils.isBlank(serviceTemplateCode)) {
+            missingParameters.add("serviceTemplateCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateCode, provider);
+        if (serviceTemplate == null) {
+            throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateCode);
+        }
+        ServiceTemplateDto result = new ServiceTemplateDto(serviceTemplate, customFieldInstanceService.getCustomFieldInstances(serviceTemplate));
+        return result;
+    }
+
+    private void setAllWalletTemplatesToNull(ServiceTemplate serviceTemplate) {
+        List<ServiceChargeTemplateRecurring> listRec = new ArrayList<ServiceChargeTemplateRecurring>();
+        for (ServiceChargeTemplateRecurring recurring : serviceTemplate.getServiceRecurringCharges()) {
+            recurring.setWalletTemplates(null);
+            listRec.add(recurring);
+        }
+        serviceTemplate.setServiceRecurringCharges(listRec);
+
+        List<ServiceChargeTemplateSubscription> listSubs = new ArrayList<ServiceChargeTemplateSubscription>();
+        for (ServiceChargeTemplateSubscription subscription : serviceTemplate.getServiceSubscriptionCharges()) {
+            subscription.setWalletTemplates(null);
+            listSubs.add(subscription);
+        }
+        serviceTemplate.setServiceSubscriptionCharges(listSubs);
+
+        List<ServiceChargeTemplateTermination> listTerms = new ArrayList<ServiceChargeTemplateTermination>();
+        for (ServiceChargeTemplateTermination termination : serviceTemplate.getServiceTerminationCharges()) {
+            termination.setWalletTemplates(null);
+            listTerms.add(termination);
+        }
+        serviceTemplate.setServiceTerminationCharges(listTerms);
+
+        List<ServiceChargeTemplateUsage> listUsages = new ArrayList<ServiceChargeTemplateUsage>();
+        for (ServiceChargeTemplateUsage usage : serviceTemplate.getServiceUsageCharges()) {
+            usage.setWalletTemplates(null);
+            listUsages.add(usage);
+        }
+        serviceTemplate.setServiceUsageCharges(listUsages);
+    }
+
+    public void remove(String serviceTemplateCode, Provider provider) throws MeveoApiException {
+
+        if (StringUtils.isBlank(serviceTemplateCode)) {
+            missingParameters.add("serviceTemplateCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateCode, provider);
+        if (serviceTemplate == null) {
+            throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateCode);
+        }
+
+        setAllWalletTemplatesToNull(serviceTemplate);
+
+        // remove serviceChargeTemplateRecurring
+        serviceChargeTemplateRecurringService.removeByServiceTemplate(serviceTemplate, provider);
+
+        // remove serviceChargeTemplateSubscription
+        serviceChargeTemplateSubscriptionService.removeByServiceTemplate(serviceTemplate, provider);
+
+        // remove serviceChargeTemplateTermination
+        serviceChargeTemplateTerminationService.removeByServiceTemplate(serviceTemplate, provider);
+
+        // remove serviceUsageChargeTemplate
+        serviceUsageChargeTemplateService.removeByServiceTemplate(serviceTemplate, provider);
+
+        serviceTemplateService.remove(serviceTemplate);
+
+    }
+
+    public void createOrUpdate(ServiceTemplateDto postData, User currentUser) throws MeveoApiException {
+        if (serviceTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+            create(postData, currentUser);
+        } else {
+            update(postData, currentUser);
+        }
+    }
 }

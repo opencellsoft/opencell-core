@@ -26,167 +26,141 @@ import org.meveo.service.catalog.impl.CounterTemplateService;
 @Stateless
 public class CounterTemplateApi extends BaseApi {
 
-	@Inject
-	private CounterTemplateService<CounterTemplate> counterTemplateService;
+    @Inject
+    private CounterTemplateService<CounterTemplate> counterTemplateService;
 
-	@Inject
-	private CalendarService calendarService;
+    @Inject
+    private CalendarService calendarService;
 
-	public void create(CounterTemplateDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription()) 
-				&& !StringUtils.isBlank(postData.getCalendar())) {
-			Provider provider = currentUser.getProvider();
+    public void create(CounterTemplateDto postData, User currentUser) throws MeveoApiException {
 
-			if (counterTemplateService.findByCode(postData.getCode(), provider) != null) {
-				throw new EntityAlreadyExistsException(CounterTemplate.class,
-						postData.getCode());
-			}
-			Calendar calendar = calendarService.findByCode(
-					postData.getCalendar(), provider);
-			if (calendar == null) {
-				throw new EntityDoesNotExistsException(Calendar.class,
-						postData.getCalendar());
-			}
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getCalendar())) {
+            missingParameters.add("calendar");
+        }
 
-			CounterTemplate counterTemplate = new CounterTemplate();
-			counterTemplate.setProvider(provider);
-			counterTemplate.setCode(postData.getCode());
-			counterTemplate.setDescription(postData.getDescription());
-			counterTemplate.setUnityDescription(postData.getUnity());
-			if (!StringUtils.isBlank(postData.getType())) {
-				try {
-					counterTemplate.setCounterType(CounterTypeEnum.valueOf(postData.getType()));
-				} catch (IllegalArgumentException e) {
-					throw new InvalidEnumValueException(CounterTypeEnum.class.getName(), postData.getType());
-				}
-			}
-			counterTemplate.setCeiling(postData.getCeiling());
-			counterTemplate.setDisabled(postData.isDisabled());
-			counterTemplate.setCalendar(calendar);
-			if (!StringUtils.isBlank(postData.getCounterLevel())) {
-				try {
-					counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData.getCounterLevel()));
-				} catch (IllegalArgumentException e) {
-					throw new InvalidEnumValueException(CounterTemplateLevel.class.getName(), postData.getCounterLevel());
-				}
-			}
-			counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			counterTemplateService.create(counterTemplate, currentUser,
-					provider);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getCalendar())) {
-				missingParameters.add("calendar");
-			}
-			
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+        Provider provider = currentUser.getProvider();
 
-	public void update(CounterTemplateDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription()) 
-				&& !StringUtils.isBlank(postData.getCalendar())) {
-			Provider provider = currentUser.getProvider();
+        if (counterTemplateService.findByCode(postData.getCode(), provider) != null) {
+            throw new EntityAlreadyExistsException(CounterTemplate.class, postData.getCode());
+        }
+        Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
+        if (calendar == null) {
+            throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
+        }
 
-			CounterTemplate counterTemplate = counterTemplateService
-					.findByCode(postData.getCode(), provider);
-			if (counterTemplate == null) {
-				throw new EntityDoesNotExistsException(CounterTemplate.class,
-						postData.getCode());
-			}
-			Calendar calendar = calendarService.findByCode(
-					postData.getCalendar(), provider);
-			if (calendar == null) {
-				throw new EntityDoesNotExistsException(Calendar.class,
-						postData.getCalendar());
-			}
+        CounterTemplate counterTemplate = new CounterTemplate();
+        counterTemplate.setProvider(provider);
+        counterTemplate.setCode(postData.getCode());
+        counterTemplate.setDescription(postData.getDescription());
+        counterTemplate.setUnityDescription(postData.getUnity());
+        if (!StringUtils.isBlank(postData.getType())) {
+            try {
+                counterTemplate.setCounterType(CounterTypeEnum.valueOf(postData.getType()));
+            } catch (IllegalArgumentException e) {
+                throw new InvalidEnumValueException(CounterTypeEnum.class.getName(), postData.getType());
+            }
+        }
+        counterTemplate.setCeiling(postData.getCeiling());
+        counterTemplate.setDisabled(postData.isDisabled());
+        counterTemplate.setCalendar(calendar);
+        if (!StringUtils.isBlank(postData.getCounterLevel())) {
+            try {
+                counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData.getCounterLevel()));
+            } catch (IllegalArgumentException e) {
+                throw new InvalidEnumValueException(CounterTemplateLevel.class.getName(), postData.getCounterLevel());
+            }
+        }
+        counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
 
-			counterTemplate.setDescription(postData.getDescription());
-			counterTemplate.setUnityDescription(postData.getUnity());
-			if (!StringUtils.isBlank(postData.getType())) {
-				try {
-					counterTemplate.setCounterType(CounterTypeEnum.valueOf(postData.getType()));
-				} catch (IllegalArgumentException e) {
-					throw new InvalidEnumValueException(CounterTypeEnum.class.getName(), postData.getType());
-				}
-			}
-			counterTemplate.setCeiling(postData.getCeiling());
-			counterTemplate.setDisabled(postData.isDisabled());
-			counterTemplate.setCalendar(calendar);
-			if (!StringUtils.isBlank(postData.getCounterLevel())) {
-				try {
-					counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData.getCounterLevel()));
-				} catch (IllegalArgumentException e) {
-					throw new InvalidEnumValueException(CounterTemplateLevel.class.getName(), postData.getCounterLevel());
-				}
-			}
-			counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
+        counterTemplateService.create(counterTemplate, currentUser, provider);
+    }
 
-			counterTemplateService.update(counterTemplate, currentUser);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getCalendar())) {
-				missingParameters.add("calendar");
-			}
+    public void update(CounterTemplateDto postData, User currentUser) throws MeveoApiException {
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getCalendar())) {
+            missingParameters.add("calendar");
+        }
 
-	public CounterTemplateDto find(String code, Provider provider)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(code)) {
-			CounterTemplate counterTemplate = counterTemplateService
-					.findByCode(code, provider);
-			if (counterTemplate == null) {
-				throw new EntityDoesNotExistsException(CounterTemplate.class,
-						code);
-			}
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			return new CounterTemplateDto(counterTemplate);
-		} else {
-			missingParameters.add("counterTemplateCode");
+        Provider provider = currentUser.getProvider();
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+        CounterTemplate counterTemplate = counterTemplateService.findByCode(postData.getCode(), provider);
+        if (counterTemplate == null) {
+            throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCode());
+        }
+        Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
+        if (calendar == null) {
+            throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
+        }
 
-	public void remove(String code, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(code)) {
-			CounterTemplate counterTemplate = counterTemplateService
-					.findByCode(code, provider);
-			if (counterTemplate == null) {
-				throw new EntityDoesNotExistsException(CounterTemplate.class,
-						code);
-			}
+        counterTemplate.setDescription(postData.getDescription());
+        counterTemplate.setUnityDescription(postData.getUnity());
+        if (!StringUtils.isBlank(postData.getType())) {
+            try {
+                counterTemplate.setCounterType(CounterTypeEnum.valueOf(postData.getType()));
+            } catch (IllegalArgumentException e) {
+                throw new InvalidEnumValueException(CounterTypeEnum.class.getName(), postData.getType());
+            }
+        }
+        counterTemplate.setCeiling(postData.getCeiling());
+        counterTemplate.setDisabled(postData.isDisabled());
+        counterTemplate.setCalendar(calendar);
+        if (!StringUtils.isBlank(postData.getCounterLevel())) {
+            try {
+                counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData.getCounterLevel()));
+            } catch (IllegalArgumentException e) {
+                throw new InvalidEnumValueException(CounterTemplateLevel.class.getName(), postData.getCounterLevel());
+            }
+        }
+        counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
 
-			counterTemplateService.remove(counterTemplate);
-		} else {
-			missingParameters.add("counterTemplateCode");
+        counterTemplateService.update(counterTemplate, currentUser);
+    }
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
-	
-	public void createOrUpdate(CounterTemplateDto postData, User currentUser)
-			throws MeveoApiException {
-		if (counterTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-			create(postData, currentUser);
-		} else {
-			update(postData, currentUser);
-		}
-	}
+    public CounterTemplateDto find(String code, Provider provider) throws MeveoApiException {
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("counterTemplateCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+        CounterTemplate counterTemplate = counterTemplateService.findByCode(code, provider);
+        if (counterTemplate == null) {
+            throw new EntityDoesNotExistsException(CounterTemplate.class, code);
+        }
+
+        return new CounterTemplateDto(counterTemplate);
+    }
+
+    public void remove(String code, Provider provider) throws MeveoApiException {
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("counterTemplateCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+        CounterTemplate counterTemplate = counterTemplateService.findByCode(code, provider);
+        if (counterTemplate == null) {
+            throw new EntityDoesNotExistsException(CounterTemplate.class, code);
+        }
+
+        counterTemplateService.remove(counterTemplate);
+    }
+
+    public void createOrUpdate(CounterTemplateDto postData, User currentUser) throws MeveoApiException {
+        if (counterTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+            create(postData, currentUser);
+        } else {
+            update(postData, currentUser);
+        }
+    }
 }

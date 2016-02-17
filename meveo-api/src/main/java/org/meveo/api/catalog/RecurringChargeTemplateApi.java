@@ -40,302 +40,298 @@ import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 @Stateless
 public class RecurringChargeTemplateApi extends BaseApi {
 
-	@Inject
-	private RecurringChargeTemplateService recurringChargeTemplateService;
+    @Inject
+    private RecurringChargeTemplateService recurringChargeTemplateService;
 
-	@Inject
-	private InvoiceSubCategoryService invoiceSubCategoryService;
+    @Inject
+    private InvoiceSubCategoryService invoiceSubCategoryService;
 
-	@Inject
-	private CalendarService calendarService;
+    @Inject
+    private CalendarService calendarService;
 
-	@Inject
-	private CatMessagesService catMessagesService;
-	
-	@Inject
-	private TriggeredEDRTemplateService triggeredEDRTemplateService;
+    @Inject
+    private CatMessagesService catMessagesService;
 
-	public void create(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getInvoiceSubCategory())
-				&& !StringUtils.isBlank(postData.getCalendar())) {
-			Provider provider = currentUser.getProvider();
-			// check if code already exists
-			if (recurringChargeTemplateService.findByCode(postData.getCode(), provider) != null) {
-				throw new EntityAlreadyExistsException(RecurringChargeTemplate.class, postData.getCode());
-			}
+    @Inject
+    private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
-			InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
-			if (invoiceSubCategory == null) {
-				throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
-			}
+    public void create(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException {
 
-			Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
-			if (calendar == null) {
-				throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
-			}
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
+            missingParameters.add("invoiceSubCategory");
+        }
+        if (StringUtils.isBlank(postData.getCalendar())) {
+            missingParameters.add("calendar");
+        }
 
-			if (provider.getTradingLanguages() != null) {
-				if (postData.getLanguageDescriptions() != null) {
-					for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-						boolean match = false;
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-						for (TradingLanguage tl : provider.getTradingLanguages()) {
-							if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
-								match = true;
-								break;
-							}
-						}
+        Provider provider = currentUser.getProvider();
+        // check if code already exists
+        if (recurringChargeTemplateService.findByCode(postData.getCode(), provider) != null) {
+            throw new EntityAlreadyExistsException(RecurringChargeTemplate.class, postData.getCode());
+        }
 
-						if (!match) {
-							throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
-						}
-					}
-				}
-			}
-			
-			if(postData.getRoundingModeDtoEnum() == null){
-				postData.setRoundingModeDtoEnum(RoundingModeDtoEnum.NEAREST);
-			}
+        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
+        if (invoiceSubCategory == null) {
+            throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
+        }
 
-			RecurringChargeTemplate chargeTemplate = new RecurringChargeTemplate();
-			chargeTemplate.setCode(postData.getCode());
-			chargeTemplate.setDescription(postData.getDescription());
-			chargeTemplate.setDisabled(postData.isDisabled());
-			chargeTemplate.setAmountEditable(postData.getAmountEditable());
-			chargeTemplate.setDurationTermInMonth(postData.getDurationTermInMonth());
-			chargeTemplate.setSubscriptionProrata(postData.getSubscriptionProrata());
-			chargeTemplate.setTerminationProrata(postData.getTerminationProrata());
-			chargeTemplate.setApplyInAdvance(postData.getApplyInAdvance());
-			chargeTemplate.setShareLevel(LevelEnum.getValue(postData.getShareLevel()));
-			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-			chargeTemplate.setCalendar(calendar);
-			chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
-			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
-			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
-			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
-            if (postData.getRoundingModeDtoEnum() != null) {
-                chargeTemplate.setRoundingMode(RoundingModeEnum.valueOf(postData.getRoundingModeDtoEnum().name()));
+        Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
+        if (calendar == null) {
+            throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
+        }
+
+        if (provider.getTradingLanguages() != null) {
+            if (postData.getLanguageDescriptions() != null) {
+                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                    boolean match = false;
+
+                    for (TradingLanguage tl : provider.getTradingLanguages()) {
+                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
+                            match = true;
+                            break;
+                        }
+                    }
+
+                    if (!match) {
+                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
+                    }
+                }
             }
-			
-			if (postData.getTriggeredEdrs() != null) {
-				List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
+        }
 
-				for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
-					TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode(), provider);
-					if (triggeredEdrTemplate == null) {
-						throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
-					}
+        if (postData.getRoundingModeDtoEnum() == null) {
+            postData.setRoundingModeDtoEnum(RoundingModeDtoEnum.NEAREST);
+        }
 
-					edrTemplates.add(triggeredEdrTemplate);
-				}
+        RecurringChargeTemplate chargeTemplate = new RecurringChargeTemplate();
+        chargeTemplate.setCode(postData.getCode());
+        chargeTemplate.setDescription(postData.getDescription());
+        chargeTemplate.setDisabled(postData.isDisabled());
+        chargeTemplate.setAmountEditable(postData.getAmountEditable());
+        chargeTemplate.setDurationTermInMonth(postData.getDurationTermInMonth());
+        chargeTemplate.setSubscriptionProrata(postData.getSubscriptionProrata());
+        chargeTemplate.setTerminationProrata(postData.getTerminationProrata());
+        chargeTemplate.setApplyInAdvance(postData.getApplyInAdvance());
+        chargeTemplate.setShareLevel(LevelEnum.getValue(postData.getShareLevel()));
+        chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
+        chargeTemplate.setCalendar(calendar);
+        chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
+        chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
+        chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
+        chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+        if (postData.getRoundingModeDtoEnum() != null) {
+            chargeTemplate.setRoundingMode(RoundingModeEnum.valueOf(postData.getRoundingModeDtoEnum().name()));
+        }
 
-				chargeTemplate.setEdrTemplates(edrTemplates);
-			}
+        if (postData.getTriggeredEdrs() != null) {
+            List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
 
-            recurringChargeTemplateService.create(chargeTemplate, currentUser, provider);
-            
-			// populate customFields
-            try {
-                populateCustomFields(postData.getCustomFields(), chargeTemplate, true, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
-            }
+            for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
+                TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode(), provider);
+                if (triggeredEdrTemplate == null) {
+                    throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
+                }
 
-			// create cat messages
-			if (postData.getLanguageDescriptions() != null) {
-				for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-					CatMessages catMsg = new CatMessages(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(), ld.getDescription());
-
-					catMessagesService.create(catMsg, currentUser, provider);
-				}
-			}
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-				missingParameters.add("invoiceSubCategory");
-			}
-			if (StringUtils.isBlank(postData.getCalendar())) {
-				missingParameters.add("calendar");
-			}
-
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
-
-	public void update(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getInvoiceSubCategory())
-				&& !StringUtils.isBlank(postData.getCalendar())) {
-			Provider provider = currentUser.getProvider();
-			// check if code already exists
-			RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(postData.getCode(), provider);
-			if (chargeTemplate == null) {
-				throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, postData.getCode());
-			}
-
-			InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
-			if (invoiceSubCategory == null) {
-				throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
-			}
-
-			Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
-			if (calendar == null) {
-				throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
-			}
-
-			if(postData.getRoundingModeDtoEnum() == null){
-				postData.setRoundingModeDtoEnum(RoundingModeDtoEnum.NEAREST);
-			}
-			
-			chargeTemplate.setDescription(postData.getDescription());
-			chargeTemplate.setDisabled(postData.isDisabled());
-			chargeTemplate.setAmountEditable(postData.getAmountEditable());
-			chargeTemplate.setDurationTermInMonth(postData.getDurationTermInMonth());
-			chargeTemplate.setSubscriptionProrata(postData.getSubscriptionProrata());
-			chargeTemplate.setTerminationProrata(postData.getTerminationProrata());
-			chargeTemplate.setApplyInAdvance(postData.getApplyInAdvance());
-			chargeTemplate.setShareLevel(LevelEnum.getValue(postData.getShareLevel()));
-			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-			chargeTemplate.setCalendar(calendar);
-			chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
-			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
-			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
-			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
-            if (postData.getRoundingModeDtoEnum() != null) {
-                chargeTemplate.setRoundingMode(RoundingModeEnum.valueOf(postData.getRoundingModeDtoEnum().name()));
-            }
-			
-			if (provider.getTradingLanguages() != null) {
-				if (postData.getLanguageDescriptions() != null) {
-					for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-						boolean match = false;
-
-						for (TradingLanguage tl : provider.getTradingLanguages()) {
-							if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
-								match = true;
-								break;
-							}
-						}
-
-						if (!match) {
-							throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
-						}
-					}
-
-					// create cat messages
-					for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-						CatMessages catMsg = catMessagesService.getCatMessages(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode());
-
-						if (catMsg != null) {
-							catMsg.setDescription(ld.getDescription());
-							catMessagesService.update(catMsg, currentUser);
-						} else {
-							CatMessages catMessages = new CatMessages(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(),
-									ld.getDescription());
-							catMessagesService.create(catMessages, currentUser, provider);
-						}
-					}
-				}
-			}
-			
-			if (postData.getTriggeredEdrs() != null) {
-				List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
-
-				for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
-					TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode(), provider);
-					if (triggeredEdrTemplate == null) {
-						throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
-					}
-
-					edrTemplates.add(triggeredEdrTemplate);
-				}
-
-				chargeTemplate.setEdrTemplates(edrTemplates);
-			}
-
-			chargeTemplate = recurringChargeTemplateService.update(chargeTemplate, currentUser);
-            
-			// populate customFields
-            try {
-                populateCustomFields(postData.getCustomFields(), chargeTemplate, false, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+                edrTemplates.add(triggeredEdrTemplate);
             }
 
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-				missingParameters.add("invoiceSubCategory");
-			}
-			if (StringUtils.isBlank(postData.getCalendar())) {
-				missingParameters.add("calendar");
-			}
+            chargeTemplate.setEdrTemplates(edrTemplates);
+        }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
+        recurringChargeTemplateService.create(chargeTemplate, currentUser, provider);
 
-	public RecurringChargeTemplateDto find(String code, Provider provider) throws MeveoApiException {
-		RecurringChargeTemplateDto result = new RecurringChargeTemplateDto();
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), chargeTemplate, true, currentUser);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
 
-		if (!StringUtils.isBlank(code)) {
-			// check if code already exists
-			RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code, provider, Arrays.asList("invoiceSubCategory", "calendar"));
-			if (chargeTemplate == null) {
-				throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, code);
-			}
+        // create cat messages
+        if (postData.getLanguageDescriptions() != null) {
+            for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                CatMessages catMsg = new CatMessages(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(), ld.getDescription());
 
-			result = new RecurringChargeTemplateDto(chargeTemplate, customFieldInstanceService.getCustomFieldInstances(chargeTemplate));
+                catMessagesService.create(catMsg, currentUser, provider);
+            }
+        }
 
-			List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-			for (CatMessages msg : catMessagesService.getCatMessagesList(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId())) {
-				languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
-			}
+    }
 
-			result.setLanguageDescriptions(languageDescriptions);
-		} else {
-			if (StringUtils.isBlank(code)) {
-				missingParameters.add("recurringChargeTemplateCode");
-			}
+    public void update(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException {
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
+            missingParameters.add("invoiceSubCategory");
+        }
+        if (StringUtils.isBlank(postData.getCalendar())) {
+            missingParameters.add("calendar");
+        }
 
-		return result;
-	}
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-	public void remove(String code, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(code)) {
-			// check if code already exists
-			RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code, provider);
-			if (chargeTemplate == null) {
-				throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, code);
-			}
+        Provider provider = currentUser.getProvider();
+        // check if code already exists
+        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(postData.getCode(), provider);
+        if (chargeTemplate == null) {
+            throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, postData.getCode());
+        }
 
-			// remove cat messages
-			catMessagesService.batchRemove(RecurringChargeTemplate.class.getSimpleName(), chargeTemplate.getId(), provider);
+        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
+        if (invoiceSubCategory == null) {
+            throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
+        }
 
-			recurringChargeTemplateService.remove(chargeTemplate);
-		} else {
-			if (StringUtils.isBlank(code)) {
-				missingParameters.add("recurringChargeTemplateCode");
-			}
+        Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
+        if (calendar == null) {
+            throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
+        }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
-	
-	public void createOrUpdate(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException {
-		
-		if (recurringChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-			create(postData, currentUser);
-		} else {
-			update(postData, currentUser);
-		}
-	}
+        if (postData.getRoundingModeDtoEnum() == null) {
+            postData.setRoundingModeDtoEnum(RoundingModeDtoEnum.NEAREST);
+        }
+
+        chargeTemplate.setDescription(postData.getDescription());
+        chargeTemplate.setDisabled(postData.isDisabled());
+        chargeTemplate.setAmountEditable(postData.getAmountEditable());
+        chargeTemplate.setDurationTermInMonth(postData.getDurationTermInMonth());
+        chargeTemplate.setSubscriptionProrata(postData.getSubscriptionProrata());
+        chargeTemplate.setTerminationProrata(postData.getTerminationProrata());
+        chargeTemplate.setApplyInAdvance(postData.getApplyInAdvance());
+        chargeTemplate.setShareLevel(LevelEnum.getValue(postData.getShareLevel()));
+        chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
+        chargeTemplate.setCalendar(calendar);
+        chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
+        chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
+        chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
+        chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+        if (postData.getRoundingModeDtoEnum() != null) {
+            chargeTemplate.setRoundingMode(RoundingModeEnum.valueOf(postData.getRoundingModeDtoEnum().name()));
+        }
+
+        if (provider.getTradingLanguages() != null) {
+            if (postData.getLanguageDescriptions() != null) {
+                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                    boolean match = false;
+
+                    for (TradingLanguage tl : provider.getTradingLanguages()) {
+                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
+                            match = true;
+                            break;
+                        }
+                    }
+
+                    if (!match) {
+                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
+                    }
+                }
+
+                // create cat messages
+                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                    CatMessages catMsg = catMessagesService.getCatMessages(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode());
+
+                    if (catMsg != null) {
+                        catMsg.setDescription(ld.getDescription());
+                        catMessagesService.update(catMsg, currentUser);
+                    } else {
+                        CatMessages catMessages = new CatMessages(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(),
+                            ld.getDescription());
+                        catMessagesService.create(catMessages, currentUser, provider);
+                    }
+                }
+            }
+        }
+
+        if (postData.getTriggeredEdrs() != null) {
+            List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
+
+            for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
+                TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode(), provider);
+                if (triggeredEdrTemplate == null) {
+                    throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
+                }
+
+                edrTemplates.add(triggeredEdrTemplate);
+            }
+
+            chargeTemplate.setEdrTemplates(edrTemplates);
+        }
+
+        chargeTemplate = recurringChargeTemplateService.update(chargeTemplate, currentUser);
+
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), chargeTemplate, false, currentUser);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
+    }
+
+    public RecurringChargeTemplateDto find(String code, Provider provider) throws MeveoApiException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("recurringChargeTemplateCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        RecurringChargeTemplateDto result = new RecurringChargeTemplateDto();
+
+        // check if code already exists
+        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code, provider, Arrays.asList("invoiceSubCategory", "calendar"));
+        if (chargeTemplate == null) {
+            throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, code);
+        }
+
+        result = new RecurringChargeTemplateDto(chargeTemplate, customFieldInstanceService.getCustomFieldInstances(chargeTemplate));
+
+        List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
+        for (CatMessages msg : catMessagesService.getCatMessagesList(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId())) {
+            languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
+        }
+
+        result.setLanguageDescriptions(languageDescriptions);
+
+        return result;
+    }
+
+    public void remove(String code, Provider provider) throws MeveoApiException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("recurringChargeTemplateCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        // check if code already exists
+        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code, provider);
+        if (chargeTemplate == null) {
+            throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, code);
+        }
+
+        // remove cat messages
+        catMessagesService.batchRemove(RecurringChargeTemplate.class.getSimpleName(), chargeTemplate.getId(), provider);
+
+        recurringChargeTemplateService.remove(chargeTemplate);
+    }
+
+    public void createOrUpdate(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+
+        if (recurringChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+            create(postData, currentUser);
+        } else {
+            update(postData, currentUser);
+        }
+    }
 }

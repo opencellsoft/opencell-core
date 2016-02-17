@@ -25,10 +25,10 @@
 
         <hftl:dataList label="#{messages['customer.search']}" sortBy="code" backingBean="#{customerListBean}">
             <hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true" />
-            <hftl:column label="#{messages['customer.customerCategory']}" field="customerCategory.description" isMessage="false" />
-            <hftl:column label="#{messages['customer.customerBrand']}" field="customerBrand.description" isMessage="false" />
+            <hftl:column label="#{messages['customer.customerCategory']}" field="customerCategory.descriptionOrCode" isMessage="false" />
+            <hftl:column label="#{messages['customer.customerBrand']}" field="customerBrand.descriptionOrCode" isMessage="false" />
             <hftl:column label="#{messages['businessEntity.description']}" field="description" />
-            <hftl:column label="#{messages['seller.title']}" field="seller.description" valueIdField="seller.id" entityView="sellerDetail" />
+            <hftl:column label="#{messages['seller.title']}" field="seller.descriptionOrCode" valueIdField="seller.id" entityView="sellerDetail" />
             <hftl:actionsColumn useCustomIdParam="true" permission="#{identity.hasPermission('account','accountManagement')}" />
         </hftl:dataList>
 
