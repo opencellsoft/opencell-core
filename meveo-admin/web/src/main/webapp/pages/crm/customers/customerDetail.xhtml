@@ -70,9 +70,9 @@
                                         listBean="#{titleBean}" listenerUpdate=":formCustomer:tabView:userNamePanel" styleClass="clearLeft"/>
 
 									<h:panelGroup id="userNamePanel" layout="block">
-											<hftl:formField label="#{messages['name.lastName']}"
+											<hftl:formField label="#{messages[(customerBean.entity.name.title != null and customerBean.entity.name.title.isCompany)?'name.company':'name.lastName']}"
 												field="name" childField="lastName" 
-												maxlength="50" required="true" />
+												maxlength="50" required="#{customerBean.entity.name.title != null}"/>
                                             <hftl:formField label="#{messages['name.firstName']}"
                                                 field="name" childField="firstName" 
                                                 maxlength="50" rendered="#{customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany}"/>

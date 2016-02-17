@@ -59,13 +59,13 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
 	}
 
 	/*
-	 * Creates the customer heirarchy including : - Trading Country - Trading
+	 * Creates the customer hierarchy including : - Trading Country - Trading
 	 * Currency - Trading Language - Customer Brand - Customer Category - Seller
 	 * - Customer - Customer Account - Billing Account - User Account
 	 * 
 	 * Required Parameters :customerId, customerCategoryCode,
 	 * sellerCode
-	 * ,currencyCode,countryCode,lastName,languageCode,billingCycleCode
+	 * ,currencyCode,countryCode,lastName if title is provided,languageCode,billingCycleCode
 	 */
 	@Override
 	public ActionStatus create(AccountHierarchyDto accountHierarchyDto) {

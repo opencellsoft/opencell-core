@@ -214,7 +214,7 @@ public class AccountHierarchyApiService extends BaseApi {
      * Creates the customer heirarchy including : - Trading Country - Trading Currency - Trading Language - Customer Brand - Customer Category - Seller - Customer - Customer
      * Account - Billing Account - User Account
      * 
-     * Required Parameters :customerId, customerCategoryCode, sellerCode ,currencyCode,countryCode,lastName,languageCode,billingCycleCode
+     * Required Parameters :customerId, customerCategoryCode, sellerCode ,currencyCode,countryCode,lastName if title provided,languageCode,billingCycleCode
      * 
      * @throws DuplicateDefaultAccountException
      */
@@ -236,10 +236,10 @@ public class AccountHierarchyApiService extends BaseApi {
         }
         if (StringUtils.isBlank(postData.getCountryCode())) {
             missingParameters.add("countryCode");
-        }
-        if (StringUtils.isBlank(postData.getLastName())) {
+        }        
+        if (!StringUtils.isBlank(postData.getTitleCode()) && StringUtils.isBlank(postData.getLastName())) {
             missingParameters.add("lastName");
-        }
+        }        
         if (StringUtils.isBlank(postData.getBillingCycleCode())) {
             missingParameters.add("billingCycleCode");
         }
@@ -465,9 +465,9 @@ public class AccountHierarchyApiService extends BaseApi {
         if (StringUtils.isBlank(postData.getCountryCode())) {
             missingParameters.add("countryCode");
         }
-        if (StringUtils.isBlank(postData.getLastName())) {
+        if (!StringUtils.isBlank(postData.getTitleCode()) && StringUtils.isBlank(postData.getLastName())) {
             missingParameters.add("lastName");
-        }
+        }   
         if (StringUtils.isBlank(postData.getBillingCycleCode())) {
             missingParameters.add("billingCycleCode");
         }
