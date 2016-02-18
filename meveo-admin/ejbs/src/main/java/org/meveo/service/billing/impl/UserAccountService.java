@@ -52,7 +52,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		log.debug("creating userAccount with details {}, creator={}, provider={}", new Object[] { userAccount, creator,
 				billingAccount.getProvider() });
 
-		UserAccount existingUserAccount = findByCode(userAccount.getCode(), userAccount.getProvider());
+		UserAccount existingUserAccount = findByCode(userAccount.getCode(), billingAccount.getProvider());
 		if (existingUserAccount != null) {
 			throw new AccountAlreadyExistsException(userAccount.getCode());
 		}
