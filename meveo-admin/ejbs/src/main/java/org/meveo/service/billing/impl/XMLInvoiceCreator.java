@@ -492,7 +492,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					Text subscriptionDateText = null;
 					if (subscription.getSubscriptionDate() != null) {
 						subscriptionDateText = doc.createTextNode(DateUtils.formatDateWithPattern(subscription.getSubscriptionDate(), 
-								paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN)));
+								paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)));
 					} else {
 						subscriptionDateText = doc.createTextNode("");
 					}

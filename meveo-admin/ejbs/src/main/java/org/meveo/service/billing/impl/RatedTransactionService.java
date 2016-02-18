@@ -711,13 +711,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 
 
-		if (expression.indexOf("ca.") >= 0) {
+		if (expression.indexOf("ca") >= 0) {
 			userMap.put("ca", billingAccount.getCustomerAccount());
 		}
-		if (expression.indexOf("ba.") >= 0) {
+		if (expression.indexOf("ba") >= 0) {
 			userMap.put("ba", billingAccount);
 		}
-		if (expression.indexOf("iv.") >= 0) {
+		if (expression.indexOf("iv") >= 0) {
 			userMap.put("iv", invoice);
 
 		}
@@ -742,13 +742,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 
 
-		if (expression.indexOf("ca.") >= 0) {
+		if (expression.indexOf("ca") >= 0) {
 			userMap.put("ca",customerAccount);
 		}
-		if (expression.indexOf("ba.") >= 0) {
+		if (expression.indexOf("ba") >= 0) {
 			userMap.put("ba", billingAccount);
 		}
-		if (expression.indexOf("iv.") >= 0) {
+		if (expression.indexOf("iv") >= 0) {
 			userMap.put("iv", invoice);
 
 		}

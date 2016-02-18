@@ -288,13 +288,13 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 			return result;
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>(); 
-		if(expression.indexOf("charge.") >= 0){
+		if(expression.indexOf("charge") >= 0){
 			userMap.put("charge",charge); 
 		}
-		if(expression.indexOf("service.") >= 0){ 
+		if(expression.indexOf("service") >= 0){ 
 			userMap.put("service",serviceInstance); 
 		} 
-		if(expression.indexOf("sub.") >= 0){ 
+		if(expression.indexOf("sub") >= 0){ 
 			userMap.put("sub",subscription); 
 		}
 

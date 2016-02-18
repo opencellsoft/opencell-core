@@ -647,19 +647,19 @@ public class RatingService extends BusinessService<WalletOperation>{
 			OfferTemplate offer=bareOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);
 		}
-		if (expression.indexOf("ua.") >= 0) {
+		if (expression.indexOf("ua") >= 0) {
 			userMap.put("ua", ua);
 		}
-		if (expression.indexOf("ba.") >= 0) {
+		if (expression.indexOf("ba") >= 0) {
 			userMap.put("ba", ua.getBillingAccount());
 		}
-		if (expression.indexOf("ca.") >= 0) {
+		if (expression.indexOf("ca") >= 0) {
 			userMap.put("ca", ua.getBillingAccount().getCustomerAccount());
 		}
-		if (expression.indexOf("c.") >= 0) {
+		if (expression.indexOf("c") >= 0) {
 			userMap.put("c", ua.getBillingAccount().getCustomerAccount().getCustomer());
 		}
-		if (expression.indexOf("prov.") >= 0) {
+		if (expression.indexOf("prov") >= 0) {
 			userMap.put("prov", ua.getProvider());
 		}
 		Object res=null;
@@ -702,19 +702,19 @@ public class RatingService extends BusinessService<WalletOperation>{
 			OfferTemplate offer=bareOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);
 		}
-		if (expression.indexOf("ua.") >= 0) {
+		if (expression.indexOf("ua") >= 0) {
 			userMap.put("ua", ua);
 		}
-		if (expression.indexOf("ba.") >= 0) {
+		if (expression.indexOf("ba") >= 0) {
 			userMap.put("ba", ua.getBillingAccount());
 		}
-		if (expression.indexOf("ca.") >= 0) {
+		if (expression.indexOf("ca") >= 0) {
 			userMap.put("ca", ua.getBillingAccount().getCustomerAccount());
 		}
-		if (expression.indexOf("c.") >= 0) {
+		if (expression.indexOf("c") >= 0) {
 			userMap.put("c", ua.getBillingAccount().getCustomerAccount().getCustomer());
 		}
-		if (expression.indexOf("prov.") >= 0) {
+		if (expression.indexOf("prov") >= 0) {
 			userMap.put("prov", ua.getProvider());
 		}
 		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
@@ -742,19 +742,19 @@ public class RatingService extends BusinessService<WalletOperation>{
 			OfferTemplate offer=walletOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);
 		}
-		if (expression.indexOf("ua.") >= 0) {
+		if (expression.indexOf("ua") >= 0) {
 			userMap.put("ua", ua);
 		}
-		if (expression.indexOf("ba.") >= 0) {
+		if (expression.indexOf("ba") >= 0) {
 			userMap.put("ba", ua.getBillingAccount());
 		}
-		if (expression.indexOf("ca.") >= 0) {
+		if (expression.indexOf("ca") >= 0) {
 			userMap.put("ca", ua.getBillingAccount().getCustomerAccount());
 		}
-		if (expression.indexOf("c.") >= 0) {
+		if (expression.indexOf("c") >= 0) {
 			userMap.put("c", ua.getBillingAccount().getCustomerAccount().getCustomer());
 		}
-		if (expression.indexOf("prov.") >= 0) {
+		if (expression.indexOf("prov") >= 0) {
 			userMap.put("prov", ua.getProvider());
 		}
 
@@ -788,19 +788,19 @@ public class RatingService extends BusinessService<WalletOperation>{
 			offer.getCustomFields();
 			userMap.put("offer",offer);
 		}*/
-		if (expression.indexOf("ua.") >= 0) {
+		if (expression.indexOf("ua") >= 0) {
 			userMap.put("ua", ua);
 		}
-		if (expression.indexOf("ba.") >= 0) {
+		if (expression.indexOf("ba") >= 0) {
 			userMap.put("ba", ua.getBillingAccount());
 		}
-		if (expression.indexOf("ca.") >= 0) {
+		if (expression.indexOf("ca") >= 0) {
 			userMap.put("ca", ua.getBillingAccount().getCustomerAccount());
 		}
-		if (expression.indexOf("c.") >= 0) {
+		if (expression.indexOf("c") >= 0) {
 			userMap.put("c", ua.getBillingAccount().getCustomerAccount().getCustomer());
 		}
-		if (expression.indexOf("prov.") >= 0) {
+		if (expression.indexOf("prov") >= 0) {
 			userMap.put("prov", ua.getProvider());
 		}
 
