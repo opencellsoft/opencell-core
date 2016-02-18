@@ -208,7 +208,7 @@ public class EntityExportImportService implements Serializable {
         exportImportTemplates = new TreeMap<String, ExportTemplate>();
 
         // Create definitions dynamically for each class in org.meveo.model package
-        Reflections reflections = new Reflections("org.meveo.model");
+        Reflections reflections = new Reflections("org.meveo.model", "org.meveocrm.model");
         Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
 
         for (Class clazz : classes) {
@@ -294,7 +294,7 @@ public class EntityExportImportService implements Serializable {
                 cfParameters.put("provider", "#{entity.provider}");
             }
 
-            exportTemplate.addRelatedEntity(cfSelect, cfParameters);
+            exportTemplate.addRelatedEntity(cfSelect, cfParameters, CustomFieldInstance.class);
 
             exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
         }
@@ -552,6 +552,7 @@ public class EntityExportImportService implements Serializable {
      * @param writer Writer for serialized entity output
      * @return
      */
+    @SuppressWarnings("rawtypes")
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void serializeEntities(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport,
             List<? extends IEntity> selectedEntitiesToExport, ExportImportStatistics exportStats, HierarchicalStreamWriter writer) {
@@ -559,10 +560,20 @@ public class EntityExportImportService implements Serializable {
         log.info("Serializing entities from export template {} and data model {} or selected entities {}", exportTemplate.getName(), dataModelToExport != null,
             (selectedEntitiesToExport != null && !selectedEntitiesToExport.isEmpty()));
 
-        List<? extends IEntity> entities = getEntitiesToExport(exportTemplate, parameters, dataModelToExport, selectedEntitiesToExport, 0, PAGE_SIZE);
-        if (entities.isEmpty()) {
+        // Get entities to export including related entities grouped by a template name
+        RetrievedEntities retrievedEntities = getEntitiesToExport(exportTemplate, parameters, dataModelToExport, selectedEntitiesToExport, 0, PAGE_SIZE);
+        if (retrievedEntities.isEmpty()) {
             log.info("No entities to serialize from export template {}", exportTemplate.getName());
             return;
+        }
+
+        // Entities corresponding to the export template of this method
+        List<? extends IEntity> principalEntities = retrievedEntities.principalEntities;
+
+        // Stores only related entities grouped by an export template name. These entities will be exported every EXPORT_PAGE_SIZE pages of a principal entity export.
+        Map<Class, List<IEntity>> relatedEntitiesByTemplate = new HashMap<Class, List<IEntity>>();
+        if (retrievedEntities.relatedEntities != null) {
+            relatedEntitiesByTemplate.putAll(retrievedEntities.relatedEntities);
         }
 
         ExportImportConfig exportImportConfig = new ExportImportConfig(exportTemplate, exportIdMapping);
@@ -573,9 +584,9 @@ public class EntityExportImportService implements Serializable {
         XStream xstream = null;
 
         // Serialize entities to XML
-        while (!entities.isEmpty()) {
+        while (!principalEntities.isEmpty()) {
 
-            // Start a new "data" node every X pages of export
+            // Start a new "data" node every EXPORT_PAGE_SIZE pages of export. If found also export related entities every EXPORT_PAGE_SIZE pages of export
             if (pagesProcessedByXstream == -1 || pagesProcessedByXstream >= EXPORT_PAGE_SIZE) {
 
                 xstream = new XStream() {
@@ -607,39 +618,66 @@ public class EntityExportImportService implements Serializable {
                 xstream.setMarshallingStrategy(new ReusingReferenceByIdMarshallingStrategy());
                 xstream.aliasSystemAttribute(REFERENCE_ID_ATTRIBUTE, "id");
 
-                if (pagesProcessedByXstream == -1) {
-                    // Write out an export template node
-                    xstream.marshal(exportTemplate, writer);
-                } else {
+                if (pagesProcessedByXstream > -1) {
                     writer.endNode();
                     writer.flush();
                     log.trace("Serialized {} records from export template {}", totalEntityCount, exportTemplate.getName());
+                }
+                // Write out an export template node at the start of serialization or every EXPORT_PAGE_SIZE pages of export
+                if (pagesProcessedByXstream == -1 || (pagesProcessedByXstream > -1 && !relatedEntitiesByTemplate.isEmpty())) { // by removing pagesProcessedByXstream > -1, related
+                                                                                                                               // entities will be exported first on the first page
+                    // Serialize related entities with their own export template node
+                    if (pagesProcessedByXstream > -1 && !relatedEntitiesByTemplate.isEmpty()) {
+                        for (Entry<Class, List<IEntity>> relatedEntityInfo : relatedEntitiesByTemplate.entrySet()) {
+                            serializeEntities(getExportImportTemplate(relatedEntityInfo.getKey()), parameters, null, relatedEntityInfo.getValue(), exportStats, writer);
+                        }
+                        relatedEntitiesByTemplate.clear();
+                    }
+
+                    xstream.marshal(exportTemplate, writer);
                 }
                 writer.startNode("data");
                 pagesProcessedByXstream = 0;
             }
 
-            for (IEntity entity : entities) {
+            for (IEntity entity : principalEntities) {
                 xstream.marshal(entity, writer);
             }
-            exportStats.updateSummary(exportTemplate.getEntityToExport(), entities.size());
+            exportStats.updateSummary(exportTemplate.getEntityToExport(), principalEntities.size());
             if (parameters.containsKey(EXPORT_PARAM_DELETE) && (Boolean) parameters.get(EXPORT_PARAM_DELETE)) {
-                exportStats.trackEntitiesToDelete(entities);
+                exportStats.trackEntitiesToDelete(principalEntities);
             }
-            totalEntityCount += entities.size();
+            totalEntityCount += principalEntities.size();
 
             // Exit if less records than a page size were found in last iteration
-            if (entities.size() < PAGE_SIZE) {
+            if (principalEntities.size() < PAGE_SIZE) {
                 break;
             }
             writer.flush();
-            entities = getEntitiesToExport(exportTemplate, parameters, dataModelToExport, selectedEntitiesToExport, from, PAGE_SIZE);
+
+            // Retrieve a new page with related entities and add related entities to the existing related entities map, so they can be serialized together
+            retrievedEntities = getEntitiesToExport(exportTemplate, parameters, dataModelToExport, selectedEntitiesToExport, from, PAGE_SIZE);
+            if (retrievedEntities.isEmpty()) {
+                principalEntities = new ArrayList<IEntity>();
+            } else {
+                principalEntities = retrievedEntities.principalEntities;
+                retrievedEntities.copyRelatedEntitiesToMap(relatedEntitiesByTemplate);
+            }
             from += PAGE_SIZE;
             pagesProcessedByXstream++;
         }
 
         writer.endNode();
         writer.flush();
+
+        // Serialize related entities with their own export template node if there were any left after the last iteration
+        if (!relatedEntitiesByTemplate.isEmpty()) {
+            for (Entry<Class, List<IEntity>> relatedEntityInfo : relatedEntitiesByTemplate.entrySet()) {
+                serializeEntities(getExportImportTemplate(relatedEntityInfo.getKey()), parameters, null, relatedEntityInfo.getValue(), exportStats, writer);
+            }
+            relatedEntitiesByTemplate.clear();
+        }
+
         log.info("Serialized {} entities from export template {}", totalEntityCount, exportTemplate.getName());
     }
 
@@ -1476,7 +1514,7 @@ public class EntityExportImportService implements Serializable {
     private void loadExportIdentifierMappings() {
         Map<Class<? extends IEntity>, String[]> exportIdMap = new HashMap<Class<? extends IEntity>, String[]>();
 
-        Reflections reflections = new Reflections("org.meveo.model");
+        Reflections reflections = new Reflections("org.meveo.model", "org.meveocrm.model");
         Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
 
         for (Class clazz : classes) {
@@ -1501,7 +1539,7 @@ public class EntityExportImportService implements Serializable {
     private void loadAtributesToOmit() {
         Map<String, Object[]> attributesToOmitLocal = new HashMap<String, Object[]>();
 
-        Reflections reflections = new Reflections("org.meveo.model");
+        Reflections reflections = new Reflections("org.meveo.model", "org.meveocrm.model");
         Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
 
         for (Class clazz : classes) {
@@ -1546,7 +1584,7 @@ public class EntityExportImportService implements Serializable {
 
         Map<Class, List<Field>> nonCascadableFieldsLocal = new HashMap<Class, List<Field>>();
 
-        Reflections reflections = new Reflections("org.meveo.model");
+        Reflections reflections = new Reflections("org.meveo.model", "org.meveocrm.model");
         Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
 
         for (Class clazz : classes) {
@@ -1693,16 +1731,19 @@ public class EntityExportImportService implements Serializable {
      * @param dataModelToExport Entities to export that are already filtered in a data model. Supports export of non-grouped export templates only. dataModelToExport and
      *        selectedEntitiesToExport are mutually exclusive.
      * @param selectedEntitiesToExport A list of entities to export. dataModelToExport and selectedEntitiesToExport are mutually exclusive.
-     * @return A list of entities corresponding to a page
+     * @return A list of entities corresponding to a page and their related entities, all grouped into map by their exportTemplate name
      */
     @SuppressWarnings({ "unchecked" })
-    private List<? extends IEntity> getEntitiesToExport(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport,
+    private RetrievedEntities getEntitiesToExport(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport,
             List<? extends IEntity> selectedEntitiesToExport, int from, int pageSize) {
+
+        RetrievedEntities retrievedEntities = new RetrievedEntities();
+
         List<IEntity> entities = null;
 
         if (selectedEntitiesToExport != null && !selectedEntitiesToExport.isEmpty()) {
             if (from >= selectedEntitiesToExport.size()) {
-                return new ArrayList<IEntity>();
+                return retrievedEntities;
             }
 
             entities = new ArrayList<IEntity>();
@@ -1716,7 +1757,7 @@ public class EntityExportImportService implements Serializable {
             // Retrieve next pageSize number of entities from iterator
         } else if (dataModelToExport != null) {
             if (from >= dataModelToExport.getRowCount()) {
-                return new ArrayList<IEntity>();
+                return retrievedEntities;
             }
 
             if (dataModelToExport instanceof LazyDataModel) {
@@ -1781,7 +1822,12 @@ public class EntityExportImportService implements Serializable {
             entities = query.getResultList();
         }
 
-        List<IEntity> entitiesWRelated = new ArrayList<IEntity>(entities);
+        retrievedEntities.principalEntities = entities;
+
+        // Nothing found, so just return an empty map
+        if (entities.isEmpty()) {
+            return retrievedEntities;
+        }
 
         // Retrieve related entities if applicable
         if (exportTemplate.getRelatedEntities() != null && !exportTemplate.getRelatedEntities().isEmpty()) {
@@ -1797,8 +1843,7 @@ public class EntityExportImportService implements Serializable {
                             Object paramValue = ValueExpressionWrapper.evaluateExpression(param.getValue(), elContext, Object.class);
                             query.setParameter(param.getKey(), paramValue);
                         }
-                        List<? extends IEntity> relatedEntities = query.getResultList();
-                        entitiesWRelated.addAll(relatedEntities);
+                        retrievedEntities.addReletedEntities(relatedEntityInfo.getEntityClass(), query.getResultList());
 
                     } catch (Exception e) {
                         log.error("Could not evaluate expression {} for exportTemplate {} given entity {}", lastElExpr, exportTemplate.getName(), entity, e);
@@ -1807,7 +1852,10 @@ public class EntityExportImportService implements Serializable {
 
             }
         }
-        return entitiesWRelated;
+
+        log.debug("Retrieved for {} export template: {}", exportTemplate.getName(), retrievedEntities.getSummary());
+
+        return retrievedEntities;
     }
 
     public static class ExportInfo {
@@ -2151,6 +2199,61 @@ public class EntityExportImportService implements Serializable {
                 }
             }
         }
+        log.error("No export template found for class {}", clazz);
         return null;
+    }
+
+    private class RetrievedEntities {
+
+        protected List<IEntity> principalEntities;
+
+        @SuppressWarnings("rawtypes")
+        protected Map<Class, List<IEntity>> relatedEntities;
+
+        protected boolean isEmpty() {
+            return principalEntities == null || principalEntities.isEmpty();
+        }
+
+        @SuppressWarnings("rawtypes")
+        protected void addReletedEntities(Class entityClass, List<IEntity> entitiesToAdd) {
+            if (relatedEntities == null) {
+                relatedEntities = new HashMap<Class, List<IEntity>>();
+            }
+            if (!entitiesToAdd.isEmpty()) {
+                if (!relatedEntities.containsKey(entityClass)) {
+                    relatedEntities.put(entityClass, new ArrayList<IEntity>());
+                }
+                relatedEntities.get(entityClass).addAll(entitiesToAdd);
+            }
+        }
+
+        @SuppressWarnings("rawtypes")
+        protected void copyRelatedEntitiesToMap(Map<Class, List<IEntity>> copyToMap) {
+            if (relatedEntities == null) {
+                return;
+            }
+            for (Entry<Class, List<IEntity>> entityInfo : relatedEntities.entrySet()) {
+                if (copyToMap.containsKey(entityInfo.getKey())) {
+                    copyToMap.get(entityInfo.getKey()).addAll(entityInfo.getValue());
+                } else {
+                    copyToMap.put(entityInfo.getKey(), entityInfo.getValue());
+                }
+            }
+        }
+
+        @SuppressWarnings("rawtypes")
+        protected String getSummary() {
+
+            StringBuilder stringBuilder = new StringBuilder("Principal entities = ");
+            stringBuilder.append(principalEntities.size());
+
+            if (relatedEntities != null) {
+                for (Entry<Class, List<IEntity>> info : relatedEntities.entrySet()) {
+                    stringBuilder.append(", ").append(info.getKey().getSimpleName()).append("=").append(info.getValue().size());
+                }
+            }
+
+            return stringBuilder.toString();
+        }
     }
 }

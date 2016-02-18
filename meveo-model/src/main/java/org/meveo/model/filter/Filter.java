@@ -14,11 +14,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Entity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "MEVEO_FILTER")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_FILTER_SEQ")
 public class Filter extends BusinessEntity {

@@ -25,10 +25,26 @@
         </parameters>
         <classesToExportAsFull>
             <java-class>org.meveo.model.crm.CustomFieldTemplate</java-class>
+            <java-class>org.meveo.model.scripts.EntityActionScript</java-class>
         </classesToExportAsFull>
         <relatedEntities>
             <relatedEntity>
+                <entityClass>org.meveo.model.crm.CustomFieldTemplate</entityClass>
                 <selection>select cft from CustomFieldTemplate cft where cft.disabled=false and cft.appliesTo=:cftPrefix and cft.provider=:provider</selection>
+                <parameters>
+                    <entry>
+                        <string>cftPrefix</string>
+                        <string>#{entity.cftPrefix}</string>
+                    </entry>
+                    <entry>
+                        <string>provider</string>
+                        <string>#{entity.provider}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+            <relatedEntity>
+                <entityClass>org.meveo.model.scripts.EntityActionScript</entityClass>
+                <selection>select es from EntityActionScript es where es.disabled=false and es.appliesTo=:cftPrefix and es.provider=:provider</selection>
                 <parameters>
                     <entry>
                         <string>cftPrefix</string>
@@ -52,6 +68,160 @@
         <classesToExportAsFull>
             <java-class>org.meveo.model.admin.MeveoModuleItem</java-class>
         </classesToExportAsFull>
+        <relatedEntities>
+            <relatedEntity>
+                <entityClass>org.meveo.model.customEntities.CustomEntityTemplate</entityClass>
+                <selection>select mie from CustomEntityTemplate mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
+                    mi.itemType='CET' and
+                    mi.meveoModule=:meveoModule and mie.provider=:provider
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>meveoModule</string>
+                        <string>#{entity}</string>
+                    </entry>
+                    <entry>
+                        <string>provider</string>
+                        <string>#{entity.provider}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+            <relatedEntity>
+                <entityClass>org.meveo.model.crm.CustomFieldTemplate</entityClass>
+                <selection>select mie from CustomFieldTemplate mie, MeveoModuleItem mi where mie.disabled=false and mie.appliesTo=mi.appliesTo and mie.code=mi.itemCode and
+                    mi.itemType='CFT' and mi.meveoModule=:meveoModule and mie.provider=:provider
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>meveoModule</string>
+                        <string>#{entity}</string>
+                    </entry>
+                    <entry>
+                        <string>provider</string>
+                        <string>#{entity.provider}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+            <relatedEntity>
+                <entityClass>org.meveo.model.filter.Filter</entityClass>
+                <selection>select mie from Filter mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
+                    mi.itemType='FILTER' and mi.meveoModule=:meveoModule
+                    and mie.provider=:provider
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>meveoModule</string>
+                        <string>#{entity}</string>
+                    </entry>
+                    <entry>
+                        <string>provider</string>
+                        <string>#{entity.provider}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+            <relatedEntity>
+                <entityClass>org.meveo.model.scripts.ScriptInstance</entityClass>
+                <selection>select mie from ScriptInstance mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
+                    mi.itemType='SCRIPT' and
+                    mi.meveoModule=:meveoModule and mie.provider=:provider
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>meveoModule</string>
+                        <string>#{entity}</string>
+                    </entry>
+                    <entry>
+                        <string>provider</string>
+                        <string>#{entity.provider}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+            <relatedEntity>
+                <entityClass>org.meveo.model.jobs.JobInstance</entityClass>
+                <selection>select mie from JobInstance mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
+                    mi.itemType='JOBINSTANCE' and
+                    mi.meveoModule=:meveoModule and mie.provider=:provider
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>meveoModule</string>
+                        <string>#{entity}</string>
+                    </entry>
+                    <entry>
+                        <string>provider</string>
+                        <string>#{entity.provider}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+            <relatedEntity>
+                <entityClass>org.meveo.model.notification.Notification</entityClass>
+                <selection>select mie from Notification mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
+                    mi.itemType='NOTIFICATION' and
+                    mi.meveoModule=:meveoModule and mie.provider=:provider
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>meveoModule</string>
+                        <string>#{entity}</string>
+                    </entry>
+                    <entry>
+                        <string>provider</string>
+                        <string>#{entity.provider}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+            <relatedEntity>
+                <entityClass>org.meveo.model.admin.MeveoModule</entityClass>
+                <selection>select mie from MeveoModule mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
+                    mi.itemType='SUBMODULE' and
+                    mi.meveoModule=:meveoModule and mie.provider=:provider
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>meveoModule</string>
+                        <string>#{entity}</string>
+                    </entry>
+                    <entry>
+                        <string>provider</string>
+                        <string>#{entity.provider}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+            <relatedEntity>
+                <entityClass>org.meveocrm.model.dwh.MeasurableQuantity</entityClass>
+                <selection>select mie from MeasurableQuantity mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
+                    mi.itemType='MEASURABLEQUANTITIES' and
+                    mi.meveoModule=:meveoModule and mie.provider=:provider
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>meveoModule</string>
+                        <string>#{entity}</string>
+                    </entry>
+                    <entry>
+                        <string>provider</string>
+                        <string>#{entity.provider}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+            <relatedEntity>
+                <entityClass>org.meveocrm.model.dwh.Chart</entityClass>
+                <selection>select mie from Chart mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
+                    mi.itemType='CHART' and mi.meveoModule=:meveoModule
+                    and mie.provider=:provider
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>meveoModule</string>
+                        <string>#{entity}</string>
+                    </entry>
+                    <entry>
+                        <string>provider</string>
+                        <string>#{entity.provider}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+        </relatedEntities>
     </template>
     <template name="Calendar" entityToExport="org.meveo.model.catalog.Calendar">
         <parameters>

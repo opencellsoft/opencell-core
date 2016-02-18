@@ -14,13 +14,18 @@ public class RelatedEntityToExport {
 
     private Map<String, String> parameters;
 
+    @SuppressWarnings("rawtypes")
+    private Class entityClass;
+
     public RelatedEntityToExport() {
         super();
     }
 
-    public RelatedEntityToExport(String selection, Map<String, String> parameters) {
+    @SuppressWarnings("rawtypes")
+    public RelatedEntityToExport(String selection, Map<String, String> parameters, Class entityClass) {
         this.selection = selection;
         this.parameters = parameters;
+        this.entityClass = entityClass;
     }
 
     public String getSelection() {
@@ -37,5 +42,15 @@ public class RelatedEntityToExport {
 
     public void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public Class getEntityClass() {
+        return entityClass;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void setEntityClass(Class entityClass) {
+        this.entityClass = entityClass;
     }
 }

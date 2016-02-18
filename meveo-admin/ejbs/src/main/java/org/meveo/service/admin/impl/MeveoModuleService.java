@@ -150,21 +150,21 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
     }
 
     /**
-     * export meveo module with DTO items to remote meveo instance
+     * Publish meveo module with DTO items to remote meveo instance
      * 
      * @param module
      * @param meveoInstance
      * @throws MeveoApiException
      * @throws RemoteAuthenticationException
      */
-    public void exportModule2MeveoInstance(MeveoModule module, MeveoInstance meveoInstance, User currentUser) throws BusinessException, RemoteAuthenticationException {
+    public void publishModule2MeveoInstance(MeveoModule module, MeveoInstance meveoInstance, User currentUser) throws BusinessException, RemoteAuthenticationException {
         log.debug("export module {} to {}", module, meveoInstance);
         final String url = "api/rest/module/createOrUpdate";
 
         try {
-            ModuleDto moduleDto = exportModuleDto(module, currentUser);
+            ModuleDto moduleDto = moduleToDto(module, currentUser);
             log.debug("export module dto {}", moduleDto);
-            Response response = exportDto2MeveoInstance(url, meveoInstance, moduleDto);
+            Response response = publishDto2MeveoInstance(url, meveoInstance, moduleDto);
             ActionStatus actionStatus = response.readEntity(ActionStatus.class);
             log.debug("response {}", actionStatus);
             if (actionStatus == null || ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
@@ -177,7 +177,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         }
     }
 
-    private ModuleDto exportModuleDto(MeveoModule module, User currentUser) {
+    private ModuleDto moduleToDto(MeveoModule module, User currentUser) {
         ModuleDto moduleDto = new ModuleDto(module);
         if (StringUtils.isNotBlank(module.getLogoPicture())) {
             try {
@@ -193,7 +193,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         for (MeveoModuleItem item : moduleItems) {
             switch (item.getItemType()) {
             case CET:
-                CustomEntityTemplate customEntityTemplate = customEntityTemplateService.findByCode(item.getItemCode(), this.getCurrentProvider());
+                CustomEntityTemplate customEntityTemplate = customEntityTemplateService.findByCode(item.getItemCode(), currentUser.getProvider());
                 if (customEntityTemplate != null) {
                     Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(customEntityTemplate.getCftPrefix(),
                         currentUser.getProvider());
@@ -205,21 +205,21 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
                 }
                 break;
             case CFT:
-                CustomFieldTemplate customFieldTemplate = customFieldTemplateService.findByCode(item.getItemCode(), this.getCurrentProvider());
+                CustomFieldTemplate customFieldTemplate = customFieldTemplateService.findByCode(item.getItemCode(), currentUser.getProvider());
                 if (customFieldTemplate != null) {
                     CustomFieldTemplateDto dto = new CustomFieldTemplateDto(customFieldTemplate);
                     moduleDto.getCftDtos().add(dto);
                 }
                 break;
             case FILTER:
-                Filter filter = filterService.findByCode(item.getItemCode(), this.getCurrentProvider());
+                Filter filter = filterService.findByCode(item.getItemCode(), currentUser.getProvider());
                 if (filter != null) {
                     FilterDto dto = FilterDto.parseDto(filter);
                     moduleDto.getFilterDtos().add(dto);
                 }
                 break;
             case JOBINSTANCE:
-                JobInstance jobInstance = jobInstanceService.findByCode(item.getItemCode(), this.getCurrentProvider());
+                JobInstance jobInstance = jobInstanceService.findByCode(item.getItemCode(), currentUser.getProvider());
                 if (jobInstance != null) {
                     moduleDto = exportJobInstance(jobInstance, moduleDto, false);
                 }
@@ -305,7 +305,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
      * @return
      * @throws MeveoApiException
      */
-    private Response exportDto2MeveoInstance(String url, MeveoInstance meveoInstance, BaseDto dto) throws BusinessException {
+    private Response publishDto2MeveoInstance(String url, MeveoInstance meveoInstance, BaseDto dto) throws BusinessException {
         String baseurl = meveoInstance.getUrl().endsWith("/") ? meveoInstance.getUrl() : meveoInstance.getUrl() + "/";
         String username = meveoInstance.getAuthUsername() != null ? meveoInstance.getAuthUsername() : "";
         String password = meveoInstance.getAuthPassword() != null ? meveoInstance.getAuthPassword() : "";
