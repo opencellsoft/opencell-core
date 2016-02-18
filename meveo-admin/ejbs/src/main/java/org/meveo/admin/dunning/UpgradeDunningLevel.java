@@ -254,13 +254,13 @@ public class UpgradeDunningLevel {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("ca", customerAccount);
 		
-		if (expression.indexOf("dt.") >= 0) {
+		if (expression.indexOf("dt") >= 0) {
 			userMap.put("dt", dunningPlanTransition);
 		}
 		if (expression.indexOf("be") >= 0) {
 			userMap.put("be", balanceExigible);
 		}
-		if (expression.indexOf("iv.") >= 0) {
+		if (expression.indexOf("iv") >= 0) {
 			List<RecordedInvoice> recordedInvoices = recordedInvoiceService
 					.getRecordedInvoices(customerAccount, MatchingStatusEnum.O,
 							false);

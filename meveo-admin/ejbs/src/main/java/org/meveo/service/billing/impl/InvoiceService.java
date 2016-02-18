@@ -901,7 +901,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			return result;
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		if (prefix.indexOf("invoice.") >= 0) {
+		if (prefix.indexOf("invoice") >= 0) {
 			userMap.put("invoice", invoice);
 		}
 		if (prefix.indexOf("day") >= 0) {
