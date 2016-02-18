@@ -572,9 +572,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		String billingTemplate = (billingCycle != null && billingCycle.getBillingTemplateName() != null) ? billingCycle
 				.getBillingTemplateName() : "default";
 		String resDir = meveoDir + "jasper";
-
 		File destDir = new File(resDir + File.separator + billingTemplate + File.separator + "pdf");
+		File sourceJapsers = new File(resDir + File.separator + "default" + File.separator + "pdf");
 		if (!destDir.exists()) {
+			destDir.mkdirs();
+			FileUtils.copyDirectory(sourceJapsers, destDir);
+		}
+		
+		/*>> it's not working with meveo.war no-exploded
+		 * 
+		 * if (!destDir.exists()) {
 			destDir.mkdirs();
 
 			String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath();
@@ -590,7 +597,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				}
 			}
 			FileUtils.copyDirectory(sourceFile, destDir);
-		}
+		}*/
 		
 		File jasperFile = getJasperTemplateFile(resDir, billingTemplate, billingAccount.getPaymentMethod());
 		if (!jasperFile.exists()) {
