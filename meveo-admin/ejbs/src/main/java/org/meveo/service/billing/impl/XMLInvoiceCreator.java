@@ -111,7 +111,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	TransformerFactory transfac = TransformerFactory.newInstance();
 
 	private static String DEFAULT_DATE_PATTERN = "dd/MM/yyyy";
-	private static String DEFAULT_DATE_TIME_PATTERN = "dd/MM/yyyyThh:MM:ss";
+	private static String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
 	
 	public void createXMLInvoiceAdjustment(Long invoiceId, File billingRundir) throws BusinessException {
 		createXMLInvoice(invoiceId, billingRundir, true);
