@@ -981,7 +981,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						Element usageDate = doc.createElement("usageDate");
 						Text usageDateTxt = doc.createTextNode(ratedTransaction.getUsageDate() != null ? DateUtils
 								.formatDateWithPattern(ratedTransaction.getUsageDate(), 
-										paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN)) + "" : "");
+										paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
 						usageDate.appendChild(usageDateTxt);
 						line.appendChild(usageDate);
 						EDR edr = ratedTransaction.getEdr();
