@@ -214,7 +214,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     }
 
     /**
-     * Get a custom field value for a given entity
+     * Get a custom field value for a given entity. If custom field is versionable, a current date will be used to access the value.
      * 
      * @param entity Entity
      * @param code Custom field code
@@ -231,8 +231,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
 
         if (cft.isVersionable()) {
-            log.warn("Trying to access a versionable custom field {}/{} value with no provided date. Null will be returned", entity.getClass().getSimpleName(), code);
-            return null;
+            log.warn("Trying to access a versionable custom field {}/{} value with no provided date. Current date will be used", entity.getClass().getSimpleName(), code);
+            return getCFValue(entity, code, new Date(), currentUser);
         }
 
         Object value = null;

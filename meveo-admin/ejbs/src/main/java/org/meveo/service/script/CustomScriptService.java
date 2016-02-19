@@ -37,6 +37,7 @@ import org.jboss.vfs.VirtualFile;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidPermissionException;
+import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -258,12 +259,13 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     /**
      * Find the script class for a given script code
      * 
-     * @param provider
-     * @param scriptCode
-     * @return Script Class
-     * @throws InvalidPermissionException
+     * @param provider Provider
+     * @param scriptCode Script code
+     * @return Script interface Class
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
+     * @throws ElementNotFoundException Script not found
      */
-    private Class<SI> getScriptInterface(Provider provider, String scriptCode) throws InvalidPermissionException {
+    private Class<SI> getScriptInterface(Provider provider, String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         Class<SI> result = null;
 
         if (allScriptInterfaces.containsKey(provider.getCode())) {
@@ -273,15 +275,21 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             T script = findByCode(scriptCode, provider);
             if (script == null) {
                 log.debug("ScriptInstance with {} does not exist", scriptCode);
-                return null;
+                throw new ElementNotFoundException(scriptCode, getEntityClass().getName());
             }
             compileScript(script, false);
             if (script.isError()) {
                 log.debug("ScriptInstance {} failed to compile", scriptCode);
-                return null;
+                throw new InvalidScriptException(scriptCode, getEntityClass().getName());
             }
             result = allScriptInterfaces.get(provider.getCode()).get(scriptCode);
         }
+
+        if (result == null) {
+            log.debug("ScriptInstance with {} does not exist", scriptCode);
+            throw new ElementNotFoundException(scriptCode, getEntityClass().getName());
+        }
+
         log.debug("getScriptInterface provider:{} scriptCode:{} -> {}", provider.getCode(), scriptCode, result);
         return result;
     }
@@ -292,14 +300,20 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param provider Provider
      * @param scriptCode Script code
      * @return A compiled script class
-     * @throws InvalidPermissionException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
+     * @throws ElementNotFoundException Script not found
      */
-    public SI getScriptInstance(Provider provider, String scriptCode) throws InvalidPermissionException, InstantiationException, IllegalAccessException {
+    public SI getScriptInstance(Provider provider, String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         Class<SI> scriptClass = getScriptInterface(provider, scriptCode);
-        SI script = scriptClass.newInstance();
-        return script;
+
+        try {
+            SI script = scriptClass.newInstance();
+            return script;
+
+        } catch (InstantiationException | IllegalAccessException e) {
+            log.error("Failed to instantiate script {}", scriptCode, e);
+            throw new InvalidScriptException(scriptCode, getEntityClass().getName());
+        }
     }
 
     /**
@@ -417,12 +431,13 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param currentUser Current user
      * @param currentProvider Current provider
      * @return Context parameters. Will not be null even if "context" parameter is null.
-     * @throws InvalidPermissionException Insufficient access to run the script
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
+     * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(IEntity entity, String scriptCode, Map<String, Object> context, User currentUser, Provider currentProvider)
-            throws InvalidPermissionException, ElementNotFoundException, BusinessException {
+    public Map<String, Object> execute(IEntity entity, String scriptCode, Map<String, Object> context, User currentUser, Provider currentProvider) throws InvalidScriptException,
+            ElementNotFoundException, InvalidPermissionException, BusinessException {
 
         if (context == null) {
             context = new HashMap<String, Object>();
@@ -442,22 +457,19 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param currentUser Current user
      * @param currentProvider Current provider
      * @return Context parameters. Will not be null even if "context" parameter is null.
-     * @throws InvalidPermissionException Insufficient access to run the script
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
+     * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser, Provider currentProvider) throws InvalidPermissionException,
-            ElementNotFoundException, BusinessException {
+    public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser, Provider currentProvider) throws ElementNotFoundException,
+            InvalidScriptException, InvalidPermissionException, BusinessException {
+        
         log.trace("Script {} to be executed with parameters {}", scriptCode, context);
-        SI classInstance;
-        try {
-            classInstance = getScriptInstance(currentProvider, scriptCode);
-
-        } catch (InstantiationException | IllegalAccessException e) {
-            log.error("Failed to instantiate script {}", scriptCode, e);
-            throw new BusinessException("Failed to instantiate script " + scriptCode);
-        }
+        
+        SI classInstance = getScriptInstance(currentProvider, scriptCode);
         classInstance.execute(context, currentProvider, currentUser);
+        
         log.trace("Script {} executed with parameters {}", scriptCode, context);
         return context;
     }

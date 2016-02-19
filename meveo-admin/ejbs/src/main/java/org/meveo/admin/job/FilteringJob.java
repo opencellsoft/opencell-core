@@ -6,8 +6,10 @@ import java.util.Map;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
+import javax.persistence.EntityNotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -47,11 +49,9 @@ public class FilteringJob extends Job {
         ScriptInterface scriptInterface = null;
         try {
             scriptInterface = scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
-        } catch (InstantiationException | IllegalAccessException e) {
-            result.registerError("Faield to instantiate a sript with code " + scriptCode);
-        }
-        if (scriptInterface == null) {
-            result.registerError("cannot find script with code " + scriptCode);
+
+        } catch (EntityNotFoundException | InvalidScriptException e) {
+            result.registerError(e.getMessage());
             return;
         }
         

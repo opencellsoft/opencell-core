@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidPermissionException;
+import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -115,17 +116,12 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      * @throws BusinessException Any execution exception
      */
     @Override
-    public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser, Provider currentProvider) throws InvalidPermissionException,
-            ElementNotFoundException, BusinessException {
-
-        // Check access to the script
+    public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser, Provider currentProvider) throws ElementNotFoundException,
+            InvalidScriptException, InvalidPermissionException, BusinessException {
+        
         ScriptInstance scriptInstance = findByCode(scriptCode, currentProvider);
-        if (scriptInstance == null) {
-            log.debug("ScriptInstance with {} does not exist", scriptCode);
-            throw new ElementNotFoundException(scriptCode, "ScriptInstance");
-        }
+        // Check access to the script
         isUserHasExecutionRole(scriptInstance, getCurrentUser());
-
         return super.execute(scriptCode, context, currentUser, currentProvider);
     }
 
