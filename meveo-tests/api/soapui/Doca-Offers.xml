@@ -24552,7 +24552,7 @@ public class PostpaidOfferScript extends Script {
 			String name = (String) jsonReq.get("name");
 			String description = (String) jsonReq.get("description");
 			Double recurringPrice = jsonReq.get("recurringPrice") == null ? null : Double.valueOf(jsonReq.get("recurringPrice").toString());
-			Long commitment = (Long) jsonReq.get("commitment");
+			Long commitment = jsonReq.get("commitment") == null ? null :  Long.valueOf(jsonReq.get("commitment").toString());
 			log.debug("commitment={}, type={}",commitment,commitment.getClass());
 			Boolean proratedSubscription = (Boolean) jsonReq.get("proratedSubscription");
 			String invoiceSubcategory = (String) jsonReq.get("invoiceSubcategory");
@@ -24695,6 +24695,7 @@ package org.meveo.service.script;
 
 import java.math.BigDecimal;
 import java.util.Map;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
@@ -24748,7 +24749,7 @@ public class PrepaidOfferScript extends Script {
 			String name = (String) jsonReq.get("name");
 			String description = (String) jsonReq.get("description");
 			Double recurringPrice = jsonReq.get("recurringPrice") == null ? null : Double.valueOf(jsonReq.get("recurringPrice").toString());
-			Long commitment = (Long) jsonReq.get("commitment");
+			Long commitment = jsonReq.get("commitment") == null ? null :  Long.valueOf(jsonReq.get("commitment").toString());
 			log.debug("commitment={}, type={}",commitment,commitment.getClass());
 			Boolean proratedSubscription = (Boolean) jsonReq.get("proratedSubscription");
 			String invoiceSubcategory = (String) jsonReq.get("invoiceSubcategory");
@@ -24940,4 +24941,4 @@ public class PrepaidOfferScript extends Script {
 {"code":"service1", "description":"Libelle 1","counter":100,"priceInCounter":0.0,"priceOverCounter":0.04,"mandatory":true,"invoiceSubcategory":"TVA_20"},
 {"code":"service2", "description":"Libelle 2","counter":10,"priceInCounter":0.0,"priceOverCounter":0.01,"mandatory":false,"invoiceSubcategory":"TVA_10"}
 ]
-}</con:request><con:assertion type="Invalid HTTP Status Codes" id="3cce94d8-e1eb-4988-80e7-381e03f79971" name="Invalid HTTP Status Codes"><con:configuration><codes>404,500</codes></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>i.meveo.info/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>provider</con:name><con:value>DEMO</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>
+}</con:request><con:assertion type="Invalid HTTP Status Codes" id="3cce94d8-e1eb-4988-80e7-381e03f79971" name="Invalid HTTP Status Codes"><con:configuration><codes>404,500</codes></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>docapost.env-integration.com/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>provider</con:name><con:value>DEMO</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>
