@@ -12,7 +12,7 @@
 
 	<ui:define name="body">
 		<hftl:entityPopup header="#{messages['tradingCountry.popup.header']}"
-			updateField=":formPanel:formId:countrySelectedId :formPanel:formId:prDescription"
+			updateField=":formCountries:countrySelectedId :formCountries:prDescription" 
 			selection="#{tradingCountryBean.entity.country}"
 			backingBean="#{countryBean}"
 			searchField1Label="#{messages['country.countryCode']}"
@@ -32,7 +32,7 @@
 			</h:form>
 		</p:panel>
 
-		<hftl:formPanel id="formPanel" 
+		<hftl:formPanel formId="formCountries" 
 			label="#{messages['tradingCountry.tradingCountryPanel']}"
 			backingBean="#{tradingCountryBean}" showEnableDisableButton="true">
 
