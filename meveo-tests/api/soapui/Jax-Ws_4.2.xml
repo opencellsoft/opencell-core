@@ -31899,7 +31899,948 @@
          </module>\r
       </ws:update>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/update"/></con:call></con:operation></con:interface><con:testSuite id="e734e237-ed42-4c1a-9392-f113827bea4b" name="#1089_crm_new account_type_hierarchy"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="afee19fb-16ed-4427-9560-eb51c75772db" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create" searchProperties="true"><con:settings/><con:testStep type="request" name="S" id="0b6f566b-bd40-4798-b83b-15dc08fb4bc6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCRMAccountHierarchy</con:operation><con:request name="S" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/update"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="afaadec0-e373-4ff5-949a-06c02d05b8f6" wsaVersion="NONE" name="InvoicingWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoicingWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/InvoicingWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://192.168.10.14:8080/meveo/InvoicingWs?wsdl"><con:part><con:url>http://192.168.10.14:8080/meveo/InvoicingWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="InvoicingWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:import location="http://192.168.10.14:8080/meveo/InvoicingWs?wsdl=InvoicingWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
+  <wsdl:binding name="InvoicingWsSoapBinding" type="ns1:InvoicingWs">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getBillingRunInfo">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getBillingRunInfo">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBillingRunInfoResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createBillingRun">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createBillingRun">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createBillingRunResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPreInvoicingReport">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getPreInvoicingReport">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getPreInvoicingReportResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPostInvoicingReport">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getPostInvoicingReport">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getPostInvoicingReportResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="index">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="indexResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBillingAccountListInRun">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getBillingAccountListInRun">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBillingAccountListInRunResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="validateBillingRun">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="validateBillingRun">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="validateBillingRunResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="cancelBillingRun">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="cancelBillingRun">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="cancelBillingRunResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="InvoicingWs">
+    <wsdl:port binding="tns:InvoicingWsSoapBinding" name="InvoicingWsImplPort">
+      <soap:address location="http://192.168.10.14:8080/meveo/InvoicingWs"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://192.168.10.14:8080/meveo/InvoicingWs?wsdl=InvoicingWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="InvoicingWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
+      <xs:element name="Access" type="tns:Access"/>
+      <xs:element name="Account" type="tns:accountDto"/>
+      <xs:element name="AccountOperation" type="tns:accountOperationDto"/>
+      <xs:element name="ActionStatus" type="tns:ActionStatus"/>
+      <xs:element name="Address" type="tns:addressDto"/>
+      <xs:element name="BankCoordinates" type="tns:bankCoordinatesDto"/>
+      <xs:element name="BillingAccount" type="tns:BillingAccount"/>
+      <xs:element name="BillingCycle" type="tns:billingCycleDto"/>
+      <xs:element name="BillingRun" type="tns:billingRunDto"/>
+      <xs:element name="CreateBillingRunDto" type="tns:createBillingRunDto"/>
+      <xs:element name="CustomField" type="tns:customFieldDto"/>
+      <xs:element name="CustomFieldValue" type="tns:customFieldValueDto"/>
+      <xs:element name="CustomFields" type="tns:customFieldsDto"/>
+      <xs:element name="EntityReference" type="tns:entityReferenceDto"/>
+      <xs:element name="GetBillingAccountListInRunResponse" type="tns:getBillingAccountListInRunResponseDto"/>
+      <xs:element name="GetBillingRunInfoResponse" type="tns:getBillingRunInfoResponseDto"/>
+      <xs:element name="GetPostInvoicingReportsResponse" type="tns:getPostInvoicingReportsResponseDto"/>
+      <xs:element name="GetPreInvoicingReportsResponse" type="tns:getPreInvoicingReportsResponseDto"/>
+      <xs:element name="Invoice" type="tns:invoiceDto"/>
+      <xs:element name="MatchingAmount" type="tns:matchingAmountDto"/>
+      <xs:element name="MatchingAmounts" type="tns:matchingAmountsDto"/>
+      <xs:element name="MatchingCode" type="tns:matchingCodeDto"/>
+      <xs:element name="MatchingCodes" type="tns:matchingCodesDto"/>
+      <xs:element name="Name" type="tns:nameDto"/>
+      <xs:element name="RatedTransaction" type="tns:ratedTransactionDto"/>
+      <xs:element name="SubCategoryInvoiceAgregate" type="tns:subCategoryInvoiceAgregateDto"/>
+      <xs:element name="Subscription" type="tns:Subscription"/>
+      <xs:element name="UserAccount" type="tns:UserAccount"/>
+      <xs:element name="cancelBillingRun" type="tns:cancelBillingRun"/>
+      <xs:element name="cancelBillingRunResponse" type="tns:cancelBillingRunResponse"/>
+      <xs:element name="createBillingRun" type="tns:createBillingRun"/>
+      <xs:element name="createBillingRunResponse" type="tns:createBillingRunResponse"/>
+      <xs:element name="getBillingAccountListInRun" type="tns:getBillingAccountListInRun"/>
+      <xs:element name="getBillingAccountListInRunResponse" type="tns:getBillingAccountListInRunResponse"/>
+      <xs:element name="getBillingRunInfo" type="tns:getBillingRunInfo"/>
+      <xs:element name="getBillingRunInfoResponse" type="tns:getBillingRunInfoResponse"/>
+      <xs:element name="getPostInvoicingReport" type="tns:getPostInvoicingReport"/>
+      <xs:element name="getPostInvoicingReportResponse" type="tns:getPostInvoicingReportResponse"/>
+      <xs:element name="getPreInvoicingReport" type="tns:getPreInvoicingReport"/>
+      <xs:element name="getPreInvoicingReportResponse" type="tns:getPreInvoicingReportResponse"/>
+      <xs:element name="index" type="tns:index"/>
+      <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:element name="validateBillingRun" type="tns:validateBillingRun"/>
+      <xs:element name="validateBillingRunResponse" type="tns:validateBillingRunResponse"/>
+      <xs:complexType name="getBillingRunInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="billingRunId" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getBillingRunInfoResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getBillingRunInfoResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getBillingRunInfoResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="billingRunDto" type="tns:billingRunDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="billingRunDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="processDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="status" type="tns:billingRunStatusEnum"/>
+              <xs:element minOccurs="0" name="statusDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="billingCycle" type="tns:billingCycleDto"/>
+              <xs:element minOccurs="0" name="billingAccountNumber" type="xs:int"/>
+              <xs:element minOccurs="0" name="billableBillingAcountNumber" type="xs:int"/>
+              <xs:element minOccurs="0" name="producibleInvoiceNumber" type="xs:int"/>
+              <xs:element minOccurs="0" name="producibleAmountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="producibleAmountTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="InvoiceNumber" type="xs:int"/>
+              <xs:element minOccurs="0" name="producibleAmountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="prAmountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="prAmountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="prAmountTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="processType" type="tns:billingRunTypeEnum"/>
+              <xs:element minOccurs="0" name="startDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="endDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="invoiceDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="lastTransactionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="rejectionReason" type="xs:string"/>
+              <xs:element minOccurs="0" name="currencyCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="countryCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="selectedBillingAccounts" type="xs:string"/>
+              <xs:element minOccurs="0" name="xmlInvoiceGenerated" type="xs:boolean"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="billingCycleDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="billingTemplateName" type="xs:string"/>
+              <xs:element name="invoiceDateDelay" type="xs:int"/>
+              <xs:element name="dueDateDelay" type="xs:int"/>
+              <xs:element minOccurs="0" name="invoiceDateProductionDelay" type="xs:int"/>
+              <xs:element minOccurs="0" name="transactionDateDelay" type="xs:int"/>
+              <xs:element name="calendar" type="xs:string"/>
+              <xs:element minOccurs="0" name="invoicingThreshold" type="xs:decimal"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ActionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element minOccurs="0" name="errorCode" type="tns:meveoApiErrorCodeEnum"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createBillingRun">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="createBillingRunRequest" type="tns:createBillingRunDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createBillingRunDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="startDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="endDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="invoiceDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="lastTransactionDate" type="xs:dateTime"/>
+            </xs:sequence>
+            <xs:attribute name="billingCycleCode" type="xs:string" use="required"/>
+            <xs:attribute name="billingRunTypeEnum" type="tns:billingRunTypeEnum" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createBillingRunResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getPreInvoicingReport">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="billingRunId" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getPreInvoicingReportResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getPreInvoicingReportsResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getPreInvoicingReportsResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="preInvoicingReportsDTO" type="tns:preInvoicingReportsDTO"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="preInvoicingReportsDTO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="amoutWitountTax" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="billableBillingAccountNumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="billingAccountNumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="billingCycleCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="checkBANumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="checkBillableBAAmountHT" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="checkBillableBANumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="directDebitBANumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="directDebitBillableBAAmountHT" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="directDebitBillableBANumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="invoiceDate" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="lastTransactionDate" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="subCategoriesAmountHT" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="taxesAmount" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="tipBANumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="tipBillableBAAmountHT" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="tipBillableBANumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="wiretransferBANumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="wiretransferBillableBAAmountHT" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="wiretransferBillableBANumber" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getPostInvoicingReport">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="billingRunId" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getPostInvoicingReportResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getPostInvoicingReportsResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getPostInvoicingReportsResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="postInvoicingReportsDTO" type="tns:postInvoicingReportsDTO"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="postInvoicingReportsDTO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="checkAmuont" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="checkAmuontHT" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="checkInvoicesNumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="directDebitAmuont" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="directDebitAmuontHT" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="directDebitInvoicesNumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="electronicInvoicesNumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="emptyInvoicesNumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="globalAmount" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="invoicesNumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="negativeInvoicesAmount" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="negativeInvoicesAmountHT" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="negativeInvoicesNumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="negativeInvoicesTaxAmount" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="positiveInvoicesAmount" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="positiveInvoicesAmountHT" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="positiveInvoicesNumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="positiveInvoicesTaxAmount" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="tipAmuont" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="tipAmuontHT" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="tipInvoicesNumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="wiretransferAmuont" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="wiretransferAmuontHT" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="wiretransferInvoicesNumber" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="index">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="indexResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="validateBillingRun">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="billingRunId" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="validateBillingRunResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getBillingAccountListInRun">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="billingRunId" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getBillingAccountListInRunResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getBillingAccountListInRunResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getBillingAccountListInRunResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="billingAccountsDto" type="tns:BillingAccounts"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="BillingAccounts">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="billingAccount" nillable="true" type="tns:BillingAccount"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="BillingAccount">
+        <xs:complexContent>
+          <xs:extension base="tns:accountDto">
+            <xs:sequence>
+              <xs:element name="customerAccount" type="xs:string"/>
+              <xs:element name="billingCycle" type="xs:string"/>
+              <xs:element name="country" type="xs:string"/>
+              <xs:element name="language" type="xs:string"/>
+              <xs:element name="paymentMethod" type="xs:string"/>
+              <xs:element minOccurs="0" name="nextInvoiceDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="paymentTerms" type="xs:string"/>
+              <xs:element minOccurs="0" name="electronicBilling" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
+              <xs:element minOccurs="0" name="email" type="xs:string"/>
+              <xs:element minOccurs="0" name="bankCoordinates" type="tns:bankCoordinatesDto"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="invoices" nillable="true" type="tns:invoiceDto"/>
+              <xs:element minOccurs="0" name="userAccounts" type="tns:UserAccounts"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="accountDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="externalRef1" type="xs:string"/>
+          <xs:element minOccurs="0" name="externalRef2" type="xs:string"/>
+          <xs:element minOccurs="0" name="name" type="tns:nameDto"/>
+          <xs:element minOccurs="0" name="address" type="tns:addressDto"/>
+          <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
+      </xs:complexType>
+      <xs:complexType name="bankCoordinatesDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="bankCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="branchCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="accountNumber" type="xs:string"/>
+          <xs:element minOccurs="0" name="key" type="xs:string"/>
+          <xs:element minOccurs="0" name="iban" type="xs:string"/>
+          <xs:element minOccurs="0" name="bic" type="xs:string"/>
+          <xs:element minOccurs="0" name="accountOwner" type="xs:string"/>
+          <xs:element minOccurs="0" name="bankName" type="xs:string"/>
+          <xs:element minOccurs="0" name="bankId" type="xs:string"/>
+          <xs:element minOccurs="0" name="issuerNumber" type="xs:string"/>
+          <xs:element minOccurs="0" name="issuerName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ics" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="invoiceDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="billingAccountCode" type="xs:string"/>
+              <xs:element name="dueDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="invoiceNumber" type="xs:string"/>
+              <xs:element minOccurs="0" name="invoiceDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="discount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="paymentMethod" type="xs:string"/>
+              <xs:element name="PDFpresent" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="type" type="xs:string"/>
+              <xs:element minOccurs="0" name="pdf" type="xs:base64Binary"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="subCategoryInvoiceAgregates" nillable="true" type="tns:subCategoryInvoiceAgregateDto"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="accountOperations" nillable="true" type="tns:accountOperationDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="subCategoryInvoiceAgregateDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="type" type="xs:string"/>
+          <xs:element minOccurs="0" name="itemNumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="accountingCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+          <xs:element minOccurs="0" name="taxPercent" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="discount" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="amountTax" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="invoiceSubCategoryCode" type="xs:string"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="taxesCodes" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="userAccountCode" type="xs:string"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="ratedTransactions" nillable="true" type="tns:ratedTransactionDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ratedTransactionDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="usageDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="unitAmountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="unitAmountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="unitAmountTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="code" type="xs:string"/>
+              <xs:element minOccurs="0" name="description" type="xs:string"/>
+              <xs:element minOccurs="0" name="unityDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="priceplanCode" type="xs:string"/>
+              <xs:element name="doNotTriggerInvoicing" type="xs:boolean"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="accountOperationDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="id" type="xs:long"/>
+              <xs:element minOccurs="0" name="dueDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="type" type="xs:string"/>
+              <xs:element minOccurs="0" name="transactionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="transactionCategory" type="xs:string"/>
+              <xs:element minOccurs="0" name="reference" type="xs:string"/>
+              <xs:element minOccurs="0" name="accountCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="accountCodeClientSide" type="xs:string"/>
+              <xs:element minOccurs="0" name="amount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="matchingAmount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="unMatchingAmount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="matchingStatus" type="xs:string"/>
+              <xs:element minOccurs="0" name="occCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="occDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="customerAccount" type="xs:string"/>
+              <xs:element minOccurs="0" name="excludedFromDunning" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="matchingAmounts" type="tns:matchingAmountsDto"/>
+              <xs:element minOccurs="0" name="otherCreditAndCharge" type="tns:OtherCreditAndCharge"/>
+              <xs:element minOccurs="0" name="recordedInvoice" type="tns:RecordedInvoice"/>
+              <xs:element minOccurs="0" name="rejectedPayment" type="tns:RejectedPayment"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="matchingAmountsDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="matchingAmount" nillable="true" type="tns:matchingAmountDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="matchingAmountDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="matchingCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="matchingAmount" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="matchingCodes" type="tns:matchingCodesDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="matchingCodesDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="matchingCode" nillable="true" type="tns:matchingCodeDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="matchingCodeDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="matchingType" type="xs:string"/>
+          <xs:element minOccurs="0" name="matchingDate" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="matchingAmountCredit" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="matchingAmountDebit" type="xs:decimal"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="OtherCreditAndCharge">
+        <xs:complexContent>
+          <xs:extension base="tns:accountOperationDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="operationDate" type="xs:dateTime"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="RecordedInvoice">
+        <xs:complexContent>
+          <xs:extension base="tns:accountOperationDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="productionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="invoiceDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="taxAmount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="netToPay" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="paymentMethod" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo1" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo2" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo3" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo4" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo5" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo6" type="xs:string"/>
+              <xs:element minOccurs="0" name="billingAccountName" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="RejectedPayment">
+        <xs:complexContent>
+          <xs:extension base="tns:accountOperationDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="rejectedType" type="xs:string"/>
+              <xs:element minOccurs="0" name="bankLot" type="xs:string"/>
+              <xs:element minOccurs="0" name="bankReference" type="xs:string"/>
+              <xs:element minOccurs="0" name="rejectedDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="rejectedDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="rejectedCode" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="UserAccounts">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="userAccount" nillable="true" type="tns:UserAccount"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="UserAccount">
+        <xs:complexContent>
+          <xs:extension base="tns:accountDto">
+            <xs:sequence>
+              <xs:element name="billingAccount" type="xs:string"/>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
+              <xs:element minOccurs="0" name="subscriptions" type="tns:Subscriptions"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="Subscriptions">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="subscription" nillable="true" type="tns:Subscription"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Subscription">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="userAccount" type="xs:string"/>
+              <xs:element name="offerTemplate" type="xs:string"/>
+              <xs:element name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="endAgreementDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
+              <xs:element minOccurs="0" name="accesses" type="tns:Accesses"/>
+              <xs:element minOccurs="0" name="services" type="tns:ServiceInstances"/>
+              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customFieldsDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="customField" nillable="true" type="tns:customFieldDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customFieldDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="stringValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="dateValue" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="longValue" type="xs:long"/>
+          <xs:element minOccurs="0" name="doubleValue" type="xs:double"/>
+          <xs:element minOccurs="0" name="listValue">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="value" type="tns:customFieldValueDto"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="mapValue">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" name="key" type="xs:string"/>
+                      <xs:element minOccurs="0" name="value" type="tns:customFieldValueDto"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" name="entityReferenceValue" type="tns:entityReferenceDto"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="valueDate" type="xs:dateTime"/>
+        <xs:attribute name="valuePeriodStartDate" type="xs:dateTime"/>
+        <xs:attribute name="valuePeriodEndDate" type="xs:dateTime"/>
+        <xs:attribute name="valuePeriodPriority" type="xs:int"/>
+      </xs:complexType>
+      <xs:complexType name="customFieldValueDto">
+        <xs:sequence>
+          <xs:choice minOccurs="0">
+            <xs:element name="dateValue" type="xs:dateTime"/>
+            <xs:element name="doubleValue" type="xs:double"/>
+            <xs:element name="longValue" type="xs:long"/>
+            <xs:element name="stringValue" type="xs:string"/>
+            <xs:element name="entityReferenceValue" type="tns:entityReferenceDto"/>
+          </xs:choice>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="entityReferenceDto">
+        <xs:sequence/>
+        <xs:attribute name="classname" type="xs:string" use="required"/>
+        <xs:attribute name="classnameCode" type="xs:string"/>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="Accesses">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="access" nillable="true" type="tns:Access"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Access">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="subscription" type="xs:string"/>
+              <xs:element minOccurs="0" name="startDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="endDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ServiceInstances">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="serviceInstance" nillable="true" type="tns:ServiceInstance"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ServiceInstance">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
+              <xs:element minOccurs="0" name="endAgreementDate" type="xs:dateTime"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="nameDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="title" type="xs:string"/>
+          <xs:element minOccurs="0" name="firstName" type="xs:string"/>
+          <xs:element name="lastName" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="addressDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="address1" type="xs:string"/>
+          <xs:element minOccurs="0" name="address2" type="xs:string"/>
+          <xs:element minOccurs="0" name="address3" type="xs:string"/>
+          <xs:element minOccurs="0" name="zipCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="city" type="xs:string"/>
+          <xs:element minOccurs="0" name="country" type="xs:string"/>
+          <xs:element minOccurs="0" name="state" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="cancelBillingRun">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="billingRunId" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="cancelBillingRunResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="billingRunStatusEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="NEW"/>
+          <xs:enumeration value="PREINVOICED"/>
+          <xs:enumeration value="PREVALIDATED"/>
+          <xs:enumeration value="CANCELED"/>
+          <xs:enumeration value="POSTINVOICED"/>
+          <xs:enumeration value="POSTVALIDATED"/>
+          <xs:enumeration value="VALIDATED"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="billingRunTypeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="AUTOMATIC"/>
+          <xs:enumeration value="MANUAL"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="actionStatusEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SUCCESS"/>
+          <xs:enumeration value="FAIL"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="meveoApiErrorCodeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ENTITY_DOES_NOT_EXISTS_EXCEPTION"/>
+          <xs:enumeration value="ENTITY_ALREADY_EXISTS_EXCEPTION"/>
+          <xs:enumeration value="DELETE_REFERENCED_ENTITY_EXCEPTION"/>
+          <xs:enumeration value="MISSING_PARAMETER"/>
+          <xs:enumeration value="INVALID_PARAMETER"/>
+          <xs:enumeration value="INVALID_ENUM_VALUE"/>
+          <xs:enumeration value="DUPLICATE_ACCESS"/>
+          <xs:enumeration value="INSUFFICIENT_BALANCE"/>
+          <xs:enumeration value="GENERIC_API_EXCEPTION"/>
+          <xs:enumeration value="BUSINESS_API_EXCEPTION"/>
+          <xs:enumeration value="AUTHENTICATION_AUTHORIZATION_EXCEPTION"/>
+          <xs:enumeration value="ACTION_FORBIDDEN"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="getBillingAccountListInRunResponse">
+    <wsdl:part element="ns1:getBillingAccountListInRunResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBillingRunInfoResponse">
+    <wsdl:part element="ns1:getBillingRunInfoResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBillingAccountListInRun">
+    <wsdl:part element="ns1:getBillingAccountListInRun" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getPreInvoicingReportResponse">
+    <wsdl:part element="ns1:getPreInvoicingReportResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getPostInvoicingReport">
+    <wsdl:part element="ns1:getPostInvoicingReport" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="validateBillingRunResponse">
+    <wsdl:part element="ns1:validateBillingRunResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createBillingRun">
+    <wsdl:part element="ns1:createBillingRun" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBillingRunInfo">
+    <wsdl:part element="ns1:getBillingRunInfo" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="indexResponse">
+    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getPostInvoicingReportResponse">
+    <wsdl:part element="ns1:getPostInvoicingReportResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="cancelBillingRunResponse">
+    <wsdl:part element="ns1:cancelBillingRunResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="cancelBillingRun">
+    <wsdl:part element="ns1:cancelBillingRun" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="validateBillingRun">
+    <wsdl:part element="ns1:validateBillingRun" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getPreInvoicingReport">
+    <wsdl:part element="ns1:getPreInvoicingReport" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createBillingRunResponse">
+    <wsdl:part element="ns1:createBillingRunResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="InvoicingWs">
+    <wsdl:operation name="getBillingRunInfo">
+      <wsdl:input message="ns1:getBillingRunInfo" name="getBillingRunInfo"></wsdl:input>
+      <wsdl:output message="ns1:getBillingRunInfoResponse" name="getBillingRunInfoResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createBillingRun">
+      <wsdl:input message="ns1:createBillingRun" name="createBillingRun"></wsdl:input>
+      <wsdl:output message="ns1:createBillingRunResponse" name="createBillingRunResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPreInvoicingReport">
+      <wsdl:input message="ns1:getPreInvoicingReport" name="getPreInvoicingReport"></wsdl:input>
+      <wsdl:output message="ns1:getPreInvoicingReportResponse" name="getPreInvoicingReportResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPostInvoicingReport">
+      <wsdl:input message="ns1:getPostInvoicingReport" name="getPostInvoicingReport"></wsdl:input>
+      <wsdl:output message="ns1:getPostInvoicingReportResponse" name="getPostInvoicingReportResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <wsdl:input message="ns1:index" name="index"></wsdl:input>
+      <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="validateBillingRun">
+      <wsdl:input message="ns1:validateBillingRun" name="validateBillingRun"></wsdl:input>
+      <wsdl:output message="ns1:validateBillingRunResponse" name="validateBillingRunResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBillingAccountListInRun">
+      <wsdl:input message="ns1:getBillingAccountListInRun" name="getBillingAccountListInRun"></wsdl:input>
+      <wsdl:output message="ns1:getBillingAccountListInRunResponse" name="getBillingAccountListInRunResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="cancelBillingRun">
+      <wsdl:input message="ns1:cancelBillingRun" name="cancelBillingRun"></wsdl:input>
+      <wsdl:output message="ns1:cancelBillingRunResponse" name="cancelBillingRunResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://192.168.10.14:8080/meveo/InvoicingWs</con:endpoint></con:endpoints><con:operation id="246f7870-166d-45a6-b49b-9002f86e1b82" isOneWay="false" action="" name="cancelBillingRun" bindingOperationName="cancelBillingRun" type="Request-Response" outputName="cancelBillingRunResponse" inputName="cancelBillingRun" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="0a88a143-3ad7-4bc8-960d-403d5739a622" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/InvoicingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:cancelBillingRun>\r
+         <!--Optional:-->\r
+         <billingRunId>?</billingRunId>\r
+      </ws:cancelBillingRun>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoicingWs/cancelBillingRun"/></con:call></con:operation><con:operation id="732ed001-7ccd-4325-b55e-1df2549730e3" isOneWay="false" action="" name="createBillingRun" bindingOperationName="createBillingRun" type="Request-Response" outputName="createBillingRunResponse" inputName="createBillingRun" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="9c4754b5-5a42-41f3-bb14-202b8a45d484" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/InvoicingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createBillingRun>\r
+         <!--Optional:-->\r
+         <createBillingRunRequest billingCycleCode="?" billingRunTypeEnum="?">\r
+            <!--Optional:-->\r
+            <startDate>?</startDate>\r
+            <!--Optional:-->\r
+            <endDate>?</endDate>\r
+            <!--Optional:-->\r
+            <invoiceDate>?</invoiceDate>\r
+            <!--Optional:-->\r
+            <lastTransactionDate>?</lastTransactionDate>\r
+         </createBillingRunRequest>\r
+      </ws:createBillingRun>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoicingWs/createBillingRun"/></con:call></con:operation><con:operation id="d2da5b37-a8f3-4823-a99f-a0ef5ca0aa44" isOneWay="false" action="" name="getBillingAccountListInRun" bindingOperationName="getBillingAccountListInRun" type="Request-Response" outputName="getBillingAccountListInRunResponse" inputName="getBillingAccountListInRun" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="35c667c9-25ef-42f4-a46a-b1f3d894255c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/InvoicingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:getBillingAccountListInRun>\r
+         <!--Optional:-->\r
+         <billingRunId>?</billingRunId>\r
+      </ws:getBillingAccountListInRun>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoicingWs/getBillingAccountListInRun"/></con:call></con:operation><con:operation id="f73b6b48-eeed-4646-8590-9bdc10efef24" isOneWay="false" action="" name="getBillingRunInfo" bindingOperationName="getBillingRunInfo" type="Request-Response" outputName="getBillingRunInfoResponse" inputName="getBillingRunInfo" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="bf164420-cf2c-4e39-8d83-fc62deada754" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/InvoicingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:getBillingRunInfo>\r
+         <!--Optional:-->\r
+         <billingRunId>?</billingRunId>\r
+      </ws:getBillingRunInfo>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoicingWs/getBillingRunInfo"/></con:call></con:operation><con:operation id="2389c366-5a88-41cf-a2c8-63d2544f0054" isOneWay="false" action="" name="getPostInvoicingReport" bindingOperationName="getPostInvoicingReport" type="Request-Response" outputName="getPostInvoicingReportResponse" inputName="getPostInvoicingReport" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="9809232d-be4d-4679-b30a-2db11594cfd9" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/InvoicingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:getPostInvoicingReport>\r
+         <!--Optional:-->\r
+         <billingRunId>?</billingRunId>\r
+      </ws:getPostInvoicingReport>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoicingWs/getPostInvoicingReport"/></con:call></con:operation><con:operation id="e7047c92-a1cf-47f8-9915-cc3328798f37" isOneWay="false" action="" name="getPreInvoicingReport" bindingOperationName="getPreInvoicingReport" type="Request-Response" outputName="getPreInvoicingReportResponse" inputName="getPreInvoicingReport" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a14cbf91-49e0-4d9c-9499-243580a92104" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/InvoicingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:getPreInvoicingReport>\r
+         <!--Optional:-->\r
+         <billingRunId>?</billingRunId>\r
+      </ws:getPreInvoicingReport>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoicingWs/getPreInvoicingReport"/></con:call></con:operation><con:operation id="2ed97570-d8bd-4dc4-983c-e661026a02cd" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="895aa7e3-8946-4496-ab0c-d21197c7942a" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/InvoicingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:index/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoicingWs/index"/></con:call></con:operation><con:operation id="acd3a47e-cfbe-4fc1-9a38-5e0b3f41f798" isOneWay="false" action="" name="validateBillingRun" bindingOperationName="validateBillingRun" type="Request-Response" outputName="validateBillingRunResponse" inputName="validateBillingRun" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="445f0503-6f90-4a28-9c6a-5422ef074357" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/InvoicingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:validateBillingRun>\r
+         <!--Optional:-->\r
+         <billingRunId>?</billingRunId>\r
+      </ws:validateBillingRun>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoicingWs/validateBillingRun"/></con:call></con:operation></con:interface><con:testSuite id="e734e237-ed42-4c1a-9392-f113827bea4b" name="#1089_crm_new account_type_hierarchy"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="afee19fb-16ed-4427-9560-eb51c75772db" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create" searchProperties="true"><con:settings/><con:testStep type="request" name="S" id="0b6f566b-bd40-4798-b83b-15dc08fb4bc6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCRMAccountHierarchy</con:operation><con:request name="S" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
@@ -44476,16 +45417,16 @@ public class ${#TestSuite#ticket}BOMCreationScript extends Script {
          </accountHierarchy>
       </ws:findAccountHierarchy>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="df86944b-6754-4a57-980b-6649a8289c8d" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findAccountHierarchy"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create/update CRMAccountHierarchy" searchProperties="true" id="65a76a13-1c4c-4445-98c9-6ba2482c56f2"><con:settings/><con:testStep type="request" name="create CRMAccountHierarchy" id="3673c8e8-e7f7-4814-a922-61c80edc6b05"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCRMAccountHierarchy</con:operation><con:request name="create CRMAccountHierarchy" id="91ebd149-156b-49a7-b576-67d2c6ddcdd1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="df86944b-6754-4a57-980b-6649a8289c8d" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findAccountHierarchy"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="413a8a1a-4980-4c73-80c6-2b65fd4bb1a2" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create/update CRMAccountHierarchy" searchProperties="true"><con:settings/><con:testStep type="request" name="S" id="97b81bc7-2619-4ab3-b879-462cdb4a6d52"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCRMAccountHierarchy</con:operation><con:request name="S" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCRMAccountHierarchy>
          <!--Optional:-->
          <crmAccountHierarchy>
             <!--Optional:-->
-            <crmAccountType>BASIC</crmAccountType>
+            <crmAccountType>S</crmAccountType>
             <!--Optional:-->
-            <code>MEVEO_${#TestSuite#ticket}_BASIC_${#TestSuite#index}</code>
+            <code>${#TestSuite#ticket}_S_${#TestSuite#index}</code>
             <!--Optional:-->
             <description>Open Source Billing System</description>
             <!--Optional:-->
@@ -44502,8 +45443,7 @@ public class ${#TestSuite#ticket}BOMCreationScript extends Script {
             <contactInformation>
                <!--Optional:-->
                <email>${#TestSuite#ticket}@manaty.net</email>
-               <phone>+339152154716</phone>
-               <mobile>+339152154716</mobile>
+               <mobile>+639152154716</mobile>
             </contactInformation>
             <!--Optional:-->
             <language>ENG</language>
@@ -44513,16 +45453,17 @@ public class ${#TestSuite#ticket}BOMCreationScript extends Script {
             <customerCategory>CLIENT</customerCategory>
             <!--Optional:-->
             <customerBrand>DEFAULT</customerBrand>
+          
             <!--Optional:-->
             <mandateIdentification>1234</mandateIdentification>
             <!--Optional:-->
-            <mandateDate>${#TestCase#currentDate}</mandateDate>
+            <mandateDate>${#TestSuite#currentDate}</mandateDate>
             <!--Optional:-->
             <currency>USD</currency>
             <!--Optional:-->
             <creditCategory>VIP</creditCategory>
             <!--Optional:-->
-            <dateStatus>${#TestCase#currentDate}</dateStatus>
+            <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <!--Optional:-->
             <country>US</country>
@@ -44531,7 +45472,787 @@ public class ${#TestSuite#ticket}BOMCreationScript extends Script {
          </crmAccountHierarchy>
       </ws:createOrUpdateCRMAccountHierarchy>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e330943d-7a29-449e-80be-fad3e2f52047"/><con:assertion type="Simple Contains" id="47993901-583a-4b88-9b84-e64d503e7e74" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>currentDate</con:name><con:value>2016-02-18</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CustomerHierarchyUpdate" searchProperties="true" id="b3220a4a-5742-462a-ab62-b430ac7265dc"><con:settings/><con:testStep type="request" name="customerHierarchyUpdate" id="34cee6bd-a993-4ae1-8006-83de067fc9c6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="customerHierarchyUpdate" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="4b3a7212-d860-4190-a1da-02a8d770dc05"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="f4e9864d-c388-4cea-8bf5-dac6a772a885" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="S_C" id="9e6ebec1-5c66-41a5-9703-e356f03499aa"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCRMAccountHierarchy</con:operation><con:request name="S_C" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>S_C</crmAccountType>
+            <!--Optional:-->
+            <code>${#TestSuite#ticket}_S_C_${#TestSuite#index}</code>
+            <!--Optional:-->
+            <description>Open Source Billing System</description>
+            <!--Optional:-->
+            <name>
+            	<title>AGCE</title>
+            	<firstName></firstName>
+               <lastName>Organisation Name</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <country>US</country>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>${#TestSuite#ticket}@manaty.net</email>
+               <mobile>+639152154716</mobile>
+            </contactInformation>
+            <!--Optional:-->
+            <language>ENG</language>
+            <!--Optional:-->
+            <paymentMethod>CHECK</paymentMethod>
+            <!--Optional:-->
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+          
+            <!--Optional:-->
+            <mandateIdentification>1234</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>${#TestSuite#currentDate}</mandateDate>
+            <!--Optional:-->
+            <currency>USD</currency>
+            <!--Optional:-->
+            <creditCategory>VIP</creditCategory>
+            <!--Optional:-->
+            <dateStatus>${#TestSuite#currentDate}</dateStatus>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <!--Optional:-->
+            <country>US</country>
+            <!--Optional:-->
+            <electronicBilling>true</electronicBilling>
+         </crmAccountHierarchy>
+      </ws:createOrUpdateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="859a31e6-b4f0-4ffe-9532-3338af139133" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="C" id="b8ab009f-69b7-40e8-8b70-8ba177e2515b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCRMAccountHierarchy</con:operation><con:request name="C" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>C</crmAccountType>
+            <!--Optional:-->
+            <code>${#TestSuite#ticket}_C_${#TestSuite#index}</code>
+            <crmParentCode>${#TestSuite#ticket}_S_${#TestSuite#index}</crmParentCode>
+            <!--Optional:-->
+            <description>Open Source Billing System</description>
+            <!--Optional:-->
+            <name>
+            	<title>AGCE</title>
+            	<firstName></firstName>
+               <lastName>Organisation Name</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <country>US</country>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>${#TestSuite#ticket}@manaty.net</email>
+               <mobile>+639152154716</mobile>
+            </contactInformation>
+            <!--Optional:-->
+            <language>ENG</language>
+            <!--Optional:-->
+            <paymentMethod>CHECK</paymentMethod>
+            <!--Optional:-->
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+          
+            <!--Optional:-->
+            <mandateIdentification>1234</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>${#TestSuite#currentDate}</mandateDate>
+            <!--Optional:-->
+            <currency>USD</currency>
+            <!--Optional:-->
+            <creditCategory>VIP</creditCategory>
+            <!--Optional:-->
+            <dateStatus>${#TestSuite#currentDate}</dateStatus>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <!--Optional:-->
+            <country>US</country>
+            <!--Optional:-->
+            <electronicBilling>true</electronicBilling>
+         </crmAccountHierarchy>
+      </ws:createOrUpdateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="f150420e-56d5-46ed-a4cd-f6578634bd0b" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="S_CA" id="8ecdb5ba-1317-45ca-b32b-e899e0048a05"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCRMAccountHierarchy</con:operation><con:request name="S_CA" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>S_CA</crmAccountType>
+            <!--Optional:-->
+            <code>${#TestSuite#ticket}_S_CA_${#TestSuite#index}</code>
+            <!--Optional:-->
+            <description>Open Source Billing System</description>
+            <!--Optional:-->
+            <name>
+            	<title>AGCE</title>
+            	<firstName></firstName>
+               <lastName>Organisation Name</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <country>US</country>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>${#TestSuite#ticket}@manaty.net</email>
+               <mobile>+639152154716</mobile>
+            </contactInformation>
+            <!--Optional:-->
+            <language>ENG</language>
+            <!--Optional:-->
+            <paymentMethod>CHECK</paymentMethod>
+            <!--Optional:-->
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+          
+            <!--Optional:-->
+            <mandateIdentification>1234</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>${#TestSuite#currentDate}</mandateDate>
+            <!--Optional:-->
+            <currency>USD</currency>
+            <!--Optional:-->
+            <creditCategory>VIP</creditCategory>
+            <!--Optional:-->
+            <dateStatus>${#TestSuite#currentDate}</dateStatus>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <!--Optional:-->
+            <country>US</country>
+            <!--Optional:-->
+            <electronicBilling>true</electronicBilling>
+         </crmAccountHierarchy>
+      </ws:createOrUpdateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="db9f6c4d-e2fa-4ebb-803b-c466761c05c4" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="C_CA" id="671aa2d3-fa00-4113-86b5-690adc9fac0f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCRMAccountHierarchy</con:operation><con:request name="C_CA" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>C_CA</crmAccountType>
+            <!--Optional:-->
+            <crmParentCode>${#TestSuite#ticket}_S_${#TestSuite#index}</crmParentCode>
+            <code>${#TestSuite#ticket}_C_CA_${#TestSuite#index}</code>
+            <!--Optional:-->
+            <description>Open Source Billing System</description>
+            <!--Optional:-->
+            <name>
+            	<title>AGCE</title>
+            	<firstName></firstName>
+               <lastName>Organisation Name</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <country>US</country>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>${#TestSuite#ticket}@manaty.net</email>
+               <mobile>+639152154716</mobile>
+            </contactInformation>
+            <!--Optional:-->
+            <language>ENG</language>
+            <!--Optional:-->
+            <paymentMethod>CHECK</paymentMethod>
+            <!--Optional:-->
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+          
+            <!--Optional:-->
+            <mandateIdentification>1234</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>${#TestSuite#currentDate}</mandateDate>
+            <!--Optional:-->
+            <currency>USD</currency>
+            <!--Optional:-->
+            <creditCategory>VIP</creditCategory>
+            <!--Optional:-->
+            <dateStatus>${#TestSuite#currentDate}</dateStatus>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <!--Optional:-->
+            <country>US</country>
+            <!--Optional:-->
+            <electronicBilling>true</electronicBilling>
+         </crmAccountHierarchy>
+      </ws:createOrUpdateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="e290343b-c670-42d6-9223-b649e33f61be" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="CA" id="89179b69-decd-4921-bcd1-d9b0a51b6b25"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCRMAccountHierarchy</con:operation><con:request name="CA" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>CA</crmAccountType>
+            <!--Optional:-->
+            <crmParentCode>${#TestSuite#ticket}_C_${#TestSuite#index}</crmParentCode>
+            <code>${#TestSuite#ticket}_CA_${#TestSuite#index}</code>
+            <!--Optional:-->
+            <description>Open Source Billing System</description>
+            <!--Optional:-->
+            <name>
+            	<title>AGCE</title>
+            	<firstName></firstName>
+               <lastName>Organisation Name</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <country>US</country>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>${#TestSuite#ticket}@manaty.net</email>
+               <mobile>+639152154716</mobile>
+            </contactInformation>
+            <!--Optional:-->
+            <language>ENG</language>
+            <!--Optional:-->
+            <paymentMethod>CHECK</paymentMethod>
+            <!--Optional:-->
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+          
+            <!--Optional:-->
+            <mandateIdentification>1234</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>${#TestSuite#currentDate}</mandateDate>
+            <!--Optional:-->
+            <currency>USD</currency>
+            <!--Optional:-->
+            <creditCategory>VIP</creditCategory>
+            <!--Optional:-->
+            <dateStatus>${#TestSuite#currentDate}</dateStatus>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <!--Optional:-->
+            <country>US</country>
+            <!--Optional:-->
+            <electronicBilling>true</electronicBilling>
+         </crmAccountHierarchy>
+      </ws:createOrUpdateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="76e0e705-f870-4d29-b2f3-92150db0d642" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="S_BA" id="328fbd4e-58cf-46d6-83f9-196d0be41f1e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCRMAccountHierarchy</con:operation><con:request name="S_BA" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>S_BA</crmAccountType>
+            <!--Optional:-->
+            <code>${#TestSuite#ticket}_S_BA_${#TestSuite#index}</code>
+            <!--Optional:-->
+            <description>Open Source Billing System</description>
+            <!--Optional:-->
+            <name>
+            	<title>AGCE</title>
+            	<firstName></firstName>
+               <lastName>Organisation Name</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <country>US</country>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>${#TestSuite#ticket}@manaty.net</email>
+               <mobile>+639152154716</mobile>
+            </contactInformation>
+            <!--Optional:-->
+            <language>ENG</language>
+            <!--Optional:-->
+            <paymentMethod>CHECK</paymentMethod>
+            <!--Optional:-->
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+          
+            <!--Optional:-->
+            <mandateIdentification>1234</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>${#TestSuite#currentDate}</mandateDate>
+            <!--Optional:-->
+            <currency>USD</currency>
+            <!--Optional:-->
+            <creditCategory>VIP</creditCategory>
+            <!--Optional:-->
+            <dateStatus>${#TestSuite#currentDate}</dateStatus>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <!--Optional:-->
+            <country>US</country>
+            <!--Optional:-->
+            <electronicBilling>true</electronicBilling>
+         </crmAccountHierarchy>
+      </ws:createOrUpdateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="b1d51d60-57a4-41f0-9cd8-619ade57eb88" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="C_BA" id="3adfa386-e523-4ab0-8665-e4ddb052653b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCRMAccountHierarchy</con:operation><con:request name="C_BA" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>C_BA</crmAccountType>
+            <!--Optional:-->
+            <crmParentCode>${#TestSuite#ticket}_S_${#TestSuite#index}</crmParentCode>
+            <code>${#TestSuite#ticket}_C_BA_${#TestSuite#index}</code>
+            <!--Optional:-->
+            <description>Open Source Billing System</description>
+            <!--Optional:-->
+            <name>
+            	<title>AGCE</title>
+            	<firstName></firstName>
+               <lastName>Organisation Name</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <country>US</country>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>${#TestSuite#ticket}@manaty.net</email>
+               <mobile>+639152154716</mobile>
+            </contactInformation>
+            <!--Optional:-->
+            <language>ENG</language>
+            <!--Optional:-->
+            <paymentMethod>CHECK</paymentMethod>
+            <!--Optional:-->
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+          
+            <!--Optional:-->
+            <mandateIdentification>1234</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>${#TestSuite#currentDate}</mandateDate>
+            <!--Optional:-->
+            <currency>USD</currency>
+            <!--Optional:-->
+            <creditCategory>VIP</creditCategory>
+            <!--Optional:-->
+            <dateStatus>${#TestSuite#currentDate}</dateStatus>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <!--Optional:-->
+            <country>US</country>
+            <!--Optional:-->
+            <electronicBilling>true</electronicBilling>
+         </crmAccountHierarchy>
+      </ws:createOrUpdateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="cd57e294-2069-4125-bc2c-247c1c8e4712" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="CA_BA" id="006a6d82-da67-4e3d-80be-a395004abf10"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCRMAccountHierarchy</con:operation><con:request name="CA_BA" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>CA_BA</crmAccountType>
+            <!--Optional:-->
+             <crmParentCode>${#TestSuite#ticket}_C_${#TestSuite#index}</crmParentCode>
+            <code>${#TestSuite#ticket}_CA_BA_${#TestSuite#index}</code>
+            <!--Optional:-->
+            <description>Open Source Billing System</description>
+            <!--Optional:-->
+            <name>
+            	<title>AGCE</title>
+            	<firstName></firstName>
+               <lastName>Organisation Name</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <country>US</country>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>${#TestSuite#ticket}@manaty.net</email>
+               <mobile>+639152154716</mobile>
+            </contactInformation>
+            <!--Optional:-->
+            <language>ENG</language>
+            <!--Optional:-->
+            <paymentMethod>CHECK</paymentMethod>
+            <!--Optional:-->
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+          
+            <!--Optional:-->
+            <mandateIdentification>1234</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>${#TestSuite#currentDate}</mandateDate>
+            <!--Optional:-->
+            <currency>USD</currency>
+            <!--Optional:-->
+            <creditCategory>VIP</creditCategory>
+            <!--Optional:-->
+            <dateStatus>${#TestSuite#currentDate}</dateStatus>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <!--Optional:-->
+            <country>US</country>
+            <!--Optional:-->
+            <electronicBilling>true</electronicBilling>
+         </crmAccountHierarchy>
+      </ws:createOrUpdateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="a5e19fe2-5254-4ae3-9666-1741603aca74" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="BA" id="1e21eb96-7cfa-4962-b9f0-aeed72a448e4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCRMAccountHierarchy</con:operation><con:request name="BA" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>BA</crmAccountType>
+            <!--Optional:-->
+             <crmParentCode>${#TestSuite#ticket}_CA_${#TestSuite#index}</crmParentCode>
+            <code>${#TestSuite#ticket}_BA_${#TestSuite#index}</code>
+            <!--Optional:-->
+            <description>Open Source Billing System</description>
+            <!--Optional:-->
+            <name>
+            	<title>AGCE</title>
+            	<firstName></firstName>
+               <lastName>Organisation Name</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <country>US</country>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>${#TestSuite#ticket}@manaty.net</email>
+               <mobile>+639152154716</mobile>
+            </contactInformation>
+            <!--Optional:-->
+            <language>ENG</language>
+            <!--Optional:-->
+            <paymentMethod>CHECK</paymentMethod>
+            <!--Optional:-->
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+          
+            <!--Optional:-->
+            <mandateIdentification>1234</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>${#TestSuite#currentDate}</mandateDate>
+            <!--Optional:-->
+            <currency>USD</currency>
+            <!--Optional:-->
+            <creditCategory>VIP</creditCategory>
+            <!--Optional:-->
+            <dateStatus>${#TestSuite#currentDate}</dateStatus>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <!--Optional:-->
+            <country>US</country>
+            <!--Optional:-->
+            <electronicBilling>true</electronicBilling>
+         </crmAccountHierarchy>
+      </ws:createOrUpdateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="4b8db718-776c-4e1a-a332-8f8a0d4716dd" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="S_UA" id="d8f32162-8b97-49b9-b7e1-c660c7203d37"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCRMAccountHierarchy</con:operation><con:request name="S_UA" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>S_UA</crmAccountType>
+            <!--Optional:-->
+            <code>${#TestSuite#ticket}_S_UA_${#TestSuite#index}</code>
+            <!--Optional:-->
+            <description>Open Source Billing System</description>
+            <!--Optional:-->
+            <name>
+            	<title>AGCE</title>
+            	<firstName></firstName>
+               <lastName>Organisation Name</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <country>US</country>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>${#TestSuite#ticket}@manaty.net</email>
+               <mobile>+639152154716</mobile>
+            </contactInformation>
+            <!--Optional:-->
+            <language>ENG</language>
+            <!--Optional:-->
+            <paymentMethod>CHECK</paymentMethod>
+            <!--Optional:-->
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+          
+            <!--Optional:-->
+            <mandateIdentification>1234</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>${#TestSuite#currentDate}</mandateDate>
+            <!--Optional:-->
+            <currency>USD</currency>
+            <!--Optional:-->
+            <creditCategory>VIP</creditCategory>
+            <!--Optional:-->
+            <dateStatus>${#TestSuite#currentDate}</dateStatus>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <!--Optional:-->
+            <country>US</country>
+            <!--Optional:-->
+            <electronicBilling>true</electronicBilling>
+         </crmAccountHierarchy>
+      </ws:createOrUpdateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="463f74b5-afd8-4531-85f7-3b12e29f67b9" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="C_UA" id="fc008f05-9da3-4282-842e-0b3a27fca9cd"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCRMAccountHierarchy</con:operation><con:request name="C_UA" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>C_UA</crmAccountType>
+            <!--Optional:-->
+             <crmParentCode>${#TestSuite#ticket}_S_${#TestSuite#index}</crmParentCode>
+            <code>${#TestSuite#ticket}_C_UA_${#TestSuite#index}</code>
+            <!--Optional:-->
+            <description>Open Source Billing System</description>
+            <!--Optional:-->
+            <name>
+            	<title>AGCE</title>
+            	<firstName></firstName>
+               <lastName>Organisation Name</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <country>US</country>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>${#TestSuite#ticket}@manaty.net</email>
+               <mobile>+639152154716</mobile>
+            </contactInformation>
+            <!--Optional:-->
+            <language>ENG</language>
+            <!--Optional:-->
+            <paymentMethod>CHECK</paymentMethod>
+            <!--Optional:-->
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+          
+            <!--Optional:-->
+            <mandateIdentification>1234</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>${#TestSuite#currentDate}</mandateDate>
+            <!--Optional:-->
+            <currency>USD</currency>
+            <!--Optional:-->
+            <creditCategory>VIP</creditCategory>
+            <!--Optional:-->
+            <dateStatus>${#TestSuite#currentDate}</dateStatus>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <!--Optional:-->
+            <country>US</country>
+            <!--Optional:-->
+            <electronicBilling>true</electronicBilling>
+         </crmAccountHierarchy>
+      </ws:createOrUpdateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="509dde9f-931b-4999-9213-468b2a69c83a" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="CA_UA" id="c4d151fc-91d1-4507-99c2-793d53570c08"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCRMAccountHierarchy</con:operation><con:request name="CA_UA" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>CA_UA</crmAccountType>
+            <!--Optional:-->
+             <crmParentCode>${#TestSuite#ticket}_C_${#TestSuite#index}</crmParentCode>
+            <code>${#TestSuite#ticket}_CA_UA_${#TestSuite#index}</code>
+            <!--Optional:-->
+            <description>Open Source Billing System</description>
+            <!--Optional:-->
+            <name>
+            	<title>AGCE</title>
+            	<firstName></firstName>
+               <lastName>Organisation Name</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <country>US</country>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>${#TestSuite#ticket}@manaty.net</email>
+               <mobile>+639152154716</mobile>
+            </contactInformation>
+            <!--Optional:-->
+            <language>ENG</language>
+            <!--Optional:-->
+            <paymentMethod>CHECK</paymentMethod>
+            <!--Optional:-->
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+          
+            <!--Optional:-->
+            <mandateIdentification>1234</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>${#TestSuite#currentDate}</mandateDate>
+            <!--Optional:-->
+            <currency>USD</currency>
+            <!--Optional:-->
+            <creditCategory>VIP</creditCategory>
+            <!--Optional:-->
+            <dateStatus>${#TestSuite#currentDate}</dateStatus>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <!--Optional:-->
+            <country>US</country>
+            <!--Optional:-->
+            <electronicBilling>true</electronicBilling>
+         </crmAccountHierarchy>
+      </ws:createOrUpdateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="bad676b7-ed2f-49ec-afde-93fc474055d7" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="BA_UA" id="317c7e85-0134-4e82-ba6d-ed7b409ca29f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCRMAccountHierarchy</con:operation><con:request name="BA_UA" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>BA_UA</crmAccountType>
+            <!--Optional:-->
+             <crmParentCode>${#TestSuite#ticket}_CA_${#TestSuite#index}</crmParentCode>
+            <code>${#TestSuite#ticket}_UA_${#TestSuite#index}</code>
+            <!--Optional:-->
+            <description>Open Source Billing System</description>
+            <!--Optional:-->
+            <name>
+            	<title>AGCE</title>
+            	<firstName></firstName>
+               <lastName>Organisation Name</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <country>US</country>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>${#TestSuite#ticket}@manaty.net</email>
+               <mobile>+639152154716</mobile>
+            </contactInformation>
+            <!--Optional:-->
+            <language>ENG</language>
+            <!--Optional:-->
+            <paymentMethod>CHECK</paymentMethod>
+            <!--Optional:-->
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+          
+            <!--Optional:-->
+            <mandateIdentification>1234</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>${#TestSuite#currentDate}</mandateDate>
+            <!--Optional:-->
+            <currency>USD</currency>
+            <!--Optional:-->
+            <creditCategory>VIP</creditCategory>
+            <!--Optional:-->
+            <dateStatus>${#TestSuite#currentDate}</dateStatus>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <!--Optional:-->
+            <country>US</country>
+            <!--Optional:-->
+            <electronicBilling>true</electronicBilling>
+         </crmAccountHierarchy>
+      </ws:createOrUpdateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="fa16f4de-6107-4cf1-b449-155f879552c3" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="UA" id="552f514f-befc-490f-a413-11e3faa0bbe0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCRMAccountHierarchy</con:operation><con:request name="UA" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>UA</crmAccountType>
+            <!--Optional:-->
+             <crmParentCode>${#TestSuite#ticket}_BA_${#TestSuite#index}</crmParentCode>
+            <code>${#TestSuite#ticket}_BA_UA_${#TestSuite#index}</code>
+            <!--Optional:-->
+            <description>Open Source Billing System</description>
+            <!--Optional:-->
+            <name>
+            	<title>AGCE</title>
+            	<firstName></firstName>
+               <lastName>Organisation Name</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <country>US</country>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>${#TestSuite#ticket}@manaty.net</email>
+               <mobile>+639152154716</mobile>
+            </contactInformation>
+            <!--Optional:-->
+            <language>ENG</language>
+            <!--Optional:-->
+            <paymentMethod>CHECK</paymentMethod>
+            <!--Optional:-->
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+          
+            <!--Optional:-->
+            <mandateIdentification>1234</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>${#TestSuite#currentDate}</mandateDate>
+            <!--Optional:-->
+            <currency>USD</currency>
+            <!--Optional:-->
+            <creditCategory>VIP</creditCategory>
+            <!--Optional:-->
+            <dateStatus>${#TestSuite#currentDate}</dateStatus>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <!--Optional:-->
+            <country>US</country>
+            <!--Optional:-->
+            <electronicBilling>true</electronicBilling>
+         </crmAccountHierarchy>
+      </ws:createOrUpdateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="45b7a56c-53cf-45cb-89a0-9356a107e13f" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CustomerHierarchyUpdate" searchProperties="true" id="b3220a4a-5742-462a-ab62-b430ac7265dc"><con:settings/><con:testStep type="request" name="customerHierarchyUpdate" id="34cee6bd-a993-4ae1-8006-83de067fc9c6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="customerHierarchyUpdate" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="4b3a7212-d860-4190-a1da-02a8d770dc05"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 	xmlns:ws="http://ws.api.meveo.org/">
 	<soapenv:Header />
 	<soapenv:Body>
@@ -44766,4 +46487,4 @@ public class ${#TestSuite#ticket}BOMCreationScript extends Script {
          </accountHierarchy>
       </ws:findAccountHierarchy>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="df86944b-6754-4a57-980b-6649a8289c8d" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findAccountHierarchy"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1413</con:value></con:property><con:property><con:name>index</con:name><con:value>1</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" outgoingWss="" wssTimeToLive="">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="df86944b-6754-4a57-980b-6649a8289c8d" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findAccountHierarchy"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1413</con:value></con:property><con:property><con:name>index</con:name><con:value>1</con:value></con:property><con:property><con:name>currentDate</con:name><con:value>2016-02-19</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" outgoingWss="" wssTimeToLive="">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
