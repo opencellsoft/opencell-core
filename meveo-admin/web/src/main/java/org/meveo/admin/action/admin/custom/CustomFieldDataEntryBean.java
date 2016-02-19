@@ -170,11 +170,16 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param entity Entity to load action definitions
      * @return A list of actions
      */
-    public List<EntityActionScript> getCustomActions(ICustomFieldEntity entity) {
-        if (!customActions.containsKey(entity.getUuid())) {
-            initCustomActions(entity);
+    public List<EntityActionScript> getCustomActions(IEntity entity) {
+
+        if (!(entity instanceof ICustomFieldEntity)) {
+            return null;
         }
-        return customActions.get(entity.getUuid());
+
+        if (!customActions.containsKey(((ICustomFieldEntity) entity).getUuid())) {
+            initCustomActions((ICustomFieldEntity) entity);
+        }
+        return customActions.get(((ICustomFieldEntity) entity).getUuid());
     }
 
     /**
