@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveocrm.model.dwh.Chart;
 
 /**
  * @author Edward P. Legaspi
@@ -29,6 +30,24 @@ public class ChartDto extends BaseDto {
 	private String styleClass;
 	private String extender;
 	private Boolean visible = false;
+
+	public ChartDto() {
+
+	}
+
+	public ChartDto(Chart e) {
+		code = e.getCode();
+		description = e.getDescription();
+		if (e.getMeasurableQuantity() != null) {
+			measurableQuantityCode = e.getMeasurableQuantity().getCode();
+		}
+		width = e.getWidth();
+		height = e.getHeight();
+		style = e.getStyle();
+		styleClass = e.getStyleClass();
+		extender = e.getExtender();
+		visible = e.isVisible();
+	}
 
 	/**
 	 * Type can be any of: PIE, LINE, BAR

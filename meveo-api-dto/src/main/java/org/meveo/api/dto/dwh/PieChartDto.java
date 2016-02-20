@@ -4,6 +4,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveocrm.model.dwh.Chart;
+import org.meveocrm.model.dwh.PieChart;
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -22,6 +25,25 @@ public class PieChartDto extends ChartDto {
 	private boolean showDataLabels;
 	private int legendCols;
 	private int legendRows;
+
+	public PieChartDto() {
+
+	}
+
+	public PieChartDto(PieChart e) {
+		super((Chart) e);
+		filled = e.isFilled();
+		if (e.getLegendPosition() != null) {
+			legendPosition = e.getLegendPosition().name();
+		}
+		seriesColors = e.getSeriesColors();
+		diameter = e.getDiameter();
+		sliceMargin = e.getSliceMargin();
+		shadow = e.isShadow();
+		showDataLabels = e.isShowDataLabels();
+		legendCols = e.getLegendCols();
+		legendRows = e.getLegendRows();
+	}
 
 	public boolean isFilled() {
 		return filled;

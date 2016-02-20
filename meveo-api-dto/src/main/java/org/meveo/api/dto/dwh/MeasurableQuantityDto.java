@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveocrm.model.dwh.MeasurableQuantity;
 
 /**
  * @author Edward P. Legaspi
@@ -34,6 +35,27 @@ public class MeasurableQuantityDto extends BaseDto {
 	private String sqlQuery;
 	private String measurementPeriod;
 	private Date lastMeasureDate;
+	
+	public MeasurableQuantityDto() {
+		
+	}
+
+	public MeasurableQuantityDto(MeasurableQuantity e) {
+		code = e.getCode();
+		description = e.getDescription();
+		theme = e.getTheme();
+		dimension1 = e.getDimension1();
+		dimension2 = e.getDimension2();
+		dimension3 = e.getDimension3();
+		dimension4 = e.getDimension4();
+		editable = e.isEditable();
+		additive = e.isAdditive();
+		sqlQuery = e.getSqlQuery();
+		if (e.getMeasurementPeriod() != null) {
+			measurementPeriod = e.getMeasurementPeriod().name();
+		}
+		lastMeasureDate = e.getLastMeasureDate();
+	}
 
 	public String getCode() {
 		return code;

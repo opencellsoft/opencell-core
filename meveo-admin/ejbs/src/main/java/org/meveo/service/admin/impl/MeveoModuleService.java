@@ -42,6 +42,10 @@ import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.ScriptInstanceDto;
+import org.meveo.api.dto.dwh.BarChartDto;
+import org.meveo.api.dto.dwh.LineChartDto;
+import org.meveo.api.dto.dwh.MeasurableQuantityDto;
+import org.meveo.api.dto.dwh.PieChartDto;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.dto.module.ModuleDto;
@@ -77,6 +81,13 @@ import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.notification.GenericNotificationService;
 import org.meveo.service.script.EntityActionScriptService;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveocrm.model.dwh.BarChart;
+import org.meveocrm.model.dwh.Chart;
+import org.meveocrm.model.dwh.LineChart;
+import org.meveocrm.model.dwh.MeasurableQuantity;
+import org.meveocrm.model.dwh.PieChart;
+import org.meveocrm.services.dwh.ChartService;
+import org.meveocrm.services.dwh.MeasurableQuantityService;
 
 @Stateless
 public class MeveoModuleService extends BusinessService<MeveoModule> {
@@ -97,6 +108,12 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
     private ScriptInstanceService scriptInstanceService;
     @Inject
     private EntityActionScriptService entityActionScriptService;
+    
+    @Inject
+    private MeasurableQuantityService measurableQuantityService;
+    
+    @Inject
+    private ChartService<? extends Chart> chartService;
 
     /**
      * import module from remote meveo instance
@@ -257,6 +274,29 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
                     moduleDto.getScriptDtos().add(dto);
                 }
                 break;
+			case MEASURABLEQUANTITIES:
+				MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(item.getItemCode(),
+						currentUser.getProvider());
+				if (measurableQuantity != null) {
+					MeasurableQuantityDto measurableQuantityDto = new MeasurableQuantityDto(measurableQuantity);
+					moduleDto.getMeasurableQuantities().add(measurableQuantityDto);
+				}
+				break;
+			case CHART:
+				Chart chart = chartService.findByCode(item.getItemCode(), currentUser.getProvider());
+				if (chart != null) {
+					if (chart instanceof PieChart) {
+						PieChartDto pieChartDto = new PieChartDto((PieChart)chart);
+						moduleDto.getCharts().add(pieChartDto);
+					} else if (chart instanceof BarChart) {
+						BarChartDto barChartDto = new BarChartDto((BarChart)chart);
+						moduleDto.getCharts().add(barChartDto);
+					} else if (chart instanceof LineChart) {
+						LineChartDto lineChartDto = new LineChartDto((LineChart)chart);
+						moduleDto.getCharts().add(lineChartDto);
+					}
+				}
+				break;
             default:
             }
         }
