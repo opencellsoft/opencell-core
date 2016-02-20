@@ -12,9 +12,6 @@ import javax.persistence.Table;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_CHART_BAR_SEQ")
 public class BarChart extends Chart {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3247705449113663454L;
 
 	@Enumerated(EnumType.STRING)

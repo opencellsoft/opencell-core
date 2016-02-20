@@ -77,13 +77,13 @@ public class CustomEntityApi extends BaseApi {
 
         if (dto.getFields() != null) {
             for (CustomFieldTemplateDto cftDto : dto.getFields()) {
-                customFieldTemplateApi.create(cftDto, cet.getCftPrefix(), currentUser);
+                customFieldTemplateApi.createOrUpdate(cftDto, cet.getCftPrefix(), currentUser);
             }
         }
 
         if (dto.getActions() != null) {
             for (EntityActionScriptDto actionDto : dto.getActions()) {
-                scriptInstanceApi.create(actionDto, cet.getCftPrefix(), currentUser);
+                scriptInstanceApi.createOrUpdate(actionDto, cet.getCftPrefix(), currentUser);
             }
         }
     }

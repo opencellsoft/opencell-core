@@ -64,9 +64,9 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      */
     @SuppressWarnings("unchecked")
     public Map<String, CustomFieldTemplate> findByAppliesTo(String appliesTo, Provider provider) {
-        
+
         // Handles cases when creating a new provider
-        if (provider.isTransient()) {
+        if (provider.getId() == null) {
             return new HashMap<String, CustomFieldTemplate>();
         }
 
@@ -104,7 +104,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     /**
-     * Find a specific custom field template by a code
+     * Find a specific custom field template by a code - do a lookup in cache if it is enabled
      * 
      * @param code Custom field template code
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
@@ -117,14 +117,27 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         if (useCache) {
             return customFieldsCache.getCustomFieldTemplate(code, appliesTo, provider);
         } else {
-            QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, provider);
-            qb.addCriterion("code", "=", code, true);
-            qb.addCriterion("appliesTo", "=", appliesTo, true);
-            try {
-                return (CustomFieldTemplate) qb.getQuery(getEntityManager()).getSingleResult();
-            } catch (NoResultException e) {
-                return null;
-            }
+            return findByCodeAndAppliesToNoCache(code, appliesTo, provider);
+        }
+    }
+
+    /**
+     * Find a specific custom field template by a code bypassing cache - always do a lookup in DB
+     * 
+     * @param code Custom field template code
+     * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
+     * @param provider Provider
+     * @return Custom field template
+     */
+    public CustomFieldTemplate findByCodeAndAppliesToNoCache(String code, String appliesTo, Provider provider) {
+
+        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, provider);
+        qb.addCriterion("code", "=", code, true);
+        qb.addCriterion("appliesTo", "=", appliesTo, true);
+        try {
+            return (CustomFieldTemplate) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         }
     }
 
@@ -136,6 +149,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     @Override
     public CustomFieldTemplate update(CustomFieldTemplate cft, User updater) {
+
         CustomFieldTemplate cftUpdated = super.update(cft, updater);
         customFieldsCache.addUpdateCustomFieldTemplate(cftUpdated);
 

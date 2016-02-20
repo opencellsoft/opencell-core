@@ -7,8 +7,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.BaseDto;
 import org.meveocrm.model.dwh.MeasurableQuantity;
+import org.meveocrm.model.dwh.MeasurementPeriodEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -17,148 +19,151 @@ import org.meveocrm.model.dwh.MeasurableQuantity;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MeasurableQuantityDto extends BaseDto {
 
-	private static final long serialVersionUID = 2678416518718451635L;
+    private static final long serialVersionUID = 2678416518718451635L;
 
-	@XmlAttribute
-	private String code;
+    @XmlAttribute(required = true)
+    private String code;
 
-	@XmlAttribute
-	private String description;
+    @XmlAttribute
+    private String description;
 
-	private String theme;
-	private String dimension1;
-	private String dimension2;
-	private String dimension3;
-	private String dimension4;
-	private boolean editable;
-	private boolean additive;
-	private String sqlQuery;
-	private String measurementPeriod;
-	private Date lastMeasureDate;
-	
-	public MeasurableQuantityDto() {
-		
-	}
+    private String theme;
+    private String dimension1;
+    private String dimension2;
+    private String dimension3;
+    private String dimension4;
+    private boolean editable;
+    private boolean additive;
+    private String sqlQuery;
+    private MeasurementPeriodEnum measurementPeriod;
+    private Date lastMeasureDate;
 
-	public MeasurableQuantityDto(MeasurableQuantity e) {
-		code = e.getCode();
-		description = e.getDescription();
-		theme = e.getTheme();
-		dimension1 = e.getDimension1();
-		dimension2 = e.getDimension2();
-		dimension3 = e.getDimension3();
-		dimension4 = e.getDimension4();
-		editable = e.isEditable();
-		additive = e.isAdditive();
-		sqlQuery = e.getSqlQuery();
-		if (e.getMeasurementPeriod() != null) {
-			measurementPeriod = e.getMeasurementPeriod().name();
-		}
-		lastMeasureDate = e.getLastMeasureDate();
-	}
+    public boolean isCodeOnly() {
+        return StringUtils.isBlank(description) && StringUtils.isBlank(theme) && StringUtils.isBlank(dimension1) && StringUtils.isBlank(dimension2)
+                && StringUtils.isBlank(dimension3) && StringUtils.isBlank(dimension4) && StringUtils.isBlank(sqlQuery) && measurementPeriod == null && lastMeasureDate == null;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public MeasurableQuantityDto() {
+        super();
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public MeasurableQuantityDto(MeasurableQuantity mq) {
+        super();
+        setCode(mq.getCode());
+        setDescription(mq.getDescription());
+        setTheme(mq.getTheme());
+        setDimension1(mq.getDimension1());
+        setDimension2(mq.getDimension2());
+        setDimension3(mq.getDimension3());
+        setDimension4(mq.getDimension4());
+        setEditable(mq.isEditable());
+        setAdditive(mq.isAdditive());
+        setSqlQuery(mq.getSqlQuery());
+        setMeasurementPeriod(mq.getMeasurementPeriod());
+        setLastMeasureDate(mq.getLastMeasureDate());
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getTheme() {
-		return theme;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setTheme(String theme) {
-		this.theme = theme;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getDimension1() {
-		return dimension1;
-	}
+    public String getTheme() {
+        return theme;
+    }
 
-	public void setDimension1(String dimension1) {
-		this.dimension1 = dimension1;
-	}
+    public void setTheme(String theme) {
+        this.theme = theme;
+    }
 
-	public String getDimension2() {
-		return dimension2;
-	}
+    public String getDimension1() {
+        return dimension1;
+    }
 
-	public void setDimension2(String dimension2) {
-		this.dimension2 = dimension2;
-	}
+    public void setDimension1(String dimension1) {
+        this.dimension1 = dimension1;
+    }
 
-	public String getDimension3() {
-		return dimension3;
-	}
+    public String getDimension2() {
+        return dimension2;
+    }
 
-	public void setDimension3(String dimension3) {
-		this.dimension3 = dimension3;
-	}
+    public void setDimension2(String dimension2) {
+        this.dimension2 = dimension2;
+    }
 
-	public String getDimension4() {
-		return dimension4;
-	}
+    public String getDimension3() {
+        return dimension3;
+    }
 
-	public void setDimension4(String dimension4) {
-		this.dimension4 = dimension4;
-	}
+    public void setDimension3(String dimension3) {
+        this.dimension3 = dimension3;
+    }
 
-	public boolean isEditable() {
-		return editable;
-	}
+    public String getDimension4() {
+        return dimension4;
+    }
 
-	public void setEditable(boolean editable) {
-		this.editable = editable;
-	}
+    public void setDimension4(String dimension4) {
+        this.dimension4 = dimension4;
+    }
 
-	public boolean isAdditive() {
-		return additive;
-	}
+    public boolean isEditable() {
+        return editable;
+    }
 
-	public void setAdditive(boolean additive) {
-		this.additive = additive;
-	}
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
 
-	public String getSqlQuery() {
-		return sqlQuery;
-	}
+    public boolean isAdditive() {
+        return additive;
+    }
 
-	public void setSqlQuery(String sqlQuery) {
-		this.sqlQuery = sqlQuery;
-	}
+    public void setAdditive(boolean additive) {
+        this.additive = additive;
+    }
 
-	public String getMeasurementPeriod() {
-		return measurementPeriod;
-	}
+    public String getSqlQuery() {
+        return sqlQuery;
+    }
 
-	public void setMeasurementPeriod(String measurementPeriod) {
-		this.measurementPeriod = measurementPeriod;
-	}
+    public void setSqlQuery(String sqlQuery) {
+        this.sqlQuery = sqlQuery;
+    }
 
-	public Date getLastMeasureDate() {
-		return lastMeasureDate;
-	}
+    public MeasurementPeriodEnum getMeasurementPeriod() {
+        return measurementPeriod;
+    }
 
-	public void setLastMeasureDate(Date lastMeasureDate) {
-		this.lastMeasureDate = lastMeasureDate;
-	}
+    public void setMeasurementPeriod(MeasurementPeriodEnum measurementPeriod) {
+        this.measurementPeriod = measurementPeriod;
+    }
 
-	@Override
-	public String toString() {
-		return "MeasurableQuantityDto [code=" + code + ", description=" + description + ", theme=" + theme
-				+ ", dimension1=" + dimension1 + ", dimension2=" + dimension2 + ", dimension3=" + dimension3
-				+ ", dimension4=" + dimension4 + ", editable=" + editable + ", additive=" + additive + ", sqlQuery="
-				+ sqlQuery + ", measurementPeriod=" + measurementPeriod + ", lastMeasureDate=" + lastMeasureDate + "]";
-	}
+    public Date getLastMeasureDate() {
+        return lastMeasureDate;
+    }
 
+    public void setLastMeasureDate(Date lastMeasureDate) {
+        this.lastMeasureDate = lastMeasureDate;
+    }
+
+    @Override
+    public String toString() {
+        return String
+            .format(
+                "MeasurableQuantityDto [code=%s, description=%s, theme=%s, dimension1=%s, dimension2=%s, dimension3=%s, dimension4=%s, editable=%s, additive=%s, sqlQuery=%s, measurementPeriod=%s, lastMeasureDate=%s]",
+                code, description, theme, dimension1, dimension2, dimension3, dimension4, editable, additive, sqlQuery, measurementPeriod, lastMeasureDate);
+    }
 }

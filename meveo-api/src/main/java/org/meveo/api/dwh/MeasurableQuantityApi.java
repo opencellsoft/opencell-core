@@ -1,68 +1,144 @@
 package org.meveo.api.dwh;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.dwh.MeasurableQuantityDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveocrm.model.dwh.MeasurableQuantity;
-import org.meveocrm.model.dwh.MeasurementPeriodEnum;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 
 /**
- * @author Edward P. Legaspi
+ * @author Andrius Karpavicius
  **/
 @Stateless
 public class MeasurableQuantityApi extends BaseApi {
 
-	@Inject
-	private MeasurableQuantityService measurableQuantityService;
+    @Inject
+    private MeasurableQuantityService measurableQuantityService;
 
-	public void create(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())) {
-			if (measurableQuantityService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
-				throw new EntityAlreadyExistsException(MeasurableQuantity.class, postData.getCode());
-			}
+    public void create(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException {
 
-			MeasurableQuantity measurableQuantity = new MeasurableQuantity();
-			measurableQuantity.setCode(postData.getCode());
-			measurableQuantity.setAdditive(postData.isAdditive());
-			measurableQuantity.setDescription(postData.getDescription());
-			measurableQuantity.setDimension1(postData.getDimension1());
-			measurableQuantity.setDimension2(postData.getDimension2());
-			measurableQuantity.setDimension3(postData.getDimension3());
-			measurableQuantity.setDimension4(postData.getDimension4());
-			measurableQuantity.setLastMeasureDate(postData.getLastMeasureDate());
-			try {
-				measurableQuantity.setMeasurementPeriod(MeasurementPeriodEnum.valueOf(postData.getMeasurementPeriod()));
-			} catch (IllegalArgumentException e) {
-				log.warn("Invalid enum {} for value={}", MeasurementPeriodEnum.class, postData.getMeasurementPeriod());
-			}
-			measurableQuantity.setSqlQuery(postData.getSqlQuery());
-			measurableQuantity.setTheme(postData.getTheme());
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			measurableQuantityService.create(measurableQuantity, currentUser, currentUser.getProvider());
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+        if (measurableQuantityService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+            throw new EntityAlreadyExistsException(MeasurableQuantity.class, postData.getCode());
+        }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
+        MeasurableQuantity measurableQuantity = fromDTO(postData, currentUser, null);
+        measurableQuantityService.create(measurableQuantity, currentUser, currentUser.getProvider());
 
-	public MeasurableQuantityDto find(String itemCode, User currentUser) {
-		MeasurableQuantityDto result = new MeasurableQuantityDto();
+    }
 
-		// TODO Manu: populate dto
+    private void update(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("measurableQuantityCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-		return result;
-	}
+        MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(postData.getCode(), currentUser.getProvider());
+        if (measurableQuantity == null) {
+            throw new EntityDoesNotExistsException(MeasurableQuantity.class, postData.getCode());
+        }
 
-	// TODO Manu - create remaining rud + list operations
+        measurableQuantity = fromDTO(postData, currentUser, measurableQuantity);
+        measurableQuantityService.update(measurableQuantity, currentUser);
+
+    }
+
+    public MeasurableQuantityDto find(String measurableQuantityCode, User currentUser) throws MeveoApiException {
+
+        if (StringUtils.isBlank(measurableQuantityCode)) {
+            missingParameters.add("measurableQuantityCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(measurableQuantityCode, currentUser.getProvider());
+        if (measurableQuantity == null) {
+            throw new EntityDoesNotExistsException(MeasurableQuantity.class, measurableQuantityCode);
+        }
+
+        MeasurableQuantityDto result = new MeasurableQuantityDto(measurableQuantity);
+
+        return result;
+    }
+
+    public void remove(String measurableQuantityCode, User currentUser) throws MeveoApiException {
+
+        if (StringUtils.isBlank(measurableQuantityCode)) {
+            missingParameters.add("measurableQuantityCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(measurableQuantityCode, currentUser.getProvider());
+        if (measurableQuantity == null) {
+            throw new EntityDoesNotExistsException(MeasurableQuantity.class, measurableQuantityCode);
+        }
+
+        measurableQuantityService.remove(measurableQuantity);
+    }
+
+    public void createOrUpdate(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException {
+        MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(postData.getCode(), currentUser.getProvider());
+        if (measurableQuantity == null) {
+            // create
+            create(postData, currentUser);
+        } else {
+            // update
+            update(postData, currentUser);
+        }
+    }
+
+    public List<MeasurableQuantityDto> list(String measurableQuantityCode, User currentUser) {
+
+        List<MeasurableQuantity> measurableQuantities = null;
+        if (StringUtils.isBlank(measurableQuantityCode)) {
+            measurableQuantities = measurableQuantityService.list(currentUser.getProvider());
+        } else {
+            measurableQuantities = measurableQuantityService.findByCodeLike(measurableQuantityCode, currentUser.getProvider());
+        }
+
+        List<MeasurableQuantityDto> measurableQuantityDtos = new ArrayList<MeasurableQuantityDto>();
+
+        for (MeasurableQuantity measurableQuantity : measurableQuantities) {
+            measurableQuantityDtos.add(new MeasurableQuantityDto(measurableQuantity));
+        }
+
+        return measurableQuantityDtos;
+    }
+
+    private MeasurableQuantity fromDTO(MeasurableQuantityDto dto, User currentUser, MeasurableQuantity mqToUpdate) {
+
+        MeasurableQuantity mq = new MeasurableQuantity();
+        if (mqToUpdate != null) {
+            mq = mqToUpdate;
+        }
+
+        mq.setCode(dto.getCode());
+        mq.setDescription(dto.getDescription());
+        mq.setTheme(dto.getTheme());
+        mq.setDimension1(dto.getDimension1());
+        mq.setDimension2(dto.getDimension2());
+        mq.setDimension3(dto.getDimension3());
+        mq.setDimension4(dto.getDimension4());
+        mq.setEditable(dto.isEditable());
+        mq.setAdditive(dto.isAdditive());
+        mq.setSqlQuery(dto.getSqlQuery());
+        mq.setMeasurementPeriod(dto.getMeasurementPeriod());
+        mq.setLastMeasureDate(dto.getLastMeasureDate());
+
+        return mq;
+    }
 }

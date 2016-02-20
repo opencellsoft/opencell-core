@@ -467,10 +467,10 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
             log.debug("export module {} to remote instance {}", entity.getCode(), meveoInstance.getCode());
             try {
                 meveoModuleService.publishModule2MeveoInstance(entity, meveoInstance, this.currentUser);
-                messages.info(new BundleKey("messages", "meveoModule.exportSuccess"), entity.getCode(), meveoInstance.getCode());
+                messages.info(new BundleKey("messages", "meveoModule.publishSuccess"), entity.getCode(), meveoInstance.getCode());
             } catch (Exception e) {
                 log.error("Error when export module {} to {}", entity.getCode(), meveoInstance, e);
-                messages.error(new BundleKey("messages", "meveoModule.exportFailed"), entity.getCode(), meveoInstance.getCode(), (e.getMessage() == null ? e.getClass()
+                messages.error(new BundleKey("messages", "meveoModule.publishFailed"), entity.getCode(), meveoInstance.getCode(), (e.getMessage() == null ? e.getClass()
                     .getSimpleName() : e.getMessage()));
             }
         }

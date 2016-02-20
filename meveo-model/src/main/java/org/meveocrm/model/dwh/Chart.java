@@ -19,118 +19,112 @@ import org.meveo.model.security.Role;
 
 @Entity
 @ExportIdentifier({ "code", "provider" })
-@Table(name = "DWH_CHART", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"CODE", "PROVIDER_ID" }))
+@Table(name = "DWH_CHART", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_RUN_SEQ")
 public class Chart extends BusinessEntity {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7127515648757614672L;
+    private static final long serialVersionUID = 7127515648757614672L;
 
-	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ROLE_ID")
+    Role role;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ROLE_ID")
-	Role role;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MSR_QTY_ID")
+    MeasurableQuantity measurableQuantity;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "MSR_QTY_ID")
-	MeasurableQuantity measurableQuantity;
+    @Column(name = "WIDTH", length = 10)
+    String width = "500px";
 
-	@Column(name="WIDTH", length = 10)
-	String width = "500px";
+    @Column(name = "HEIGHT", length = 10)
+    String height = "300px";
 
-	@Column(name="HEIGHT", length = 10)
-	String height = "300px";
-	
-	@Column(name = "CSS_STYLE", length = 1000)
-	String style;
+    @Column(name = "CSS_STYLE", length = 1000)
+    String style;
 
-	@Column(name = "CSS_STYLE_CLASS")
-	String styleClass;
+    @Column(name = "CSS_STYLE_CLASS")
+    String styleClass;
 
-	@Column(name = "EXTENDER")
-	String extender;
+    @Column(name = "EXTENDER")
+    String extender;
 
-	@Column(name = "VISIBLE")
-	Boolean visible = false;
-	
-	@Transient
-	private User user;
-	
-	public User getUser() {
-		return user;
-	}
+    @Column(name = "VISIBLE")
+    Boolean visible = false;
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+    @Transient
+    private User user;
 
-	public Role getRole() {
-		return role;
-	}
+    public User getUser() {
+        return user;
+    }
 
-	public void setRole(Role role) {
-		this.role = role;
-	}
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-	public MeasurableQuantity getMeasurableQuantity() {
-		return measurableQuantity;
-	}
+    public Role getRole() {
+        return role;
+    }
 
-	public void setMeasurableQuantity(MeasurableQuantity measurableQuantity) {
-		this.measurableQuantity = measurableQuantity;
-	}
+    public void setRole(Role role) {
+        this.role = role;
+    }
 
-	public String getWidth() {
-		return width;
-	}
+    public MeasurableQuantity getMeasurableQuantity() {
+        return measurableQuantity;
+    }
 
-	public void setWidth(String width) {
-		this.width = width;
-	}
+    public void setMeasurableQuantity(MeasurableQuantity measurableQuantity) {
+        this.measurableQuantity = measurableQuantity;
+    }
 
-	public String getHeight() {
-		return height;
-	}
+    public String getWidth() {
+        return width;
+    }
 
-	public void setHeight(String height) {
-		this.height = height;
-	}
+    public void setWidth(String width) {
+        this.width = width;
+    }
 
-	public String getStyle() {
-		return style;
-	}
+    public String getHeight() {
+        return height;
+    }
 
-	public void setStyle(String style) {
-		this.style = style;
-	}
+    public void setHeight(String height) {
+        this.height = height;
+    }
 
-	public String getStyleClass() {
-		return styleClass;
-	}
+    public String getStyle() {
+        return style;
+    }
 
-	public void setStyleClass(String styleClass) {
-		this.styleClass = styleClass;
-	}
+    public void setStyle(String style) {
+        this.style = style;
+    }
 
-	public String getExtender() {
-		return extender;
-	}
+    public String getStyleClass() {
+        return styleClass;
+    }
 
-	public void setExtender(String extender) {
-		this.extender = extender;
-	}
+    public void setStyleClass(String styleClass) {
+        this.styleClass = styleClass;
+    }
 
-	public boolean isVisible() {
-		return visible;
-	}
+    public String getExtender() {
+        return extender;
+    }
 
-	public void setVisible(boolean isVisible) {
-		this.visible = isVisible;
-	}
+    public void setExtender(String extender) {
+        this.extender = extender;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean isVisible) {
+        this.visible = isVisible;
+    }
 
 }

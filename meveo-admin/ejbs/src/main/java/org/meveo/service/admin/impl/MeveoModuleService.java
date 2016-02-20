@@ -108,10 +108,8 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
     private ScriptInstanceService scriptInstanceService;
     @Inject
     private EntityActionScriptService entityActionScriptService;
-    
     @Inject
     private MeasurableQuantityService measurableQuantityService;
-    
     @Inject
     private ChartService<? extends Chart> chartService;
 
@@ -274,30 +272,31 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
                     moduleDto.getScriptDtos().add(dto);
                 }
                 break;
-			case MEASURABLEQUANTITIES:
-				MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(item.getItemCode(),
-						currentUser.getProvider());
-				if (measurableQuantity != null) {
-					MeasurableQuantityDto measurableQuantityDto = new MeasurableQuantityDto(measurableQuantity);
-					moduleDto.getMeasurableQuantities().add(measurableQuantityDto);
-				}
-				break;
-			case CHART:
-				Chart chart = chartService.findByCode(item.getItemCode(), currentUser.getProvider());
-				if (chart != null) {
-					if (chart instanceof PieChart) {
-						PieChartDto pieChartDto = new PieChartDto((PieChart)chart);
-						moduleDto.getCharts().add(pieChartDto);
-					} else if (chart instanceof BarChart) {
-						BarChartDto barChartDto = new BarChartDto((BarChart)chart);
-						moduleDto.getCharts().add(barChartDto);
-					} else if (chart instanceof LineChart) {
-						LineChartDto lineChartDto = new LineChartDto((LineChart)chart);
-						moduleDto.getCharts().add(lineChartDto);
-					}
-				}
-				break;
-            default:
+            case CHART:
+                Chart chart = chartService.findByCode(item.getItemCode(), getCurrentProvider());
+                if (chart != null) {
+                    if (chart instanceof PieChart) {
+                        moduleDto.getCharts().add(new PieChartDto((PieChart) chart));
+                    } else if (chart instanceof LineChart) {
+                        moduleDto.getCharts().add(new LineChartDto((LineChart) chart));
+                    } else if (chart instanceof BarChart) {
+                        moduleDto.getCharts().add(new BarChartDto((BarChart) chart));
+                    }
+                }
+                break;
+            case MEASURABLEQUANTITIES:
+                MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(item.getItemCode(), getCurrentProvider());
+                if (measurableQuantity != null) {
+                    MeasurableQuantityDto dto = new MeasurableQuantityDto(measurableQuantity);
+                    moduleDto.getMeasurableQuantities().add(dto);
+                }
+                break;
+            case SUBMODULE:
+                MeveoModule subModule = this.findByCode(item.getItemCode(), getCurrentProvider());
+                if (subModule != null) {
+                    moduleDto.getSubModules().add(moduleToDto(subModule, currentUser));
+                }
+                break;
             }
         }
         return moduleDto;

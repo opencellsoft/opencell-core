@@ -15,130 +15,114 @@ import org.meveocrm.model.dwh.Chart;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChartDto extends BaseDto {
 
-	private static final long serialVersionUID = 2573963792647472501L;
+    private static final long serialVersionUID = 2573963792647472501L;
 
-	@XmlAttribute
-	private String code;
+    @XmlAttribute
+    private String code;
 
-	@XmlAttribute
-	private String description;
+    @XmlAttribute
+    private String description;
 
-	private String measurableQuantityCode;
-	private String width = "500px";
-	private String height = "300px";
-	private String style;
-	private String styleClass;
-	private String extender;
-	private Boolean visible = false;
+    private MeasurableQuantityDto measurableQuantity;
+    private String width = "500px";
+    private String height = "300px";
+    private String style;
+    private String styleClass;
+    private String extender;
+    private Boolean visible = false;
 
-	public ChartDto() {
+    public ChartDto() {
+        super();
+    }
 
-	}
+    public ChartDto(Chart chart) {
+        super();
+        setCode(chart.getCode());
+        setDescription(chart.getDescription());
+        setMeasurableQuantity(new MeasurableQuantityDto(chart.getMeasurableQuantity()));
+        setWidth(chart.getWidth());
+        setHeight(chart.getHeight());
+        setStyle(chart.getStyle());
+        setStyleClass(chart.getStyleClass());
+        setExtender(chart.getExtender());
+        setVisible(chart.isVisible());
+    }
 
-	public ChartDto(Chart e) {
-		code = e.getCode();
-		description = e.getDescription();
-		if (e.getMeasurableQuantity() != null) {
-			measurableQuantityCode = e.getMeasurableQuantity().getCode();
-		}
-		width = e.getWidth();
-		height = e.getHeight();
-		style = e.getStyle();
-		styleClass = e.getStyleClass();
-		extender = e.getExtender();
-		visible = e.isVisible();
-	}
+    public MeasurableQuantityDto getMeasurableQuantity() {
+        return measurableQuantity;
+    }
 
-	/**
-	 * Type can be any of: PIE, LINE, BAR
-	 */
-	private String chartType;
+    public void setMeasurableQuantity(MeasurableQuantityDto measurableQuantity) {
+        this.measurableQuantity = measurableQuantity;
+    }
 
-	public String getMeasurableQuantityCode() {
-		return measurableQuantityCode;
-	}
+    public String getWidth() {
+        return width;
+    }
 
-	public void setMeasurableQuantityCode(String measurableQuantityCode) {
-		this.measurableQuantityCode = measurableQuantityCode;
-	}
+    public void setWidth(String width) {
+        this.width = width;
+    }
 
-	public String getWidth() {
-		return width;
-	}
+    public String getHeight() {
+        return height;
+    }
 
-	public void setWidth(String width) {
-		this.width = width;
-	}
+    public void setHeight(String height) {
+        this.height = height;
+    }
 
-	public String getHeight() {
-		return height;
-	}
+    public String getStyle() {
+        return style;
+    }
 
-	public void setHeight(String height) {
-		this.height = height;
-	}
+    public void setStyle(String style) {
+        this.style = style;
+    }
 
-	public String getStyle() {
-		return style;
-	}
+    public String getStyleClass() {
+        return styleClass;
+    }
 
-	public void setStyle(String style) {
-		this.style = style;
-	}
+    public void setStyleClass(String styleClass) {
+        this.styleClass = styleClass;
+    }
 
-	public String getStyleClass() {
-		return styleClass;
-	}
+    public String getExtender() {
+        return extender;
+    }
 
-	public void setStyleClass(String styleClass) {
-		this.styleClass = styleClass;
-	}
+    public void setExtender(String extender) {
+        this.extender = extender;
+    }
 
-	public String getExtender() {
-		return extender;
-	}
+    public Boolean getVisible() {
+        return visible;
+    }
 
-	public void setExtender(String extender) {
-		this.extender = extender;
-	}
+    public void setVisible(Boolean visible) {
+        this.visible = visible;
+    }
 
-	public Boolean getVisible() {
-		return visible;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setVisible(Boolean visible) {
-		this.visible = visible;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	@Override
-	public String toString() {
-		return "ChartDto [code=" + code + ", description=" + description + ", measurableQuantityCode="
-				+ measurableQuantityCode + ", width=" + width + ", height=" + height + ", style=" + style
-				+ ", styleClass=" + styleClass + ", extender=" + extender + ", visible=" + visible + "]";
-	}
-
-	public String getChartType() {
-		return chartType;
-	}
-
-	public void setChartType(String chartType) {
-		this.chartType = chartType;
-	}
-
+    @Override
+    public String toString() {
+        return String.format("ChartDto [code=%s, description=%s, measurableQuantityDto=%s, width=%s, height=%s, style=%s, styleClass=%s, extender=%s, visible=%s]", code,
+            description, measurableQuantity, width, height, style, styleClass, extender, visible);
+    }
 }

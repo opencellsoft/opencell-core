@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.admin.User;
@@ -43,10 +42,10 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (appliesTo == null && StringUtils.isBlank(postData.getAccountLevel()) && StringUtils.isBlank(postData.getAppliesTo())) {
             missingParameters.add("appliesTo");
         }
-        if (StringUtils.isBlank(postData.getFieldType())) {
+        if (postData.getFieldType() == null) {
             missingParameters.add("fieldType");
         }
-        if (StringUtils.isBlank(postData.getStorageType())) {
+        if (postData.getStorageType() == null) {
             missingParameters.add("storageType");
         }
 
@@ -67,7 +66,7 @@ public class CustomFieldTemplateApi extends BaseApi {
             }
         }
 
-        if (customFieldTemplateService.findByCodeAndAppliesTo(postData.getCode(), appliesTo, currentUser.getProvider()) != null) {
+        if (customFieldTemplateService.findByCodeAndAppliesToNoCache(postData.getCode(), appliesTo, currentUser.getProvider()) != null) {
             throw new EntityAlreadyExistsException(CustomFieldTemplate.class, postData.getCode());
         }
 
@@ -87,10 +86,10 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (appliesTo == null && StringUtils.isBlank(postData.getAccountLevel()) && StringUtils.isBlank(postData.getAppliesTo())) {
             missingParameters.add("appliesTo");
         }
-        if (StringUtils.isBlank(postData.getFieldType())) {
+        if (postData.getFieldType() == null) {
             missingParameters.add("fieldType");
         }
-        if (StringUtils.isBlank(postData.getStorageType())) {
+        if (postData.getStorageType() == null) {
             missingParameters.add("storageType");
         }
 
@@ -110,12 +109,13 @@ public class CustomFieldTemplateApi extends BaseApi {
             }
         }
 
-        CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(postData.getCode(), appliesTo, currentUser.getProvider());
+        CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesToNoCache(postData.getCode(), appliesTo, currentUser.getProvider());
         if (cft == null) {
             throw new EntityDoesNotExistsException(CustomFieldTemplate.class, postData.getCode());
         }
 
         cft = fromDTO(postData, currentUser, appliesTo, cft);
+
         customFieldTemplateService.update(cft, currentUser);
 
     }
@@ -183,7 +183,8 @@ public class CustomFieldTemplateApi extends BaseApi {
             }
         }
 
-        CustomFieldTemplate customFieldTemplate = customFieldTemplateService.findByCodeAndAppliesTo(postData.getCode(), appliesTo, currentUser.getProvider());
+        CustomFieldTemplate customFieldTemplate = customFieldTemplateService.findByCodeAndAppliesToNoCache(postData.getCode(), appliesTo, currentUser.getProvider());
+        
         if (customFieldTemplate == null) {
             create(postData, appliesTo, currentUser);
         } else {
@@ -191,7 +192,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
     }
 
-    protected CustomFieldTemplate fromDTO(CustomFieldTemplateDto dto, User currentUser, String appliesTo, CustomFieldTemplate cftToUpdate) throws InvalidEnumValueException {
+    protected CustomFieldTemplate fromDTO(CustomFieldTemplateDto dto, User currentUser, String appliesTo, CustomFieldTemplate cftToUpdate) {
 
         // Set default values
         if (CustomFieldTypeEnum.STRING.name().equals(dto.getFieldType()) && dto.getMaxValue() == null) {
@@ -214,19 +215,9 @@ public class CustomFieldTemplateApi extends BaseApi {
             }
         }
         cft.setAppliesTo(appliesTo);
-
-        try {
-            cft.setFieldType(CustomFieldTypeEnum.valueOf(dto.getFieldType()));
-        } catch (IllegalArgumentException e) {
-            throw new InvalidEnumValueException(CustomFieldTypeEnum.class.getName(), dto.getFieldType());
-        }
-
+        cft.setFieldType(dto.getFieldType());
         cft.setDefaultValue(dto.getDefaultValue());
-        try {
-            cft.setStorageType(CustomFieldStorageTypeEnum.valueOf(dto.getStorageType()));
-        } catch (IllegalArgumentException e) {
-            throw new InvalidEnumValueException(CustomFieldStorageTypeEnum.class.getName(), dto.getStorageType());
-        }
+        cft.setStorageType(dto.getStorageType());
         cft.setValueRequired(dto.isValueRequired());
         cft.setVersionable(dto.isVersionable());
         cft.setTriggerEndPeriodEvent(dto.isTriggerEndPeriodEvent());
@@ -245,15 +236,8 @@ public class CustomFieldTemplateApi extends BaseApi {
             cft.setListValues(dto.getListValues());
         }
 
-        if (dto.getMapKeyType() != null) {
-            try {
-                cft.setMapKeyType(CustomFieldMapKeyEnum.valueOf(dto.getMapKeyType()));
-            } catch (IllegalArgumentException e) {
-                throw new InvalidEnumValueException(CustomFieldMapKeyEnum.class.getName(), dto.getMapKeyType());
-            }
-        } else {
-            cft.setMapKeyType(null);
-        }
+        cft.setMapKeyType(dto.getMapKeyType());
+
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP && cft.getMapKeyType() == null) {
             cft.setMapKeyType(CustomFieldMapKeyEnum.STRING);
         }

@@ -217,66 +217,71 @@ public class ModuleApi extends BaseApi {
         if (items != null && items.size() > 0) {
             Provider provider = currentUser.getProvider();
             for (MeveoModuleItem item : items) {
-                switch (item.getItemType()) {
-                case CET:
-                    CustomEntityTemplateDto cetDto = customEntityApi.findEntityTemplate(item.getItemCode(), currentUser);
-                    moduleDto.getCetDtos().add(cetDto);
-                    break;
-                case CFT:
-                    CustomFieldTemplateDto cftDto = customFieldTemplateApi.find(item.getItemCode(), item.getAppliesTo(), provider);
-                    moduleDto.getCftDtos().add(cftDto);
-                    break;
-                case FILTER:
-                    FilterDto filterDto = filterApi.findFilter(item.getItemCode(), provider);
-                    moduleDto.getFilterDtos().add(filterDto);
-                    break;
-                case SCRIPT:
-                    ScriptInstanceDto scriptDto = scriptInstanceApi.findScriptInstance(item.getItemCode(), currentUser);
-                    moduleDto.getScriptDtos().add(scriptDto);
-                    break;
-                case JOBINSTANCE:
-                    moduleDto = getJobInstanceDto(item.getItemCode(), currentUser, moduleDto);
-                    break;
-                case NOTIFICATION:
-                    Notification notification = genericNotificationService.findByCode(item.getItemCode(), provider);
-                    if (notification != null) {
-                        if (notification instanceof ScriptNotification) {
-                            NotificationDto notificationDto = notificationApi.find(item.getItemCode(), provider);
-                            moduleDto.getNotificationDtos().add(notificationDto);
-                            if (!StringUtils.isBlank(notificationDto.getScriptInstanceCode())) {
-                                ScriptInstanceDto scriptInstanceDto = scriptInstanceApi.findScriptInstance(notificationDto.getScriptInstanceCode(), currentUser);
-                                moduleDto.getScriptDtos().add(scriptInstanceDto);
+                try {
+                    switch (item.getItemType()) {
+                    case CET:
+                        CustomEntityTemplateDto cetDto = customEntityApi.findEntityTemplate(item.getItemCode(), currentUser);
+                        moduleDto.getCetDtos().add(cetDto);
+                        break;
+                    case CFT:
+                        CustomFieldTemplateDto cftDto = customFieldTemplateApi.find(item.getItemCode(), item.getAppliesTo(), provider);
+                        moduleDto.getCftDtos().add(cftDto);
+                        break;
+                    case FILTER:
+                        FilterDto filterDto = filterApi.findFilter(item.getItemCode(), provider);
+                        moduleDto.getFilterDtos().add(filterDto);
+                        break;
+                    case SCRIPT:
+                        ScriptInstanceDto scriptDto = scriptInstanceApi.findScriptInstance(item.getItemCode(), currentUser);
+                        moduleDto.getScriptDtos().add(scriptDto);
+                        break;
+                    case JOBINSTANCE:
+                        moduleDto = getJobInstanceDto(item.getItemCode(), currentUser, moduleDto);
+                        break;
+                    case NOTIFICATION:
+                        Notification notification = genericNotificationService.findByCode(item.getItemCode(), provider);
+                        if (notification != null) {
+                            if (notification instanceof ScriptNotification) {
+                                NotificationDto notificationDto = notificationApi.find(item.getItemCode(), provider);
+                                moduleDto.getNotificationDtos().add(notificationDto);
+                                if (!StringUtils.isBlank(notificationDto.getScriptInstanceCode())) {
+                                    ScriptInstanceDto scriptInstanceDto = scriptInstanceApi.findScriptInstance(notificationDto.getScriptInstanceCode(), currentUser);
+                                    moduleDto.getScriptDtos().add(scriptInstanceDto);
+                                }
+                            } else if (notification instanceof EmailNotification) {
+                                EmailNotificationDto emailNotifiDto = emailNotificationApi.find(item.getItemCode(), provider);
+                                moduleDto.getEmailNotifDtos().add(emailNotifiDto);
+                            } else if (notification instanceof JobTrigger) {
+                                JobTriggerDto jobTriggerDto = jobTriggerApi.find(item.getItemCode(), provider);
+                                moduleDto.getJobTriggerDtos().add(jobTriggerDto);
+                            } else if (notification instanceof WebHook) {
+                                WebhookNotificationDto webhookNotifDto = webhookNotificationApi.find(item.getItemCode(), provider);
+                                moduleDto.getWebhookNotifDtos().add(webhookNotifDto);
                             }
-                        } else if (notification instanceof EmailNotification) {
-                            EmailNotificationDto emailNotifiDto = emailNotificationApi.find(item.getItemCode(), provider);
-                            moduleDto.getEmailNotifDtos().add(emailNotifiDto);
-                        } else if (notification instanceof JobTrigger) {
-                            JobTriggerDto jobTriggerDto = jobTriggerApi.find(item.getItemCode(), provider);
-                            moduleDto.getJobTriggerDtos().add(jobTriggerDto);
-                        } else if (notification instanceof WebHook) {
-                            WebhookNotificationDto webhookNotifDto = webhookNotificationApi.find(item.getItemCode(), provider);
-                            moduleDto.getWebhookNotifDtos().add(webhookNotifDto);
+                            CounterTemplate counter = notification.getCounterTemplate();
+                            if (!StringUtils.isBlank(counter)) {
+                                CounterTemplateDto counterDto = new CounterTemplateDto(counter);
+                                moduleDto.getCounterDtos().add(counterDto);
+                            }
                         }
-                        CounterTemplate counter = notification.getCounterTemplate();
-                        if (!StringUtils.isBlank(counter)) {
-                            CounterTemplateDto counterDto = new CounterTemplateDto(counter);
-                            moduleDto.getCounterDtos().add(counterDto);
-                        }
+                        break;
+                    case SUBMODULE:
+                        ModuleDto subModuleDto = get(item.getItemCode(), currentUser);
+                        moduleDto.getSubModules().add(subModuleDto);
+                        break;
+                    case MEASURABLEQUANTITIES:
+                        MeasurableQuantityDto measurableQuantityDto = measurableQuantityApi.find(item.getItemCode(), currentUser);
+                        moduleDto.getMeasurableQuantities().add(measurableQuantityDto);
+                        break;
+                    case CHART:
+                        ChartDto chartDto = chartApi.find(item.getItemCode(), currentUser);
+                        moduleDto.getCharts().add(chartDto);
+                        break;
+                    default:
                     }
-                    break;
-                case SUBMODULE:
-                    ModuleDto subModuleDto = get(item.getItemCode(), currentUser);
-                    moduleDto.getSubModules().add(subModuleDto);
-                    break;
-                case MEASURABLEQUANTITIES:
-                    MeasurableQuantityDto measurableQuantityDto = measurableQuantityApi.find(item.getItemCode(), currentUser);
-                    moduleDto.getMeasurableQuantities().add(measurableQuantityDto);
-                    break;
-                case CHART:
-                    ChartDto chartDto = chartApi.find(item.getItemCode(), currentUser);
-                    moduleDto.getCharts().add(chartDto);
-                    break;
-                default:
+                } catch (EntityDoesNotExistsException e) {
+                    // Dont care - item must have been removed, just a reference remains
+                    log.error("Module {} item {} was not found and will be ignored", meveoModule.getCode(), item);
                 }
             }
         }
@@ -381,21 +386,21 @@ public class ModuleApi extends BaseApi {
         }
         if (moduleDto.getSubModules() != null) {
             for (ModuleDto dto : moduleDto.getSubModules()) {
-                create(dto, currentUser);
+                createOrUpdate(dto, currentUser);
                 item = new MeveoModuleItem(dto.getCode(), ModuleItemTypeEnum.SUBMODULE);
                 meveoModule.addModuleItem(item);
             }
         }
         if (moduleDto.getMeasurableQuantities() != null) {
             for (MeasurableQuantityDto dto : moduleDto.getMeasurableQuantities()) {
-                measurableQuantityApi.create(dto, currentUser);
+                measurableQuantityApi.createOrUpdate(dto, currentUser);
                 item = new MeveoModuleItem(dto.getCode(), ModuleItemTypeEnum.MEASURABLEQUANTITIES);
                 meveoModule.addModuleItem(item);
             }
         }
         if (moduleDto.getCharts() != null) {
             for (ChartDto dto : moduleDto.getCharts()) {
-                chartApi.create(dto, currentUser);
+                chartApi.createOrUpdate(dto, currentUser);
                 item = new MeveoModuleItem(dto.getCode(), ModuleItemTypeEnum.CHART);
                 meveoModule.addModuleItem(item);
             }

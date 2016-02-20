@@ -114,4 +114,8 @@ public class MeveoModuleItem extends BaseEntity {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return String.format("MeveoModuleItem [itemType=%s, itemCode=%s, appliesTo=%s]", itemType, itemCode, appliesTo);
+    }
 }

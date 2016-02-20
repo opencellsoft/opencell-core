@@ -10,6 +10,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -27,7 +30,7 @@ public class CustomFieldTemplateDto extends BaseDto {
     protected String description;
 
     @XmlElement(required = true)
-    protected String fieldType;
+    protected CustomFieldTypeEnum fieldType;
 
     @XmlElement(required = false)
     @Deprecated
@@ -40,7 +43,7 @@ public class CustomFieldTemplateDto extends BaseDto {
     protected String defaultValue;
 
     @XmlElement(required = true)
-    protected String storageType;
+    protected CustomFieldStorageTypeEnum storageType;
 
     @XmlElement
     protected boolean valueRequired;
@@ -85,7 +88,7 @@ public class CustomFieldTemplateDto extends BaseDto {
     protected String guiPosition;
 
     @XmlElement()
-    protected String mapKeyType;
+    protected CustomFieldMapKeyEnum mapKeyType;
 
     @XmlElement()
     protected String applicableOnEl;
@@ -97,11 +100,11 @@ public class CustomFieldTemplateDto extends BaseDto {
     public CustomFieldTemplateDto(CustomFieldTemplate cf) {
         code = cf.getCode();
         description = cf.getDescription();
-        fieldType = cf.getFieldType().name();
+        fieldType = cf.getFieldType();
         accountLevel = cf.getAppliesTo();
         appliesTo = cf.getAppliesTo();
         defaultValue = cf.getDefaultValue();
-        storageType = cf.getStorageType().name();
+        storageType = cf.getStorageType();
         valueRequired = cf.isValueRequired();
         versionable = cf.isVersionable();
         triggerEndPeriodEvent = cf.isTriggerEndPeriodEvent();
@@ -119,9 +122,7 @@ public class CustomFieldTemplateDto extends BaseDto {
         guiPosition = cf.getGuiPosition();
         listValues = cf.getListValues();
         applicableOnEl = cf.getApplicableOnEl();
-        if (cf.getMapKeyType() != null) {
-            mapKeyType = cf.getMapKeyType().name();
-        }
+        mapKeyType = cf.getMapKeyType();
     }
 
     public String getCode() {
@@ -140,11 +141,11 @@ public class CustomFieldTemplateDto extends BaseDto {
         this.description = description;
     }
 
-    public String getFieldType() {
+    public CustomFieldTypeEnum getFieldType() {
         return fieldType;
     }
 
-    public void setFieldType(String fieldType) {
+    public void setFieldType(CustomFieldTypeEnum fieldType) {
         this.fieldType = fieldType;
     }
 
@@ -172,11 +173,11 @@ public class CustomFieldTemplateDto extends BaseDto {
         this.defaultValue = defaultValue;
     }
 
-    public String getStorageType() {
+    public CustomFieldStorageTypeEnum getStorageType() {
         return storageType;
     }
 
-    public void setStorageType(String storageType) {
+    public void setStorageType(CustomFieldStorageTypeEnum storageType) {
         this.storageType = storageType;
     }
 
@@ -305,11 +306,11 @@ public class CustomFieldTemplateDto extends BaseDto {
         this.guiPosition = guiPosition;
     }
 
-    public String getMapKeyType() {
+    public CustomFieldMapKeyEnum getMapKeyType() {
         return mapKeyType;
     }
 
-    public void setMapKeyType(String mapKeyType) {
+    public void setMapKeyType(CustomFieldMapKeyEnum mapKeyType) {
         this.mapKeyType = mapKeyType;
     }
 

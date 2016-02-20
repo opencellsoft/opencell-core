@@ -59,7 +59,7 @@ public class EntityActionScriptService extends CustomScriptService<EntityActionS
     public Map<String, EntityActionScript> findByAppliesTo(String appliesTo, Provider provider) {
 
         // Handles cases when creating a new provider
-        if (provider.isTransient()) {
+        if (provider.getId() == null) {
             return new HashMap<String, EntityActionScript>();
         }
 
@@ -143,6 +143,5 @@ public class EntityActionScriptService extends CustomScriptService<EntityActionS
         List<EntityActionScript> scriptInstances = findByType(ScriptSourceTypeEnum.JAVA);
         compile(scriptInstances);
     }
-
 
 }

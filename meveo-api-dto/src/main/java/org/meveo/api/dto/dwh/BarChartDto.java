@@ -5,7 +5,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveocrm.model.dwh.BarChart;
-import org.meveocrm.model.dwh.Chart;
+import org.meveocrm.model.dwh.LegendPositionEnum;
+import org.meveocrm.model.dwh.OrientationEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -14,198 +15,237 @@ import org.meveocrm.model.dwh.Chart;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BarChartDto extends ChartDto {
 
-	private static final long serialVersionUID = 7595622432302931522L;
+    private static final long serialVersionUID = -3708601896002824344L;
 
-	private String legendPosition;
-	private int barPadding = 8;
-	private int barMargin = 10;
-	private String orientation;
-	private boolean stacked;
-	private Double min;
-	private Double max;
-	private boolean breakOnNull;
-	private String xaxisLabel;
-	private String yaxisLabel;
-	private Integer xaxisAngle;
-	private Integer yaxisAngle;
-	private int legendCols;
-	private int legendRows;
-	private boolean zoom;
-	private boolean animate;
-	private boolean showDataTip = true;
-	private String datatipFormat;
+    private LegendPositionEnum legendPosition;
 
-	public BarChartDto() {
+    private int barPadding = 8;
 
-	}
+    private int barMargin = 10;
 
-	public BarChartDto(BarChart e) {
-		super((Chart) e);
-		if (e.getLegendPosition() != null) {
-			legendPosition = e.getLegendPosition().name();
-		}
-		barPadding = e.getBarPadding();
-		barMargin = e.getBarMargin();
-		if (e.getOrientation() != null) {
-			orientation = e.getOrientation().name();
-		}
-		stacked = e.isStacked();
-		min = e.getMin();
-		max = e.getMax();
-		breakOnNull = e.isBreakOnNull();
-		xaxisLabel = e.getXaxisLabel();
-		yaxisLabel = e.getYaxisLabel();
-		xaxisAngle = e.getXaxisAngle();
-		yaxisAngle = e.getYaxisAngle();
-		legendCols = e.getLegendCols();
-		legendRows = e.getLegendRows();
-		zoom = e.isZoom();
-		animate = e.isAnimate();
-		showDataTip = e.isShowDataTip();
-		datatipFormat = e.getDatatipFormat();
-	}
+    private OrientationEnum orientation;
 
-	public String getLegendPosition() {
-		return legendPosition;
-	}
+    /** Enables stacked display of bars */
+    private boolean stacked;
 
-	public void setLegendPosition(String legendPosition) {
-		this.legendPosition = legendPosition;
-	}
+    /** Minimum boundary value. */
+    private Double min;
 
-	public int getBarPadding() {
-		return barPadding;
-	}
+    /** Minimum boundary value. */
+    private Double max;
 
-	public void setBarPadding(int barPadding) {
-		this.barPadding = barPadding;
-	}
+    /**
+     * Whether line segments should be broken at null value, fall will join point on either side of line.
+     */
+    boolean breakOnNull;
 
-	public int getBarMargin() {
-		return barMargin;
-	}
+    private String xaxisLabel;
 
-	public void setBarMargin(int barMargin) {
-		this.barMargin = barMargin;
-	}
+    private String yaxisLabel;
 
-	public String getOrientation() {
-		return orientation;
-	}
+    /** Angle of the x-axis ticks */
+    private Integer xaxisAngle;
 
-	public void setOrientation(String orientation) {
-		this.orientation = orientation;
-	}
+    private Integer yaxisAngle;
 
-	public boolean isStacked() {
-		return stacked;
-	}
+    private int legendCols;
 
-	public void setStacked(boolean stacked) {
-		this.stacked = stacked;
-	}
+    private int legendRows;
 
-	public Double getMin() {
-		return min;
-	}
+    /** Enables plot zooming. */
+    private boolean zoom;
 
-	public void setMin(Double min) {
-		this.min = min;
-	}
+    /** Enables animation on plot rendering */
+    private boolean animate;
 
-	public Double getMax() {
-		return max;
-	}
+    /** Defines visibility of datatip. */
+    private boolean showDataTip = true;
 
-	public void setMax(Double max) {
-		this.max = max;
-	}
+    /**
+     * Template string for datatips.
+     */
+    private String datatipFormat;
 
-	public boolean isBreakOnNull() {
-		return breakOnNull;
-	}
+    public BarChartDto() {
+        super();
+    }
 
-	public void setBreakOnNull(boolean breakOnNull) {
-		this.breakOnNull = breakOnNull;
-	}
+    public BarChartDto(BarChart chart) {
+        super(chart);
+        setLegendPosition(chart.getLegendPosition());
+        setBarPadding(chart.getBarPadding());
+        setBarMargin(chart.getBarMargin());
+        setOrientation(chart.getOrientation());
+        setStacked(chart.isStacked());
+        setMin(chart.getMin());
+        setMax(chart.getMax());
+        setBreakOnNull(chart.isBreakOnNull());
+        setXaxisLabel(chart.getXaxisLabel());
+        setYaxisLabel(chart.getYaxisLabel());
+        setXaxisAngle(chart.getXaxisAngle());
+        setYaxisAngle(chart.getYaxisAngle());
+        setLegendCols(chart.getLegendCols());
+        setLegendRows(chart.getLegendRows());
+        setZoom(chart.isZoom());
+        setAnimate(chart.isAnimate());
+        setShowDataTip(chart.isShowDataTip());
+        setShowDataTip(chart.isShowDataTip());
+    }
 
-	public String getXaxisLabel() {
-		return xaxisLabel;
-	}
+    public LegendPositionEnum getLegendPosition() {
+        return legendPosition;
+    }
 
-	public void setXaxisLabel(String xaxisLabel) {
-		this.xaxisLabel = xaxisLabel;
-	}
+    public void setLegendPosition(LegendPositionEnum legendPosition) {
+        this.legendPosition = legendPosition;
+    }
 
-	public String getYaxisLabel() {
-		return yaxisLabel;
-	}
+    public int getBarPadding() {
+        return barPadding;
+    }
 
-	public void setYaxisLabel(String yaxisLabel) {
-		this.yaxisLabel = yaxisLabel;
-	}
+    public void setBarPadding(int barPadding) {
+        this.barPadding = barPadding;
+    }
 
-	public Integer getXaxisAngle() {
-		return xaxisAngle;
-	}
+    public int getBarMargin() {
+        return barMargin;
+    }
 
-	public void setXaxisAngle(Integer xaxisAngle) {
-		this.xaxisAngle = xaxisAngle;
-	}
+    public void setBarMargin(int barMargin) {
+        this.barMargin = barMargin;
+    }
 
-	public Integer getYaxisAngle() {
-		return yaxisAngle;
-	}
+    public OrientationEnum getOrientation() {
+        return orientation;
+    }
 
-	public void setYaxisAngle(Integer yaxisAngle) {
-		this.yaxisAngle = yaxisAngle;
-	}
+    public void setOrientation(OrientationEnum orientation) {
+        this.orientation = orientation;
+    }
 
-	public int getLegendCols() {
-		return legendCols;
-	}
+    public boolean isStacked() {
+        return stacked;
+    }
 
-	public void setLegendCols(int legendCols) {
-		this.legendCols = legendCols;
-	}
+    public void setStacked(boolean stacked) {
+        this.stacked = stacked;
+    }
 
-	public int getLegendRows() {
-		return legendRows;
-	}
+    public Double getMin() {
+        return min;
+    }
 
-	public void setLegendRows(int legendRows) {
-		this.legendRows = legendRows;
-	}
+    public void setMin(Double min) {
+        this.min = min;
+    }
 
-	public boolean isZoom() {
-		return zoom;
-	}
+    public Double getMax() {
+        return max;
+    }
 
-	public void setZoom(boolean zoom) {
-		this.zoom = zoom;
-	}
+    public void setMax(Double max) {
+        this.max = max;
+    }
 
-	public boolean isAnimate() {
-		return animate;
-	}
+    public boolean isBreakOnNull() {
+        return breakOnNull;
+    }
 
-	public void setAnimate(boolean animate) {
-		this.animate = animate;
-	}
+    public void setBreakOnNull(boolean breakOnNull) {
+        this.breakOnNull = breakOnNull;
+    }
 
-	public boolean isShowDataTip() {
-		return showDataTip;
-	}
+    public String getXaxisLabel() {
+        return xaxisLabel;
+    }
 
-	public void setShowDataTip(boolean showDataTip) {
-		this.showDataTip = showDataTip;
-	}
+    public void setXaxisLabel(String xaxisLabel) {
+        this.xaxisLabel = xaxisLabel;
+    }
 
-	public String getDatatipFormat() {
-		return datatipFormat;
-	}
+    public String getYaxisLabel() {
+        return yaxisLabel;
+    }
 
-	public void setDatatipFormat(String datatipFormat) {
-		this.datatipFormat = datatipFormat;
-	}
+    public void setYaxisLabel(String yaxisLabel) {
+        this.yaxisLabel = yaxisLabel;
+    }
+
+    public Integer getXaxisAngle() {
+        return xaxisAngle;
+    }
+
+    public void setXaxisAngle(Integer xaxisAngle) {
+        this.xaxisAngle = xaxisAngle;
+    }
+
+    public Integer getYaxisAngle() {
+        return yaxisAngle;
+    }
+
+    public void setYaxisAngle(Integer yaxisAngle) {
+        this.yaxisAngle = yaxisAngle;
+    }
+
+    public int getLegendCols() {
+        return legendCols;
+    }
+
+    public void setLegendCols(int legendCols) {
+        this.legendCols = legendCols;
+    }
+
+    public int getLegendRows() {
+        return legendRows;
+    }
+
+    public void setLegendRows(int legendRows) {
+        this.legendRows = legendRows;
+    }
+
+    public boolean isZoom() {
+        return zoom;
+    }
+
+    public void setZoom(boolean zoom) {
+        this.zoom = zoom;
+    }
+
+    public boolean isAnimate() {
+        return animate;
+    }
+
+    public void setAnimate(boolean animate) {
+        this.animate = animate;
+    }
+
+    public boolean isShowDataTip() {
+        return showDataTip;
+    }
+
+    public void setShowDataTip(boolean showDataTip) {
+        this.showDataTip = showDataTip;
+    }
+
+    public String getDatatipFormat() {
+        return datatipFormat;
+    }
+
+    public void setDatatipFormat(String datatipFormat) {
+        this.datatipFormat = datatipFormat;
+    }
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
+
+    @Override
+    public String toString() {
+        return String
+            .format(
+                "BarChartDto [%s,legendPosition=%s, barPadding=%s, barMargin=%s, orientation=%s, stacked=%s, min=%s, max=%s, breakOnNull=%s, xaxisLabel=%s, yaxisLabel=%s, xaxisAngle=%s, yaxisAngle=%s, legendCols=%s, legendRows=%s, zoom=%s, animate=%s, showDataTip=%s, datatipFormat=%s]",
+                super.toString(), legendPosition, barPadding, barMargin, orientation, stacked, min, max, breakOnNull, xaxisLabel, yaxisLabel, xaxisAngle, yaxisAngle, legendCols,
+                legendRows, zoom, animate, showDataTip, datatipFormat);
+    }
 }

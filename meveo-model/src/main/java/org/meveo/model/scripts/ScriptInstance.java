@@ -16,8 +16,8 @@
  */
 package org.meveo.model.scripts;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
@@ -39,11 +39,11 @@ public class ScriptInstance extends CustomScript {
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "ADM_SCRIPT_EXEC_ROLE", joinColumns = @JoinColumn(name = "SCRIPT_INSTANCE_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
-    private List<Role> executionRoles = new ArrayList<Role>();
+    private Set<Role> executionRoles = new HashSet<Role>();
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "ADM_SCRIPT_SOURC_ROLE", joinColumns = @JoinColumn(name = "SCRIPT_INSTANCE_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
-    private List<Role> sourcingRoles = new ArrayList<Role>();
+    private Set<Role> sourcingRoles = new HashSet<Role>();
 
     public ScriptInstance() {
 
@@ -52,28 +52,28 @@ public class ScriptInstance extends CustomScript {
     /**
      * @return the executionRoles
      */
-    public List<Role> getExecutionRoles() {
+    public Set<Role> getExecutionRoles() {
         return executionRoles;
     }
 
     /**
      * @param executionRoles the executionRoles to set
      */
-    public void setExecutionRoles(List<Role> executionRoles) {
+    public void setExecutionRoles(Set<Role> executionRoles) {
         this.executionRoles = executionRoles;
     }
 
     /**
      * @return the sourcingRoles
      */
-    public List<Role> getSourcingRoles() {
+    public Set<Role> getSourcingRoles() {
         return sourcingRoles;
     }
 
     /**
      * @param sourcingRoles the sourcingRoles to set
      */
-    public void setSourcingRoles(List<Role> sourcingRoles) {
+    public void setSourcingRoles(Set<Role> sourcingRoles) {
         this.sourcingRoles = sourcingRoles;
     }
 }

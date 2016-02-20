@@ -12589,6 +12589,7 @@
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
       <xs:element name="ActionStatus" type="tns:ActionStatus"/>
+      <xs:element name="Chart" type="tns:chartDto"/>
       <xs:element name="CounterTemplate" type="tns:counterTemplateDto"/>
       <xs:element name="CustomEntityTemplate" type="tns:customEntityTemplateDto"/>
       <xs:element name="CustomField" type="tns:customFieldDto"/>
@@ -12601,6 +12602,7 @@
       <xs:element name="Filter" type="tns:filterDto"/>
       <xs:element name="JobInstance" type="tns:jobInstanceDto"/>
       <xs:element name="JobTrigger" type="tns:jobTriggerDto"/>
+      <xs:element name="MeasurableQuantity" type="tns:measurableQuantityDto"/>
       <xs:element name="MeveoModuleDtoResponse" type="tns:meveoModuleDtoResponse"/>
       <xs:element name="MeveoModuleDtosResponse" type="tns:meveoModuleDtosResponse"/>
       <xs:element name="Module" type="tns:moduleDto"/>
@@ -12635,19 +12637,111 @@
             <xs:sequence>
               <xs:element minOccurs="0" name="logoPicture" type="xs:string"/>
               <xs:element minOccurs="0" name="logoPictureFile" type="xs:base64Binary"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="cetDtos" nillable="true" type="tns:customEntityTemplateDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="cftDtos" nillable="true" type="tns:customFieldTemplateDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="filterDtos" nillable="true" type="tns:filterDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="jobDtos" nillable="true" type="tns:jobInstanceDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="jobNextDtos" nillable="true" type="tns:jobInstanceDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="scriptDtos" nillable="true" type="tns:scriptInstanceDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="notificationDtos" nillable="true" type="tns:notificationDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="timerEntityDtos" nillable="true" type="tns:timerEntityDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="emailNotifDtos" nillable="true" type="tns:emailNotificationDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="jobTriggerDtos" nillable="true" type="tns:jobTriggerDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="webhookNotifDtos" nillable="true" type="tns:webhookNotificationDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="counterDtos" nillable="true" type="tns:counterTemplateDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="subModules" nillable="true" type="tns:moduleDto"/>
+              <xs:element minOccurs="0" name="cets">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="customEntityTemplate" type="tns:customEntityTemplateDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="cfts">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="customFieldTemplate" type="tns:customFieldTemplateDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="filters">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="filter" type="tns:filterDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="jobs">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="jobInstance" type="tns:jobInstanceDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="jobsNext">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="job" type="tns:jobInstanceDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="scripts">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="script" type="tns:scriptInstanceDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="notifications">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="notification" type="tns:notificationDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="timerEntities">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="timerEntity" type="tns:timerEntityDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="emailNotifs">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="emailNotif" type="tns:emailNotificationDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="jobTriggers">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="jobTrigger" type="tns:jobTriggerDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="webhookNotifs">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="webhookNotif" type="tns:webhookNotificationDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="counters">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="counter" type="tns:counterTemplateDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="subModules">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="subModule" type="tns:moduleDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="measurableQuantities">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="measurableQuantity" type="tns:measurableQuantityDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="charts">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="chart" type="tns:chartDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
             <xs:attribute name="license" type="tns:moduleLicenseEnum" use="required"/>
@@ -12694,11 +12788,11 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
-              <xs:element name="fieldType" type="xs:string"/>
+              <xs:element name="fieldType" type="tns:customFieldTypeEnum"/>
               <xs:element minOccurs="0" name="accountLevel" type="xs:string"/>
               <xs:element minOccurs="0" name="appliesTo" type="xs:string"/>
               <xs:element minOccurs="0" name="defaultValue" type="xs:string"/>
-              <xs:element name="storageType" type="xs:string"/>
+              <xs:element name="storageType" type="tns:customFieldStorageTypeEnum"/>
               <xs:element name="valueRequired" type="xs:boolean"/>
               <xs:element name="versionable" type="xs:boolean"/>
               <xs:element name="triggerEndPeriodEvent" type="xs:boolean"/>
@@ -12726,7 +12820,7 @@
               <xs:element minOccurs="0" name="regExp" type="xs:string"/>
               <xs:element name="cacheValue" type="xs:boolean"/>
               <xs:element minOccurs="0" name="guiPosition" type="xs:string"/>
-              <xs:element minOccurs="0" name="mapKeyType" type="xs:string"/>
+              <xs:element minOccurs="0" name="mapKeyType" type="tns:customFieldMapKeyEnum"/>
               <xs:element minOccurs="0" name="applicableOnEl" type="xs:string"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
@@ -13022,6 +13116,43 @@
         <xs:attribute name="description" type="xs:string"/>
         <xs:attribute name="calendar" type="xs:string" use="required"/>
       </xs:complexType>
+      <xs:complexType name="measurableQuantityDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="theme" type="xs:string"/>
+              <xs:element minOccurs="0" name="dimension1" type="xs:string"/>
+              <xs:element minOccurs="0" name="dimension2" type="xs:string"/>
+              <xs:element minOccurs="0" name="dimension3" type="xs:string"/>
+              <xs:element minOccurs="0" name="dimension4" type="xs:string"/>
+              <xs:element name="editable" type="xs:boolean"/>
+              <xs:element name="additive" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="sqlQuery" type="xs:string"/>
+              <xs:element minOccurs="0" name="measurementPeriod" type="tns:measurementPeriodEnum"/>
+              <xs:element minOccurs="0" name="lastMeasureDate" type="xs:dateTime"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="chartDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="measurableQuantity" type="tns:measurableQuantityDto"/>
+              <xs:element minOccurs="0" name="width" type="xs:string"/>
+              <xs:element minOccurs="0" name="height" type="xs:string"/>
+              <xs:element minOccurs="0" name="style" type="xs:string"/>
+              <xs:element minOccurs="0" name="styleClass" type="xs:string"/>
+              <xs:element minOccurs="0" name="extender" type="xs:string"/>
+              <xs:element minOccurs="0" name="visible" type="xs:boolean"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string"/>
+            <xs:attribute name="description" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
       <xs:complexType name="createOrUpdateResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
@@ -13129,6 +13260,40 @@
           <xs:enumeration value="EPL"/>
           <xs:enumeration value="OPEN"/>
           <xs:enumeration value="COM"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="customFieldTypeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="STRING"/>
+          <xs:enumeration value="DATE"/>
+          <xs:enumeration value="LONG"/>
+          <xs:enumeration value="DOUBLE"/>
+          <xs:enumeration value="LIST"/>
+          <xs:enumeration value="ENTITY"/>
+          <xs:enumeration value="TEXT_AREA"/>
+          <xs:enumeration value="CHILD_ENTITY"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="customFieldStorageTypeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SINGLE"/>
+          <xs:enumeration value="LIST"/>
+          <xs:enumeration value="MAP"/>
+          <xs:enumeration value="MATRIX"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="customFieldMapKeyEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="STRING"/>
+          <xs:enumeration value="RON"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="measurementPeriodEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="DAILY"/>
+          <xs:enumeration value="WEEKLY"/>
+          <xs:enumeration value="MONTHLY"/>
+          <xs:enumeration value="YEARLY"/>
         </xs:restriction>
       </xs:simpleType>
       <xs:simpleType name="actionStatusEnum">
@@ -24702,220 +24867,526 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
          </module>
       </ws:createOrUpdate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="39d878ea-6c60-4cca-b352-39cf2560ed29"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="b04a36fd-de2e-4cc8-9d59-5d63af09ce38" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Module" searchProperties="true"><con:settings/><con:testStep type="request" name="Create" id="01fccf1c-a0a3-488c-af75-10f628b8592a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create" id="26fadc13-9fcd-4022-a898-007cee426e83"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header />
-   <soapenv:Body>
-      <ws:createOrUpdate>
-         <!--Optional:-->
-         <module code="${#TestSuite#ticket}_module" description="${#TestSuite#ticket}_module" license="GPL">
-            <!--Optional:-->
-            <cfts>
-               <customFieldTemplate code="${#TestSuite#ticket}_CFT_code${#TestSuite#index}" description="${#TestSuite#ticket}_CFT_description${#TestSuite#index}">
-                  <valueRequired />
-                  <versionable />
-                  <triggerEndPeriodEvent />
-                  <listValues />
-                  <fieldType>STRING</fieldType>
-                  <storageType>SINGLE</storageType>
-                  <appliesTo>CUST</appliesTo>
-               </customFieldTemplate>
-            </cfts>
-            <!--Zero or more repetitions:-->
-            <filters>
-               <filter code="${#TestSuite#ticket}_filter" description="${#TestSuite#ticket}_filter">
-                  <!--Optional:-->
-                  <shared>?</shared>
-                  <!--Optional:-->
-                  <inputXml><![CDATA[<filter>
-  <primarySelector>
-    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>
-    <alias>c</alias>
-    <displayFields>
-      <field>code</field>
-      <field>status</field>
-    </displayFields>
-    <exportFields/>
-    <ignoreIfNotFoundForeignKeys/>
-  </primarySelector>
-  <secondarySelectors/>
-  <filterCondition class="andCompositeFilterCondition">
-    <filterConditionType>COMPOSITE_AND</filterConditionType>
-    <filterConditions>
-      <primitiveFilterCondition>
-        <filterConditionType>PRIMITIVE</filterConditionType>
-        <fieldName>status</fieldName>
-        <operator>=</operator>
-        <operand>enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE</operand>
-      </primitiveFilterCondition>
-    </filterConditions>
-  </filterCondition>
-  <orderCondition>
-    <fieldNames>
-      <field>subscriptionDate</field>
-    </fieldNames>
-    <ascending>false</ascending>
-  </orderCondition>
-</filter>]]]]>><![CDATA[</inputXml>
-               </filter>
-            </filters>
-            <!--Zero or more repetitions:-->
-            <jobs>
-               <jobInstance jobTemplate="BillingRunJob" code="${#TestSuite#ticket}_BR1" description="BillingRunJob">
-                  <jobCategory>INVOICING</jobCategory>
-                  <customFields>
-                     <customField code="BillingRunJob_billingCycle" description="billingCycle">
-                        <stringValue>CYC_INV_MT_1</stringValue>
-                     </customField>
-                     <customField code="BillingRunJob_invoiceDate" description="invoiceDate">
-                        <dateValue>${#TestSuite#invoice_date}</dateValue>
-                     </customField>
-                     <customField code="BillingRunJob_lastTransactionDate" description="lastTransactionDate">
-                        <dateValue>${#TestSuite#last_tx_date}</dateValue>
-                     </customField>
-                  </customFields>
-               </jobInstance>
-            </jobs>
-            <!--Zero or more repetitions:-->
-            <scripts>
-               <script code="org.meveo.service.script.${#TestSuite#ticket}_script" description="${#TestSuite#ticket}_script">
-                  <script><![CDATA[package org.meveo.service.script;
-
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.crm.Provider;
-import org.meveo.model.admin.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-
-public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script {
-	
-	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}_script.class);
-		
-	@Override
-    public void execute(Map<String, Object> context, Provider provider, User user) throws BusinessException {
-		log.debug("Hello MEVEO Module");
-	}
-
-}]]]]>><![CDATA[</script>
-               </script>
-            </scripts>
-            <!--Zero or more repetitions:-->
-            <notifications>
-               <notification code="${#TestSuite#ticket}_notification">
-                  <classNameFilter>org.meveo.model.catalog.OfferTemplate</classNameFilter>
-                  <eventTypeFilter>CREATED</eventTypeFilter>
-               </notification>
-            </notifications>
-            <subModules>
-               <subModule code="${#TestSuite#ticket}_submodule" description="${#TestSuite#ticket}_submodule" license="GPL">
-                  <!--Optional:-->
-                  <cfts>
-                     <customFieldTemplate code="${#TestSuite#ticket}_CFT_code${#TestSuite#index}" description="${#TestSuite#ticket}_CFT_description${#TestSuite#index}">
-                        <valueRequired />
-                        <versionable />
-                        <triggerEndPeriodEvent />
-                        <listValues />
-                        <fieldType>STRING</fieldType>
-                        <storageType>SINGLE</storageType>
-                        <appliesTo>CUST</appliesTo>
-                     </customFieldTemplate>
-                  </cfts>
-                  <!--Zero or more repetitions:-->
-                  <filters>
-                     <filter code="${#TestSuite#ticket}_filter" description="${#TestSuite#ticket}_filter">
-                        <!--Optional:-->
-                        <shared>?</shared>
-                        <!--Optional:-->
-                        <inputXml><![CDATA[<filter>
-  <primarySelector>
-    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>
-    <alias>c</alias>
-    <displayFields>
-      <field>code</field>
-      <field>status</field>
-    </displayFields>
-    <exportFields/>
-    <ignoreIfNotFoundForeignKeys/>
-  </primarySelector>
-  <secondarySelectors/>
-  <filterCondition class="andCompositeFilterCondition">
-    <filterConditionType>COMPOSITE_AND</filterConditionType>
-    <filterConditions>
-      <primitiveFilterCondition>
-        <filterConditionType>PRIMITIVE</filterConditionType>
-        <fieldName>status</fieldName>
-        <operator>=</operator>
-        <operand>enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE</operand>
-      </primitiveFilterCondition>
-    </filterConditions>
-  </filterCondition>
-  <orderCondition>
-    <fieldNames>
-      <field>subscriptionDate</field>
-    </fieldNames>
-    <ascending>false</ascending>
-  </orderCondition>
-</filter>]]]]>><![CDATA[</inputXml>
-                     </filter>
-                  </filters>
-                  <!--Zero or more repetitions:-->
-                  <jobs>
-                     <jobInstance jobTemplate="BillingRunJob" code="${#TestSuite#ticket}_BR1" description="BillingRunJob">
-                        <jobCategory>INVOICING</jobCategory>
-                        <customFields>
-                           <customField code="BillingRunJob_billingCycle" description="billingCycle">
-                              <stringValue>CYC_INV_MT_1</stringValue>
-                           </customField>
-                           <customField code="BillingRunJob_invoiceDate" description="invoiceDate">
-                              <dateValue>${#TestSuite#invoice_date}</dateValue>
-                           </customField>
-                           <customField code="BillingRunJob_lastTransactionDate" description="lastTransactionDate">
-                              <dateValue>${#TestSuite#last_tx_date}</dateValue>
-                           </customField>
-                        </customFields>
-                     </jobInstance>
-                  </jobs>
-                  <!--Zero or more repetitions:-->
-                  <scripts>
-                     <script code="org.meveo.service.script.${#TestSuite#ticket}_script" description="${#TestSuite#ticket}_script">
-                        <script><![CDATA[package org.meveo.service.script;
-
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.crm.Provider;
-import org.meveo.model.admin.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-
-public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script {
-	
-	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}_script.class);
-		
-	@Override
-    public void execute(Map<String, Object> context, Provider provider, User user) throws BusinessException {
-		log.debug("Hello MEVEO Module");
-	}
-
-}]]]]>><![CDATA[</script>
-                     </script>
-                  </scripts>
-                  <!--Zero or more repetitions:-->
-                  <notifications>
-                     <notification code="${#TestSuite#ticket}_notification">
-                        <classNameFilter>org.meveo.model.catalog.OfferTemplate</classNameFilter>
-                        <eventTypeFilter>CREATED</eventTypeFilter>
-                     </notification>
-                  </notifications>
-               </subModule>
-            </subModules>
-         </module>
-      </ws:createOrUpdate>
-   </soapenv:Body>
-</soapenv:Envelope>
-]]></con:request><con:assertion type="SOAP Response" id="65819703-e5bc-48b6-8b33-c3bb09e028bc"/><con:assertion type="Simple Contains" id="9572118c-a281-4c3f-addb-a6b00cf0f58d" name="Contains"><con:configuration><token/><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="e70e127b-e5ea-43d6-8d93-6235b49ff3ce" name="Script Assertion"><con:configuration/></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update" id="a397dadf-6304-4040-b58a-8c2f84941fb8" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="Update" id="3506c20e-cc8c-4ac9-b0f6-6ad6ad94f6aa"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="39d878ea-6c60-4cca-b352-39cf2560ed29"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="b04a36fd-de2e-4cc8-9d59-5d63af09ce38" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Module" searchProperties="true"><con:settings/><con:testStep type="request" name="Create" id="d844156a-a8a9-42c6-91a9-617e31566909"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create" id="26fadc13-9fcd-4022-a898-007cee426e83"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdate>\r
+         <module code="${#TestSuite#ticket}_${#TestSuite#index}_Module 1" license="GPL" description="Module 1">\r
+            <cets>\r
+               <customEntityTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_Entity template 1" name="First entity template" description="Entity template testing">\r
+                  <fields>\r
+                     <field code="${#TestSuite#ticket}_${#TestSuite#index}_Field1" description="Field one">\r
+                        <fieldType>STRING</fieldType>\r
+                        <accountLevel>CE_Entity template 1</accountLevel>\r
+                        <appliesTo>CE_${#TestSuite#ticket}_${#TestSuite#index}_Entity template 1</appliesTo>\r
+                        <defaultValue>hello</defaultValue>\r
+                        <storageType>SINGLE</storageType>\r
+                        <valueRequired>false</valueRequired>\r
+                        <versionable>false</versionable>\r
+                        <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+                        <listValues/>\r
+                        <allowEdit>true</allowEdit>\r
+                        <hideOnNew>false</hideOnNew>\r
+                        <maxValue>7</maxValue>\r
+                        <cacheValue>false</cacheValue>\r
+                        <guiPosition>tab:First entity template:0;field:0</guiPosition>\r
+                     </field>\r
+                  </fields>\r
+                  <actions>\r
+                     <action appliesTo="CE_${#TestSuite#ticket}_${#TestSuite#index}_Entity template 1" code="${#TestSuite#ticket}_${#TestSuite#index}_TestButton" description="Test button">\r
+                        <type>JAVA</type>\r
+                        <script>import org.meveo.service.script.Script;\r
+public class Action1 extends Script {\r
+}</script>\r
+                        <label>Test</label>\r
+                     </action>\r
+                  </actions>\r
+               </customEntityTemplate>\r
+            </cets>\r
+            <cfts>\r
+               <customFieldTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_CONSUMPTION" description="Consumption">\r
+                  <fieldType>DOUBLE</fieldType>\r
+                  <accountLevel>CUST</accountLevel>\r
+                  <appliesTo>CUST</appliesTo>\r
+                  <defaultValue>25.0</defaultValue>\r
+                  <storageType>SINGLE</storageType>\r
+                  <valueRequired>false</valueRequired>\r
+                  <versionable>true</versionable>\r
+                  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+                  <calendar>MONTHLY</calendar>\r
+                  <listValues/>\r
+                  <allowEdit>true</allowEdit>\r
+                  <hideOnNew>false</hideOnNew>\r
+                  <cacheValue>false</cacheValue>\r
+                  <guiPosition>tab:Custom fields:0;field:0</guiPosition>\r
+               </customFieldTemplate>\r
+            </cfts>\r
+            <filters>\r
+               <filter code="${#TestSuite#ticket}_${#TestSuite#index}_Filter1" description="Filter1">\r
+                  <shared>false</shared>\r
+                  <inputXml><![CDATA[<filter>\r
+  <primarySelector>\r
+    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>\r
+    <alias>c</alias>\r
+    <displayFields>\r
+      <field>code</field>\r
+      <field>status</field>\r
+    </displayFields>\r
+    <exportFields/>\r
+    <ignoreIfNotFoundForeignKeys/>\r
+  </primarySelector>\r
+  <secondarySelectors/>\r
+  <filterCondition class="andCompositeFilterCondition">\r
+    <filterConditionType>COMPOSITE_AND</filterConditionType>\r
+    <filterConditions>\r
+      <primitiveFilterCondition>\r
+        <filterConditionType>PRIMITIVE</filterConditionType>\r
+        <fieldName>status</fieldName>\r
+        <operator>=</operator>\r
+        <operand>enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE</operand>\r
+      </primitiveFilterCondition>\r
+    </filterConditions>\r
+  </filterCondition>\r
+  <orderCondition>\r
+    <fieldNames>\r
+      <field>subscriptionDate</field>\r
+    </fieldNames>\r
+    <ascending>false</ascending>\r
+  </orderCondition>\r
+</filter>]]]]>><![CDATA[</inputXml>\r
+               </filter>\r
+            </filters>\r
+            <jobs>\r
+               <jobInstance jobTemplate="ReRatingJob" code="${#TestSuite#ticket}_${#TestSuite#index}_Rerate_Job" timerCode="Hourly">\r
+                  <jobCategory>RATING</jobCategory>\r
+                  <active>false</active>\r
+               </jobInstance>\r
+            </jobs>\r
+            <jobsNext/>\r
+            <scripts>\r
+               <script code="org.meveo.service.script.Script1" description="Script1">\r
+                  <type>JAVA</type>\r
+                  <script>package org.meveo.service.script;\r
+\r
+import org.meveo.admin.exception.BusinessException;\r
+import org.meveo.model.crm.Provider;\r
+import org.meveo.model.admin.User;\r
+import org.slf4j.Logger;\r
+import org.slf4j.LoggerFactory;\r
+\r
+import java.util.Map;\r
+\r
+public class Script1 extends org.meveo.service.script.Script {\r
+	\r
+	private static final Logger log = LoggerFactory.getLogger(Script1.class);\r
+		\r
+	@Override\r
+    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {\r
+		log.debug("Hello MEVEO Module");\r
+	}\r
+\r
+}</script>\r
+                  <executionRoles name="administrateur">\r
+                     <description>Administrateur</description>\r
+                     <permissions>\r
+                        <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>\r
+                        <permission permission="billingManagement" name="Billing management" resource="billing"/>\r
+                        <permission permission="apiAccess" name="API User" resource="user"/>\r
+                        <permission permission="administrationManagement" name="Administration management" resource="administration"/>\r
+                        <permission permission="reportingVisualization" name="Reporting visualization" resource="reporting"/>\r
+                        <permission permission="accountVisualization" name="Account visualization" resource="account"/>\r
+                        <permission permission="reportingManagement" name="Reporting management" resource="reporting"/>\r
+                        <permission permission="catalogVisualization" name="Catalog visualization" resource="catalog"/>\r
+                        <permission permission="billingVisualization" name="Billing visualization" resource="billing"/>\r
+                        <permission permission="customerSummaryVisualization" name="Customer summary visualization" resource="customerSummary"/>\r
+                        <permission permission="ftpread" name="FTP Read" resource="administration"/>\r
+                        <permission permission="accountManagement" name="Account management" resource="account"/>\r
+                        <permission permission="ftpwrite" name="FTP Write" resource="administration"/>\r
+                        <permission permission="catalogManagement" name="Catalog management" resource="catalog"/>\r
+                        <permission permission="remoteImport" name="Remote import" resource="utilities"/>\r
+                     </permissions>\r
+                     <roles>\r
+                        <role name="ModifyAllCE">\r
+                           <description>Modify all custom entities</description>\r
+                           <permissions>\r
+                              <permission permission="modify" name="CE_MEVEO_CF_145_CET-modify" resource="CE_MEVEO_CF_145_CET"/>\r
+                              <permission permission="modify" name="CE_MEVEO_CF_144_CET-modify" resource="CE_MEVEO_CF_144_CET"/>\r
+                              <permission permission="modify" name="CE_MEVEO_CF_142_CET-modify" resource="CE_MEVEO_CF_142_CET"/>\r
+                              <permission permission="modify" name="CE_ProductOrderItem-modify" resource="CE_ProductOrderItem"/>\r
+                              <permission permission="modify" name="CE_MEVEO_CF_131_CET-modify" resource="CE_MEVEO_CF_131_CET"/>\r
+                              <permission permission="modify" name="CE_MEVEO_CF_130_CET-modify" resource="CE_MEVEO_CF_130_CET"/>\r
+                              <permission permission="modify" name="CE_MEVEO_CF_141_CET-modify" resource="CE_MEVEO_CF_141_CET"/>\r
+                              <permission permission="modify" name="CE_Entity template 1-modify" resource="CE_Entity template 1"/>\r
+                              <permission permission="modify" name="CE_Entity template2-modify" resource="CE_Entity template2"/>\r
+                              <permission permission="modify" name="CE_MEVEO_CF_143_CET-modify" resource="CE_MEVEO_CF_143_CET"/>\r
+                              <permission permission="modify" name="CE_ProductOrder-modify" resource="CE_ProductOrder"/>\r
+                           </permissions>\r
+                           <roles>\r
+                              <role name="ReadAllCE">\r
+                                 <description>Read all custom entities</description>\r
+                                 <permissions>\r
+                                    <permission permission="read" name="CE_MEVEO_CF_145_CET-read" resource="CE_MEVEO_CF_145_CET"/>\r
+                                    <permission permission="read" name="CE_MEVEO_CF_141_CET-read" resource="CE_MEVEO_CF_141_CET"/>\r
+                                    <permission permission="read" name="CE_Entity template 1-read" resource="CE_Entity template 1"/>\r
+                                    <permission permission="read" name="CE_MEVEO_CF_143_CET-read" resource="CE_MEVEO_CF_143_CET"/>\r
+                                    <permission permission="read" name="CE_MEVEO_CF_142_CET-read" resource="CE_MEVEO_CF_142_CET"/>\r
+                                    <permission permission="read" name="CE_MEVEO_CF_131_CET-read" resource="CE_MEVEO_CF_131_CET"/>\r
+                                    <permission permission="read" name="CE_MEVEO_CF_144_CET-read" resource="CE_MEVEO_CF_144_CET"/>\r
+                                    <permission permission="read" name="CE_ProductOrderItem-read" resource="CE_ProductOrderItem"/>\r
+                                    <permission permission="read" name="CE_Entity template2-read" resource="CE_Entity template2"/>\r
+                                    <permission permission="read" name="CE_MEVEO_CF_130_CET-read" resource="CE_MEVEO_CF_130_CET"/>\r
+                                    <permission permission="read" name="CE_ProductOrder-read" resource="CE_ProductOrder"/>\r
+                                 </permissions>\r
+                                 <roles/>\r
+                              </role>\r
+                           </roles>\r
+                        </role>\r
+                     </roles>\r
+                  </executionRoles>\r
+                  <sourcingRoles name="administrateur">\r
+                     <description>Administrateur</description>\r
+                     <permissions>\r
+                        <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>\r
+                        <permission permission="billingManagement" name="Billing management" resource="billing"/>\r
+                        <permission permission="apiAccess" name="API User" resource="user"/>\r
+                        <permission permission="administrationManagement" name="Administration management" resource="administration"/>\r
+                        <permission permission="reportingVisualization" name="Reporting visualization" resource="reporting"/>\r
+                        <permission permission="accountVisualization" name="Account visualization" resource="account"/>\r
+                        <permission permission="reportingManagement" name="Reporting management" resource="reporting"/>\r
+                        <permission permission="catalogVisualization" name="Catalog visualization" resource="catalog"/>\r
+                        <permission permission="billingVisualization" name="Billing visualization" resource="billing"/>\r
+                        <permission permission="customerSummaryVisualization" name="Customer summary visualization" resource="customerSummary"/>\r
+                        <permission permission="ftpread" name="FTP Read" resource="administration"/>\r
+                        <permission permission="accountManagement" name="Account management" resource="account"/>\r
+                        <permission permission="ftpwrite" name="FTP Write" resource="administration"/>\r
+                        <permission permission="catalogManagement" name="Catalog management" resource="catalog"/>\r
+                        <permission permission="remoteImport" name="Remote import" resource="utilities"/>\r
+                     </permissions>\r
+                     <roles>\r
+                        <role name="ModifyAllCE">\r
+                           <description>Modify all custom entities</description>\r
+                           <permissions>\r
+                              <permission permission="modify" name="CE_MEVEO_CF_145_CET-modify" resource="CE_MEVEO_CF_145_CET"/>\r
+                              <permission permission="modify" name="CE_MEVEO_CF_144_CET-modify" resource="CE_MEVEO_CF_144_CET"/>\r
+                              <permission permission="modify" name="CE_MEVEO_CF_142_CET-modify" resource="CE_MEVEO_CF_142_CET"/>\r
+                              <permission permission="modify" name="CE_ProductOrderItem-modify" resource="CE_ProductOrderItem"/>\r
+                              <permission permission="modify" name="CE_MEVEO_CF_131_CET-modify" resource="CE_MEVEO_CF_131_CET"/>\r
+                              <permission permission="modify" name="CE_MEVEO_CF_130_CET-modify" resource="CE_MEVEO_CF_130_CET"/>\r
+                              <permission permission="modify" name="CE_MEVEO_CF_141_CET-modify" resource="CE_MEVEO_CF_141_CET"/>\r
+                              <permission permission="modify" name="CE_Entity template 1-modify" resource="CE_Entity template 1"/>\r
+                              <permission permission="modify" name="CE_Entity template2-modify" resource="CE_Entity template2"/>\r
+                              <permission permission="modify" name="CE_MEVEO_CF_143_CET-modify" resource="CE_MEVEO_CF_143_CET"/>\r
+                              <permission permission="modify" name="CE_ProductOrder-modify" resource="CE_ProductOrder"/>\r
+                           </permissions>\r
+                           <roles>\r
+                              <role name="ReadAllCE">\r
+                                 <description>Read all custom entities</description>\r
+                                 <permissions>\r
+                                    <permission permission="read" name="CE_MEVEO_CF_145_CET-read" resource="CE_MEVEO_CF_145_CET"/>\r
+                                    <permission permission="read" name="CE_MEVEO_CF_141_CET-read" resource="CE_MEVEO_CF_141_CET"/>\r
+                                    <permission permission="read" name="CE_Entity template 1-read" resource="CE_Entity template 1"/>\r
+                                    <permission permission="read" name="CE_MEVEO_CF_143_CET-read" resource="CE_MEVEO_CF_143_CET"/>\r
+                                    <permission permission="read" name="CE_MEVEO_CF_142_CET-read" resource="CE_MEVEO_CF_142_CET"/>\r
+                                    <permission permission="read" name="CE_MEVEO_CF_131_CET-read" resource="CE_MEVEO_CF_131_CET"/>\r
+                                    <permission permission="read" name="CE_MEVEO_CF_144_CET-read" resource="CE_MEVEO_CF_144_CET"/>\r
+                                    <permission permission="read" name="CE_ProductOrderItem-read" resource="CE_ProductOrderItem"/>\r
+                                    <permission permission="read" name="CE_Entity template2-read" resource="CE_Entity template2"/>\r
+                                    <permission permission="read" name="CE_MEVEO_CF_130_CET-read" resource="CE_MEVEO_CF_130_CET"/>\r
+                                    <permission permission="read" name="CE_ProductOrder-read" resource="CE_ProductOrder"/>\r
+                                 </permissions>\r
+                                 <roles/>\r
+                              </role>\r
+                           </roles>\r
+                        </role>\r
+                     </roles>\r
+                  </sourcingRoles>\r
+               </script>\r
+            </scripts>\r
+            <notifications/>\r
+            <timerEntities>\r
+               <timerEntity code="Hourly" hour="*" minute="0" second="0" year="*" month="*" dayOfMonth="*" dayOfWeek="*"/>\r
+            </timerEntities>\r
+            <emailNotifs>\r
+               <emailNotif code="${#TestSuite#ticket}_${#TestSuite#index}_EmailNotification">\r
+                  <classNameFilter>org.meveo.model.billing.UserAccount</classNameFilter>\r
+                  <eventTypeFilter>UPDATED</eventTypeFilter>\r
+                  <scriptParams/>\r
+                  <emailFrom>info@opencell.info</emailFrom>\r
+                  <subject>Test</subject>\r
+                  <body>Test</body>\r
+               </emailNotif>\r
+            </emailNotifs>\r
+            <jobTriggers/>\r
+            <webhookNotifs/>\r
+            <subModules>\r
+               <subModule code="${#TestSuite#ticket}_${#TestSuite#index}_Child module 1" license="GPL" description="Child module 1">\r
+                  <cets>\r
+                     <customEntityTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_Entity template2" name="Second entity " description="Second entity template">\r
+                        <fields>\r
+                           <field code="${#TestSuite#ticket}_${#TestSuite#index}_Field2" description="Field two">\r
+                              <fieldType>LONG</fieldType>\r
+                              <accountLevel>CE_Entity template2</accountLevel>\r
+                              <appliesTo>CE_${#TestSuite#ticket}_${#TestSuite#index}_Entity template2</appliesTo>\r
+                              <storageType>SINGLE</storageType>\r
+                              <valueRequired>false</valueRequired>\r
+                              <versionable>false</versionable>\r
+                              <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+                              <listValues/>\r
+                              <allowEdit>true</allowEdit>\r
+                              <hideOnNew>false</hideOnNew>\r
+                              <cacheValue>false</cacheValue>\r
+                              <guiPosition>tab:Second entity :0;field:0</guiPosition>\r
+                           </field>\r
+                        </fields>\r
+                        <actions/>\r
+                     </customEntityTemplate>\r
+                  </cets>\r
+                  <cfts>\r
+                     <customFieldTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_HIGH_CONSUMP_FLAG" description="High consumer">\r
+                        <fieldType>STRING</fieldType>\r
+                        <accountLevel>CUST</accountLevel>\r
+                        <appliesTo>CUST</appliesTo>\r
+                        <defaultValue>X</defaultValue>\r
+                        <storageType>SINGLE</storageType>\r
+                        <valueRequired>false</valueRequired>\r
+                        <versionable>false</versionable>\r
+                        <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+                        <listValues/>\r
+                        <allowEdit>true</allowEdit>\r
+                        <hideOnNew>false</hideOnNew>\r
+                        <maxValue>3</maxValue>\r
+                        <cacheValue>false</cacheValue>\r
+                        <guiPosition>tab:Custom fields:0;field:1</guiPosition>\r
+                        <applicableOnEl>#{mv:executeScript(entity, "org.meveo.test.TestCFTScript",null,entity.auditable.creator,entity.provider) > 10}</applicableOnEl>\r
+                     </customFieldTemplate>\r
+                  </cfts>\r
+                  <filters>\r
+                     <filter code="${#TestSuite#ticket}_${#TestSuite#index}_Filter2" description="Filter2">\r
+                        <shared>true</shared>\r
+                        <inputXml><![CDATA[<filter>\r
+  <primarySelector>\r
+    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>\r
+    <alias>c</alias>\r
+    <displayFields>\r
+      <field>code</field>\r
+      <field>status</field>\r
+    </displayFields>\r
+    <exportFields/>\r
+    <ignoreIfNotFoundForeignKeys/>\r
+  </primarySelector>\r
+  <secondarySelectors/>\r
+  <filterCondition class="andCompositeFilterCondition">\r
+    <filterConditionType>COMPOSITE_AND</filterConditionType>\r
+    <filterConditions>\r
+      <primitiveFilterCondition>\r
+        <filterConditionType>PRIMITIVE</filterConditionType>\r
+        <fieldName>status</fieldName>\r
+        <operator>=</operator>\r
+        <operand>enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE</operand>\r
+      </primitiveFilterCondition>\r
+    </filterConditions>\r
+  </filterCondition>\r
+  <orderCondition>\r
+    <fieldNames>\r
+      <field>subscriptionDate</field>\r
+    </fieldNames>\r
+    <ascending>false</ascending>\r
+  </orderCondition>\r
+</filter>]]]]>><![CDATA[</inputXml>\r
+                     </filter>\r
+                  </filters>\r
+                  <jobs>\r
+                     <jobInstance jobTemplate="PurgeJob" code="${#TestSuite#ticket}_${#TestSuite#index}_Purge Job" description="Purge job" timerCode="Hourly">\r
+                        <jobCategory>UTILS</jobCategory>\r
+                        <followingJob>${#TestSuite#ticket}_${#TestSuite#index}_Inv_Job</followingJob>\r
+                        <parameter>purgeak</parameter>\r
+                        <active>false</active>\r
+                        <customFields>\r
+                           <customField code="PurgeJob_counterPeriod_nbDays">\r
+                              <longValue>30</longValue>\r
+                           </customField>\r
+                           <customField code="PurgeJob_jobExecHistory_nbDays">\r
+                              <longValue>20</longValue>\r
+                           </customField>\r
+                           <customField code="PurgeJob_jobExecHistory_jobName">\r
+                              <stringValue>Invoicing</stringValue>\r
+                           </customField>\r
+                        </customFields>\r
+                     </jobInstance>\r
+                  </jobs>\r
+                  <jobsNext>\r
+                     <job jobTemplate="InvoicingJob" code="${#TestSuite#ticket}_${#TestSuite#index}_Inv_Job" timerCode="Hourly">\r
+                        <jobCategory>INVOICING</jobCategory>\r
+                        <active>false</active>\r
+                     </job>\r
+                  </jobsNext>\r
+                  <scripts>\r
+                     <script code="org.meveo.service.script.Script3" description="Script3">\r
+                        <type>JAVA</type>\r
+                        <script>package org.meveo.service.script;\r
+\r
+import org.meveo.admin.exception.BusinessException;\r
+import org.meveo.model.crm.Provider;\r
+import org.meveo.model.admin.User;\r
+import org.slf4j.Logger;\r
+import org.slf4j.LoggerFactory;\r
+\r
+import java.util.Map;\r
+\r
+public class Script3 extends org.meveo.service.script.Script {\r
+	\r
+	private static final Logger log = LoggerFactory.getLogger(Script3.class);\r
+		\r
+	@Override\r
+    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {\r
+		log.debug("Hello MEVEO Module");\r
+	}\r
+\r
+}</script>\r
+                        <executionRoles name="administrateur">\r
+                           <description>Administrateur</description>\r
+                           <permissions>\r
+                              <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>\r
+                              <permission permission="billingManagement" name="Billing management" resource="billing"/>\r
+                              <permission permission="apiAccess" name="API User" resource="user"/>\r
+                              <permission permission="administrationManagement" name="Administration management" resource="administration"/>\r
+                              <permission permission="reportingVisualization" name="Reporting visualization" resource="reporting"/>\r
+                              <permission permission="accountVisualization" name="Account visualization" resource="account"/>\r
+                              <permission permission="reportingManagement" name="Reporting management" resource="reporting"/>\r
+                              <permission permission="catalogVisualization" name="Catalog visualization" resource="catalog"/>\r
+                              <permission permission="billingVisualization" name="Billing visualization" resource="billing"/>\r
+                              <permission permission="customerSummaryVisualization" name="Customer summary visualization" resource="customerSummary"/>\r
+                              <permission permission="ftpread" name="FTP Read" resource="administration"/>\r
+                              <permission permission="accountManagement" name="Account management" resource="account"/>\r
+                              <permission permission="ftpwrite" name="FTP Write" resource="administration"/>\r
+                              <permission permission="catalogManagement" name="Catalog management" resource="catalog"/>\r
+                              <permission permission="remoteImport" name="Remote import" resource="utilities"/>\r
+                           </permissions>\r
+                           <roles>\r
+                              <role name="ModifyAllCE">\r
+                                 <description>Modify all custom entities</description>\r
+                                 <permissions>\r
+                                    <permission permission="modify" name="CE_MEVEO_CF_145_CET-modify" resource="CE_MEVEO_CF_145_CET"/>\r
+                                    <permission permission="modify" name="CE_MEVEO_CF_144_CET-modify" resource="CE_MEVEO_CF_144_CET"/>\r
+                                    <permission permission="modify" name="CE_MEVEO_CF_142_CET-modify" resource="CE_MEVEO_CF_142_CET"/>\r
+                                    <permission permission="modify" name="CE_ProductOrderItem-modify" resource="CE_ProductOrderItem"/>\r
+                                    <permission permission="modify" name="CE_MEVEO_CF_131_CET-modify" resource="CE_MEVEO_CF_131_CET"/>\r
+                                    <permission permission="modify" name="CE_MEVEO_CF_130_CET-modify" resource="CE_MEVEO_CF_130_CET"/>\r
+                                    <permission permission="modify" name="CE_MEVEO_CF_141_CET-modify" resource="CE_MEVEO_CF_141_CET"/>\r
+                                    <permission permission="modify" name="CE_Entity template 1-modify" resource="CE_Entity template 1"/>\r
+                                    <permission permission="modify" name="CE_Entity template2-modify" resource="CE_Entity template2"/>\r
+                                    <permission permission="modify" name="CE_MEVEO_CF_143_CET-modify" resource="CE_MEVEO_CF_143_CET"/>\r
+                                    <permission permission="modify" name="CE_ProductOrder-modify" resource="CE_ProductOrder"/>\r
+                                 </permissions>\r
+                                 <roles>\r
+                                    <role name="ReadAllCE">\r
+                                       <description>Read all custom entities</description>\r
+                                       <permissions>\r
+                                          <permission permission="read" name="CE_MEVEO_CF_145_CET-read" resource="CE_MEVEO_CF_145_CET"/>\r
+                                          <permission permission="read" name="CE_MEVEO_CF_141_CET-read" resource="CE_MEVEO_CF_141_CET"/>\r
+                                          <permission permission="read" name="CE_Entity template 1-read" resource="CE_Entity template 1"/>\r
+                                          <permission permission="read" name="CE_MEVEO_CF_143_CET-read" resource="CE_MEVEO_CF_143_CET"/>\r
+                                          <permission permission="read" name="CE_MEVEO_CF_142_CET-read" resource="CE_MEVEO_CF_142_CET"/>\r
+                                          <permission permission="read" name="CE_MEVEO_CF_131_CET-read" resource="CE_MEVEO_CF_131_CET"/>\r
+                                          <permission permission="read" name="CE_MEVEO_CF_144_CET-read" resource="CE_MEVEO_CF_144_CET"/>\r
+                                          <permission permission="read" name="CE_ProductOrderItem-read" resource="CE_ProductOrderItem"/>\r
+                                          <permission permission="read" name="CE_Entity template2-read" resource="CE_Entity template2"/>\r
+                                          <permission permission="read" name="CE_MEVEO_CF_130_CET-read" resource="CE_MEVEO_CF_130_CET"/>\r
+                                          <permission permission="read" name="CE_ProductOrder-read" resource="CE_ProductOrder"/>\r
+                                       </permissions>\r
+                                       <roles/>\r
+                                    </role>\r
+                                 </roles>\r
+                              </role>\r
+                           </roles>\r
+                        </executionRoles>\r
+                     </script>\r
+                     <script code="org.meveo.service.script.Script2" description="Script2">\r
+                        <type>JAVA</type>\r
+                        <script>package org.meveo.service.script;\r
+\r
+import org.meveo.admin.exception.BusinessException;\r
+import org.meveo.model.crm.Provider;\r
+import org.meveo.model.admin.User;\r
+import org.slf4j.Logger;\r
+import org.slf4j.LoggerFactory;\r
+\r
+import java.util.Map;\r
+\r
+public class Script2 extends org.meveo.service.script.Script {\r
+	\r
+	private static final Logger log = LoggerFactory.getLogger(Script2.class);\r
+		\r
+	@Override\r
+    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {\r
+		log.debug("Hello MEVEO Module");\r
+	}\r
+\r
+}</script>\r
+                        <executionRoles name="superAdministrateur">\r
+                           <description>Super Administrateur</description>\r
+                           <permissions>\r
+                              <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>\r
+                              <permission permission="remoteImport" name="Remote import" resource="utilities"/>\r
+                              <permission permission="superAdminManagement" name="SuperAdmin management" resource="superAdmin"/>\r
+                           </permissions>\r
+                           <roles/>\r
+                        </executionRoles>\r
+                     </script>\r
+                  </scripts>\r
+                  <notifications>\r
+                     <notification code="${#TestSuite#ticket}_${#TestSuite#index}_Notification2">\r
+                        <classNameFilter>org.meveo.model.crm.Customer</classNameFilter>\r
+                        <eventTypeFilter>DISABLED</eventTypeFilter>\r
+                        <scriptInstanceCode>org.meveo.service.script.Script3</scriptInstanceCode>\r
+                        <scriptParams/>\r
+                     </notification>\r
+                  </notifications>\r
+                  <timerEntities>\r
+                     <timerEntity code="Hourly" hour="*" minute="0" second="0" year="*" month="*" dayOfMonth="*" dayOfWeek="*"/>\r
+                     <timerEntity code="Hourly" hour="*" minute="0" second="0" year="*" month="*" dayOfMonth="*" dayOfWeek="*"/>\r
+                  </timerEntities>\r
+                  <emailNotifs/>\r
+                  <jobTriggers/>\r
+                  <webhookNotifs>\r
+                     <webhookNotif code="${#TestSuite#ticket}_${#TestSuite#index}_Webhook2">\r
+                        <classNameFilter>org.meveo.model.billing.BillingAccount</classNameFilter>\r
+                        <eventTypeFilter>REJECTED</eventTypeFilter>\r
+                        <scriptParams/>\r
+                        <host>i.meveo.info</host>\r
+                        <port>443</port>\r
+                        <page>meveo/api/rest</page>\r
+                        <httpMethod>HTTP_POST</httpMethod>\r
+                        <headers/>\r
+                        <params/>\r
+                     </webhookNotif>\r
+                  </webhookNotifs>\r
+                  <subModules/>\r
+                  <measurableQuantities>\r
+                     <measurableQuantity code="${#TestSuite#ticket}_${#TestSuite#index}_Measure2">\r
+                        <dimension1>Three</dimension1>\r
+                        <dimension2>Four</dimension2>\r
+                        <editable>false</editable>\r
+                        <additive>false</additive>\r
+                     </measurableQuantity>\r
+                  </measurableQuantities>\r
+                  <charts/>\r
+               </subModule>\r
+            </subModules>\r
+            <measurableQuantities>\r
+               <measurableQuantity code="${#TestSuite#ticket}_${#TestSuite#index}_Measure1">\r
+                  <dimension1>first</dimension1>\r
+                  <dimension2>second</dimension2>\r
+                  <editable>false</editable>\r
+                  <additive>false</additive>\r
+                  <sqlQuery>select now from dual</sqlQuery>\r
+               </measurableQuantity>\r
+            </measurableQuantities>\r
+            <charts/>\r
+         </module>\r
+      </ws:createOrUpdate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="65819703-e5bc-48b6-8b33-c3bb09e028bc"/><con:assertion type="Simple Contains" id="9572118c-a281-4c3f-addb-a6b00cf0f58d" name="Contains"><con:configuration><token/><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="e70e127b-e5ea-43d6-8d93-6235b49ff3ce" name="Script Assertion"><con:configuration/></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update" id="a397dadf-6304-4040-b58a-8c2f84941fb8" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="Update" id="3506c20e-cc8c-4ac9-b0f6-6ad6ad94f6aa"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header />
    <soapenv:Body>
@@ -25106,13 +25577,13 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
       </ws:createOrUpdate>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="779952b8-98ef-4d00-87c7-1cf6676b2904"/><con:assertion type="XPath Match" id="99939215-0347-4d8a-9d8e-ad0bb2c26cd5" name="Match content of [status]"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:updateResponse[1]/return[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get" id="acbad161-cddb-40fe-b716-2f8cc9cd39f2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>get</con:operation><con:request name="Get" id="fff83a35-c78b-4dfc-9465-f3fdd4155d18"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:get><!--Optional:-->
-         <code>${#TestSuite#ticket}_module</code>
-      </ws:get>
-   </soapenv:Body>
+//ns2:updateResponse[1]/return[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get" id="acbad161-cddb-40fe-b716-2f8cc9cd39f2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>get</con:operation><con:request name="Get" id="fff83a35-c78b-4dfc-9465-f3fdd4155d18"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:get>\r
+         <code>${#TestSuite#ticket}_${#TestSuite#index}_Module 1</code>\r
+      </ws:get>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="3382c6c6-3e45-4ded-8818-ff872c56f22a"/><con:assertion type="XPath Match" id="9fe12d4b-3934-40e7-aa52-13de4b335aa5" name="Match content of [status]"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
 //ns2:getResponse[1]/return[1]/actionStatus[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="List" id="5c73996e-2bbe-406d-bb6c-2595de6801f5"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>list</con:operation><con:request name="List" id="e41cc5f6-e897-44aa-ab71-9c6a41ef5e5d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
@@ -25120,13 +25591,13 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
       <ws:list/>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="9b66e124-744d-42d5-96d3-9d4061d931a3"/><con:assertion type="XPath Match" id="7c7280fe-335c-43f5-aefb-68bda8f66ec1" name="Match content of [status]"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:listResponse[1]/return[1]/actionStatus[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete" id="486f1e93-5733-4e61-94a5-96d827eb191f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>delete</con:operation><con:request name="Delete" id="5e65d7c2-5466-4f69-b07b-872a0f27ce3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:delete><!--Optional:-->
-         <code>${#TestSuite#ticket}_module</code>
-      </ws:delete>
-   </soapenv:Body>
+//ns2:listResponse[1]/return[1]/actionStatus[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete" id="486f1e93-5733-4e61-94a5-96d827eb191f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>delete</con:operation><con:request name="Delete" id="5e65d7c2-5466-4f69-b07b-872a0f27ce3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:delete>\r
+         <code>${#TestSuite#ticket}_${#TestSuite#index}_Module 1</code>\r
+      </ws:delete>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="138d8ba5-7068-4031-8a5d-faa697dc6aaf"/><con:assertion type="XPath Match" id="604d9c93-8e45-45b8-8487-25245fe65581" name="Match content of [status]"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
 //ns2:deleteResponse[1]/return[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/><con:reportParameters/></con:testCase><con:testCase id="2461e59b-5690-4ebb-bbf9-862ae7757927" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Clean" searchProperties="true" disabled="true"><con:settings/><con:testStep type="request" name="Delete CET1" id="e6bbe103-01cb-442a-b473-32767abd1acc"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>removeEntityTemplate</con:operation><con:request name="Delete CET1" id="04d81923-afb4-4147-9829-63bed0745cfd"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
@@ -25157,4 +25628,4 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
       </ws:removeEntityTemplate>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e8ac783d-aa45-4924-bcb1-d79c57949d1e"/><con:assertion type="XPath Match" id="00bad731-bfff-42fb-8a83-a5cadeb0b748" name="Match content of [status]"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:removeEntityTemplateResponse[1]/return[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/><con:reportParameters/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>ModuleWs3</con:value></con:property><con:property><con:name>index</con:name><con:value>88</con:value></con:property><con:property><con:name>invoice_date</con:name><con:value>2016-02-15</con:value></con:property><con:property><con:name>last_tx_date</con:name><con:value>2016-02-15</con:value></con:property></con:properties><con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString())</con:setupScript><con:reportParameters/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">${#Project#meveoUrl}/SettingsWs</con:endpoint><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin" domain="" wssTimeToLive="" outgoingWss="" incomingWss="">${#Project#meveoUrl}/AccountWs</con:endpoint><con:endpoint mode="COMPLEMENT" username="" password="meveo.admin" domain="" wssTimeToLive="" wssType="" outgoingWss="" incomingWss="">${#Project#meveoUrl}/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>username</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>password</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:afterLoadScript/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+//ns2:removeEntityTemplateResponse[1]/return[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/><con:reportParameters/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>ModuleWs3</con:value></con:property><con:property><con:name>index</con:name><con:value>94</con:value></con:property><con:property><con:name>invoice_date</con:name><con:value>2016-02-15</con:value></con:property><con:property><con:name>last_tx_date</con:name><con:value>2016-02-15</con:value></con:property></con:properties><con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString())</con:setupScript><con:reportParameters/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">${#Project#meveoUrl}/SettingsWs</con:endpoint><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin" domain="" wssTimeToLive="" outgoingWss="" incomingWss="">${#Project#meveoUrl}/AccountWs</con:endpoint><con:endpoint mode="COMPLEMENT" username="" password="meveo.admin" domain="" wssTimeToLive="" wssType="" outgoingWss="" incomingWss="">${#Project#meveoUrl}/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>username</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>password</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:afterLoadScript/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

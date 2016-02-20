@@ -56,7 +56,6 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     private DualListModel<Role> execRolesDM;
     private DualListModel<Role> sourcRolesDM;
 
-
     public void initCompilationErrors() {
         if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
             return;
@@ -103,12 +102,10 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     }
 
     public void setExecRolesDM(DualListModel<Role> perks) {
-        getEntity().setExecutionRoles(perks.getTarget());
         this.execRolesDM = perks;
     }
 
     public void setSourcRolesDM(DualListModel<Role> perks) {
-        getEntity().setSourcingRoles(perks.getTarget());
         this.sourcRolesDM = perks;
     }
 
@@ -152,6 +149,14 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         String result = getListViewName();
         try {
+            // Update roles
+            getEntity().getExecutionRoles().clear();
+            getEntity().getExecutionRoles().addAll(roleService.refreshOrRetrieve(execRolesDM.getTarget()));
+
+            // Update roles
+            getEntity().getSourcingRoles().clear();
+            getEntity().getSourcingRoles().addAll(roleService.refreshOrRetrieve(sourcRolesDM.getTarget()));
+
             super.saveOrUpdate(killConversation);
 
             if (entity.isError().booleanValue()) {

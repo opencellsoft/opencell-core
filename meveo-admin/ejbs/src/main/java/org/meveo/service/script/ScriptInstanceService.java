@@ -18,6 +18,7 @@ package org.meveo.service.script;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -158,7 +159,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      */
     public void isUserHasExecutionRole(ScriptInstance scriptInstance, User user) throws InvalidPermissionException {
         if (scriptInstance != null && user != null && scriptInstance.getExecutionRoles() != null && !scriptInstance.getExecutionRoles().isEmpty()) {
-            List<Role> execRoles = scriptInstance.getExecutionRoles();
+            Set<Role> execRoles = scriptInstance.getExecutionRoles();
             execRoles.retainAll(user.getRoles());
             if (execRoles.isEmpty()) {
                 throw new InvalidPermissionException();
@@ -168,7 +169,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
 
     public boolean isUserHasSourcingRole(ScriptInstance scriptInstance, User user) {
         if (scriptInstance != null && user != null && scriptInstance.getSourcingRoles() != null && !scriptInstance.getSourcingRoles().isEmpty()) {
-            List<Role> sourcingRoles = scriptInstance.getSourcingRoles();
+            Set<Role> sourcingRoles = scriptInstance.getSourcingRoles();
             sourcingRoles.retainAll(user.getRoles());
             if (sourcingRoles.isEmpty()) {
                 return false;

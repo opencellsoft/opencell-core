@@ -12,109 +12,106 @@ import javax.persistence.Table;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_CHART_PIE_SEQ")
 public class PieChart extends Chart {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3549868233998052477L;
+    private static final long serialVersionUID = -3549868233998052477L;
 
-	@Column(name = "FILLED")
-	boolean filled;
+    @Column(name = "FILLED")
+    boolean filled;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "LEGEND_POSITION")
-	LegendPositionEnum legendPosition;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "LEGEND_POSITION")
+    LegendPositionEnum legendPosition;
 
-	@Column(name = "SERIES_COLORS", length = 1000)
-	String seriesColors = "1b788f";
+    @Column(name = "SERIES_COLORS", length = 1000)
+    String seriesColors = "1b788f";
 
-	@Column(name = "DIAMETER")
-	Integer diameter;
+    @Column(name = "DIAMETER")
+    Integer diameter;
 
-	@Column(name = "SLICE_MARGIN")
-	int sliceMargin;
+    @Column(name = "SLICE_MARGIN")
+    int sliceMargin;
 
-	@Column(name = "SHADOW")
-	boolean shadow = true;
+    @Column(name = "SHADOW")
+    boolean shadow = true;
 
-	@Column(name = "SHOW_DATA_LABELS")
-	boolean showDataLabels;
+    @Column(name = "SHOW_DATA_LABELS")
+    boolean showDataLabels;
 
-	@Column(name = "LEGEND_COLS")
-	int legendCols;
+    @Column(name = "LEGEND_COLS")
+    int legendCols;
 
-	@Column(name = "LEGEND_ROWS")
-	int legendRows;
+    @Column(name = "LEGEND_ROWS")
+    int legendRows;
 
-	public boolean isFilled() {
-		return filled;
-	}
+    public boolean isFilled() {
+        return filled;
+    }
 
-	public void setFilled(boolean filled) {
-		this.filled = filled;
-	}
+    public void setFilled(boolean filled) {
+        this.filled = filled;
+    }
 
-	public LegendPositionEnum getLegendPosition() {
-		return legendPosition;
-	}
+    public LegendPositionEnum getLegendPosition() {
+        return legendPosition;
+    }
 
-	public void setLegendPosition(LegendPositionEnum legendPosition) {
-		this.legendPosition = legendPosition;
-	}
+    public void setLegendPosition(LegendPositionEnum legendPosition) {
+        this.legendPosition = legendPosition;
+    }
 
-	public String getSeriesColors() {
-		return seriesColors;
-	}
+    public String getSeriesColors() {
+        return seriesColors;
+    }
 
-	public void setSeriesColors(String seriesColors) {
-		this.seriesColors = seriesColors;
-	}
+    public void setSeriesColors(String seriesColors) {
+        this.seriesColors = seriesColors;
+    }
 
-	public Integer getDiameter() {
-		return diameter;
-	}
+    public Integer getDiameter() {
+        return diameter;
+    }
 
-	public void setDiameter(Integer diameter) {
-		this.diameter = diameter;
-	}
+    public void setDiameter(Integer diameter) {
+        this.diameter = diameter;
+    }
 
-	public int getSliceMargin() {
-		return sliceMargin;
-	}
+    public int getSliceMargin() {
+        return sliceMargin;
+    }
 
-	public void setSliceMargin(int sliceMargin) {
-		this.sliceMargin = sliceMargin;
-	}
+    public void setSliceMargin(int sliceMargin) {
+        this.sliceMargin = sliceMargin;
+    }
 
-	public boolean isShadow() {
-		return shadow;
-	}
+    public boolean isShadow() {
+        return shadow;
+    }
 
-	public void setShadow(boolean shadow) {
-		this.shadow = shadow;
-	}
+    public void setShadow(boolean shadow) {
+        this.shadow = shadow;
+    }
 
-	public boolean isShowDataLabels() {
-		return showDataLabels;
-	}
+    public boolean isShowDataLabels() {
+        return showDataLabels;
+    }
 
-	public void setShowDataLabels(boolean showDataLabels) {
-		this.showDataLabels = showDataLabels;
-	}
+    public void setShowDataLabels(boolean showDataLabels) {
+        this.showDataLabels = showDataLabels;
+    }
 
-	public int getLegendCols() {
-		return legendCols;
-	}
+    public int getLegendCols() {
+        return legendCols;
+    }
 
-	public void setLegendCols(int legendCols) {
-		this.legendCols = legendCols;
-	}
+    public void setLegendCols(int legendCols) {
+        this.legendCols = legendCols;
+    }
 
-	public int getLegendRows() {
-		return legendRows;
-	}
+    public int getLegendRows() {
+        return legendRows;
+    }
 
-	public void setLegendRows(int legendRows) {
-		this.legendRows = legendRows;
-	}
+    public void setLegendRows(int legendRows) {
+        this.legendRows = legendRows;
+    }
 
 }
