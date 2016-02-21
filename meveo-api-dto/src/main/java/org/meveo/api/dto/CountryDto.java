@@ -22,7 +22,7 @@ public class CountryDto extends BaseDto {
 	@XmlAttribute(required = true)
 	private String countryCode;
 
-	@XmlAttribute(required = true)
+	@XmlAttribute()
 	private String name;
 
 	@XmlElement(required = true)

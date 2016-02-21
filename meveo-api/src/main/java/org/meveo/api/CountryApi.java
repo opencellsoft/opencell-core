@@ -52,9 +52,7 @@ public class CountryApi extends BaseApi {
         if (StringUtils.isBlank(postData.getCountryCode())) {
             missingParameters.add("countryCode");
         }
-        if (StringUtils.isBlank(postData.getName())) {
-            missingParameters.add("name");
-        }
+
         if (StringUtils.isBlank(postData.getCurrencyCode())) {
             missingParameters.add("currencyCode");
         }
@@ -224,8 +222,8 @@ public class CountryApi extends BaseApi {
         }
 
         Country country = countryService.findByCode(postData.getCountryCode());
-        if (country != null && !StringUtils.isBlank(postData.getName())) {
-            if (!postData.getName().equals(country.getDescriptionEn())) {
+        if (country != null) {
+            if (!StringUtils.isBlank(postData.getName()) && !postData.getName().equals(country.getDescriptionEn())) {
                 tradingCountry.setPrDescription(postData.getName());
                 country.setCurrency(currency);
                 country.setDescriptionEn(postData.getName());
