@@ -9,6 +9,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 
@@ -18,7 +19,7 @@ public class ApiExecutor {
 	public HttpResponse executeApi(String api, String url, String userName, String password, HttpMethodsEnum method, CommonContentTypeEnum cotentType, Map<String, String> headers, Map<String, String> params, String body, AuthentificationModeEnum authMode) {
 		try {
 			
-			URI uri = new URI(url  + api);			
+			URI uri = new URI(url  + (api==null?"":api));			
 			uri = addParamsToUri( uri, params);
 
 			if (HttpMethodsEnum.POST == method) {
@@ -68,8 +69,31 @@ public class ApiExecutor {
 		return null;
 	}
 
-	private HttpResponse executeGet(URI uri, String userNale, String password, CommonContentTypeEnum cotentType, Map<String, String> headers, Map<String, String> params, AuthentificationModeEnum authMode) {
-		throw new UnsupportedOperationException();
+	private HttpResponse executeGet(URI uri, String userName, String password, CommonContentTypeEnum cotentType, Map<String, String> headers, Map<String, String> params, AuthentificationModeEnum authMode) {
+		try {			
+			System.out.println("uri.toASCIIString:"+uri.toASCIIString());
+			HttpGet theRequest = new HttpGet(uri);
+			if (cotentType != null) {
+				theRequest.setHeader("Content-Type", cotentType.getValue());
+			}
+			if (AuthentificationModeEnum.BASIC == authMode) {
+				theRequest.setHeader("Authorization", getBasicAuthentication(userName,password));
+			}
+			if (headers != null) {
+				for (String key : headers.keySet()) {
+					theRequest.setHeader(key, headers.get(key));
+				}
+			}
+
+			HttpResponse response = MeveoConnectionFactory.httpClient.execute(theRequest);
+			System.out.println("executeGet code :" + response.getStatusLine().getStatusCode());
+			return response;
+		} catch (Exception e) {
+
+			e.printStackTrace();
+
+		}
+		return null;
 	}
 
 	/**
