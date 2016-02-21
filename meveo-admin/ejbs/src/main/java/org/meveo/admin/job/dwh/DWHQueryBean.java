@@ -126,7 +126,7 @@ public class DWHQueryBean {
 						MeasurementPeriodEnum mve = (mq.getMeasurementPeriod() != null) ? mq.getMeasurementPeriod()
 								: MeasurementPeriodEnum.DAILY;
 						BigDecimal value = BigDecimal.ZERO;
-						Date date = mq.getNextMeasureDate();
+						Date date = mq.getLastMeasureDate();
 						String dimension1 = mq.getDimension1();
 						String dimension2 = mq.getDimension2();
 						String dimension3 = mq.getDimension3();
