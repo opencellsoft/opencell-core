@@ -47172,4 +47172,216 @@ public class ${#TestSuite#ticket}BOMCreationScript extends Script {
          </activateServices>
       </ws:activateServices>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="89126986-a2b4-40d2-af62-adb80179fbd6"/><con:assertion type="Simple Contains" name="Contains" id="27042faa-671f-4d07-91e6-b5ce9b308d95"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1462</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" outgoingWss="" wssTimeToLive="">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="89126986-a2b4-40d2-af62-adb80179fbd6"/><con:assertion type="Simple Contains" name="Contains" id="27042faa-671f-4d07-91e6-b5ce9b308d95"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1462</con:value></con:property></con:properties></con:testSuite><con:testSuite id="a7755fc6-919c-4d12-84ef-bec904be7290" name="#1214 Associate roles to script Instance"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="cbacb7f9-324c-404a-b7c6-2ab24545dbf3" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create Scripts" searchProperties="true"><con:settings/><con:testStep type="request" name="create Admin script  By admin" id="1b492bff-4af5-4001-a832-2a685f4cb01e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptInstanceWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="create Admin script  By admin" id="49cbd249-8900-41f0-811e-9bc456887293"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:create>\r
+         <!--Optional:-->\r
+         <createScriptInstanceRequest code="org.meveo.service.script.The${#TestSuite#ticket}ScriptA" description="SCRIPT_INSTANCE${#TestSuite#ticket}">\r
+            <!--Optional:-->\r
+            <type>JAVA</type>\r
+            <script>
+            <![CDATA[
+package org.meveo.service.script;
+
+import java.util.Map;
+import java.math.BigDecimal;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class The${#TestSuite#ticket}ScriptA extends Script {
+  
+  	private static final Logger log = LoggerFactory.getLogger(The${#TestSuite#ticket}ScriptA.class);
+
+	public void execute(Map<String,Object> context, Provider provider, User user) throws BusinessException{
+		log.debug("The${#TestSuite#ticket}ScriptA creation script...");
+		log.debug("The${#TestSuite#ticket}ScriptA creation script.");
+	}
+}
+]]]]>><![CDATA[
+            </script>\r
+          <!--Zero or more repetitions:-->
+            <executionRoles name="administrateur">
+            </executionRoles>
+            <!--Zero or more repetitions:-->
+            <sourcingRoles name="administrateur">              
+            </sourcingRoles>            
+         </createScriptInstanceRequest>\r
+      </ws:create>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b9598fff-642d-49c2-aaa4-864b21e1b9c5"/><con:assertion type="Simple Contains" id="cbd0e2cd-c88c-4a2c-8508-27aefcf01089" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update  Admin script  By admin" id="13656040-319c-41d7-abb7-8aadb65eb866"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptInstanceWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="update  Admin script  By admin" id="49cbd249-8900-41f0-811e-9bc456887293"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:create>\r
+         <!--Optional:-->\r
+         <createScriptInstanceRequest code="org.meveo.service.script.The${#TestSuite#ticket}ScriptA" description="SCRIPT_INSTANCE${#TestSuite#ticket}">\r
+            <!--Optional:-->\r
+            <type>JAVA</type>\r
+            <script>
+            <![CDATA[
+package org.meveo.service.script;
+
+import java.util.Map;
+import java.math.BigDecimal;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class The${#TestSuite#ticket}ScriptA extends Script {
+  
+  	private static final Logger log = LoggerFactory.getLogger(The${#TestSuite#ticket}ScriptA.class);
+
+	public void execute(Map<String,Object> context, Provider provider, User user) throws BusinessException{
+		log.debug("The${#TestSuite#ticket}ScriptA creation script...");
+		log.debug("The${#TestSuite#ticket}ScriptA creation script.");
+	}
+}
+]]]]>><![CDATA[
+            </script>\r
+          <!--Zero or more repetitions:-->
+            <executionRoles name="administrateur">
+            </executionRoles>
+            <!--Zero or more repetitions:-->
+            <sourcingRoles name="administrateur">              
+            </sourcingRoles>            
+         </createScriptInstanceRequest>\r
+      </ws:create>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b9598fff-642d-49c2-aaa4-864b21e1b9c5"/><con:assertion type="Simple Contains" id="cbd0e2cd-c88c-4a2c-8508-27aefcf01089" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find  Admin script  By admin" id="f2a3b1c7-f25b-48d6-9324-541bdc639f00"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptInstanceWsSoapBinding</con:interface><con:operation>find</con:operation><con:request name="find  Admin script  By admin" id="49cbd249-8900-41f0-811e-9bc456887293"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:find>
+         <!--Optional:-->
+         <findScriptInstanceRequest>org.meveo.service.script.The${#TestSuite#ticket}ScriptA</findScriptInstanceRequest>
+      </ws:find>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b9598fff-642d-49c2-aaa4-864b21e1b9c5"/><con:assertion type="Simple Contains" id="cbd0e2cd-c88c-4a2c-8508-27aefcf01089" name="Contains"><con:configuration><token>Invalid Sourcing Permission</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create ModifyAllCE script  By admin" id="c8cdcfea-c346-41df-af5e-36f20e87f401"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptInstanceWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="create ModifyAllCE script  By admin" id="49cbd249-8900-41f0-811e-9bc456887293"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:create>\r
+         <!--Optional:-->\r
+         <createScriptInstanceRequest code="org.meveo.service.script.The${#TestSuite#ticket}ScriptB" description="SCRIPT_INSTANCE${#TestSuite#ticket}">\r
+            <!--Optional:-->\r
+            <type>JAVA</type>\r
+            <script>
+            <![CDATA[
+package org.meveo.service.script;
+
+import java.util.Map;
+import java.math.BigDecimal;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class The${#TestSuite#ticket}ScriptB extends Script {
+  
+  	private static final Logger log = LoggerFactory.getLogger(The${#TestSuite#ticket}ScriptB.class);
+
+	public void execute(Map<String,Object> context, Provider provider, User user) throws BusinessException{
+		log.debug("The${#TestSuite#ticket}ScriptB creation script...");
+		log.debug("The${#TestSuite#ticket}ScriptB creation script.");
+	}
+}
+]]]]>><![CDATA[
+            </script>\r
+          <!--Zero or more repetitions:-->
+            <executionRoles name="ModifyAllCE">
+            </executionRoles>
+            <!--Zero or more repetitions:-->
+            <sourcingRoles name="ModifyAllCE">              
+            </sourcingRoles>            
+         </createScriptInstanceRequest>\r
+      </ws:create>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b9598fff-642d-49c2-aaa4-864b21e1b9c5"/><con:assertion type="Simple Contains" id="cbd0e2cd-c88c-4a2c-8508-27aefcf01089" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update  ModifyAllCE script  By admin" id="ab609f7a-4846-4149-b8e4-0cb38fb187f5"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptInstanceWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="update  ModifyAllCE script  By admin" id="49cbd249-8900-41f0-811e-9bc456887293"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:update>
+         <!--Optional:-->
+         <updateScriptInstanceRequest code="org.meveo.service.script.The${#TestSuite#ticket}ScriptB" description="SCRIPT_INSTANCE${#TestSuite#ticket}">
+            <!--Optional:-->
+            <type>JAVA</type>
+            <script>
+            <![CDATA[
+package org.meveo.service.script;
+
+import java.util.Map;
+import java.math.BigDecimal;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class The${#TestSuite#ticket}ScriptB extends Script {
+  
+  	private static final Logger log = LoggerFactory.getLogger(The${#TestSuite#ticket}ScriptB.class);
+
+	public void execute(Map<String,Object> context, Provider provider, User user) throws BusinessException{
+		log.debug("The${#TestSuite#ticket}ScriptB creation script...");
+		log.debug("The${#TestSuite#ticket}ScriptB creation script.");
+	}
+}
+]]]]>><![CDATA[
+            </script>           
+         </updateScriptInstanceRequest>
+      </ws:update>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b9598fff-642d-49c2-aaa4-864b21e1b9c5"/><con:assertion type="Simple Contains" id="cbd0e2cd-c88c-4a2c-8508-27aefcf01089" name="Contains"><con:configuration><token>Invalid Sourcing Permission</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find  ModifyAllCE script  By admin" id="9413a513-7bc9-4667-a14c-ccb009c94c2b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptInstanceWsSoapBinding</con:interface><con:operation>find</con:operation><con:request name="find  ModifyAllCE script  By admin" id="49cbd249-8900-41f0-811e-9bc456887293"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:update>
+         <!--Optional:-->
+         <updateScriptInstanceRequest code="org.meveo.service.script.The${#TestSuite#ticket}ScriptB" description="SCRIPT_INSTANCE${#TestSuite#ticket}">
+            <!--Optional:-->
+            <type>JAVA</type>
+            <script>
+            <![CDATA[
+package org.meveo.service.script;
+
+import java.util.Map;
+import java.math.BigDecimal;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class The${#TestSuite#ticket}ScriptB extends Script {
+  
+  	private static final Logger log = LoggerFactory.getLogger(The${#TestSuite#ticket}ScriptB.class);
+
+	public void execute(Map<String,Object> context, Provider provider, User user) throws BusinessException{
+		log.debug("The${#TestSuite#ticket}ScriptB creation script...");
+		log.debug("The${#TestSuite#ticket}ScriptB creation script.");
+	}
+}
+]]]]>><![CDATA[
+            </script>           
+         </updateScriptInstanceRequest>
+      </ws:update>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b9598fff-642d-49c2-aaa4-864b21e1b9c5"/><con:assertion type="Simple Contains" id="cbd0e2cd-c88c-4a2c-8508-27aefcf01089" name="Contains"><con:configuration><token>Invalid Sourcing Permission</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create  Scripting Job instance" id="819a6ff3-85cb-4a74-85a7-ad83b8e113d7"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>createOrUpdateJobInstance</con:operation><con:request name="Create  Scripting Job instance" id="649e7b1d-d31a-45d1-a439-683999b38cfe"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateJobInstance>
+        <!--Optional:-->
+         <jobInstance jobTemplate="ScriptingJob" code="Scripting_Job" description="Scripting Job" >
+            <jobCategory>MEDIATION</jobCategory>
+            <customFields>
+               <!--Zero or more repetitions:-->
+               <customField code="ScriptingJob_script" >
+                  <entityReferenceValue classname=" org.meveo.model.scripts.ScriptInstance" code="org.meveo.service.script.The${#TestSuite#ticket}ScriptA"/>
+               </customField>
+            </customFields>
+         </jobInstance>
+      </ws:createOrUpdateJobInstance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="08f8e479-698b-4fcb-a264-c88deb79cbd6"/><con:assertion type="Simple Contains" id="8efda91e-73f1-463e-a322-2e834777b2c5" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1214_bis</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" outgoingWss="" wssTimeToLive="">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
