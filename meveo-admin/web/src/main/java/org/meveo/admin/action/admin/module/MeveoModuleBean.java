@@ -456,7 +456,28 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
                     }
                 }
                 break;
+            case CHART:
+                for (TreeNode node : chartNode.getChildren()) {
+                    CustomizedModuleItem dest = (CustomizedModuleItem) node.getData();
+                    if (item.getCode().equals(dest.getCode())) {
+                        chartNode.getChildren().remove(node);
+                        removeItemFromEntity(item.getCode(), ModuleItemTypeEnum.CHART);
+                        break;
+                    }
+                }                
+                break;
+            case MEASURABLEQUANTITIES:
+                for (TreeNode node : measurableQuantityNode.getChildren()) {
+                    CustomizedModuleItem dest = (CustomizedModuleItem) node.getData();
+                    if (item.getCode().equals(dest.getCode())) {
+                        measurableQuantityNode.getChildren().remove(node);
+                        removeItemFromEntity(item.getCode(), ModuleItemTypeEnum.MEASURABLEQUANTITIES);
+                        break;
+                    }
+                }  
+                break;
             default:
+                break;
             }
         }
     }
