@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.manaty</groupId>
 		<artifactId>meveo</artifactId>
-		<version>4.2</version>
+		<version>4.2-alpha</version>
 	</parent>
 	<groupId>org.manaty</groupId>
 	<artifactId>meveo-client</artifactId>
@@ -35,5 +35,4 @@
 			<version>2.5</version>
 		</dependency>
 	</dependencies>
-	<version>4.2</version>
 </project>

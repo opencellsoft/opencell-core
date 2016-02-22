@@ -3,7 +3,7 @@
 <modelVersion>4.0.0</modelVersion>
   <groupId>info.meveo.tests</groupId>
   <artifactId>meveotests</artifactId>
-<version>4.2</version>
+<version>4.2-alpha</version>
 <name>meveotests</name>
 
 <pluginRepositories>
