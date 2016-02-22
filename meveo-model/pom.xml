@@ -2,12 +2,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>meveo</artifactId>
-        <groupId>org.manaty</groupId>
-        <version>4.2.0-alpha</version>
+        <groupId>org.meveo</groupId>
+        <version>4.2.0-beta-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>meveo-model</artifactId>
-
     <packaging>jar</packaging>
     <name>MEVEO Model</name>
 

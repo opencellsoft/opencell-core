@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>meveo-admin</artifactId>
-        <groupId>org.manaty</groupId>
-        <version>4.2.0-alpha</version>
+        <groupId>org.meveo</groupId>
+        <version>4.2.0-beta-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>meveo-admin-ejbs</artifactId>
@@ -155,7 +155,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.manaty</groupId>
+            <groupId>org.meveo</groupId>
             <artifactId>meveo-model</artifactId>
         </dependency>
 

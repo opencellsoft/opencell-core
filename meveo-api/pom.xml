@@ -3,13 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.manaty</groupId>
+        <groupId>org.meveo</groupId>
         <artifactId>meveo</artifactId>
-        <version>4.2.0-alpha</version>
+        <version>4.2.0-beta-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-
-    <groupId>org.meveo</groupId>
     <artifactId>meveo-api</artifactId>
     <name>MEVEO API</name>
 
@@ -37,11 +35,11 @@
         </dependency>
 
         <dependency>
-            <groupId>org.manaty</groupId>
+            <groupId>org.meveo</groupId>
             <artifactId>meveo-admin-ejbs</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.manaty</groupId>
+            <groupId>org.meveo</groupId>
             <artifactId>meveo-model</artifactId>
         </dependency>
         <dependency>
@@ -49,7 +47,7 @@
             <artifactId>meveo-api-dto</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.manaty</groupId>
+            <groupId>org.meveo</groupId>
             <artifactId>meveo-tmforum</artifactId>
         </dependency>
         <dependency>
@@ -138,7 +136,7 @@
             <!-- Dependencies for api documention generation -->
             <dependencies>
                 <dependency>
-                    <groupId>org.manaty</groupId>
+                    <groupId>org.meveo</groupId>
                     <artifactId>meveo-model</artifactId>
                     <version>${project.version}</version>
                     <classifier>sources</classifier>

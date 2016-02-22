@@ -2,9 +2,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>meveo</artifactId>
-        <groupId>org.manaty</groupId>
+        <groupId>org.meveo</groupId>
         <relativePath>../pom.xml</relativePath>
-        <version>4.2.0-alpha</version>
+        <version>4.2.0-beta-SNAPSHOT</version>
     </parent>
     <artifactId>meveo-admin</artifactId>
     <packaging>pom</packaging>

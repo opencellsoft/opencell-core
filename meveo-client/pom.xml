@@ -4,11 +4,10 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.manaty</groupId>
+		<groupId>org.meveo</groupId>
 		<artifactId>meveo</artifactId>
-		<version>4.2.0-alpha</version>
+		<version>4.2.0-beta-SNAPSHOT</version>
 	</parent>
-	<groupId>org.manaty</groupId>
 	<artifactId>meveo-client</artifactId>
 	<name>MEVEO Client</name>
 
