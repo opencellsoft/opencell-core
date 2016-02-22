@@ -122,7 +122,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
         
         ScriptInstance scriptInstance = findByCode(scriptCode, currentProvider);
         // Check access to the script
-        isUserHasExecutionRole(scriptInstance, getCurrentUser());
+        isUserHasExecutionRole(scriptInstance, currentUser);
         return super.execute(scriptCode, context, currentUser, currentProvider);
     }
 
@@ -163,7 +163,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
             execRoles.retainAll(user.getRoles());
             if (execRoles.isEmpty()) {
                 throw new InvalidPermissionException();
-            }
+            }            
         }
     }
 
