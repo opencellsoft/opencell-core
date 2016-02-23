@@ -36240,7 +36240,7 @@
          </jobInstance>\r
       </ws:create>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/create"/></con:call></con:operation><con:operation id="7bac8f29-19e6-4d2c-b4c1-a63ea6df82dd" isOneWay="false" action="" name="createOrUpdateJobInstance" bindingOperationName="createOrUpdateJobInstance" type="Request-Response" outputName="createOrUpdateJobInstanceResponse" inputName="createOrUpdateJobInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a8410881-44cd-40d5-b392-0e0774879644" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/create"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="7bac8f29-19e6-4d2c-b4c1-a63ea6df82dd" isOneWay="false" action="" name="createOrUpdateJobInstance" bindingOperationName="createOrUpdateJobInstance" type="Request-Response" outputName="createOrUpdateJobInstanceResponse" inputName="createOrUpdateJobInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a8410881-44cd-40d5-b392-0e0774879644" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateJobInstance>\r
@@ -36315,7 +36315,7 @@
          <timerEntity code="?" description="?" hour="?" minute="?" second="?" year="?" month="?" dayOfMonth="?" dayOfWeek="?"/>\r
       </ws:createTimer>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createTimer"/></con:call></con:operation><con:operation id="d11c107f-19db-462a-a1c8-9eba0577e49a" isOneWay="false" action="" name="execute" bindingOperationName="execute" type="Request-Response" outputName="executeResponse" inputName="execute" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="8bf66c99-5a88-4f7e-a126-26222c87f4dd" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createTimer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="d11c107f-19db-462a-a1c8-9eba0577e49a" isOneWay="false" action="" name="execute" bindingOperationName="execute" type="Request-Response" outputName="executeResponse" inputName="execute" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="8bf66c99-5a88-4f7e-a126-26222c87f4dd" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:execute>\r
@@ -36340,7 +36340,7 @@
          <jobInstanceCode>?</jobInstanceCode>\r
       </ws:findJobInstance>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/findJobInstance"/></con:call></con:operation><con:operation id="e5b409c1-baec-4e1b-9456-bd12659bb349" isOneWay="false" action="" name="findTimer" bindingOperationName="findTimer" type="Request-Response" outputName="findTimerResponse" inputName="findTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b4772810-82ac-48dd-827f-59d418959ee8" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/findJobInstance"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="e5b409c1-baec-4e1b-9456-bd12659bb349" isOneWay="false" action="" name="findTimer" bindingOperationName="findTimer" type="Request-Response" outputName="findTimerResponse" inputName="findTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b4772810-82ac-48dd-827f-59d418959ee8" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findTimer>\r
@@ -36348,7 +36348,7 @@
          <timerCode>?</timerCode>\r
       </ws:findTimer>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/findTimer"/></con:call></con:operation><con:operation id="e7b3bd55-62ba-4b3d-8370-b31794c53d8f" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="373109db-ea08-4e04-91cf-7829dd6c49f1" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/findTimer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="e7b3bd55-62ba-4b3d-8370-b31794c53d8f" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="373109db-ea08-4e04-91cf-7829dd6c49f1" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:index/>\r
@@ -36361,7 +36361,7 @@
          <jobInstanceCode>?</jobInstanceCode>\r
       </ws:removeJobInstance>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/removeJobInstance"/></con:call></con:operation><con:operation id="9ee6f9ef-33cd-4415-bc8c-a2ad61a9182f" isOneWay="false" action="" name="removeTimer" bindingOperationName="removeTimer" type="Request-Response" outputName="removeTimerResponse" inputName="removeTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="8bcd761b-d4db-47d2-8dfd-f60501520e10" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/removeJobInstance"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="9ee6f9ef-33cd-4415-bc8c-a2ad61a9182f" isOneWay="false" action="" name="removeTimer" bindingOperationName="removeTimer" type="Request-Response" outputName="removeTimerResponse" inputName="removeTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="8bcd761b-d4db-47d2-8dfd-f60501520e10" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeTimer>\r
@@ -54865,7 +54865,7 @@
             <!--Optional:-->\r
             <code>${#TestSuite#ticket}_${#TestSuite#index}_CB1</code>\r
             <!--Optional:-->\r
-            <description>${#TestSuite#ticket}_${#TestSuite#index}_CB1_Description</description>\r
+            <description></description>\r
          </customerBrand>\r
       </ws:createCustomerBrand>\r
    </soapenv:Body>\r
@@ -54898,7 +54898,7 @@
             <!--Optional:-->\r
             <code>${#TestSuite#ticket}_${#TestSuite#index}_CC1</code>\r
             <!--Optional:-->\r
-            <description>${#TestSuite#ticket}_${#TestSuite#index}_CC1</description>\r
+            <description></description>\r
          </customerCategory>\r
       </ws:createCustomerCategory>\r
    </soapenv:Body>\r
@@ -54932,7 +54932,7 @@
             <!--Optional:-->\r
             <code>${#TestSuite#ticket}_${#TestSuite#index}_CREDIT_CAT1</code>\r
             <!--Optional:-->\r
-            <description>${#TestSuite#ticket}_${#TestSuite#index}_CREDIT_CAT1</description>\r
+            <description></description>\r
          </creditCategory>\r
       </ws:createCreditCategory>\r
    </soapenv:Body>\r
@@ -54964,7 +54964,7 @@
          <!--Optional:-->
          <language code="ARA">
             <!--Optional:-->
-            <description>Arabic</description>
+            <description></description>
          </language>
       </ws:createLanguage>
    </soapenv:Body>
@@ -55002,7 +55002,7 @@
          <!--Optional:-->
          <currency code="TND">
             <!--Optional:-->
-            <description>Dinar Tunisien</description>
+            <description></description>
          </currency>
       </ws:createCurrency>
    </soapenv:Body>
@@ -55038,7 +55038,7 @@
    <soapenv:Body>
       <ws:createCountry>
          <!--Optional:-->
-           <country countryCode="TN" name="TUNISIA">
+           <country countryCode="TN" name="">
             <currencyCode>TND</currencyCode>
             <!--Optional:-->
             <languageCode>ARA</languageCode>
@@ -55133,7 +55133,7 @@
    <soapenv:Body>
       <ws:createCalendar>
          <calendar code="${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_YEARLY">
-            <description>Yearly Calendar</description>
+            <description></description>
             <calendarType>YEARLY</calendarType>
              <days day="1" month="JANUARY"/>
                <days day="1" month="FEBRUARY"/>
@@ -55158,23 +55158,8 @@
       </ws:findCalendar>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b3e53013-5eff-4d27-b542-3d1a725be8d1"/><con:assertion type="Simple Contains" id="0cbeaf3b-e923-4132-b89b-b0c7e545d1b9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="49381e57-6bf6-42c1-ae34-174ed4c91372" name="Contains 1"><con:configuration><token><![CDATA[         <calendar code="${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_YEARLY">
-               <description>Yearly calendar</description>
-               <calendarType>YEARLY</calendarType>
-               <days day="1" month="JANUARY"/>
-               <days day="1" month="FEBRUARY"/>
-               <days day="1" month="MARCH"/>
-               <days day="1" month="APRIL"/>
-               <days day="1" month="MAY"/>
-               <days day="1" month="JUNE"/>
-               <days day="1" month="JULY"/>
-               <days day="1" month="AUGUST"/>
-               <days day="1" month="SEPTEMBER"/>
-               <days day="1" month="OCTOBER"/>
-               <days day="1" month="NOVEMBER"/>
-               <days day="1" month="DECEMBER"/>
-            </calendar>
-]]></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update Calendar" id="da48a36f-c6c9-4673-b224-3abca8ff7fd9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateCalendar</con:operation><con:request name="update Calendar" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a195e58f-88b0-445e-aa11-b4abc19ee044"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="49381e57-6bf6-42c1-ae34-174ed4c91372" name="Contains 1"><con:configuration><token>
+</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update Calendar" id="da48a36f-c6c9-4673-b224-3abca8ff7fd9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateCalendar</con:operation><con:request name="update Calendar" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a195e58f-88b0-445e-aa11-b4abc19ee044"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCalendar>
@@ -55210,7 +55195,7 @@
    <soapenv:Body>
       <ws:createBillingCycle>
          <!--Optional:-->
-         <billingCycle code="${#TestSuite#ticket}_${#TestSuite#index}_BC1" description="${#TestSuite#ticket}_${#TestSuite#index}_BC1">
+         <billingCycle code="${#TestSuite#ticket}_${#TestSuite#index}_BC1" description="">
             <!--Optional:-->
             <dueDateDelay>1</dueDateDelay>
             <calendar>MONTHLY</calendar>
@@ -55253,7 +55238,7 @@
    <soapenv:Body>
       <ws:createTax>
          <!--Optional:-->
-         <tax code="${#TestSuite#ticket}_${#TestSuite#index}_TAX_10" description="${#TestSuite#ticket}_${#TestSuite#index}_10_Percent_Tax">
+         <tax code="${#TestSuite#ticket}_${#TestSuite#index}_TAX_10" description="">
             <percent>10</percent>
             <!--Optional:-->
             <accountingCode></accountingCode>
@@ -55307,7 +55292,7 @@
    <soapenv:Body>
       <ws:createInvoiceCategory>
          <!--Optional:-->
-         <invoiceCategory code="${#TestSuite#ticket}_${#TestSuite#index}_InvCAT1" description="${#TestSuite#ticket}_${#TestSuite#index}_InvCategory1">
+         <invoiceCategory code="${#TestSuite#ticket}_${#TestSuite#index}_InvCAT1" description="">
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <!--Optional:-->
@@ -56345,4 +56330,82 @@
          <usageChargeTemplateCode>${#TestSuite#ticket}_USAGE1</usageChargeTemplateCode>
       </ws:removeUsageChargeTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="37b76b59-8634-4c45-bb11-2259fcf1a269" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/removeUsageChargeTemplate"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1406</con:value></con:property><con:property><con:name>index</con:name><con:value>1</con:value></con:property></con:properties></con:testSuite><con:properties><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="37b76b59-8634-4c45-bb11-2259fcf1a269" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/removeUsageChargeTemplate"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="109647b8-ac93-4c87-8357-9d97fb64677b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD JobInstance" searchProperties="true"><con:settings/><con:testStep type="request" name="create JobInstance" id="67844b40-3a1c-4834-99a7-a2feeb6aaba2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="create JobInstance" id="8ccb1125-1a20-4972-ab58-a2a58f2cfa6f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:create>
+         <!--Optional:-->
+         <jobInstance jobTemplate="ExportSubscriptionsJob" code="${#TestSuite#ticket}_${#TestSuite#index}_ImpExp_Job" description="" timerCode="">
+            <jobCategory>IMPORT/EXPORT</jobCategory>
+            <!--Optional:-->
+            <followingJob>ACCO_JOB</followingJob>
+            <!--Optional:-->
+            <parameter></parameter>
+            <active></active>
+         </jobInstance>
+      </ws:create>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="693c92b1-d0d3-4a28-b7bf-9f771084b202"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find JobInstance" id="fdd3de84-eded-4268-887f-8a784222c68c"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>findJobInstance</con:operation><con:request name="find JobInstance" id="3e0378ad-e983-4d73-ab2e-cdce1e837dc9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findJobInstance>
+      	<!--Optional:-->
+          <jobInstanceCode>${#TestSuite#ticket}_${#TestSuite#index}_ImpExp_Job</jobInstanceCode>
+      </ws:findJobInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b4a65eb3-ca9e-428c-97de-de05fc52eded"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update JobInstance" id="cea2d80f-8b3e-4b01-9d04-5f059c92980f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>createOrUpdateJobInstance</con:operation><con:request name="update JobInstance" id="786edb98-c703-4c29-88ae-e0ec256ee1e2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateJobInstance>
+         <!--Optional:-->
+         <jobInstance jobTemplate="ExportSubscriptionsJob" code="${#TestSuite#ticket}_${#TestSuite#index}_ImpExp_Job" description="Import/Export" timerCode="">
+            <jobCategory>IMPORT/EXPORT</jobCategory>
+            <!--Optional:-->
+            <followingJob>ACCO_JOB</followingJob>
+            <!--Optional:-->
+            <parameter></parameter>
+            <active></active>
+         </jobInstance>
+      </ws:createOrUpdateJobInstance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="db6d806d-cd8e-4f9d-a7f0-8d3fef7a4937"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="delete JobInstance" id="3696c5e3-38df-4bbd-a81a-30d020d81a89"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>removeJobInstance</con:operation><con:request name="delete JobInstance" id="90078c91-bb73-4168-8355-1fe2fbb741e7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeJobInstance>\r
+      	<!--Optional:-->
+          <jobInstanceCode>${#TestSuite#ticket}_${#TestSuite#index}_ImpExp_Job</jobInstanceCode>
+      </ws:removeJobInstance>
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b4493089-6da3-4faf-97fd-550fa99465cd"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="79fb7a60-bdee-4abd-bdcd-ff91ebda7848" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD Timer" searchProperties="true"><con:settings/><con:testStep type="request" name="create Timer" id="1d33ac3f-52c8-42a6-8f32-7155af7ce9bc"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>createTimer</con:operation><con:request name="create Timer" id="c2f0c9c2-5679-4215-af0a-459921854f8c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createTimer>
+         <!--Optional:-->
+         <timerEntity code="${#TestSuite#ticket}_${#TestSuite#index}_TM1" description="" hour="*" minute="0" second="0" year="*" month="*" dayOfMonth="*" dayOfWeek="*"/>
+      </ws:createTimer>
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a8522892-4e14-4dc5-88f1-b04ffd89c331"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find Timer" id="96a167fd-1d1b-48a3-9dc1-d1f97b3c80f9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>findTimer</con:operation><con:request name="find Timer" id="cb036045-54f2-4ab2-a03e-4e6b25e3f939"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findTimer>\r
+      	<!--Optional:-->
+         	<timerCode>${#TestSuite#ticket}_${#TestSuite#index}_Timer1</timerCode>
+      </ws:findTimer>
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f18e3f79-569e-4aec-b9cd-2997cb3bcea5"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update Timer" id="86f22cbd-c5b1-49da-84ae-2316cb2819ef"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>updateTimer</con:operation><con:request name="update Timer" id="713c5381-eea5-4db3-8d61-e5e2ce878771"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateTimer>
+      	<!--Optional:-->
+         	<timerEntity code="${#TestSuite#ticket}_${#TestSuite#index}_Timer1" description="${#TestSuite#ticket}_${#TestSuite#index}_Timer1_DESCP" hour="0" minute="0" second="0" year="0" month="0" dayOfMonth="0" dayOfWeek="0"/>
+      </ws:updateTimer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="948f941f-684f-4288-bd5a-09445a66926e"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="delete Timer" id="e0d619ae-31c2-4ccb-970e-eba109f5cadd"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>removeTimer</con:operation><con:request name="delete Timer" id="d386f085-34be-4dfd-99b7-01c387833207"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeTimer>
+      	<!--Optional:-->
+         	<timerCode>${#TestSuite#ticket}_${#TestSuite#index}_Timer1</timerCode>
+      </ws:removeTimer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="96457535-1cd9-41d4-a0f4-9033f1d72562"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1406</con:value></con:property><con:property><con:name>index</con:name><con:value>1</con:value></con:property></con:properties></con:testSuite><con:properties><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
