@@ -262,7 +262,7 @@
         <!--  If the value binding is a number, display an input number spinner. -->
         <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Number}">
 
-            <c:if test="${fieldInfo.numberType==FieldNumberType.Double or fieldInfo.numberType==FieldNumberType.Float}">
+            <c:if test="${fieldInfo.numberType==FieldNumberTypeEnum.Double or fieldInfo.numberType==FieldNumberTypeEnum.Float}">
                 <c:set var="size" value="5" />
             </c:if>
             <c:if test="${empty(minValue)}">
@@ -278,7 +278,7 @@
                 labelWidth="${labelWidth}" inputWidth="${inputWidth}" size="${size}" maxlength="${maxlength}" listValues="${listValues}" minValue="${minValue}"
                 maxValue="${maxValue}" isMessage="${isMessage}" messagePrefix="${messagePrefix}" converter="${empty(converter)?fieldInfo.numberConverter:converter}"
                 negativeValue="${negativeValue}"
-                spinner="${fieldInfo.numberType!=FieldNumberType.BigDecimal and fieldInfo.numberType!=FieldNumberType.Double and fieldInfo.numberType!=FieldNumberType.Float}"
+                spinner="${fieldInfo.numberType!=FieldNumberTypeEnum.BigDecimal and fieldInfo.numberType!=FieldNumberTypeEnum.Double and fieldInfo.numberType!=FieldNumberTypeEnum.Float}"
                 edit="#{edit}" />
 
         </c:if>
