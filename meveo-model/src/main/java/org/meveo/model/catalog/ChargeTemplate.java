@@ -100,7 +100,7 @@ public class ChargeTemplate extends BusinessCFEntity {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ROUNDING_MODE")
-	private RoundingModeEnum roundingMode;	
+	private RoundingModeEnum roundingMode = RoundingModeEnum.NEAREST; 	
 
 	public OperationTypeEnum getType() {
 		return type;
