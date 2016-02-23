@@ -1082,7 +1082,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @param event Value change event
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public final void updateItemInCollection(ValueChangeEvent event) {
+    public void updateItemInCollection(ValueChangeEvent event) {
 
         Collection values = (Collection) event.getComponent().getAttributes().get("values");
 
