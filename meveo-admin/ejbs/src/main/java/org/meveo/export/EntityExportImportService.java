@@ -207,27 +207,7 @@ public class EntityExportImportService implements Serializable {
 
         exportImportTemplates = new TreeMap<String, ExportTemplate>();
 
-        // Create definitions dynamically for each class in org.meveo.model package
-        Reflections reflections = new Reflections("org.meveo.model", "org.meveocrm.model");
-        Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
-
-        for (Class clazz : classes) {
-
-            if (!clazz.isAnnotationPresent(Entity.class) || !IEntity.class.isAssignableFrom(clazz)) {
-                continue;
-            }
-
-            ExportTemplate exportTemplate = new ExportTemplate();
-
-            exportTemplate.setName(clazz.getSimpleName());
-            exportTemplate.setEntityToExport(clazz);
-
-            supplementExportTemplateWithAutomaticInfo(exportTemplate);
-
-            exportImportTemplates.put(exportTemplate.getName(), exportTemplate);
-        }
-
-        // Retrieve complex export template definitions from configuration xml file and replace over the previously dynamically created definitions
+        // Retrieve complex export template definitions from configuration xml file
         XStream xstream = new XStream();
         xstream.alias("template", ExportTemplate.class);
         xstream.alias("relatedEntity", RelatedEntityToExport.class);
@@ -242,6 +222,48 @@ public class EntityExportImportService implements Serializable {
 
         for (ExportTemplate exportTemplate : templatesFromXml) {
             supplementExportTemplateWithAutomaticInfo(exportTemplate);
+            exportImportTemplates.put(exportTemplate.getName(), exportTemplate);
+        }
+
+        Set templatesFromConfigFile = new HashSet();
+        templatesFromConfigFile.addAll(exportImportTemplates.keySet());
+
+        // Create definitions dynamically for each class in model package.
+        // Do not overwrite previously loaded definitions from configuration file.
+        // Do not create definition if a definition for a parent class was found already
+        Reflections reflections = new Reflections("org.meveo.model", "org.meveocrm.model");
+        Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
+
+        for (Class clazz : classes) {
+
+            // Do not overwrite previously loaded definitions from configuration file.
+            if (!clazz.isAnnotationPresent(Entity.class) || !IEntity.class.isAssignableFrom(clazz) || exportImportTemplates.containsKey(clazz.getSimpleName())) {
+                continue;
+            }
+
+            // Do not create definition if a definition for a parent class was defined in configuration file, which means it contains more info as automatically populated export
+            // template
+            Class superClass = clazz.getSuperclass();
+            boolean found = false;
+            while (superClass != null && !Object.class.equals(superClass)) {
+                if (templatesFromConfigFile.contains(superClass.getSimpleName())) {
+                    found = true;
+                    break;
+                }
+                superClass = superClass.getSuperclass();
+            }
+
+            if (found) {
+                continue;
+            }
+
+            ExportTemplate exportTemplate = new ExportTemplate();
+
+            exportTemplate.setName(clazz.getSimpleName());
+            exportTemplate.setEntityToExport(clazz);
+
+            supplementExportTemplateWithAutomaticInfo(exportTemplate);
+
             exportImportTemplates.put(exportTemplate.getName(), exportTemplate);
         }
 
@@ -2192,11 +2214,20 @@ public class EntityExportImportService implements Serializable {
             return exportImportTemplates.get(clazz.getSimpleName());
 
         } else {
+            // Check by entity class in case template name differs from a class to export
             for (ExportTemplate template : exportImportTemplates.values()) {
-                // Filter by a template name
                 if (template.getEntityToExport() != null && template.getEntityToExport().equals(clazz)) {
                     return template;
                 }
+            }
+
+            // Check by a superclass
+            Class superClass = clazz.getSuperclass();
+            while (superClass != null && !Object.class.equals(superClass)) {
+                if (exportImportTemplates.containsKey(superClass.getSimpleName())) {
+                    return exportImportTemplates.get(superClass.getSimpleName());
+                }
+                superClass = superClass.getSuperclass();
             }
         }
         log.error("No export template found for class {}", clazz);
