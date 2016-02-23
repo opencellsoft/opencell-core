@@ -56,7 +56,7 @@
                         <p:column width="10%">
                             <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
                             <p:commandButton id="deletelink" action="#{backingBean.deleteItemFromCollection(fieldItem, rowIndex)}" partialSubmit="true" icon="ui-icon-trash"
-                                process="@this" update="#{id}">
+                                process="@this #{id}" update="#{id}">
                             </p:commandButton>
                         </p:column>
                     </c:if>

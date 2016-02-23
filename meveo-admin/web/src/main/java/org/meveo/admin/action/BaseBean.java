@@ -17,8 +17,10 @@
 package org.meveo.admin.action;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -27,6 +29,7 @@ import java.util.Set;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.inject.Instance;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 
@@ -92,7 +95,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @Inject
     @CurrentUser
     protected User currentUser;
-    
+
     @Inject
     protected Conversation conversation;
 
@@ -104,13 +107,13 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @Inject
     private CatMessagesService catMessagesService;
-    
+
     @Inject
     private FilterService filterService;
-    
+
     @Inject
     private ProviderService providerService;
-    
+
     /** Search filters. */
     protected Map<String, Object> filters = new HashMap<String, Object>();
 
@@ -119,7 +122,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     /** Class of backing bean. */
     private Class<T> clazz;
-    
 
     /**
      * Request parameter. Should form be displayed in create/edit or view mode
@@ -167,18 +169,18 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * Selected Entities in multiselect datatable.
      */
     private List<T> selectedEntities;
-    
+
     private Filter listFilter;
-    
+
     private boolean listFiltered = false;
 
     /**
      * Tracks active tabs in GUI
-     */        
-    private int activeTab; 
+     */
+    private int activeTab;
 
     private int activeMainTab = 0;
-    
+
     /**
      * Constructor
      */
@@ -230,7 +232,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public T initEntity() {
         log.debug("instantiating {} with id {}", this.getClass(), getObjectId());
         if (getObjectId() != null) {
-            
+
             List<String> formFieldsToFetch = getFormFieldsToFetch();
 
             if (formFieldsToFetch == null) {
@@ -261,7 +263,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
         return entity;
     }
-    
+
     public T initEntity(Long id) {
         entity = null;
         setObjectId(id);
@@ -339,8 +341,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        String message = entity.isTransient()?"save.successful":"update.successful";
-        
+        String message = entity.isTransient() ? "save.successful" : "update.successful";
+
         if (!isMultilanguageEntity()) {
             entity = saveOrUpdate(entity);
 
@@ -379,17 +381,17 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         messages.info(new BundleKey("messages", message));
         return back();
     }
-    
+
     public String saveOrUpdateWithMessage(boolean killConversation) throws BusinessException {
-    	 boolean result = true;
-         try {
-        	 return this.saveOrUpdate(killConversation);
-         } catch (Exception e) {
-             result = false;
-         }
-         RequestContext requestContext = RequestContext.getCurrentInstance();
-         requestContext.addCallbackParam("result", result);
-         return null;
+        boolean result = true;
+        try {
+            return this.saveOrUpdate(killConversation);
+        } catch (Exception e) {
+            result = false;
+        }
+        RequestContext requestContext = RequestContext.getCurrentInstance();
+        requestContext.addCallbackParam("result", result);
+        return null;
     }
 
     /**
@@ -756,7 +758,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                         cleanFilters.put(filterEntry.getKey(), filterEntry.getValue());
                     }
 
-//                    cleanFilters.put(PersistenceService.SEARCH_CURRENT_USER, getCurrentUser());
+                    // cleanFilters.put(PersistenceService.SEARCH_CURRENT_USER, getCurrentUser());
                     cleanFilters.put(PersistenceService.SEARCH_CURRENT_PROVIDER, getCurrentProvider());
                     return BaseBean.this.supplementSearchCriteria(cleanFilters);
                 }
@@ -777,9 +779,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 }
             };
         }
-        
+
         listFiltered = false;
-        
+
         return dataModel;
     }
 
@@ -831,11 +833,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void setObjectIdFromSet(Long objectIdFromSet) {
         this.objectIdFromSet = objectIdFromSet;
     }
-    
+
     public Long getObjectIdFromSet() {
         return objectIdFromSet;
     }
-    
+
     /**
      * true in edit mode
      * 
@@ -855,8 +857,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     protected User getCurrentUser() {
-        return currentUser; 
-        
+        return currentUser;
+
         // return ((MeveoUser) identity.getUser()).getUser();
     }
 
@@ -883,33 +885,33 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return currentProvider;
     }
 
-	protected String getDefaultSort() {
-		if (listFilter != null && listFilter.getOrderCondition() != null) {
-			StringBuffer sb = new StringBuffer();
-			for (String field : listFilter.getOrderCondition().getFieldNames()) {
-				if (field.indexOf(".") == -1) {
-					sb.append(listFilter.getPrimarySelector().getAlias() + "." + field + ",");
-				} else {
-					sb.append(field + ",");
-				}
-			}
-			sb.deleteCharAt(sb.length() - 1);
+    protected String getDefaultSort() {
+        if (listFilter != null && listFilter.getOrderCondition() != null) {
+            StringBuffer sb = new StringBuffer();
+            for (String field : listFilter.getOrderCondition().getFieldNames()) {
+                if (field.indexOf(".") == -1) {
+                    sb.append(listFilter.getPrimarySelector().getAlias() + "." + field + ",");
+                } else {
+                    sb.append(field + ",");
+                }
+            }
+            sb.deleteCharAt(sb.length() - 1);
 
-			return StringUtils.join(listFilter.getOrderCondition().getFieldNames(), ",");
-		}
+            return StringUtils.join(listFilter.getOrderCondition().getFieldNames(), ",");
+        }
 
-		return "id";
-	}
+        return "id";
+    }
 
-	protected SortOrder getDefaultSortOrder() {
-		if (listFilter != null && listFilter.getOrderCondition() != null) {
-			if (listFilter.getOrderCondition().isAscending()) {
-				return SortOrder.ASCENDING;
-			}
-		}
+    protected SortOrder getDefaultSortOrder() {
+        if (listFilter != null && listFilter.getOrderCondition() != null) {
+            if (listFilter.getOrderCondition().isAscending()) {
+                return SortOrder.ASCENDING;
+            }
+        }
 
-		return SortOrder.DESCENDING;
-	}
+        return SortOrder.DESCENDING;
+    }
 
     public String getBackView() {
         return backView.get();
@@ -981,53 +983,54 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         requestContext.addCallbackParam("result", result);
         return null;
     }
-    
-    public CSVExportOptions csvOptions(){
-	    ParamBean param = ParamBean.getInstance();
-		String characterEncoding = param.getProperty("csv.characterEncoding","iso-8859-1");
-		CSVExportOptions csvOption=new CSVExportOptions();
-		csvOption.setSeparatorCharacter(';');
-		csvOption.setCharacterEncoding(characterEncoding);
-		return csvOption;
-	}
-    //dummy codes for avoiding to get custom field templates
-    public List<CustomFieldTemplate> getCustomFieldTemplates() {
-    	return null;
+
+    public CSVExportOptions csvOptions() {
+        ParamBean param = ParamBean.getInstance();
+        String characterEncoding = param.getProperty("csv.characterEncoding", "iso-8859-1");
+        CSVExportOptions csvOption = new CSVExportOptions();
+        csvOption.setSeparatorCharacter(';');
+        csvOption.setCharacterEncoding(characterEncoding);
+        return csvOption;
     }
 
-	public Filter getListFilter() {
-		return listFilter;
-	}
+    // dummy codes for avoiding to get custom field templates
+    public List<CustomFieldTemplate> getCustomFieldTemplates() {
+        return null;
+    }
 
-	public void setListFilter(Filter listFilter) {
-		this.listFilter = listFilter;
-	}
-	
-	public List<Filter> getListFilters() {
-		return filterService.findByPrimaryTargetClass(clazz.getName());
-	}
-	
-	public void runListFilter() {
-		if (listFilter != null) {
-			dataModel = null;
-			filters = new HashMap<String, Object>();
+    public Filter getListFilter() {
+        return listFilter;
+    }
 
-			filters.put("$FILTER", listFilter);
+    public void setListFilter(Filter listFilter) {
+        this.listFilter = listFilter;
+    }
 
-			listFiltered = true;
-		} else {
-			filters.remove("$FILTER");
-		}
-	}
-	
-	public int getActiveTab() {
+    public List<Filter> getListFilters() {
+        return filterService.findByPrimaryTargetClass(clazz.getName());
+    }
+
+    public void runListFilter() {
+        if (listFilter != null) {
+            dataModel = null;
+            filters = new HashMap<String, Object>();
+
+            filters.put("$FILTER", listFilter);
+
+            listFiltered = true;
+        } else {
+            filters.remove("$FILTER");
+        }
+    }
+
+    public int getActiveTab() {
         return activeTab;
     }
-	
-	public void setActiveTab(int activeTab) {
+
+    public void setActiveTab(int activeTab) {
         this.activeTab = activeTab;
     }
-	
+
     /**
      * @param activeMainTab Main tab to select
      */
@@ -1049,5 +1052,68 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     public List<EntityActionScript> getCustomActions() {
         return null;
+    }
+
+    /**
+     * Delete item from a collection of values
+     * 
+     * @param values Collection of values
+     * @param itemIndex An index of an item to remove
+     * @return True/false if item was removed
+     */
+    @SuppressWarnings("rawtypes")
+    public void deleteItemFromCollection(Collection values, int itemIndex) {
+
+        int index = 0;
+        Iterator iterator = values.iterator();
+        while (iterator.hasNext()) {
+            iterator.next();
+            if (itemIndex == index) {
+                iterator.remove();
+                return;
+            }
+            index++;
+        }
+    }
+
+    /**
+     * Change value in a collection. Collection to update an item index are passed as attributes
+     * 
+     * @param event Value change event
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public final void updateItemInCollection(ValueChangeEvent event) {
+
+        Collection values = (Collection) event.getComponent().getAttributes().get("values");
+
+        values.remove(event.getOldValue());
+        values.add(event.getNewValue());
+
+        // Unpredictable results when changing several values at a time, as Set does not guarantee same value oder - could be used only in Ajax and only with refresh
+        // int itemIndex = (int) event.getComponent().getAttributes().get("itemIndex");
+        // log.error("AKK changing value from {} to {} in index {} values {}", event.getOldValue(), event.getNewValue(), itemIndex, values.toArray());
+        // ArrayList newValues = new ArrayList();
+        // newValues.addAll(values);
+        //
+        // newValues.remove(itemIndex);
+        // newValues.add(itemIndex, event.getNewValue());
+        // values.clear();
+        // values.addAll(newValues);
+        // log.error("AKK end changing value from {} to {} in index {} values {}", event.getOldValue(), event.getNewValue(), itemIndex, values.toArray());
+    }
+
+    /**
+     * Add a new blank item to collection. Instantiate a new item based on parametized collection type.
+     * 
+     * @param values A collection of values
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public void addItemToCollection(Collection values, Class itemClass) {
+
+        try {
+            values.add(itemClass.newInstance());
+        } catch (InstantiationException | IllegalAccessException e) {
+            log.error("Failed to instantiate a new item of {} class", itemClass.getName());
+        }
     }
 }
