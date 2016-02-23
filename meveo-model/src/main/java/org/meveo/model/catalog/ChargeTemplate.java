@@ -25,6 +25,8 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -95,6 +97,10 @@ public class ChargeTemplate extends BusinessCFEntity {
 	
 	@Column(name = "UNIT_NB_DECIMAL")
 	private int unitNbDecimal;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ROUNDING_MODE")
+	private RoundingModeEnum roundingMode;	
 
 	public OperationTypeEnum getType() {
 		return type;
@@ -180,4 +186,19 @@ public class ChargeTemplate extends BusinessCFEntity {
     public ICustomFieldEntity getParentCFEntity() {
         return null;
     }
+
+	/**
+	 * @return the roundingMode
+	 */
+	public RoundingModeEnum getRoundingMode() {
+		return roundingMode;
+	}
+
+	/**
+	 * @param roundingMode the roundingMode to set
+	 */
+	public void setRoundingMode(RoundingModeEnum roundingMode) {
+		this.roundingMode = roundingMode;
+	}
+    
 }

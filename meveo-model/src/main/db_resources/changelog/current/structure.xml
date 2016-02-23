@@ -2029,5 +2029,12 @@
 		<modifyDataType columnName="INVOICE_PREFIX" newDataType="VARCHAR(2000)" tableName="CRM_PROVIDER" />	
 		<modifyDataType columnName="INVOICE_ADJUSTMENT_PREFIX" newDataType="VARCHAR(2000)" tableName="CRM_PROVIDER" />																																
 	</changeSet>
+		
+    <changeSet id="#1365_20160119" author="anasseh">
+        <addColumn tableName="CAT_CHARGE_TEMPLATE">
+            <column name="ROUNDING_MODE" type="VARCHAR(255)" />
+        </addColumn>
+        <sql>UPDATE CAT_CHARGE_TEMPLATE SET ROUNDING_MODE='NEAREST';</sql>
+    </changeSet> 	
 	
 </databaseChangeLog>
