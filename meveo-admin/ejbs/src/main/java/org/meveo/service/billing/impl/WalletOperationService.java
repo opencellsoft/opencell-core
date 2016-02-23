@@ -484,8 +484,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			} else {
 				log.error("Error in calendar dates : nextapplicationDate={}, previousapplicationDate={}", nextapplicationDate, previousapplicationDate);
 			}
-
-			quantity = quantity.multiply(new BigDecimal(prorataRatio).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+            
+			quantity = NumberUtil.getInChargeUnit(quantity, new BigDecimal(prorataRatio), chargeInstance.getChargeTemplate().getUnitNbDecimal(),chargeInstance.getChargeTemplate().getRoundingMode());			
 			log.debug("rateSubscription part1={}, part2={}, prorataRation={} -> quantity={}", new Object[] { part1, part2, prorataRatio, quantity });
 		}
 
@@ -613,9 +613,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			}
 
 			// FIXME i18n
-			String param2 = " " + str_tooPerceived + " " + sdf.format(periodStart) + " / " + sdf.format(DateUtils.addDaysToDate(nextapplicationDate, -1));
-
-			quantity = quantity.multiply(new BigDecimal(prorataRatio + "").setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+			String param2 = " " + str_tooPerceived + " " + sdf.format(periodStart) + " / " + sdf.format(DateUtils.addDaysToDate(nextapplicationDate, -1));			
+			quantity = NumberUtil.getInChargeUnit(quantity, new BigDecimal(prorataRatio + ""), chargeInstance.getChargeTemplate().getUnitNbDecimal(),chargeInstance.getChargeTemplate().getRoundingMode());
 			log.debug("part1={}, part2={}, prorataRatio={}, param2={} -> quantity={}", part1, part2, prorataRatio, param2, quantity);
 
 			InvoiceSubCategory invoiceSubCategory = recurringChargeTemplate.getInvoiceSubCategory();
@@ -848,7 +847,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					log.error("ApplyNotAppliedinAdvanceReccuringCharge Error in calendar dates : nextapplicationDate={}, previousapplicationDate={}", nextapplicationDate,
 							previousapplicationDate);
 				}
-				quantity = quantity.multiply(new BigDecimal(prorataRatio + "").setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+				quantity = NumberUtil.getInChargeUnit(quantity, new BigDecimal(prorataRatio + ""), recurringChargeTemplate.getUnitNbDecimal(),recurringChargeTemplate.getRoundingMode());				
 				log.debug("part1={}, part2={}, prorataRatio={} -> quantity", part1, part2, prorataRatio, quantity);
 			}
 
@@ -962,8 +961,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				nextapplicationDate = endAgreementDate;
 				endDate = nextapplicationDate;
 				if (recurringChargeTemplate.getTerminationProrata()) {
-					type = ApplicationTypeEnum.PRORATA_TERMINATION;
-					quantity = quantity.multiply(new BigDecimal(prorataRatio + "").setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+					type = ApplicationTypeEnum.PRORATA_TERMINATION;					
+					quantity = NumberUtil.getInChargeUnit(quantity, new BigDecimal(prorataRatio + ""), recurringChargeTemplate.getUnitNbDecimal(),recurringChargeTemplate.getRoundingMode());
 				}
 			}
 			String param2 = sdf.format(applicationDate) + " - " + sdf.format(endDate);

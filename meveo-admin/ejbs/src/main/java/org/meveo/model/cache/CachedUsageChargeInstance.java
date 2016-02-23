@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 
@@ -24,6 +25,7 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
     private Date subscriptionDate;
     private Date terminationDate;
     private CachedUsageChargeTemplate templateCache;
+    private RoundingModeEnum roundingModeEnum;
 
     public Long getId() {
         return id;
@@ -145,6 +147,7 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
         templateCache = cachedTemplate;
         unityMultiplicator = usageChargeTemplate.getUnitMultiplicator();
         unityNbDecimal = usageChargeTemplate.getUnitNbDecimal();
+        roundingModeEnum = usageChargeTemplate.getRoundingMode();
         lastUpdate = new Date();
         computeRoundingValues();
     }
@@ -153,8 +156,16 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
     public String toString() {
         return String
             .format(
-                "CachedUsageChargeInstance [id=%s, provider=%s, currencyId=%s, lastUpdate=%s, unityMultiplicator=%s, unityNbDecimal=%s, roundingUnityNbDecimal=%s, roundingEdrNbDecimal=%s, counter=%s, chargeDate=%s, subscriptionDate=%s, terminationDate=%s, templateCache=%s]",
+                "CachedUsageChargeInstance [id=%s, provider=%s, currencyId=%s, lastUpdate=%s, unityMultiplicator=%s, unityNbDecimal=%s, roundingUnityNbDecimal=%s, roundingEdrNbDecimal=%s, counter=%s, chargeDate=%s, subscriptionDate=%s, terminationDate=%s, templateCache=%s,roundingModeEnum=%s]",
                 id, provider, currencyId, lastUpdate, unityMultiplicator, unityNbDecimal, roundingUnityNbDecimal, roundingEdrNbDecimal, counter, chargeDate, subscriptionDate,
-                terminationDate, templateCache);
+                terminationDate, templateCache,roundingModeEnum);
     }
+
+	public RoundingModeEnum getRoundingModeEnum() {
+		return roundingModeEnum;
+	}
+
+	public void setRoundingModeEnum(RoundingModeEnum roundingModeEnum) {
+		this.roundingModeEnum = roundingModeEnum;
+	}
 }

@@ -24,6 +24,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Provider;
@@ -108,6 +109,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
 			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
 			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
 			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+			chargeTemplate.setRoundingMode(RoundingModeEnum.valueOf(postData.getRoundingModeDtoEnum().name()));
 			
 			if (postData.getTriggeredEdrs() != null) {
 				List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
@@ -196,6 +198,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
 			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
 			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
 			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+			chargeTemplate.setRoundingMode(RoundingModeEnum.valueOf(postData.getRoundingModeDtoEnum().name()));
 
 			if (provider.getTradingLanguages() != null) {
 				if (postData.getLanguageDescriptions() != null) {
