@@ -4,12 +4,12 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SuccessJobInstancesTestCase</title>
+<title>DeleteEmailListFromEmailNotifTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SuccessJobInstancesTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">DeleteEmailListFromEmailNotifTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
@@ -22,13 +22,18 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${EmailNotificationBool}==true</td>
-	<td></td>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${CodeValue}')]</td>
+	<td>${CodeValue}</td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>${buttonNew}</td>
+	<td>verifyText</td>
+	<td>//a[contains(text(),'${CodeValue}')]</td>
+	<td>${CodeValue}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[contains(text(),'${CodeValue}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -57,19 +62,9 @@
 	<td></td>
 </tr>
 <tr>
-	<td>sendKeys</td>
+	<td>verifyValue</td>
 	<td>${ClassnameFilter}</td>
-	<td>${TypeClassnameFilterValue}</td>
-</tr>
-<tr>
-	<td>waitForVisible</td>
-	<td>//*[contains(@id, 'classNameFilter_txt_panel')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;${ClassnameFilterValue}&quot;)</td>
-	<td></td>
+	<td>${ClassnameFilterValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -247,11 +242,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${MailingListBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertText</td>
 	<td>//div[9]/label</td>
 	<td>Send to mailing list</td>
@@ -262,48 +252,43 @@
 	<td>Send to mailing list</td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${AddNewEmailInList}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>${MailingValue1}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${AddNewEmailInList}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>${MailingValue2}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${MailingValue1}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${MailingValue1}</td>
-	<td>${EmailValue1}</td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${MailingValue2}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>verifyValue</td>
 	<td>${MailingValue2}</td>
 	<td>${EmailValue2}</td>
 </tr>
 <tr>
-	<td>endIf</td>
+	<td>click</td>
+	<td>${DeleteValue2}</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>${MailingValue2}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${MailingValue1}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>${MailingValue1}</td>
+	<td>${EmailValue1}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${DeleteValue1}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>${MailingValue1}</td>
 	<td></td>
 </tr>
 <tr>
@@ -401,11 +386,7 @@
 	<td>//a[contains(text(),'${CodeValue}')]</td>
 	<td>${CodeValue}</td>
 </tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
+
 </tbody></table>
 </body>
 </html>
