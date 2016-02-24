@@ -241,30 +241,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		}
 
 		int agreementMonthTerm = 0;
-		// activate recurring charges
-		log.debug("serviceActivation:serviceInstance.getRecurrringChargeInstances.size={}", serviceInstance
-				.getRecurringChargeInstances().size());
-
-		for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
-
-			// application of subscription prorata
-			recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
-			recurringChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
-			recurringChargeInstance.setSeller(subscription.getUserAccount().getBillingAccount().getCustomerAccount()
-					.getCustomer().getSeller());
-			recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-			recurringChargeInstance.setStatusDate(new Date());
-			recurringChargeInstanceService.update(recurringChargeInstance, creator);
-			walletOperationService.chargeSubscription(recurringChargeInstance, creator);
-
-			if (recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth() != null) {
-				if (recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth() > agreementMonthTerm) {
-					agreementMonthTerm = recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth();
-				}
-			}
-			int nbRating=recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance.getId(),new Date(),creator);
-			log.debug("rated "+nbRating+" missing periods during activation");
-		}
 
 		// set end Agreement Date
 		Date serviceEngAgreementDate = null;
@@ -293,6 +269,30 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			log.debug("ServiceActivation: subscription charges are not applied.");
 		}
 
+		// activate recurring charges
+		log.debug("serviceActivation:serviceInstance.getRecurrringChargeInstances.size={}", serviceInstance
+				.getRecurringChargeInstances().size());
+
+		for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
+
+			// application of subscription prorata
+			recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
+			recurringChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
+			recurringChargeInstance.setSeller(subscription.getUserAccount().getBillingAccount().getCustomerAccount()
+					.getCustomer().getSeller());
+			recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
+			recurringChargeInstance.setStatusDate(new Date());
+			recurringChargeInstanceService.update(recurringChargeInstance, creator);
+			walletOperationService.chargeSubscription(recurringChargeInstance, creator);
+
+			if (recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth() != null) {
+				if (recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth() > agreementMonthTerm) {
+					agreementMonthTerm = recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth();
+				}
+			}
+			int nbRating=recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance.getId(),new Date(),creator);
+			log.debug("rated "+nbRating+" missing periods during activation");
+		}
 		for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
 			usageChargeInstanceService.activateUsageChargeInstance(usageChargeInstance, creator);
 		}
