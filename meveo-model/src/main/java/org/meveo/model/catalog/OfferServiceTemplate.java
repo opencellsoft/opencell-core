@@ -12,13 +12,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "offerTemplate.code", "serviceTemplate.code", "provider" })
-@Table(name = "CAT_OFFER_SERVICE_TEMPLATE")
+@Table(name = "CAT_OFFER_SERV_TEMPLATES", uniqueConstraints = @UniqueConstraint(columnNames = { "OFFER_TEMPLATE_ID", "SERVICE_TEMPLATE_ID", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_SERV_TEMPLT_SEQ")
 public class OfferServiceTemplate extends BaseEntity {
 
@@ -36,7 +37,7 @@ public class OfferServiceTemplate extends BaseEntity {
 	private boolean mandatory;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CAT_OFFER_SERV_INCOMP", joinColumns = @JoinColumn(name = "OFFER_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_SERVICE_TEMPLATE_ID"))
+	@JoinTable(name = "CAT_OFFER_SERV_INCOMP", joinColumns = @JoinColumn(name = "OFFER_SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"))
 	private List<ServiceTemplate> incompatibleServices = new ArrayList<>();
 
 	public OfferTemplate getOfferTemplate() {

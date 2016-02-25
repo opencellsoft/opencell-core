@@ -129,7 +129,7 @@
 								id="serviceTemplateCode" field="serviceTemplate"
 								valueLabelField="code" popup="true"
 								popupId="searchServiceTemplatePopup" clearButton="true"
-								required="true" />
+								required="true" disabled="#{!offerTemplateBean.offerServiceTemplate.transient}" />
 							<hftl:formField
 								label="#{messages['offerServiceTemplate.mandatory']}"
 								id="mandatory" field="mandatory" />

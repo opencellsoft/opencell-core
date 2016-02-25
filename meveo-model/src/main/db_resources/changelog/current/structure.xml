@@ -1383,5 +1383,51 @@
 			<column name="VISIBLE" type="BOOL"></column>
 		</addColumn> 
 	</changeSet>
+    
+    <changeSet id="#1101_20160224" author="AndriusKarpavicius">
+        <dropUniqueConstraint tableName="crm_custom_field_inst" constraintName="uk_crm_custom_field_inst" />
+        <addUniqueConstraint columnNames="APPLIES_TO_UUID, code, period_start_date, period_end_date, provider_id" tableName="crm_custom_field_inst" constraintName="uk_crm_custom_field_inst" />
+    </changeSet>
+    <changeSet id="#1516_20160224" author="AndriusKarpavicius">
+        <dropTable tableName="CAT_OFFER_SERV_ASSOC"/>
+    </changeSet>
+    <changeSet id="#1450_20160226" author="AndriusKarpavicius">
+        <renameColumn tableName="cat_offer_serv_incomp" oldColumnName="offer_service_template_id" newColumnName="service_template_id"/>
+        <renameColumn tableName="cat_offer_serv_incomp" oldColumnName="offer_template_id" newColumnName="offer_service_template_id"/>
+    </changeSet>
+    
+    <changeSet id="#1450_20160226-1" author="AndriusKarpavicius">    
+        <addColumn tableName="cat_offer_serv_templates">
+            <column name="id" type="BIGINT"/>
+            <column name="version" type="INT4" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="mandatory" type="BOOL" defaultValueBoolean="false"/>        
+        </addColumn>
 
+        <sql>update cat_offer_serv_templates set id=offer_template_id, version=0</sql>
+        <sql>update cat_offer_serv_templates set provider_id = (select provider_id from cat_offer_template where cat_offer_template.id=cat_offer_serv_templates.offer_template_id)</sql>
+        <sql>update cat_offer_serv_templates set id = (select nextval('CAT_OFFER_SERV_TEMPLT_SEQ') from cat_offer_serv_templates as oo where oo.offer_template_id=cat_offer_serv_templates.offer_template_id and oo.service_template_id=cat_offer_serv_templates.service_template_id)</sql>
+
+
+        <addNotNullConstraint tableName="cat_offer_serv_templates" columnName="id"/>
+        <addPrimaryKey columnNames="id" constraintName="pk_cat_offer_serv_templates" tableName="cat_offer_serv_templates" />
+        <addUniqueConstraint columnNames="provider_id, offer_template_id, service_template_id" tableName="cat_offer_serv_templates" constraintName="uk_cat_offer_serv_templates" />
+        
+        <dropForeignKeyConstraint baseTableName="cat_offer_serv_incomp" constraintName="fk_cat_os_incomp_offer_template"/>
+        
+        <sql>delete from cat_offer_serv_incomp</sql>
+        
+        <addForeignKeyConstraint baseColumnNames="offer_service_template_id"
+            baseTableName="cat_offer_serv_incomp" constraintName="fk_cat_os_incomp_offer_template"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id"
+            referencedTableName="cat_offer_serv_templates" />
+            
+        <dropTable tableName="cat_offer_service_template"/>
+        
+    </changeSet>
+
+
+    
+    
 </databaseChangeLog>

@@ -112,7 +112,7 @@
         <c:set var="disabled" value="false" />
     </c:if>
     <c:if test="${empty(size)}">
-        <c:set var="size" value="${field =='description'?80:20}" />
+        <c:set var="size" value="${field =='description'?80:35}" />
     </c:if>
     <c:if test="${empty(maxlength)}">
         <c:set var="maxlength" value="${field =='description'?100:(size&lt;=40?40:size)}" />
