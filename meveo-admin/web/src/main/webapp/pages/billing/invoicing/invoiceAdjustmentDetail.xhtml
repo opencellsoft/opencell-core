@@ -126,7 +126,7 @@
 									<p:column headerText="#{messages['invoice.amountWithTax']}"
 										rendered="#{invoiceBean.entity.transient}" />
 									<p:column headerText="#{messages['invoice.amountWithoutTax']}" />
-									<p:column headerText="#{messages['invoice.amountWithTax']}" />
+									<p:column headerText="#{messages['invoice.amountWithTax']}"  rendered="#{invoiceBean.entity.provider.entreprise}"/>
 								</p:row>
 							</p:columnGroup>
 
@@ -153,7 +153,7 @@
 								</p:inputText>
 							</p:column>
 
-							<p:column>
+							<p:column rendered="#{invoiceBean.entity.provider.entreprise}">
 								<p:inputText value="#{entity.amountWithTax}"
 									readonly="#{not invoiceBean.entity.transient}">
 									<f:converter converterId="bigDecimal4DigitsConverter" />
@@ -195,7 +195,7 @@
 										</f:facet>
 									</p:column>
 
-									<p:column>
+									<p:column rendered="#{invoiceBean.entity.provider.entreprise}">
 										<f:facet name="footer">
 											<h:outputText
 												value="#{invoiceBean.totalInvoiceAdjustmentAmountWithTax}"
@@ -284,7 +284,7 @@
 											</h:outputText>
 										</f:facet>
 									</p:column>
-									<p:column>
+									<p:column rendered="#{invoiceBean.entity.provider.entreprise}">
 										<f:facet name="footer">
 											<h:outputText
 												value="#{invoiceBean.totalInvoiceAdjustmentDetailAmountWithoutTax}"
@@ -317,7 +317,7 @@
 									<p:column headerText="#{messages['ratedTransaction.quantity']}" />
 									<p:column
 										headerText="#{messages['ratedTransaction.amount1WithoutTax']}" />
-									<p:column
+									<p:column  rendered="#{invoiceBean.entity.provider.entreprise}" 
 										headerText="#{messages['ratedTransaction.amount1WithTax']}" />
 								</p:row>
 							</p:columnGroup>
@@ -363,7 +363,7 @@
 								<h:outputText value="#{entity.amountWithoutTax}"
 									converter="#{getConverter.forType(entity.amountWithoutTax,'4digits')}" />
 							</p:column>
-							<p:column>
+							<p:column rendered="#{invoiceBean.entity.provider.entreprise}" >
 								<h:outputText value="#{entity.amountWithTax}"
 									converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
 							</p:column>
@@ -405,7 +405,7 @@
 											</h:outputText>
 										</f:facet>
 									</p:column>
-									<p:column>
+									<p:column rendered="#{invoiceBean.entity.provider.entreprise}" >
 										<f:facet name="footer">
 											<h:outputText
 												value="#{invoiceBean.totalInvoiceAdjustmentDetailAmountWithTax}"
