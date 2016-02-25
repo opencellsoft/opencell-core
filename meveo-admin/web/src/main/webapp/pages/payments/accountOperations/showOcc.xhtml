@@ -20,7 +20,7 @@
 
             <hftl:formField label="#{messages['accountOperation.occDescription']}" field="occDescription" size="50" maxlength="50" disabled="true" />
 
-            <hftl:formField label="#{messages['accountOperation.amount']}" field="amount" disabled="true" />
+            <hftl:formField label="#{messages['accountOperation.amount']}" field="amount" disabled="true" converter="bigDecimal4DigitsConverter" />
 
             <ui:param name="buttons" value="true"/>
             <ui:define name="buttons">

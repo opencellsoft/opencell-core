@@ -29,11 +29,11 @@
 					field="occDescription" size="50" maxlength="50" disabled="true" />
 
 				<hftl:formField label="#{messages['accountOperation.amountTTC']}"
-					field="amount" disabled="true"/>
+					field="amount" disabled="true" converter="bigDecimal4DigitsConverter"/>
 				<hftl:formField label="#{messages['accountOperation.amountHT']}"
-					field="amountWithoutTax" disabled="true" />
+					field="amountWithoutTax" disabled="true" converter="bigDecimal4DigitsConverter" />
 				<hftl:formField label="#{messages['accountOperation.amountTax']}"
-					field="taxAmount" disabled="true"/> 
+					field="taxAmount" disabled="true" converter="bigDecimal4DigitsConverter"/> 
                
                <ui:param name="buttons" value="true"/>
                <ui:define name="buttons"> 		   
