@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.SubscriptionTerminationReason;
@@ -16,7 +17,8 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 public class TerminationReasonDto implements Serializable {
 
 	private static final long serialVersionUID = 6013621511892042364L;
-
+	
+	@XmlAttribute(required = true)
 	private String code;
 	private String description;
 	private boolean applyAgreement;

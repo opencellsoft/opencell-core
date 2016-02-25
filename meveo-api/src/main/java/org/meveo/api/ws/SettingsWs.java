@@ -20,6 +20,7 @@ import org.meveo.api.dto.ProviderDto;
 import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
+import org.meveo.api.dto.TerminationReasonDto;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
@@ -41,6 +42,7 @@ import org.meveo.api.dto.response.GetRoleResponse;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTaxesResponse;
+import org.meveo.api.dto.response.GetTerminationReasonResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.PermissionResponseDto;
@@ -354,4 +356,24 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     public DescriptionsResponseDto listDescriptions();
+    
+    /* termination reasons */
+    
+    @WebMethod
+    public ActionStatus createTerminationReason(@WebParam(name = "terminationReason") TerminationReasonDto postData);
+    
+    @WebMethod
+    public ActionStatus updateTerminationReason(@WebParam(name = "terminationReason") TerminationReasonDto postData);
+    
+    @WebMethod
+    public ActionStatus createOrUpdateTerminationReason(@WebParam(name = "terminationReason") TerminationReasonDto postData);
+    
+    @WebMethod
+    public ActionStatus removeTerminationReason(@WebParam(name = "terminationReasonCode") String code);
+    
+    @WebMethod
+    public GetTerminationReasonResponse findTerminationReason(@WebParam(name = "terminationReasonCode") String code);
+    
+    @WebMethod
+    public GetTerminationReasonResponse listTerminationReason();
 }
