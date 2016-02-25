@@ -21,7 +21,7 @@
 					<hf:formField
 						label="#{messages['postInvoicingReport.globalAmountHT']}"
 						field="postInvoicingReports" childField="globalAmount"
-						popup="false" />
+						popup="false" converter="bigDecimal4DigitsConverter"/>
 					<hf:formField
 						label="#{messages['postInvoicingReport.invoicesNumber']}"
 						field="postInvoicingReports" childField="invoicesNumber"
@@ -31,13 +31,13 @@
 						field="postInvoicingReports" childField="positiveInvoicesNumber"
 						popup="false" />
 					<hf:formField
-						label="#{messages['postInvoicingReport.positiveInvoicesAmountHT']}"
+						label="toto#{messages['postInvoicingReport.positiveInvoicesAmountHT']}"
 						field="postInvoicingReports" childField="positiveInvoicesAmountHT"
-						popup="false" />
+						popup="false" converter="bigDecimal4DigitsConverter" />
 					<hf:formField
 						label="#{messages['postInvoicingReport.positiveInvoicesAmount']}"
 						field="postInvoicingReports" childField="positiveInvoicesAmount"
-						popup="false" />
+						popup="false" converter="bigDecimal4DigitsConverter" />
 
 					<hf:formField id="emptyInvoicesNumber"
 						label="#{messages['postInvoicingReport.emptyInvoicesNumber']}"
@@ -48,19 +48,19 @@
 					<hf:formField
 						label="#{messages['postInvoicingReport.positiveInvoicesTaxAmount']}"
 						field="postInvoicingReports"
-						childField="positiveInvoicesTaxAmount" popup="false" />
+						childField="positiveInvoicesTaxAmount" popup="false"  converter="bigDecimal4DigitsConverter" />
 					<hf:formField
 						label="#{messages['postInvoicingReport.negativeInvoicesAmountHT']}"
 						field="postInvoicingReports" childField="negativeInvoicesAmountHT"
-						popup="false" />
+						popup="false" converter="bigDecimal4DigitsConverter" />
 					<hf:formField
 						label="#{messages['postInvoicingReport.negativeInvoicesTaxAmount']}"
 						field="postInvoicingReports"
-						childField="negativeInvoicesTaxAmount" popup="false" />
+						childField="negativeInvoicesTaxAmount" popup="false" converter="bigDecimal4DigitsConverter"/>
 					<hf:formField id="positiveInvoicesAmount"
 						label="#{messages['postInvoicingReport.negativeInvoicesAmount']}"
 						field="postInvoicingReports" childField="negativeInvoicesAmount"
-						popup="false" />
+						popup="false" converter="bigDecimal4DigitsConverter" />
 					<hf:formField id="electronicInvoicesNumber"
 						label="#{messages['postInvoicingReport.electronicInvoicesNumber']}"
 						field="postInvoicingReports" childField="electronicInvoicesNumber"
@@ -92,38 +92,38 @@
 
 				<hf:formField label="#{messages['paymentMethod.check']}"
 					field="postInvoicingReports" childField="checkAmuontHT"
-					popup="false" />
+					popup="false" converter="bigDecimal4DigitsConverter" />
 
 				<hf:formField label="#{messages['paymentMethod.directDebit']}"
 					field="postInvoicingReports" childField="directDebitAmuontHT"
-					popup="false" />
+					popup="false" converter="bigDecimal4DigitsConverter" />
 
 				<hf:formField label="#{messages['paymentMethod.tip']}"
-					field="postInvoicingReports" childField="tipAmuontHT" popup="false" />
+					field="postInvoicingReports" childField="tipAmuontHT" popup="false" converter="bigDecimal4DigitsConverter" />
 
 				<hf:formField
 					label="#{messages['paymentMethod.wiretransfer']}"
 					field="postInvoicingReports" childField="wiretransferAmuontHT"
-					popup="false" />
+					popup="false" converter="bigDecimal4DigitsConverter" />
 
 
 			<b>#{messages['postInvoicingReport.amoutTtcPerPaymentMode']}</b>
 
 
 				<hf:formField label="#{messages['paymentMethod.check']}"
-					field="postInvoicingReports" childField="checkAmuont" popup="false" />
+					field="postInvoicingReports" childField="checkAmuont" popup="false" converter="bigDecimal4DigitsConverter"/>
 
 				<hf:formField label="#{messages['paymentMethod.directDebit']}"
 					field="postInvoicingReports" childField="directDebitAmuont"
-					popup="false" />
+					popup="false"  converter="bigDecimal4DigitsConverter"/>
 
 				<hf:formField label="#{messages['paymentMethod.tip']}"
-					field="postInvoicingReports" childField="tipAmuont" popup="false" />
+					field="postInvoicingReports" childField="tipAmuont" popup="false" converter="bigDecimal4DigitsConverter"/>
 
 				<hf:formField
 					label="#{messages['paymentMethod.wiretransfer']}"
 					field="postInvoicingReports" childField="wiretransferAmuont"
-					popup="false" />
+					popup="false"  converter="bigDecimal4DigitsConverter"/>
 
 
 		</hf:formPanel>
@@ -150,11 +150,11 @@
 			<hftl:column label="#{messages['billingAccount.name']}"
 				field="billingAccount.name" />
 			<hftl:column label="#{messages['invoice.amountWithoutTax']}"   
-				field="amountWithoutTax" />
+				field="amountWithoutTax"  converterParam="4digits"/>
 			<hftl:column label="#{messages['invoice.amountTax']}"
-				field="amountTax" />
+				field="amountTax" converterParam="4digits" />
 			<hftl:column label="#{messages['invoice.amountWithTax']}"
-				field="amountWithTax" />
+				field="amountWithTax" converterParam="4digits" />
  
 		</hftl:dataList>
 	 

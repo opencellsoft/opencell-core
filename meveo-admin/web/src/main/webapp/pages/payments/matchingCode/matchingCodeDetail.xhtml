@@ -16,8 +16,8 @@
 				<hf:formPanel  showFormButtons ="#{false}" label="#{messages['matchingCode.panel']}" backingBean="#{matchingCodeBean}">
 						<hf:formField label="#{messages['matchingCode.matchingDate']}" field="matchingDate" disabled="true" />	  
 						<hf:formField label="#{messages['matchingCode.matchingType']}" field="matchingType" disabled="true"/>
-						<hf:formField label="#{messages['matchingCode.matchingAmountDebit']}" field="matchingAmountDebit" disabled="true" />
-						<hf:formField label="#{messages['matchingCode.matchingAmountCredit']}" field="matchingAmountCredit" disabled="true" />																		                  																						
+						<hf:formField label="#{messages['matchingCode.matchingAmountDebit']}" field="matchingAmountDebit" disabled="true"  converter="bigDecimal4DigitsConverter"/>
+						<hf:formField label="#{messages['matchingCode.matchingAmountCredit']}" field="matchingAmountCredit" disabled="true" converter="bigDecimal4DigitsConverter"/>																		                  																						
 					<p:commandButton value="#{messages['action.back']}"	 onclick="window.history.back();"/>						
 					<p:commandButton value="#{messages['matchingCode.button.unmatching']}"	 action="#{matchingCodeBean.unmatching()}"/>
 				</hf:formPanel>
@@ -35,11 +35,11 @@
 						<hftl:column label="#{messages['accountOperation.dueDate']}"
 							field="accountOperation.dueDate" isDate="true" />
 						<hftl:column label="#{messages['accountOperation.credit']}"
-							field="accountOperation.amount" show="#{entity.accountOperation.transactionCategory.toString() == 'CREDIT'}" />
+							field="accountOperation.amount" show="#{entity.accountOperation.transactionCategory.toString() == 'CREDIT'}" converterParam="4digits" />
 						<hftl:column label="#{messages['accountOperation.debit']}"
-							field="accountOperation.amount" show="#{entity.accountOperation.transactionCategory.toString() == 'DEBIT'}" />								- 					
+							field="accountOperation.amount" show="#{entity.accountOperation.transactionCategory.toString() == 'DEBIT'}"  converterParam="4digits"/>								- 					
 	                    <hftl:column label="#{messages['matchingAmount.amount']}"
-							field="matchingAmount"  />								-							
+							field="matchingAmount"  converterParam="4digits" />								-							
 					</hftl:dataList>
 				</p:panel>
 				
