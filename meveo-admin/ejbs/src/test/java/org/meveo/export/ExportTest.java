@@ -10,6 +10,7 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
+import org.junit.Test;
 import org.meveo.export.EntityExportImportService.ReusingReferenceByIdMarshallingStrategy;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
@@ -25,6 +26,24 @@ public class ExportTest {
     private Map<ExportTemplate, XStream> xstreams = new HashMap<ExportTemplate, XStream>();
 
     private Customer customer1 = null;
+
+    @Test
+    public void testExport1() {
+
+        Map<RelatedEntityToExport, String> map = new HashMap<RelatedEntityToExport, String>();
+
+        RelatedEntityToExport ree = new RelatedEntityToExport("select * from Customer", null, Customer.class);
+        RelatedEntityToExport ree2 = new RelatedEntityToExport("select * from CustmerAcount", null, CustomerAccount.class);
+        RelatedEntityToExport ree3 = new RelatedEntityToExport("select * from Customer", null, Customer.class);
+        RelatedEntityToExport ree4 = new RelatedEntityToExport("select * from Customerssss", null, Customer.class);
+        map.put(ree, "val1");
+        map.put(ree2, "val2");
+
+        Assert.assertEquals("val1", map.get(ree));
+        Assert.assertEquals("val2", map.get(ree2));
+        Assert.assertEquals("val1", map.get(ree3));
+        Assert.assertNull(map.get(ree4));
+    }
 
     // @Test
     public void testExport() throws ClassNotFoundException, IOException {
@@ -55,7 +74,7 @@ public class ExportTest {
         xstream.marshal(template, writer);
         Assert.fail(xstream.toXML(template));
         Assert.fail(buffer.toString());
-        
+
         if (1 / 1 == 1) {
             return;
         }

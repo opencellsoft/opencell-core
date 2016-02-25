@@ -8,7 +8,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.meveo.model.jobs.JobInstance;
@@ -23,7 +23,7 @@ public class JobTrigger extends Notification {
 	@CollectionTable(name = "ADM_NOTIF_JOB_PARAMS") 
 	private Map<String, String> jobParams = new HashMap<String, String>();
 	
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "JOB_INSTANCE_ID")
     private JobInstance jobInstance;
  

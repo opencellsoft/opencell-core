@@ -74,6 +74,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
@@ -99,6 +100,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.security.Permission;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.util.MeveoJpa;
@@ -287,6 +289,7 @@ public class EntityExportImportService implements Serializable {
     @SuppressWarnings("rawtypes")
     private void supplementExportTemplateWithAutomaticInfo(ExportTemplate exportTemplate) {
 
+        // Skip if it is a grouped template, as it holds references to templates defined separatelly
         Class clazz = exportTemplate.getEntityToExport();
         if (clazz == null) {
             return;
@@ -319,6 +322,16 @@ public class EntityExportImportService implements Serializable {
             exportTemplate.addRelatedEntity(cfSelect, cfParameters, CustomFieldInstance.class);
 
             exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
+        }
+
+        // If template is marked as exportAllClassesAsFull add to export provider and permission as short version
+        if (exportTemplate.isExportAllClassesAsFull()) {
+            if (!Provider.class.isAssignableFrom(clazz) && !exportTemplate.getClassesToExportAsShort().contains(Provider.class)) {
+                exportTemplate.getClassesToExportAsShort().add(Provider.class);
+            }
+            if (!Permission.class.isAssignableFrom(clazz) && !exportTemplate.getClassesToExportAsShort().contains(Permission.class)) {
+                exportTemplate.getClassesToExportAsShort().add(Permission.class);
+            }
         }
     }
 
@@ -574,7 +587,6 @@ public class EntityExportImportService implements Serializable {
      * @param writer Writer for serialized entity output
      * @return
      */
-    @SuppressWarnings("rawtypes")
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void serializeEntities(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport,
             List<? extends IEntity> selectedEntitiesToExport, ExportImportStatistics exportStats, HierarchicalStreamWriter writer) {
@@ -593,7 +605,7 @@ public class EntityExportImportService implements Serializable {
         List<? extends IEntity> principalEntities = retrievedEntities.principalEntities;
 
         // Stores only related entities grouped by an export template name. These entities will be exported every EXPORT_PAGE_SIZE pages of a principal entity export.
-        Map<Class, List<IEntity>> relatedEntitiesByTemplate = new HashMap<Class, List<IEntity>>();
+        Map<RelatedEntityToExport, List<IEntity>> relatedEntitiesByTemplate = new HashMap<RelatedEntityToExport, List<IEntity>>();
         if (retrievedEntities.relatedEntities != null) {
             relatedEntitiesByTemplate.putAll(retrievedEntities.relatedEntities);
         }
@@ -650,7 +662,7 @@ public class EntityExportImportService implements Serializable {
                                                                                                                                // entities will be exported first on the first page
                     // Serialize related entities with their own export template node
                     if (pagesProcessedByXstream > -1 && !relatedEntitiesByTemplate.isEmpty()) {
-                        for (Entry<Class, List<IEntity>> relatedEntityInfo : relatedEntitiesByTemplate.entrySet()) {
+                        for (Entry<RelatedEntityToExport, List<IEntity>> relatedEntityInfo : relatedEntitiesByTemplate.entrySet()) {
                             serializeEntities(getExportImportTemplate(relatedEntityInfo.getKey()), parameters, null, relatedEntityInfo.getValue(), exportStats, writer);
                         }
                         relatedEntitiesByTemplate.clear();
@@ -694,7 +706,7 @@ public class EntityExportImportService implements Serializable {
 
         // Serialize related entities with their own export template node if there were any left after the last iteration
         if (!relatedEntitiesByTemplate.isEmpty()) {
-            for (Entry<Class, List<IEntity>> relatedEntityInfo : relatedEntitiesByTemplate.entrySet()) {
+            for (Entry<RelatedEntityToExport, List<IEntity>> relatedEntityInfo : relatedEntitiesByTemplate.entrySet()) {
                 serializeEntities(getExportImportTemplate(relatedEntityInfo.getKey()), parameters, null, relatedEntityInfo.getValue(), exportStats, writer);
             }
             relatedEntitiesByTemplate.clear();
@@ -1034,6 +1046,12 @@ public class EntityExportImportService implements Serializable {
     /**
      * Save entity to a target DB
      * 
+     * OneToMany and OneToOne with no cascading are saved after the main entity is saved in saveEntityToTarget() > extractNonCascadedEntities()
+     * 
+     * OneToMany and OneToOne that cascade are saved before the main entity is saved in saveNonManagedFields()
+     * 
+     * ManyToOne are saved before the main entity is saved in saveNonManagedFields()
+     * 
      * @param entityToSave Entity to save
      * @param lookupById Should a lookup of existing entity in DB be done by ID or by attributes
      * @param importStats Import statistics
@@ -1167,6 +1185,8 @@ public class EntityExportImportService implements Serializable {
         }
 
         // Update id and version fields, so if entity was referred from other importing entities, it would be referring to a newly saved entity
+        // THIS WORKS ONLY WHEN ENTITY IS CREATED. When entity is updated it is irrelevant as em.update returns a new entity instance, and if entity was referred from other
+        // importing entities, they contain a reference to an old entity instance. See saveNonManagedField()
         entityDeserialized.setId((Long) entityFromDB.getId());
         log.trace("Deserialized entity updated with id {}", entityFromDB.getId());
 
@@ -1175,6 +1195,7 @@ public class EntityExportImportService implements Serializable {
             log.trace("Deserialized entity updated with version {}", ((IVersionedEntity) entityFromDB).getVersion());
         }
 
+        // Copy data from deserialized entity to an entity from DB field by field
         Class clazz = entityDeserialized.getClass();
         Class cls = clazz;
         while (!Object.class.equals(cls) && cls != null) {
@@ -1209,6 +1230,16 @@ public class EntityExportImportService implements Serializable {
                             .contains(oneToOneAnotation.cascade(), CascadeType.PERSIST))) {
                             continue;
                         }
+
+                        // TODO should a check be added here for ManyToMany fields?? - if so - extractNonCascadableEntities and loadonCascadableFields shoud handle it as well.
+                        // Extract @oneToOne fields that do not cascade
+                        // } else if (field.isAnnotationPresent(ManyToMany.class)) {
+                        // ManyToMany manyToManyAnotation = field.getAnnotation(ManyToMany.class);
+                        // if (!(ArrayUtils.contains(manyToManyAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(manyToManyAnotation.cascade(), CascadeType.MERGE) ||
+                        // ArrayUtils
+                        // .contains(manyToManyAnotation.cascade(), CascadeType.PERSIST))) {
+                        // continue;
+                        // }
                     }
 
                     // Save related entities that were not saved during main entity saving
@@ -1223,7 +1254,7 @@ public class EntityExportImportService implements Serializable {
                         } else {
                             FieldUtils.writeField(field, entityFromDB, sourceValue, true);
                         }
-                        log.trace("Populating field {} with {}", field.getName(), sourceValue);
+                        log.trace("Populating map field {}.{} with {}", clazz.getSimpleName(), field.getName(), sourceValue);
 
                     } else if (Set.class.isAssignableFrom(field.getType())) {
                         Set targetValue = (Set) FieldUtils.readField(field, entityFromDB, true);
@@ -1233,7 +1264,7 @@ public class EntityExportImportService implements Serializable {
                         } else {
                             FieldUtils.writeField(field, entityFromDB, sourceValue, true);
                         }
-                        log.trace("Populating field {} with {}", field.getName(), sourceValue);
+                        log.trace("Populating set field {}.{} with {}", clazz.getSimpleName(), field.getName(), sourceValue);
 
                     } else if (List.class.isAssignableFrom(field.getType())) {
                         List targetValue = (List) FieldUtils.readField(field, entityFromDB, true);
@@ -1244,11 +1275,11 @@ public class EntityExportImportService implements Serializable {
                             FieldUtils.writeField(field, entityFromDB, sourceValue, true);
                         }
 
-                        log.trace("Populating field {} with {}", field.getName(), sourceValue);
+                        log.trace("Populating list field {}.{} with {}", clazz.getSimpleName(), field.getName(), sourceValue);
 
                     } else {
 
-                        log.trace("Setting field {} to {} ", field.getName(), sourceValue);
+                        log.trace("Setting field {}.{} to {} ", clazz.getSimpleName(), field.getName(), sourceValue);
                         FieldUtils.writeField(field, entityFromDB, sourceValue, true);
                     }
 
@@ -1321,6 +1352,7 @@ public class EntityExportImportService implements Serializable {
 
         // Do not care about @oneToMany and @OneToOne fields that do not cascade they will be ignored anyway and their saving is handled in saveEntityToTarget() (see
         // extractNonCascadedEntities part)
+        // @ManyToOne are always saved first
         boolean isCascadedField = false;
         if (field.isAnnotationPresent(OneToMany.class)) {
             OneToMany oneToManyAnotation = field.getAnnotation(OneToMany.class);
@@ -1362,11 +1394,24 @@ public class EntityExportImportService implements Serializable {
                 }
                 // If entity is managed, then continue on unless detached. Update value in a map with a new value. TODO fix here as when lookupById, id value would be filled
                 // already
-                isManaged = ((IEntity) singleValue).getId() != null; // emTarget.contains(singleValue);
+                isManaged = getEntityManager().contains((IEntity) singleValue);// ((IEntity) singleValue).getId() != null;
                 if (!isManaged) {
-                    log.debug("Persisting child field {}.{}'s (cascaded={}) value {}", clazz.getSimpleName(), field.getName(), isCascadedField, singleValue);
-                    mapValue.put(key, saveEntityToTarget((IEntity) singleValue, lookupById, importStats, isCascadedField, forceToProvider));
 
+                    log.debug("Persisting non-managed map's child field {}.{}'s (cascaded={}, id={}) value {}", clazz.getSimpleName(), field.getName(), isCascadedField,
+                        ((IEntity) singleValue).getId(), singleValue);
+
+                    if (((IEntity) singleValue).getId() != null) {
+                        log.error("Value is not managed, but ID is known."
+                                + (singleValue instanceof Provider ? "Will use same entity becuase it is provider" : "Entity will be stored as a JPA reference."));
+                        if (singleValue instanceof Provider) {
+                            continue;
+                        } else {
+                            // mapValue.put(key, getEntityManager().find(fieldValue.getClass(), ((IEntity) singleValue).getId()));
+                            mapValue.put(key, getEntityManager().getReference(singleValue.getClass(), ((IEntity) singleValue).getId()));
+                        }
+                    } else {
+                        mapValue.put(key, saveEntityToTarget((IEntity) singleValue, lookupById, importStats, isCascadedField, forceToProvider));
+                    }
                     // // Is managed, but detached - need to detach it again
                     // // Don't know why it fails on permission class only. Problem arises when converter in another iEntityIdentifierConverter finds an entity, but it as it runs
                     // in a
@@ -1377,8 +1422,9 @@ public class EntityExportImportService implements Serializable {
                     // singleValue = getEntityManagerForImport().merge(singleValue);
                     // mapValue.put(key, singleValue);
 
-                    // } else {
-                    // log.trace("Persisting child field {}.{} is managed", clazz.getSimpleName(), field.getName());
+                    // Value is managed already - do nothing
+                } else {
+                    log.trace("Persisting non-managed map's child field {}.{} managed value", clazz.getSimpleName(), field.getName());
                 }
             }
 
@@ -1393,14 +1439,29 @@ public class EntityExportImportService implements Serializable {
                     continue;
                 }
                 // If entity is not managed, then save it. TODO fix here as when lookupById, id value would be filled already
-                isManaged = ((IEntity) singleValue).getId() != null; // emTarget.contains(singleValue);
+                isManaged = getEntityManager().contains((IEntity) singleValue);// ((IEntity) singleValue).getId() != null;
                 if (!isManaged) {
-                    log.debug("Persisting child field {}.{}'s (cascaded={}) value {}", clazz.getSimpleName(), field.getName(), isCascadedField, singleValue);
-                    collectionValue.add(saveEntityToTarget((IEntity) singleValue, lookupById, importStats, isCascadedField, forceToProvider));
+                    log.debug("Persisting non-managed collection's child field {}.{}'s (cascaded={}, id={}) value {}", clazz.getSimpleName(), field.getName(), isCascadedField,
+                        ((IEntity) singleValue).getId(), singleValue);
 
+                    if (((IEntity) singleValue).getId() != null) {
+                        log.error("Value is not managed, but ID is known. "
+                                + (singleValue instanceof Provider ? "Will use same entity because it is provider" : "Entity will be stored as a JPA reference."));
+                        if (singleValue instanceof Provider) {
+                            collectionValue.add(singleValue);
+                        } else {
+                            // collectionValue.add( getEntityManager().find(fieldValue.getClass(), ((IEntity) singleValue).getId()));
+                            collectionValue.add(getEntityManager().getReference(singleValue.getClass(), ((IEntity) singleValue).getId()));
+                        }
+
+                    } else {
+                        collectionValue.add(saveEntityToTarget((IEntity) singleValue, lookupById, importStats, isCascadedField, forceToProvider));
+                    }
+                    // Value is managed already, so add it to the list unchanged
                 } else {
                     // // Is managed, but detached - need to detach it again
-                    // // Don't know why it fails on permission class only. Problem arises when converter in another iEntityIdentifierConverter finds an entity, but it as it runs
+                    // // Don't know why it fails on permission class only. Problem arises when converter in another iEntityExportIdentifierConverter finds an entity, but it as it
+                    // runs
                     // in a
                     // // separate session, it gets detached for a next entity. It happens for all entities,but throws an error for Permission class only.
                     // if (!getEntityManagerForImport().contains(singleValue) && !(fieldValue instanceof Provider)) {
@@ -1409,7 +1470,7 @@ public class EntityExportImportService implements Serializable {
                     // singleValue = getEntityManagerForImport().merge(singleValue);
                     // }
                     collectionValue.add(singleValue);
-                    // log.trace("Persisting child field {}.{} is managed", clazz.getSimpleName(), field.getName());
+                    log.trace("Persisting non-managed collections child field {}.{} managed value", clazz.getSimpleName(), field.getName());
                 }
             }
 
@@ -1418,23 +1479,41 @@ public class EntityExportImportService implements Serializable {
             // If entity is not managed, then save it.
             // TODO emTarget.contains(fieldValue) fails - need to fix this temporary solution as when lookupById is used, id value would be
             // filled already for an entity this this .getId() != null would always be true
-            isManaged = ((IEntity) fieldValue).getId() != null; // emTarget.contains(fieldValue);
+            isManaged = getEntityManager().contains((IEntity) fieldValue);// ((IEntity) fieldValue).getId() != null;
             if (!isManaged) {
-                log.debug("Persisting child field {}.{}'s (cascaded={}) value {}", clazz.getSimpleName(), field.getName(), isCascadedField, fieldValue);
-                fieldValue = saveEntityToTarget((IEntity) fieldValue, lookupById, importStats, isCascadedField, forceToProvider);
-                // Update field value in an entity with a new value
-                FieldUtils.writeField(field, entity, fieldValue, true);
+                log.debug("Persisting non-managed  single value child field {}.{}'s (cascaded={}, id={}) value {}", clazz.getSimpleName(), field.getName(), isCascadedField,
+                    ((IEntity) fieldValue).getId(), fieldValue);
 
+                if (((IEntity) fieldValue).getId() != null) {
+                    log.error("Value is not managed, but ID is known."
+                            + (fieldValue instanceof Provider ? "Will use same entity because it is provider" : "Entity will be stored as a JPA reference."));
+                    if (fieldValue instanceof Provider) {
+
+                    } else {
+                        // fieldValue = getEntityManager().find(fieldValue.getClass(), ((IEntity) fieldValue).getId());
+                        fieldValue = getEntityManager().getReference(fieldValue.getClass(), ((IEntity) fieldValue).getId());
+                        // Update field value in an entity with a new value
+                        FieldUtils.writeField(field, entity, fieldValue, true);
+                    }
+
+                } else {
+
+                    fieldValue = saveEntityToTarget((IEntity) fieldValue, lookupById, importStats, isCascadedField, forceToProvider);
+                    // Update field value in an entity with a new value
+                    FieldUtils.writeField(field, entity, fieldValue, true);
+                }
                 // // Is managed, but detached - need to detach it again
-                // // Don't know why it fails on permission class only. Problem arises when converter in another iEntityIdentifierConverter finds an entity, but it as it runs in a
+                // // Don't know why it fails on permission class only. Problem arises when converter in another iEntityExportIdentifierConverter finds an entity, but it as it runs
+                // in a
                 // // separate session, it gets detached for a next entity. It happens for all entities,but throws an error for Permission class only.
                 // } else if (!getEntityManagerForImport().contains(fieldValue) && !(fieldValue instanceof Provider)) {
                 // log.trace("Persisting child field {}.{} is managed BUT detached. Object id={} will be refreshed.", clazz.getSimpleName(), field.getName(),
                 // ((IEntity) fieldValue).getId());
                 // fieldValue = getEntityManagerForImport().merge(fieldValue);
 
-                // } else {
-                // log.trace("Persisting field {}.{} is managed", clazz.getSimpleName(), field.getName());
+                // Value is managed already - do nothing
+            } else {
+                log.trace("Persisting non-managed single value field {}.{} managed value", clazz.getSimpleName(), field.getName());
             }
         }
 
@@ -1865,7 +1944,7 @@ public class EntityExportImportService implements Serializable {
                             Object paramValue = ValueExpressionWrapper.evaluateExpression(param.getValue(), elContext, Object.class);
                             query.setParameter(param.getKey(), paramValue);
                         }
-                        retrievedEntities.addReletedEntities(relatedEntityInfo.getEntityClass(), query.getResultList());
+                        retrievedEntities.addReletedEntities(relatedEntityInfo, query.getResultList());
 
                     } catch (Exception e) {
                         log.error("Could not evaluate expression {} for exportTemplate {} given entity {}", lastElExpr, exportTemplate.getName(), entity, e);
@@ -2234,36 +2313,74 @@ public class EntityExportImportService implements Serializable {
         return null;
     }
 
+    /**
+     * Get export template by name
+     * 
+     * @param templateName Template name
+     * @return Export/import template definition
+     */
+    public ExportTemplate getExportImportTemplate(String templateName) {
+
+        if (exportImportTemplates.containsKey(templateName)) {
+            return exportImportTemplates.get(templateName);
+
+        }
+        log.error("No export template found by name {}", templateName);
+        return null;
+    }
+
+    /**
+     * Get export template by name
+     * 
+     * @param templateName Template name
+     * @return Export/import template definition
+     */
+    public ExportTemplate getExportImportTemplate(RelatedEntityToExport relatedEntityInfo) {
+
+        if (relatedEntityInfo.getEntityClass() != null) {
+            return getExportImportTemplate(relatedEntityInfo.getEntityClass());
+
+        } else if (!StringUtils.isBlank(relatedEntityInfo.getTemplateName())) {
+            return getExportImportTemplate(relatedEntityInfo.getTemplateName());
+        }
+
+        log.error("No export template found for relaetd entity {}", relatedEntityInfo);
+        return null;
+    }
+
+    /**
+     * Contains information about retrieved entities to be serialized
+     */
     private class RetrievedEntities {
 
+        /**
+         * Entities retrieved according to an export template
+         */
         protected List<IEntity> principalEntities;
 
-        @SuppressWarnings("rawtypes")
-        protected Map<Class, List<IEntity>> relatedEntities;
+        protected Map<RelatedEntityToExport, List<IEntity>> relatedEntities;
 
         protected boolean isEmpty() {
             return principalEntities == null || principalEntities.isEmpty();
         }
 
-        @SuppressWarnings("rawtypes")
-        protected void addReletedEntities(Class entityClass, List<IEntity> entitiesToAdd) {
+        protected void addReletedEntities(RelatedEntityToExport relatedEntity, List<IEntity> entitiesToAdd) {
             if (relatedEntities == null) {
-                relatedEntities = new HashMap<Class, List<IEntity>>();
+                relatedEntities = new HashMap<RelatedEntityToExport, List<IEntity>>();
             }
             if (!entitiesToAdd.isEmpty()) {
-                if (!relatedEntities.containsKey(entityClass)) {
-                    relatedEntities.put(entityClass, new ArrayList<IEntity>());
+                if (!relatedEntities.containsKey(relatedEntity)) {
+                    relatedEntities.put(relatedEntity, new ArrayList<IEntity>());
                 }
-                relatedEntities.get(entityClass).addAll(entitiesToAdd);
+                relatedEntities.get(relatedEntity).addAll(entitiesToAdd);
             }
         }
 
-        @SuppressWarnings("rawtypes")
-        protected void copyRelatedEntitiesToMap(Map<Class, List<IEntity>> copyToMap) {
+        protected void copyRelatedEntitiesToMap(Map<RelatedEntityToExport, List<IEntity>> copyToMap) {
             if (relatedEntities == null) {
                 return;
             }
-            for (Entry<Class, List<IEntity>> entityInfo : relatedEntities.entrySet()) {
+            for (Entry<RelatedEntityToExport, List<IEntity>> entityInfo : relatedEntities.entrySet()) {
                 if (copyToMap.containsKey(entityInfo.getKey())) {
                     copyToMap.get(entityInfo.getKey()).addAll(entityInfo.getValue());
                 } else {
@@ -2272,15 +2389,14 @@ public class EntityExportImportService implements Serializable {
             }
         }
 
-        @SuppressWarnings("rawtypes")
         protected String getSummary() {
 
             StringBuilder stringBuilder = new StringBuilder("Principal entities = ");
             stringBuilder.append(principalEntities.size());
 
             if (relatedEntities != null) {
-                for (Entry<Class, List<IEntity>> info : relatedEntities.entrySet()) {
-                    stringBuilder.append(", ").append(info.getKey().getSimpleName()).append("=").append(info.getValue().size());
+                for (Entry<RelatedEntityToExport, List<IEntity>> info : relatedEntities.entrySet()) {
+                    stringBuilder.append(", ").append(info.getKey().getEntityClassNameOrTemplateName()).append("=").append(info.getValue().size());
                 }
             }
 

@@ -2,6 +2,8 @@ package org.meveo.export;
 
 import java.util.Map;
 
+import org.meveo.commons.utils.StringUtils;
+
 /**
  * Contains information to retrieve related entities for export once primary entity was retrieved
  * 
@@ -17,6 +19,8 @@ public class RelatedEntityToExport {
     @SuppressWarnings("rawtypes")
     private Class entityClass;
 
+    private String templateName;
+
     public RelatedEntityToExport() {
         super();
     }
@@ -26,6 +30,12 @@ public class RelatedEntityToExport {
         this.selection = selection;
         this.parameters = parameters;
         this.entityClass = entityClass;
+    }
+
+    public RelatedEntityToExport(String selection, Map<String, String> parameters, String templateName) {
+        this.selection = selection;
+        this.parameters = parameters;
+        this.templateName = templateName;
     }
 
     public String getSelection() {
@@ -52,5 +62,59 @@ public class RelatedEntityToExport {
     @SuppressWarnings("rawtypes")
     public void setEntityClass(Class entityClass) {
         this.entityClass = entityClass;
+    }
+
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("RelatedEntityToExport [entityClass=%s, templateName=%s]", entityClass, templateName);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        if (entityClass != null) {
+            hash = entityClass.hashCode();
+
+        } else if (templateName != null) {
+            hash = templateName.hashCode();
+        }
+
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        } else if (!(obj instanceof RelatedEntityToExport)) { // Fails with proxed objects: getClass() != obj.getClass()){
+            return false;
+        }
+
+        RelatedEntityToExport other = (RelatedEntityToExport) obj;
+
+        if (StringUtils.compare(getTemplateName(), other.getTemplateName()) == 0 && getEntityClass() == other.getEntityClass()
+                && StringUtils.compare(getSelection(), other.getSelection()) == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public String getEntityClassNameOrTemplateName() {
+        if (entityClass != null) {
+            return entityClass.getSimpleName();
+        } else {
+            return templateName;
+        }
     }
 }

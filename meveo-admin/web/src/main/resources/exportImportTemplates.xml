@@ -17,12 +17,6 @@
         </classesToIgnoreFKNotFound>
     </template>
     <template name="CustomEntityTemplate" entityToExport="org.meveo.model.customEntities.CustomEntityTemplate">
-        <parameters>
-            <entry>
-                <string>provider</string>
-                <string>provider</string>
-            </entry>
-        </parameters>
         <classesToExportAsFull>
             <java-class>org.meveo.model.crm.CustomFieldTemplate</java-class>
             <java-class>org.meveo.model.scripts.EntityActionScript</java-class>
@@ -58,13 +52,26 @@
             </relatedEntity>
         </relatedEntities>
     </template>
+    <template name="ScriptInstance with all dependencies" entityToExport="org.meveo.model.scripts.ScriptInstance">
+        <exportAllClassesAsFull>true</exportAllClassesAsFull>
+        <classesToExportAsShort>
+            <java-class>org.meveo.model.security.Permission</java-class>
+        </classesToExportAsShort>
+        <classesToIgnoreFKNotFound>
+            <java-class>org.meveo.model.admin.User</java-class>
+        </classesToIgnoreFKNotFound>
+    </template>
+    <template name="Notification with all dependencies" entityToExport="org.meveo.model.notification.Notification">
+        <exportAllClassesAsFull>true</exportAllClassesAsFull>
+        <classesToExportAsShort>
+            <java-class>org.meveo.model.security.Permission</java-class>
+        </classesToExportAsShort>
+        <classesToIgnoreFKNotFound>
+            <java-class>org.meveo.model.admin.User</java-class>
+        </classesToIgnoreFKNotFound>
+    </template>
+
     <template name="MeveoModule" entityToExport="org.meveo.model.admin.MeveoModule">
-        <parameters>
-            <entry>
-                <string>provider</string>
-                <string>provider</string>
-            </entry>
-        </parameters>
         <classesToExportAsFull>
             <java-class>org.meveo.model.admin.MeveoModuleItem</java-class>
         </classesToExportAsFull>
@@ -120,7 +127,7 @@
                 </parameters>
             </relatedEntity>
             <relatedEntity>
-                <entityClass>org.meveo.model.scripts.ScriptInstance</entityClass>
+                <templateName>ScriptInstance with all dependencies</templateName>
                 <selection>select mie from ScriptInstance mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
                     mi.itemType='SCRIPT' and
                     mi.meveoModule=:meveoModule and mie.provider=:provider
@@ -154,7 +161,7 @@
                 </parameters>
             </relatedEntity>
             <relatedEntity>
-                <entityClass>org.meveo.model.notification.Notification</entityClass>
+                <templateName>Notification with all dependencies</templateName>
                 <selection>select mie from Notification mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
                     mi.itemType='NOTIFICATION' and
                     mi.meveoModule=:meveoModule and mie.provider=:provider
@@ -224,36 +231,18 @@
         </relatedEntities>
     </template>
     <template name="Calendar" entityToExport="org.meveo.model.catalog.Calendar">
-        <parameters>
-            <entry>
-                <string>provider</string>
-                <string>provider</string>
-            </entry>
-        </parameters>
         <classesToExportAsFull>
             <java-class>org.meveo.model.catalog.CalendarDateInterval</java-class>
             <java-class>org.meveo.model.catalog.HourInDay</java-class>
         </classesToExportAsFull>
     </template>
     <template name="InvoiceCategory" entityToExport="org.meveo.model.billing.InvoiceCategory">
-        <parameters>
-            <entry>
-                <string>provider</string>
-                <string>provider</string>
-            </entry>
-        </parameters>
         <classesToExportAsFull>
             <java-class>org.meveo.model.billing.InvoiceSubCategory</java-class>
             <java-class>org.meveo.model.billing.InvoiceSubcategoryCountry</java-class>
         </classesToExportAsFull>
     </template>
     <template name="ServiceTemplate" entityToExport="org.meveo.model.catalog.ServiceTemplate">
-        <parameters>
-            <entry>
-                <string>provider</string>
-                <string>provider</string>
-            </entry>
-        </parameters>
         <classesToExportAsFull>
             <java-class>org.meveo.model.catalog.ServiceChargeTemplateRecurring</java-class>
             <java-class>org.meveo.model.catalog.ServiceChargeTemplateSubscription</java-class>
@@ -263,16 +252,21 @@
         </classesToExportAsFull>
     </template>
     <template name="DiscountPlan" entityToExport="org.meveo.model.catalog.DiscountPlan">
-        <parameters>
-            <entry>
-                <string>provider</string>
-                <string>provider</string>
-            </entry>
-        </parameters>
         <classesToExportAsFull>
             <java-class>org.meveo.model.catalog.DiscountPlanItem</java-class>
         </classesToExportAsFull>
     </template>
+    <template name="UserAccount" entityToExport="org.meveo.model.billing.UserAccount">
+        <classesToExportAsFull>
+            <java-class>org.meveo.model.billing.WalletInstance</java-class>
+        </classesToExportAsFull>
+    </template>
+    <template name="OfferTemplate" entityToExport="org.meveo.model.catalog.OfferTemplate">
+        <classesToExportAsFull>
+            <java-class>org.meveo.model.catalog.OfferServiceTemplate</java-class>
+        </classesToExportAsFull>
+    </template>    
+
     <template name="Users and roles">
         <parameters>
             <entry>
@@ -308,7 +302,6 @@
             <template ref="Calendar" />
             <template ref="CustomEntityTemplate" />
             <template ref="CustomFieldTemplate" />
-            <template ref="MeveoModule" />
             <template ref="Tax" />
             <template ref="InvoiceCategory" />
             <template ref="BillingCycle" />
@@ -346,6 +339,7 @@
             <template ref="OfferTemplate" />
             <template ref="PricePlanMatrix" />
             <template ref="DiscountPlan" />
+            <template ref="MeveoModule" />
         </groupedTemplates>
     </template>
 
@@ -360,11 +354,7 @@
             <template ref="Customer" />
             <template ref="CustomerAccount" />
             <template ref="BillingAccount" />
-            <template name="UserAccount" entityToExport="org.meveo.model.billing.UserAccount">
-                <classesToExportAsFull>
-                    <java-class>org.meveo.model.billing.WalletInstance</java-class>
-                </classesToExportAsFull>
-            </template>
+            <template ref="UserAccount" />
         </groupedTemplates>
     </template>
 
@@ -398,10 +388,6 @@
     <template name="EDR" entityToExport="org.meveo.model.rating.EDR" canDeleteAfterExport="true">
         <parameters>
             <entry>
-                <string>provider</string>
-                <string>provider</string>
-            </entry>
-            <entry>
                 <string>eventDate</string>
                 <string>dateRange</string>
             </entry>
@@ -410,34 +396,18 @@
     <template name="WalletOperation" entityToExport="org.meveo.model.billing.WalletOperation" canDeleteAfterExport="true">
         <parameters>
             <entry>
-                <string>provider</string>
-                <string>provider</string>
-            </entry>
-            <entry>
                 <string>operationDate</string>
                 <string>dateRange</string>
             </entry>
         </parameters>
     </template>
     <template name="DunningPlan" entityToExport="org.meveo.model.payments.DunningPlan">
-        <parameters>
-            <entry>
-                <string>provider</string>
-                <string>provider</string>
-            </entry>
-        </parameters>
         <classesToExportAsFull>
             <java-class>org.meveo.model.payments.DunningPlanTransition</java-class>
             <java-class>org.meveo.model.payments.ActionPlanItem</java-class>
         </classesToExportAsFull>
     </template>
     <template name="JobInstance" entityToExport="org.meveo.model.jobs.JobInstance">
-        <parameters>
-            <entry>
-                <string>provider</string>
-                <string>provider</string>
-            </entry>
-        </parameters>
         <classesToExportAsFull>
             <java-class>org.meveo.model.jobs.TimerEntity</java-class>
         </classesToExportAsFull>

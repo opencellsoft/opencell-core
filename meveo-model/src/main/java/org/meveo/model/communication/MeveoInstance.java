@@ -42,7 +42,7 @@ public class MeveoInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 1733186433208397850L;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "USER_ID")
     private User user;
 

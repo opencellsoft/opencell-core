@@ -15,6 +15,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -57,15 +58,15 @@ public class Notification extends BusinessEntity {
     @Size(max = 2000)
     private String elFilter;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "COUNTER_TEMPLATE_ID")
     private CounterTemplate counterTemplate;
 
-    @OneToOne()
+    @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
     @JoinColumn(name = "COUNTER_INSTANCE_ID")
     private CounterInstance counterInstance;
     
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SCRIPT_INSTANCE_ID")
     private ScriptInstance scriptInstance;
     
