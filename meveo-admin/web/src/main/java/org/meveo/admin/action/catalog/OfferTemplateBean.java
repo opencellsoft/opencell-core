@@ -71,29 +71,13 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     @Inject
     private OfferServiceTemplateService offerServiceTemplateService;
 
-    private DualListModel<ServiceTemplate> perks;
+    private DualListModel<ServiceTemplate> incompatibleServices;
 
     private OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
-
-    public DualListModel<ServiceTemplate> getDualListModel() {
-
-        if (perks == null) {
-            List<ServiceTemplate> perksSource = serviceTemplateService.listActive();
-            List<ServiceTemplate> perksTarget = new ArrayList<ServiceTemplate>();
-            // FIXME
-            // if (getEntity().getServiceTemplates() != null) {
-            // perksTarget.addAll(getEntity().getServiceTemplates());
-            // }
-            perksSource.removeAll(perksTarget);
-            perks = new DualListModel<ServiceTemplate>(perksSource, perksTarget);
-        }
-        return perks;
-    }
-
     public OfferTemplateBean() {
         super(OfferTemplate.class);
     }
@@ -111,13 +95,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
      */
     protected List<String> getFormFieldsToFetch() {
         return Arrays.asList("provider");
-    }
-
-    public void setDualListModel(DualListModel<ServiceTemplate> perks) {
-        // FIXME
-        // getEntity().setServiceTemplates((List<ServiceTemplate>)
-        // perks.getTarget());
-        this.perks = perks;
     }
 
     public List<OfferTemplate> listActive() {
@@ -188,29 +165,32 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         log.info("saveOfferServiceTemplate getObjectId={}", getObjectId());
 
         try {
-            if (offerServiceTemplate != null && offerServiceTemplate.getServiceTemplate() != null) {
-
-                if (offerServiceTemplate.getId() != null) {
-                    offerServiceTemplate = offerServiceTemplateService.update(offerServiceTemplate);
-                    entity = getPersistenceService().refreshOrRetrieve(entity);
-                    messages.info(new BundleKey("messages", "update.successful"));
-
-                } else {
-                    offerServiceTemplate.setOfferTemplate(entity);
-                    offerServiceTemplateService.create(offerServiceTemplate);
-                    entity.addOfferServiceTemplate(offerServiceTemplate);
-                    entity = getPersistenceService().update(entity);
-                    messages.info(new BundleKey("messages", "save.successful"));
-                }
-            } else {
+            if (offerServiceTemplate != null && offerServiceTemplate.getServiceTemplate() == null) {
                 messages.error(new BundleKey("messages", "save.unsuccessful"));
             }
+            offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
+            if (offerServiceTemplate.getId() != null) {
+                offerServiceTemplate = offerServiceTemplateService.update(offerServiceTemplate);
+                entity = getPersistenceService().refreshOrRetrieve(entity);
+                messages.info(new BundleKey("messages", "update.successful"));
+
+            } else {
+                offerServiceTemplate.setOfferTemplate(entity);
+                offerServiceTemplateService.create(offerServiceTemplate);
+                entity.addOfferServiceTemplate(offerServiceTemplate);
+                entity = getPersistenceService().update(entity);
+                messages.info(new BundleKey("messages", "save.successful"));
+            }
+
+            offerServiceTemplate.getIncompatibleServices().clear();
+            offerServiceTemplate.getIncompatibleServices().addAll(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
+
         } catch (Exception e) {
             log.error("exception when saving offer service template !", e.getMessage());
             messages.error(new BundleKey("messages", "save.unsuccessful"));
         }
 
-        offerServiceTemplate = new OfferServiceTemplate();
+        newOfferServiceTemplate();
     }
 
     public void deleteOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) throws BusinessException {
@@ -222,10 +202,12 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     public void editOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) {
         this.offerServiceTemplate = offerServiceTemplate;
+        setIncompatibleServices(null);
     }
 
     public void newOfferServiceTemplate() {
         this.offerServiceTemplate = new OfferServiceTemplate();
+        this.incompatibleServices = null;
     }
 
     public OfferServiceTemplate getOfferServiceTemplate() {
@@ -237,24 +219,28 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     }
 
     public DualListModel<ServiceTemplate> getIncompatibleServices() {
-        List<ServiceTemplate> source = (offerServiceTemplate == null || offerServiceTemplate.isTransient()) ? serviceTemplateService.listActive() : serviceTemplateService
-            .listAllActiveExcept(offerServiceTemplate.getServiceTemplate(), getCurrentProvider());
-        List<ServiceTemplate> target = new ArrayList<ServiceTemplate>();
-        if (offerServiceTemplate != null && offerServiceTemplate.getIncompatibleServices() != null && offerServiceTemplate.getIncompatibleServices().size() > 0) {
-            target.addAll(offerServiceTemplate.getIncompatibleServices());
+
+        log.error("AKK getIncompatibleServices is null {}", incompatibleServices == null);
+        if (incompatibleServices == null) {
+            List<ServiceTemplate> source = null;
+            if (offerServiceTemplate == null || offerServiceTemplate.isTransient()) {
+                source = serviceTemplateService.listActive();
+            } else {
+                source = serviceTemplateService.listAllActiveExcept(offerServiceTemplate.getServiceTemplate(), getCurrentProvider());
+            }
+
+            List<ServiceTemplate> target = new ArrayList<ServiceTemplate>();
+
+            if (offerServiceTemplate != null && offerServiceTemplate.getIncompatibleServices() != null && offerServiceTemplate.getIncompatibleServices().size() > 0) {
+                target.addAll(offerServiceTemplate.getIncompatibleServices());
+            }
+            source.removeAll(target);
+            incompatibleServices = new DualListModel<ServiceTemplate>(source, target);
         }
-
-        source.removeAll(target);
-
-        DualListModel<ServiceTemplate> incompatibleServices = new DualListModel<ServiceTemplate>(source, target);
-
         return incompatibleServices;
     }
 
     public void setIncompatibleServices(DualListModel<ServiceTemplate> incompatibleServices) {
-        if (offerServiceTemplate != null) {
-            offerServiceTemplate.setIncompatibleServices(incompatibleServices.getTarget());
-        }
+        this.incompatibleServices = incompatibleServices;
     }
-
 }

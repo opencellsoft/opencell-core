@@ -138,6 +138,9 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 			return null;
 		}
 
+        getEntity().getEdrTemplates().clear();
+        getEntity().getEdrTemplates().addAll(edrTemplateService.refreshOrRetrieve(edrTemplates.getTarget()));
+
         String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {
@@ -172,8 +175,7 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 		return edrTemplates;
 	}
 
-	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> edrTemplates) {
-		getEntity().setEdrTemplates(edrTemplates.getTarget());
+	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> edrTemplates) {	
 		this.edrTemplates = edrTemplates;
 	}
 

@@ -65,7 +65,7 @@ public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 
 	public DualListModel<ServiceTemplate> getServiceTemplates() {
 		List<ServiceTemplate> targetList = new ArrayList<>();
-//FIXME
+//FIXME - for a proper dual list implementation see UserBean.get/setDualList and saveOrUpdate methods
 		//dualListModel.setSource(entity.getOfferTemplate().getServiceTemplates());
 		dualListModel.setTarget(targetList);
 

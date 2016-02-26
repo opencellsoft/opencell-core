@@ -100,6 +100,9 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
 			return null;
 		}
 
+        getEntity().getEdrTemplates().clear();
+        getEntity().getEdrTemplates().addAll(edrTemplateService.refreshOrRetrieve(edrTemplates.getTarget()));
+        
         String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {
@@ -135,7 +138,6 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
 	}
 
 	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> edrTemplates) {
-		getEntity().setEdrTemplates(edrTemplates.getTarget());
 		this.edrTemplates = edrTemplates;
 	}
 	

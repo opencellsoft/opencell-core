@@ -144,8 +144,7 @@ public class CalendarBean extends BaseBean<Calendar> {
     }
 
     public void setDayInYearModel(DualListModel<DayInYear> perks) {
-        ((CalendarYearly) getEntity()).setDays((List<DayInYear>) perks.getTarget());
-        this.dayInYearListModel = perks; 
+        this.dayInYearListModel = perks;
     }
 
     @Override
@@ -315,4 +314,18 @@ public class CalendarBean extends BaseBean<Calendar> {
         return Arrays.asList(CalendarIntervalTypeEnum.values());
     }
 
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+        if (entity instanceof CalendarYearly) {
+            if (((CalendarYearly) getEntity()).getDays() == null) {
+                ((CalendarYearly) getEntity()).setDays(new ArrayList<DayInYear>());
+            } else {
+                ((CalendarYearly) getEntity()).getDays().clear();
+            }
+            ((CalendarYearly) getEntity()).getDays().addAll(dayInYearService.refreshOrRetrieve(dayInYearListModel.getTarget()));
+        }
+
+        return super.saveOrUpdate(killConversation);
+    }
 }

@@ -175,7 +175,7 @@
 										label="#{messages['pricePlanMatrix.eventCode']}"
 										field="chargeTemplate" valueLabelField="code" popup="true"
 										popupId="searchRecurringChargeTemplatePopup"
-										clearButton="true" required="true" />
+										clearButton="true" required="true" disabled="#{!serviceTemplateBean.serviceChargeTemplateRecurring.transient}" />
 									<hftl:formField label="#{messages['menu.wallets']}"
 										listType="pickUpList" field="walletTemplates"
 										valueLabelField="code"
@@ -268,7 +268,7 @@
 										label="#{messages['pricePlanMatrix.eventCode']}"
 										field="chargeTemplate" valueLabelField="code" popup="true"
 										popupId="searchSubscriptionChargeTemplatePopup"
-										clearButton="true" required="true" />
+										clearButton="true" required="true"  disabled="#{!serviceTemplateBean.serviceChargeTemplateSubscription.transient}"/>
 									<hftl:formField label="#{messages['menu.wallets']}"
 										listType="pickUpList" field="walletTemplates"
 										valueLabelField="code"
@@ -359,7 +359,7 @@
 										label="#{messages['pricePlanMatrix.eventCode']}"
 										field="chargeTemplate" valueLabelField="code" popup="true"
 										popupId="searchTerminationChargeTemplatePopup"
-										clearButton="true" required="true" />
+										clearButton="true" required="true"  disabled="#{!serviceTemplateBean.serviceChargeTemplateTermination.transient}"/>
 									<hftl:formField label="#{messages['menu.wallets']}"
 										listType="pickUpList" field="walletTemplates"
 										valueLabelField="code"
@@ -449,7 +449,7 @@
 										label="#{messages['pricePlanMatrix.eventCode']}"
 										field="chargeTemplate" valueLabelField="code" popup="true"
 										popupId="searchUsageChargeTemplatePopup" clearButton="true"
-										required="true" />
+										required="true" disabled="#{!serviceTemplateBean.serviceChargeTemplateUsage.transient}"/>
 									<hftl:formField label="#{messages['menu.wallets']}"
 										listType="pickUpList" field="walletTemplates"
 										valueLabelField="code"

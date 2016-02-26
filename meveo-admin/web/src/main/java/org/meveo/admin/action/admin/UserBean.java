@@ -27,7 +27,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -95,6 +94,8 @@ public class UserBean extends BaseBean<User> {
      */
     private boolean show = false;
 
+    private DualListModel<Role> rolesDM;
+
     /**
      * Repeated password to check if it matches another entered password and user did not make a mistake.
      */
@@ -141,26 +142,28 @@ public class UserBean extends BaseBean<User> {
         if (passwordsDoNotMatch) {
             messages.error(new BundleKey("messages", "save.passwordsDoNotMatch"));
             return null;
-        } else {
-            if (getObjectId() != null) {
-                if (userService.isUsernameExists(entity.getUserName(), entity.getId())) {
-                    messages.error(new BundleKey("messages", "exception.UsernameAlreadyExistsException"));
-                    return null;
-                }
-            } else {
-                if (userService.isUsernameExists(entity.getUserName())) {
-                    messages.error(new BundleKey("messages", "exception.UsernameAlreadyExistsException"));
-                    return null;
-                }
-            }
-            if (!StringUtils.isBlank(password)) {
-                entity.setLastPasswordModification(new Date());
-                entity.setNewPassword(password);
-                entity.setPassword(password);
-            }
-
-            return super.saveOrUpdate(killConversation);
         }
+        if (getObjectId() != null) {
+            if (userService.isUsernameExists(entity.getUserName(), entity.getId())) {
+                messages.error(new BundleKey("messages", "exception.UsernameAlreadyExistsException"));
+                return null;
+            }
+        } else {
+            if (userService.isUsernameExists(entity.getUserName())) {
+                messages.error(new BundleKey("messages", "exception.UsernameAlreadyExistsException"));
+                return null;
+            }
+        }
+        if (!StringUtils.isBlank(password)) {
+            entity.setLastPasswordModification(new Date());
+            entity.setNewPassword(password);
+            entity.setPassword(password);
+        }
+
+        getEntity().getRoles().clear();
+        getEntity().getRoles().addAll(roleService.refreshOrRetrieve(rolesDM.getTarget()));
+
+        return super.saveOrUpdate(killConversation);
     }
 
     /**
@@ -189,23 +192,25 @@ public class UserBean extends BaseBean<User> {
      * Standard method for custom component with listType="pickList".
      */
     public DualListModel<Role> getDualListModel() {
-        List<Role> perksSource = null;
-        if (entity != null && entity.getProvider() != null) {
-            perksSource = roleService.list(entity.getProvider());
-        } else {
-            perksSource = roleService.list();
+        if (rolesDM == null) {
+            List<Role> perksSource = null;
+            if (entity != null && entity.getProvider() != null) {
+                perksSource = roleService.list(entity.getProvider());
+            } else {
+                perksSource = roleService.list();
+            }
+            List<Role> perksTarget = new ArrayList<Role>();
+            if (getEntity().getRoles() != null) {
+                perksTarget.addAll(getEntity().getRoles());
+            }
+            perksSource.removeAll(perksTarget);
+            rolesDM = new DualListModel<Role>(perksSource, perksTarget);
         }
-        List<Role> perksTarget = new ArrayList<Role>();
-        if (getEntity().getRoles() != null) {
-            perksTarget.addAll(getEntity().getRoles());
-        }
-        perksSource.removeAll(perksTarget);
-        DualListModel<Role> perks = new DualListModel<Role>(perksSource, perksTarget);
-        return perks;
+        return rolesDM;
     }
 
-    public void setDualListModel(DualListModel<Role> perks) {
-        getEntity().setRoles(new HashSet<Role>((List<Role>) perks.getTarget()));
+    public void setDualListModel(DualListModel<Role> rolesDM) {
+        this.rolesDM = rolesDM;
     }
 
     public List<Provider> getProviders() {
