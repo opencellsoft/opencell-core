@@ -54,18 +54,12 @@
     </template>
     <template name="ScriptInstance with all dependencies" entityToExport="org.meveo.model.scripts.ScriptInstance">
         <exportAllClassesAsFull>true</exportAllClassesAsFull>
-        <classesToExportAsShort>
-            <java-class>org.meveo.model.security.Permission</java-class>
-        </classesToExportAsShort>
         <classesToIgnoreFKNotFound>
             <java-class>org.meveo.model.admin.User</java-class>
         </classesToIgnoreFKNotFound>
     </template>
     <template name="Notification with all dependencies" entityToExport="org.meveo.model.notification.Notification">
         <exportAllClassesAsFull>true</exportAllClassesAsFull>
-        <classesToExportAsShort>
-            <java-class>org.meveo.model.security.Permission</java-class>
-        </classesToExportAsShort>
         <classesToIgnoreFKNotFound>
             <java-class>org.meveo.model.admin.User</java-class>
         </classesToIgnoreFKNotFound>
