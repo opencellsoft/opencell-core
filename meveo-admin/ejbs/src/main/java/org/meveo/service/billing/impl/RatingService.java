@@ -18,6 +18,7 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
+import org.meveo.admin.util.NumberUtil;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -183,7 +184,8 @@ public class RatingService extends BusinessService<WalletOperation>{
 			result.setSubscriptionDate(subscriptionDate);
 		}
 		
-		result.setQuantity(quantity);
+		result.setQuantity(NumberUtil.getInChargeUnit(quantity, chargeInstance.getChargeTemplate().getUnitMultiplicator(), chargeInstance.getChargeTemplate().getUnitNbDecimal(), chargeInstance.getChargeTemplate().getRoundingMode()));
+		
 		result.setInputQuantity(inputQuantity);
 		result.setRatingUnitDescription(chargeInstance.getChargeTemplate().getRatingUnitDescription());
 		result.setInputUnitDescription(chargeInstance.getChargeTemplate().getInputUnitDescription());
