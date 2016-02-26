@@ -16,6 +16,7 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.NumberUtil;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
@@ -177,6 +178,7 @@ public class UsageRatingService {
 			walletOperation.setQuantity(edr.getQuantity());
 		}
 
+		walletOperation.setQuantity( NumberUtil.getInChargeUnit(walletOperation.getQuantity(), chargeInstance.getChargeTemplate().getUnitMultiplicator(), chargeInstance.getChargeTemplate().getUnitNbDecimal(), chargeInstance.getChargeTemplate().getRoundingMode()));
 		walletOperation.setTaxPercent(tax.getPercent());
 		walletOperation.setStartDate(null);
 		walletOperation.setEndDate(null);
