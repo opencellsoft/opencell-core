@@ -4,16 +4,16 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SuccessPrepaidWalletTestCase</title>
+<title>SuccessTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SuccessPrepaidWalletTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">SuccessTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${CataloguePrepaidWallet}</td>
+	<td>${Calendars}</td>
 	<td></td>
 </tr>
 <tr>
@@ -33,38 +33,78 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${codeText}</td>
+	<td>${CalendarType}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>${codeText}</td>
-	<td>${CodePPW}</td>
+	<td>click</td>
+	<td>${CalendarType}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${CalendarTypeValue2}&quot;)</td>
+	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${PWdescription}</td>
+	<td>${Name}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${PWdescription}</td>
-	<td>${Description}</td>
+	<td>${Name}</td>
+	<td>${NameValue2}</td>
 </tr>
 <tr>
 	<td>if</td>
-	<td>${LowBalanceLevelBool}==true</td>
+	<td>${DescriptionBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${BalanceLevelNumber}</td>
+	<td>${DescriptionCal}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${BalanceLevelNumber}</td>
-	<td>${LowBalanceLevelValue}</td>
+	<td>${DescriptionCal}</td>
+	<td>${DescriptionValue2}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DaysInMonthBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${Day1InMonthIN}</td>
+	<td>${DaysInMonthValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Day1InMonthIN}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>doubleClick</td>
+	<td>${Day1InMonthIN}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${Day1InMonthOUT}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${Day1InMonthOUT}</td>
+	<td>${DaysInMonthValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -93,8 +133,8 @@
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>//a[contains(text(),'${CodePPW}')]</td>
-	<td>${CodePPW}</td>
+	<td>//a[contains(text(),'${NameValue2}')]</td>
+	<td>${NameValue2}</td>
 </tr>
 </tbody></table>
 </body>

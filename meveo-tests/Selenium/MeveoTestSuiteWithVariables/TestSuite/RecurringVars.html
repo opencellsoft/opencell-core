@@ -124,12 +124,22 @@
 <tr>
 	<td>store</td>
 	<td>false</td>
+	<td>IsAmountOverridableBool</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>true</td>
 	<td>TriggeredEDRBool</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>false</td>
-	<td>IsAmountOverridableBool</td>
+	<td>//*[contains(@id, 'edrTemplates_list')]/div/ul/li[text() = '${CodeEDR}']</td>
+	<td>TriggeredEDRIN</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'edrTemplates_list')]/div[3]/ul/li[text() = '${CodeEDR}']</td>
+	<td>TriggeredEDROUT</td>
 </tr>
 </tbody></table>
 </body>

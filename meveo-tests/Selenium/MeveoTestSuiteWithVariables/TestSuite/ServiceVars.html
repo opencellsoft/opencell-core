@@ -19,6 +19,11 @@
 <tr>
 	<td>store</td>
 	<td>SERVICE1</td>
+	<td>CodeSERV</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>SERVICE1</td>
 	<td>Description</td>
 </tr>
 <tr>
@@ -34,11 +39,6 @@
 <tr>
 	<td>store</td>
 	<td>false</td>
-	<td>PrepaidWalletBool</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>false</td>
 	<td>CounterBool</td>
 </tr>
 <tr>
@@ -50,6 +50,21 @@
 	<td>store</td>
 	<td>USG1</td>
 	<td>UsageChargeCode</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>true</td>
+	<td>PrepaidWalletBool</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'walletTemplates_list')]/div/ul/li[text() = '${CodePPW}']</td>
+	<td>PrepaidWalletIN</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'walletTemplates_list')]/div[3]/ul/li[text() = '${CodePPW}']</td>
+	<td>PrepaidWalletOUT</td>
 </tr>
 </tbody></table>
 </body>
