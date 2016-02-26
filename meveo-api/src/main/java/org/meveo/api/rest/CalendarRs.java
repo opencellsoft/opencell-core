@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.response.GetCalendarResponse;
+import org.meveo.api.dto.response.ListCalendarResponseDto;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
@@ -55,6 +56,15 @@ public interface CalendarRs extends IBaseRs {
 	@GET
 	public GetCalendarResponse find(@QueryParam("calendarCode") String calendarCode);
 
+	/**
+	 * Retrieve a list of all calendars.
+	 * 
+	 * @return 
+	 */
+	@Path("/list")
+	@GET
+	public ListCalendarResponseDto list();
+	
 	/**
 	 * Remove calendar with a given code.
 	 * 

@@ -309,6 +309,14 @@ public class CalendarApi extends BaseApi {
 
         return result;
     }
+    
+    public List<CalendarDto> list(Provider provider) throws MeveoApiException{
+    	List<CalendarDto> result = new ArrayList<CalendarDto>();
+		for(Calendar calendar : calendarService.list(provider)){
+    		result.add(new CalendarDto(calendar));
+    	}
+    	return result;
+    }
 
     public void remove(String calendarCode, Provider provider) throws MeveoApiException {
         if (!StringUtils.isBlank(calendarCode)) {

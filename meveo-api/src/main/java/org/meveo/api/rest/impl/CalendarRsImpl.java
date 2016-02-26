@@ -9,6 +9,8 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CalendarDto;
+import org.meveo.api.dto.CalendarsDto;
+import org.meveo.api.dto.response.ListCalendarResponseDto;
 import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
@@ -71,6 +73,28 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 
 		try {
 			result.setCalendar(calendarApi.find(calendarCode, getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ListCalendarResponseDto list() {
+		ListCalendarResponseDto result = new ListCalendarResponseDto();
+		CalendarsDto calendarsDto = new CalendarsDto();
+
+		try {
+			calendarsDto.setCalendar(calendarApi.list(getCurrentUser().getProvider()));
+			result.setCalendars(calendarsDto);
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
