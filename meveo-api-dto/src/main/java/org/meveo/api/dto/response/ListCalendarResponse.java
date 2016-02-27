@@ -11,7 +11,7 @@ import org.meveo.api.dto.CalendarsDto;
  **/
 @XmlRootElement(name = "ListCalendarResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ListCalendarResponseDto extends BaseResponse{
+public class ListCalendarResponse extends BaseResponse{
 
 	private static final long serialVersionUID = -8366882097461743155L;
 	private CalendarsDto calendars = new CalendarsDto();
@@ -26,7 +26,7 @@ public class ListCalendarResponseDto extends BaseResponse{
 
 	@Override
 	public String toString() {
-		return "ListCalendarsResponseDto [calendars=" + calendars + ", toString()=" + super.toString() + "]";
+		return "ListCalendarsResponse [calendars=" + calendars + ", toString()=" + super.toString() + "]";
 	} 
 
 }

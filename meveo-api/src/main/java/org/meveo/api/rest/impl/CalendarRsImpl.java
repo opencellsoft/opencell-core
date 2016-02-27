@@ -10,7 +10,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.CalendarsDto;
-import org.meveo.api.dto.response.ListCalendarResponseDto;
+import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
@@ -88,8 +88,8 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 	}
 	
 	@Override
-	public ListCalendarResponseDto list() {
-		ListCalendarResponseDto result = new ListCalendarResponseDto();
+	public ListCalendarResponse list() {
+		ListCalendarResponse result = new ListCalendarResponse();
 		CalendarsDto calendarsDto = new CalendarsDto();
 
 		try {

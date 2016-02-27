@@ -26,6 +26,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CalendarDto;
+import org.meveo.api.dto.CalendarsDto;
 import org.meveo.api.dto.CatMessagesDto;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.CurrencyDto;
@@ -64,6 +65,7 @@ import org.meveo.api.dto.response.GetTaxesResponse;
 import org.meveo.api.dto.response.GetTerminationReasonResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetUserResponse;
+import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.PermissionResponseDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
@@ -1105,6 +1107,28 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
 		try {
 			result.setCalendar(calendarApi.find(calendarCode, getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ListCalendarResponse listCalendars() {
+		ListCalendarResponse result = new ListCalendarResponse();
+		CalendarsDto calendarsDto = new CalendarsDto();
+
+		try {
+			calendarsDto.setCalendar(calendarApi.list(getCurrentUser().getProvider()));
+			result.setCalendars(calendarsDto);
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
