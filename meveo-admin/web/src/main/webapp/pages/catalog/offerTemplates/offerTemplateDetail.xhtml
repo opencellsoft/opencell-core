@@ -41,30 +41,19 @@
 			<p:tabView id="tabView" activeIndex="#{offerTemplateBean.activeTab}">
 				<p:tab title="#{messages['customer.tab.information']}">
 					<hftl:formPanel ajaxSubmit="true"
-						submitPartialProcess=":tabView:formId:informationTab"
-						label="#{messages['offerTemplate.offerTemplatePanel']}"
+						submitPartialProcess=":tabView:formId"
 						backingBean="#{offerTemplateBean}" showEnableDisableButton="true"
 						updateConfirmationMessage="#{offerTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
-						<p:tabView id="informationTab"
-							activeIndex="#{offerTemplateBean.activeTab}">
-							<p:tab title="#{messages['customer.tab.information']}">
-
-								<hftl:formField label="#{messages['offerTemplate.code']}"
-									field="code" required="true" validateUnique="true" />
-								<hftl:formField label="#{messages['offerTemplate.description']}"
-									field="description" useConverter="false"
-									id="description" maxlength="50" />
-								<hftl:formField label="#{messages['enableEntity.disabled']}"
-									doNotShowOnNew="true" allowEdit="false" field="disabled"
-									isMessage="true" />
-								<!-- 					<hftl:formField label="#{messages['offerTemplate.serviceTemplates']}" -->
-								<!-- 						field="serviceTemplates" listType="pickUpList" -->
-								<!-- 						valueLabelField="code" newLine="true" /> -->
-
-							</p:tab>
-							<hftl:customFields backingBean="#{offerTemplateBean}"
-								messagesId=":tabView:formId:messages" />
-						</p:tabView>
+						<hftl:formField label="#{messages['offerTemplate.code']}"
+							field="code" required="true" validateUnique="true" />
+						<hftl:formField label="#{messages['offerTemplate.description']}"
+							field="description" useConverter="false"
+							id="description" maxlength="50" />
+						<hftl:formField label="#{messages['enableEntity.disabled']}"
+							doNotShowOnNew="true" allowEdit="false" field="disabled"
+							isMessage="true" />
+						<hftl:customFields backingBean="#{offerTemplateBean}"
+							messagesId=":tabView:formId:messages" />
 					</hftl:formPanel>
 				</p:tab>
 
