@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
+import org.meveo.admin.util.NumberUtil;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -124,7 +125,7 @@ public class RealtimeChargingService {
 		op.setCode(chargeTemplate.getCode());
 
 		op.setDescription("");
-		op.setQuantity(quantity);
+		op.setQuantity(NumberUtil.getInChargeUnit(quantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));    
 		op.setTaxPercent(tax.getPercent());
 		op.setCurrency(currency.getCurrency());
 		op.setStartDate(null);
