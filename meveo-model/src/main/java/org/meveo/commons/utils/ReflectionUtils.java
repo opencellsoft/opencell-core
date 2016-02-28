@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,5 +131,19 @@ public class ReflectionUtils {
         }
 
         return classname;
+    }
+
+    /**
+     * Convert a java type classname to a fuman readable name. E.g. CustomerAccount >> Customer Account
+     * 
+     * @param classname Full or simple classname
+     * @return A humanized class name
+     */
+    public static String getHumanClassName(String classname) {
+        if (classname.lastIndexOf('.') > 0) {
+            classname = classname.substring(classname.lastIndexOf('.') + 1);
+        }
+        String humanClassname = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(classname), ' ');
+        return humanClassname;
     }
 }

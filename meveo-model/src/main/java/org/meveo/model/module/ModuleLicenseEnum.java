@@ -1,4 +1,4 @@
-package org.meveo.model.admin;
+package org.meveo.model.module;
 
 /**
  * @author Tyshan Shi(tyshan@manaty.net)

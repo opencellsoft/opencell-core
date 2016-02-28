@@ -1427,7 +1427,19 @@
         
     </changeSet>
 
-
+    <changeSet id="#1103-20160226" author="AndriusKarpavicius">        
+        <modifyDataType tableName="MEVEO_MODULE_ITEM" columnName="ITEM_TYPE" newDataType="VARCHAR(100)" />
+        
+        <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE='org.meveo.model.customEntities.CustomEntityTemplate' where ITEM_TYPE='CET' </sql> 
+        <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE='org.meveo.model.crm.CustomFieldTemplate' where ITEM_TYPE='CFT' </sql>
+        <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE='org.meveo.model.filter.Filter' where ITEM_TYPE='FILTER' </sql>
+        <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE='org.meveo.model.scripts.ScriptInstance' where ITEM_TYPE='SCRIPT' </sql>
+        <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE='org.meveo.model.jobs.JobInstance' where ITEM_TYPE='JOBINSTANCE' </sql>
+        <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE='org.meveo.model.notification.Notification' where ITEM_TYPE='NOTIFICATION' </sql>
+        <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE='org.meveo.model.module.MeveoModule' where ITEM_TYPE='SUBMODULE' </sql>
+        <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE='org.meveocrm.model.dwh.MeasurableQuantity' where ITEM_TYPE='MEASURABLEQUANTITIES' </sql>
+        <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE='org.meveocrm.model.dwh.Chart' where ITEM_TYPE='CHART' </sql>
+    </changeSet>
     
     
 </databaseChangeLog>

@@ -50,7 +50,7 @@ public class FilterDto extends BaseDto {
 		this.inputXml = inputXml;
 	}
 	
-	public static FilterDto parseDto(Filter filter){
+	public static FilterDto toDto(Filter filter){
 		FilterDto dto=new FilterDto();
 		dto.setCode(filter.getCode());
 		dto.setDescription(filter.getDescription());

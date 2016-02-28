@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="MEVEO API - SOAP" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" id="2f54001a-e294-45e3-b31b-9f879444ecc5" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="ProjectSettings@shadowPassword"/><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="MEVEO API - SOAP" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" id="2f54001a-e294-45e3-b31b-9f879444ecc5" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="ProjectSettings@shadowPassword"/><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
   <con:entry key="TestSuite" value="CatalogWsSoapBinding TestSuite"/>
@@ -12796,6 +12796,7 @@
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
       <xs:element name="ActionStatus" type="tns:ActionStatus"/>
+      <xs:element name="BarChart" type="tns:barChartDto"/>
       <xs:element name="Chart" type="tns:chartDto"/>
       <xs:element name="CounterTemplate" type="tns:counterTemplateDto"/>
       <xs:element name="CustomEntityTemplate" type="tns:customEntityTemplateDto"/>
@@ -12809,12 +12810,14 @@
       <xs:element name="Filter" type="tns:filterDto"/>
       <xs:element name="JobInstance" type="tns:jobInstanceDto"/>
       <xs:element name="JobTrigger" type="tns:jobTriggerDto"/>
+      <xs:element name="LineChart" type="tns:lineChartDto"/>
       <xs:element name="MeasurableQuantity" type="tns:measurableQuantityDto"/>
       <xs:element name="MeveoModuleDtoResponse" type="tns:meveoModuleDtoResponse"/>
       <xs:element name="MeveoModuleDtosResponse" type="tns:meveoModuleDtosResponse"/>
       <xs:element name="Module" type="tns:moduleDto"/>
       <xs:element name="Notification" type="tns:notificationDto"/>
       <xs:element name="Permission" type="tns:permissionDto"/>
+      <xs:element name="PieChart" type="tns:pieChartDto"/>
       <xs:element name="Role" type="tns:roleDto"/>
       <xs:element name="ScriptInstance" type="tns:scriptInstanceDto"/>
       <xs:element name="TimerEntity" type="tns:timerEntityDto"/>
@@ -12844,108 +12847,27 @@
             <xs:sequence>
               <xs:element minOccurs="0" name="logoPicture" type="xs:string"/>
               <xs:element minOccurs="0" name="logoPictureFile" type="xs:base64Binary"/>
-              <xs:element minOccurs="0" name="cets">
+              <xs:element minOccurs="0" name="moduleItems">
                 <xs:complexType>
                   <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="customEntityTemplate" type="tns:customEntityTemplateDto"/>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element minOccurs="0" name="cfts">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="customFieldTemplate" type="tns:customFieldTemplateDto"/>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element minOccurs="0" name="filters">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="filter" type="tns:filterDto"/>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element minOccurs="0" name="jobs">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="jobInstance" type="tns:jobInstanceDto"/>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element minOccurs="0" name="jobsNext">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="job" type="tns:jobInstanceDto"/>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element minOccurs="0" name="scripts">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="script" type="tns:scriptInstanceDto"/>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element minOccurs="0" name="notifications">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="notification" type="tns:notificationDto"/>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element minOccurs="0" name="timerEntities">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="timerEntity" type="tns:timerEntityDto"/>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element minOccurs="0" name="emailNotifs">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="emailNotif" type="tns:emailNotificationDto"/>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element minOccurs="0" name="jobTriggers">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="jobTrigger" type="tns:jobTriggerDto"/>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element minOccurs="0" name="webhookNotifs">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="webhookNotif" type="tns:webhookNotificationDto"/>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element minOccurs="0" name="counters">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="counter" type="tns:counterTemplateDto"/>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element minOccurs="0" name="subModules">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="subModule" type="tns:moduleDto"/>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element minOccurs="0" name="measurableQuantities">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="measurableQuantity" type="tns:measurableQuantityDto"/>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element minOccurs="0" name="charts">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="chart" type="tns:chartDto"/>
+                    <xs:choice maxOccurs="unbounded" minOccurs="0">
+                      <xs:element name="cet" type="tns:customEntityTemplateDto"/>
+                      <xs:element name="cft" type="tns:customFieldTemplateDto"/>
+                      <xs:element name="filter" type="tns:filterDto"/>
+                      <xs:element name="jobInstance" type="tns:jobInstanceDto"/>
+                      <xs:element name="script" type="tns:scriptInstanceDto"/>
+                      <xs:element name="notification" type="tns:notificationDto"/>
+                      <xs:element name="timerEntity" type="tns:timerEntityDto"/>
+                      <xs:element name="emailNotif" type="tns:emailNotificationDto"/>
+                      <xs:element name="jobTrigger" type="tns:jobTriggerDto"/>
+                      <xs:element name="webhookNotif" type="tns:webhookNotificationDto"/>
+                      <xs:element name="counter" type="tns:counterTemplateDto"/>
+                      <xs:element name="subModule" type="tns:moduleDto"/>
+                      <xs:element name="measurableQuantity" type="tns:measurableQuantityDto"/>
+                      <xs:element name="pieChart" type="tns:pieChartDto"/>
+                      <xs:element name="lineChart" type="tns:lineChartDto"/>
+                      <xs:element name="barChart" type="tns:barChartDto"/>
+                    </xs:choice>
                   </xs:sequence>
                 </xs:complexType>
               </xs:element>
@@ -13343,6 +13265,23 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="pieChartDto">
+        <xs:complexContent>
+          <xs:extension base="tns:chartDto">
+            <xs:sequence>
+              <xs:element name="filled" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="legendPosition" type="tns:legendPositionEnum"/>
+              <xs:element minOccurs="0" name="seriesColors" type="xs:string"/>
+              <xs:element minOccurs="0" name="diameter" type="xs:int"/>
+              <xs:element name="sliceMargin" type="xs:int"/>
+              <xs:element name="shadow" type="xs:boolean"/>
+              <xs:element name="showDataLabels" type="xs:boolean"/>
+              <xs:element name="legendCols" type="xs:int"/>
+              <xs:element name="legendRows" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
       <xs:complexType name="chartDto">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
@@ -13357,6 +13296,60 @@
             </xs:sequence>
             <xs:attribute name="code" type="xs:string"/>
             <xs:attribute name="description" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="lineChartDto">
+        <xs:complexContent>
+          <xs:extension base="tns:chartDto">
+            <xs:sequence>
+              <xs:element name="filled" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="legendPosition" type="tns:legendPositionEnum"/>
+              <xs:element minOccurs="0" name="seriesColors" type="xs:string"/>
+              <xs:element name="shadow" type="xs:boolean"/>
+              <xs:element name="minX" type="xs:int"/>
+              <xs:element name="maxX" type="xs:int"/>
+              <xs:element name="minY" type="xs:int"/>
+              <xs:element name="maxY" type="xs:int"/>
+              <xs:element name="breakOnNull" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="xaxisLabel" type="xs:string"/>
+              <xs:element minOccurs="0" name="yaxisLabel" type="xs:string"/>
+              <xs:element minOccurs="0" name="xaxisAngle" type="xs:int"/>
+              <xs:element minOccurs="0" name="yaxisAngle" type="xs:int"/>
+              <xs:element name="stacked" type="xs:boolean"/>
+              <xs:element name="zoom" type="xs:boolean"/>
+              <xs:element name="animate" type="xs:boolean"/>
+              <xs:element name="showDataTip" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="datatipFormat" type="xs:string"/>
+              <xs:element name="legendCols" type="xs:int"/>
+              <xs:element name="legendRows" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="barChartDto">
+        <xs:complexContent>
+          <xs:extension base="tns:chartDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="legendPosition" type="tns:legendPositionEnum"/>
+              <xs:element name="barPadding" type="xs:int"/>
+              <xs:element name="barMargin" type="xs:int"/>
+              <xs:element minOccurs="0" name="orientation" type="tns:orientationEnum"/>
+              <xs:element name="stacked" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="min" type="xs:double"/>
+              <xs:element minOccurs="0" name="max" type="xs:double"/>
+              <xs:element name="breakOnNull" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="xaxisLabel" type="xs:string"/>
+              <xs:element minOccurs="0" name="yaxisLabel" type="xs:string"/>
+              <xs:element minOccurs="0" name="xaxisAngle" type="xs:int"/>
+              <xs:element minOccurs="0" name="yaxisAngle" type="xs:int"/>
+              <xs:element name="legendCols" type="xs:int"/>
+              <xs:element name="legendRows" type="xs:int"/>
+              <xs:element name="zoom" type="xs:boolean"/>
+              <xs:element name="animate" type="xs:boolean"/>
+              <xs:element name="showDataTip" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="datatipFormat" type="xs:string"/>
+            </xs:sequence>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -13404,7 +13397,13 @@
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="moduleDtoList" nillable="true" type="tns:moduleDto"/>
+              <xs:element minOccurs="0" name="modules">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="module" type="tns:moduleDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -13436,7 +13435,7 @@
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element minOccurs="0" name="moduleDto" type="tns:moduleDto"/>
+              <xs:element minOccurs="0" name="module" type="tns:moduleDto"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -13501,6 +13500,20 @@
           <xs:enumeration value="WEEKLY"/>
           <xs:enumeration value="MONTHLY"/>
           <xs:enumeration value="YEARLY"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="legendPositionEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="n"/>
+          <xs:enumeration value="s"/>
+          <xs:enumeration value="e"/>
+          <xs:enumeration value="w"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="orientationEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="vertical"/>
+          <xs:enumeration value="horizontal"/>
         </xs:restriction>
       </xs:simpleType>
       <xs:simpleType name="actionStatusEnum">
@@ -25079,7 +25092,7 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
    <soapenv:Body>\r
       <ws:createOrUpdate>\r
          <module code="${#TestSuite#ticket}_${#TestSuite#index}_Module 1" license="GPL" description="Module 1">\r
-            <cets>\r
+            <moduleItems>\r
                <customEntityTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_Entity template 1" name="First entity template" description="Entity template testing">\r
                   <fields>\r
                      <field code="${#TestSuite#ticket}_${#TestSuite#index}_Field1" description="Field one">\r
@@ -25102,15 +25115,13 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
                   <actions>\r
                      <action appliesTo="CE_${#TestSuite#ticket}_${#TestSuite#index}_Entity template 1" code="${#TestSuite#ticket}_${#TestSuite#index}_TestButton" description="Test button">\r
                         <type>JAVA</type>\r
-                        <script>import org.meveo.service.script.Script;\r
-public class Action1 extends Script {\r
+                        <script>import org.meveo.service.script.Script;
+public class Action1 extends Script {
 }</script>\r
                         <label>Test</label>\r
                      </action>\r
                   </actions>\r
                </customEntityTemplate>\r
-            </cets>\r
-            <cfts>\r
                <customFieldTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_CONSUMPTION" description="Consumption">\r
                   <fieldType>DOUBLE</fieldType>\r
                   <accountLevel>CUST</accountLevel>\r
@@ -25127,71 +25138,64 @@ public class Action1 extends Script {\r
                   <cacheValue>false</cacheValue>\r
                   <guiPosition>tab:Custom fields:0;field:0</guiPosition>\r
                </customFieldTemplate>\r
-            </cfts>\r
-            <filters>\r
                <filter code="${#TestSuite#ticket}_${#TestSuite#index}_Filter1" description="Filter1">\r
                   <shared>false</shared>\r
-                  <inputXml><![CDATA[<filter>\r
-  <primarySelector>\r
-    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>\r
-    <alias>c</alias>\r
-    <displayFields>\r
-      <field>code</field>\r
-      <field>status</field>\r
-    </displayFields>\r
-    <exportFields/>\r
-    <ignoreIfNotFoundForeignKeys/>\r
-  </primarySelector>\r
-  <secondarySelectors/>\r
-  <filterCondition class="andCompositeFilterCondition">\r
-    <filterConditionType>COMPOSITE_AND</filterConditionType>\r
-    <filterConditions>\r
-      <primitiveFilterCondition>\r
-        <filterConditionType>PRIMITIVE</filterConditionType>\r
-        <fieldName>status</fieldName>\r
-        <operator>=</operator>\r
-        <operand>enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE</operand>\r
-      </primitiveFilterCondition>\r
-    </filterConditions>\r
-  </filterCondition>\r
-  <orderCondition>\r
-    <fieldNames>\r
-      <field>subscriptionDate</field>\r
-    </fieldNames>\r
-    <ascending>false</ascending>\r
-  </orderCondition>\r
+                  <inputXml><![CDATA[<filter>
+  <primarySelector>
+    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>
+    <alias>c</alias>
+    <displayFields>
+      <field>code</field>
+      <field>status</field>
+    </displayFields>
+    <exportFields/>
+    <ignoreIfNotFoundForeignKeys/>
+  </primarySelector>
+  <secondarySelectors/>
+  <filterCondition class="andCompositeFilterCondition">
+    <filterConditionType>COMPOSITE_AND</filterConditionType>
+    <filterConditions>
+      <primitiveFilterCondition>
+        <filterConditionType>PRIMITIVE</filterConditionType>
+        <fieldName>status</fieldName>
+        <operator>=</operator>
+        <operand>enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE</operand>
+      </primitiveFilterCondition>
+    </filterConditions>
+  </filterCondition>
+  <orderCondition>
+    <fieldNames>
+      <field>subscriptionDate</field>
+    </fieldNames>
+    <ascending>false</ascending>
+  </orderCondition>
 </filter>]]]]>><![CDATA[</inputXml>\r
                </filter>\r
-            </filters>\r
-            <jobs>\r
                <jobInstance jobTemplate="ReRatingJob" code="${#TestSuite#ticket}_${#TestSuite#index}_Rerate_Job" timerCode="Hourly">\r
                   <jobCategory>RATING</jobCategory>\r
                   <active>false</active>\r
                </jobInstance>\r
-            </jobs>\r
-            <jobsNext/>\r
-            <scripts>\r
                <script code="org.meveo.service.script.Script1" description="Script1">\r
                   <type>JAVA</type>\r
-                  <script>package org.meveo.service.script;\r
-\r
-import org.meveo.admin.exception.BusinessException;\r
-import org.meveo.model.crm.Provider;\r
-import org.meveo.model.admin.User;\r
-import org.slf4j.Logger;\r
-import org.slf4j.LoggerFactory;\r
-\r
-import java.util.Map;\r
-\r
-public class Script1 extends org.meveo.service.script.Script {\r
-	\r
-	private static final Logger log = LoggerFactory.getLogger(Script1.class);\r
-		\r
-	@Override\r
-    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {\r
-		log.debug("Hello MEVEO Module");\r
-	}\r
-\r
+                  <script>package org.meveo.service.script;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.admin.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+
+public class Script1 extends org.meveo.service.script.Script {
+	
+	private static final Logger log = LoggerFactory.getLogger(Script1.class);
+		
+	@Override
+    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {
+		log.debug("Hello MEVEO Module");
+	}
+
 }</script>\r
                   <executionRoles name="administrateur">\r
                      <description>Administrateur</description>\r
@@ -25308,12 +25312,7 @@ public class Script1 extends org.meveo.service.script.Script {\r
                      </roles>\r
                   </sourcingRoles>\r
                </script>\r
-            </scripts>\r
-            <notifications/>\r
-            <timerEntities>\r
                <timerEntity code="Hourly" hour="*" minute="0" second="0" year="*" month="*" dayOfMonth="*" dayOfWeek="*"/>\r
-            </timerEntities>\r
-            <emailNotifs>\r
                <emailNotif code="${#TestSuite#ticket}_${#TestSuite#index}_EmailNotification">\r
                   <classNameFilter>org.meveo.model.billing.UserAccount</classNameFilter>\r
                   <eventTypeFilter>UPDATED</eventTypeFilter>\r
@@ -25322,12 +25321,8 @@ public class Script1 extends org.meveo.service.script.Script {\r
                   <subject>Test</subject>\r
                   <body>Test</body>\r
                </emailNotif>\r
-            </emailNotifs>\r
-            <jobTriggers/>\r
-            <webhookNotifs/>\r
-            <subModules>\r
                <subModule code="${#TestSuite#ticket}_${#TestSuite#index}_Child module 1" license="GPL" description="Child module 1">\r
-                  <cets>\r
+                  <moduleItems>\r
                      <customEntityTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_Entity template2" name="Second entity " description="Second entity template">\r
                         <fields>\r
                            <field code="${#TestSuite#ticket}_${#TestSuite#index}_Field2" description="Field two">\r
@@ -25347,8 +25342,6 @@ public class Script1 extends org.meveo.service.script.Script {\r
                         </fields>\r
                         <actions/>\r
                      </customEntityTemplate>\r
-                  </cets>\r
-                  <cfts>\r
                      <customFieldTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_HIGH_CONSUMP_FLAG" description="High consumer">\r
                         <fieldType>STRING</fieldType>\r
                         <accountLevel>CUST</accountLevel>\r
@@ -25366,43 +25359,43 @@ public class Script1 extends org.meveo.service.script.Script {\r
                         <guiPosition>tab:Custom fields:0;field:1</guiPosition>\r
                         <applicableOnEl>#{mv:executeScript(entity, "org.meveo.test.TestCFTScript",null,entity.auditable.creator,entity.provider) > 10}</applicableOnEl>\r
                      </customFieldTemplate>\r
-                  </cfts>\r
-                  <filters>\r
                      <filter code="${#TestSuite#ticket}_${#TestSuite#index}_Filter2" description="Filter2">\r
                         <shared>true</shared>\r
-                        <inputXml><![CDATA[<filter>\r
-  <primarySelector>\r
-    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>\r
-    <alias>c</alias>\r
-    <displayFields>\r
-      <field>code</field>\r
-      <field>status</field>\r
-    </displayFields>\r
-    <exportFields/>\r
-    <ignoreIfNotFoundForeignKeys/>\r
-  </primarySelector>\r
-  <secondarySelectors/>\r
-  <filterCondition class="andCompositeFilterCondition">\r
-    <filterConditionType>COMPOSITE_AND</filterConditionType>\r
-    <filterConditions>\r
-      <primitiveFilterCondition>\r
-        <filterConditionType>PRIMITIVE</filterConditionType>\r
-        <fieldName>status</fieldName>\r
-        <operator>=</operator>\r
-        <operand>enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE</operand>\r
-      </primitiveFilterCondition>\r
-    </filterConditions>\r
-  </filterCondition>\r
-  <orderCondition>\r
-    <fieldNames>\r
-      <field>subscriptionDate</field>\r
-    </fieldNames>\r
-    <ascending>false</ascending>\r
-  </orderCondition>\r
+                        <inputXml><![CDATA[<filter>
+  <primarySelector>
+    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>
+    <alias>c</alias>
+    <displayFields>
+      <field>code</field>
+      <field>status</field>
+    </displayFields>
+    <exportFields/>
+    <ignoreIfNotFoundForeignKeys/>
+  </primarySelector>
+  <secondarySelectors/>
+  <filterCondition class="andCompositeFilterCondition">
+    <filterConditionType>COMPOSITE_AND</filterConditionType>
+    <filterConditions>
+      <primitiveFilterCondition>
+        <filterConditionType>PRIMITIVE</filterConditionType>
+        <fieldName>status</fieldName>
+        <operator>=</operator>
+        <operand>enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE</operand>
+      </primitiveFilterCondition>
+    </filterConditions>
+  </filterCondition>
+  <orderCondition>
+    <fieldNames>
+      <field>subscriptionDate</field>
+    </fieldNames>
+    <ascending>false</ascending>
+  </orderCondition>
 </filter>]]]]>><![CDATA[</inputXml>\r
                      </filter>\r
-                  </filters>\r
-                  <jobs>\r
+                     <jobInstance jobTemplate="InvoicingJob" code="${#TestSuite#ticket}_${#TestSuite#index}_Inv_Job" timerCode="Hourly">
+                        <jobCategory>INVOICING</jobCategory>
+                        <active>false</active>
+                     </jobInstance>
                      <jobInstance jobTemplate="PurgeJob" code="${#TestSuite#ticket}_${#TestSuite#index}_Purge Job" description="Purge job" timerCode="Hourly">\r
                         <jobCategory>UTILS</jobCategory>\r
                         <followingJob>${#TestSuite#ticket}_${#TestSuite#index}_Inv_Job</followingJob>\r
@@ -25420,35 +25413,27 @@ public class Script1 extends org.meveo.service.script.Script {\r
                            </customField>\r
                         </customFields>\r
                      </jobInstance>\r
-                  </jobs>\r
-                  <jobsNext>\r
-                     <job jobTemplate="InvoicingJob" code="${#TestSuite#ticket}_${#TestSuite#index}_Inv_Job" timerCode="Hourly">\r
-                        <jobCategory>INVOICING</jobCategory>\r
-                        <active>false</active>\r
-                     </job>\r
-                  </jobsNext>\r
-                  <scripts>\r
                      <script code="org.meveo.service.script.Script3" description="Script3">\r
                         <type>JAVA</type>\r
-                        <script>package org.meveo.service.script;\r
-\r
-import org.meveo.admin.exception.BusinessException;\r
-import org.meveo.model.crm.Provider;\r
-import org.meveo.model.admin.User;\r
-import org.slf4j.Logger;\r
-import org.slf4j.LoggerFactory;\r
-\r
-import java.util.Map;\r
-\r
-public class Script3 extends org.meveo.service.script.Script {\r
-	\r
-	private static final Logger log = LoggerFactory.getLogger(Script3.class);\r
-		\r
-	@Override\r
-    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {\r
-		log.debug("Hello MEVEO Module");\r
-	}\r
-\r
+                        <script>package org.meveo.service.script;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.admin.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+
+public class Script3 extends org.meveo.service.script.Script {
+	
+	private static final Logger log = LoggerFactory.getLogger(Script3.class);
+		
+	@Override
+    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {
+		log.debug("Hello MEVEO Module");
+	}
+
 }</script>\r
                         <executionRoles name="administrateur">\r
                            <description>Administrateur</description>\r
@@ -25510,25 +25495,25 @@ public class Script3 extends org.meveo.service.script.Script {\r
                      </script>\r
                      <script code="org.meveo.service.script.Script2" description="Script2">\r
                         <type>JAVA</type>\r
-                        <script>package org.meveo.service.script;\r
-\r
-import org.meveo.admin.exception.BusinessException;\r
-import org.meveo.model.crm.Provider;\r
-import org.meveo.model.admin.User;\r
-import org.slf4j.Logger;\r
-import org.slf4j.LoggerFactory;\r
-\r
-import java.util.Map;\r
-\r
-public class Script2 extends org.meveo.service.script.Script {\r
-	\r
-	private static final Logger log = LoggerFactory.getLogger(Script2.class);\r
-		\r
-	@Override\r
-    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {\r
-		log.debug("Hello MEVEO Module");\r
-	}\r
-\r
+                        <script>package org.meveo.service.script;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.admin.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+
+public class Script2 extends org.meveo.service.script.Script {
+	
+	private static final Logger log = LoggerFactory.getLogger(Script2.class);
+		
+	@Override
+    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {
+		log.debug("Hello MEVEO Module");
+	}
+
 }</script>\r
                         <executionRoles name="superAdministrateur">\r
                            <description>Super Administrateur</description>\r
@@ -25540,22 +25525,13 @@ public class Script2 extends org.meveo.service.script.Script {\r
                            <roles/>\r
                         </executionRoles>\r
                      </script>\r
-                  </scripts>\r
-                  <notifications>\r
                      <notification code="${#TestSuite#ticket}_${#TestSuite#index}_Notification2">\r
                         <classNameFilter>org.meveo.model.crm.Customer</classNameFilter>\r
                         <eventTypeFilter>DISABLED</eventTypeFilter>\r
                         <scriptInstanceCode>org.meveo.service.script.Script3</scriptInstanceCode>\r
                         <scriptParams/>\r
                      </notification>\r
-                  </notifications>\r
-                  <timerEntities>\r
                      <timerEntity code="Hourly" hour="*" minute="0" second="0" year="*" month="*" dayOfMonth="*" dayOfWeek="*"/>\r
-                     <timerEntity code="Hourly" hour="*" minute="0" second="0" year="*" month="*" dayOfMonth="*" dayOfWeek="*"/>\r
-                  </timerEntities>\r
-                  <emailNotifs/>\r
-                  <jobTriggers/>\r
-                  <webhookNotifs>\r
                      <webhookNotif code="${#TestSuite#ticket}_${#TestSuite#index}_Webhook2">\r
                         <classNameFilter>org.meveo.model.billing.BillingAccount</classNameFilter>\r
                         <eventTypeFilter>REJECTED</eventTypeFilter>\r
@@ -25567,20 +25543,62 @@ public class Script2 extends org.meveo.service.script.Script {\r
                         <headers/>\r
                         <params/>\r
                      </webhookNotif>\r
-                  </webhookNotifs>\r
-                  <subModules/>\r
-                  <measurableQuantities>\r
                      <measurableQuantity code="${#TestSuite#ticket}_${#TestSuite#index}_Measure2">\r
                         <dimension1>Three</dimension1>\r
                         <dimension2>Four</dimension2>\r
                         <editable>false</editable>\r
                         <additive>false</additive>\r
                      </measurableQuantity>\r
-                  </measurableQuantities>\r
-                  <charts/>\r
+                     <barChart code="${#TestSuite#ticket}_${#TestSuite#index}_chart" description="Chart">
+                        <measurableQuantity code="${#TestSuite#ticket}_${#TestSuite#index}_Measure_Chart">
+                           <dimension1>Offer</dimension1>
+                           <dimension2>Billing acc.</dimension2>
+                           <dimension3>Payer acc.</dimension3>
+                           <dimension4>Custommer</dimension4>
+                           <editable>false</editable>
+                           <additive>true</additive>
+                           <sqlQuery>SELECT  wo.amount_without_tax/((EXTRACT(epoch FROM (wo.end_date - wo.start_date))/86400)) as mrr_value,
+        wo.offer_code as offer_code,ba.code as ba_code,ca.code as ca_code,cust.code as cust_code
+        FROM billing_wallet_operation wo
+        LEFT JOIN crm_provider p ON p.id=wo.provider_id
+        LEFT JOIN billing_charge_instance ci ON ci.id=wo.charge_instance_id
+        LEFT JOIN billing_subscription sub ON sub.id = ci.subscription_id
+        LEFT JOIN billing_wallet w ON w.id=wo.wallet_id
+        LEFT JOIN billing_user_account uaa ON uaa.id= w.user_account_id
+        LEFT JOIN account_entity ua ON ua.id= uaa.id
+        LEFT JOIN billing_billing_account baa ON baa.id= uaa.billing_account_id
+        LEFT JOIN account_entity ba ON ba.id= baa.id
+        LEFT JOIN ar_customer_account caa ON caa.id= baa.customer_account_id
+        LEFT JOIN account_entity ca ON ca.id= caa.id
+        LEFT JOIN crm_customer custa ON custa.id= caa.customer_id
+        LEFT JOIN account_entity cust ON cust.id= custa.id
+        WHERE wo.disabled=FALSE
+        AND wo.provider_id=#{provider}
+        AND NOT(wo.end_date IS NULL)
+        AND ((EXTRACT(epoch FROM (wo.end_date - wo.start_date))/86400))>0
+        AND (wo.start_date &lt;= '#{date}') AND (wo.end_date > '#{date}')</sqlQuery>
+                           <measurementPeriod>DAILY</measurementPeriod>
+                           <lastMeasureDate>2016-02-21T20:00:00-03:00</lastMeasureDate>
+                        </measurableQuantity>
+                        <width>1400px</width>
+                        <height>100px</height>
+                        <style>width:1000px</style>
+                        <visible>true</visible>
+                        <barPadding>8</barPadding>
+                        <barMargin>10</barMargin>
+                        <stacked>false</stacked>
+                        <breakOnNull>false</breakOnNull>
+                        <xaxisLabel>Date</xaxisLabel>
+                        <yaxisLabel>Monthly Rec. Revenue</yaxisLabel>
+                        <xaxisAngle>30</xaxisAngle>
+                        <legendCols>0</legendCols>
+                        <legendRows>0</legendRows>
+                        <zoom>true</zoom>
+                        <animate>false</animate>
+                        <showDataTip>true</showDataTip>
+                     </barChart>                     
+                  </moduleItems>\r
                </subModule>\r
-            </subModules>\r
-            <measurableQuantities>\r
                <measurableQuantity code="${#TestSuite#ticket}_${#TestSuite#index}_Measure1">\r
                   <dimension1>first</dimension1>\r
                   <dimension2>second</dimension2>\r
@@ -25588,8 +25606,7 @@ public class Script2 extends org.meveo.service.script.Script {\r
                   <additive>false</additive>\r
                   <sqlQuery>select now from dual</sqlQuery>\r
                </measurableQuantity>\r
-            </measurableQuantities>\r
-            <charts/>\r
+            </moduleItems>\r
          </module>\r
       </ws:createOrUpdate>\r
    </soapenv:Body>\r
@@ -25792,13 +25809,13 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
       </ws:get>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="3382c6c6-3e45-4ded-8818-ff872c56f22a"/><con:assertion type="XPath Match" id="9fe12d4b-3934-40e7-aa52-13de4b335aa5" name="Match content of [status]"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:getResponse[1]/return[1]/actionStatus[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="List" id="5c73996e-2bbe-406d-bb6c-2595de6801f5"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>list</con:operation><con:request name="List" id="e41cc5f6-e897-44aa-ab71-9c6a41ef5e5d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+//ns2:getResponse[1]/return[1]/actionStatus[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="5dcc7269-c722-4ff5-b1f2-4110edc5a2d1" name="XPath Match"><con:configuration><path>//return/module/@code</path><content>${#TestSuite#ticket}_${#TestSuite#index}_Module 1</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="ca30061f-bcbf-4123-9f11-c54ad9941261" name="XPath Match 2"><con:configuration><path>//return/module/moduleItems/customEntityTemplate[1]/@code</path><content>${#TestSuite#ticket}_${#TestSuite#index}_Entity template 1</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="56227cfc-a8b6-43e3-8604-c1e82d0b0bbd" name="XPath Match 3"><con:configuration><path>//return/module/moduleItems/customFieldTemplate[1]/@code</path><content>${#TestSuite#ticket}_${#TestSuite#index}_CONSUMPTION</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="c046555e-3d1f-4ff3-8503-01a6e1a10033" name="XPath Match 4"><con:configuration><path>//return/module/moduleItems/filter[1]/@code</path><content>${#TestSuite#ticket}_${#TestSuite#index}_Filter1</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="35f304d1-e2d4-457d-8f0e-5d46ec5d1284" name="XPath Match 5"><con:configuration><path>//return/module/moduleItems/timerEntity[1]/@code</path><content>Hourly</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="bc2189d9-f327-444f-aa3c-5a91a1ef204d" name="XPath Match 6"><con:configuration><path>//return/module/moduleItems/jobInstance[1]/@code</path><content>${#TestSuite#ticket}_${#TestSuite#index}_Rerate_Job</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="e7306d8d-e2a0-49e4-a5b3-e2490c363bf9" name="XPath Match 7"><con:configuration><path>//return/module/moduleItems/script[1]/@code</path><content>org.meveo.service.script.Script1</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="d85005f5-a056-4c10-923f-07a5f9036069" name="XPath Match 8"><con:configuration><path>//return/module/moduleItems/measurableQuantity[1]/@code</path><content>${#TestSuite#ticket}_${#TestSuite#index}_Measure1</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="ec185c96-1413-44af-afd3-ee5432274124" name="XPath Match 9"><con:configuration><path>//return/module/moduleItems/subModule[1]/@code</path><content>${#TestSuite#ticket}_${#TestSuite#index}_Child module 1</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="3c243dc3-4cf7-4ccf-9182-9085421e8d6b" name="XPath Match 10"><con:configuration><path>//return/module/moduleItems/subModule[1]/moduleItems/customEntityTemplate[1]/@code</path><content>${#TestSuite#ticket}_${#TestSuite#index}_Entity template2</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="60ed095d-6042-4c29-bc2d-f6501eb0c60a" name="XPath Match 11"><con:configuration><path>//return/module/moduleItems/subModule[1]/moduleItems/customFieldTemplate[1]/@code</path><content>${#TestSuite#ticket}_${#TestSuite#index}_HIGH_CONSUMP_FLAG</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="20c84290-7e2b-4f74-9bce-8af92e27e222" name="XPath Match 12"><con:configuration><path>//return/module/moduleItems/subModule[1]/moduleItems/filter[1]/@code</path><content>${#TestSuite#ticket}_${#TestSuite#index}_Filter2</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="761a375d-9be7-4e49-8e87-db6100685ac9" name="XPath Match 13"><con:configuration><path>//return/module/moduleItems/subModule[1]/moduleItems/timerEntity[1]/@code</path><content>Hourly</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="3967e558-a8fd-42b2-b89d-1e755f3faf2e" name="XPath Match 15"><con:configuration><path>//return/module/moduleItems/subModule[1]/moduleItems/jobInstance[1]/@code</path><content>${#TestSuite#ticket}_${#TestSuite#index}_Inv_Job</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="68bae089-c4fc-4b7c-be85-797d989b9754" name="XPath Match 16"><con:configuration><path>//return/module/moduleItems/subModule[1]/moduleItems/jobInstance[3]/@code</path><content>${#TestSuite#ticket}_${#TestSuite#index}_Purge Job</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="867b8ea7-c14d-4515-ad7a-067522757d43" name="XPath Match 17"><con:configuration><path>//return/module/moduleItems/subModule[1]/moduleItems/script[1]/@code</path><content>org.meveo.service.script.Script3</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9b0ac16c-80e2-4cc7-bc50-547ed0f8e378" name="XPath Match 18"><con:configuration><path>//return/module/moduleItems/subModule[1]/moduleItems/script[2]/@code</path><content>org.meveo.service.script.Script2</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="e6adf846-b822-49b1-a399-36aa59f5bde9" name="XPath Match 20"><con:configuration><path>//return/module/moduleItems/subModule[1]/moduleItems/notification[1]/@code</path><content>${#TestSuite#ticket}_${#TestSuite#index}_Notification2</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="8a64be90-eb59-4189-a2ad-d1ea4641e755" name="XPath Match 21"><con:configuration><path>//return/module/moduleItems/subModule[1]/moduleItems/webhookNotif[1]/@code</path><content>${#TestSuite#ticket}_${#TestSuite#index}_Webhook2</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="62d959a9-bd3e-4963-9dd2-67c75c7e97cd" name="XPath Match 22"><con:configuration><path>//return/module/moduleItems/subModule[1]/moduleItems/measurableQuantity[1]/@code</path><content>${#TestSuite#ticket}_${#TestSuite#index}_Measure2</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="06db760c-c4de-4f31-ad30-8f9bb9d0390d" name="XPath Match 23"><con:configuration><path>//return/module/moduleItems/subModule[1]/moduleItems/barChart[1]/@code</path><content>${#TestSuite#ticket}_${#TestSuite#index}_chart</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="List" id="5c73996e-2bbe-406d-bb6c-2595de6801f5"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>list</con:operation><con:request name="List" id="e41cc5f6-e897-44aa-ab71-9c6a41ef5e5d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:list/>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="9b66e124-744d-42d5-96d3-9d4061d931a3"/><con:assertion type="XPath Match" id="7c7280fe-335c-43f5-aefb-68bda8f66ec1" name="Match content of [status]"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:listResponse[1]/return[1]/actionStatus[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete" id="486f1e93-5733-4e61-94a5-96d827eb191f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>delete</con:operation><con:request name="Delete" id="5e65d7c2-5466-4f69-b07b-872a0f27ce3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+//ns2:listResponse[1]/return[1]/actionStatus[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="Simple Contains" id="b37c85dd-3ac4-4584-934d-ad34b00221ff" name="Contains"><con:configuration><token>module code="${#TestSuite#ticket}_${#TestSuite#index}_Module 1"</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete" id="486f1e93-5733-4e61-94a5-96d827eb191f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>delete</con:operation><con:request name="Delete" id="5e65d7c2-5466-4f69-b07b-872a0f27ce3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:delete>\r

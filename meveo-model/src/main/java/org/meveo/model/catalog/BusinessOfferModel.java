@@ -6,7 +6,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.admin.MeveoModule;
+import org.meveo.model.module.MeveoModule;
 import org.meveo.model.scripts.OfferModelScript;
 
 @Entity

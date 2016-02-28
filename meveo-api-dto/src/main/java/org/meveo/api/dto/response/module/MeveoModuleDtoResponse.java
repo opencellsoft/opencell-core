@@ -9,26 +9,26 @@ import org.meveo.api.dto.response.BaseResponse;
 
 /**
  * @author Tyshan Shi(tyshan@manaty.net)
- *
-**/
-@XmlRootElement(name="MeveoModuleDtoResponse")
+ * 
+ **/
+@XmlRootElement(name = "MeveoModuleDtoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MeveoModuleDtoResponse extends BaseResponse{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private ModuleDto moduleDto;
-	public ModuleDto getModuleDto() {
-		return moduleDto;
-	}
-	public void setModuleDto(ModuleDto moduleDto) {
-		this.moduleDto = moduleDto;
-	}
-	@Override
-	public String toString() {
-		return "MeveoModuleDtoResponse [moduleDto=" + moduleDto + "]";
-	}
-	
+public class MeveoModuleDtoResponse extends BaseResponse {
+
+    private static final long serialVersionUID = 1L;
+    private ModuleDto module;
+
+    public ModuleDto getModule() {
+        return module;
+    }
+
+    public void setModule(ModuleDto module) {
+        this.module = module;
+    }
+
+    @Override
+    public String toString() {
+        return "MeveoModuleDtoResponse [module=" + module + "]";
+    }
+
 }

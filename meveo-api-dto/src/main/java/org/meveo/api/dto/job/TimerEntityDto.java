@@ -164,4 +164,28 @@ public class TimerEntityDto extends BaseDto {
         return "TimerEntityDto [code=" + code + ", description=" + description + ", hour=" + hour + ", minute=" + minute + ", second=" + second + ", year=" + year + ", month="
                 + month + ", dayOfMonth=" + dayOfMonth + ", dayOfWeek=" + dayOfWeek + "]";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        } else if (!(obj instanceof TimerEntityDto)) { // Fails with proxed objects: getClass() != obj.getClass()){
+            return false;
+        }
+
+        TimerEntityDto other = (TimerEntityDto) obj;
+
+        if (getCode() == null) {
+            if (other.getCode() != null) {
+                return false;
+            }
+        } else if (!getCode().equals(other.getCode())) {
+            return false;
+        }
+        return true;
+    }
 }

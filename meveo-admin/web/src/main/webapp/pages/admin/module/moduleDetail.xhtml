@@ -72,19 +72,20 @@
             </hftl:decorateFormField>
             <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />
             <hftl:decorateFormField label="#{messages['meveoModule.items']}" componentWidth="100" displayOneLine="false" newLine="true">
-                <p:treeTable id="moduleItems" lazy="false" value="#{meveoModuleBean.root}" var="e" reflow="false" resizableColumns="true" rowIndexVar="rowIndex">
+                <p:treeTable id="moduleItems" lazy="false" value="#{meveoModuleBean.root}" var="item" nodeVar="node" reflow="false" resizableColumns="true" rowIndexVar="rowIndex">
                     <p:column headerText="#{messages['businessEntity.code']}">
-                        <h:outputText value="#{e.root?messages[e.code]:e.code}" styleClass="field-value" />
+                        <h:outputText value="#{node.data}" styleClass="field-value" rendered="#{node.type ne 'item'}" />
+                        <h:outputText value="#{item.itemEntity.code}" rendered="#{node.type eq 'item'}" />
                     </p:column>
                     <p:column headerText="#{messages['businessEntity.description']}">
-                        <h:outputText value="#{e.description}" styleClass="field-value" />
+                        <h:outputText value="#{item.itemEntity.description}" rendered="#{node.type eq 'item'}" />
                     </p:column>
                     <p:column headerText="#{messages['meveoModuleItem.appliesTo']}">
-                        <h:outputText value="#{e.appliesTo}" styleClass="field-value" converter="customFieldConverter" />
+                        <h:outputText value="#{item.appliesTo}" converter="customFieldConverter" rendered="#{node.type eq 'item'}" />
                     </p:column>
                     <p:column headerText="#{messages['commons.actions']}">
-                        <p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this" update="moduleItems" rendered="#{!e.root}"
-                            action="#{meveoModuleBean.removeTreeNode(e)}" />
+                        <p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this" update="moduleItems" action="#{meveoModuleBean.removeTreeNode(node)}"
+                            rendered="#{node.type eq 'item'}" />
                     </p:column>
                     <f:facet name="footer" layout="block">
                         <p:commandButton value="#{messages['meveoModuleItem.addCE']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchCustomEntity').show()" />

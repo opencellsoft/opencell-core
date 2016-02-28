@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,28 +35,21 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ModuleUtil;
-import org.meveo.model.admin.MeveoModule;
-import org.meveo.model.admin.MeveoModuleItem;
-import org.meveo.model.admin.ModuleItemTypeEnum;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.module.MeveoModule;
+import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.custom.CustomEntityTemplateService;
-import org.meveo.service.filter.FilterService;
-import org.meveo.service.job.JobInstanceService;
-import org.meveo.service.notification.GenericNotificationService;
-import org.meveo.service.script.ScriptInstanceService;
 import org.meveocrm.model.dwh.Chart;
 import org.meveocrm.model.dwh.MeasurableQuantity;
-import org.meveocrm.services.dwh.ChartService;
-import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.CroppedImage;
@@ -82,20 +74,6 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
      */
     @Inject
     private MeveoModuleService meveoModuleService;
-    @Inject
-    private CustomEntityTemplateService customEntityTemplateService;
-    @Inject
-    private FilterService filterService;
-    @Inject
-    private ScriptInstanceService scriptInstanceService;
-    @Inject
-    private JobInstanceService jobInstanceService;
-    @Inject
-    private GenericNotificationService notificationService;
-    @Inject
-    private MeasurableQuantityService measurableQuantityService;
-    @Inject
-    private ChartService<? extends Chart> chartService;
 
     private CustomEntityTemplate customEntity;
     private CustomFieldTemplate customField;
@@ -108,15 +86,6 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
     private Chart chart;
 
     private TreeNode root;
-    private TreeNode cetnode;
-    private TreeNode cftnode;
-    private TreeNode filternode;
-    private TreeNode scriptnode;
-    private TreeNode jobnode;
-    private TreeNode notificationnode;
-    private TreeNode subModuleNode;
-    private TreeNode measurableQuantityNode;
-    private TreeNode chartNode;
 
     protected MeveoInstance meveoInstance;
 
@@ -133,25 +102,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 
     @PostConstruct
     public void init() {
-        root = new DefaultTreeNode(new CustomizedModuleItem("meveoModule.title", true));
-        cetnode = new DefaultTreeNode(new CustomizedModuleItem("meveoModule.customEntities", true), root);
-        cetnode.setExpanded(true);
-        cftnode = new DefaultTreeNode(new CustomizedModuleItem("meveoModule.customFields", true), root);
-        cftnode.setExpanded(true);
-        filternode = new DefaultTreeNode(new CustomizedModuleItem("meveoModule.filters", true), root);
-        filternode.setExpanded(true);
-        scriptnode = new DefaultTreeNode(new CustomizedModuleItem("meveoModule.scriptInstances", true), root);
-        scriptnode.setExpanded(true);
-        jobnode = new DefaultTreeNode(new CustomizedModuleItem("meveoModule.jobInstances", true), root);
-        jobnode.setExpanded(true);
-        notificationnode = new DefaultTreeNode(new CustomizedModuleItem("meveoModule.notifications", true), root);
-        notificationnode.setExpanded(true);
-        subModuleNode = new DefaultTreeNode(new CustomizedModuleItem("meveoModule.subModules", true), root);
-        subModuleNode.setExpanded(true);
-        measurableQuantityNode = new DefaultTreeNode(new CustomizedModuleItem("meveoModule.measurableQuantities", true), root);
-        measurableQuantityNode.setExpanded(true);
-        chartNode = new DefaultTreeNode(new CustomizedModuleItem("meveoModule.charts", true), root);
-        chartNode.setExpanded(true);
+        root = new DefaultTreeNode("Root");
     }
 
     public MeveoInstance getMeveoInstance() {
@@ -165,98 +116,27 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
     @Override
     public MeveoModule initEntity() {
         MeveoModule module = super.initEntity();
-        if (module.getModuleItems() != null) {
-            List<MeveoModuleItem> items = module.getModuleItems();
-            Iterator<MeveoModuleItem> itr = items.iterator();
-            while (itr.hasNext()) {
-                MeveoModuleItem item = itr.next();
-                switch (item.getItemType()) {
-                case CET:
-                    CustomEntityTemplate cet = customEntityTemplateService.findByCode(item.getItemCode(), getCurrentProvider());
-                    if (cet != null) {
-                        new DefaultTreeNode(new CustomizedModuleItem(cet.getCode(), cet.getDescription(), ModuleItemTypeEnum.CET), cetnode);
-                    } else {
-                        item.setMeveoModule(null);
-                        itr.remove();
-                    }
-                    break;
-                case CFT:
-                    CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(item.getItemCode(), item.getAppliesTo(), getCurrentProvider());
-                    if (cft != null) {
-                        new DefaultTreeNode(new CustomizedModuleItem(cft.getCode(), cft.getDescription(), cft.getAppliesTo(), ModuleItemTypeEnum.CFT), cftnode);
-                    } else {
-                        item.setMeveoModule(null);
-                        itr.remove();
-                    }
-                    break;
-                case FILTER:
-                    Filter filter = filterService.findByCode(item.getItemCode(), getCurrentProvider());
-                    if (filter != null) {
-                        new DefaultTreeNode(new CustomizedModuleItem(filter.getCode(), filter.getDescription(), ModuleItemTypeEnum.FILTER), filternode);
-                    } else {
-                        item.setMeveoModule(null);
-                        itr.remove();
-                    }
-                    break;
-                case SCRIPT:
-                    ScriptInstance script = scriptInstanceService.findByCode(item.getItemCode(), getCurrentProvider());
-                    if (script != null) {
-                        new DefaultTreeNode(new CustomizedModuleItem(script.getCode(), script.getDescription(), ModuleItemTypeEnum.SCRIPT), scriptnode);
-                    } else {
-                        item.setMeveoModule(null);
-                        itr.remove();
-                    }
-                    break;
-                case JOBINSTANCE:
-                    JobInstance job = jobInstanceService.findByCode(item.getItemCode(), getCurrentProvider());
-                    if (job != null) {
-                        new DefaultTreeNode(new CustomizedModuleItem(job.getCode(), job.getDescription(), ModuleItemTypeEnum.JOBINSTANCE), jobnode);
-                    } else {
-                        item.setMeveoModule(null);
-                        itr.remove();
-                    }
-                    break;
-                case NOTIFICATION:
-                    Notification notification = notificationService.findByCode(item.getItemCode(), getCurrentProvider());
-                    if (notification != null) {
-                        new DefaultTreeNode(new CustomizedModuleItem(notification.getCode(), notification.getDescription(), ModuleItemTypeEnum.NOTIFICATION), notificationnode);
-                    } else {
-                        item.setMeveoModule(null);
-                        itr.remove();
-                    }
-                    break;
-                case SUBMODULE:
-                    MeveoModule meveoModule = meveoModuleService.findByCode(item.getItemCode(), getCurrentProvider());
-                    if (meveoModule != null) {
-                        new DefaultTreeNode(new CustomizedModuleItem(meveoModule.getCode(), meveoModule.getDescription(), ModuleItemTypeEnum.SUBMODULE), subModuleNode);
-                    } else {
-                        item.setMeveoModule(null);
-                        itr.remove();
-                    }
-                    break;
-                case MEASURABLEQUANTITIES:
-                    MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(item.getItemCode(), getCurrentProvider());
-                    if (measurableQuantity != null) {
-                        new DefaultTreeNode(new CustomizedModuleItem(measurableQuantity.getCode(), measurableQuantity.getDescription(), ModuleItemTypeEnum.MEASURABLEQUANTITIES),
-                            measurableQuantityNode);
-                    } else {
-                        item.setMeveoModule(null);
-                        itr.remove();
-                    }
-                    break;
-                case CHART:
-                    Chart chart = chartService.findByCode(item.getItemCode(), getCurrentProvider());
-                    if (chart != null) {
-                        new DefaultTreeNode(new CustomizedModuleItem(chart.getCode(), chart.getDescription(), ModuleItemTypeEnum.CHART), chartNode);
-                    } else {
-                        item.setMeveoModule(null);
-                        itr.remove();
-                    }
-                    break;
-                default:
-                }
-            }
+        if (module.getModuleItems() == null) {
+            return module;
         }
+
+        List<MeveoModuleItem> itemsToRemove = new ArrayList<MeveoModuleItem>();
+
+        for (MeveoModuleItem item : module.getModuleItems()) {
+
+            // Load an entity related to a module item. If it was not been able to lead (e.g. was deleted), mark it to be deleted and delete
+            meveoModuleService.loadModuleItem(item, getCurrentProvider());
+
+            if (item.getItemEntity() == null) {
+                itemsToRemove.add(item);
+                continue;
+            }
+
+            TreeNode classNode = getOrCreateNodeByClass(item.getItemClass());
+            new DefaultTreeNode("item", item, classNode);
+
+        }
+
         return module;
     }
 
@@ -272,15 +152,13 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
         return customEntity;
     }
 
-    public void setCustomEntity(CustomEntityTemplate customEntity) {
-        // this.customEntity = customEntity;
-        if (customEntity != null) {
-            MeveoModuleItem item = new MeveoModuleItem(customEntity.getCode(), ModuleItemTypeEnum.CET);
+    public void setCustomEntity(CustomEntityTemplate itemEntity) {
+        if (itemEntity != null) {
+            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
             if (!entity.getModuleItems().contains(item)) {
                 entity.addModuleItem(item);
-                new DefaultTreeNode(new CustomizedModuleItem(customEntity.getCode(), customEntity.getDescription(), ModuleItemTypeEnum.CET), cetnode);
+                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
             }
-
         }
     }
 
@@ -296,12 +174,12 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
         return customField;
     }
 
-    public void setCustomField(CustomFieldTemplate customField) {
-        if (customField != null) {
-            MeveoModuleItem item = new MeveoModuleItem(customField.getCode(), customField.getAppliesTo(), ModuleItemTypeEnum.CFT);
+    public void setCustomField(CustomFieldTemplate itemEntity) {
+        if (itemEntity != null) {
+            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
             if (!entity.getModuleItems().contains(item)) {
                 entity.addModuleItem(item);
-                new DefaultTreeNode(new CustomizedModuleItem(customField.getCode(), customField.getDescription(), customField.getAppliesTo(), ModuleItemTypeEnum.CFT), cftnode);
+                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
             }
         }
     }
@@ -310,12 +188,12 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
         return filter;
     }
 
-    public void setFilter(Filter filter) {
-        if (filter != null) {
-            MeveoModuleItem item = new MeveoModuleItem(filter.getCode(), ModuleItemTypeEnum.FILTER);
+    public void setFilter(Filter itemEntity) {
+        if (itemEntity != null) {
+            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
             if (!entity.getModuleItems().contains(item)) {
                 entity.addModuleItem(item);
-                new DefaultTreeNode(new CustomizedModuleItem(filter.getCode(), filter.getDescription(), ModuleItemTypeEnum.FILTER), filternode);
+                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
             }
         }
     }
@@ -324,12 +202,12 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
         return script;
     }
 
-    public void setScript(ScriptInstance script) {
-        if (script != null) {
-            MeveoModuleItem item = new MeveoModuleItem(script.getCode(), ModuleItemTypeEnum.SCRIPT);
+    public void setScript(ScriptInstance itemEntity) {
+        if (itemEntity != null) {
+            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
             if (!entity.getModuleItems().contains(item)) {
                 entity.addModuleItem(item);
-                new DefaultTreeNode(new CustomizedModuleItem(script.getCode(), script.getDescription(), ModuleItemTypeEnum.SCRIPT), scriptnode);
+                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
             }
         }
     }
@@ -338,12 +216,12 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
         return job;
     }
 
-    public void setJob(JobInstance job) {
-        if (job != null) {
-            MeveoModuleItem item = new MeveoModuleItem(job.getCode(), ModuleItemTypeEnum.JOBINSTANCE);
+    public void setJob(JobInstance itemEntity) {
+        if (itemEntity != null) {
+            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
             if (!entity.getModuleItems().contains(item)) {
                 entity.addModuleItem(item);
-                new DefaultTreeNode(new CustomizedModuleItem(job.getCode(), job.getDescription(), ModuleItemTypeEnum.JOBINSTANCE), jobnode);
+                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
             }
         }
     }
@@ -352,134 +230,24 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
         return notification;
     }
 
-    public void setNotification(Notification notification) {
-        if (notification != null) {
-            MeveoModuleItem item = new MeveoModuleItem(notification.getCode(), ModuleItemTypeEnum.NOTIFICATION);
+    public void setNotification(Notification itemEntity) {
+        if (itemEntity != null) {
+            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
             if (!entity.getModuleItems().contains(item)) {
                 entity.addModuleItem(item);
-                new DefaultTreeNode(new CustomizedModuleItem(notification.getCode(), notification.getDescription(), ModuleItemTypeEnum.NOTIFICATION), notificationnode);
+                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
             }
         }
     }
 
-    private void removeItemFromEntity(String code, String applyTo, ModuleItemTypeEnum type) {
-        for (MeveoModuleItem item : entity.getModuleItems()) {
-            if (type == item.getItemType()) {
-                if (ModuleItemTypeEnum.CFT.equals(type)) {
-                    if (code.equalsIgnoreCase(item.getItemCode()) && applyTo.equalsIgnoreCase(item.getAppliesTo())) {
-                        entity.removeItem(item);
-                        break;
-                    }
-                } else if (code.equalsIgnoreCase(item.getItemCode())) {
-                    entity.removeItem(item);
-                    break;
-                }
-            }
+    public void removeTreeNode(TreeNode node) {
+        MeveoModuleItem item = (MeveoModuleItem) node.getData();
+        TreeNode parent = node.getParent();
+        parent.getChildren().remove(node);
+        if (parent.getChildCount() == 0) {
+            parent.getParent().getChildren().remove(parent);
         }
-    }
-
-    private void removeItemFromEntity(String code, ModuleItemTypeEnum type) {
-        removeItemFromEntity(code, null, type);
-    }
-
-    public void removeTreeNode(CustomizedModuleItem item) {
-        if (item != null && item.getType() != null) {
-            switch (item.getType()) {
-            case CET:
-                for (TreeNode node : cetnode.getChildren()) {
-                    CustomizedModuleItem dest = (CustomizedModuleItem) node.getData();
-                    if (item.getCode().equals(dest.getCode())) {
-                        cetnode.getChildren().remove(node);
-                        log.debug("start to remove cet from entity by {}", item.getCode());
-                        removeItemFromEntity(item.getCode(), ModuleItemTypeEnum.CET);
-                        break;
-                    }
-                }
-                break;
-            case CFT:
-                for (TreeNode node : cftnode.getChildren()) {
-                    CustomizedModuleItem dest = (CustomizedModuleItem) node.getData();
-                    if (item.getCode().equals(dest.getCode()) && item.getAppliesTo().equals(dest.getAppliesTo())) {
-                        cftnode.getChildren().remove(node);
-                        removeItemFromEntity(item.getCode(), item.getAppliesTo(), ModuleItemTypeEnum.CFT);
-                        break;
-                    }
-                }
-                break;
-            case FILTER:
-                for (TreeNode node : filternode.getChildren()) {
-                    CustomizedModuleItem dest = (CustomizedModuleItem) node.getData();
-                    if (item.getCode().equals(dest.getCode())) {
-                        filternode.getChildren().remove(node);
-                        removeItemFromEntity(item.getCode(), ModuleItemTypeEnum.FILTER);
-                        break;
-                    }
-                }
-                break;
-            case JOBINSTANCE:
-                for (TreeNode node : jobnode.getChildren()) {
-                    CustomizedModuleItem dest = (CustomizedModuleItem) node.getData();
-                    if (item.getCode().equals(dest.getCode())) {
-                        jobnode.getChildren().remove(node);
-                        removeItemFromEntity(item.getCode(), ModuleItemTypeEnum.JOBINSTANCE);
-                        break;
-                    }
-                }
-                break;
-            case SCRIPT:
-                for (TreeNode node : scriptnode.getChildren()) {
-                    CustomizedModuleItem dest = (CustomizedModuleItem) node.getData();
-                    if (item.getCode().equals(dest.getCode())) {
-                        scriptnode.getChildren().remove(node);
-                        removeItemFromEntity(item.getCode(), ModuleItemTypeEnum.SCRIPT);
-                        break;
-                    }
-                }
-                break;
-            case NOTIFICATION:
-                for (TreeNode node : notificationnode.getChildren()) {
-                    CustomizedModuleItem dest = (CustomizedModuleItem) node.getData();
-                    if (item.getCode().equals(dest.getCode())) {
-                        notificationnode.getChildren().remove(node);
-                        removeItemFromEntity(item.getCode(), ModuleItemTypeEnum.NOTIFICATION);
-                        break;
-                    }
-                }
-                break;
-            case SUBMODULE:
-                for (TreeNode node : subModuleNode.getChildren()) {
-                    CustomizedModuleItem dest = (CustomizedModuleItem) node.getData();
-                    if (item.getCode().equals(dest.getCode())) {
-                        subModuleNode.getChildren().remove(node);
-                        removeItemFromEntity(item.getCode(), ModuleItemTypeEnum.SUBMODULE);
-                        break;
-                    }
-                }
-                break;
-            case CHART:
-                for (TreeNode node : chartNode.getChildren()) {
-                    CustomizedModuleItem dest = (CustomizedModuleItem) node.getData();
-                    if (item.getCode().equals(dest.getCode())) {
-                        chartNode.getChildren().remove(node);
-                        removeItemFromEntity(item.getCode(), ModuleItemTypeEnum.CHART);
-                        break;
-                    }
-                }                
-                break;
-            case MEASURABLEQUANTITIES:
-                for (TreeNode node : measurableQuantityNode.getChildren()) {
-                    CustomizedModuleItem dest = (CustomizedModuleItem) node.getData();
-                    if (item.getCode().equals(dest.getCode())) {
-                        measurableQuantityNode.getChildren().remove(node);
-                        removeItemFromEntity(item.getCode(), ModuleItemTypeEnum.MEASURABLEQUANTITIES);
-                        break;
-                    }
-                }  
-                break;
-            default:
-                break;
-            }
-        }
+        entity.removeItem(item);
     }
 
     public void publishModule() {
@@ -614,18 +382,17 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
         return meveoModule;
     }
 
-    public void setMeveoModule(MeveoModule meveoModule) {
-        if (meveoModule != null) {
-            MeveoModuleItem item = new MeveoModuleItem(meveoModule.getCode(), ModuleItemTypeEnum.SUBMODULE);
+    public void setMeveoModule(MeveoModule itemEntity) {
+        if (itemEntity != null) {
+            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
             if (!entity.getModuleItems().contains(item)) {
                 entity.addModuleItem(item);
-                new DefaultTreeNode(new CustomizedModuleItem(meveoModule.getCode(), meveoModule.getDescription(), ModuleItemTypeEnum.SUBMODULE), subModuleNode);
+                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
             }
         }
     }
 
     public LazyDataModel<MeveoModule> getSubModules() {
-        log.debug("getSubModules");
 
         LazyDataModel<MeveoModule> result = null;
         HashMap<String, Object> filters = new HashMap<String, Object>();
@@ -640,25 +407,16 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
         return result;
     }
 
-    public TreeNode getSubModuleNode() {
-        return subModuleNode;
-    }
-
-    public void setSubModuleNode(TreeNode subModuleNode) {
-        this.subModuleNode = subModuleNode;
-    }
-
     public MeasurableQuantity getMeasurableQuantity() {
         return measurableQuantity;
     }
 
-    public void setMeasurableQuantity(MeasurableQuantity measurableQuantity) {
-        if (measurableQuantity != null) {
-            MeveoModuleItem item = new MeveoModuleItem(measurableQuantity.getCode(), ModuleItemTypeEnum.MEASURABLEQUANTITIES);
+    public void setMeasurableQuantity(MeasurableQuantity itemEntity) {
+        if (itemEntity != null) {
+            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
             if (!entity.getModuleItems().contains(item)) {
                 entity.addModuleItem(item);
-                new DefaultTreeNode(new CustomizedModuleItem(measurableQuantity.getCode(), measurableQuantity.getDescription(), ModuleItemTypeEnum.MEASURABLEQUANTITIES),
-                    measurableQuantityNode);
+                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
             }
         }
     }
@@ -667,14 +425,25 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
         return chart;
     }
 
-    public void setChart(Chart chart) {
-        if (chart != null) {
-            MeveoModuleItem item = new MeveoModuleItem(chart.getCode(), ModuleItemTypeEnum.CHART);
+    public void setChart(Chart itemEntity) {
+        if (itemEntity != null) {
+            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
             if (!entity.getModuleItems().contains(item)) {
                 entity.addModuleItem(item);
-                new DefaultTreeNode(new CustomizedModuleItem(chart.getCode(), chart.getDescription(), ModuleItemTypeEnum.CHART), chartNode);
+                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
             }
         }
     }
 
+    private TreeNode getOrCreateNodeByClass(String classname) {
+        for (TreeNode node : root.getChildren()) {
+            if (classname.equals(node.getType())) {
+                return node;
+            }
+        }
+
+        TreeNode node = new DefaultTreeNode(classname, ReflectionUtils.getHumanClassName(classname), root);
+        node.setExpanded(true);
+        return node;
+    }
 }

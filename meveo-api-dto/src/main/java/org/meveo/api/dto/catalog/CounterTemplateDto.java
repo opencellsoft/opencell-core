@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.BaseDto;
 import org.meveo.model.catalog.CounterTemplate;
 
 /**
@@ -15,119 +16,140 @@ import org.meveo.model.catalog.CounterTemplate;
  **/
 @XmlRootElement(name = "CounterTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CounterTemplateDto implements Serializable {
+public class CounterTemplateDto extends BaseDto implements Serializable {
 
-	private static final long serialVersionUID = 2587489734648000805L;
+    private static final long serialVersionUID = 2587489734648000805L;
 
-	@XmlAttribute(required = true)
-	private String code;
+    @XmlAttribute(required = true)
+    private String code;
 
-	@XmlAttribute()
-	private String description;
-    
-	@XmlAttribute(required = true)
-	private String calendar;
-	
-	private String unity;
-	private String type;
-	private BigDecimal ceiling;
-	private boolean disabled;
-	private String counterLevel;
-	private String ceilingExpressionEl;
-	
+    @XmlAttribute()
+    private String description;
 
-	public CounterTemplateDto() {
-	}
+    @XmlAttribute(required = true)
+    private String calendar;
 
-	public CounterTemplateDto(CounterTemplate e) {
-		code = e.getCode();
-		description = e.getDescription();
-		unity = e.getUnityDescription();
-		type = e.getCounterType().getLabel();
-		ceiling = e.getCeiling();
-		disabled = e.isDisabled();
-		calendar = e.getCalendar().getCode();
-		counterLevel=String.valueOf(e.getCounterLevel());
-		ceilingExpressionEl=e.getCeilingExpressionEl();
-	}
+    private String unity;
+    private String type;
+    private BigDecimal ceiling;
+    private boolean disabled;
+    private String counterLevel;
+    private String ceilingExpressionEl;
 
-	public String getCode() {
-		return code;
-	}
+    public CounterTemplateDto() {
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public CounterTemplateDto(CounterTemplate e) {
+        code = e.getCode();
+        description = e.getDescription();
+        unity = e.getUnityDescription();
+        type = e.getCounterType().getLabel();
+        ceiling = e.getCeiling();
+        disabled = e.isDisabled();
+        calendar = e.getCalendar().getCode();
+        counterLevel = String.valueOf(e.getCounterLevel());
+        ceilingExpressionEl = e.getCeilingExpressionEl();
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getUnity() {
-		return unity;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setUnity(String unity) {
-		this.unity = unity;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getUnity() {
+        return unity;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setUnity(String unity) {
+        this.unity = unity;
+    }
 
-	public BigDecimal getCeiling() {
-		return ceiling;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setCeiling(BigDecimal ceiling) {
-		this.ceiling = ceiling;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public boolean isDisabled() {
-		return disabled;
-	}
+    public BigDecimal getCeiling() {
+        return ceiling;
+    }
 
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
-	}
+    public void setCeiling(BigDecimal ceiling) {
+        this.ceiling = ceiling;
+    }
 
-	public String getCalendar() {
-		return calendar;
-	}
+    public boolean isDisabled() {
+        return disabled;
+    }
 
-	public void setCalendar(String calendar) {
-		this.calendar = calendar;
-	}
-	
-	public String getCounterLevel() {
-		return counterLevel;
-	}
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
 
-	public void setCounterLevel(String counterLevel) {
-		this.counterLevel = counterLevel;
-	}
-	
+    public String getCalendar() {
+        return calendar;
+    }
 
-	public String getCeilingExpressionEl() {
-		return ceilingExpressionEl;
-	}
+    public void setCalendar(String calendar) {
+        this.calendar = calendar;
+    }
 
-	public void setCeilingExpressionEl(String ceilingExpressionEl) {
-		this.ceilingExpressionEl = ceilingExpressionEl;
-	}
+    public String getCounterLevel() {
+        return counterLevel;
+    }
 
-	@Override
-	public String toString() {
-		return "CounterTemplateDto [code=" + code + ", description=" + description + ", unity=" + unity + ", type="
-				+ type + ", ceiling=" + ceiling + ", counterLevel=" + counterLevel + ", disabled=" + disabled + ", calendar=" + calendar + ", ceilingExpressionEl="+ ceilingExpressionEl +"]";
-	}
+    public void setCounterLevel(String counterLevel) {
+        this.counterLevel = counterLevel;
+    }
 
+    public String getCeilingExpressionEl() {
+        return ceilingExpressionEl;
+    }
+
+    public void setCeilingExpressionEl(String ceilingExpressionEl) {
+        this.ceilingExpressionEl = ceilingExpressionEl;
+    }
+
+    @Override
+    public String toString() {
+        return "CounterTemplateDto [code=" + code + ", description=" + description + ", unity=" + unity + ", type=" + type + ", ceiling=" + ceiling + ", counterLevel="
+                + counterLevel + ", disabled=" + disabled + ", calendar=" + calendar + ", ceilingExpressionEl=" + ceilingExpressionEl + "]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        } else if (!(obj instanceof CounterTemplateDto)) { // Fails with proxed objects: getClass() != obj.getClass()){
+            return false;
+        }
+
+        CounterTemplateDto other = (CounterTemplateDto) obj;
+
+        if (getCode() == null) {
+            if (other.getCode() != null) {
+                return false;
+            }
+        } else if (!getCode().equals(other.getCode())) {
+            return false;
+        }
+        return true;
+    }
 }

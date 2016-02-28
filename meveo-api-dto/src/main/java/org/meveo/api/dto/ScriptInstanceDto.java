@@ -74,4 +74,28 @@ public class ScriptInstanceDto extends CustomScriptDto {
     public void setSourcingRoles(List<RoleDto> sourcingRoles) {
         this.sourcingRoles = sourcingRoles;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        } else if (!(obj instanceof ScriptInstanceDto)) { // Fails with proxed objects: getClass() != obj.getClass()){
+            return false;
+        }
+
+        ScriptInstanceDto other = (ScriptInstanceDto) obj;
+
+        if (getCode() == null) {
+            if (other.getCode() != null) {
+                return false;
+            }
+        } else if (!getCode().equals(other.getCode())) {
+            return false;
+        }
+        return true;
+    }
 }

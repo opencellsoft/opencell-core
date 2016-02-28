@@ -91,7 +91,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
 		MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 		try {
-			result.setModuleDtoList(moduleApi.list(getCurrentUser()));
+			result.setModules(moduleApi.list(getCurrentUser()));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
@@ -107,7 +107,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
 		MeveoModuleDtoResponse result = new MeveoModuleDtoResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 		try {
-			result.setModuleDto(moduleApi.get(code, getCurrentUser()));
+			result.setModule(moduleApi.get(code, getCurrentUser()));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());

@@ -72,7 +72,7 @@ public class FilterApi extends BaseApi {
             throw new EntityDoesNotExistsException(Filter.class, code);
         }
 
-        return FilterDto.parseDto(filter);
+        return FilterDto.toDto(filter);
     }
 
 }

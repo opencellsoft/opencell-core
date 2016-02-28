@@ -95,7 +95,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
 		result.getActionStatus().setMessage("");
 		try {
 			List<ModuleDto> dtos = moduleApi.list(getCurrentUser());
-			result.setModuleDtoList(dtos);
+			result.setModules(dtos);
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -117,7 +117,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
 		result.getActionStatus().setMessage("");
 		try {
 			ModuleDto dto = moduleApi.get(code, getCurrentUser());
-			result.setModuleDto(dto);
+			result.setModule(dto);
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

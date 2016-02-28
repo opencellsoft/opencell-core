@@ -1,22 +1,24 @@
-package org.meveo.model.admin;
+package org.meveo.model.module;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import org.meveo.model.BaseEntity;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseProviderlessEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.crm.CustomFieldTemplate;
 
 @Entity
-@ExportIdentifier({ "meveoModule.code", "provider", "appliesTo", "itemType", "itemCode" })
+@ExportIdentifier({ "meveoModule.code", "meveoModule.provider", "appliesTo", "itemType", "itemCode" })
 @Table(name = "MEVEO_MODULE_ITEM")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_MODULE_ITEM_SEQ")
-public class MeveoModuleItem extends BaseEntity {
+public class MeveoModuleItem extends BaseProviderlessEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -27,25 +29,31 @@ public class MeveoModuleItem extends BaseEntity {
     @Column(name = "APPLIES_TO", length = 100)
     private String appliesTo;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "ITEM_TYPE", length = 20, nullable = false)
-    private ModuleItemTypeEnum itemType;
+    @Column(name = "ITEM_TYPE", length = 100, nullable = false)
+    private String itemClass;
 
     @Column(name = "ITEM_CODE", length = 60, nullable = false)
     private String itemCode;
 
+    @Transient
+    private BusinessEntity itemEntity;
+
     public MeveoModuleItem() {
     }
 
-    public MeveoModuleItem(String itemCode, ModuleItemTypeEnum itemType) {
-        this.itemType = itemType;
-        this.itemCode = itemCode;
+    public MeveoModuleItem(BusinessEntity itemEntity) {
+        this.itemEntity = itemEntity;
+        this.itemClass = itemEntity.getClass().getName();
+        this.itemCode = itemEntity.getCode();
+        if (itemEntity instanceof CustomFieldTemplate) {
+            this.appliesTo = ((CustomFieldTemplate) itemEntity).getAppliesTo();
+        }
     }
 
-    public MeveoModuleItem(String itemCode, String applyTo, ModuleItemTypeEnum itemType) {
+    public MeveoModuleItem(String itemCode, String itemClass, String appliesTo) {
+        this.itemClass = itemClass;
         this.itemCode = itemCode;
-        this.appliesTo = applyTo;
-        this.itemType = itemType;
+        this.appliesTo = appliesTo;
     }
 
     public MeveoModule getMeveoModule() {
@@ -56,12 +64,12 @@ public class MeveoModuleItem extends BaseEntity {
         this.meveoModule = meveoModule;
     }
 
-    public ModuleItemTypeEnum getItemType() {
-        return itemType;
+    public String getItemClass() {
+        return itemClass;
     }
 
-    public void setItemType(ModuleItemTypeEnum itemType) {
-        this.itemType = itemType;
+    public void setItemClass(String itemClass) {
+        this.itemClass = itemClass;
     }
 
     public String getItemCode() {
@@ -84,7 +92,7 @@ public class MeveoModuleItem extends BaseEntity {
     public int hashCode() {
         final int prime = 31;
         int result = prime * 1;// super.hashCode();
-        result += itemType != null ? itemType.hashCode() : 0;
+        result += itemClass != null ? itemClass.hashCode() : 0;
         result += itemCode != null ? itemCode.hashCode() : 0;
         result += appliesTo != null ? appliesTo.hashCode() : 0;
         return result;
@@ -103,19 +111,22 @@ public class MeveoModuleItem extends BaseEntity {
 
         MeveoModuleItem other = (MeveoModuleItem) obj;
 
-        if (itemType == ModuleItemTypeEnum.CFT) {
-            if (itemType.equals(other.getItemType()) && itemCode != null && itemCode.equalsIgnoreCase(other.getItemCode()) && appliesTo != null
-                    && appliesTo.equalsIgnoreCase(other.getAppliesTo())) {
-                return true;
-            }
-        } else if (itemType.equals(other.getItemType()) && itemCode != null && itemCode.equalsIgnoreCase(other.getItemCode())) {
-            return true;
+        if (!itemClass.equals(other.getItemClass()) || !itemCode.equalsIgnoreCase(other.getItemCode()) || StringUtils.compare(appliesTo, other.getAppliesTo()) != 0) {
+            return false;
         }
-        return false;
+        return true;
+    }
+
+    public BusinessEntity getItemEntity() {
+        return itemEntity;
+    }
+
+    public void setItemEntity(BusinessEntity itemEntity) {
+        this.itemEntity = itemEntity;
     }
 
     @Override
     public String toString() {
-        return String.format("MeveoModuleItem [itemType=%s, itemCode=%s, appliesTo=%s]", itemType, itemCode, appliesTo);
+        return String.format("MeveoModuleItem [itemClass=%s, itemCode=%s, appliesTo=%s]", itemClass, itemCode, appliesTo);
     }
 }

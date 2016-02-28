@@ -23,6 +23,9 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.TypedQuery;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -42,6 +45,7 @@ import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.ScriptInstanceDto;
+import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.dwh.BarChartDto;
 import org.meveo.api.dto.dwh.LineChartDto;
 import org.meveo.api.dto.dwh.MeasurableQuantityDto;
@@ -55,16 +59,18 @@ import org.meveo.api.dto.notification.NotificationDto;
 import org.meveo.api.dto.notification.WebhookNotificationDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.export.RemoteAuthenticationException;
-import org.meveo.model.admin.MeveoModule;
-import org.meveo.model.admin.MeveoModuleItem;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.module.MeveoModule;
+import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.JobTrigger;
 import org.meveo.model.notification.Notification;
@@ -75,43 +81,23 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.custom.CustomEntityTemplateService;
-import org.meveo.service.filter.FilterService;
-import org.meveo.service.job.JobInstanceService;
-import org.meveo.service.notification.GenericNotificationService;
 import org.meveo.service.script.EntityActionScriptService;
-import org.meveo.service.script.ScriptInstanceService;
 import org.meveocrm.model.dwh.BarChart;
-import org.meveocrm.model.dwh.Chart;
 import org.meveocrm.model.dwh.LineChart;
 import org.meveocrm.model.dwh.MeasurableQuantity;
 import org.meveocrm.model.dwh.PieChart;
-import org.meveocrm.services.dwh.ChartService;
-import org.meveocrm.services.dwh.MeasurableQuantityService;
 
 @Stateless
 public class MeveoModuleService extends BusinessService<MeveoModule> {
 
     @Inject
-    private CustomEntityTemplateService customEntityTemplateService;
-    @Inject
     private CustomFieldTemplateService customFieldTemplateService;
-    @Inject
-    private FilterService filterService;
-    @Inject
-    private JobInstanceService jobInstanceService;
+
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
-    @Inject
-    private GenericNotificationService genericNotificationService;
-    @Inject
-    private ScriptInstanceService scriptInstanceService;
+
     @Inject
     private EntityActionScriptService entityActionScriptService;
-    @Inject
-    private MeasurableQuantityService measurableQuantityService;
-    @Inject
-    private ChartService<? extends Chart> chartService;
 
     /**
      * import module from remote meveo instance
@@ -147,7 +133,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
             if (resultDto == null || ActionStatusEnum.SUCCESS != resultDto.getActionStatus().getStatus()) {
                 throw new BusinessException("Code " + resultDto.getActionStatus().getErrorCode() + ", info " + resultDto.getActionStatus().getMessage());
             }
-            result = resultDto.getModuleDtoList();
+            result = resultDto.getModules();
             if (result != null) {
                 Collections.sort(result, new Comparator<ModuleDto>() {
                     @Override
@@ -159,7 +145,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
             return result;
 
         } catch (Exception e) {
-            log.error("Fail to communicate {}. Reason {}", meveoInstance.getCode(), (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
+            log.error("Failed to communicate {}. Reason {}", meveoInstance.getCode(), (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
             throw new BusinessException("Fail to communicate " + meveoInstance.getCode() + ". Error " + (e == null ? e.getClass().getSimpleName() : e.getMessage()));
         }
     }
@@ -177,7 +163,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         final String url = "api/rest/module/createOrUpdate";
 
         try {
-            ModuleDto moduleDto = moduleToDto(module, currentUser);
+            ModuleDto moduleDto = moduleToDto(module, currentUser.getProvider());
             log.debug("export module dto {}", moduleDto);
             Response response = publishDto2MeveoInstance(url, meveoInstance, moduleDto);
             ActionStatus actionStatus = response.readEntity(ActionStatus.class);
@@ -192,7 +178,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         }
     }
 
-    private ModuleDto moduleToDto(MeveoModule module, User currentUser) {
+    public ModuleDto moduleToDto(MeveoModule module, Provider provider) {
         ModuleDto moduleDto = new ModuleDto(module);
         if (StringUtils.isNotBlank(module.getLogoPicture())) {
             try {
@@ -206,97 +192,71 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
             return moduleDto;
         }
         for (MeveoModuleItem item : moduleItems) {
-            switch (item.getItemType()) {
-            case CET:
-                CustomEntityTemplate customEntityTemplate = customEntityTemplateService.findByCode(item.getItemCode(), currentUser.getProvider());
-                if (customEntityTemplate != null) {
-                    Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(customEntityTemplate.getCftPrefix(),
-                        currentUser.getProvider());
-                    Map<String, EntityActionScript> customActions = entityActionScriptService.findByAppliesTo(customEntityTemplate.getCftPrefix(), currentUser.getProvider());
+            loadModuleItem(item, provider);
 
-                    CustomEntityTemplateDto dto = CustomEntityTemplateDto.toDTO(customEntityTemplate, customFieldTemplates != null ? customFieldTemplates.values() : null,
-                        customActions != null ? customActions.values() : null);
-                    moduleDto.getCetDtos().add(dto);
-                }
-                break;
-            case CFT:
-                CustomFieldTemplate customFieldTemplate = customFieldTemplateService.findByCode(item.getItemCode(), currentUser.getProvider());
-                if (customFieldTemplate != null) {
-                    CustomFieldTemplateDto dto = new CustomFieldTemplateDto(customFieldTemplate);
-                    moduleDto.getCftDtos().add(dto);
-                }
-                break;
-            case FILTER:
-                Filter filter = filterService.findByCode(item.getItemCode(), currentUser.getProvider());
-                if (filter != null) {
-                    FilterDto dto = FilterDto.parseDto(filter);
-                    moduleDto.getFilterDtos().add(dto);
-                }
-                break;
-            case JOBINSTANCE:
-                JobInstance jobInstance = jobInstanceService.findByCode(item.getItemCode(), currentUser.getProvider());
-                if (jobInstance != null) {
-                    moduleDto = exportJobInstance(jobInstance, moduleDto, false);
-                }
-                break;
-            case NOTIFICATION:
-                Notification notification = genericNotificationService.findByCode(item.getItemCode(), getCurrentProvider());
-                if (notification == null) {
-                    break;
-                }
+            if (item.getItemEntity() == null) {
+                continue;
+            }
+            if (item.getItemEntity() instanceof CustomEntityTemplate) {
+                CustomEntityTemplate customEntityTemplate = (CustomEntityTemplate) item.getItemEntity();
+                Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(customEntityTemplate.getCftPrefix(), module.getProvider());
+                Map<String, EntityActionScript> customActions = entityActionScriptService.findByAppliesTo(customEntityTemplate.getCftPrefix(), module.getProvider());
+
+                CustomEntityTemplateDto dto = CustomEntityTemplateDto.toDTO(customEntityTemplate, customFieldTemplates != null ? customFieldTemplates.values() : null,
+                    customActions != null ? customActions.values() : null);
+                moduleDto.addModuleItem(dto);
+
+            } else if (item.getItemEntity() instanceof CustomFieldTemplate) {
+                moduleDto.addModuleItem(new CustomFieldTemplateDto((CustomFieldTemplate) item.getItemEntity()));
+
+            } else if (item.getItemEntity() instanceof Filter) {
+                moduleDto.addModuleItem(FilterDto.toDto((Filter) item.getItemEntity()));
+
+            } else if (item.getItemEntity() instanceof JobInstance) {
+                exportJobInstance((JobInstance) item.getItemEntity(), moduleDto);
+
+            } else if (item.getItemEntity() instanceof Notification) {
+
+                Notification notification = (Notification) item.getItemEntity();
                 if (notification.getScriptInstance() != null) {
-                    ScriptInstance scriptInstance = notification.getScriptInstance();
-                    ScriptInstanceDto dto = new ScriptInstanceDto(scriptInstance);
-                    moduleDto.getScriptDtos().add(dto);
+                    moduleDto.addModuleItem(new ScriptInstanceDto(notification.getScriptInstance()));
+                }
+
+                if (notification.getCounterTemplate() !=null) {
+                    moduleDto.addModuleItem(new CounterTemplateDto(notification.getCounterTemplate()));
                 }
 
                 if (notification instanceof EmailNotification) {
-                    EmailNotificationDto dto = new EmailNotificationDto((EmailNotification) notification);
-                    moduleDto.getEmailNotifDtos().add(dto);
+                    moduleDto.addModuleItem(new EmailNotificationDto((EmailNotification) notification));
+
                 } else if (notification instanceof JobTrigger) {
-                    exportJobInstance(((JobTrigger) notification).getJobInstance(), moduleDto, true);
-                    JobTriggerDto dto = new JobTriggerDto((JobTrigger) notification);
-                    moduleDto.getJobTriggerDtos().add(dto);
+                    exportJobInstance(((JobTrigger) notification).getJobInstance(), moduleDto);
+                    moduleDto.addModuleItem(new JobTriggerDto((JobTrigger) notification));
+
                 } else if (notification instanceof ScriptNotification) {
-                    NotificationDto dto = new NotificationDto(notification);
-                    moduleDto.getNotificationDtos().add(dto);
+                    moduleDto.addModuleItem(new NotificationDto(notification));
+
                 } else if (notification instanceof WebHook) {
-                    WebhookNotificationDto dto = new WebhookNotificationDto((WebHook) notification);
-                    moduleDto.getWebhookNotifDtos().add(dto);
+                    moduleDto.addModuleItem(new WebhookNotificationDto((WebHook) notification));
                 }
-                break;
-            case SCRIPT:
-                ScriptInstance scriptInstance = scriptInstanceService.findByCode(item.getItemCode(), getCurrentProvider());
-                if (scriptInstance != null) {
-                    ScriptInstanceDto dto = new ScriptInstanceDto(scriptInstance);
-                    moduleDto.getScriptDtos().add(dto);
-                }
-                break;
-            case CHART:
-                Chart chart = chartService.findByCode(item.getItemCode(), getCurrentProvider());
-                if (chart != null) {
-                    if (chart instanceof PieChart) {
-                        moduleDto.getCharts().add(new PieChartDto((PieChart) chart));
-                    } else if (chart instanceof LineChart) {
-                        moduleDto.getCharts().add(new LineChartDto((LineChart) chart));
-                    } else if (chart instanceof BarChart) {
-                        moduleDto.getCharts().add(new BarChartDto((BarChart) chart));
-                    }
-                }
-                break;
-            case MEASURABLEQUANTITIES:
-                MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(item.getItemCode(), getCurrentProvider());
-                if (measurableQuantity != null) {
-                    MeasurableQuantityDto dto = new MeasurableQuantityDto(measurableQuantity);
-                    moduleDto.getMeasurableQuantities().add(dto);
-                }
-                break;
-            case SUBMODULE:
-                MeveoModule subModule = this.findByCode(item.getItemCode(), getCurrentProvider());
-                if (subModule != null) {
-                    moduleDto.getSubModules().add(moduleToDto(subModule, currentUser));
-                }
-                break;
+
+            } else if (item.getItemEntity() instanceof ScriptInstance) {
+                moduleDto.addModuleItem(new ScriptInstanceDto((ScriptInstance) item.getItemEntity()));
+
+            } else if (item.getItemEntity() instanceof PieChart) {
+                moduleDto.addModuleItem(new PieChartDto((PieChart) item.getItemEntity()));
+
+            } else if (item.getItemEntity() instanceof LineChart) {
+                moduleDto.addModuleItem(new LineChartDto((LineChart) item.getItemEntity()));
+
+            } else if (item.getItemEntity() instanceof BarChart) {
+                moduleDto.addModuleItem(new BarChartDto((BarChart) item.getItemEntity()));
+
+            } else if (item.getItemEntity() instanceof MeasurableQuantity) {
+                moduleDto.addModuleItem(new MeasurableQuantityDto((MeasurableQuantity) item.getItemEntity()));
+
+            } else if (item.getItemEntity() instanceof MeveoModule) {
+                moduleDto.addModuleItem(moduleToDto((MeveoModule) item.getItemEntity(), provider));
             }
         }
         return moduleDto;
@@ -310,29 +270,22 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
      * @return
      * @throws MeveoApiException
      */
-    private ModuleDto exportJobInstance(JobInstance jobInstance, ModuleDto moduleDto, boolean nextJob) {
-        if (jobInstance == null) {
-            return moduleDto;
+    private void exportJobInstance(JobInstance jobInstance, ModuleDto moduleDto) {
+        JobInstance nextJobInstance = jobInstance.getFollowingJob();
+        if (nextJobInstance != null) {
+            exportJobInstance(nextJobInstance, moduleDto);
         }
 
         if (jobInstance.getTimerEntity() != null) {
             TimerEntity timerEntity = jobInstance.getTimerEntity();
             if (timerEntity != null) {
                 TimerEntityDto timerDto = new TimerEntityDto(timerEntity);
-                moduleDto.getTimerEntityDtos().add(timerDto);
+                moduleDto.addModuleItem(timerDto);
             }
         }
         Map<String, List<CustomFieldInstance>> cfis = customFieldInstanceService.getCustomFieldInstances(jobInstance);
         JobInstanceDto dto = new JobInstanceDto(jobInstance, cfis);
-        if (nextJob) {
-            moduleDto.getJobNextDtos().addFirst(dto);
-        } else {
-            moduleDto.getJobDtos().add(dto);
-        }
-
-        JobInstance nextJobInstance = jobInstance.getFollowingJob();
-
-        return exportJobInstance(nextJobInstance, moduleDto, true);
+        moduleDto.addModuleItem(dto);
     }
 
     /**
@@ -367,5 +320,32 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
             log.error("Failed to communicate {}. Reason {}", meveoInstance.getCode(), (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
             throw new BusinessException("Failed to communicate " + meveoInstance.getCode() + ". Error " + e.getMessage());
         }
+    }
+
+    public void loadModuleItem(MeveoModuleItem item, Provider provider) {
+
+        BusinessEntity entity = null;
+        if (CustomFieldTemplate.class.getName().equals(item.getItemClass())) {
+            entity = customFieldTemplateService.findByCode(item.getItemCode(), provider);
+
+        } else {
+
+            String sql = "select mi from " + item.getItemClass() + " mi where mi.code=:code and mi.provider=:provider";
+            TypedQuery<BusinessEntity> query = getEntityManager().createQuery(sql, BusinessEntity.class);
+            query.setParameter("code", item.getItemCode());
+            query.setParameter("provider", provider);
+            try {
+                entity = query.getSingleResult();
+
+            } catch (NoResultException | NonUniqueResultException e) {
+                log.error("Failed to find a module item {}. Reason: {}", item, e.getClass().getSimpleName());
+                return;
+            } catch (Exception e) {
+                log.error("Failed to find a module item {}", item, e);
+                return;
+            }
+        }
+        item.setItemEntity(entity);
+
     }
 }
