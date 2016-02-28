@@ -2,6 +2,7 @@ package org.meveo.api.ws.impl;
 
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.jws.WebService;
 
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
@@ -21,6 +22,7 @@ import org.meveo.api.ws.ReportingWs;
 /**
  * @author Edward P. Legaspi
  **/
+@WebService(serviceName = "ReportingWs", endpointInterface = "org.meveo.api.ws.ReportingWs")
 @Interceptors({ LoggingInterceptor.class })
 public class ReportingWsImpl extends BaseWs implements ReportingWs {
 	

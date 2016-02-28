@@ -88,6 +88,7 @@ public class ChartApi extends BaseApi {
             BarChart barChart = fromDTO((BarChartDto) postData, currentUser, null);
             barChart.setMeasurableQuantity(measurableQuantity);
             barChartService.create(barChart, currentUser, currentUser.getProvider());
+            
         } else {
         	throw new InvalidParameterException();
         }
@@ -137,6 +138,8 @@ public class ChartApi extends BaseApi {
         ChartDto result = null;
 
         Chart chart = chartService.findByCode(chartCode, currentUser.getProvider());
+        
+        
         if (chart == null) {
             throw new EntityDoesNotExistsException(Chart.class, chartCode);
         }

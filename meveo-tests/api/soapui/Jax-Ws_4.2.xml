@@ -33136,7 +33136,1166 @@
    <soapenv:Body>\r
       <ws:index/>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoicingWs/index"/></con:call></con:operation><con:operation id="acd3a47e-cfbe-4fc1-9a38-5e0b3f41f798" isOneWay="false" action="" name="validateBillingRun" bindingOperationName="validateBillingRun" type="Request-Response" outputName="validateBillingRunResponse" inputName="validateBillingRun" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="445f0503-6f90-4a28-9c6a-5422ef074357" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/InvoicingWs</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoicingWs/validateBillingRun"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:testSuite id="e734e237-ed42-4c1a-9392-f113827bea4b" name="#1089_crm_new account_type_hierarchy"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="afee19fb-16ed-4427-9560-eb51c75772db" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create" searchProperties="true"><con:settings/><con:testStep type="request" name="S" id="0b6f566b-bd40-4798-b83b-15dc08fb4bc6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCRMAccountHierarchy</con:operation><con:request name="S" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoicingWs/index"/></con:call></con:operation><con:operation id="acd3a47e-cfbe-4fc1-9a38-5e0b3f41f798" isOneWay="false" action="" name="validateBillingRun" bindingOperationName="validateBillingRun" type="Request-Response" outputName="validateBillingRunResponse" inputName="validateBillingRun" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="445f0503-6f90-4a28-9c6a-5422ef074357" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/InvoicingWs</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoicingWs/validateBillingRun"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="c7d376f6-17df-4e14-83ef-88594f0f7a90" wsaVersion="NONE" name="ReportingWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ReportingWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndPoint}/ReportingWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/ReportingWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/ReportingWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ReportingWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:import location="http://localhost:8080/meveo/ReportingWs?wsdl=ReportingWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
+  <wsdl:binding name="ReportingWsSoapBinding" type="ns1:ReportingWs">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="createBarChart">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createBarChart">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createBarChartResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createChart">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createChart">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createChartResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="index">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="indexResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateBarChart">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateBarChart">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateBarChartResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateLineChart">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateLineChart">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateLineChartResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updatePieChart">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updatePieChart">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updatePieChartResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createLineChart">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createLineChart">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createLineChartResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createMeasurableQuantity">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createMeasurableQuantity">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createMeasurableQuantityResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateChart">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateChart">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateChartResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateChart">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateChart">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateChartResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createPieChart">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createPieChart">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createPieChartResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeChart">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeChart">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeChartResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findChart">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findChart">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findChartResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ReportingWs">
+    <wsdl:port binding="tns:ReportingWsSoapBinding" name="ReportingWsImplPort">
+      <soap:address location="http://localhost:8080/meveo/ReportingWs"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/ReportingWs?wsdl=ReportingWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ReportingWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
+      <xs:element name="ActionStatus" type="tns:ActionStatus"/>
+      <xs:element name="BarChart" type="tns:barChartDto"/>
+      <xs:element name="Chart" type="tns:chartDto"/>
+      <xs:element name="GetChartResponse" type="tns:getChartResponse"/>
+      <xs:element name="LineChart" type="tns:lineChartDto"/>
+      <xs:element name="MeasurableQuantity" type="tns:measurableQuantityDto"/>
+      <xs:element name="PieChart" type="tns:pieChartDto"/>
+      <xs:element name="createBarChart" type="tns:createBarChart"/>
+      <xs:element name="createBarChartResponse" type="tns:createBarChartResponse"/>
+      <xs:element name="createChart" type="tns:createChart"/>
+      <xs:element name="createChartResponse" type="tns:createChartResponse"/>
+      <xs:element name="createLineChart" type="tns:createLineChart"/>
+      <xs:element name="createLineChartResponse" type="tns:createLineChartResponse"/>
+      <xs:element name="createMeasurableQuantity" type="tns:createMeasurableQuantity"/>
+      <xs:element name="createMeasurableQuantityResponse" type="tns:createMeasurableQuantityResponse"/>
+      <xs:element name="createOrUpdateChart" type="tns:createOrUpdateChart"/>
+      <xs:element name="createOrUpdateChartResponse" type="tns:createOrUpdateChartResponse"/>
+      <xs:element name="createPieChart" type="tns:createPieChart"/>
+      <xs:element name="createPieChartResponse" type="tns:createPieChartResponse"/>
+      <xs:element name="findChart" type="tns:findChart"/>
+      <xs:element name="findChartResponse" type="tns:findChartResponse"/>
+      <xs:element name="index" type="tns:index"/>
+      <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:element name="removeChart" type="tns:removeChart"/>
+      <xs:element name="removeChartResponse" type="tns:removeChartResponse"/>
+      <xs:element name="updateBarChart" type="tns:updateBarChart"/>
+      <xs:element name="updateBarChartResponse" type="tns:updateBarChartResponse"/>
+      <xs:element name="updateChart" type="tns:updateChart"/>
+      <xs:element name="updateChartResponse" type="tns:updateChartResponse"/>
+      <xs:element name="updateLineChart" type="tns:updateLineChart"/>
+      <xs:element name="updateLineChartResponse" type="tns:updateLineChartResponse"/>
+      <xs:element name="updatePieChart" type="tns:updatePieChart"/>
+      <xs:element name="updatePieChartResponse" type="tns:updatePieChartResponse"/>
+      <xs:complexType name="createChart">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="chart" type="tns:chartDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="chartDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="measurableQuantity" type="tns:measurableQuantityDto"/>
+              <xs:element minOccurs="0" name="width" type="xs:string"/>
+              <xs:element minOccurs="0" name="height" type="xs:string"/>
+              <xs:element minOccurs="0" name="style" type="xs:string"/>
+              <xs:element minOccurs="0" name="styleClass" type="xs:string"/>
+              <xs:element minOccurs="0" name="extender" type="xs:string"/>
+              <xs:element minOccurs="0" name="visible" type="xs:boolean"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string"/>
+            <xs:attribute name="description" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="measurableQuantityDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="theme" type="xs:string"/>
+              <xs:element minOccurs="0" name="dimension1" type="xs:string"/>
+              <xs:element minOccurs="0" name="dimension2" type="xs:string"/>
+              <xs:element minOccurs="0" name="dimension3" type="xs:string"/>
+              <xs:element minOccurs="0" name="dimension4" type="xs:string"/>
+              <xs:element name="editable" type="xs:boolean"/>
+              <xs:element name="additive" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="sqlQuery" type="xs:string"/>
+              <xs:element minOccurs="0" name="measurementPeriod" type="tns:measurementPeriodEnum"/>
+              <xs:element minOccurs="0" name="lastMeasureDate" type="xs:dateTime"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createChartResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ActionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element minOccurs="0" name="errorCode" type="tns:meveoApiErrorCodeEnum"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createBarChart">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="barChart" type="tns:barChartDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="barChartDto">
+        <xs:complexContent>
+          <xs:extension base="tns:chartDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="legendPosition" type="tns:legendPositionEnum"/>
+              <xs:element name="barPadding" type="xs:int"/>
+              <xs:element name="barMargin" type="xs:int"/>
+              <xs:element minOccurs="0" name="orientation" type="tns:orientationEnum"/>
+              <xs:element name="stacked" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="min" type="xs:double"/>
+              <xs:element minOccurs="0" name="max" type="xs:double"/>
+              <xs:element name="breakOnNull" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="xaxisLabel" type="xs:string"/>
+              <xs:element minOccurs="0" name="yaxisLabel" type="xs:string"/>
+              <xs:element minOccurs="0" name="xaxisAngle" type="xs:int"/>
+              <xs:element minOccurs="0" name="yaxisAngle" type="xs:int"/>
+              <xs:element name="legendCols" type="xs:int"/>
+              <xs:element name="legendRows" type="xs:int"/>
+              <xs:element name="zoom" type="xs:boolean"/>
+              <xs:element name="animate" type="xs:boolean"/>
+              <xs:element name="showDataTip" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="datatipFormat" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createBarChartResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateLineChart">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="lineChart" type="tns:lineChartDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="lineChartDto">
+        <xs:complexContent>
+          <xs:extension base="tns:chartDto">
+            <xs:sequence>
+              <xs:element name="filled" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="legendPosition" type="tns:legendPositionEnum"/>
+              <xs:element minOccurs="0" name="seriesColors" type="xs:string"/>
+              <xs:element name="shadow" type="xs:boolean"/>
+              <xs:element name="minX" type="xs:int"/>
+              <xs:element name="maxX" type="xs:int"/>
+              <xs:element name="minY" type="xs:int"/>
+              <xs:element name="maxY" type="xs:int"/>
+              <xs:element name="breakOnNull" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="xaxisLabel" type="xs:string"/>
+              <xs:element minOccurs="0" name="yaxisLabel" type="xs:string"/>
+              <xs:element minOccurs="0" name="xaxisAngle" type="xs:int"/>
+              <xs:element minOccurs="0" name="yaxisAngle" type="xs:int"/>
+              <xs:element name="stacked" type="xs:boolean"/>
+              <xs:element name="zoom" type="xs:boolean"/>
+              <xs:element name="animate" type="xs:boolean"/>
+              <xs:element name="showDataTip" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="datatipFormat" type="xs:string"/>
+              <xs:element name="legendCols" type="xs:int"/>
+              <xs:element name="legendRows" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="updateLineChartResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateBarChart">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="barChart" type="tns:barChartDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateBarChartResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="index">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="indexResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updatePieChart">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="pieChart" type="tns:pieChartDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="pieChartDto">
+        <xs:complexContent>
+          <xs:extension base="tns:chartDto">
+            <xs:sequence>
+              <xs:element name="filled" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="legendPosition" type="tns:legendPositionEnum"/>
+              <xs:element minOccurs="0" name="seriesColors" type="xs:string"/>
+              <xs:element minOccurs="0" name="diameter" type="xs:int"/>
+              <xs:element name="sliceMargin" type="xs:int"/>
+              <xs:element name="shadow" type="xs:boolean"/>
+              <xs:element name="showDataLabels" type="xs:boolean"/>
+              <xs:element name="legendCols" type="xs:int"/>
+              <xs:element name="legendRows" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="updatePieChartResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createLineChart">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="lineChart" type="tns:lineChartDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createLineChartResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createMeasurableQuantity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="measurableQuantity" type="tns:measurableQuantityDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createMeasurableQuantityResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateChart">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="chart" type="tns:chartDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateChartResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateChart">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="chart" type="tns:chartDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateChartResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeChart">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="chartCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeChartResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createPieChart">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="pieChart" type="tns:pieChartDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createPieChartResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findChart">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="chartCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findChartResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getChartResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getChartResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="chartDto" type="tns:chartDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="measurementPeriodEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="DAILY"/>
+          <xs:enumeration value="WEEKLY"/>
+          <xs:enumeration value="MONTHLY"/>
+          <xs:enumeration value="YEARLY"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="actionStatusEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SUCCESS"/>
+          <xs:enumeration value="FAIL"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="meveoApiErrorCodeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ENTITY_DOES_NOT_EXISTS_EXCEPTION"/>
+          <xs:enumeration value="ENTITY_ALREADY_EXISTS_EXCEPTION"/>
+          <xs:enumeration value="DELETE_REFERENCED_ENTITY_EXCEPTION"/>
+          <xs:enumeration value="MISSING_PARAMETER"/>
+          <xs:enumeration value="INVALID_PARAMETER"/>
+          <xs:enumeration value="INVALID_ENUM_VALUE"/>
+          <xs:enumeration value="DUPLICATE_ACCESS"/>
+          <xs:enumeration value="INSUFFICIENT_BALANCE"/>
+          <xs:enumeration value="GENERIC_API_EXCEPTION"/>
+          <xs:enumeration value="BUSINESS_API_EXCEPTION"/>
+          <xs:enumeration value="AUTHENTICATION_AUTHORIZATION_EXCEPTION"/>
+          <xs:enumeration value="ACTION_FORBIDDEN"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="legendPositionEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="n"/>
+          <xs:enumeration value="s"/>
+          <xs:enumeration value="e"/>
+          <xs:enumeration value="w"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="orientationEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="vertical"/>
+          <xs:enumeration value="horizontal"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="updateBarChartResponse">
+    <wsdl:part element="ns1:updateBarChartResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createMeasurableQuantityResponse">
+    <wsdl:part element="ns1:createMeasurableQuantityResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createPieChartResponse">
+    <wsdl:part element="ns1:createPieChartResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createMeasurableQuantity">
+    <wsdl:part element="ns1:createMeasurableQuantity" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findChartResponse">
+    <wsdl:part element="ns1:findChartResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateChart">
+    <wsdl:part element="ns1:updateChart" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updatePieChartResponse">
+    <wsdl:part element="ns1:updatePieChartResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateChartResponse">
+    <wsdl:part element="ns1:updateChartResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createChart">
+    <wsdl:part element="ns1:createChart" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createBarChart">
+    <wsdl:part element="ns1:createBarChart" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updatePieChart">
+    <wsdl:part element="ns1:updatePieChart" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createPieChart">
+    <wsdl:part element="ns1:createPieChart" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createChartResponse">
+    <wsdl:part element="ns1:createChartResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateChartResponse">
+    <wsdl:part element="ns1:createOrUpdateChartResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createLineChart">
+    <wsdl:part element="ns1:createLineChart" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeChart">
+    <wsdl:part element="ns1:removeChart" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="indexResponse">
+    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createLineChartResponse">
+    <wsdl:part element="ns1:createLineChartResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateBarChart">
+    <wsdl:part element="ns1:updateBarChart" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateChart">
+    <wsdl:part element="ns1:createOrUpdateChart" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findChart">
+    <wsdl:part element="ns1:findChart" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createBarChartResponse">
+    <wsdl:part element="ns1:createBarChartResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeChartResponse">
+    <wsdl:part element="ns1:removeChartResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateLineChartResponse">
+    <wsdl:part element="ns1:updateLineChartResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateLineChart">
+    <wsdl:part element="ns1:updateLineChart" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ReportingWs">
+    <wsdl:operation name="createChart">
+      <wsdl:input message="ns1:createChart" name="createChart"></wsdl:input>
+      <wsdl:output message="ns1:createChartResponse" name="createChartResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createBarChart">
+      <wsdl:input message="ns1:createBarChart" name="createBarChart"></wsdl:input>
+      <wsdl:output message="ns1:createBarChartResponse" name="createBarChartResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateLineChart">
+      <wsdl:input message="ns1:updateLineChart" name="updateLineChart"></wsdl:input>
+      <wsdl:output message="ns1:updateLineChartResponse" name="updateLineChartResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateBarChart">
+      <wsdl:input message="ns1:updateBarChart" name="updateBarChart"></wsdl:input>
+      <wsdl:output message="ns1:updateBarChartResponse" name="updateBarChartResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <wsdl:input message="ns1:index" name="index"></wsdl:input>
+      <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updatePieChart">
+      <wsdl:input message="ns1:updatePieChart" name="updatePieChart"></wsdl:input>
+      <wsdl:output message="ns1:updatePieChartResponse" name="updatePieChartResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createLineChart">
+      <wsdl:input message="ns1:createLineChart" name="createLineChart"></wsdl:input>
+      <wsdl:output message="ns1:createLineChartResponse" name="createLineChartResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createMeasurableQuantity">
+      <wsdl:input message="ns1:createMeasurableQuantity" name="createMeasurableQuantity"></wsdl:input>
+      <wsdl:output message="ns1:createMeasurableQuantityResponse" name="createMeasurableQuantityResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateChart">
+      <wsdl:input message="ns1:updateChart" name="updateChart"></wsdl:input>
+      <wsdl:output message="ns1:updateChartResponse" name="updateChartResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateChart">
+      <wsdl:input message="ns1:createOrUpdateChart" name="createOrUpdateChart"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateChartResponse" name="createOrUpdateChartResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeChart">
+      <wsdl:input message="ns1:removeChart" name="removeChart"></wsdl:input>
+      <wsdl:output message="ns1:removeChartResponse" name="removeChartResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createPieChart">
+      <wsdl:input message="ns1:createPieChart" name="createPieChart"></wsdl:input>
+      <wsdl:output message="ns1:createPieChartResponse" name="createPieChartResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findChart">
+      <wsdl:input message="ns1:findChart" name="findChart"></wsdl:input>
+      <wsdl:output message="ns1:findChartResponse" name="findChartResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint></con:endpoints><con:operation id="299edf55-72f7-4c40-a999-05de518d1464" isOneWay="false" action="" name="createBarChart" bindingOperationName="createBarChart" type="Request-Response" outputName="createBarChartResponse" inputName="createBarChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="036731d0-f8ca-4b1d-8d28-2e7e5030e323" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createBarChart>\r
+         <!--Optional:-->\r
+         <barChart code="?" description="?">\r
+            <!--Optional:-->\r
+            <measurableQuantity code="?" description="?">\r
+               <!--Optional:-->\r
+               <theme>?</theme>\r
+               <!--Optional:-->\r
+               <dimension1>?</dimension1>\r
+               <!--Optional:-->\r
+               <dimension2>?</dimension2>\r
+               <!--Optional:-->\r
+               <dimension3>?</dimension3>\r
+               <!--Optional:-->\r
+               <dimension4>?</dimension4>\r
+               <editable>?</editable>\r
+               <additive>?</additive>\r
+               <!--Optional:-->\r
+               <sqlQuery>?</sqlQuery>\r
+               <!--Optional:-->\r
+               <measurementPeriod>?</measurementPeriod>\r
+               <!--Optional:-->\r
+               <lastMeasureDate>?</lastMeasureDate>\r
+            </measurableQuantity>\r
+            <!--Optional:-->\r
+            <width>?</width>\r
+            <!--Optional:-->\r
+            <height>?</height>\r
+            <!--Optional:-->\r
+            <style>?</style>\r
+            <!--Optional:-->\r
+            <styleClass>?</styleClass>\r
+            <!--Optional:-->\r
+            <extender>?</extender>\r
+            <!--Optional:-->\r
+            <visible>?</visible>\r
+            <!--Optional:-->\r
+            <legendPosition>?</legendPosition>\r
+            <barPadding>?</barPadding>\r
+            <barMargin>?</barMargin>\r
+            <!--Optional:-->\r
+            <orientation>?</orientation>\r
+            <stacked>?</stacked>\r
+            <!--Optional:-->\r
+            <min>?</min>\r
+            <!--Optional:-->\r
+            <max>?</max>\r
+            <breakOnNull>?</breakOnNull>\r
+            <!--Optional:-->\r
+            <xaxisLabel>?</xaxisLabel>\r
+            <!--Optional:-->\r
+            <yaxisLabel>?</yaxisLabel>\r
+            <!--Optional:-->\r
+            <xaxisAngle>?</xaxisAngle>\r
+            <!--Optional:-->\r
+            <yaxisAngle>?</yaxisAngle>\r
+            <legendCols>?</legendCols>\r
+            <legendRows>?</legendRows>\r
+            <zoom>?</zoom>\r
+            <animate>?</animate>\r
+            <showDataTip>?</showDataTip>\r
+            <!--Optional:-->\r
+            <datatipFormat>?</datatipFormat>\r
+         </barChart>\r
+      </ws:createBarChart>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ReportingWs/createBarChart"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="53d715f3-67a3-4c04-85be-5dfc5f509a08" isOneWay="false" action="" name="createChart" bindingOperationName="createChart" type="Request-Response" outputName="createChartResponse" inputName="createChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="25cd443b-e5e5-4434-b7f0-adb1b873e9c2" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createChart>\r
+         <!--Optional:-->\r
+         <chart code="?" description="?">\r
+            <!--Optional:-->\r
+            <measurableQuantity code="?" description="?">\r
+               <!--Optional:-->\r
+               <theme>?</theme>\r
+               <!--Optional:-->\r
+               <dimension1>?</dimension1>\r
+               <!--Optional:-->\r
+               <dimension2>?</dimension2>\r
+               <!--Optional:-->\r
+               <dimension3>?</dimension3>\r
+               <!--Optional:-->\r
+               <dimension4>?</dimension4>\r
+               <editable>?</editable>\r
+               <additive>?</additive>\r
+               <!--Optional:-->\r
+               <sqlQuery>?</sqlQuery>\r
+               <!--Optional:-->\r
+               <measurementPeriod>?</measurementPeriod>\r
+               <!--Optional:-->\r
+               <lastMeasureDate>?</lastMeasureDate>\r
+            </measurableQuantity>\r
+            <!--Optional:-->\r
+            <width>?</width>\r
+            <!--Optional:-->\r
+            <height>?</height>\r
+            <!--Optional:-->\r
+            <style>?</style>\r
+            <!--Optional:-->\r
+            <styleClass>?</styleClass>\r
+            <!--Optional:-->\r
+            <extender>?</extender>\r
+            <!--Optional:-->\r
+            <visible>?</visible>\r
+         </chart>\r
+      </ws:createChart>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ReportingWs/createChart"/></con:call></con:operation><con:operation id="36b5a254-16a5-49f1-b817-91d7f7bb81b7" isOneWay="false" action="" name="createLineChart" bindingOperationName="createLineChart" type="Request-Response" outputName="createLineChartResponse" inputName="createLineChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="82bea92d-4c50-4f83-8c10-065804aae247" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createLineChart>\r
+         <!--Optional:-->\r
+         <lineChart code="?" description="?">\r
+            <!--Optional:-->\r
+            <measurableQuantity code="?" description="?">\r
+               <!--Optional:-->\r
+               <theme>?</theme>\r
+               <!--Optional:-->\r
+               <dimension1>?</dimension1>\r
+               <!--Optional:-->\r
+               <dimension2>?</dimension2>\r
+               <!--Optional:-->\r
+               <dimension3>?</dimension3>\r
+               <!--Optional:-->\r
+               <dimension4>?</dimension4>\r
+               <editable>?</editable>\r
+               <additive>?</additive>\r
+               <!--Optional:-->\r
+               <sqlQuery>?</sqlQuery>\r
+               <!--Optional:-->\r
+               <measurementPeriod>?</measurementPeriod>\r
+               <!--Optional:-->\r
+               <lastMeasureDate>?</lastMeasureDate>\r
+            </measurableQuantity>\r
+            <!--Optional:-->\r
+            <width>?</width>\r
+            <!--Optional:-->\r
+            <height>?</height>\r
+            <!--Optional:-->\r
+            <style>?</style>\r
+            <!--Optional:-->\r
+            <styleClass>?</styleClass>\r
+            <!--Optional:-->\r
+            <extender>?</extender>\r
+            <!--Optional:-->\r
+            <visible>?</visible>\r
+            <filled>?</filled>\r
+            <!--Optional:-->\r
+            <legendPosition>?</legendPosition>\r
+            <!--Optional:-->\r
+            <seriesColors>?</seriesColors>\r
+            <shadow>?</shadow>\r
+            <minX>?</minX>\r
+            <maxX>?</maxX>\r
+            <minY>?</minY>\r
+            <maxY>?</maxY>\r
+            <breakOnNull>?</breakOnNull>\r
+            <!--Optional:-->\r
+            <xaxisLabel>?</xaxisLabel>\r
+            <!--Optional:-->\r
+            <yaxisLabel>?</yaxisLabel>\r
+            <!--Optional:-->\r
+            <xaxisAngle>?</xaxisAngle>\r
+            <!--Optional:-->\r
+            <yaxisAngle>?</yaxisAngle>\r
+            <stacked>?</stacked>\r
+            <zoom>?</zoom>\r
+            <animate>?</animate>\r
+            <showDataTip>?</showDataTip>\r
+            <!--Optional:-->\r
+            <datatipFormat>?</datatipFormat>\r
+            <legendCols>?</legendCols>\r
+            <legendRows>?</legendRows>\r
+         </lineChart>\r
+      </ws:createLineChart>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ReportingWs/createLineChart"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="cd05f3d7-2406-4be3-bdab-6348a3ce7edb" isOneWay="false" action="" name="createMeasurableQuantity" bindingOperationName="createMeasurableQuantity" type="Request-Response" outputName="createMeasurableQuantityResponse" inputName="createMeasurableQuantity" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5eccea60-c8c0-4cf6-8278-d053fd0596fa" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createMeasurableQuantity>\r
+         <!--Optional:-->\r
+         <measurableQuantity code="?" description="?">\r
+            <!--Optional:-->\r
+            <theme>?</theme>\r
+            <!--Optional:-->\r
+            <dimension1>?</dimension1>\r
+            <!--Optional:-->\r
+            <dimension2>?</dimension2>\r
+            <!--Optional:-->\r
+            <dimension3>?</dimension3>\r
+            <!--Optional:-->\r
+            <dimension4>?</dimension4>\r
+            <editable>?</editable>\r
+            <additive>?</additive>\r
+            <!--Optional:-->\r
+            <sqlQuery>?</sqlQuery>\r
+            <!--Optional:-->\r
+            <measurementPeriod>?</measurementPeriod>\r
+            <!--Optional:-->\r
+            <lastMeasureDate>?</lastMeasureDate>\r
+         </measurableQuantity>\r
+      </ws:createMeasurableQuantity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ReportingWs/createMeasurableQuantity"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="060f65e7-9b76-45fa-9fa7-1c732906ff90" isOneWay="false" action="" name="createOrUpdateChart" bindingOperationName="createOrUpdateChart" type="Request-Response" outputName="createOrUpdateChartResponse" inputName="createOrUpdateChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="8329a361-c8ae-433a-a436-1906a30f7eeb" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateChart>\r
+         <!--Optional:-->\r
+         <chart code="?" description="?">\r
+            <!--Optional:-->\r
+            <measurableQuantity code="?" description="?">\r
+               <!--Optional:-->\r
+               <theme>?</theme>\r
+               <!--Optional:-->\r
+               <dimension1>?</dimension1>\r
+               <!--Optional:-->\r
+               <dimension2>?</dimension2>\r
+               <!--Optional:-->\r
+               <dimension3>?</dimension3>\r
+               <!--Optional:-->\r
+               <dimension4>?</dimension4>\r
+               <editable>?</editable>\r
+               <additive>?</additive>\r
+               <!--Optional:-->\r
+               <sqlQuery>?</sqlQuery>\r
+               <!--Optional:-->\r
+               <measurementPeriod>?</measurementPeriod>\r
+               <!--Optional:-->\r
+               <lastMeasureDate>?</lastMeasureDate>\r
+            </measurableQuantity>\r
+            <!--Optional:-->\r
+            <width>?</width>\r
+            <!--Optional:-->\r
+            <height>?</height>\r
+            <!--Optional:-->\r
+            <style>?</style>\r
+            <!--Optional:-->\r
+            <styleClass>?</styleClass>\r
+            <!--Optional:-->\r
+            <extender>?</extender>\r
+            <!--Optional:-->\r
+            <visible>?</visible>\r
+         </chart>\r
+      </ws:createOrUpdateChart>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ReportingWs/createOrUpdateChart"/></con:call></con:operation><con:operation id="edc65429-88ab-4443-b85e-5693ba5f2075" isOneWay="false" action="" name="createPieChart" bindingOperationName="createPieChart" type="Request-Response" outputName="createPieChartResponse" inputName="createPieChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="97b4df02-48c6-4782-be36-0cd63a1e6d39" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createPieChart>\r
+         <!--Optional:-->\r
+         <pieChart code="?" description="?">\r
+            <!--Optional:-->\r
+            <measurableQuantity code="?" description="?">\r
+               <!--Optional:-->\r
+               <theme>?</theme>\r
+               <!--Optional:-->\r
+               <dimension1>?</dimension1>\r
+               <!--Optional:-->\r
+               <dimension2>?</dimension2>\r
+               <!--Optional:-->\r
+               <dimension3>?</dimension3>\r
+               <!--Optional:-->\r
+               <dimension4>?</dimension4>\r
+               <editable>?</editable>\r
+               <additive>?</additive>\r
+               <!--Optional:-->\r
+               <sqlQuery>?</sqlQuery>\r
+               <!--Optional:-->\r
+               <measurementPeriod>?</measurementPeriod>\r
+               <!--Optional:-->\r
+               <lastMeasureDate>?</lastMeasureDate>\r
+            </measurableQuantity>\r
+            <!--Optional:-->\r
+            <width>?</width>\r
+            <!--Optional:-->\r
+            <height>?</height>\r
+            <!--Optional:-->\r
+            <style>?</style>\r
+            <!--Optional:-->\r
+            <styleClass>?</styleClass>\r
+            <!--Optional:-->\r
+            <extender>?</extender>\r
+            <!--Optional:-->\r
+            <visible>?</visible>\r
+            <filled>?</filled>\r
+            <!--Optional:-->\r
+            <legendPosition>?</legendPosition>\r
+            <!--Optional:-->\r
+            <seriesColors>?</seriesColors>\r
+            <!--Optional:-->\r
+            <diameter>?</diameter>\r
+            <sliceMargin>?</sliceMargin>\r
+            <shadow>?</shadow>\r
+            <showDataLabels>?</showDataLabels>\r
+            <legendCols>?</legendCols>\r
+            <legendRows>?</legendRows>\r
+         </pieChart>\r
+      </ws:createPieChart>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ReportingWs/createPieChart"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="aec98873-4434-4536-b394-0358d027e341" isOneWay="false" action="" name="findChart" bindingOperationName="findChart" type="Request-Response" outputName="findChartResponse" inputName="findChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="6370a0b8-632f-44bc-9cda-bb8a452f2f28" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findChart>\r
+         <!--Optional:-->\r
+         <chartCode>?</chartCode>\r
+      </ws:findChart>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ReportingWs/findChart"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="261f44ba-df0c-4c38-9f51-630eb95e8db8" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b1d40724-d76e-4a0e-beb4-d7bc9db243f5" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:index/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ReportingWs/index"/></con:call></con:operation><con:operation id="9cf3a312-cc7e-4531-9778-569a5b9cf167" isOneWay="false" action="" name="removeChart" bindingOperationName="removeChart" type="Request-Response" outputName="removeChartResponse" inputName="removeChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="7c781be1-f22f-4e73-b281-33365c0a13e4" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeChart>\r
+         <!--Optional:-->\r
+         <chartCode>?</chartCode>\r
+      </ws:removeChart>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ReportingWs/removeChart"/></con:call></con:operation><con:operation id="c8048a57-de1a-4577-bebf-d51205bc1aa7" isOneWay="false" action="" name="updateBarChart" bindingOperationName="updateBarChart" type="Request-Response" outputName="updateBarChartResponse" inputName="updateBarChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="086027e6-5536-4981-a912-6156775e3c94" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateBarChart>\r
+         <!--Optional:-->\r
+         <barChart code="?" description="?">\r
+            <!--Optional:-->\r
+            <measurableQuantity code="?" description="?">\r
+               <!--Optional:-->\r
+               <theme>?</theme>\r
+               <!--Optional:-->\r
+               <dimension1>?</dimension1>\r
+               <!--Optional:-->\r
+               <dimension2>?</dimension2>\r
+               <!--Optional:-->\r
+               <dimension3>?</dimension3>\r
+               <!--Optional:-->\r
+               <dimension4>?</dimension4>\r
+               <editable>?</editable>\r
+               <additive>?</additive>\r
+               <!--Optional:-->\r
+               <sqlQuery>?</sqlQuery>\r
+               <!--Optional:-->\r
+               <measurementPeriod>?</measurementPeriod>\r
+               <!--Optional:-->\r
+               <lastMeasureDate>?</lastMeasureDate>\r
+            </measurableQuantity>\r
+            <!--Optional:-->\r
+            <width>?</width>\r
+            <!--Optional:-->\r
+            <height>?</height>\r
+            <!--Optional:-->\r
+            <style>?</style>\r
+            <!--Optional:-->\r
+            <styleClass>?</styleClass>\r
+            <!--Optional:-->\r
+            <extender>?</extender>\r
+            <!--Optional:-->\r
+            <visible>?</visible>\r
+            <!--Optional:-->\r
+            <legendPosition>?</legendPosition>\r
+            <barPadding>?</barPadding>\r
+            <barMargin>?</barMargin>\r
+            <!--Optional:-->\r
+            <orientation>?</orientation>\r
+            <stacked>?</stacked>\r
+            <!--Optional:-->\r
+            <min>?</min>\r
+            <!--Optional:-->\r
+            <max>?</max>\r
+            <breakOnNull>?</breakOnNull>\r
+            <!--Optional:-->\r
+            <xaxisLabel>?</xaxisLabel>\r
+            <!--Optional:-->\r
+            <yaxisLabel>?</yaxisLabel>\r
+            <!--Optional:-->\r
+            <xaxisAngle>?</xaxisAngle>\r
+            <!--Optional:-->\r
+            <yaxisAngle>?</yaxisAngle>\r
+            <legendCols>?</legendCols>\r
+            <legendRows>?</legendRows>\r
+            <zoom>?</zoom>\r
+            <animate>?</animate>\r
+            <showDataTip>?</showDataTip>\r
+            <!--Optional:-->\r
+            <datatipFormat>?</datatipFormat>\r
+         </barChart>\r
+      </ws:updateBarChart>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ReportingWs/updateBarChart"/></con:call></con:operation><con:operation id="40dd64c2-285e-4b17-b9a1-0fd2fa88efbb" isOneWay="false" action="" name="updateChart" bindingOperationName="updateChart" type="Request-Response" outputName="updateChartResponse" inputName="updateChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="dadf6d96-726a-40c9-b417-ad25975ff595" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateChart>\r
+         <!--Optional:-->\r
+         <chart code="?" description="?">\r
+            <!--Optional:-->\r
+            <measurableQuantity code="?" description="?">\r
+               <!--Optional:-->\r
+               <theme>?</theme>\r
+               <!--Optional:-->\r
+               <dimension1>?</dimension1>\r
+               <!--Optional:-->\r
+               <dimension2>?</dimension2>\r
+               <!--Optional:-->\r
+               <dimension3>?</dimension3>\r
+               <!--Optional:-->\r
+               <dimension4>?</dimension4>\r
+               <editable>?</editable>\r
+               <additive>?</additive>\r
+               <!--Optional:-->\r
+               <sqlQuery>?</sqlQuery>\r
+               <!--Optional:-->\r
+               <measurementPeriod>?</measurementPeriod>\r
+               <!--Optional:-->\r
+               <lastMeasureDate>?</lastMeasureDate>\r
+            </measurableQuantity>\r
+            <!--Optional:-->\r
+            <width>?</width>\r
+            <!--Optional:-->\r
+            <height>?</height>\r
+            <!--Optional:-->\r
+            <style>?</style>\r
+            <!--Optional:-->\r
+            <styleClass>?</styleClass>\r
+            <!--Optional:-->\r
+            <extender>?</extender>\r
+            <!--Optional:-->\r
+            <visible>?</visible>\r
+         </chart>\r
+      </ws:updateChart>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ReportingWs/updateChart"/></con:call></con:operation><con:operation id="dc046476-7812-43c8-befb-fee13205f221" isOneWay="false" action="" name="updateLineChart" bindingOperationName="updateLineChart" type="Request-Response" outputName="updateLineChartResponse" inputName="updateLineChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="4970fdd3-038b-43e9-9718-f3a19bff806e" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateLineChart>\r
+         <!--Optional:-->\r
+         <lineChart code="?" description="?">\r
+            <!--Optional:-->\r
+            <measurableQuantity code="?" description="?">\r
+               <!--Optional:-->\r
+               <theme>?</theme>\r
+               <!--Optional:-->\r
+               <dimension1>?</dimension1>\r
+               <!--Optional:-->\r
+               <dimension2>?</dimension2>\r
+               <!--Optional:-->\r
+               <dimension3>?</dimension3>\r
+               <!--Optional:-->\r
+               <dimension4>?</dimension4>\r
+               <editable>?</editable>\r
+               <additive>?</additive>\r
+               <!--Optional:-->\r
+               <sqlQuery>?</sqlQuery>\r
+               <!--Optional:-->\r
+               <measurementPeriod>?</measurementPeriod>\r
+               <!--Optional:-->\r
+               <lastMeasureDate>?</lastMeasureDate>\r
+            </measurableQuantity>\r
+            <!--Optional:-->\r
+            <width>?</width>\r
+            <!--Optional:-->\r
+            <height>?</height>\r
+            <!--Optional:-->\r
+            <style>?</style>\r
+            <!--Optional:-->\r
+            <styleClass>?</styleClass>\r
+            <!--Optional:-->\r
+            <extender>?</extender>\r
+            <!--Optional:-->\r
+            <visible>?</visible>\r
+            <filled>?</filled>\r
+            <!--Optional:-->\r
+            <legendPosition>?</legendPosition>\r
+            <!--Optional:-->\r
+            <seriesColors>?</seriesColors>\r
+            <shadow>?</shadow>\r
+            <minX>?</minX>\r
+            <maxX>?</maxX>\r
+            <minY>?</minY>\r
+            <maxY>?</maxY>\r
+            <breakOnNull>?</breakOnNull>\r
+            <!--Optional:-->\r
+            <xaxisLabel>?</xaxisLabel>\r
+            <!--Optional:-->\r
+            <yaxisLabel>?</yaxisLabel>\r
+            <!--Optional:-->\r
+            <xaxisAngle>?</xaxisAngle>\r
+            <!--Optional:-->\r
+            <yaxisAngle>?</yaxisAngle>\r
+            <stacked>?</stacked>\r
+            <zoom>?</zoom>\r
+            <animate>?</animate>\r
+            <showDataTip>?</showDataTip>\r
+            <!--Optional:-->\r
+            <datatipFormat>?</datatipFormat>\r
+            <legendCols>?</legendCols>\r
+            <legendRows>?</legendRows>\r
+         </lineChart>\r
+      </ws:updateLineChart>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ReportingWs/updateLineChart"/></con:call></con:operation><con:operation id="a4b8b029-9bf9-4dd9-9520-1ecd98d0cedf" isOneWay="false" action="" name="updatePieChart" bindingOperationName="updatePieChart" type="Request-Response" outputName="updatePieChartResponse" inputName="updatePieChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="ed73aceb-70d5-4192-b811-adcc12e4536f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updatePieChart>\r
+         <!--Optional:-->\r
+         <pieChart code="?" description="?">\r
+            <!--Optional:-->\r
+            <measurableQuantity code="?" description="?">\r
+               <!--Optional:-->\r
+               <theme>?</theme>\r
+               <!--Optional:-->\r
+               <dimension1>?</dimension1>\r
+               <!--Optional:-->\r
+               <dimension2>?</dimension2>\r
+               <!--Optional:-->\r
+               <dimension3>?</dimension3>\r
+               <!--Optional:-->\r
+               <dimension4>?</dimension4>\r
+               <editable>?</editable>\r
+               <additive>?</additive>\r
+               <!--Optional:-->\r
+               <sqlQuery>?</sqlQuery>\r
+               <!--Optional:-->\r
+               <measurementPeriod>?</measurementPeriod>\r
+               <!--Optional:-->\r
+               <lastMeasureDate>?</lastMeasureDate>\r
+            </measurableQuantity>\r
+            <!--Optional:-->\r
+            <width>?</width>\r
+            <!--Optional:-->\r
+            <height>?</height>\r
+            <!--Optional:-->\r
+            <style>?</style>\r
+            <!--Optional:-->\r
+            <styleClass>?</styleClass>\r
+            <!--Optional:-->\r
+            <extender>?</extender>\r
+            <!--Optional:-->\r
+            <visible>?</visible>\r
+            <filled>?</filled>\r
+            <!--Optional:-->\r
+            <legendPosition>?</legendPosition>\r
+            <!--Optional:-->\r
+            <seriesColors>?</seriesColors>\r
+            <!--Optional:-->\r
+            <diameter>?</diameter>\r
+            <sliceMargin>?</sliceMargin>\r
+            <shadow>?</shadow>\r
+            <showDataLabels>?</showDataLabels>\r
+            <legendCols>?</legendCols>\r
+            <legendRows>?</legendRows>\r
+         </pieChart>\r
+      </ws:updatePieChart>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ReportingWs/updatePieChart"/></con:call></con:operation></con:interface><con:testSuite id="e734e237-ed42-4c1a-9392-f113827bea4b" name="#1089_crm_new account_type_hierarchy"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="afee19fb-16ed-4427-9560-eb51c75772db" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create" searchProperties="true"><con:settings/><con:testStep type="request" name="S" id="0b6f566b-bd40-4798-b83b-15dc08fb4bc6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCRMAccountHierarchy</con:operation><con:request name="S" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
@@ -48607,4 +49766,550 @@ public class The${#TestSuite#ticket}ScriptB extends Script {
                <applyAgreement>true</applyAgreement>
                <applyReimbursment>true</applyReimbursment>
                <applyTerminationCharges>true</applyTerminationCharges>
-]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1326</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" outgoingWss="" wssTimeToLive="">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1326</con:value></con:property></con:properties></con:testSuite><con:testSuite id="8bc93981-e5d6-44d2-ae86-310727b0e573" name="#1492_measureQuantitiesAndChartsApi"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="ca06f5fa-a51d-4c32-8b82-dd75bd55ec2e" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create_measurableQuantity" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="f6ab6ece-b722-4cf0-a654-2e04a5b3b318"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createMeasurableQuantity</con:operation><con:request name="create" id="6cd4934b-337c-4c28-8fd8-7b9dce84ee36"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createMeasurableQuantity>
+         <!--Optional:-->
+         <measurableQuantity code="${#TestSuite#ticket}_mq_ws_code1" description="{#TestSuite#ticket}_mq_ws_desc1">
+         </measurableQuantity>
+      </ws:createMeasurableQuantity>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="fd2c03fe-a7b4-4618-96d2-0d3c7fb0d386"/><con:assertion type="Simple Contains" id="d3f5077c-f560-4e8a-aa99-fe6c11023859" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="4f7862a6-b9e1-4b72-b556-447e9e04bd54" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create_BarChart" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="add94f12-c832-4b8f-b6a1-fa8b8e830282"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="create" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBarChart>
+         <!--Optional:-->
+         <barChart code="${#TestSuite#ticket}_bc_ws_code1" description="${#TestSuite#ticket}_bc_ws_desc1">
+            <!--Optional:-->
+            <measurableQuantity code="${#TestSuite#ticket}_mq_ws_code1">
+            </measurableQuantity>
+            <!--Optional:-->
+            <width>100</width>
+            <!--Optional:-->
+            <height>100</height>
+            <!--Optional:-->
+            <style>test1</style>
+            <!--Optional:-->
+            <styleClass>test1</styleClass>
+            <!--Optional:-->
+            <extender>test1</extender>
+            <!--Optional:-->
+            <visible>true</visible>
+            <!--Optional:-->
+            <legendPosition>n</legendPosition>
+            <barPadding>100</barPadding>
+            <barMargin>100</barMargin>
+            <!--Optional:-->
+            <orientation>vertical</orientation>
+            <stacked>true</stacked>
+            <!--Optional:-->
+            <min>100</min>
+            <!--Optional:-->
+            <max>100</max>
+            <breakOnNull>false</breakOnNull>
+            <!--Optional:-->
+            <xaxisLabel>test</xaxisLabel>
+            <!--Optional:-->
+            <yaxisLabel>test</yaxisLabel>
+            <!--Optional:-->
+            <xaxisAngle>10</xaxisAngle>
+            <!--Optional:-->
+            <yaxisAngle>10</yaxisAngle>
+            <legendCols>20</legendCols>
+            <legendRows>20</legendRows>
+            <zoom>true</zoom>
+            <animate>?</animate>
+            <showDataTip>true</showDataTip>
+            <!--Optional:-->
+            <datatipFormat>false</datatipFormat>
+         </barChart>
+      </ws:createBarChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="0d1d7113-24ae-41ef-b6c6-3eddf99cd31b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="find" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findChart>
+         <chartCode>${#TestSuite#ticket}_bc_ws_code1</chartCode>
+      </ws:findChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="b91a89d0-8304-4b60-a8d6-b17d075f3ba0" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create_PieChart" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="a1affb8e-82c8-49d0-b57c-b91a28539742"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="create" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPieChart>
+         <!--Optional:-->
+         <pieChart code="${#TestSuite#ticket}_pc_ws_code1" description="${#TestSuite#ticket}_pc_ws_desc1">
+            <!--Optional:-->
+            <measurableQuantity code="${#TestSuite#ticket}_mq_ws_code1">
+            </measurableQuantity>
+           <!--Optional:-->
+            <width>123</width>
+            <!--Optional:-->
+            <height>123</height>
+            <!--Optional:-->
+            <style>style1</style>
+            <!--Optional:-->
+            <styleClass>style_class1</styleClass>
+            <!--Optional:-->
+            <extender>extender1</extender>
+            <!--Optional:-->
+            <visible>true</visible>
+            <filled>false</filled>
+            <!--Optional:-->
+            <legendPosition>n</legendPosition>
+            <!--Optional:-->
+            <diameter>120</diameter>
+            <sliceMargin>10</sliceMargin>
+            <shadow>true</shadow>
+            <showDataLabels>false</showDataLabels>
+            <legendCols>23</legendCols>
+            <legendRows>23</legendRows>
+         </pieChart>
+      </ws:createPieChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="a4f5af75-bd21-4290-8ae1-a08fa53cc179"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="find" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findChart>
+         <chartCode>${#TestSuite#ticket}_pc_ws_code1</chartCode>
+      </ws:findChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="5df9f9b9-c333-4b00-afc8-b5bc2d12416f" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create_LineChart" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="00bac64e-ade7-489d-9606-76194e5e2d01"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="create" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createLineChart>
+         <!--Optional:-->
+         <lineChart code="${#TestSuite#ticket}_lc_ws_code1" description="${#TestSuite#ticket}_lc_ws_desc1">
+            <!--Optional:-->
+            <measurableQuantity code="${#TestSuite#ticket}_mq_ws_code1">
+            </measurableQuantity>
+            <!--Optional:-->
+            <width>200</width>
+            <!--Optional:-->
+            <height>200</height>
+            <!--Optional:-->
+            <style>style1</style>
+            <!--Optional:-->
+            <styleClass>styleClass2</styleClass>
+            <!--Optional:-->
+            <extender>extender3</extender>
+            <!--Optional:-->
+            <visible>true</visible>
+            <filled>false</filled>
+            <!--Optional:-->
+            <legendPosition>w</legendPosition>
+            <shadow>true</shadow>
+            <minX>45</minX>
+            <maxX>45</maxX>
+            <minY>45</minY>
+            <maxY>45</maxY>
+            <breakOnNull>true</breakOnNull>
+            <!--Optional:-->
+            <xaxisLabel>label 1</xaxisLabel>
+            <!--Optional:-->
+            <yaxisLabel>label 2</yaxisLabel>
+            <!--Optional:-->
+            <xaxisAngle>12</xaxisAngle>
+            <!--Optional:-->
+            <yaxisAngle>12</yaxisAngle>
+            <stacked>true</stacked>
+            <zoom>true</zoom>
+            <animate>false</animate>
+            <showDataTip>false</showDataTip>
+            <!--Optional:-->
+            <datatipFormat>false</datatipFormat>
+            <legendCols>56</legendCols>
+            <legendRows>56</legendRows>
+         </lineChart>
+      </ws:createLineChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="edccac2c-ec25-4fa0-953c-4a930dbfc18a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="find" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findChart>
+         <chartCode>${#TestSuite#ticket}_lc_ws_code1</chartCode>
+      </ws:findChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="2f5c514c-6544-4df2-abf1-97b374f0fd87" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="update_BarChart" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="43db774a-17fd-4ee6-a2c2-5e68bd13b286"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="create" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBarChart>
+         <!--Optional:-->
+         <barChart code="${#TestSuite#ticket}_bc_ws_code2" description="${#TestSuite#ticket}_bc_ws_desc2">
+            <!--Optional:-->
+            <measurableQuantity code="${#TestSuite#ticket}_mq_ws_code1">
+            </measurableQuantity>
+            <!--Optional:-->
+            <width>100</width>
+            <!--Optional:-->
+            <height>100</height>
+            <!--Optional:-->
+            <style>test1</style>
+            <!--Optional:-->
+            <styleClass>test1</styleClass>
+            <!--Optional:-->
+            <extender>test1</extender>
+            <!--Optional:-->
+            <visible>true</visible>
+            <!--Optional:-->
+            <legendPosition>n</legendPosition>
+            <barPadding>100</barPadding>
+            <barMargin>100</barMargin>
+            <!--Optional:-->
+            <orientation>vertical</orientation>
+            <stacked>true</stacked>
+            <!--Optional:-->
+            <min>100</min>
+            <!--Optional:-->
+            <max>100</max>
+            <breakOnNull>false</breakOnNull>
+            <!--Optional:-->
+            <xaxisLabel>test</xaxisLabel>
+            <!--Optional:-->
+            <yaxisLabel>test</yaxisLabel>
+            <!--Optional:-->
+            <xaxisAngle>10</xaxisAngle>
+            <!--Optional:-->
+            <yaxisAngle>10</yaxisAngle>
+            <legendCols>20</legendCols>
+            <legendRows>20</legendRows>
+            <zoom>true</zoom>
+            <animate>?</animate>
+            <showDataTip>true</showDataTip>
+            <!--Optional:-->
+            <datatipFormat>false</datatipFormat>
+         </barChart>
+      </ws:createBarChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="ebcb85ce-f177-433f-b935-ba61865d3c33"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="find" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findChart>
+         <chartCode>${#TestSuite#ticket}_bc_ws_code2</chartCode>
+      </ws:findChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update" id="3b154990-8a02-479d-a01d-a94aba720df4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="update" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateBarChart>
+         <!--Optional:-->
+         <barChart code="${#TestSuite#ticket}_bc_ws_code2" description="${#TestSuite#ticket}_bc_ws_desc2_updated">
+            <!--Optional:-->
+            <measurableQuantity code="${#TestSuite#ticket}_mq_ws_code1">
+            </measurableQuantity>
+            <!--Optional:-->
+            <width>101</width>
+            <!--Optional:-->
+            <height>101</height>
+            <!--Optional:-->
+            <style>test12</style>
+            <!--Optional:-->
+            <styleClass>test12</styleClass>
+            <!--Optional:-->
+            <extender>test12</extender>
+            <!--Optional:-->
+            <visible>true</visible>
+            <!--Optional:-->
+            <legendPosition>n</legendPosition>
+            <barPadding>101</barPadding>
+            <barMargin>101</barMargin>
+            <!--Optional:-->
+            <orientation>vertical</orientation>
+            <stacked>true</stacked>
+            <!--Optional:-->
+            <min>101</min>
+            <!--Optional:-->
+            <max>101</max>
+            <breakOnNull>false</breakOnNull>
+            <!--Optional:-->
+            <xaxisLabel>test</xaxisLabel>
+            <!--Optional:-->
+            <yaxisLabel>test</yaxisLabel>
+            <!--Optional:-->
+            <xaxisAngle>10</xaxisAngle>
+            <!--Optional:-->
+            <yaxisAngle>10</yaxisAngle>
+            <legendCols>20</legendCols>
+            <legendRows>20</legendRows>
+            <zoom>true</zoom>
+            <animate>?</animate>
+            <showDataTip>true</showDataTip>
+            <!--Optional:-->
+            <datatipFormat>false</datatipFormat>
+         </barChart>
+      </ws:updateBarChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find_updated" id="8ad866c0-000d-4ebe-be14-a1c6c7e528e3"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="find_updated" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findChart>
+         <chartCode>${#TestSuite#ticket}_bc_ws_code2</chartCode>
+      </ws:findChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="3a3d5ac5-9e76-47cc-b589-ac4a3101fbef" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="update_PieChart" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="1bc7be6c-d64c-4cf6-8171-db7177c5a083"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="create" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPieChart>
+         <!--Optional:-->
+         <pieChart code="${#TestSuite#ticket}_pc_ws_code2" description="${#TestSuite#ticket}_pc_ws_desc2">
+            <!--Optional:-->
+            <measurableQuantity code="${#TestSuite#ticket}_mq_ws_code1">
+            </measurableQuantity>
+           <!--Optional:-->
+            <width>123</width>
+            <!--Optional:-->
+            <height>123</height>
+            <!--Optional:-->
+            <style>style1</style>
+            <!--Optional:-->
+            <styleClass>style_class1</styleClass>
+            <!--Optional:-->
+            <extender>extender1</extender>
+            <!--Optional:-->
+            <visible>true</visible>
+            <filled>false</filled>
+            <!--Optional:-->
+            <legendPosition>n</legendPosition>
+            <!--Optional:-->
+            <diameter>120</diameter>
+            <sliceMargin>10</sliceMargin>
+            <shadow>true</shadow>
+            <showDataLabels>false</showDataLabels>
+            <legendCols>23</legendCols>
+            <legendRows>23</legendRows>
+         </pieChart>
+      </ws:createPieChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="1ee50df4-6523-4677-8daa-1ed6bfadad31"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="find" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findChart>
+         <chartCode>${#TestSuite#ticket}_pc_ws_code2</chartCode>
+      </ws:findChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update" id="80da0199-f89c-40fc-968d-8ed420fb1a5b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="update" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updatePieChart>
+         <!--Optional:-->
+         <pieChart code="${#TestSuite#ticket}_pc_ws_code2" description="${#TestSuite#ticket}_pc_ws_desc_updated2">
+            <!--Optional:-->
+            <measurableQuantity code="${#TestSuite#ticket}_mq_ws_code1">
+            </measurableQuantity>
+           <!--Optional:-->
+            <width>222</width>
+            <!--Optional:-->
+            <height>123</height>
+            <!--Optional:-->
+            <style>style1</style>
+            <!--Optional:-->
+            <styleClass>style_class222</styleClass>
+            <!--Optional:-->
+            <extender>extender1</extender>
+            <!--Optional:-->
+            <visible>true</visible>
+            <filled>false</filled>
+            <!--Optional:-->
+            <legendPosition>n</legendPosition>
+            <!--Optional:-->
+            <diameter>120</diameter>
+            <sliceMargin>222</sliceMargin>
+            <shadow>true</shadow>
+            <showDataLabels>false</showDataLabels>
+            <legendCols>23</legendCols>
+            <legendRows>111</legendRows>
+         </pieChart>
+      </ws:updatePieChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find_updated" id="2d28ba34-fa1d-45d7-bed6-28257b313b9f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="find_updated" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findChart>
+         <chartCode>${#TestSuite#ticket}_pc_ws_code2</chartCode>
+      </ws:findChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="72fd06ee-139e-4d23-acba-9bd35c70da41" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="update_LineChart" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="7bcdd47f-8b15-4095-9d67-173bc8edcb7d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="create" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createLineChart>
+         <!--Optional:-->
+         <lineChart code="${#TestSuite#ticket}_lc_ws_code2" description="${#TestSuite#ticket}_lc_ws_desc2">
+            <!--Optional:-->
+            <measurableQuantity code="${#TestSuite#ticket}_mq_ws_code1">
+            </measurableQuantity>
+            <!--Optional:-->
+            <width>200</width>
+            <!--Optional:-->
+            <height>200</height>
+            <!--Optional:-->
+            <style>style1</style>
+            <!--Optional:-->
+            <styleClass>styleClass2</styleClass>
+            <!--Optional:-->
+            <extender>extender3</extender>
+            <!--Optional:-->
+            <visible>true</visible>
+            <filled>false</filled>
+            <!--Optional:-->
+            <legendPosition>w</legendPosition>
+            <shadow>true</shadow>
+            <minX>45</minX>
+            <maxX>45</maxX>
+            <minY>45</minY>
+            <maxY>45</maxY>
+            <breakOnNull>true</breakOnNull>
+            <!--Optional:-->
+            <xaxisLabel>label 1</xaxisLabel>
+            <!--Optional:-->
+            <yaxisLabel>label 2</yaxisLabel>
+            <!--Optional:-->
+            <xaxisAngle>12</xaxisAngle>
+            <!--Optional:-->
+            <yaxisAngle>12</yaxisAngle>
+            <stacked>true</stacked>
+            <zoom>true</zoom>
+            <animate>false</animate>
+            <showDataTip>false</showDataTip>
+            <!--Optional:-->
+            <datatipFormat>false</datatipFormat>
+            <legendCols>56</legendCols>
+            <legendRows>56</legendRows>
+         </lineChart>
+      </ws:createLineChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="4927a2d3-df6c-424c-9657-8347777aac2b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="find" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findChart>
+         <chartCode>${#TestSuite#ticket}_lc_ws_code2</chartCode>
+      </ws:findChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update" id="af77ebde-10f7-483b-9e94-8b376f748b5e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="update" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateLineChart>
+         <!--Optional:-->
+         <lineChart code="${#TestSuite#ticket}_lc_ws_code2" description="${#TestSuite#ticket}_lc_ws_desc2_updated">
+            <!--Optional:-->
+            <measurableQuantity code="${#TestSuite#ticket}_mq_ws_code1">
+            </measurableQuantity>
+            <!--Optional:-->
+            <width>300</width>
+            <!--Optional:-->
+            <height>300</height>
+            <!--Optional:-->
+            <style>style1</style>
+            <!--Optional:-->
+            <styleClass>styleClass2</styleClass>
+            <!--Optional:-->
+            <extender>extender3</extender>
+            <!--Optional:-->
+            <visible>true</visible>
+            <filled>false</filled>
+            <!--Optional:-->
+            <legendPosition>w</legendPosition>
+            <shadow>true</shadow>
+            <minX>45</minX>
+            <maxX>45</maxX>
+            <minY>45</minY>
+            <maxY>45</maxY>
+            <breakOnNull>true</breakOnNull>
+            <!--Optional:-->
+            <xaxisLabel>label 1</xaxisLabel>
+            <!--Optional:-->
+            <yaxisLabel>label 2</yaxisLabel>
+            <!--Optional:-->
+            <xaxisAngle>12</xaxisAngle>
+            <!--Optional:-->
+            <yaxisAngle>12</yaxisAngle>
+            <stacked>true</stacked>
+            <zoom>true</zoom>
+            <animate>false</animate>
+            <showDataTip>false</showDataTip>
+            <!--Optional:-->
+            <datatipFormat>false</datatipFormat>
+            <legendCols>56</legendCols>
+            <legendRows>56</legendRows>
+         </lineChart>
+      </ws:updateLineChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find_updated" id="6c233219-0f96-498d-9e6b-179b10363000"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="find_updated" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findChart>
+         <chartCode>${#TestSuite#ticket}_lc_ws_code2</chartCode>
+      </ws:findChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="82248465-abe8-48bb-a599-7e4c0a13c124" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="remove_Chart" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="cf2af671-9ea3-4df2-b78f-231303ad2846"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="create" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBarChart>
+         <!--Optional:-->
+         <barChart code="${#TestSuite#ticket}_bc_ws_code3" description="${#TestSuite#ticket}_bc_ws_desc3">
+            <!--Optional:-->
+            <measurableQuantity code="${#TestSuite#ticket}_mq_ws_code1">
+            </measurableQuantity>
+            <!--Optional:-->
+            <width>100</width>
+            <!--Optional:-->
+            <height>100</height>
+            <!--Optional:-->
+            <style>test1</style>
+            <!--Optional:-->
+            <styleClass>test1</styleClass>
+            <!--Optional:-->
+            <extender>test1</extender>
+            <!--Optional:-->
+            <visible>true</visible>
+            <!--Optional:-->
+            <legendPosition>n</legendPosition>
+            <barPadding>100</barPadding>
+            <barMargin>100</barMargin>
+            <!--Optional:-->
+            <orientation>vertical</orientation>
+            <stacked>true</stacked>
+            <!--Optional:-->
+            <min>100</min>
+            <!--Optional:-->
+            <max>100</max>
+            <breakOnNull>false</breakOnNull>
+            <!--Optional:-->
+            <xaxisLabel>test</xaxisLabel>
+            <!--Optional:-->
+            <yaxisLabel>test</yaxisLabel>
+            <!--Optional:-->
+            <xaxisAngle>10</xaxisAngle>
+            <!--Optional:-->
+            <yaxisAngle>10</yaxisAngle>
+            <legendCols>20</legendCols>
+            <legendRows>20</legendRows>
+            <zoom>true</zoom>
+            <animate>?</animate>
+            <showDataTip>true</showDataTip>
+            <!--Optional:-->
+            <datatipFormat>false</datatipFormat>
+         </barChart>
+      </ws:createBarChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="98892cb3-19ab-4e46-92fd-defa99f57478"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="find" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findChart>
+         <chartCode>${#TestSuite#ticket}_bc_ws_code3</chartCode>
+      </ws:findChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="remove" id="f9e47767-6223-4ae3-b2d0-c01ff6a75d19"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="remove" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeChart>
+         <chartCode>${#TestSuite#ticket}_bc_ws_code3</chartCode>
+      </ws:removeChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find_updated" id="8005ebf0-4c1f-4d06-b353-752ee3772e62"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="find_updated" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findChart>
+         <chartCode>${#TestSuite#ticket}_bc_ws_code3</chartCode>
+      </ws:findChart>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1492</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" outgoingWss="" wssTimeToLive="">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
