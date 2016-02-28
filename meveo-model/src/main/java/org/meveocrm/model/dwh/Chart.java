@@ -30,7 +30,7 @@ public class Chart extends BusinessEntity {
     @JoinColumn(name = "ROLE_ID")
     Role role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MSR_QTY_ID")
     MeasurableQuantity measurableQuantity;
 

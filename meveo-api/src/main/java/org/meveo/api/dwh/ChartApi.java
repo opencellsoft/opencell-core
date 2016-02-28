@@ -13,6 +13,7 @@ import org.meveo.api.dto.dwh.LineChartDto;
 import org.meveo.api.dto.dwh.PieChartDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -57,7 +58,7 @@ public class ChartApi extends BaseApi {
         if (postData.getMeasurableQuantity() == null || StringUtils.isBlank(postData.getMeasurableQuantity().getCode())) {
             missingParameters.add("measurableQuantity.code");
         }
-
+        
         if (!missingParameters.isEmpty()) {
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
@@ -66,18 +67,29 @@ public class ChartApi extends BaseApi {
         if (chart != null) {
             throw new EntityAlreadyExistsException(Chart.class, postData.getCode());
         }
-
+        
+        MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(postData.getMeasurableQuantity().getCode(), currentUser.getProvider());
+        
+        if (measurableQuantity == null) {
+        	throw new EntityDoesNotExistsException(MeasurableQuantity.class, postData.getMeasurableQuantity().getCode());
+        }
+        
         if (postData instanceof PieChartDto) {
             PieChart pieChart = fromDTO((PieChartDto) postData, currentUser, null);
+            pieChart.setMeasurableQuantity(measurableQuantity);
             pieChartService.create(pieChart, currentUser, currentUser.getProvider());
 
         } else if (postData instanceof LineChartDto) {
             LineChart lineChart = fromDTO((LineChartDto) postData, currentUser, null);
+            lineChart.setMeasurableQuantity(measurableQuantity);
             lineChartService.create(lineChart, currentUser, currentUser.getProvider());
 
         } else if (postData instanceof BarChartDto) {
             BarChart barChart = fromDTO((BarChartDto) postData, currentUser, null);
+            barChart.setMeasurableQuantity(measurableQuantity);
             barChartService.create(barChart, currentUser, currentUser.getProvider());
+        } else {
+        	throw new InvalidParameterException();
         }
     }
 
@@ -110,6 +122,8 @@ public class ChartApi extends BaseApi {
         } else if (chart instanceof BarChart) {
             BarChart barChart = fromDTO((BarChartDto) postData, currentUser, (BarChart) chart);
             barChartService.update(barChart, currentUser);
+        } else {
+        	throw new InvalidParameterException();
         }
     }
 

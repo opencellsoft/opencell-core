@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseDto;
 import org.meveocrm.model.dwh.Chart;
 
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -15,6 +16,7 @@ import org.meveocrm.model.dwh.Chart;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChartDto extends BaseDto {
 
+	
     private static final long serialVersionUID = 2573963792647472501L;
 
     @XmlAttribute
@@ -39,7 +41,9 @@ public class ChartDto extends BaseDto {
         super();
         setCode(chart.getCode());
         setDescription(chart.getDescription());
-        setMeasurableQuantity(new MeasurableQuantityDto(chart.getMeasurableQuantity()));
+        if (chart.getMeasurableQuantity() != null) {
+        	setMeasurableQuantity(new MeasurableQuantityDto(chart.getMeasurableQuantity()));
+        }
         setWidth(chart.getWidth());
         setHeight(chart.getHeight());
         setStyle(chart.getStyle());
