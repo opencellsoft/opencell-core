@@ -99,13 +99,14 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 		log.info("JobExecutionService persistResult End");
 	}
 
-    private QueryBuilder getFindQuery(String jobName, PaginationConfiguration configuration) {
+    private QueryBuilder getFindQuery(String jobName, PaginationConfiguration configuration,Provider provider) {
         String sql = "select distinct t from JobExecutionResultImpl t";
         QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
 
         if (!StringUtils.isEmpty(jobName)) {
             qb.addCriterion("t.jobInstance.code", "=", jobName, false);
         }
+        qb.addCriterionEntity("t.provider", provider);
         qb.addPaginationConfiguration(configuration);
 
         return qb;
@@ -172,12 +173,12 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     }
 
     @SuppressWarnings("unchecked")
-    public List<JobExecutionResultImpl> find(String jobName, PaginationConfiguration configuration) {
-        return getFindQuery(jobName, configuration).find(getEntityManager());
+    public List<JobExecutionResultImpl> find(String jobName, PaginationConfiguration configuration,Provider provider) {
+        return getFindQuery(jobName, configuration,provider).find(getEntityManager());
     }
 
-    public long count(String jobName, PaginationConfiguration configuration) {
-        return getFindQuery(jobName, configuration).count(getEntityManager());
+    public long count(String jobName, PaginationConfiguration configuration,Provider provider) {
+        return getFindQuery(jobName, configuration,provider).count(getEntityManager());
     }
 
     public JobInstanceService getJobInstanceService() {
