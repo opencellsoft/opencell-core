@@ -104,7 +104,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
         QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
 
         if (!StringUtils.isEmpty(jobName)) {
-            qb.addCriterion("t.jobName", "=", jobName, false);
+            qb.addCriterion("t.jobInstance.code", "=", jobName, false);
         }
         qb.addPaginationConfiguration(configuration);
 
