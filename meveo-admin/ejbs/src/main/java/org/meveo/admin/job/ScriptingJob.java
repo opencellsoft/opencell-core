@@ -23,6 +23,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.job.Job;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInterface;
 
 @Startup
 @Singleton
@@ -43,15 +44,21 @@ public class ScriptingJob extends Job {
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
 
         String scriptCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "ScriptingJob_script", currentUser)).getCode();
-
-        try {
-            Map<String, Object> context = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "ScriptingJob_variables", currentUser);
-            if (context == null) {
-                context = new HashMap<String, Object>();
-            }
-            scriptInstanceService.execute(scriptCode, context, currentUser, currentUser.getProvider());
+        Map<String, Object> context = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "ScriptingJob_variables", currentUser);
+        if (context == null) {
+            context = new HashMap<String, Object>();
+        }
+        ScriptInterface script = null;
+        script = scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+        try {        	
+        	script.init(context, currentUser.getProvider(), currentUser);        	
+        	script.execute(context, currentUser.getProvider(), currentUser);                      
         } catch (Exception e) {
+        	log.error("Exception on init/execute script",e);
             result.registerError("Error in " + scriptCode + " execution :" + e.getMessage());
+        }finally{
+        	log.debug("calling script.finalize ....");
+        	script.finalize(context, currentUser.getProvider(), currentUser);
         }
     }
 

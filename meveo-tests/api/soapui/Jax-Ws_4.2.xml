@@ -50312,4 +50312,63 @@ public class The${#TestSuite#ticket}ScriptB extends Script {
          <chartCode>${#TestSuite#ticket}_bc_ws_code3</chartCode>
       </ws:findChart>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1492</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" outgoingWss="" wssTimeToLive="">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4f6ed214-6799-4992-a94b-4b0936f49952"/><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1492</con:value></con:property></con:properties></con:testSuite><con:testSuite name="#1523_scriptingjob--call-init-and-finalise-too" id="60902b1b-f90a-4b4b-97d0-9a961476a0a7"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation" searchProperties="true" id="e953c0ef-1b73-4659-88fc-ae412eb14894"><con:settings/><con:testStep type="request" name="createAscript" id="57907eb1-05cb-4ab5-aaeb-fb30aaef01d8"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptInstanceWsSoapBinding</con:interface><con:operation>createOrUpdate</con:operation><con:request name="createAscript" id="a6485862-c17b-4411-b169-a7f9584f60f3"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdate>
+         <!--Optional:-->
+         <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.TestScript${#TestSuite#ticket}" description="TestScript${#TestSuite#ticket}">
+            <!--Optional:-->
+            <type>JAVA</type>
+            <script><![CDATA[
+package org.meveo.service.script;
+
+import java.util.List;
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class TestScript${#TestSuite#ticket} extends org.meveo.service.script.Script {
+	
+	private static final Logger log = LoggerFactory.getLogger(TestScript${#TestSuite#ticket}.class);
+	
+
+	public void init(Map<String,Object> methodContext,Provider provider,User user){
+		log.info("init...");
+		log.info("init Done");
+	}
+		
+	public void execute(Map<String, Object> initContext, Provider provider,User user) throws BusinessException {
+		log.info("Execute...");
+		log.info("Execute Done");
+	}
+
+	public void finalize(Map<String,Object> methodContext,Provider provider,User user){
+		log.info("finalize...");
+		log.info("finalize Done");		
+	}
+
+}
+]]]]>><![CDATA[</script>
+         </createOrUpdateScriptInstanceRequest>
+      </ws:createOrUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e0e86ba4-f111-4d48-b839-8b7a388c35c1"/><con:assertion type="Simple Contains" id="2cd89237-4e7c-4dcf-a1ac-37e83389a55f" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create SctriptingJob" id="4d6110cb-9a95-4826-9331-765050a345e0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>createOrUpdateJobInstance</con:operation><con:request name="Create SctriptingJob" id="c0ca4193-2738-4812-8903-b9c87a294b7c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateJobInstance>
+         <jobInstance jobTemplate="ScriptingJob" code="Script_Job" description="Scripnting">
+            <jobCategory>Mediation</jobCategory>           
+            <customFields>
+               <customField code="ScriptingJob_script">
+                  <entityReferenceValue classname="org.meveo.model.scripts.ScriptInstance" code="org.meveo.service.script.TestScript${#TestSuite#ticket}"/>
+               </customField>
+            </customFields>
+         </jobInstance>
+      </ws:createOrUpdateJobInstance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="24eb9241-1610-42b0-8b7b-74dfa613d7ff"/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>794</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1523</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" outgoingWss="" wssTimeToLive="">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
