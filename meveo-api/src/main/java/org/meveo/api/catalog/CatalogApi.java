@@ -145,7 +145,7 @@ public class CatalogApi extends BaseApi {
 							if (!currentUser.getProvider().isEntreprise()) {
 								if(price.getTaxIncludedAmount()!=null){
 								price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(
-										pricePlans.get(0).getAmountWithTax()!=null ? pricePlans.get(0).getAmountWithTax() : null));
+										pricePlans.get(0).getAmountWithTax()!=null ? pricePlans.get(0).getAmountWithTax() : BigDecimal.ZERO));
 								}
 							}
 						}
