@@ -184,4 +184,9 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     public JobInstanceService getJobInstanceService() {
         return jobInstanceService;
     }
+    
+    @Override
+    public List<JobExecutionResultImpl> findByCodeLike(String code, Provider provider){
+    	throw new UnsupportedOperationException();
+    }
 }
