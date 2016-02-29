@@ -44225,7 +44225,7 @@ public class ${#TestSuite#ticket}BOMCreationScript extends Script {
          <!--Optional:-->\r
          <oneShotChargeTemplate code="${#TestSuite#ticket}ONESHOT" description="${#TestSuite#ticket}ONESHOT">\r
             <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
-            <oneShotChargeTemplateType>1</oneShotChargeTemplateType>\r
+            <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>\r
          </oneShotChargeTemplate>\r
       </ws:createOneShotChargeTemplate>\r
    </soapenv:Body>\r

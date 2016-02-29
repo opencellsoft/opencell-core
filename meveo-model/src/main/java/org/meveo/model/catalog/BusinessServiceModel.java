@@ -1,5 +1,6 @@
 package org.meveo.model.catalog;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -24,6 +25,12 @@ public class BusinessServiceModel extends MeveoModule {
 	@JoinColumn(name = "SCRIPT_INSTANCE_ID")
 	private ServiceModelScript script;
 
+	@Column(name = "DUPLICATE_SERVICE")
+	private boolean duplicateService;
+
+	@Column(name = "DUPLICATE_PRICE_PLAN")
+	private boolean duplicatePricePlan;
+
 	public ServiceTemplate getServiceTemplate() {
 		return serviceTemplate;
 	}
@@ -38,6 +45,22 @@ public class BusinessServiceModel extends MeveoModule {
 
 	public void setScript(ServiceModelScript script) {
 		this.script = script;
+	}
+
+	public boolean isDuplicateService() {
+		return duplicateService;
+	}
+
+	public void setDuplicateService(boolean duplicateService) {
+		this.duplicateService = duplicateService;
+	}
+
+	public boolean isDuplicatePricePlan() {
+		return duplicatePricePlan;
+	}
+
+	public void setDuplicatePricePlan(boolean duplicatePricePlan) {
+		this.duplicatePricePlan = duplicatePricePlan;
 	}
 
 }

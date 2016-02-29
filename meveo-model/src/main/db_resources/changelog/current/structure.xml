@@ -1441,5 +1441,11 @@
         <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE='org.meveocrm.model.dwh.Chart' where ITEM_TYPE='CHART' </sql>
     </changeSet>
     
+     <changeSet id="#20160229" author="EdwardLegaspi">
+     	<addColumn tableName="cat_business_serv_model">
+     		<column name="duplicate_service" type="BOOL" defaultValueBoolean="false"/>
+     		<column name="duplicate_price_plan" type="BOOL" defaultValueBoolean="false"/>
+     	</addColumn>        
+     </changeSet>
     
 </databaseChangeLog>

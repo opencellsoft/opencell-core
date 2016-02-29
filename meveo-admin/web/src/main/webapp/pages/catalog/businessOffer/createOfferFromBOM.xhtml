@@ -25,58 +25,21 @@
 </h:head>
 
 <h:body>
-	<hftl:formPanel ajaxSubmit="true"
-		label="#{messages['businessOffer.title']}"
-		backingBean="#{businessOfferBean}" showEnableDisableButton="true"
-		showFormButtons="false">
+	<h:form>
+		<p:panel>
+			<h:panelGroup layout="block" styleClass="form-panel">
+				<h:panelGroup layout="block" styleClass="formFieldGroup">
+					<p:outputLabel value="Prefix" for="prefix"></p:outputLabel>
+					<p:inputText id="prefix"
+						value="#{businessOfferBean.bomOfferInstancePrefix}"></p:inputText>
+				</h:panelGroup>
+			</h:panelGroup>
 
-		<p:tabView>
-			<p:tab title="Offer Information">
-				<hftl:formField label="#{messages['BusinessEntity.code']}"
-					field="code" required="true" validateUnique="true"
-					allowEdit="false" />
-				<hftl:formField label="#{messages['BusinessEntity.description']}"
-					field="description" useConverter="false"
-					id="description" maxlength="50" edit="false" />
-				<hftl:formField id="offerSelectId"
-					label="#{messages['pricePlanMatrix.offerCode']}"
-					field="offerTemplate" valueLabelField="code"
-					listElements="#{offerTemplateBean.listActive}" readonly="true"
-					allowEdit="false" />
-				<hftl:decorateFormField fieldId="serviceCodePrefix"
-					label="Service Code Prefix">
-					<p:inputText id="serviceCodePrefix"
-						value="#{businessOfferBean.serviceCodePrefix}"></p:inputText>
-				</hftl:decorateFormField>
-			</p:tab>
-			<hftl:customFields backingBean="#{offerTemplateBean}"
-				messagesId=":formId:messages" />
-		</p:tabView>
-
-		<hftl:panelGroup>
-			<p:pickList id="picklistServiceTemplates"
-				value="#{businessOfferBean.serviceTemplates}" var="st"
-				itemLabel="#{st.code}" itemValue="#{st}">
-			</p:pickList>
-
-			<p:tabView>
-				<p:tab title="Service Template Information">
-					<hftl:customFields backingBean="#{serviceTemplateBean}"
-						messagesId=":formId:messages" />
-				</p:tab>
-			</p:tabView>
-		</hftl:panelGroup>
-
-		<!-- 		<p:selectOneMenu id="dropdownServiceTemplates" -->
-		<!-- 			value="#{dropdownView.country}" style="width:150px"> -->
-		<!-- 			<p:ajax listener="#{dropdownView.onCountryChange}" update="city" /> -->
-		<!-- 			<f:selectItem itemLabel="Select Country" itemValue="" -->
-		<!-- 				noSelectionOption="true" /> -->
-		<!-- 			<f:selectItems value="#{dropdownView.countries}" /> -->
-		<!-- 		</p:selectOneMenu> -->
-
-
-
-	</hftl:formPanel>
+			<h:panelGroup layout="block" styleClass="form-panel-actions">
+				<p:commandButton value="Create Offer"
+					action="#{businessOfferBean.createOfferFromBOM()}"></p:commandButton>
+			</h:panelGroup>
+		</p:panel>
+	</h:form>
 </h:body>
 </html>

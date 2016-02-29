@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.local.IPersistenceService;
@@ -33,6 +34,8 @@ public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 	private Map<String, String> serviceCFVs = new HashMap<>();
 	DualListModel<ServiceTemplate> dualListModel = new DualListModel<>();
 
+	private String bomOfferInstancePrefix;
+
 	public BusinessOfferBean() {
 		super(BusinessOfferModel.class);
 	}
@@ -47,13 +50,12 @@ public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 		return "businessOffers";
 	}
 
-	public void createOfferFromBOM() {
-		System.out.println("test");
+	public void createOfferFromBOMPopup() {
 		Map<String, Object> options = new HashMap<String, Object>();
 		options.put("resizable", false);
 		options.put("draggable", false);
 		options.put("modal", true);
-		options.put("width", 800);
+		options.put("width", 400);
 
 		Map<String, List<String>> params = new HashMap<String, List<String>>();
 		List<String> values = new ArrayList<String>();
@@ -63,10 +65,16 @@ public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 		RequestContext.getCurrentInstance().openDialog("createOfferFromBOM", options, params);
 	}
 
+	public void createOfferFromBOM() throws BusinessException {
+		businessOfferService.createOfferFromBOM(getEntity(), bomOfferInstancePrefix, currentUser);
+		RequestContext.getCurrentInstance().closeDialog(getEntity());
+	}
+
 	public DualListModel<ServiceTemplate> getServiceTemplates() {
 		List<ServiceTemplate> targetList = new ArrayList<>();
-//FIXME - for a proper dual list implementation see UserBean.get/setDualList and saveOrUpdate methods
-		//dualListModel.setSource(entity.getOfferTemplate().getServiceTemplates());
+		// FIXME - for a proper dual list implementation see
+		// UserBean.get/setDualList and saveOrUpdate methods
+		// dualListModel.setSource(entity.getOfferTemplate().getServiceTemplates());
 		dualListModel.setTarget(targetList);
 
 		return dualListModel;
@@ -106,6 +114,14 @@ public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 
 	public void setOfferCFVs(Map<String, String> offerCFVs) {
 		this.offerCFVs = offerCFVs;
+	}
+
+	public String getBomOfferInstancePrefix() {
+		return bomOfferInstancePrefix;
+	}
+
+	public void setBomOfferInstancePrefix(String bomOfferInstancePrefix) {
+		this.bomOfferInstancePrefix = bomOfferInstancePrefix;
 	}
 
 }

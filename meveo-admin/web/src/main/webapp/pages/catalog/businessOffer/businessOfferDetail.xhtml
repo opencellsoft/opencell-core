@@ -52,8 +52,8 @@
 					<hftl:formField label="#{messages['BusinessEntity.code']}"
 						field="code" required="true" validateUnique="true" />
 					<hftl:formField label="#{messages['BusinessEntity.description']}"
-						field="description" useConverter="false"
-						id="description" maxlength="50" />
+						field="description" useConverter="false" id="description"
+						maxlength="50" />
 					<hftl:formField id="offerSelectId"
 						label="#{messages['pricePlanMatrix.offerCode']}"
 						field="offerTemplate" valueLabelField="code"
@@ -70,12 +70,10 @@
 		<h:panelGroup layout="block" styleClass="form-panel-actions"
 			rendered="#{!businessOfferBean.entity.isTransient()}">
 			<p:commandButton
-				actionListener="#{businessOfferBean.createOfferFromBOM()}"
+				actionListener="#{businessOfferBean.createOfferFromBOMPopup()}"
 				icon="ui-icon-extlink"
 				value="#{messages['action.createOfferFromBOM']}">
 				<f:param name="objectId" value="#{businessOfferBean.entity.id}"></f:param>
-				<p:ajax event="dialogReturn"
-					listener="#{businessOfferBean.onCreateOfferFromBOM}" />
 			</p:commandButton>
 		</h:panelGroup>
 
