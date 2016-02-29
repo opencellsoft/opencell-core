@@ -41315,6 +41315,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateTerminationReason">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateTerminationReason">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateTerminationReasonResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateTax">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateTax">
@@ -41540,30 +41549,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="listSeller">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="listSeller">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="listSellerResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="listTaxes">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="listTaxes">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="listTaxesResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdateUser">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createOrUpdateUser">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createOrUpdateUserResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -41576,15 +41567,6 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="removeLanguage">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="removeLanguage">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="removeLanguageResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="removeRole">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeRole">
@@ -41594,12 +41576,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createLanguage">
+    <wsdl:operation name="removeLanguage">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createLanguage">
+      <wsdl:input name="removeLanguage">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="createLanguageResponse">
+      <wsdl:output name="removeLanguageResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -41609,24 +41591,6 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="findCountryResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateInvoiceSubCategory">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateInvoiceSubCategory">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateInvoiceSubCategoryResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createCurrency">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createCurrency">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createCurrencyResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -41675,6 +41639,168 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateOccTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateOccTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateOccTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateUser">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateUser">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateUserResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateTerminationReason">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateTerminationReason">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateTerminationReasonResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateOccTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateOccTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateOccTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeDescriptions">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeDescriptions">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeDescriptionsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createCustomFieldTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createCustomFieldTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createCustomFieldTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createInvoiceSubCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createInvoiceSubCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createInvoiceSubCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeInvoiceCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeInvoiceCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeInvoiceCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateDescriptions">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateDescriptions">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateDescriptionsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateInvoiceSubCategoryCountry">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateInvoiceSubCategoryCountry">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateInvoiceSubCategoryCountryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findProvider">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findProvider">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findProviderResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCurrency">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateCurrency">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateCurrencyResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listSeller">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="listSeller">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listSellerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateUser">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateUser">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateUserResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateInvoiceSubCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateInvoiceSubCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateInvoiceSubCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createLanguage">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createLanguage">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createLanguageResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createCurrency">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createCurrency">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createCurrencyResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findTerminationReason">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findTerminationReason">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findTerminationReasonResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateCustomFieldTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateCustomFieldTemplate">
@@ -41690,6 +41816,15 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="findCurrencyResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeTerminationReason">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeTerminationReason">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeTerminationReasonResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -41711,21 +41846,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateOccTemplate">
+    <wsdl:operation name="createTerminationReason">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateOccTemplate">
+      <wsdl:input name="createTerminationReason">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="updateOccTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateUser">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateUser">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateUserResponse">
+      <wsdl:output name="createTerminationReasonResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -41801,24 +41927,6 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createOrUpdateOccTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createOrUpdateOccTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createOrUpdateOccTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createCustomFieldTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createCustomFieldTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createCustomFieldTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createInvoiceSubCategoryCountry">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createInvoiceSubCategoryCountry">
@@ -41837,39 +41945,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="removeDescriptions">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="removeDescriptions">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="removeDescriptionsResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createInvoiceSubCategory">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createInvoiceSubCategory">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createInvoiceSubCategoryResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="findCustomFieldTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findCustomFieldTemplate">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="findCustomFieldTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="removeInvoiceCategory">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="removeInvoiceCategory">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="removeInvoiceCategoryResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -41891,33 +41972,6 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createOrUpdateDescriptions">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createOrUpdateDescriptions">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createOrUpdateDescriptionsResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateInvoiceSubCategoryCountry">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateInvoiceSubCategoryCountry">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateInvoiceSubCategoryCountryResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="findProvider">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findProvider">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="findProviderResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createOrUpdateCurrency">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateCurrency">
@@ -41927,21 +41981,21 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="listTerminationReason">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="listTerminationReason">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listTerminationReasonResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateInvoiceCategory">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateInvoiceCategory">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createOrUpdateInvoiceCategoryResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateCurrency">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateCurrency">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateCurrencyResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -42035,6 +42089,7 @@
       <xs:element name="Tax" type="tns:taxDto"/>
       <xs:element name="Taxes" type="tns:taxesDto"/>
       <xs:element name="TerminationReasonDto" nillable="true" type="xs:anyType"/>
+      <xs:element name="TerminationReasonResponse" type="tns:getTerminationReasonResponse"/>
       <xs:element name="Title" type="tns:titleDto"/>
       <xs:element name="Titles" type="tns:titlesDto"/>
       <xs:element name="User" type="tns:userDto"/>
@@ -42091,6 +42146,8 @@
       <xs:element name="createOrUpdateSellerResponse" type="tns:createOrUpdateSellerResponse"/>
       <xs:element name="createOrUpdateTax" type="tns:createOrUpdateTax"/>
       <xs:element name="createOrUpdateTaxResponse" type="tns:createOrUpdateTaxResponse"/>
+      <xs:element name="createOrUpdateTerminationReason" type="tns:createOrUpdateTerminationReason"/>
+      <xs:element name="createOrUpdateTerminationReasonResponse" type="tns:createOrUpdateTerminationReasonResponse"/>
       <xs:element name="createOrUpdateUser" type="tns:createOrUpdateUser"/>
       <xs:element name="createOrUpdateUserResponse" type="tns:createOrUpdateUserResponse"/>
       <xs:element name="createProvider" type="tns:createProvider"/>
@@ -42101,6 +42158,8 @@
       <xs:element name="createSellerResponse" type="tns:createSellerResponse"/>
       <xs:element name="createTax" type="tns:createTax"/>
       <xs:element name="createTaxResponse" type="tns:createTaxResponse"/>
+      <xs:element name="createTerminationReason" type="tns:createTerminationReason"/>
+      <xs:element name="createTerminationReasonResponse" type="tns:createTerminationReasonResponse"/>
       <xs:element name="createUser" type="tns:createUser"/>
       <xs:element name="createUserResponse" type="tns:createUserResponse"/>
       <xs:element name="findBillingCycle" type="tns:findBillingCycle"/>
@@ -42139,6 +42198,8 @@
       <xs:element name="findSellerResponse" type="tns:findSellerResponse"/>
       <xs:element name="findTax" type="tns:findTax"/>
       <xs:element name="findTaxResponse" type="tns:findTaxResponse"/>
+      <xs:element name="findTerminationReason" type="tns:findTerminationReason"/>
+      <xs:element name="findTerminationReasonResponse" type="tns:findTerminationReasonResponse"/>
       <xs:element name="findTradingConfiguration" type="tns:findTradingConfiguration"/>
       <xs:element name="findTradingConfigurationResponse" type="tns:findTradingConfigurationResponse"/>
       <xs:element name="findUser" type="tns:findUser"/>
@@ -42155,6 +42216,8 @@
       <xs:element name="listSellerResponse" type="tns:listSellerResponse"/>
       <xs:element name="listTaxes" type="tns:listTaxes"/>
       <xs:element name="listTaxesResponse" type="tns:listTaxesResponse"/>
+      <xs:element name="listTerminationReason" type="tns:listTerminationReason"/>
+      <xs:element name="listTerminationReasonResponse" type="tns:listTerminationReasonResponse"/>
       <xs:element name="removeBillingCycle" type="tns:removeBillingCycle"/>
       <xs:element name="removeBillingCycleResponse" type="tns:removeBillingCycleResponse"/>
       <xs:element name="removeCalendar" type="tns:removeCalendar"/>
@@ -42183,6 +42246,8 @@
       <xs:element name="removeSellerResponse" type="tns:removeSellerResponse"/>
       <xs:element name="removeTax" type="tns:removeTax"/>
       <xs:element name="removeTaxResponse" type="tns:removeTaxResponse"/>
+      <xs:element name="removeTerminationReason" type="tns:removeTerminationReason"/>
+      <xs:element name="removeTerminationReasonResponse" type="tns:removeTerminationReasonResponse"/>
       <xs:element name="removeUser" type="tns:removeUser"/>
       <xs:element name="removeUserResponse" type="tns:removeUserResponse"/>
       <xs:element name="updateBillingCycle" type="tns:updateBillingCycle"/>
@@ -42215,6 +42280,8 @@
       <xs:element name="updateSellerResponse" type="tns:updateSellerResponse"/>
       <xs:element name="updateTax" type="tns:updateTax"/>
       <xs:element name="updateTaxResponse" type="tns:updateTaxResponse"/>
+      <xs:element name="updateTerminationReason" type="tns:updateTerminationReason"/>
+      <xs:element name="updateTerminationReasonResponse" type="tns:updateTerminationReasonResponse"/>
       <xs:element name="updateUser" type="tns:updateUser"/>
       <xs:element name="updateUserResponse" type="tns:updateUserResponse"/>
       <xs:complexType name="createOrUpdateRole">
@@ -43118,6 +43185,25 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="updateTerminationReason">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="terminationReason" type="tns:terminationReasonDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="terminationReasonDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+          <xs:element name="applyAgreement" type="xs:boolean"/>
+          <xs:element name="applyReimbursment" type="xs:boolean"/>
+          <xs:element name="applyTerminationCharges" type="xs:boolean"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="updateTerminationReasonResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createOrUpdateTax">
         <xs:sequence>
           <xs:element minOccurs="0" name="tax" type="tns:taxDto"/>
@@ -43376,15 +43462,6 @@
           <xs:element maxOccurs="unbounded" minOccurs="0" name="terminationReason" nillable="true" type="tns:terminationReasonDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="terminationReasonDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="code" type="xs:string"/>
-          <xs:element minOccurs="0" name="description" type="xs:string"/>
-          <xs:element name="applyAgreement" type="xs:boolean"/>
-          <xs:element name="applyReimbursment" type="xs:boolean"/>
-          <xs:element name="applyTerminationCharges" type="xs:boolean"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="createBillingCycle">
         <xs:sequence>
           <xs:element minOccurs="0" name="billingCycle" type="tns:billingCycleDto"/>
@@ -43590,28 +43667,6 @@
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="listSeller">
-        <xs:sequence/>
-      </xs:complexType>
-      <xs:complexType name="listSellerResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:sellerResponseDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="sellerResponseDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="sellers" type="tns:Sellers"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="Sellers">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="seller" nillable="true" type="tns:Seller"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="listTaxes">
         <xs:sequence/>
       </xs:complexType>
@@ -43628,16 +43683,6 @@
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateUser">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="user" type="tns:userDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateUserResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeRole">
         <xs:sequence>
@@ -43669,16 +43714,6 @@
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="updateInvoiceSubCategory">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="invoiceSubCategory" type="tns:invoiceSubCategoryDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateInvoiceSubCategoryResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="findCountry">
         <xs:sequence>
           <xs:element minOccurs="0" name="countryCode" type="xs:string"/>
@@ -43697,26 +43732,6 @@
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="createLanguage">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="language" type="tns:languageDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createLanguageResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createCurrency">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="currency" type="tns:currencyDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createCurrencyResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeCalendar">
         <xs:sequence>
@@ -43814,12 +43829,233 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="updateUser">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="user" type="tns:userDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateUserResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateOccTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="occTemplate" type="tns:occTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateOccTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateTerminationReason">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="terminationReason" type="tns:terminationReasonDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateTerminationReasonResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateOccTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="occTemplate" type="tns:occTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateOccTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeDescriptions">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="descriptionsCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeDescriptionsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createCustomFieldTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customField" type="tns:customFieldTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createCustomFieldTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createInvoiceSubCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="invoiceSubCategory" type="tns:invoiceSubCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createInvoiceSubCategoryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeInvoiceCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="invoiceCategoryCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeInvoiceCategoryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateInvoiceSubCategoryCountry">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="invoiceSubCategoryCountry" type="tns:invoiceSubCategoryCountryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateInvoiceSubCategoryCountryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateDescriptions">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="descriptions" type="tns:catMessagesDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateDescriptionsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findProvider">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="providerCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findProviderResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getProviderResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getProviderResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="provider" type="tns:providerDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="updateCurrency">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="currency" type="tns:currencyDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCurrencyResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listSeller">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="listSellerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:sellerResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="sellerResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="sellers" type="tns:Sellers"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="Sellers">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="seller" nillable="true" type="tns:Seller"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateUser">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="user" type="tns:userDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateUserResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateInvoiceSubCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="invoiceSubCategory" type="tns:invoiceSubCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateInvoiceSubCategoryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createLanguage">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="language" type="tns:languageDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createLanguageResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createCurrency">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="currency" type="tns:currencyDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createCurrencyResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findTerminationReason">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="terminationReasonCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findTerminationReasonResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getTerminationReasonResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getTerminationReasonResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="terminationReason" nillable="true" type="tns:terminationReasonDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
       <xs:complexType name="createOrUpdateCustomFieldTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="customField" type="tns:customFieldTemplateDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateCustomFieldTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeTerminationReason">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="terminationReasonCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeTerminationReasonResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
@@ -43853,26 +44089,6 @@
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="updateUser">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="user" type="tns:userDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateUserResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateOccTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="occTemplate" type="tns:occTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateOccTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="listPermissions">
         <xs:sequence/>
       </xs:complexType>
@@ -43893,6 +44109,16 @@
       <xs:complexType name="Permissions">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="permission" nillable="true" type="tns:permissionDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createTerminationReason">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="terminationReason" type="tns:terminationReasonDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createTerminationReasonResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeCustomFieldTemplate">
@@ -44040,37 +44266,6 @@
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
       </xs:complexType>
-      <xs:complexType name="createOrUpdateOccTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="occTemplate" type="tns:occTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateOccTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeDescriptions">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="descriptionsCode" type="xs:string"/>
-          <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeDescriptionsResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createSeller">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="seller" type="tns:Seller"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createSellerResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="createInvoiceSubCategoryCountry">
         <xs:sequence>
           <xs:element minOccurs="0" name="invoiceSubCategoryCountry" type="tns:invoiceSubCategoryCountryDto"/>
@@ -44081,12 +44276,12 @@
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="createCustomFieldTemplate">
+      <xs:complexType name="createSeller">
         <xs:sequence>
-          <xs:element minOccurs="0" name="customField" type="tns:customFieldTemplateDto"/>
+          <xs:element minOccurs="0" name="seller" type="tns:Seller"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="createCustomFieldTemplateResponse">
+      <xs:complexType name="createSellerResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
@@ -44111,26 +44306,6 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="createInvoiceSubCategory">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="invoiceSubCategory" type="tns:invoiceSubCategoryDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createInvoiceSubCategoryResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeInvoiceCategory">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="invoiceCategoryCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeInvoiceCategoryResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="createOccTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="occTemplate" type="tns:occTemplateDto"/>
@@ -44151,44 +44326,13 @@
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="updateInvoiceSubCategoryCountry">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="invoiceSubCategoryCountry" type="tns:invoiceSubCategoryCountryDto"/>
-        </xs:sequence>
+      <xs:complexType name="listTerminationReason">
+        <xs:sequence/>
       </xs:complexType>
-      <xs:complexType name="updateInvoiceSubCategoryCountryResponse">
+      <xs:complexType name="listTerminationReasonResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:getTerminationReasonResponse"/>
         </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateDescriptions">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="descriptions" type="tns:catMessagesDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateDescriptionsResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findProvider">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="providerCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findProviderResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getProviderResponse"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getProviderResponse">
-        <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="provider" type="tns:providerDto"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="createOrUpdateCurrency">
         <xs:sequence>
@@ -44196,16 +44340,6 @@
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateCurrencyResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateCurrency">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="currency" type="tns:currencyDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateCurrencyResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
@@ -44299,6 +44433,9 @@
   <wsdl:message name="createOrUpdateRole">
     <wsdl:part element="ns1:createOrUpdateRole" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createTerminationReasonResponse">
+    <wsdl:part element="ns1:createTerminationReasonResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findInvoiceSubCategoryResponse">
     <wsdl:part element="ns1:findInvoiceSubCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -44371,8 +44508,14 @@
   <wsdl:message name="findCurrencyResponse">
     <wsdl:part element="ns1:findCurrencyResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="removeTerminationReasonResponse">
+    <wsdl:part element="ns1:removeTerminationReasonResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createOrUpdateInvoiceSubCategoryCountry">
     <wsdl:part element="ns1:createOrUpdateInvoiceSubCategoryCountry" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateTerminationReason">
+    <wsdl:part element="ns1:updateTerminationReason" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeSellerResponse">
     <wsdl:part element="ns1:removeSellerResponse" name="parameters"></wsdl:part>
@@ -44383,11 +44526,11 @@
   <wsdl:message name="removeInvoiceSubCategoryCountryResponse">
     <wsdl:part element="ns1:removeInvoiceSubCategoryCountryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeLanguageResponse">
-    <wsdl:part element="ns1:removeLanguageResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createOrUpdateInvoiceSubCategoryCountryResponse">
     <wsdl:part element="ns1:createOrUpdateInvoiceSubCategoryCountryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeLanguageResponse">
+    <wsdl:part element="ns1:removeLanguageResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="listTaxesResponse">
     <wsdl:part element="ns1:listTaxesResponse" name="parameters"></wsdl:part>
@@ -44400,6 +44543,9 @@
   </wsdl:message>
   <wsdl:message name="createOrUpdateProviderResponse">
     <wsdl:part element="ns1:createOrUpdateProviderResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listTerminationReasonResponse">
+    <wsdl:part element="ns1:listTerminationReasonResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createInvoiceCategoryResponse">
     <wsdl:part element="ns1:createInvoiceCategoryResponse" name="parameters"></wsdl:part>
@@ -44434,14 +44580,17 @@
   <wsdl:message name="findSellerResponse">
     <wsdl:part element="ns1:findSellerResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createTerminationReason">
+    <wsdl:part element="ns1:createTerminationReason" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="updateProvider">
     <wsdl:part element="ns1:updateProvider" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findCalendar">
-    <wsdl:part element="ns1:findCalendar" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createOrUpdateUser">
     <wsdl:part element="ns1:createOrUpdateUser" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findCalendar">
+    <wsdl:part element="ns1:findCalendar" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdateCalendar">
     <wsdl:part element="ns1:createOrUpdateCalendar" name="parameters"></wsdl:part>
@@ -44454,6 +44603,9 @@
   </wsdl:message>
   <wsdl:message name="updateProviderResponse">
     <wsdl:part element="ns1:updateProviderResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateTerminationReasonResponse">
+    <wsdl:part element="ns1:updateTerminationReasonResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdateLanguage">
     <wsdl:part element="ns1:createOrUpdateLanguage" name="parameters"></wsdl:part>
@@ -44491,11 +44643,14 @@
   <wsdl:message name="updateDescriptions">
     <wsdl:part element="ns1:updateDescriptions" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateUserResponse">
+    <wsdl:part element="ns1:createOrUpdateUserResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeTax">
     <wsdl:part element="ns1:removeTax" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateUserResponse">
-    <wsdl:part element="ns1:createOrUpdateUserResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="findTerminationReason">
+    <wsdl:part element="ns1:findTerminationReason" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateUser">
     <wsdl:part element="ns1:updateUser" name="parameters"></wsdl:part>
@@ -44506,11 +44661,11 @@
   <wsdl:message name="indexResponse">
     <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateInvoiceSubCategoryCountry">
-    <wsdl:part element="ns1:updateInvoiceSubCategoryCountry" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeCustomFieldTemplateResponse">
     <wsdl:part element="ns1:removeCustomFieldTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateInvoiceSubCategoryCountry">
+    <wsdl:part element="ns1:updateInvoiceSubCategoryCountry" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="index">
     <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
@@ -44578,6 +44733,9 @@
   <wsdl:message name="updateCustomFieldTemplateResponse">
     <wsdl:part element="ns1:updateCustomFieldTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="findTerminationReasonResponse">
+    <wsdl:part element="ns1:findTerminationReasonResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createOrUpdateOccTemplate">
     <wsdl:part element="ns1:createOrUpdateOccTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -44598,6 +44756,9 @@
   </wsdl:message>
   <wsdl:message name="createDescriptions">
     <wsdl:part element="ns1:createDescriptions" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateTerminationReason">
+    <wsdl:part element="ns1:createOrUpdateTerminationReason" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findInvoiceSubCategory">
     <wsdl:part element="ns1:findInvoiceSubCategory" name="parameters"></wsdl:part>
@@ -44689,6 +44850,9 @@
   <wsdl:message name="findBillingCycle">
     <wsdl:part element="ns1:findBillingCycle" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="removeTerminationReason">
+    <wsdl:part element="ns1:removeTerminationReason" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="updateInvoiceSubCategoryCountryResponse">
     <wsdl:part element="ns1:updateInvoiceSubCategoryCountryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -44749,20 +44913,26 @@
   <wsdl:message name="updateInvoiceSubCategoryResponse">
     <wsdl:part element="ns1:updateInvoiceSubCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeInvoiceSubCategoryResponse">
-    <wsdl:part element="ns1:removeInvoiceSubCategoryResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="listSellerResponse">
     <wsdl:part element="ns1:listSellerResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="removeInvoiceSubCategoryResponse">
+    <wsdl:part element="ns1:removeInvoiceSubCategoryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="listSeller">
     <wsdl:part element="ns1:listSeller" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateTerminationReasonResponse">
+    <wsdl:part element="ns1:createOrUpdateTerminationReasonResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateDescriptionsResponse">
     <wsdl:part element="ns1:updateDescriptionsResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createUserResponse">
     <wsdl:part element="ns1:createUserResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listTerminationReason">
+    <wsdl:part element="ns1:listTerminationReason" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findCustomerConfigurationResponse">
     <wsdl:part element="ns1:findCustomerConfigurationResponse" name="parameters"></wsdl:part>
@@ -44907,6 +45077,10 @@
       <wsdl:input message="ns1:findInvoiceSubCategoryCountry" name="findInvoiceSubCategoryCountry"></wsdl:input>
       <wsdl:output message="ns1:findInvoiceSubCategoryCountryResponse" name="findInvoiceSubCategoryCountryResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateTerminationReason">
+      <wsdl:input message="ns1:updateTerminationReason" name="updateTerminationReason"></wsdl:input>
+      <wsdl:output message="ns1:updateTerminationReasonResponse" name="updateTerminationReasonResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateTax">
       <wsdl:input message="ns1:createOrUpdateTax" name="createOrUpdateTax"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateTaxResponse" name="createOrUpdateTaxResponse"></wsdl:output>
@@ -45007,17 +45181,9 @@
       <wsdl:input message="ns1:index" name="index"></wsdl:input>
       <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="listSeller">
-      <wsdl:input message="ns1:listSeller" name="listSeller"></wsdl:input>
-      <wsdl:output message="ns1:listSellerResponse" name="listSellerResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="listTaxes">
       <wsdl:input message="ns1:listTaxes" name="listTaxes"></wsdl:input>
       <wsdl:output message="ns1:listTaxesResponse" name="listTaxesResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdateUser">
-      <wsdl:input message="ns1:createOrUpdateUser" name="createOrUpdateUser"></wsdl:input>
-      <wsdl:output message="ns1:createOrUpdateUserResponse" name="createOrUpdateUserResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="removeRole">
       <wsdl:input message="ns1:removeRole" name="removeRole"></wsdl:input>
@@ -45031,21 +45197,9 @@
       <wsdl:input message="ns1:createOrUpdateBillingCycle" name="createOrUpdateBillingCycle"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateBillingCycleResponse" name="createOrUpdateBillingCycleResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateInvoiceSubCategory">
-      <wsdl:input message="ns1:updateInvoiceSubCategory" name="updateInvoiceSubCategory"></wsdl:input>
-      <wsdl:output message="ns1:updateInvoiceSubCategoryResponse" name="updateInvoiceSubCategoryResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="findCountry">
       <wsdl:input message="ns1:findCountry" name="findCountry"></wsdl:input>
       <wsdl:output message="ns1:findCountryResponse" name="findCountryResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createLanguage">
-      <wsdl:input message="ns1:createLanguage" name="createLanguage"></wsdl:input>
-      <wsdl:output message="ns1:createLanguageResponse" name="createLanguageResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createCurrency">
-      <wsdl:input message="ns1:createCurrency" name="createCurrency"></wsdl:input>
-      <wsdl:output message="ns1:createCurrencyResponse" name="createCurrencyResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="removeCalendar">
       <wsdl:input message="ns1:removeCalendar" name="removeCalendar"></wsdl:input>
@@ -45067,9 +45221,85 @@
       <wsdl:input message="ns1:findBillingCycle" name="findBillingCycle"></wsdl:input>
       <wsdl:output message="ns1:findBillingCycleResponse" name="findBillingCycleResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateUser">
+      <wsdl:input message="ns1:updateUser" name="updateUser"></wsdl:input>
+      <wsdl:output message="ns1:updateUserResponse" name="updateUserResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateOccTemplate">
+      <wsdl:input message="ns1:updateOccTemplate" name="updateOccTemplate"></wsdl:input>
+      <wsdl:output message="ns1:updateOccTemplateResponse" name="updateOccTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateTerminationReason">
+      <wsdl:input message="ns1:createOrUpdateTerminationReason" name="createOrUpdateTerminationReason"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateTerminationReasonResponse" name="createOrUpdateTerminationReasonResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateOccTemplate">
+      <wsdl:input message="ns1:createOrUpdateOccTemplate" name="createOrUpdateOccTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateOccTemplateResponse" name="createOrUpdateOccTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeDescriptions">
+      <wsdl:input message="ns1:removeDescriptions" name="removeDescriptions"></wsdl:input>
+      <wsdl:output message="ns1:removeDescriptionsResponse" name="removeDescriptionsResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createCustomFieldTemplate">
+      <wsdl:input message="ns1:createCustomFieldTemplate" name="createCustomFieldTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createCustomFieldTemplateResponse" name="createCustomFieldTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createInvoiceSubCategory">
+      <wsdl:input message="ns1:createInvoiceSubCategory" name="createInvoiceSubCategory"></wsdl:input>
+      <wsdl:output message="ns1:createInvoiceSubCategoryResponse" name="createInvoiceSubCategoryResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeInvoiceCategory">
+      <wsdl:input message="ns1:removeInvoiceCategory" name="removeInvoiceCategory"></wsdl:input>
+      <wsdl:output message="ns1:removeInvoiceCategoryResponse" name="removeInvoiceCategoryResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateInvoiceSubCategoryCountry">
+      <wsdl:input message="ns1:updateInvoiceSubCategoryCountry" name="updateInvoiceSubCategoryCountry"></wsdl:input>
+      <wsdl:output message="ns1:updateInvoiceSubCategoryCountryResponse" name="updateInvoiceSubCategoryCountryResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateDescriptions">
+      <wsdl:input message="ns1:createOrUpdateDescriptions" name="createOrUpdateDescriptions"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateDescriptionsResponse" name="createOrUpdateDescriptionsResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findProvider">
+      <wsdl:input message="ns1:findProvider" name="findProvider"></wsdl:input>
+      <wsdl:output message="ns1:findProviderResponse" name="findProviderResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCurrency">
+      <wsdl:input message="ns1:updateCurrency" name="updateCurrency"></wsdl:input>
+      <wsdl:output message="ns1:updateCurrencyResponse" name="updateCurrencyResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listSeller">
+      <wsdl:input message="ns1:listSeller" name="listSeller"></wsdl:input>
+      <wsdl:output message="ns1:listSellerResponse" name="listSellerResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateUser">
+      <wsdl:input message="ns1:createOrUpdateUser" name="createOrUpdateUser"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateUserResponse" name="createOrUpdateUserResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateInvoiceSubCategory">
+      <wsdl:input message="ns1:updateInvoiceSubCategory" name="updateInvoiceSubCategory"></wsdl:input>
+      <wsdl:output message="ns1:updateInvoiceSubCategoryResponse" name="updateInvoiceSubCategoryResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createLanguage">
+      <wsdl:input message="ns1:createLanguage" name="createLanguage"></wsdl:input>
+      <wsdl:output message="ns1:createLanguageResponse" name="createLanguageResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createCurrency">
+      <wsdl:input message="ns1:createCurrency" name="createCurrency"></wsdl:input>
+      <wsdl:output message="ns1:createCurrencyResponse" name="createCurrencyResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findTerminationReason">
+      <wsdl:input message="ns1:findTerminationReason" name="findTerminationReason"></wsdl:input>
+      <wsdl:output message="ns1:findTerminationReasonResponse" name="findTerminationReasonResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateCustomFieldTemplate">
       <wsdl:input message="ns1:createOrUpdateCustomFieldTemplate" name="createOrUpdateCustomFieldTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateCustomFieldTemplateResponse" name="createOrUpdateCustomFieldTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeTerminationReason">
+      <wsdl:input message="ns1:removeTerminationReason" name="removeTerminationReason"></wsdl:input>
+      <wsdl:output message="ns1:removeTerminationReasonResponse" name="removeTerminationReasonResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="findCurrency">
       <wsdl:input message="ns1:findCurrency" name="findCurrency"></wsdl:input>
@@ -45079,17 +45309,13 @@
       <wsdl:input message="ns1:updateDescriptions" name="updateDescriptions"></wsdl:input>
       <wsdl:output message="ns1:updateDescriptionsResponse" name="updateDescriptionsResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateUser">
-      <wsdl:input message="ns1:updateUser" name="updateUser"></wsdl:input>
-      <wsdl:output message="ns1:updateUserResponse" name="updateUserResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateOccTemplate">
-      <wsdl:input message="ns1:updateOccTemplate" name="updateOccTemplate"></wsdl:input>
-      <wsdl:output message="ns1:updateOccTemplateResponse" name="updateOccTemplateResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="listPermissions">
       <wsdl:input message="ns1:listPermissions" name="listPermissions"></wsdl:input>
       <wsdl:output message="ns1:listPermissionsResponse" name="listPermissionsResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createTerminationReason">
+      <wsdl:input message="ns1:createTerminationReason" name="createTerminationReason"></wsdl:input>
+      <wsdl:output message="ns1:createTerminationReasonResponse" name="createTerminationReasonResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="removeCustomFieldTemplate">
       <wsdl:input message="ns1:removeCustomFieldTemplate" name="removeCustomFieldTemplate"></wsdl:input>
@@ -45123,37 +45349,17 @@
       <wsdl:input message="ns1:findCustomerConfiguration" name="findCustomerConfiguration"></wsdl:input>
       <wsdl:output message="ns1:findCustomerConfigurationResponse" name="findCustomerConfigurationResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createOrUpdateOccTemplate">
-      <wsdl:input message="ns1:createOrUpdateOccTemplate" name="createOrUpdateOccTemplate"></wsdl:input>
-      <wsdl:output message="ns1:createOrUpdateOccTemplateResponse" name="createOrUpdateOccTemplateResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="removeDescriptions">
-      <wsdl:input message="ns1:removeDescriptions" name="removeDescriptions"></wsdl:input>
-      <wsdl:output message="ns1:removeDescriptionsResponse" name="removeDescriptionsResponse"></wsdl:output>
+    <wsdl:operation name="createInvoiceSubCategoryCountry">
+      <wsdl:input message="ns1:createInvoiceSubCategoryCountry" name="createInvoiceSubCategoryCountry"></wsdl:input>
+      <wsdl:output message="ns1:createInvoiceSubCategoryCountryResponse" name="createInvoiceSubCategoryCountryResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createSeller">
       <wsdl:input message="ns1:createSeller" name="createSeller"></wsdl:input>
       <wsdl:output message="ns1:createSellerResponse" name="createSellerResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createInvoiceSubCategoryCountry">
-      <wsdl:input message="ns1:createInvoiceSubCategoryCountry" name="createInvoiceSubCategoryCountry"></wsdl:input>
-      <wsdl:output message="ns1:createInvoiceSubCategoryCountryResponse" name="createInvoiceSubCategoryCountryResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createCustomFieldTemplate">
-      <wsdl:input message="ns1:createCustomFieldTemplate" name="createCustomFieldTemplate"></wsdl:input>
-      <wsdl:output message="ns1:createCustomFieldTemplateResponse" name="createCustomFieldTemplateResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="findCustomFieldTemplate">
       <wsdl:input message="ns1:findCustomFieldTemplate" name="findCustomFieldTemplate"></wsdl:input>
       <wsdl:output message="ns1:findCustomFieldTemplateResponse" name="findCustomFieldTemplateResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createInvoiceSubCategory">
-      <wsdl:input message="ns1:createInvoiceSubCategory" name="createInvoiceSubCategory"></wsdl:input>
-      <wsdl:output message="ns1:createInvoiceSubCategoryResponse" name="createInvoiceSubCategoryResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="removeInvoiceCategory">
-      <wsdl:input message="ns1:removeInvoiceCategory" name="removeInvoiceCategory"></wsdl:input>
-      <wsdl:output message="ns1:removeInvoiceCategoryResponse" name="removeInvoiceCategoryResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createOccTemplate">
       <wsdl:input message="ns1:createOccTemplate" name="createOccTemplate"></wsdl:input>
@@ -45163,25 +45369,13 @@
       <wsdl:input message="ns1:updateCalendar" name="updateCalendar"></wsdl:input>
       <wsdl:output message="ns1:updateCalendarResponse" name="updateCalendarResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateInvoiceSubCategoryCountry">
-      <wsdl:input message="ns1:updateInvoiceSubCategoryCountry" name="updateInvoiceSubCategoryCountry"></wsdl:input>
-      <wsdl:output message="ns1:updateInvoiceSubCategoryCountryResponse" name="updateInvoiceSubCategoryCountryResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdateDescriptions">
-      <wsdl:input message="ns1:createOrUpdateDescriptions" name="createOrUpdateDescriptions"></wsdl:input>
-      <wsdl:output message="ns1:createOrUpdateDescriptionsResponse" name="createOrUpdateDescriptionsResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="findProvider">
-      <wsdl:input message="ns1:findProvider" name="findProvider"></wsdl:input>
-      <wsdl:output message="ns1:findProviderResponse" name="findProviderResponse"></wsdl:output>
+    <wsdl:operation name="listTerminationReason">
+      <wsdl:input message="ns1:listTerminationReason" name="listTerminationReason"></wsdl:input>
+      <wsdl:output message="ns1:listTerminationReasonResponse" name="listTerminationReasonResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createOrUpdateCurrency">
       <wsdl:input message="ns1:createOrUpdateCurrency" name="createOrUpdateCurrency"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateCurrencyResponse" name="createOrUpdateCurrencyResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateCurrency">
-      <wsdl:input message="ns1:updateCurrency" name="updateCurrency"></wsdl:input>
-      <wsdl:output message="ns1:updateCurrencyResponse" name="updateCurrencyResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createOrUpdateInvoiceCategory">
       <wsdl:input message="ns1:createOrUpdateInvoiceCategory" name="createOrUpdateInvoiceCategory"></wsdl:input>
@@ -52496,7 +52690,70 @@
          </user>\r
       </ws:updateUser>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateUser"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="8c2affeb-ab12-43ad-adde-ed28dba3be5d" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://192.168.10.14:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://192.168.10.14:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateUser"/></con:call></con:operation><con:operation id="3650d467-c533-47f7-8105-cc106506610b" isOneWay="false" action="" name="updateTerminationReason" bindingOperationName="updateTerminationReason" type="Request-Response" outputName="updateTerminationReasonResponse" inputName="updateTerminationReason" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5cce520a-0c52-4df9-8f5d-031b0cf6ce61" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateTerminationReason>\r
+         <!--Optional:-->\r
+         <terminationReason code="?">\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+            <applyAgreement>?</applyAgreement>\r
+            <applyReimbursment>?</applyReimbursment>\r
+            <applyTerminationCharges>?</applyTerminationCharges>\r
+         </terminationReason>\r
+      </ws:updateTerminationReason>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateTerminationReason"/></con:call></con:operation><con:operation id="9fe247b5-090e-4540-8ca3-2f05cd1d19b5" isOneWay="false" action="" name="createOrUpdateTerminationReason" bindingOperationName="createOrUpdateTerminationReason" type="Request-Response" outputName="createOrUpdateTerminationReasonResponse" inputName="createOrUpdateTerminationReason" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="7a94ac4d-2a53-47e1-a21f-468ae2a89dc4" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateTerminationReason>\r
+         <!--Optional:-->\r
+         <terminationReason code="?">\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+            <applyAgreement>?</applyAgreement>\r
+            <applyReimbursment>?</applyReimbursment>\r
+            <applyTerminationCharges>?</applyTerminationCharges>\r
+         </terminationReason>\r
+      </ws:createOrUpdateTerminationReason>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateTerminationReason"/></con:call></con:operation><con:operation id="f91f8efc-b446-46bd-8183-edd57d848309" isOneWay="false" action="" name="findTerminationReason" bindingOperationName="findTerminationReason" type="Request-Response" outputName="findTerminationReasonResponse" inputName="findTerminationReason" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="23263f16-5bc4-4b6c-987f-1a9c20dfee95" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findTerminationReason>\r
+         <!--Optional:-->\r
+         <terminationReasonCode>?</terminationReasonCode>\r
+      </ws:findTerminationReason>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findTerminationReason"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="d1d97a0b-ad7f-414e-beca-76cc7f5a0af1" isOneWay="false" action="" name="removeTerminationReason" bindingOperationName="removeTerminationReason" type="Request-Response" outputName="removeTerminationReasonResponse" inputName="removeTerminationReason" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="9e9113a2-3b49-4e14-a5d7-7dc89cb5deed" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeTerminationReason>\r
+         <!--Optional:-->\r
+         <terminationReasonCode>?</terminationReasonCode>\r
+      </ws:removeTerminationReason>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeTerminationReason"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="94da0ab9-313a-41c1-8dca-f2e2982b1a13" isOneWay="false" action="" name="createTerminationReason" bindingOperationName="createTerminationReason" type="Request-Response" outputName="createTerminationReasonResponse" inputName="createTerminationReason" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5bbc1e21-c081-4a30-a72e-57b20a320617" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createTerminationReason>\r
+         <!--Optional:-->\r
+         <terminationReason code="?">\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+            <applyAgreement>?</applyAgreement>\r
+            <applyReimbursment>?</applyReimbursment>\r
+            <applyTerminationCharges>?</applyTerminationCharges>\r
+         </terminationReason>\r
+      </ws:createTerminationReason>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createTerminationReason"/></con:call></con:operation><con:operation id="e2a9e6ad-2b87-423f-8bec-7ee09ae4d7d8" isOneWay="false" action="" name="listTerminationReason" bindingOperationName="listTerminationReason" type="Request-Response" outputName="listTerminationReasonResponse" inputName="listTerminationReason" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="30fb68b9-d74d-49f6-b7a8-689a2660c21f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:listTerminationReason/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listTerminationReason"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="8c2affeb-ab12-43ad-adde-ed28dba3be5d" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://192.168.10.14:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://192.168.10.14:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://192.168.10.14:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -54814,7 +55071,7 @@
          <username>${#TestSuite#ticket}_${#TestSuite#index}_Username.Test2</username>
       </ws:findUser>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="e4fac04c-e371-493e-9a0c-aafc5ec9c7e7" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeUser"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="delete UserRole1" id="2e1820f8-1e08-44e0-b45e-36d1d454f7b3"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>removeUser</con:operation><con:request name="delete User1" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="ccd77086-b842-4715-a281-48a79d776b69"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="e4fac04c-e371-493e-9a0c-aafc5ec9c7e7" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeUser"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="delete UserRole1" id="2e1820f8-1e08-44e0-b45e-36d1d454f7b3"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>removeUser</con:operation><con:request name="delete UserRole1" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="ccd77086-b842-4715-a281-48a79d776b69"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeUser>
@@ -55998,7 +56255,7 @@
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b3e53013-5eff-4d27-b542-3d1a725be8d1"/><con:assertion type="Simple Contains" id="0cbeaf3b-e923-4132-b89b-b0c7e545d1b9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="49381e57-6bf6-42c1-ae34-174ed4c91372" name="Contains 1"><con:configuration><token>
-</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CDUD BillingCycle" searchProperties="true" id="f303d279-0322-4d86-8507-59e69cc381f4"><con:settings/><con:testStep type="request" name="create BillingCycle with All Vals" id="96dfa3a4-5c23-410d-8b99-f666687abf10"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createBillingCycle</con:operation><con:request name="create BillingCycle with All Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7852fbd9-87ad-43f3-a3e2-d34424821239"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD BillingCycle" searchProperties="true" id="f303d279-0322-4d86-8507-59e69cc381f4"><con:settings/><con:testStep type="request" name="create BillingCycle with All Vals" id="96dfa3a4-5c23-410d-8b99-f666687abf10"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createBillingCycle</con:operation><con:request name="create BillingCycle with All Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7852fbd9-87ad-43f3-a3e2-d34424821239"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBillingCycle>
@@ -56409,7 +56666,113 @@
          <invoiceSubCategoryCode>${#TestSuite#ticket}_${#TestSuite#index}_InvSubCAT2</invoiceSubCategoryCode>
       </ws:findInvoiceSubCategory>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="4349fa79-c42e-46fb-874d-33457ea3a200" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findInvoiceSubCategory"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="3122e502-eb78-47f1-a99f-a28df190e42a" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD Module" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Module with min req Vals" id="55133d2c-eb26-4fbd-9512-a03a592bbc60"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create Module with min req Vals" id="26fadc13-9fcd-4022-a898-007cee426e83"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="4349fa79-c42e-46fb-874d-33457ea3a200" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findInvoiceSubCategory"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD TerminationReason" searchProperties="true" id="ccdfdcb4-85a8-478c-90c4-abe02ca7bd00"><con:settings/><con:testStep type="request" name="create TerminationReason with All Vals" id="a9aee4a7-0700-4e7f-b732-911349da6183"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createTerminationReason</con:operation><con:request name="create TerminationReason with All Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7852fbd9-87ad-43f3-a3e2-d34424821239"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <!--Optional:-->
+      <ws:createTerminationReason>
+         <!--Optional:-->
+         <terminationReason code="${#TestSuite#ticket}_${#TestSuite#index}_TR1">
+            <!--Optional:-->
+            <description>${#TestSuite#ticket}_${#TestSuite#index}_TR1</description>
+            <applyAgreement>false</applyAgreement>
+            <applyReimbursment>false</applyReimbursment>
+            <applyTerminationCharges>false</applyTerminationCharges>
+         </terminationReason>
+      </ws:createTerminationReason>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="e37ccf70-ddcb-4fb9-829b-abbcd506beca" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create TerminationReason with min Req Vals" id="18cdf8ca-f398-4c29-8e7c-9f9f1e3cf2b4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createTerminationReason</con:operation><con:request name="create TerminationReason with min Req Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7852fbd9-87ad-43f3-a3e2-d34424821239"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <!--Optional:-->
+      <ws:createTerminationReason>
+         <!--Optional:-->
+         <terminationReason code="${#TestSuite#ticket}_${#TestSuite#index}_TR2">
+            <!--Optional:-->
+            <description>${#TestSuite#ticket}_${#TestSuite#index}_TR2</description>
+            <applyAgreement></applyAgreement>
+            <applyReimbursment></applyReimbursment>
+            <applyTerminationCharges></applyTerminationCharges>
+         </terminationReason>
+      </ws:createTerminationReason>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="e37ccf70-ddcb-4fb9-829b-abbcd506beca" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find create TerminationReason with All Vals" id="187b6e5f-78af-424e-971f-afc51750d9bb"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findTerminationReason</con:operation><con:request name="find create TerminationReason with All Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="9253f456-1202-46bb-95cd-01258e250cb6"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findTerminationReason>
+         <!--Optional:-->
+         <terminationReasonCode>${#TestSuite#ticket}_${#TestSuite#index}_TR1</terminationReasonCode>
+      </ws:findTerminationReason>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="eca3027d-7009-4406-8052-889e2115df90" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find create TerminationReason with min Req Vals" id="67ea956f-5889-47f2-835f-0d08036bc853"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findTerminationReason</con:operation><con:request name="find create TerminationReason with min Req Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="9253f456-1202-46bb-95cd-01258e250cb6"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findTerminationReason>
+         <!--Optional:-->
+         <terminationReasonCode>${#TestSuite#ticket}_${#TestSuite#index}_TR2</terminationReasonCode>
+      </ws:findTerminationReason>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="eca3027d-7009-4406-8052-889e2115df90" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update TerminationReason with All Vals" id="c0e060eb-04b4-44d1-84f8-401e5cd332b3"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateTerminationReason</con:operation><con:request name="update TerminationReason with All Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="54b299db-de74-47da-a41f-3e5c8b16df8d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateTerminationReason>
+         <!--Optional:-->
+         <terminationReason code="${#TestSuite#ticket}_${#TestSuite#index}_TR1">
+            <!--Optional:-->
+            <description>${#TestSuite#ticket}_${#TestSuite#index}_TR1</description>
+            <applyAgreement>false</applyAgreement>
+            <applyReimbursment>false</applyReimbursment>
+            <applyTerminationCharges>false</applyTerminationCharges>
+         </terminationReason>
+      </ws:updateTerminationReason>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="8e70b95d-8aae-4766-b241-8235e58a650b" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update TerminationReason with min Req Vals" id="e2e50444-2f3d-448b-97a8-345e7e1e61f2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateTerminationReason</con:operation><con:request name="update TerminationReason with min Req Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="54b299db-de74-47da-a41f-3e5c8b16df8d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateTerminationReason>
+         <!--Optional:-->
+         <terminationReason code="${#TestSuite#ticket}_${#TestSuite#index}_TR2">
+            <!--Optional:-->
+            <description>${#TestSuite#ticket}_${#TestSuite#index}_TR2</description>
+            <applyAgreement></applyAgreement>
+            <applyReimbursment></applyReimbursment>
+            <applyTerminationCharges></applyTerminationCharges>
+         </terminationReason>
+      </ws:updateTerminationReason>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="8e70b95d-8aae-4766-b241-8235e58a650b" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find update TerminationReason with All Vals" id="bc059eab-d4e8-4f6e-87e4-fc5d430cec5a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findTerminationReason</con:operation><con:request name="find update TerminationReason with All Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="9253f456-1202-46bb-95cd-01258e250cb6"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findTerminationReason>
+         <!--Optional:-->
+         <terminationReasonCode>${#TestSuite#ticket}_${#TestSuite#index}_TR1</terminationReasonCode>
+      </ws:findTerminationReason>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="eca3027d-7009-4406-8052-889e2115df90" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find update TerminationReason with min Req Vals" id="94120023-fe9d-4b6a-99f8-a710c74db999"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findTerminationReason</con:operation><con:request name="find update TerminationReason with min Req Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="9253f456-1202-46bb-95cd-01258e250cb6"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findTerminationReason>
+         <!--Optional:-->
+         <terminationReasonCode>${#TestSuite#ticket}_${#TestSuite#index}_TR2</terminationReasonCode>
+      </ws:findTerminationReason>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="eca3027d-7009-4406-8052-889e2115df90" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="delete TerminationReason1" id="a660f5d1-1e2c-40c4-859e-b5efd5b91d12"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>removeTerminationReason</con:operation><con:request name="delete TerminationReason1" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="208831eb-9676-4e46-981a-773ae4691218"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeTerminationReason>
+         <!--Optional:-->
+         <terminationReasonCode>${#TestSuite#ticket}_${#TestSuite#index}_TR2</terminationReasonCode>
+      </ws:removeTerminationReason>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="846b37a3-b474-4653-9ef5-c8fe5883b5a2" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find removed TerminationReason1" id="f5520759-1d3f-4260-80a3-e8a6d958e3cf"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findTerminationReason</con:operation><con:request name="find removed TerminationReason1" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="9253f456-1202-46bb-95cd-01258e250cb6"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findTerminationReason>
+         <!--Optional:-->
+         <terminationReasonCode>${#TestSuite#ticket}_${#TestSuite#index}_TR2</terminationReasonCode>
+      </ws:findTerminationReason>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="eca3027d-7009-4406-8052-889e2115df90" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="3122e502-eb78-47f1-a99f-a28df190e42a" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD Module" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Module with min req Vals" id="55133d2c-eb26-4fbd-9512-a03a592bbc60"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create Module with min req Vals" id="26fadc13-9fcd-4022-a898-007cee426e83"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header />
    <soapenv:Body>
