@@ -28,42 +28,45 @@ import org.meveo.service.script.ScriptInterface;
 @Startup
 @Singleton
 public class ScriptingJob extends Job {
-	
+
 	@Inject
 	ScriptInstanceService scriptInstanceService;
 
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	@Override
+	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+		CustomFieldInstance scriptCFI = jobInstance.getCustomFields().get("ScriptingJob_script");
+		String scriptCode = scriptCFI.getEntityReferenceValue().getCode();
+		Map<String, Object> context = new HashMap<String, Object>();
+		CustomFieldInstance variablesCFI = jobInstance.getCustomFields().get("ScriptingJob_variables");
+		if (variablesCFI != null) {
+			context = variablesCFI.getMapValue();
+		}
+		ScriptInterface script = null;
+		Class<org.meveo.service.script.ScriptInterface> scriptClass = scriptInstanceService.getScriptInterface(currentUser.getProvider(), scriptCode);
+		try {
+			script = scriptClass.newInstance();
+			script.init(context, currentUser.getProvider(), currentUser);
+			script.execute(context, currentUser.getProvider(), currentUser);
+		} catch (Exception e) {
+			log.error("Exception on init/execute script", e);
+			result.registerError("Error in " + scriptCode + " execution :" + e.getMessage());
+		} finally {
+			if (script != null) {
+				log.debug("calling script.finalize ....");
+				script.finalize(context, currentUser.getProvider(), currentUser);
+			}
+		}
+	}
 
-        CustomFieldInstance scriptCFI = jobInstance.getCustomFields().get("ScriptingJob_script");
-        String scriptCode = scriptCFI.getEntityReferenceValue().getCode();
-        Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(currentUser.getProvider(),scriptCode);
-    	if(scriptInterfaceClass==null){
-    		result.registerError("cannot find script with code "+scriptCode);
-    	} else {
-    		try{
-    			ScriptInterface scriptInterface=scriptInterfaceClass.newInstance();
-    			Map<String,Object> context = new HashMap<String,Object>();
-    			CustomFieldInstance variablesCFI = jobInstance.getCustomFields().get("ScriptingJob_variables");
-    			if(variablesCFI!=null){
-    				context = variablesCFI.getMapValue();
-    			}
-    			scriptInterface.execute(context,currentUser.getProvider(),currentUser);	
-    		} catch(Exception e){
-    			result.registerError("Error in "+scriptCode+" execution :"+e.getMessage());
-    		}
-    	}
-    }
+	@Override
+	public JobCategoryEnum getJobCategory() {
+		return JobCategoryEnum.MEDIATION;
+	}
 
-    @Override
-    public JobCategoryEnum getJobCategory() {
-        return JobCategoryEnum.MEDIATION;
-    }
-
-    @Override
-    public Map<String, CustomFieldTemplate> getCustomFields() {
-        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
+	@Override
+	public Map<String, CustomFieldTemplate> getCustomFields() {
+		Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
 		CustomFieldTemplate scriptCF = new CustomFieldTemplate();
 		scriptCF.setCode("ScriptingJob_script");
@@ -74,7 +77,7 @@ public class ScriptingJob extends Job {
 		scriptCF.setEntityClazz(ScriptInstance.class.getName());
 		scriptCF.setValueRequired(true);
 		result.put("ScriptingJob_script", scriptCF);
-		
+
 		CustomFieldTemplate variablesCF = new CustomFieldTemplate();
 		variablesCF.setCode("ScriptingJob_variables");
 		variablesCF.setAccountLevel(AccountLevelEnum.TIMER);
@@ -83,8 +86,8 @@ public class ScriptingJob extends Job {
 		variablesCF.setFieldType(CustomFieldTypeEnum.STRING);
 		variablesCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
 		variablesCF.setValueRequired(false);
-		result.put("ScriptingJob_variables", variablesCF); 
-		
+		result.put("ScriptingJob_variables", variablesCF);
+
 		return result;
-    }
+	}
 }
