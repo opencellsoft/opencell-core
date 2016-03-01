@@ -326,10 +326,18 @@ public class EntityExportImportService implements Serializable {
 
         // If template is marked as exportAllClassesAsFull add to export provider and permission as short version
         if (exportTemplate.isExportAllClassesAsFull()) {
-            if (!Provider.class.isAssignableFrom(clazz) && !exportTemplate.getClassesToExportAsShort().contains(Provider.class)) {
+            if (!Provider.class.isAssignableFrom(clazz)
+                    && (exportTemplate.getClassesToExportAsShort() == null || !exportTemplate.getClassesToExportAsShort().contains(Provider.class))) {
+                if (exportTemplate.getClassesToExportAsShort() == null) {
+                    exportTemplate.setClassesToExportAsShort(new ArrayList<Class<? extends IEntity>>());
+                }
                 exportTemplate.getClassesToExportAsShort().add(Provider.class);
             }
-            if (!Permission.class.isAssignableFrom(clazz) && !exportTemplate.getClassesToExportAsShort().contains(Permission.class)) {
+            if (!Permission.class.isAssignableFrom(clazz)
+                    && (exportTemplate.getClassesToExportAsShort() == null || !exportTemplate.getClassesToExportAsShort().contains(Permission.class))) {
+                if (exportTemplate.getClassesToExportAsShort() == null) {
+                    exportTemplate.setClassesToExportAsShort(new ArrayList<Class<? extends IEntity>>());
+                }
                 exportTemplate.getClassesToExportAsShort().add(Permission.class);
             }
         }

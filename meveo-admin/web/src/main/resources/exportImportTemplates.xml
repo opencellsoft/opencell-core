@@ -65,15 +65,15 @@
         </classesToIgnoreFKNotFound>
     </template>
 
-    <template name="MeveoModule" entityToExport="org.meveo.model.admin.MeveoModule">
+    <template name="MeveoModule" entityToExport="org.meveo.model.module.MeveoModule">
         <classesToExportAsFull>
-            <java-class>org.meveo.model.admin.MeveoModuleItem</java-class>
+            <java-class>org.meveo.model.module.MeveoModuleItem</java-class>
         </classesToExportAsFull>
         <relatedEntities>
             <relatedEntity>
                 <entityClass>org.meveo.model.customEntities.CustomEntityTemplate</entityClass>
                 <selection>select mie from CustomEntityTemplate mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
-                    mi.itemType='CET' and
+                    mi.itemClass='org.meveo.model.customEntities.CustomEntityTemplate' and
                     mi.meveoModule=:meveoModule and mie.provider=:provider
                 </selection>
                 <parameters>
@@ -90,7 +90,7 @@
             <relatedEntity>
                 <entityClass>org.meveo.model.crm.CustomFieldTemplate</entityClass>
                 <selection>select mie from CustomFieldTemplate mie, MeveoModuleItem mi where mie.disabled=false and mie.appliesTo=mi.appliesTo and mie.code=mi.itemCode and
-                    mi.itemType='CFT' and mi.meveoModule=:meveoModule and mie.provider=:provider
+                    mi.itemClass='org.meveo.model.crm.CustomFieldTemplate' and mi.meveoModule=:meveoModule and mie.provider=:provider
                 </selection>
                 <parameters>
                     <entry>
@@ -106,7 +106,8 @@
             <relatedEntity>
                 <entityClass>org.meveo.model.filter.Filter</entityClass>
                 <selection>select mie from Filter mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
-                    mi.itemType='FILTER' and mi.meveoModule=:meveoModule
+                    mi.itemClass='org.meveo.model.filter.Filter' and
+                    mi.meveoModule=:meveoModule
                     and mie.provider=:provider
                 </selection>
                 <parameters>
@@ -123,7 +124,7 @@
             <relatedEntity>
                 <templateName>ScriptInstance with all dependencies</templateName>
                 <selection>select mie from ScriptInstance mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
-                    mi.itemType='SCRIPT' and
+                    mi.itemClass='org.meveo.model.scripts.ScriptInstance' and
                     mi.meveoModule=:meveoModule and mie.provider=:provider
                 </selection>
                 <parameters>
@@ -140,7 +141,8 @@
             <relatedEntity>
                 <entityClass>org.meveo.model.jobs.JobInstance</entityClass>
                 <selection>select mie from JobInstance mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
-                    mi.itemType='JOBINSTANCE' and
+                    mi.itemClass='org.meveo.model.jobs.JobInstance'
+                    and
                     mi.meveoModule=:meveoModule and mie.provider=:provider
                 </selection>
                 <parameters>
@@ -157,8 +159,11 @@
             <relatedEntity>
                 <templateName>Notification with all dependencies</templateName>
                 <selection>select mie from Notification mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
-                    mi.itemType='NOTIFICATION' and
-                    mi.meveoModule=:meveoModule and mie.provider=:provider
+                    (mi.itemClass='org.meveo.model.notification.Notification' or mi.itemClass='org.meveo.model.notification.EmailNotification' or
+                    mi.itemClass='org.meveo.model.notification.InstantMessagingNotification' or mi.itemClass='org.meveo.model.notification.JobTrigger' or
+                    mi.itemClass='org.meveo.model.notification.ScriptNotification' or mi.itemClass='org.meveo.model.notification.WebHook') and
+                    mi.meveoModule=:meveoModule and
+                    mie.provider=:provider
                 </selection>
                 <parameters>
                     <entry>
@@ -172,9 +177,10 @@
                 </parameters>
             </relatedEntity>
             <relatedEntity>
-                <entityClass>org.meveo.model.admin.MeveoModule</entityClass>
+                <entityClass>org.meveo.model.module.MeveoModule</entityClass>
                 <selection>select mie from MeveoModule mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
-                    mi.itemType='SUBMODULE' and
+                    (mi.itemClass='org.meveo.model.module.MeveoModule' or mi.itemClass='org.meveo.model.catalog.BusinessOfferModel' or
+                    mi.itemClass='org.meveo.model.catalog.BusinessServiceModel') and
                     mi.meveoModule=:meveoModule and mie.provider=:provider
                 </selection>
                 <parameters>
@@ -191,7 +197,7 @@
             <relatedEntity>
                 <entityClass>org.meveocrm.model.dwh.MeasurableQuantity</entityClass>
                 <selection>select mie from MeasurableQuantity mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
-                    mi.itemType='MEASURABLEQUANTITIES' and
+                    mi.itemClass='org.meveocrm.model.dwh.MeasurableQuantity' and
                     mi.meveoModule=:meveoModule and mie.provider=:provider
                 </selection>
                 <parameters>
@@ -208,7 +214,8 @@
             <relatedEntity>
                 <entityClass>org.meveocrm.model.dwh.Chart</entityClass>
                 <selection>select mie from Chart mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
-                    mi.itemType='CHART' and mi.meveoModule=:meveoModule
+                    (mi.itemClass='org.meveocrm.model.dwh.BarChart' or
+                    mi.itemClass='org.meveocrm.model.dwh.LineChart' or mi.itemClass='org.meveocrm.model.dwh.PieChart') and mi.meveoModule=:meveoModule
                     and mie.provider=:provider
                 </selection>
                 <parameters>
@@ -223,6 +230,11 @@
                 </parameters>
             </relatedEntity>
         </relatedEntities>
+    </template>
+    <template name="Chart" entityToExport="org.meveocrm.model.dwh.Chart">
+        <classesToExportAsFull>
+            <java-class>org.meveocrm.model.dwh.MeasurableQuantity</java-class>
+        </classesToExportAsFull>
     </template>
     <template name="Calendar" entityToExport="org.meveo.model.catalog.Calendar">
         <classesToExportAsFull>
@@ -259,7 +271,7 @@
         <classesToExportAsFull>
             <java-class>org.meveo.model.catalog.OfferServiceTemplate</java-class>
         </classesToExportAsFull>
-    </template>    
+    </template>
 
     <template name="Users and roles">
         <parameters>
