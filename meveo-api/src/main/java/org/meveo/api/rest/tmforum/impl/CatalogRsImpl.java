@@ -65,7 +65,8 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
                 for (OfferTemplateCategoryDto otcd : offerTemplateCategoryDtos) {
                     Category category = new Category();
                     category.setId(String.valueOf(otcd.getId()));
-                    category.setVersion(String.valueOf(otcd.getVersion()));
+                    //TODO where to get data for version??
+                    //category.setVersion(String.valueOf(otcd.getVersion()));
                     category.setHref(otcd.getHref());
                     category.setName(otcd.getName());
                     category.setDescription(otcd.getDescription());
@@ -113,7 +114,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
             Category category = new Category();
             category.setId(String.valueOf(otcd.getId()));
-            category.setVersion(String.valueOf(otcd.getVersion()));
+            //category.setVersion(String.valueOf(otcd.getVersion()));
             category.setHref(otcd.getHref());
             category.setName(otcd.getName());
             category.setDescription(otcd.getDescription());
