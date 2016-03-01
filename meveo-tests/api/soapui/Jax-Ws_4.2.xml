@@ -20086,39 +20086,12 @@
   <wsdl:import location="http://localhost:8080/meveo/CatalogWs?wsdl=CatalogWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="CatalogWsSoapBinding" type="ns1:CatalogWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-    <wsdl:operation name="removeTriggeredEdr">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="removeTriggeredEdr">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="removeTriggeredEdrResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="removeUsageChargeTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeUsageChargeTemplate">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="removeUsageChargeTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="removeOneShotChargeTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="removeOneShotChargeTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="removeOneShotChargeTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOneShotChargeTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createOneShotChargeTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createOneShotChargeTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -20149,15 +20122,6 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateDiscountPlan">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateDiscountPlan">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateDiscountPlanResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="removeBusinessOfferModel">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeBusinessOfferModel">
@@ -20167,57 +20131,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updatePricePlan">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updatePricePlan">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updatePricePlanResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdatePricePlan">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createOrUpdatePricePlan">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createOrUpdatePricePlanResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdateTriggeredEdr">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createOrUpdateTriggeredEdr">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createOrUpdateTriggeredEdrResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createBusinessOfferModel">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createBusinessOfferModel">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createBusinessOfferModelResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="updateTriggeredEdr">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateTriggeredEdr">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="updateTriggeredEdrResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdateCounterTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createOrUpdateCounterTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createOrUpdateCounterTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -20266,21 +20185,111 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createRecurringChargeTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createRecurringChargeTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createRecurringChargeTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createOrUpdateOfferTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateOfferTemplate">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createOrUpdateOfferTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeTriggeredEdr">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeTriggeredEdr">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeTriggeredEdrResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findOfferTemplateCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findOfferTemplateCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findOfferTemplateCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeOneShotChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeOneShotChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeOneShotChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOneShotChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOneShotChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOneShotChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateDiscountPlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateDiscountPlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateDiscountPlanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updatePricePlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updatePricePlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updatePricePlanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdatePricePlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdatePricePlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdatePricePlanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateTriggeredEdr">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateTriggeredEdr">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateTriggeredEdrResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createBusinessOfferModel">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createBusinessOfferModel">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createBusinessOfferModelResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCounterTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateCounterTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateCounterTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createRecurringChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createRecurringChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createRecurringChargeTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -20374,6 +20383,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateOfferTemplateCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateOfferTemplateCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateOfferTemplateCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="listOneShotChargeTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="listOneShotChargeTemplate">
@@ -20437,6 +20455,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="removeOfferTemplateCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeOfferTemplateCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeOfferTemplateCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeDiscountPlan">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeDiscountPlan">
@@ -20482,6 +20509,24 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateOfferTemplateCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateOfferTemplateCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateOfferTemplateCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOfferTemplateCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOfferTemplateCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOfferTemplateCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findUsageChargeTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findUsageChargeTemplate">
@@ -20491,12 +20536,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateOfferTemplate">
+    <wsdl:operation name="listPricePlanByEventCode">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateOfferTemplate">
+      <wsdl:input name="listPricePlanByEventCode">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="updateOfferTemplateResponse">
+      <wsdl:output name="listPricePlanByEventCodeResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -20509,12 +20554,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="listPricePlanByEventCode">
+    <wsdl:operation name="updateOfferTemplate">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="listPricePlanByEventCode">
+      <wsdl:input name="updateOfferTemplate">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="listPricePlanByEventCodeResponse">
+      <wsdl:output name="updateOfferTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -20614,7 +20659,7 @@
       <xs:element name="GetCounterTemplateResponse" type="tns:getCounterTemplateResponseDto"/>
       <xs:element name="GetDiscountPlanResponse" type="tns:getDiscountPlanResponseDto"/>
       <xs:element name="GetDiscountPlansResponse" type="tns:getDiscountPlansResponseDto"/>
-      <xs:element name="GetOfferTemplateResponse" type="tns:getOfferTemplateResponseDto"/>
+      <xs:element name="GetOfferTemplateResponse" nillable="true" type="xs:anyType"/>
       <xs:element name="GetOneShotChargeTemplateResponse" type="tns:getOneShotChargeTemplateResponseDto"/>
       <xs:element name="GetPricePlanResponse" type="tns:getPricePlanResponseDto"/>
       <xs:element name="GetRecurringChargeTemplateResponse" type="tns:getRecurringChargeTemplateResponseDto"/>
@@ -20622,6 +20667,7 @@
       <xs:element name="GetTriggeredEdrResponse" type="tns:getTriggeredEdrResponseDto"/>
       <xs:element name="GetUsageChargeTemplateResponse" type="tns:getUsageChargeTemplateResponseDto"/>
       <xs:element name="LanguageDescription" type="tns:languageDescriptionDto"/>
+      <xs:element name="OfferCategory" type="tns:offerTemplateCategoryDto"/>
       <xs:element name="OfferTemplate" type="tns:offerTemplateDto"/>
       <xs:element name="OneShotChargeTemplate" nillable="true" type="xs:anyType"/>
       <xs:element name="OneShotChargeTemplateList" type="tns:oneShotChargeTemplateWithPriceListDto"/>
@@ -20643,6 +20689,8 @@
       <xs:element name="createOfferFromBOM" type="tns:createOfferFromBOM"/>
       <xs:element name="createOfferFromBOMResponse" type="tns:createOfferFromBOMResponse"/>
       <xs:element name="createOfferTemplate" type="tns:createOfferTemplate"/>
+      <xs:element name="createOfferTemplateCategory" type="tns:createOfferTemplateCategory"/>
+      <xs:element name="createOfferTemplateCategoryResponse" type="tns:createOfferTemplateCategoryResponse"/>
       <xs:element name="createOfferTemplateResponse" type="tns:createOfferTemplateResponse"/>
       <xs:element name="createOneShotChargeTemplate" type="tns:createOneShotChargeTemplate"/>
       <xs:element name="createOneShotChargeTemplateResponse" type="tns:createOneShotChargeTemplateResponse"/>
@@ -20653,6 +20701,8 @@
       <xs:element name="createOrUpdateDiscountPlan" type="tns:createOrUpdateDiscountPlan"/>
       <xs:element name="createOrUpdateDiscountPlanResponse" type="tns:createOrUpdateDiscountPlanResponse"/>
       <xs:element name="createOrUpdateOfferTemplate" type="tns:createOrUpdateOfferTemplate"/>
+      <xs:element name="createOrUpdateOfferTemplateCategory" type="tns:createOrUpdateOfferTemplateCategory"/>
+      <xs:element name="createOrUpdateOfferTemplateCategoryResponse" type="tns:createOrUpdateOfferTemplateCategoryResponse"/>
       <xs:element name="createOrUpdateOfferTemplateResponse" type="tns:createOrUpdateOfferTemplateResponse"/>
       <xs:element name="createOrUpdateOneShotChargeTemplate" type="tns:createOrUpdateOneShotChargeTemplate"/>
       <xs:element name="createOrUpdateOneShotChargeTemplateResponse" type="tns:createOrUpdateOneShotChargeTemplateResponse"/>
@@ -20685,6 +20735,8 @@
       <xs:element name="findDiscountPlan" type="tns:findDiscountPlan"/>
       <xs:element name="findDiscountPlanResponse" type="tns:findDiscountPlanResponse"/>
       <xs:element name="findOfferTemplate" type="tns:findOfferTemplate"/>
+      <xs:element name="findOfferTemplateCategory" type="tns:findOfferTemplateCategory"/>
+      <xs:element name="findOfferTemplateCategoryResponse" type="tns:findOfferTemplateCategoryResponse"/>
       <xs:element name="findOfferTemplateResponse" type="tns:findOfferTemplateResponse"/>
       <xs:element name="findOneShotChargeTemplate" type="tns:findOneShotChargeTemplate"/>
       <xs:element name="findOneShotChargeTemplateResponse" type="tns:findOneShotChargeTemplateResponse"/>
@@ -20713,6 +20765,8 @@
       <xs:element name="removeDiscountPlan" type="tns:removeDiscountPlan"/>
       <xs:element name="removeDiscountPlanResponse" type="tns:removeDiscountPlanResponse"/>
       <xs:element name="removeOfferTemplate" type="tns:removeOfferTemplate"/>
+      <xs:element name="removeOfferTemplateCategory" type="tns:removeOfferTemplateCategory"/>
+      <xs:element name="removeOfferTemplateCategoryResponse" type="tns:removeOfferTemplateCategoryResponse"/>
       <xs:element name="removeOfferTemplateResponse" type="tns:removeOfferTemplateResponse"/>
       <xs:element name="removeOneShotChargeTemplate" type="tns:removeOneShotChargeTemplate"/>
       <xs:element name="removeOneShotChargeTemplateResponse" type="tns:removeOneShotChargeTemplateResponse"/>
@@ -20733,6 +20787,8 @@
       <xs:element name="updateDiscountPlan" type="tns:updateDiscountPlan"/>
       <xs:element name="updateDiscountPlanResponse" type="tns:updateDiscountPlanResponse"/>
       <xs:element name="updateOfferTemplate" type="tns:updateOfferTemplate"/>
+      <xs:element name="updateOfferTemplateCategory" type="tns:updateOfferTemplateCategory"/>
+      <xs:element name="updateOfferTemplateCategoryResponse" type="tns:updateOfferTemplateCategoryResponse"/>
       <xs:element name="updateOfferTemplateResponse" type="tns:updateOfferTemplateResponse"/>
       <xs:element name="updateOneShotChargeTemplate" type="tns:updateOneShotChargeTemplate"/>
       <xs:element name="updateOneShotChargeTemplateResponse" type="tns:updateOneShotChargeTemplateResponse"/>
@@ -20746,23 +20802,6 @@
       <xs:element name="updateTriggeredEdrResponse" type="tns:updateTriggeredEdrResponse"/>
       <xs:element name="updateUsageChargeTemplate" type="tns:updateUsageChargeTemplate"/>
       <xs:element name="updateUsageChargeTemplateResponse" type="tns:updateUsageChargeTemplateResponse"/>
-      <xs:complexType name="removeTriggeredEdr">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="triggeredEdrCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeTriggeredEdrResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="ActionStatus">
-        <xs:sequence>
-          <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element minOccurs="0" name="errorCode" type="tns:meveoApiErrorCodeEnum"/>
-          <xs:element name="message" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="removeUsageChargeTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="usageChargeTemplateCode" type="xs:string"/>
@@ -20773,24 +20812,11 @@
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="removeOneShotChargeTemplate">
+      <xs:complexType name="ActionStatus">
         <xs:sequence>
-          <xs:element minOccurs="0" name="oneShotChargeTemplateCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeOneShotChargeTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeRecurringChargeTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="recurringChargeTemplateCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeRecurringChargeTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element minOccurs="0" name="errorCode" type="tns:meveoApiErrorCodeEnum"/>
+          <xs:element name="message" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateBusinessOfferModel">
@@ -20818,124 +20844,12 @@
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="createOneShotChargeTemplate">
+      <xs:complexType name="removeRecurringChargeTemplate">
         <xs:sequence>
-          <xs:element minOccurs="0" name="oneShotChargeTemplate" type="tns:oneShotChargeTemplateDto"/>
+          <xs:element minOccurs="0" name="recurringChargeTemplateCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="oneShotChargeTemplateDto">
-        <xs:complexContent>
-          <xs:extension base="tns:chargeTemplateDto">
-            <xs:sequence>
-              <xs:element name="oneShotChargeTemplateType" type="xs:int"/>
-              <xs:element minOccurs="0" name="immediateInvoicing" type="xs:boolean"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="chargeTemplateDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element name="invoiceSubCategory" type="xs:string"/>
-              <xs:element name="disabled" type="xs:boolean"/>
-              <xs:element minOccurs="0" name="amountEditable" type="xs:boolean"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
-              <xs:element minOccurs="0" name="inputUnitDescription" type="xs:string"/>
-              <xs:element minOccurs="0" name="ratingUnitDescription" type="xs:string"/>
-              <xs:element minOccurs="0" name="unitMultiplicator" type="xs:decimal"/>
-              <xs:element name="unitNbDecimal" type="xs:int"/>
-              <xs:element minOccurs="0" name="roundingModeDtoEnum" type="tns:roundingModeDtoEnum"/>
-              <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
-              <xs:element minOccurs="0" name="triggeredEdrs" type="tns:triggeredEdrTemplatesDto"/>
-            </xs:sequence>
-            <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="description" type="xs:string" use="required"/>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="languageDescriptionDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
-          <xs:element minOccurs="0" name="description" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="customFieldsDto">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="customField" nillable="true" type="tns:customFieldDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="customFieldDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="stringValue" type="xs:string"/>
-          <xs:element minOccurs="0" name="dateValue" type="xs:dateTime"/>
-          <xs:element minOccurs="0" name="longValue" type="xs:long"/>
-          <xs:element minOccurs="0" name="doubleValue" type="xs:double"/>
-          <xs:element minOccurs="0" name="listValue">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element maxOccurs="unbounded" minOccurs="0" name="value" type="tns:customFieldValueDto"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="mapValue">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
-                  <xs:complexType>
-                    <xs:sequence>
-                      <xs:element minOccurs="0" name="key" type="xs:string"/>
-                      <xs:element minOccurs="0" name="value" type="tns:customFieldValueDto"/>
-                    </xs:sequence>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element minOccurs="0" name="entityReferenceValue" type="tns:entityReferenceDto"/>
-        </xs:sequence>
-        <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="valueDate" type="xs:dateTime"/>
-        <xs:attribute name="valuePeriodStartDate" type="xs:dateTime"/>
-        <xs:attribute name="valuePeriodEndDate" type="xs:dateTime"/>
-        <xs:attribute name="valuePeriodPriority" type="xs:int"/>
-      </xs:complexType>
-      <xs:complexType name="customFieldValueDto">
-        <xs:sequence>
-          <xs:choice minOccurs="0">
-            <xs:element name="dateValue" type="xs:dateTime"/>
-            <xs:element name="doubleValue" type="xs:double"/>
-            <xs:element name="longValue" type="xs:long"/>
-            <xs:element name="stringValue" type="xs:string"/>
-            <xs:element name="entityReferenceValue" type="tns:entityReferenceDto"/>
-          </xs:choice>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="entityReferenceDto">
-        <xs:sequence/>
-        <xs:attribute name="classname" type="xs:string" use="required"/>
-        <xs:attribute name="classnameCode" type="xs:string"/>
-        <xs:attribute name="code" type="xs:string" use="required"/>
-      </xs:complexType>
-      <xs:complexType name="triggeredEdrTemplatesDto">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="triggeredEdr" nillable="true" type="tns:triggeredEdrTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="triggeredEdrTemplateDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="subscriptionEl" type="xs:string"/>
-          <xs:element minOccurs="0" name="conditionEl" type="xs:string"/>
-          <xs:element name="quantityEl" type="xs:string"/>
-          <xs:element minOccurs="0" name="param1El" type="xs:string"/>
-          <xs:element minOccurs="0" name="param2El" type="xs:string"/>
-          <xs:element minOccurs="0" name="param3El" type="xs:string"/>
-          <xs:element minOccurs="0" name="param4El" type="xs:string"/>
-        </xs:sequence>
-        <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string"/>
-      </xs:complexType>
-      <xs:complexType name="createOneShotChargeTemplateResponse">
+      <xs:complexType name="removeRecurringChargeTemplateResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
@@ -20951,9 +20865,10 @@
           <xs:element minOccurs="0" name="serviceTemplates" type="tns:serviceTemplatesDto"/>
           <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
           <xs:element minOccurs="0" name="bomCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="offerTemplateCategoryCode" type="xs:string"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
       </xs:complexType>
       <xs:complexType name="serviceTemplatesDto">
         <xs:sequence>
@@ -20971,7 +20886,7 @@
           <xs:element name="mandatory" type="xs:boolean"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
       </xs:complexType>
       <xs:complexType name="ServiceChargeTemplateRecurrings">
         <xs:sequence>
@@ -21034,62 +20949,64 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="createOfferTemplateResponse">
+      <xs:complexType name="customFieldsDto">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="customField" nillable="true" type="tns:customFieldDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="updateDiscountPlan">
+      <xs:complexType name="customFieldDto">
         <xs:sequence>
-          <xs:element minOccurs="0" name="discountPlan" type="tns:discountPlanDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="discountPlanDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="code" type="xs:string"/>
-          <xs:element minOccurs="0" name="description" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateDiscountPlanResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updatePricePlan">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="pricePlan" type="tns:pricePlanDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="pricePlanDto">
-        <xs:sequence>
-          <xs:element name="eventCode" type="xs:string"/>
-          <xs:element minOccurs="0" name="seller" type="xs:string"/>
-          <xs:element minOccurs="0" name="country" type="xs:string"/>
-          <xs:element minOccurs="0" name="currency" type="xs:string"/>
-          <xs:element minOccurs="0" name="minQuantity" type="xs:decimal"/>
-          <xs:element minOccurs="0" name="maxQuantity" type="xs:decimal"/>
-          <xs:element minOccurs="0" name="offerTemplate" type="xs:string"/>
-          <xs:element minOccurs="0" name="startSubscriptionDate" type="xs:dateTime"/>
-          <xs:element minOccurs="0" name="endSubscriptionDate" type="xs:dateTime"/>
-          <xs:element minOccurs="0" name="startRatingDate" type="xs:dateTime"/>
-          <xs:element minOccurs="0" name="endRatingDate" type="xs:dateTime"/>
-          <xs:element minOccurs="0" name="minSubscriptionAgeInMonth" type="xs:long"/>
-          <xs:element minOccurs="0" name="maxSubscriptionAgeInMonth" type="xs:long"/>
-          <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
-          <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
-          <xs:element minOccurs="0" name="amountWithoutTaxEL" type="xs:string"/>
-          <xs:element minOccurs="0" name="amountWithTaxEL" type="xs:string"/>
-          <xs:element name="priority" type="xs:int"/>
-          <xs:element minOccurs="0" name="criteria1" type="xs:string"/>
-          <xs:element minOccurs="0" name="criteria2" type="xs:string"/>
-          <xs:element minOccurs="0" name="criteria3" type="xs:string"/>
-          <xs:element minOccurs="0" name="criteriaEL" type="xs:string"/>
-          <xs:element minOccurs="0" name="validityCalendarCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="stringValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="dateValue" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="longValue" type="xs:long"/>
+          <xs:element minOccurs="0" name="doubleValue" type="xs:double"/>
+          <xs:element minOccurs="0" name="listValue">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="value" type="tns:customFieldValueDto"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="mapValue">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" name="key" type="xs:string"/>
+                      <xs:element minOccurs="0" name="value" type="tns:customFieldValueDto"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" name="entityReferenceValue" type="tns:entityReferenceDto"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:attribute name="valueDate" type="xs:dateTime"/>
+        <xs:attribute name="valuePeriodStartDate" type="xs:dateTime"/>
+        <xs:attribute name="valuePeriodEndDate" type="xs:dateTime"/>
+        <xs:attribute name="valuePeriodPriority" type="xs:int"/>
       </xs:complexType>
-      <xs:complexType name="updatePricePlanResponse">
+      <xs:complexType name="customFieldValueDto">
+        <xs:sequence>
+          <xs:choice minOccurs="0">
+            <xs:element name="dateValue" type="xs:dateTime"/>
+            <xs:element name="doubleValue" type="xs:double"/>
+            <xs:element name="longValue" type="xs:long"/>
+            <xs:element name="stringValue" type="xs:string"/>
+            <xs:element name="entityReferenceValue" type="tns:entityReferenceDto"/>
+          </xs:choice>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="entityReferenceDto">
+        <xs:sequence/>
+        <xs:attribute name="classname" type="xs:string" use="required"/>
+        <xs:attribute name="classnameCode" type="xs:string"/>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="createOfferTemplateResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
@@ -21104,42 +21021,35 @@
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="createOrUpdatePricePlan">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="pricePlan" type="tns:pricePlanDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdatePricePlanResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateTriggeredEdr">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="triggeredEdrTemplate" type="tns:triggeredEdrTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateTriggeredEdrResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createBusinessOfferModel">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="businessOfferModel" type="tns:businessOfferModelDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createBusinessOfferModelResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="updateTriggeredEdr">
         <xs:sequence>
           <xs:element minOccurs="0" name="triggeredEdrTemplate" type="tns:triggeredEdrTemplateDto"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="triggeredEdrTemplateDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="subscriptionEl" type="xs:string"/>
+          <xs:element minOccurs="0" name="conditionEl" type="xs:string"/>
+          <xs:element name="quantityEl" type="xs:string"/>
+          <xs:element minOccurs="0" name="param1El" type="xs:string"/>
+          <xs:element minOccurs="0" name="param2El" type="xs:string"/>
+          <xs:element minOccurs="0" name="param3El" type="xs:string"/>
+          <xs:element minOccurs="0" name="param4El" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
+      </xs:complexType>
       <xs:complexType name="updateTriggeredEdrResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createServiceTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="serviceTemplate" type="tns:serviceTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createServiceTemplateResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
@@ -21166,39 +21076,6 @@
       <xs:complexType abstract="true" name="baseResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="actionStatus" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createServiceTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="serviceTemplate" type="tns:serviceTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createServiceTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateCounterTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="counterTemplate" type="tns:counterTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="counterTemplateDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="unity" type="xs:string"/>
-          <xs:element minOccurs="0" name="type" type="xs:string"/>
-          <xs:element minOccurs="0" name="ceiling" type="xs:decimal"/>
-          <xs:element name="disabled" type="xs:boolean"/>
-          <xs:element minOccurs="0" name="counterLevel" type="xs:string"/>
-          <xs:element minOccurs="0" name="ceilingExpressionEl" type="xs:string"/>
-        </xs:sequence>
-        <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
-        <xs:attribute name="calendar" type="xs:string" use="required"/>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateCounterTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeServiceTemplate">
@@ -21254,14 +21131,36 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="createRecurringChargeTemplate">
+      <xs:complexType name="chargeTemplateDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="invoiceSubCategory" type="xs:string"/>
+              <xs:element name="disabled" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="amountEditable" type="xs:boolean"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
+              <xs:element minOccurs="0" name="inputUnitDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="ratingUnitDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="unitMultiplicator" type="xs:decimal"/>
+              <xs:element name="unitNbDecimal" type="xs:int"/>
+              <xs:element minOccurs="0" name="roundingModeDtoEnum" type="tns:roundingModeDtoEnum"/>
+              <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
+              <xs:element minOccurs="0" name="triggeredEdrs" type="tns:triggeredEdrTemplatesDto"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="languageDescriptionDto">
         <xs:sequence>
-          <xs:element minOccurs="0" name="recurringChargeTemplate" type="tns:recurringChargeTemplateDto"/>
+          <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="createRecurringChargeTemplateResponse">
+      <xs:complexType name="triggeredEdrTemplatesDto">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="triggeredEdr" nillable="true" type="tns:triggeredEdrTemplateDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateOfferTemplate">
@@ -21270,6 +21169,202 @@
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateOfferTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeTriggeredEdr">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="triggeredEdrCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeTriggeredEdrResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findOfferTemplateCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="offerTemplateCategoryCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findOfferTemplateCategoryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getOfferTemplateCategoryResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getOfferTemplateCategoryResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="offerTemplateCategory" type="tns:offerTemplateCategoryDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="offerTemplateCategoryDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+          <xs:element minOccurs="0" name="name" type="xs:string"/>
+          <xs:element minOccurs="0" name="imageByteValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="offerTemplateCategoryCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="id" type="xs:long"/>
+          <xs:element minOccurs="0" name="href" type="xs:string"/>
+          <xs:element name="version" type="xs:int"/>
+          <xs:element minOccurs="0" name="lastModified" type="xs:dateTime"/>
+          <xs:element name="active" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="parentId" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeOneShotChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="oneShotChargeTemplateCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeOneShotChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOneShotChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="oneShotChargeTemplate" type="tns:oneShotChargeTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="oneShotChargeTemplateDto">
+        <xs:complexContent>
+          <xs:extension base="tns:chargeTemplateDto">
+            <xs:sequence>
+              <xs:element name="oneShotChargeTemplateType" type="tns:oneShotChargeTemplateTypeEnum"/>
+              <xs:element minOccurs="0" name="immediateInvoicing" type="xs:boolean"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createOneShotChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateDiscountPlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="discountPlan" type="tns:discountPlanDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="discountPlanDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updatePricePlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="pricePlan" type="tns:pricePlanDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="pricePlanDto">
+        <xs:sequence>
+          <xs:element name="eventCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="seller" type="xs:string"/>
+          <xs:element minOccurs="0" name="country" type="xs:string"/>
+          <xs:element minOccurs="0" name="currency" type="xs:string"/>
+          <xs:element minOccurs="0" name="minQuantity" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="maxQuantity" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="offerTemplate" type="xs:string"/>
+          <xs:element minOccurs="0" name="startSubscriptionDate" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="endSubscriptionDate" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="startRatingDate" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="endRatingDate" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="minSubscriptionAgeInMonth" type="xs:long"/>
+          <xs:element minOccurs="0" name="maxSubscriptionAgeInMonth" type="xs:long"/>
+          <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="amountWithoutTaxEL" type="xs:string"/>
+          <xs:element minOccurs="0" name="amountWithTaxEL" type="xs:string"/>
+          <xs:element name="priority" type="xs:int"/>
+          <xs:element minOccurs="0" name="criteria1" type="xs:string"/>
+          <xs:element minOccurs="0" name="criteria2" type="xs:string"/>
+          <xs:element minOccurs="0" name="criteria3" type="xs:string"/>
+          <xs:element minOccurs="0" name="criteriaEL" type="xs:string"/>
+          <xs:element minOccurs="0" name="validityCalendarCode" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
+      </xs:complexType>
+      <xs:complexType name="updatePricePlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdatePricePlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="pricePlan" type="tns:pricePlanDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdatePricePlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateTriggeredEdr">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="triggeredEdrTemplate" type="tns:triggeredEdrTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateTriggeredEdrResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createBusinessOfferModel">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="businessOfferModel" type="tns:businessOfferModelDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createBusinessOfferModelResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCounterTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="counterTemplate" type="tns:counterTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="counterTemplateDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="unity" type="xs:string"/>
+              <xs:element minOccurs="0" name="type" type="xs:string"/>
+              <xs:element minOccurs="0" name="ceiling" type="xs:decimal"/>
+              <xs:element name="disabled" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="counterLevel" type="xs:string"/>
+              <xs:element minOccurs="0" name="ceilingExpressionEl" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
+            <xs:attribute name="calendar" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCounterTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createRecurringChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="recurringChargeTemplate" type="tns:recurringChargeTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createRecurringChargeTemplateResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
@@ -21463,6 +21558,16 @@
           <xs:element minOccurs="0" name="taxDescription" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateOfferTemplateCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="offerTemplateCategory" type="tns:offerTemplateCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateOfferTemplateCategoryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createCounterTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="counterTemplate" type="tns:counterTemplateDto"/>
@@ -21531,6 +21636,16 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="removeOfferTemplateCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="offerTemplateCategoryCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeOfferTemplateCategoryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="removeDiscountPlan">
         <xs:sequence>
           <xs:element minOccurs="0" name="discountPlanCocde" type="xs:string"/>
@@ -21590,6 +21705,16 @@
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="updateOfferTemplateCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="offerTemplateCategory" type="tns:offerTemplateCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateOfferTemplateCategoryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="findUsageChargeTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="usageChargeTemplateCode" type="xs:string"/>
@@ -21608,6 +21733,16 @@
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createOfferTemplateCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="offerTemplateCategory" type="tns:offerTemplateCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOfferTemplateCategoryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateOfferTemplate">
         <xs:sequence>
@@ -21782,6 +21917,7 @@
           <xs:enumeration value="GENERIC_API_EXCEPTION"/>
           <xs:enumeration value="BUSINESS_API_EXCEPTION"/>
           <xs:enumeration value="AUTHENTICATION_AUTHORIZATION_EXCEPTION"/>
+          <xs:enumeration value="ACTION_FORBIDDEN"/>
         </xs:restriction>
       </xs:simpleType>
       <xs:simpleType name="roundingModeDtoEnum">
@@ -21789,6 +21925,13 @@
           <xs:enumeration value="NEAREST"/>
           <xs:enumeration value="DOWN"/>
           <xs:enumeration value="UP"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="oneShotChargeTemplateTypeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SUBSCRIPTION"/>
+          <xs:enumeration value="TERMINATION"/>
+          <xs:enumeration value="OTHER"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:schema>
@@ -21868,11 +22011,11 @@
   <wsdl:message name="createOrUpdateOneShotChargeTemplate">
     <wsdl:part element="ns1:createOrUpdateOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeOneShotChargeTemplateResponse">
-    <wsdl:part element="ns1:removeOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="listPricePlanByEventCodeResponse">
     <wsdl:part element="ns1:listPricePlanByEventCodeResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeOneShotChargeTemplateResponse">
+    <wsdl:part element="ns1:removeOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createTriggeredEdr">
     <wsdl:part element="ns1:createTriggeredEdr" name="parameters"></wsdl:part>
@@ -21940,8 +22083,14 @@
   <wsdl:message name="updateOneShotChargeTemplate">
     <wsdl:part element="ns1:updateOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOfferTemplateCategory">
+    <wsdl:part element="ns1:createOfferTemplateCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="updateBusinessOfferModelResponse">
     <wsdl:part element="ns1:updateBusinessOfferModelResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOfferTemplateCategoryResponse">
+    <wsdl:part element="ns1:createOfferTemplateCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findDiscountPlanResponse">
     <wsdl:part element="ns1:findDiscountPlanResponse" name="parameters"></wsdl:part>
@@ -21967,11 +22116,11 @@
   <wsdl:message name="indexResponse">
     <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="index">
-    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateOfferTemplate">
     <wsdl:part element="ns1:updateOfferTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateServiceTemplateResponse">
     <wsdl:part element="ns1:updateServiceTemplateResponse" name="parameters"></wsdl:part>
@@ -22024,14 +22173,14 @@
   <wsdl:message name="createOrUpdateTriggeredEdr">
     <wsdl:part element="ns1:createOrUpdateTriggeredEdr" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateUsageChargeTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateUsageChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="updateDiscountPlanResponse">
     <wsdl:part element="ns1:updateDiscountPlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdateDiscountPlanResponse">
     <wsdl:part element="ns1:createOrUpdateDiscountPlanResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createOrUpdateUsageChargeTemplateResponse">
-    <wsdl:part element="ns1:createOrUpdateUsageChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateCounterTemplateResponse">
     <wsdl:part element="ns1:updateCounterTemplateResponse" name="parameters"></wsdl:part>
@@ -22051,6 +22200,15 @@
   <wsdl:message name="createOrUpdateOneShotChargeTemplateResponse">
     <wsdl:part element="ns1:createOrUpdateOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="findOfferTemplateCategory">
+    <wsdl:part element="ns1:findOfferTemplateCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeOfferTemplateCategory">
+    <wsdl:part element="ns1:removeOfferTemplateCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateOfferTemplateCategory">
+    <wsdl:part element="ns1:updateOfferTemplateCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeUsageChargeTemplate">
     <wsdl:part element="ns1:removeUsageChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -22069,6 +22227,9 @@
   <wsdl:message name="removeCounterTemplate">
     <wsdl:part element="ns1:removeCounterTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateOfferTemplateCategory">
+    <wsdl:part element="ns1:createOrUpdateOfferTemplateCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findChargeTemplateResponse">
     <wsdl:part element="ns1:findChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -22077,6 +22238,9 @@
   </wsdl:message>
   <wsdl:message name="updateServiceTemplate">
     <wsdl:part element="ns1:updateServiceTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeOfferTemplateCategoryResponse">
+    <wsdl:part element="ns1:removeOfferTemplateCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdateServiceTemplateResponse">
     <wsdl:part element="ns1:createOrUpdateServiceTemplateResponse" name="parameters"></wsdl:part>
@@ -22108,8 +22272,14 @@
   <wsdl:message name="updateUsageChargeTemplate">
     <wsdl:part element="ns1:updateUsageChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="findOfferTemplateCategoryResponse">
+    <wsdl:part element="ns1:findOfferTemplateCategoryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createDiscountPlan">
     <wsdl:part element="ns1:createDiscountPlan" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateOfferTemplateCategoryResponse">
+    <wsdl:part element="ns1:createOrUpdateOfferTemplateCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findCounterTemplateResponse">
     <wsdl:part element="ns1:findCounterTemplateResponse" name="parameters"></wsdl:part>
@@ -22126,77 +22296,44 @@
   <wsdl:message name="removeOneShotChargeTemplate">
     <wsdl:part element="ns1:removeOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="updateOfferTemplateCategoryResponse">
+    <wsdl:part element="ns1:updateOfferTemplateCategoryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createTriggeredEdrResponse">
     <wsdl:part element="ns1:createTriggeredEdrResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:portType name="CatalogWs">
-    <wsdl:operation name="removeTriggeredEdr">
-      <wsdl:input message="ns1:removeTriggeredEdr" name="removeTriggeredEdr"></wsdl:input>
-      <wsdl:output message="ns1:removeTriggeredEdrResponse" name="removeTriggeredEdrResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="removeUsageChargeTemplate">
       <wsdl:input message="ns1:removeUsageChargeTemplate" name="removeUsageChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:removeUsageChargeTemplateResponse" name="removeUsageChargeTemplateResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="removeOneShotChargeTemplate">
-      <wsdl:input message="ns1:removeOneShotChargeTemplate" name="removeOneShotChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:removeOneShotChargeTemplateResponse" name="removeOneShotChargeTemplateResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="removeRecurringChargeTemplate">
-      <wsdl:input message="ns1:removeRecurringChargeTemplate" name="removeRecurringChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:removeRecurringChargeTemplateResponse" name="removeRecurringChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createOrUpdateBusinessOfferModel">
       <wsdl:input message="ns1:createOrUpdateBusinessOfferModel" name="createOrUpdateBusinessOfferModel"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateBusinessOfferModelResponse" name="createOrUpdateBusinessOfferModelResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createOneShotChargeTemplate">
-      <wsdl:input message="ns1:createOneShotChargeTemplate" name="createOneShotChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:createOneShotChargeTemplateResponse" name="createOneShotChargeTemplateResponse"></wsdl:output>
+    <wsdl:operation name="removeRecurringChargeTemplate">
+      <wsdl:input message="ns1:removeRecurringChargeTemplate" name="removeRecurringChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:removeRecurringChargeTemplateResponse" name="removeRecurringChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createOfferTemplate">
       <wsdl:input message="ns1:createOfferTemplate" name="createOfferTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOfferTemplateResponse" name="createOfferTemplateResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateDiscountPlan">
-      <wsdl:input message="ns1:updateDiscountPlan" name="updateDiscountPlan"></wsdl:input>
-      <wsdl:output message="ns1:updateDiscountPlanResponse" name="updateDiscountPlanResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updatePricePlan">
-      <wsdl:input message="ns1:updatePricePlan" name="updatePricePlan"></wsdl:input>
-      <wsdl:output message="ns1:updatePricePlanResponse" name="updatePricePlanResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="removeBusinessOfferModel">
       <wsdl:input message="ns1:removeBusinessOfferModel" name="removeBusinessOfferModel"></wsdl:input>
       <wsdl:output message="ns1:removeBusinessOfferModelResponse" name="removeBusinessOfferModelResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdatePricePlan">
-      <wsdl:input message="ns1:createOrUpdatePricePlan" name="createOrUpdatePricePlan"></wsdl:input>
-      <wsdl:output message="ns1:createOrUpdatePricePlanResponse" name="createOrUpdatePricePlanResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdateTriggeredEdr">
-      <wsdl:input message="ns1:createOrUpdateTriggeredEdr" name="createOrUpdateTriggeredEdr"></wsdl:input>
-      <wsdl:output message="ns1:createOrUpdateTriggeredEdrResponse" name="createOrUpdateTriggeredEdrResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createBusinessOfferModel">
-      <wsdl:input message="ns1:createBusinessOfferModel" name="createBusinessOfferModel"></wsdl:input>
-      <wsdl:output message="ns1:createBusinessOfferModelResponse" name="createBusinessOfferModelResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updateTriggeredEdr">
       <wsdl:input message="ns1:updateTriggeredEdr" name="updateTriggeredEdr"></wsdl:input>
       <wsdl:output message="ns1:updateTriggeredEdrResponse" name="updateTriggeredEdrResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findServiceTemplate">
-      <wsdl:input message="ns1:findServiceTemplate" name="findServiceTemplate"></wsdl:input>
-      <wsdl:output message="ns1:findServiceTemplateResponse" name="findServiceTemplateResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createServiceTemplate">
       <wsdl:input message="ns1:createServiceTemplate" name="createServiceTemplate"></wsdl:input>
       <wsdl:output message="ns1:createServiceTemplateResponse" name="createServiceTemplateResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createOrUpdateCounterTemplate">
-      <wsdl:input message="ns1:createOrUpdateCounterTemplate" name="createOrUpdateCounterTemplate"></wsdl:input>
-      <wsdl:output message="ns1:createOrUpdateCounterTemplateResponse" name="createOrUpdateCounterTemplateResponse"></wsdl:output>
+    <wsdl:operation name="findServiceTemplate">
+      <wsdl:input message="ns1:findServiceTemplate" name="findServiceTemplate"></wsdl:input>
+      <wsdl:output message="ns1:findServiceTemplateResponse" name="findServiceTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="removeServiceTemplate">
       <wsdl:input message="ns1:removeServiceTemplate" name="removeServiceTemplate"></wsdl:input>
@@ -22210,13 +22347,53 @@
       <wsdl:input message="ns1:findRecurringChargeTemplate" name="findRecurringChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:findRecurringChargeTemplateResponse" name="findRecurringChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createRecurringChargeTemplate">
-      <wsdl:input message="ns1:createRecurringChargeTemplate" name="createRecurringChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:createRecurringChargeTemplateResponse" name="createRecurringChargeTemplateResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createOrUpdateOfferTemplate">
       <wsdl:input message="ns1:createOrUpdateOfferTemplate" name="createOrUpdateOfferTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateOfferTemplateResponse" name="createOrUpdateOfferTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeTriggeredEdr">
+      <wsdl:input message="ns1:removeTriggeredEdr" name="removeTriggeredEdr"></wsdl:input>
+      <wsdl:output message="ns1:removeTriggeredEdrResponse" name="removeTriggeredEdrResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findOfferTemplateCategory">
+      <wsdl:input message="ns1:findOfferTemplateCategory" name="findOfferTemplateCategory"></wsdl:input>
+      <wsdl:output message="ns1:findOfferTemplateCategoryResponse" name="findOfferTemplateCategoryResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeOneShotChargeTemplate">
+      <wsdl:input message="ns1:removeOneShotChargeTemplate" name="removeOneShotChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:removeOneShotChargeTemplateResponse" name="removeOneShotChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOneShotChargeTemplate">
+      <wsdl:input message="ns1:createOneShotChargeTemplate" name="createOneShotChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOneShotChargeTemplateResponse" name="createOneShotChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateDiscountPlan">
+      <wsdl:input message="ns1:updateDiscountPlan" name="updateDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:updateDiscountPlanResponse" name="updateDiscountPlanResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updatePricePlan">
+      <wsdl:input message="ns1:updatePricePlan" name="updatePricePlan"></wsdl:input>
+      <wsdl:output message="ns1:updatePricePlanResponse" name="updatePricePlanResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdatePricePlan">
+      <wsdl:input message="ns1:createOrUpdatePricePlan" name="createOrUpdatePricePlan"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdatePricePlanResponse" name="createOrUpdatePricePlanResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateTriggeredEdr">
+      <wsdl:input message="ns1:createOrUpdateTriggeredEdr" name="createOrUpdateTriggeredEdr"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateTriggeredEdrResponse" name="createOrUpdateTriggeredEdrResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createBusinessOfferModel">
+      <wsdl:input message="ns1:createBusinessOfferModel" name="createBusinessOfferModel"></wsdl:input>
+      <wsdl:output message="ns1:createBusinessOfferModelResponse" name="createBusinessOfferModelResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCounterTemplate">
+      <wsdl:input message="ns1:createOrUpdateCounterTemplate" name="createOrUpdateCounterTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateCounterTemplateResponse" name="createOrUpdateCounterTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createRecurringChargeTemplate">
+      <wsdl:input message="ns1:createRecurringChargeTemplate" name="createRecurringChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createRecurringChargeTemplateResponse" name="createRecurringChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updateUsageChargeTemplate">
       <wsdl:input message="ns1:updateUsageChargeTemplate" name="updateUsageChargeTemplate"></wsdl:input>
@@ -22266,6 +22443,10 @@
       <wsdl:input message="ns1:listOneShotChargeTemplate" name="listOneShotChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:listOneShotChargeTemplateResponse" name="listOneShotChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateOfferTemplateCategory">
+      <wsdl:input message="ns1:createOrUpdateOfferTemplateCategory" name="createOrUpdateOfferTemplateCategory"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateOfferTemplateCategoryResponse" name="createOrUpdateOfferTemplateCategoryResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createCounterTemplate">
       <wsdl:input message="ns1:createCounterTemplate" name="createCounterTemplate"></wsdl:input>
       <wsdl:output message="ns1:createCounterTemplateResponse" name="createCounterTemplateResponse"></wsdl:output>
@@ -22285,6 +22466,10 @@
     <wsdl:operation name="findTriggeredEdr">
       <wsdl:input message="ns1:findTriggeredEdr" name="findTriggeredEdr"></wsdl:input>
       <wsdl:output message="ns1:findTriggeredEdrResponse" name="findTriggeredEdrResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeOfferTemplateCategory">
+      <wsdl:input message="ns1:removeOfferTemplateCategory" name="removeOfferTemplateCategory"></wsdl:input>
+      <wsdl:output message="ns1:removeOfferTemplateCategoryResponse" name="removeOfferTemplateCategoryResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="removeDiscountPlan">
       <wsdl:input message="ns1:removeDiscountPlan" name="removeDiscountPlan"></wsdl:input>
@@ -22306,9 +22491,17 @@
       <wsdl:input message="ns1:updateCounterTemplate" name="updateCounterTemplate"></wsdl:input>
       <wsdl:output message="ns1:updateCounterTemplateResponse" name="updateCounterTemplateResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateOfferTemplateCategory">
+      <wsdl:input message="ns1:updateOfferTemplateCategory" name="updateOfferTemplateCategory"></wsdl:input>
+      <wsdl:output message="ns1:updateOfferTemplateCategoryResponse" name="updateOfferTemplateCategoryResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findUsageChargeTemplate">
       <wsdl:input message="ns1:findUsageChargeTemplate" name="findUsageChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:findUsageChargeTemplateResponse" name="findUsageChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOfferTemplateCategory">
+      <wsdl:input message="ns1:createOfferTemplateCategory" name="createOfferTemplateCategory"></wsdl:input>
+      <wsdl:output message="ns1:createOfferTemplateCategoryResponse" name="createOfferTemplateCategoryResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updateOfferTemplate">
       <wsdl:input message="ns1:updateOfferTemplate" name="updateOfferTemplate"></wsdl:input>
@@ -24720,7 +24913,110 @@
    <soapenv:Body>\r
       <ws:listDiscountPlan/>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/listDiscountPlan"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="3db00ff1-8f28-4532-9da8-5efb5c1e6655" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndPoint}/NotificationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/NotificationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/NotificationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="NotificationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/listDiscountPlan"/></con:call></con:operation><con:operation id="febb87b7-0da9-4c93-931e-76c0ed3141c7" isOneWay="false" action="" name="findOfferTemplateCategory" bindingOperationName="findOfferTemplateCategory" type="Request-Response" outputName="findOfferTemplateCategoryResponse" inputName="findOfferTemplateCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="709ce8d1-db7e-4200-863d-e9b650ef75a7" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findOfferTemplateCategory>\r
+         <!--Optional:-->\r
+         <offerTemplateCategoryCode>?</offerTemplateCategoryCode>\r
+      </ws:findOfferTemplateCategory>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/findOfferTemplateCategory"/></con:call></con:operation><con:operation id="8c11a9b1-2cdb-4967-999d-57be8b7a3bb7" isOneWay="false" action="" name="createOrUpdateOfferTemplateCategory" bindingOperationName="createOrUpdateOfferTemplateCategory" type="Request-Response" outputName="createOrUpdateOfferTemplateCategoryResponse" inputName="createOrUpdateOfferTemplateCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d49a0f94-5695-43be-a151-7dba89481ec9" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateOfferTemplateCategory>\r
+         <!--Optional:-->\r
+         <offerTemplateCategory>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+            <!--Optional:-->\r
+            <name>?</name>\r
+            <!--Optional:-->\r
+            <imageByteValue>?</imageByteValue>\r
+            <!--Optional:-->\r
+            <offerTemplateCategoryCode>?</offerTemplateCategoryCode>\r
+            <!--Optional:-->\r
+            <id>?</id>\r
+            <!--Optional:-->\r
+            <href>?</href>\r
+            <version>?</version>\r
+            <!--Optional:-->\r
+            <lastModified>?</lastModified>\r
+            <active>?</active>\r
+            <!--Optional:-->\r
+            <parentId>?</parentId>\r
+         </offerTemplateCategory>\r
+      </ws:createOrUpdateOfferTemplateCategory>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateOfferTemplateCategory"/></con:call></con:operation><con:operation id="7d54f010-1e54-4521-94f9-9f1fe62881d2" isOneWay="false" action="" name="removeOfferTemplateCategory" bindingOperationName="removeOfferTemplateCategory" type="Request-Response" outputName="removeOfferTemplateCategoryResponse" inputName="removeOfferTemplateCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="7315127a-a9b5-45fc-9529-1ab9b24ddcf3" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeOfferTemplateCategory>\r
+         <!--Optional:-->\r
+         <offerTemplateCategoryCode>?</offerTemplateCategoryCode>\r
+      </ws:removeOfferTemplateCategory>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/removeOfferTemplateCategory"/></con:call></con:operation><con:operation id="6cf30eea-82ec-48e2-b5ea-05fc2220f26b" isOneWay="false" action="" name="updateOfferTemplateCategory" bindingOperationName="updateOfferTemplateCategory" type="Request-Response" outputName="updateOfferTemplateCategoryResponse" inputName="updateOfferTemplateCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="184e7959-278c-452a-a91d-90318d58388f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateOfferTemplateCategory>\r
+         <!--Optional:-->\r
+         <offerTemplateCategory>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+            <!--Optional:-->\r
+            <name>?</name>\r
+            <!--Optional:-->\r
+            <imageByteValue>?</imageByteValue>\r
+            <!--Optional:-->\r
+            <offerTemplateCategoryCode>?</offerTemplateCategoryCode>\r
+            <!--Optional:-->\r
+            <id>?</id>\r
+            <!--Optional:-->\r
+            <href>?</href>\r
+            <version>?</version>\r
+            <!--Optional:-->\r
+            <lastModified>?</lastModified>\r
+            <active>?</active>\r
+            <!--Optional:-->\r
+            <parentId>?</parentId>\r
+         </offerTemplateCategory>\r
+      </ws:updateOfferTemplateCategory>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/updateOfferTemplateCategory"/></con:call></con:operation><con:operation id="0bb76527-b930-4766-818c-9e30afa7b725" isOneWay="false" action="" name="createOfferTemplateCategory" bindingOperationName="createOfferTemplateCategory" type="Request-Response" outputName="createOfferTemplateCategoryResponse" inputName="createOfferTemplateCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c9677bed-a144-4cf1-b60d-31e84def882e" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOfferTemplateCategory>\r
+         <!--Optional:-->\r
+         <offerTemplateCategory>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+            <!--Optional:-->\r
+            <name>?</name>\r
+            <!--Optional:-->\r
+            <imageByteValue>?</imageByteValue>\r
+            <!--Optional:-->\r
+            <offerTemplateCategoryCode>?</offerTemplateCategoryCode>\r
+            <!--Optional:-->\r
+            <id>?</id>\r
+            <!--Optional:-->\r
+            <href>?</href>\r
+            <version>?</version>\r
+            <!--Optional:-->\r
+            <lastModified>?</lastModified>\r
+            <active>?</active>\r
+            <!--Optional:-->\r
+            <parentId>?</parentId>\r
+         </offerTemplateCategory>\r
+      </ws:createOfferTemplateCategory>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOfferTemplateCategory"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="3db00ff1-8f28-4532-9da8-5efb5c1e6655" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndPoint}/NotificationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/NotificationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/NotificationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="NotificationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/NotificationWs?wsdl=NotificationWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="NotificationWsSoapBinding" type="ns1:NotificationWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -50889,4 +51185,14 @@ public class TestScript${#TestSuite#ticket} extends org.meveo.service.script.Scr
          <invoiceNumber>000000002</invoiceNumber>
       </ws:findPdfInvoice>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f24123ca-553d-42a4-93d9-a187f3be4240"/><con:assertion type="Simple Contains" name="Contains" id="81c028e2-76e1-4f55-a543-fcb8df080cde"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1425</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" outgoingWss="" wssTimeToLive="">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f24123ca-553d-42a4-93d9-a187f3be4240"/><con:assertion type="Simple Contains" name="Contains" id="81c028e2-76e1-4f55-a543-fcb8df080cde"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1425</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties></con:testSuite><con:testSuite id="ad0b47f8-4258-4175-b0f9-3cc15b25e0ab" name="#1461_offer_template_with_category"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="73c6a145-8401-4188-84c9-8428a3f06913" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create_offer_template_category" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="574ffe5e-db6c-45dd-b8cd-2fb028603c05"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOrUpdateOfferTemplateCategory</con:operation><con:request name="create" id="c8ede4d6-badf-45c3-bdde-7e9901ea921b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateOfferTemplateCategory/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="00a161d0-692e-45b4-84de-d8f3ad216df6"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="87e3c4dd-6eb2-4f3e-bf32-891e17c1046f" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create_find" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="8231f177-746b-40b1-b567-6bb53ba4db1b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="create" id="caedf010-1245-410e-b9f6-2a9c1e946ee3"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOfferTemplate/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2b07b977-7d1b-448a-85e9-c92ec5a6578d"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1461</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" outgoingWss="" wssTimeToLive="">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

@@ -35,6 +35,8 @@ public class OfferTemplateDto implements Serializable {
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 	
 	private String bomCode;
+	
+	private String offerTemplateCategoryCode;
 
 	public OfferTemplateDto() {
 
@@ -48,7 +50,10 @@ public class OfferTemplateDto implements Serializable {
 			bomCode = e.getBusinessOfferModel().getCode();
 		}
 		
-
+		if (e.getOfferTemplateCategory() != null) {
+			offerTemplateCategoryCode = e.getOfferTemplateCategory().getCode();
+		}
+		
 		if (e.getOfferServiceTemplates() != null && e.getOfferServiceTemplates().size() > 0) {
 			for (OfferServiceTemplate st : e.getOfferServiceTemplates()) {
 				serviceTemplates.getServiceTemplate().add(new ServiceTemplateDto(st.getServiceTemplate().getCode()));
@@ -84,8 +89,11 @@ public class OfferTemplateDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "OfferTemplateDto [code=" + code + ", description=" + description + ", disabled=" + disabled
-				+ ", serviceTemplates=" + serviceTemplates + ", customFields=" + customFields + ", bomCode=" + bomCode
+		return "OfferTemplateDto [code=" + code + ", description="
+				+ description + ", disabled=" + disabled
+				+ ", serviceTemplates=" + serviceTemplates + ", customFields="
+				+ customFields + ", bomCode=" + bomCode
+				+ ", offerTemplateCategoryCode=" + offerTemplateCategoryCode
 				+ "]";
 	}
 
@@ -111,6 +119,14 @@ public class OfferTemplateDto implements Serializable {
 
 	public void setBomCode(String bomCode) {
 		this.bomCode = bomCode;
+	}
+
+	public String getOfferTemplateCategoryCode() {
+		return offerTemplateCategoryCode;
+	}
+
+	public void setOfferTemplateCategoryCode(String offerTemplateCategoryCode) {
+		this.offerTemplateCategoryCode = offerTemplateCategoryCode;
 	}
 
 }
