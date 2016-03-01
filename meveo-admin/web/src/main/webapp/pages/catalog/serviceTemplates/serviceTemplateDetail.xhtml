@@ -91,25 +91,23 @@
 		<p:panel header="#{messages['menu.serviceTemplates']}" >
 			<p:tabView id="tabView" activeIndex="#{serviceTemplateBean.activeMainTab}">
 				<p:tab title="#{messages['serviceUsageChargeTemplate.info']}">
-					<hftl:formPanel backingBean="#{serviceTemplateBean}" showEnableDisableButton="true" updateConfirmationMessage="#{serviceTemplateBean.usedInSubscription ? 'confirmationMessage.confirmUpdate' : ''}" ajaxSubmit="true" submitPartialProcess=":tabView:formId:informationTab">
-						<p:tabView id="informationTab" activeIndex="#{serviceTemplateBean.activeTab}">
-							<p:tab title="#{messages['serviceUsageChargeTemplate.info']}">
-								<hftl:formField label="#{messages['serviceTemplate.code']}"
-									field="code" required="true" validateUnique="true" />
-								<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
-									field="disabled" isMessage="true" />
-								<hftl:formField label="#{messages['serviceTemplate.description']}"
-									field="description" useConverter="false"
-									size="50" maxlength="50" />
-								<hftl:formField
-									label="#{messages['serviceTemplate.calendar']}"
-									field="invoicingCalendar" valueLabelField="code" required="false" popup="false"
-									listBean="#{calendarBean}" />
-							</p:tab>
-
-							<hftl:customFields backingBean="#{serviceTemplateBean}" messagesId=":tabView:formId:messages" />
-
-						</p:tabView>
+					<hftl:formPanel backingBean="#{serviceTemplateBean}" 
+						showEnableDisableButton="true" 
+						updateConfirmationMessage="#{serviceTemplateBean.usedInSubscription ? 'confirmationMessage.confirmUpdate' : ''}" 
+						ajaxSubmit="true" 
+						submitPartialProcess=":tabView:formId">
+						<hftl:formField label="#{messages['serviceTemplate.code']}"
+							field="code" required="true" validateUnique="true" />
+						<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+							field="disabled" isMessage="true" />
+						<hftl:formField label="#{messages['serviceTemplate.description']}"
+							field="description" useConverter="false"
+							size="50" maxlength="50" />
+						<hftl:formField
+							label="#{messages['serviceTemplate.calendar']}"
+							field="invoicingCalendar" valueLabelField="code" required="false" popup="false"
+							listBean="#{calendarBean}" />
+						<hftl:customFields backingBean="#{serviceTemplateBean}" messagesId=":tabView:formId:messages" />
 					</hftl:formPanel>
 				</p:tab>
 				

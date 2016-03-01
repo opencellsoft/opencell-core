@@ -45,6 +45,7 @@ import org.meveo.api.dto.response.GetTaxesResponse;
 import org.meveo.api.dto.response.GetTerminationReasonResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetUserResponse;
+import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.PermissionResponseDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
@@ -262,6 +263,9 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     public ActionStatus createOrUpdateCalendar(@WebParam(name = "calendar") CalendarDto postData);
+    
+    @WebMethod
+    public ListCalendarResponse listCalendars();
 
     // billing cycle
 
