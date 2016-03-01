@@ -172,13 +172,13 @@ public class GetConverter {
 			return (DateConverter) beanManager.getReference(bean,
 					DateConverter.class, ctx);
 
-		}else if("customField".equals(param)){
-			Bean<CustomFieldConverter> bean = (Bean<CustomFieldConverter>) beanManager
-					.getBeans(CustomFieldConverter.class).iterator().next();
-			CreationalContext<CustomFieldConverter> ctx = beanManager
+		}else if("customFieldAppliesTo".equals(param)){
+			Bean<CustomFieldAppliesToConverter> bean = (Bean<CustomFieldAppliesToConverter>) beanManager
+					.getBeans(CustomFieldAppliesToConverter.class).iterator().next();
+			CreationalContext<CustomFieldAppliesToConverter> ctx = beanManager
 					.createCreationalContext(bean);
-			return (CustomFieldConverter) beanManager.getReference(bean,
-					CustomFieldConverter.class, ctx);
+			return (CustomFieldAppliesToConverter) beanManager.getReference(bean,
+					CustomFieldAppliesToConverter.class, ctx);
 		}
 		return null;
 	}

@@ -10,7 +10,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.Provider;
@@ -63,18 +62,13 @@ public class CustomizedEntityService implements Serializable {
                     continue;
                 }
 
-                entities.add(new CustomizedEntity(cfClass.getSimpleName(), cfClass, null, null));
-
+                entities.add(new CustomizedEntity(cfClass));
             }
 
             // Find Jobs
             for (Job job : jobInstanceService.getJobs()) {
-
                 if (job.getCustomFields() != null && (entityName == null || (entityName != null && job.getClass().getSimpleName().toLowerCase().contains(entityName)))) {
-
-                    String classname = ReflectionUtils.getCleanClassName(job.getClass().getSimpleName());
-
-                    entities.add(new CustomizedEntity(classname, job.getClass(), null, null));
+                    entities.add(new CustomizedEntity(job.getClass()));
                 }
             }
         }
@@ -82,7 +76,7 @@ public class CustomizedEntityService implements Serializable {
         List<CustomEntityTemplate> cets = null;
         if (entityName == null || CustomEntityTemplate.class.getSimpleName().toLowerCase().contains(entityName)) {
             cets = customEntityTemplateService.list(currentProvider);
-        
+
         } else if (entityName != null) {
             cets = customEntityTemplateService.findByCodeLike(entityName, currentProvider);
         }

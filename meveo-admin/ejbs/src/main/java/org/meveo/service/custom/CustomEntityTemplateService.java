@@ -83,7 +83,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
         CustomEntityTemplate cet = findById(id);
 
-        Map<String, CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesTo(cet.getCftPrefix(), cet.getProvider());
+        Map<String, CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo(), cet.getProvider());
 
         for (CustomFieldTemplate cft : fields.values()) {
             customFieldTemplateService.remove(cft.getId());

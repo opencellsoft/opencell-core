@@ -86,8 +86,27 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, null, null, getCurrentProvider());
 
         for (CustomizedEntity customizedEntity : entities) {
-            clazzNames.add(ReflectionUtils.getCleanClassName(customizedEntity.getEntityClass().getName())
-                    + (!customizedEntity.isStandardEntity() ? CustomFieldInstanceService.ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR + customizedEntity.getEntityName() : ""));
+            String classNameToDisplay = ReflectionUtils.getCleanClassName(customizedEntity.getEntityClass().getName());
+            if (!customizedEntity.isStandardEntity()) {
+                classNameToDisplay = classNameToDisplay + CustomFieldInstanceService.ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR + customizedEntity.getEntityName();
+            }
+            clazzNames.add(classNameToDisplay);
+        }
+
+        return clazzNames;
+    }
+
+    public List<String> autocompleteClassNamesHuman(String query) {
+        List<String> clazzNames = new ArrayList<String>();
+
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, null, null, getCurrentProvider());
+
+        for (CustomizedEntity customizedEntity : entities) {
+            String classNameToDisplay = ReflectionUtils.getHumanClassName(customizedEntity.getEntityClass().getSimpleName());
+            if (!customizedEntity.isStandardEntity()) {
+                classNameToDisplay = classNameToDisplay + CustomFieldInstanceService.ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR + customizedEntity.getEntityName();
+            }
+            clazzNames.add(classNameToDisplay);
         }
 
         return clazzNames;

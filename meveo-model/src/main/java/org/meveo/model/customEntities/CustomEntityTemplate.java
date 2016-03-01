@@ -34,8 +34,12 @@ public class CustomEntityTemplate extends BusinessEntity implements Comparable<C
         this.name = name;
     }
 
-    public String getCftPrefix() {
+    public String getAppliesTo() {
         return CFT_PREFIX + "_" + getCode();
+    }
+    
+    public static String getAppliesTo(String code) {
+        return CFT_PREFIX + "_" + code;
     }
 
     public String getPermissionResourceName() {

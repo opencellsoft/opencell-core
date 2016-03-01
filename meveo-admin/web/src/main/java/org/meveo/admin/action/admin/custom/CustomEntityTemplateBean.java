@@ -109,7 +109,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         if (customizedEntity == null && entityClassName != null && !CustomEntityTemplate.class.getName().equals(entityClassName)) {
             entityClass = Class.forName(entityClassName);
             customizedEntity = new CustomizedEntity(entityClass.getSimpleName(), entityClass, null, null);
-            cetPrefix = EntityCustomizationUtils.getAppliesToPrefix(entityClass);
+            cetPrefix = EntityCustomizationUtils.getAppliesTo(entityClass);
 
             if (Job.class.isAssignableFrom(entityClass)) {
 
@@ -222,7 +222,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
             return cetPrefix;
 
         } else if (entity != null && entity.getCode() != null) {
-            cetPrefix = entity.getCftPrefix();
+            cetPrefix = entity.getAppliesTo();
             return cetPrefix;
         }
         return null;

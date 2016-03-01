@@ -24,64 +24,102 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
+import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.module.ModuleDto;
 import org.meveo.api.module.ModuleApi;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.service.admin.impl.MeveoModuleService;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
 
 @Named
 @ConversationScoped
 public class MeveoModuleListBean extends MeveoModuleBean {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Inject
-	private ModuleApi moduleApi;
-	@Inject
-	private MeveoModuleService meveoModuleService;
+    @Inject
+    private ModuleApi moduleApi;
+    @Inject
+    private MeveoModuleService meveoModuleService;
 
-	private ModuleDto selectedModuleDto;
-	
-	private EntityListDataModelPF<ModuleDto> moduleDtos = null;
-	
-	public EntityListDataModelPF<ModuleDto> getModuleDtos() {
-		return moduleDtos;
-	}
+    private ModuleDto selectedModuleDto;
 
-	public ModuleDto getSelectedModuleDto() {
-		return selectedModuleDto;
-	}
+    private TreeNode selectedModuleItems;
 
-	public void setSelectedModuleDto(ModuleDto selectedModuleDto) {
-		this.selectedModuleDto = selectedModuleDto;
-	}
-	public void initMeveoInstance() {
-		log.debug("start initMeveoInstance");
-		try {
-			moduleDtos = new EntityListDataModelPF<ModuleDto>(new ArrayList<ModuleDto>());
-	        moduleDtos.addAll(meveoModuleService.downloadModulesFromMeveoInstance(meveoInstance));
-		}catch (Exception e) {
-			log.error("Error when retrieve modules from {}. Reason {}", meveoInstance.getCode(),e.getMessage(),e);
-			messages.error(new BundleKey("messages", "meveoModule.retrieveRemoteMeveoInstanceException"), meveoInstance.getCode(),e.getMessage());
-			this.moduleDtos=null;
-		}
-	}
+    private EntityListDataModelPF<ModuleDto> moduleDtos = null;
 
-	public void installModule() {
-		if (selectedModuleDto != null) {
-			try {
-				moduleApi.createOrUpdate(selectedModuleDto, currentUser);
-				messages.info(new BundleKey("messages", "meveoModule.installSuccess"), selectedModuleDto.getCode());
-			} catch (Exception e) {
-				log.error("Error when create meveo module {} from meveoInstance {}", selectedModuleDto.getCode(),meveoInstance.getCode(), e);
-				messages.error(new BundleKey("messages", "meveoModule.installFailed"), selectedModuleDto.getCode(),
-						(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
-			}
-		}
-	}
+    public EntityListDataModelPF<ModuleDto> getModuleDtos() {
+        return moduleDtos;
+    }
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
-	
+    public ModuleDto getSelectedModuleDto() {
+        return selectedModuleDto;
+    }
+
+    public void setSelectedModuleDto(ModuleDto selectedModuleDto) {
+        this.selectedModuleDto = selectedModuleDto;
+        selectedModuleItems = new DefaultTreeNode("Root");
+        if (selectedModuleDto == null) {
+            return;
+        }
+
+        if (selectedModuleDto.getModuleItems() != null) {
+            for (BaseDto item : selectedModuleDto.getModuleItems()) {
+
+                TreeNode classNode = getOrCreateNodeByClass(item.getClass().getSimpleName());
+                new DefaultTreeNode("item", item, classNode);
+            }
+        }
+    }
+
+    public TreeNode getSelectedModuleItems() {
+
+        return selectedModuleItems;
+    }
+
+    public void loadModulesFromInstance() {
+        log.debug("start loadModulesFromInstance");
+        try {
+            moduleDtos = new EntityListDataModelPF<ModuleDto>(new ArrayList<ModuleDto>());
+            moduleDtos.addAll(meveoModuleService.downloadModulesFromMeveoInstance(meveoInstance));
+        } catch (Exception e) {
+            log.error("Error when retrieve modules from {}. Reason {}", meveoInstance.getCode(), e.getMessage(), e);
+            messages.error(new BundleKey("messages", "meveoModule.retrieveRemoteMeveoInstanceException"), meveoInstance.getCode(), e.getMessage());
+            this.moduleDtos = null;
+        }
+    }
+
+    public void installModule() {
+        if (selectedModuleDto != null) {
+            try {
+                moduleApi.createOrUpdate(selectedModuleDto, currentUser);
+                messages.info(new BundleKey("messages", "meveoModule.installSuccess"), selectedModuleDto.getCode());
+            } catch (Exception e) {
+                log.error("Error when create meveo module {} from meveoInstance {}", selectedModuleDto.getCode(), meveoInstance.getCode(), e);
+                messages.error(new BundleKey("messages", "meveoModule.installFailed"), selectedModuleDto.getCode(),
+                    (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
+            }
+        }
+    }
+
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
+
+    private TreeNode getOrCreateNodeByClass(String classname) {
+
+        classname.replaceAll("Dto", "");
+        classname.replaceAll("DTO", "");
+        for (TreeNode node : selectedModuleItems.getChildren()) {
+            if (classname.equals(node.getType())) {
+                return node;
+            }
+        }
+
+        TreeNode node = new DefaultTreeNode(classname, ReflectionUtils.getHumanClassName(classname), selectedModuleItems);
+        node.setExpanded(true);
+        return node;
+    }
 }

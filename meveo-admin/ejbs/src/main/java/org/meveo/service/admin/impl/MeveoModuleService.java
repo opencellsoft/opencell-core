@@ -199,8 +199,8 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
             }
             if (item.getItemEntity() instanceof CustomEntityTemplate) {
                 CustomEntityTemplate customEntityTemplate = (CustomEntityTemplate) item.getItemEntity();
-                Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(customEntityTemplate.getCftPrefix(), module.getProvider());
-                Map<String, EntityActionScript> customActions = entityActionScriptService.findByAppliesTo(customEntityTemplate.getCftPrefix(), module.getProvider());
+                Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(customEntityTemplate.getAppliesTo(), module.getProvider());
+                Map<String, EntityActionScript> customActions = entityActionScriptService.findByAppliesTo(customEntityTemplate.getAppliesTo(), module.getProvider());
 
                 CustomEntityTemplateDto dto = CustomEntityTemplateDto.toDTO(customEntityTemplate, customFieldTemplates != null ? customFieldTemplates.values() : null,
                     customActions != null ? customActions.values() : null);

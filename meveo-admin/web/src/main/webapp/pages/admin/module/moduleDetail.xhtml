@@ -14,7 +14,8 @@
         <hftl:entityPopup id="searchCustomField" width="750" header="#{messages['customField.popup.header']}" backingBean="#{customFieldTemplateListBean}"
             searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['meveoModuleItem.appliesTo']}" searchField2="appliesTo"
             selection="#{meveoModuleBean.customField}" column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}"
-            column2="description" column3Label="#{messages['meveoModuleItem.appliesTo']}" column3="appliesTo" updateField="moduleFormId:moduleItems" column3Converter="customField">
+            column2="description" column3Label="#{messages['meveoModuleItem.appliesTo']}" column3="appliesTo" updateField="moduleFormId:moduleItems" column3Converter="customFieldAppliesTo"
+            isAutocomplete2="true" autocompleteBean2="#{customFieldTemplateBean}" autocompleteMethod2="autocompleteClassNamesHuman" searchField2Converter="customFieldAppliesToConverter">
         </hftl:entityPopup>
         <hftl:entityPopup id="searchFilter" header="#{messages['filter.popup.header']}" backingBean="#{filterListBean}" searchField1Label="#{messages['businessEntity.code']}"
             searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
@@ -81,7 +82,7 @@
                         <h:outputText value="#{item.itemEntity.description}" rendered="#{node.type eq 'item'}" />
                     </p:column>
                     <p:column headerText="#{messages['meveoModuleItem.appliesTo']}">
-                        <h:outputText value="#{item.appliesTo}" converter="customFieldConverter" rendered="#{node.type eq 'item'}" />
+                        <h:outputText value="#{item.appliesTo}" converter="customFieldAppliesToConverter" rendered="#{node.type eq 'item'}" />
                     </p:column>
                     <p:column headerText="#{messages['commons.actions']}">
                         <p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this" update="moduleItems" action="#{meveoModuleBean.removeTreeNode(node)}"
