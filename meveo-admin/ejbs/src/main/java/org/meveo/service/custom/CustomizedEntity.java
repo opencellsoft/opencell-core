@@ -1,5 +1,7 @@
 package org.meveo.service.custom;
 
+import org.meveo.commons.utils.ReflectionUtils;
+
 public class CustomizedEntity {
 
     private Long id;
@@ -14,9 +16,16 @@ public class CustomizedEntity {
     private String description;
 
     @SuppressWarnings("rawtypes")
-    public CustomizedEntity(String entityName, Class entityClass, Long customEntityId, String description) {
+    public CustomizedEntity(Class entityClass) {
         super();
-        this.entityName = entityName;
+        this.entityName = ReflectionUtils.getCleanClassName(entityClass.getSimpleName());
+        this.entityClass = entityClass;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public CustomizedEntity(String entityCode, Class entityClass, Long customEntityId, String description) {
+        super();
+        this.entityName = entityCode;
         this.entityClass = entityClass;
         this.customEntityId = customEntityId;
         this.description = description;

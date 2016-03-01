@@ -36,9 +36,13 @@
         <c:set var="showMessages" value="true" />
     </c:if>
 
+    <c:if test="${empty rendered}">
+        <c:set var="rendered" value="true" />
+    </c:if>
+    
     <h:form id="#{formId}">
-        <p:panel>
-            <c:if test="#{not empty header}">
+        <p:panel rendered="#{rendered}">
+            <c:if test="#{not empty label}">
                 <f:facet name="header">
                     <h:outputText value="#{label}" />
                 </f:facet>

@@ -270,6 +270,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
             String originFilename = croppedImage.getOriginalFilename();
             String formatname = originFilename.substring(originFilename.lastIndexOf(".") + 1);
             String filename = String.format("%s.%s", entity.getCode(), formatname);
+            filename.replaceAll(" ","_");            
             log.debug("crop module picture to {}", filename);
             String dest = ModuleUtil.getModulePicturePath(entity.getProvider().getCode()) + File.separator + filename;
             ModuleUtil.cropPicture(dest, croppedImage);

@@ -31,6 +31,7 @@
         isAutocomplete and autocompleteBean and autocompleteMethod - should autocomplete be used and a bean (el expresseion) and method (string name) to use
         listElements - a list of entities
         valueField - use in conjunction with listElements. Since this is not an entity case
+        converter - converter (id) to apply
         
      Additional attributes applicable to Number type fields
         rangeSearch - search by a range of values
@@ -84,36 +85,27 @@
 
     <!-- If value binding is a text field, display a text input field -->
     <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Text}">
-    	<c:if test="${empty(listElements)}">
-	        <c:if test="${empty(isAutocomplete)}">
-	            <c:set var="isAutocomplete" value="false" />
-	        </c:if>
-	
-	        <hftl:searchTextField id="${empty(id)?fieldIdPrefix.concat('_txt'):id}" backingBean="${backingBean}" field="${field}" label="${label}" disabled="${disabled}"
-	            componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
-	            labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}"
-	            size="${size}" maxlength="${maxlength}" listValues="${listValues}" isAutocomplete="${isAutocomplete}" autocompleteBean="#{autocompleteBean}"
-	            autocompleteMethod="${autocompleteMethod}" />
+        <c:if test="${empty(listElements)}">
+            <c:if test="${empty(isAutocomplete)}">
+                <c:set var="isAutocomplete" value="false" />
+            </c:if>
+            <hftl:searchTextField id="${empty(id)?fieldIdPrefix.concat('_txt'):id}" backingBean="${backingBean}" field="${field}" label="${label}" disabled="${disabled}"
+                componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
+                labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}"
+                size="${size}" maxlength="${maxlength}" listValues="${listValues}" isAutocomplete="${isAutocomplete}" autocompleteBean="#{autocompleteBean}"
+                autocompleteMethod="${autocompleteMethod}" converter="${converter}" />
         </c:if>
-        
-        <c:if test="${not empty(listElements)}">
-        	<c:if test="${empty(isAutocomplete)}">
-	            <c:set var="isAutocomplete" value="false" />
-	        </c:if>
 
-			<hftl:searchEntityField
-				id="${empty(id)?fieldIdPrefix.concat('_entity'):id}"
-				backingBean="${backingBean}" field="${field}"
-				fieldIdPrefix="${fieldIdPrefix}" label="${label}"
-				disabled="${disabled}" componentWidth="${componentWidth}"
-				newLine="${newLine}" displayOneLine="${displayOneLine}"
-				styleClass="${styleClass}" style="${style}"
-				labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}"
-				inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}"
-				labelWidth="${labelWidth}" inputWidth="${inputWidth}"
-				listElements="${listElements}" valueLabelField="${valueLabelField}" valueField="${valueField}"
-				size="${size}" />
-		</c:if>
+        <c:if test="${not empty(listElements)}">
+            <c:if test="${empty(isAutocomplete)}">
+                <c:set var="isAutocomplete" value="false" />
+            </c:if>
+
+            <hftl:searchEntityField id="${empty(id)?fieldIdPrefix.concat('_entity'):id}" backingBean="${backingBean}" field="${field}" fieldIdPrefix="${fieldIdPrefix}"
+                label="${label}" disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}"
+                style="${style}" labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}"
+                labelWidth="${labelWidth}" inputWidth="${inputWidth}" listElements="${listElements}" valueLabelField="${valueLabelField}" valueField="${valueField}" size="${size}" />
+        </c:if>
     </c:if>
 
 

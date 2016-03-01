@@ -77,13 +77,13 @@ public class CustomEntityApi extends BaseApi {
 
         if (dto.getFields() != null) {
             for (CustomFieldTemplateDto cftDto : dto.getFields()) {
-                customFieldTemplateApi.createOrUpdate(cftDto, cet.getCftPrefix(), currentUser);
+                customFieldTemplateApi.createOrUpdate(cftDto, cet.getAppliesTo(), currentUser);
             }
         }
 
         if (dto.getActions() != null) {
             for (EntityActionScriptDto actionDto : dto.getActions()) {
-                scriptInstanceApi.createOrUpdate(actionDto, cet.getCftPrefix(), currentUser);
+                scriptInstanceApi.createOrUpdate(actionDto, cet.getAppliesTo(), currentUser);
             }
         }
     }
@@ -108,7 +108,7 @@ public class CustomEntityApi extends BaseApi {
         cet = CustomEntityTemplateDto.fromDTO(dto, cet);
         cet = customEntityTemplateService.update(cet, currentUser);
 
-        synchronizeCustomFieldsAndActions(cet.getCftPrefix(), dto.getFields(), dto.getActions(), currentUser);
+        synchronizeCustomFieldsAndActions(cet.getAppliesTo(), dto.getFields(), dto.getActions(), currentUser);
 
     }
 
@@ -142,9 +142,9 @@ public class CustomEntityApi extends BaseApi {
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
         }
-        Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getCftPrefix(), currentUser.getProvider());
+        Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo(), currentUser.getProvider());
 
-        Map<String, EntityActionScript> cetActions = entityActionScriptService.findByAppliesTo(cet.getCftPrefix(), currentUser.getProvider());
+        Map<String, EntityActionScript> cetActions = entityActionScriptService.findByAppliesTo(cet.getAppliesTo(), currentUser.getProvider());
 
         return CustomEntityTemplateDto.toDTO(cet, cetFields.values(), cetActions.values());
     }
@@ -289,8 +289,8 @@ public class CustomEntityApi extends BaseApi {
 
         for (CustomEntityTemplate cet : cets) {
 
-            Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getCftPrefix(), currentUser.getProvider());
-            Map<String, EntityActionScript> cetActions = entityActionScriptService.findByAppliesTo(cet.getCftPrefix(), currentUser.getProvider());
+            Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo(), currentUser.getProvider());
+            Map<String, EntityActionScript> cetActions = entityActionScriptService.findByAppliesTo(cet.getAppliesTo(), currentUser.getProvider());
 
             cetDtos.add(CustomEntityTemplateDto.toDTO(cet, cetFields.values(), cetActions.values()));
         }
@@ -316,7 +316,7 @@ public class CustomEntityApi extends BaseApi {
             throw new EntityDoesNotExistsException("Customizable entity of class " + dto.getClassname() + " not found");
         }
 
-        String appliesTo = EntityCustomizationUtils.getAppliesToPrefix(clazz);
+        String appliesTo = EntityCustomizationUtils.getAppliesTo(clazz);
 
         synchronizeCustomFieldsAndActions(appliesTo, dto.getFields(), dto.getActions(), currentUser);
     }
@@ -407,7 +407,7 @@ public class CustomEntityApi extends BaseApi {
             throw new EntityDoesNotExistsException("Customizable entity of class " + customizedEntityClass + " not found");
         }
 
-        String appliesTo = EntityCustomizationUtils.getAppliesToPrefix(clazz);
+        String appliesTo = EntityCustomizationUtils.getAppliesTo(clazz);
 
         Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo, currentUser.getProvider());
 

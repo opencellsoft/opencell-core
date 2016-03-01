@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,10 +141,28 @@ public class ReflectionUtils {
      * @return A humanized class name
      */
     public static String getHumanClassName(String classname) {
+        classname = getCleanClassName(classname);
         if (classname.lastIndexOf('.') > 0) {
             classname = classname.substring(classname.lastIndexOf('.') + 1);
         }
         String humanClassname = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(classname), ' ');
         return humanClassname;
+    }
+
+    /**
+     * Check if object has a field
+     * 
+     * @param object Object to check
+     * @param fieldName Name of a field to check
+     * @return True if object has a field
+     */
+    public static boolean hasField(Object object, String fieldName) {
+        if (object == null) {
+            return false;
+        }
+        Field field = FieldUtils.getField(object.getClass(), fieldName, true);
+        Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
+        log.error("AKK check if {} has field {}", object.getClass(), fieldName);
+        return field != null;
     }
 }
