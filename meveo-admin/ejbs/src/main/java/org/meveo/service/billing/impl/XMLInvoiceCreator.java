@@ -462,12 +462,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						.getInvoiceConfiguration().getDisplayDetail(), enterprise);
 			}
 
-			addSubscriptions(userAccount, invoice, doc, invoiceTag);
+			addSubscriptions(userAccount, invoice, doc, userAccountTag, invoiceTag);
 		}
 
 	}
 
-	private void addSubscriptions(UserAccount userAccount, Invoice invoice, Document doc, Element invoiceTag) {
+	private void addSubscriptions(UserAccount userAccount, Invoice invoice, Document doc, Element userAccountTag, Element invoiceTag) {
 		if (userAccount.getSubscriptions() != null && userAccount.getSubscriptions().size() > 0) {
 
 			Element subscriptionsTag = null;
@@ -475,7 +475,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					&& invoice.getProvider().getInvoiceConfiguration().getDisplaySubscriptions() != null
 					&& invoice.getProvider().getInvoiceConfiguration().getDisplaySubscriptions()) {
 				subscriptionsTag = doc.createElement("subscriptions");
-				invoiceTag.appendChild(subscriptionsTag);
+				userAccountTag.appendChild(subscriptionsTag);
 			}
 			
 			for (Subscription subscription : userAccount.getSubscriptions()) {
