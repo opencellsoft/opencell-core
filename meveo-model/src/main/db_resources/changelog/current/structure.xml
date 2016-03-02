@@ -1447,5 +1447,19 @@
      		<column name="duplicate_price_plan" type="BOOL" defaultValueBoolean="false"/>
      	</addColumn>        
      </changeSet>
+    <changeSet id="#1478-20160302" author="AndriusKarpavicius">
+        <dropTable tableName="crm_provider_config"/>
+        <dropSequence sequenceName="crm_provider_config_seq"/>
+        <dropUniqueConstraint tableName="billing_invoice_configuration" constraintName="uk_billing_invoice_configuration"/>
+        <dropColumn tableName="billing_invoice_configuration" columnName="code"/>
+        <dropColumn tableName="billing_invoice_configuration" columnName="description"/>
+        <dropColumn tableName="billing_invoice_configuration" columnName="created"/>
+        <dropColumn tableName="billing_invoice_configuration" columnName="updated"/>
+        <dropColumn tableName="billing_invoice_configuration" columnName="creator_id"/>
+        <dropColumn tableName="billing_invoice_configuration" columnName="updater_id"/>
+        <dropColumn tableName="billing_invoice_configuration" columnName="disabled"/>
+        <addUniqueConstraint columnNames="provider_id" constraintName="uk_billing_invoice_configuration" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="billing_invoice_configuration" />
+    </changeSet>
     
 </databaseChangeLog>

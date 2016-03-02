@@ -32,7 +32,6 @@ import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.InvoiceConfigurationService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
@@ -47,13 +46,10 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     private ProviderService providerService;
 
     @Inject
-    private UserService userService; 
+    private UserService userService;
 
     @Inject
     private RoleService roleService;
-    
-    @Inject
-    private InvoiceConfigurationService invoiceConfigurationService;
 
     private static ParamBean paramBean = ParamBean.getInstance();
 
@@ -78,34 +74,20 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     protected String getDefaultSort() {
         return "code";
     }
-    
+
     @Override
-	public Provider initEntity() {
-		 super.initEntity();
-	   try{
-		if(entity.getId()!=null && entity.getInvoiceConfiguration()==null){ 
-		   InvoiceConfiguration invoiceConfiguration =new InvoiceConfiguration();
-			invoiceConfiguration.setCode(entity.getCode()); 
-			invoiceConfiguration.setDescription(entity.getDescription());   
-	   		invoiceConfiguration.setProvider(entity);
-	   		invoiceConfiguration.setDisplaySubscriptions(false);
-	   		invoiceConfiguration.setDisplayOffers(false);
-	   		invoiceConfiguration.setDisplayServices(false);
-	   		invoiceConfiguration.setDisplayProvider(false);
-	   		invoiceConfiguration.setDisplayEdrs(false);
-	   		invoiceConfiguration.setDisplayDetail(false);
-	   		invoiceConfigurationService.create(invoiceConfiguration);
-	   	    entity.setInvoiceConfiguration(invoiceConfiguration);
-	   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
-			}
-		if (entity.getBankCoordinates() == null) {
-			entity.setBankCoordinates(new BankCoordinates());
-		}
-		}catch(BusinessException e){
-		  log.error("error while saving invoiceConfiguration "+e);	
-		 }
-		return entity;
-	}
+    public Provider initEntity() {
+        super.initEntity();
+        if (entity.getId() != null && entity.getInvoiceConfiguration() == null) {
+            InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
+            invoiceConfiguration.setProvider(entity);
+            entity.setInvoiceConfiguration(invoiceConfiguration);
+        }
+        if (entity.getBankCoordinates() == null) {
+            entity.setBankCoordinates(new BankCoordinates());
+        }
+        return entity;
+    }
 
     public void onRowSelect(SelectEvent event) {
         if (event.getObject() instanceof Language) {
@@ -128,14 +110,11 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     protected Provider saveOrUpdate(Provider entity) throws BusinessException {
 
         boolean isNew = entity.isTransient();
-        
-        if (isNew){            
-           entity.getInvoiceConfiguration().setCode(entity.getCode()); 
-           entity.getInvoiceConfiguration().setDescription(entity.getDescription());   
-           entity.getInvoiceConfiguration().setProvider(entity);
-           entity.getInvoiceConfiguration().updateAudit(getCurrentUser());
+
+        if (isNew) {
+            entity.getInvoiceConfiguration().setProvider(entity);
         }
-        
+
         entity = super.saveOrUpdate(entity);
 
         // Create a default role and a user
@@ -160,18 +139,18 @@ public class ProviderBean extends CustomFieldBean<Provider> {
             log.info("created default user id={} for provider {}", user.getId(), entity.getCode());
 
             messages.info(new BundleKey("messages", "provider.createdWithDefaultUser"), entity.getCode() + ".ADMIN", entity.getCode() + ".password");
-         }
+        }
 
         return entity;
     }
-    
+
     @Override
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-    	if(!getCurrentUser().hasPermission("superAdmin", "superAdminManagement")) {
-    	    super.saveOrUpdate(killConversation);
-        	messages.info(new BundleKey("messages", "update.successful"));
-        	return "providerSelfDetail";
+        if (!getCurrentUser().hasPermission("superAdmin", "superAdminManagement")) {
+            super.saveOrUpdate(killConversation);
+            messages.info(new BundleKey("messages", "update.successful"));
+            return "providerSelfDetail";
         }
         String outcome = super.saveOrUpdate(killConversation);
         if (outcome != null) {

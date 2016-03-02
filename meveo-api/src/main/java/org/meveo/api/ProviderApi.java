@@ -29,7 +29,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingCycle;
@@ -141,7 +140,7 @@ public class ProviderApi extends BaseApi {
         if (!missingParameters.isEmpty()) {
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
-        
+
         Provider provider = providerService.findByCode(postData.getCode());
         if (provider != null) {
             throw new EntityAlreadyExistsException(Provider.class, postData.getCode());
@@ -197,22 +196,15 @@ public class ProviderApi extends BaseApi {
         }
 
         InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
-        invoiceConfiguration.setCode(provider.getCode());
-        invoiceConfiguration.setDescription(provider.getDescription());
         invoiceConfiguration.setDisplayEdrs(postData.getDisplayEdrs());
         invoiceConfiguration.setDisplayOffers(postData.getDisplayOffers());
         invoiceConfiguration.setDisplayServices(postData.getDisplayServices());
         invoiceConfiguration.setDisplaySubscriptions(postData.getDisplaySubscriptions());
         invoiceConfiguration.setDisplayProvider(postData.getDisplayProvider());
         invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
-
-        Auditable auditable = new Auditable(currentUser);
-        invoiceConfiguration.setAuditable(auditable);
-
-        provider.setInvoiceConfiguration(invoiceConfiguration);
-
         invoiceConfiguration.setProvider(provider);
 
+        provider.setInvoiceConfiguration(invoiceConfiguration);
         provider.setInvoiceAdjustmentPrefix(postData.getInvoiceAdjustmentPrefix());
         provider.setCurrentInvoiceAdjustmentNb(postData.getCurrentInvoiceAdjustmentNb());
 
@@ -308,14 +300,17 @@ public class ProviderApi extends BaseApi {
         provider.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
 
         InvoiceConfiguration invoiceConfiguration = provider.getInvoiceConfiguration();
-        if (invoiceConfiguration != null) {
-            invoiceConfiguration.setDisplaySubscriptions(postData.getDisplaySubscriptions());
-            invoiceConfiguration.setDisplayServices(postData.getDisplayServices());
-            invoiceConfiguration.setDisplayOffers(postData.getDisplayOffers());
-            invoiceConfiguration.setDisplayEdrs(postData.getDisplayEdrs());
-            invoiceConfiguration.setDisplayProvider(postData.getDisplayProvider());
-            invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
+        if (invoiceConfiguration == null) {
+            invoiceConfiguration = new InvoiceConfiguration();
+            invoiceConfiguration.setProvider(provider);
+            provider.setInvoiceConfiguration(invoiceConfiguration);
         }
+        invoiceConfiguration.setDisplaySubscriptions(postData.getDisplaySubscriptions());
+        invoiceConfiguration.setDisplayServices(postData.getDisplayServices());
+        invoiceConfiguration.setDisplayOffers(postData.getDisplayOffers());
+        invoiceConfiguration.setDisplayEdrs(postData.getDisplayEdrs());
+        invoiceConfiguration.setDisplayProvider(postData.getDisplayProvider());
+        invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
 
         if (postData.getInvoiceSequenceSize() != null) {
             provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
@@ -334,7 +329,7 @@ public class ProviderApi extends BaseApi {
         }
 
         provider = providerService.update(provider, currentUser);
-        
+
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), provider, false, currentUser);

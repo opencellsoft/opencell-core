@@ -54945,28 +54945,22 @@
                <currentInvoiceAdjustmentNb>36</currentInvoiceAdjustmentNb>
                <invoiceAdjustmentSequenceSize>25</invoiceAdjustmentSequenceSize>
             </provider>
-]]></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.superadmin</con:username><con:password>meveo.superadmin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="updateProvider" id="d3614878-daf6-4f1b-b3eb-47a0b6491656"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateProvider</con:operation><con:request name="updateProvider" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f641e1dd-046e-44c3-b6f1-364e8c05a64f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:updateProvider>
-         <!--Optional:-->
-         <provider code="${#TestSuite#ticket}_${#TestSuite#index}_Provider">
-            <!--Optional:-->
-            <description>Provider</description>
-            <!--Optional:-->
-            <currency>EUR</currency>
-            <!--Optional:-->
-            <country>FR</country>
-            <!--Optional:-->
-            <language>FRA</language>
-            <multiCurrency>true</multiCurrency>
-            <multiCountry>true</multiCountry>
-            <multiLanguage>true</multiLanguage>
-            <!--Optional:-->
-            <userAccount></userAccount>
-         </provider>
-      </ws:updateProvider>
-   </soapenv:Body>
+]]></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.superadmin</con:username><con:password>meveo.superadmin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="updateProvider" id="d3614878-daf6-4f1b-b3eb-47a0b6491656"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateProvider</con:operation><con:request name="updateProvider" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f641e1dd-046e-44c3-b6f1-364e8c05a64f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateProvider>\r
+         <provider code="${#TestSuite#ticket}_${#TestSuite#index}_Provider">\r
+            <description>Provider</description>\r
+            <currency>EUR</currency>\r
+            <country>FR</country>\r
+            <language>FRA</language>\r
+            <multiCurrency>true</multiCurrency>\r
+            <multiCountry>true</multiCountry>\r
+            <multiLanguage>true</multiLanguage>\r
+            <displayEdrs>false</displayEdrs>\r
+         </provider>\r
+      </ws:updateProvider>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="df260ffa-57bb-4360-97b3-86cb85c7161d" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.superadmin</con:username><con:password>meveo.superadmin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateProvider"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="e00ddc13-6cf8-4b25-856a-0a9c65330b02" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD User" searchProperties="true"><con:settings/><con:testStep type="request" name="create User with All Vals" id="3f311ef4-cab9-4382-9db9-d07dc08ca38b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createUser</con:operation><con:request name="create User with All Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a7b6b132-bf5d-466b-94af-01689de7367e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
