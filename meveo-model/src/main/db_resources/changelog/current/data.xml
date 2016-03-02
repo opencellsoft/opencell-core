@@ -44,4 +44,10 @@
 		<sql>UPDATE BILLING_BILLING_RUN SET STATUS='POSTINVOICED' WHERE STATUS='TERMINATED'</sql>
 		<sql>UPDATE BILLING_BILLING_RUN SET STATUS='POSTVALIDATED' WHERE STATUS='CONFIRMED'</sql>
 	</changeSet>
+     <changeSet id="#1517-20160302" author="AndriusKarpavicius">
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="2" />
+            <column name="permission_id" valueNumeric="14" />
+        </insert>     
+     </changeSet>    
 </databaseChangeLog>

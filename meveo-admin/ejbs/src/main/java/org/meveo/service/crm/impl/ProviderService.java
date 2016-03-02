@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -34,51 +33,36 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class ProviderService extends PersistenceService<Provider> {
-	@Inject
-	private UserService userService;
+    @Inject
+    private UserService userService;
 
-	public Provider findByCode(String code) {
-		return findByCode(getEntityManager(), code);
-	}
+    public Provider findByCode(String code) {
+        return findByCodeWithFetch(code, null);
+    }
 
-	public Provider findByCode(EntityManager em, String code) {
-		try {
-			return (Provider) em
-					.createQuery(
-							"from " + Provider.class.getSimpleName()
-									+ " where code=:code")
-					.setParameter("code", code).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
+    public Provider findUsersProvider(String userName) {
+        User user = userService.findByUsername(userName);
+        if (user != null) {
+            return user.getProvider();
+        }
+        return null;
+    }
 
-	public Provider findUsersProvider(String userName) {
-		User user = userService.findByUsername(userName);
-		if (user != null) {
-			return user.getProvider();
-		}
-		return null;
-	}
+    @SuppressWarnings("unchecked")
+    public List<Provider> getProviders() {
+        List<Provider> providers = (List<Provider>) getEntityManager().createQuery("from " + Provider.class.getSimpleName()).getResultList();
+        return providers;
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<Provider> getProviders() {
-		List<Provider> providers = (List<Provider>) getEntityManager()
-				.createQuery("from " + Provider.class.getSimpleName())
-				.getResultList();
-		return providers;
-	}
+    public Provider findByCodeWithFetch(String code, List<String> fetchFields) {
+        QueryBuilder qb = new QueryBuilder(Provider.class, "p", fetchFields, null);
 
-	public Provider findByCodeWithFetch(String code, List<String> fetchFields) {
-		QueryBuilder qb = new QueryBuilder(Provider.class, "p", fetchFields,
-				null);
+        qb.addCriterion("p.code", "=", code, true);
 
-		qb.addCriterion("p.code", "=", code, true);
-
-		try {
-			return (Provider) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
+        try {
+            return (Provider) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }

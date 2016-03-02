@@ -50,284 +50,276 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
 @Stateless
 public class FilterService extends BusinessService<Filter> {
 
-	@Inject
-	private FilterSelectorService filterSelectorService;
+    @Inject
+    private FilterSelectorService filterSelectorService;
 
-	public Filter parse(String xmlInput) throws XStreamException {
-		xmlInput = xmlInput.trim();
-		Filter result = new Filter();
+    public Filter parse(String xmlInput) throws XStreamException {
+        xmlInput = xmlInput.trim();
+        Filter result = new Filter();
 
-		XStream xstream = getXStream();
-		result = (Filter) xstream.fromXML(xmlInput);
+        XStream xstream = getXStream();
+        result = (Filter) xstream.fromXML(xmlInput);
 
-		return result;
-	}
+        return result;
+    }
 
-	/**
-	 * Use in the UI when creating a filter hierarchy from xml.
-	 * 
-	 * @return
-	 */
-	private XStream getXStream() {
-		XStream xStream = new XStream();
-		// rename the selector field
-		xStream.alias("andCompositeFilterCondition", AndCompositeFilterCondition.class);
-		xStream.alias("filter", Filter.class);
-		xStream.alias("filterCondition", FilterCondition.class);
-		xStream.alias("filterSelector", FilterSelector.class);
-		xStream.alias("nativeFilterCondition", NativeFilterCondition.class);
-		xStream.alias("orCompositeFilterCondition", OrCompositeFilterCondition.class);
-		xStream.alias("orderCondition", OrderCondition.class);
-		xStream.alias("primitiveFilterCondition", PrimitiveFilterCondition.class);
-		xStream.alias("projector", Projector.class);
+    /**
+     * Use in the UI when creating a filter hierarchy from xml.
+     * 
+     * @return
+     */
+    private XStream getXStream() {
+        XStream xStream = new XStream();
+        // rename the selector field
+        xStream.alias("andCompositeFilterCondition", AndCompositeFilterCondition.class);
+        xStream.alias("filter", Filter.class);
+        xStream.alias("filterCondition", FilterCondition.class);
+        xStream.alias("filterSelector", FilterSelector.class);
+        xStream.alias("nativeFilterCondition", NativeFilterCondition.class);
+        xStream.alias("orCompositeFilterCondition", OrCompositeFilterCondition.class);
+        xStream.alias("orderCondition", OrderCondition.class);
+        xStream.alias("primitiveFilterCondition", PrimitiveFilterCondition.class);
+        xStream.alias("projector", Projector.class);
 
-		xStream.setMode(XStream.NO_REFERENCES);
+        xStream.setMode(XStream.NO_REFERENCES);
 
-		// rename String to field, arrayList must be specify in the fieldName
-		// setter
-		ClassAliasingMapper orderConditionFieldMapper = new ClassAliasingMapper(xStream.getMapper());
-		orderConditionFieldMapper.addClassAlias("field", String.class);
-		xStream.registerLocalConverter(OrderCondition.class, "fieldNames", new CollectionConverter(
-				orderConditionFieldMapper));
+        // rename String to field, arrayList must be specify in the fieldName
+        // setter
+        ClassAliasingMapper orderConditionFieldMapper = new ClassAliasingMapper(xStream.getMapper());
+        orderConditionFieldMapper.addClassAlias("field", String.class);
+        xStream.registerLocalConverter(OrderCondition.class, "fieldNames", new CollectionConverter(orderConditionFieldMapper));
 
-		// rename projector exportField
-		ClassAliasingMapper projectorExportFieldMapper = new ClassAliasingMapper(xStream.getMapper());
-		projectorExportFieldMapper.addClassAlias("field", String.class);
-		xStream.registerLocalConverter(FilterSelector.class, "exportFields", new CollectionConverter(
-				projectorExportFieldMapper));
+        // rename projector exportField
+        ClassAliasingMapper projectorExportFieldMapper = new ClassAliasingMapper(xStream.getMapper());
+        projectorExportFieldMapper.addClassAlias("field", String.class);
+        xStream.registerLocalConverter(FilterSelector.class, "exportFields", new CollectionConverter(projectorExportFieldMapper));
 
-		// rename projector displayField
-		ClassAliasingMapper projectorDisplayFieldMapper = new ClassAliasingMapper(xStream.getMapper());
-		projectorDisplayFieldMapper.addClassAlias("field", String.class);
-		xStream.registerLocalConverter(FilterSelector.class, "displayFields", new CollectionConverter(
-				projectorDisplayFieldMapper));
+        // rename projector displayField
+        ClassAliasingMapper projectorDisplayFieldMapper = new ClassAliasingMapper(xStream.getMapper());
+        projectorDisplayFieldMapper.addClassAlias("field", String.class);
+        xStream.registerLocalConverter(FilterSelector.class, "displayFields", new CollectionConverter(projectorDisplayFieldMapper));
 
-		// rename projector ignore field
-		ClassAliasingMapper projectorIgnoreFieldMapper = new ClassAliasingMapper(xStream.getMapper());
-		projectorIgnoreFieldMapper.addClassAlias("field", String.class);
-		xStream.registerLocalConverter(FilterSelector.class, "ignoreIfNotFoundForeignKeys", new CollectionConverter(
-				projectorIgnoreFieldMapper));
+        // rename projector ignore field
+        ClassAliasingMapper projectorIgnoreFieldMapper = new ClassAliasingMapper(xStream.getMapper());
+        projectorIgnoreFieldMapper.addClassAlias("field", String.class);
+        xStream.registerLocalConverter(FilterSelector.class, "ignoreIfNotFoundForeignKeys", new CollectionConverter(projectorIgnoreFieldMapper));
 
-		return xStream;
-	}
+        return xStream;
+    }
 
-	public void applyOmittedFields(XStream xstream, Filter filter) {
-		applyOmittedFields(xstream, filter, true);
-	}
+    public void applyOmittedFields(XStream xstream, Filter filter) {
+        applyOmittedFields(xstream, filter, true);
+    }
 
-	public void applyOmittedFields(XStream xstream, Filter filter, boolean display) {
-		List<String> displayOrExportFields = filter.getPrimarySelector().getDisplayFields();
-		if (!display) {
-			displayOrExportFields = filter.getPrimarySelector().getExportFields();
-		}
+    public void applyOmittedFields(XStream xstream, Filter filter, boolean display) {
+        List<String> displayOrExportFields = filter.getPrimarySelector().getDisplayFields();
+        if (!display) {
+            displayOrExportFields = filter.getPrimarySelector().getExportFields();
+        }
 
-		@SuppressWarnings("rawtypes")
-		Class targetClass = ReflectionUtils.createObject(filter.getPrimarySelector().getTargetEntity()).getClass();
-		List<Field> fields = new ArrayList<Field>();
-		ReflectionUtils.getAllFields(fields, targetClass);
+        @SuppressWarnings("rawtypes")
+        Class targetClass = ReflectionUtils.createObject(filter.getPrimarySelector().getTargetEntity()).getClass();
+        List<Field> fields = new ArrayList<Field>();
+        ReflectionUtils.getAllFields(fields, targetClass);
 
-		// allFields - display = omit
-		List<Field> displayFields = new ArrayList<>();
-		for (Field field : fields) {
-			for (String displayField : displayOrExportFields) {
-				if (field.getName().equals(displayField)) {
-					displayFields.add(field);
-					break;
-				}
-			}
-		}
+        // allFields - display = omit
+        List<Field> displayFields = new ArrayList<>();
+        for (Field field : fields) {
+            for (String displayField : displayOrExportFields) {
+                if (field.getName().equals(displayField)) {
+                    displayFields.add(field);
+                    break;
+                }
+            }
+        }
 
-		fields.removeAll(displayFields);
+        fields.removeAll(displayFields);
 
-		// omit fields
-		log.debug("Omitting fields={} from class={}", Arrays.asList(fields), targetClass.getName());
-		for (Field field : fields) {
-			xstream.omitField(field.getDeclaringClass(), field.getName());
-		}
-	}
+        // omit fields
+        log.debug("Omitting fields={} from class={}", Arrays.asList(fields), targetClass.getName());
+        for (Field field : fields) {
+            xstream.omitField(field.getDeclaringClass(), field.getName());
+        }
+    }
 
-	public boolean isMatch(NativeFilterCondition filter, Map<Object, Object> params) {
-		try {
-			return ((Boolean) ValueExpressionWrapper.evaluateExpression(filter.getEl(), params, Boolean.class))
-					.booleanValue();
-		} catch (BusinessException e) {
-			return false;
-		}
-	}
+    public boolean isMatch(NativeFilterCondition filter, Map<Object, Object> params) {
+        try {
+            return ((Boolean) ValueExpressionWrapper.evaluateExpression(filter.getEl(), params, Boolean.class)).booleanValue();
+        } catch (BusinessException e) {
+            return false;
+        }
+    }
 
-	public String serializeEntities(XStream xstream, Filter filter, List<? extends IEntity> entities) {
-		if (entities.isEmpty()) {
-			log.info("No entities to serialize");
-			return "";
-		}
+    public String serializeEntities(XStream xstream, Filter filter, List<? extends IEntity> entities) {
+        if (entities.isEmpty()) {
+            log.info("No entities to serialize");
+            return "";
+        }
 
-		Class<? extends Object> primaryTargetClass = ReflectionUtils.createObject(
-				filter.getPrimarySelector().getTargetEntity()).getClass();
-		xstream.alias(primaryTargetClass.getSimpleName().toLowerCase(), primaryTargetClass);
+        Class<? extends Object> primaryTargetClass = ReflectionUtils.createObject(filter.getPrimarySelector().getTargetEntity()).getClass();
+        xstream.alias(primaryTargetClass.getSimpleName().toLowerCase(), primaryTargetClass);
 
-		// Add custom converters
-		xstream.registerConverter(new HibernatePersistentCollectionConverter(xstream.getMapper()));
-		xstream.registerConverter(new HibernatePersistentMapConverter(xstream.getMapper()));
-		xstream.registerConverter(new HibernatePersistentSortedMapConverter(xstream.getMapper()));
-		xstream.registerConverter(new HibernatePersistentSortedSetConverter(xstream.getMapper()));
-		xstream.registerConverter(new HibernateProxyConverter());
-		xstream.setMode(XStream.NO_REFERENCES);
+        // Add custom converters
+        xstream.registerConverter(new HibernatePersistentCollectionConverter(xstream.getMapper()));
+        xstream.registerConverter(new HibernatePersistentMapConverter(xstream.getMapper()));
+        xstream.registerConverter(new HibernatePersistentSortedMapConverter(xstream.getMapper()));
+        xstream.registerConverter(new HibernatePersistentSortedSetConverter(xstream.getMapper()));
+        xstream.registerConverter(new HibernateProxyConverter());
+        xstream.setMode(XStream.NO_REFERENCES);
 
-		return xstream.toXML(entities);
-	}
+        return xstream.toXML(entities);
+    }
 
-	@SuppressWarnings("unchecked")
-	public String filteredList(Filter filter, Provider provider) throws BusinessException {
-		FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter);
+    @SuppressWarnings("unchecked")
+    public String filteredList(Filter filter, Provider provider) throws BusinessException {
+        FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter);
 
-		try {
-			Query query = fqb.getQuery(getEntityManager());
-			log.debug("query={}", fqb.getSqlString());
-			List<? extends IEntity> objects = (List<? extends IEntity>) query.getResultList();
-			XStream xstream = new XStream() {
-				@Override
-				protected MapperWrapper wrapMapper(MapperWrapper next) {
-					return new HibernateMapper(next);
-				}
-			};
+        try {
+            Query query = fqb.getQuery(getEntityManager());
+            log.debug("query={}", fqb.getSqlString());
+            List<? extends IEntity> objects = (List<? extends IEntity>) query.getResultList();
+            XStream xstream = new XStream() {
+                @Override
+                protected MapperWrapper wrapMapper(MapperWrapper next) {
+                    return new HibernateMapper(next);
+                }
+            };
 
-			applyOmittedFields(xstream, filter);
+            applyOmittedFields(xstream, filter);
 
-			// String result = xstream.toXML(countries);
-			return serializeEntities(xstream, filter, objects);
-		} catch (Exception e) {
-			throw new BusinessException(e);
-		}
-	}
+            // String result = xstream.toXML(countries);
+            return serializeEntities(xstream, filter, objects);
+        } catch (Exception e) {
+            throw new BusinessException(e);
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<? extends IEntity> filteredListAsObjects(Filter filter, Provider provider) throws BusinessException {
-		FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter);
+    @SuppressWarnings("unchecked")
+    public List<? extends IEntity> filteredListAsObjects(Filter filter, Provider provider) throws BusinessException {
+        FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter);
 
-		try {
-			Query query = fqb.getQuery(getEntityManager());
-			log.debug("query={}", fqb.getSqlString());
-			List<? extends IEntity> objects = (List<? extends IEntity>) query.getResultList();
-			XStream xstream = new XStream() {
-				@Override
-				protected MapperWrapper wrapMapper(MapperWrapper next) {
-					return new HibernateMapper(next);
-				}
-			};
+        try {
+            Query query = fqb.getQuery(getEntityManager());
+            log.debug("query={}", fqb.getSqlString());
+            List<? extends IEntity> objects = (List<? extends IEntity>) query.getResultList();
+            XStream xstream = new XStream() {
+                @Override
+                protected MapperWrapper wrapMapper(MapperWrapper next) {
+                    return new HibernateMapper(next);
+                }
+            };
 
-			applyOmittedFields(xstream, filter);
+            applyOmittedFields(xstream, filter);
 
-			return objects;
-		} catch (Exception e) {
-			throw new BusinessException(e);
-		}
-	}
+            return objects;
+        } catch (Exception e) {
+            throw new BusinessException(e);
+        }
+    }
 
-	public String filteredList(String filterName, Integer firstRow, Integer numberOfRows, Provider provider)
-			throws BusinessException {
-		Filter filter = (Filter) findByCode(filterName, provider);
-		return filteredList(filter, firstRow, numberOfRows);
-	}
+    public String filteredList(String filterName, Integer firstRow, Integer numberOfRows, Provider provider) throws BusinessException {
+        Filter filter = (Filter) findByCode(filterName, provider);
+        return filteredList(filter, firstRow, numberOfRows);
+    }
 
-	@SuppressWarnings("unchecked")
-	public String filteredList(Filter filter, Integer firstRow, Integer numberOfRows) throws BusinessException {
-		FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter);
+    @SuppressWarnings("unchecked")
+    public String filteredList(Filter filter, Integer firstRow, Integer numberOfRows) throws BusinessException {
+        FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter);
 
-		try {
-			Query query = fqb.getQuery(getEntityManager());
-			log.debug("query={}", fqb.getSqlString());
-			fqb.applyPagination(query, firstRow, numberOfRows);
-			List<? extends IEntity> objects = (List<? extends IEntity>) query.getResultList();
-			XStream xstream = new XStream() {
-				@Override
-				protected MapperWrapper wrapMapper(MapperWrapper next) {
-					return new HibernateMapper(next);
-				}
-			};
+        try {
+            Query query = fqb.getQuery(getEntityManager());
+            log.debug("query={}", fqb.getSqlString());
+            fqb.applyPagination(query, firstRow, numberOfRows);
+            List<? extends IEntity> objects = (List<? extends IEntity>) query.getResultList();
+            XStream xstream = new XStream() {
+                @Override
+                protected MapperWrapper wrapMapper(MapperWrapper next) {
+                    return new HibernateMapper(next);
+                }
+            };
 
-			applyOmittedFields(xstream, filter);
+            applyOmittedFields(xstream, filter);
 
-			// String result = xstream.toXML(countries);
-			return serializeEntities(xstream, filter, objects);
-		} catch (Exception e) {
-			throw new BusinessException(e);
-		}
-	}
+            // String result = xstream.toXML(countries);
+            return serializeEntities(xstream, filter, objects);
+        } catch (Exception e) {
+            throw new BusinessException(e);
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<Filter> findByPrimaryTargetClass(String className) {
-		QueryBuilder qb = new QueryBuilder(Filter.class, "f", null, getCurrentProvider());
-		qb.addCriterion("primarySelector.targetEntity", "=", className, true);
-		qb.startOrClause();
-		qb.addBooleanCriterion("shared", true);
-		qb.addCriterionEntity("f.auditable.creator", getCurrentUser());
-		qb.endOrClause();
+    @SuppressWarnings("unchecked")
+    public List<Filter> findByPrimaryTargetClass(String className) {
+        QueryBuilder qb = new QueryBuilder(Filter.class, "f", null, getCurrentProvider());
+        qb.addCriterion("primarySelector.targetEntity", "=", className, true);
+        qb.startOrClause();
+        qb.addBooleanCriterion("shared", true);
+        qb.addCriterionEntity("f.auditable.creator", getCurrentUser());
+        qb.endOrClause();
 
-		try {
-			return (List<Filter>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
+        try {
+            return (List<Filter>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
-	public void initFilterFromInputXml(Filter filter) throws BusinessException {
-		if (filter != null) {
-			Auditable auditable = new Auditable();
-			auditable.setCreated(new Date());
-			auditable.setCreator(getCurrentUser());
+    public void initFilterFromInputXml(Filter filter) throws BusinessException {
+        if (filter == null) {
+            return;
+        }
+        Auditable auditable = new Auditable();
+        auditable.setCreated(new Date());
+        auditable.setCreator(getCurrentUser());
 
-			if (filter.getOrderCondition() != null) {
-				filter.getOrderCondition().setProvider(getCurrentProvider());
-				filter.setOrderCondition(filter.getOrderCondition());
-			}
+        if (filter.getOrderCondition() != null) {
+            filter.getOrderCondition().setProvider(getCurrentProvider());
+            filter.setOrderCondition(filter.getOrderCondition());
+        }
 
-			if (filter.getPrimarySelector() != null) {
-				filter.getPrimarySelector().setProvider(getCurrentProvider());
-				filter.setPrimarySelector(filter.getPrimarySelector());
-			}
+        if (filter.getPrimarySelector() != null) {
+            filter.getPrimarySelector().setProvider(getCurrentProvider());
+            filter.setPrimarySelector(filter.getPrimarySelector());
+        }
 
-			if (filter.getSecondarySelectors() != null) {
-				if (filter.getSecondarySelectors() == null) {
-					filter.setSecondarySelectors(new ArrayList<FilterSelector>());
-				}
-				for (FilterSelector filterSelector : filter.getSecondarySelectors()) {
-					filterSelector.setProvider(getCurrentProvider());
-					filterSelectorService.create(filterSelector);
-					filter.getSecondarySelectors().add(filterSelector);
-				}
-			}
+        if (filter.getSecondarySelectors() != null) {
+            if (filter.getSecondarySelectors() == null) {
+                filter.setSecondarySelectors(new ArrayList<FilterSelector>());
+            }
+            for (FilterSelector filterSelector : filter.getSecondarySelectors()) {
+                filterSelector.setProvider(getCurrentProvider());
+                filterSelectorService.create(filterSelector);
+                filter.getSecondarySelectors().add(filterSelector);
+            }
+        }
 
-			// process filterCondition
-			if (filter.getFilterCondition() != null) {
-				filter.setFilterCondition(setProviderToFilterCondition(filter.getFilterCondition()));
-			}
-		}
-	}
+        // process filterCondition
+        if (filter.getFilterCondition() != null) {
+            filter.setFilterCondition(setProviderToFilterCondition(filter.getFilterCondition()));
+        }
+    }
 
-	public FilterCondition setProviderToFilterCondition(FilterCondition filterCondition) {
-		filterCondition.setProvider(getCurrentProvider());
+    public FilterCondition setProviderToFilterCondition(FilterCondition filterCondition) {
+        filterCondition.setProvider(getCurrentProvider());
 
-		if (filterCondition.getFilterConditionType().equals(
-				AndCompositeFilterCondition.class.getAnnotation(DiscriminatorValue.class).value())) {
-			AndCompositeFilterCondition andCompositeFilterCondition = (AndCompositeFilterCondition) filterCondition;
-			if (andCompositeFilterCondition.getFilterConditions() != null) {
-				for (FilterCondition filterConditionLoop : andCompositeFilterCondition.getFilterConditions()) {
-					setProviderToFilterCondition(filterConditionLoop);
-				}
-			}
-		}
+        if (filterCondition.getFilterConditionType().equals(AndCompositeFilterCondition.class.getAnnotation(DiscriminatorValue.class).value())) {
+            AndCompositeFilterCondition andCompositeFilterCondition = (AndCompositeFilterCondition) filterCondition;
+            if (andCompositeFilterCondition.getFilterConditions() != null) {
+                for (FilterCondition filterConditionLoop : andCompositeFilterCondition.getFilterConditions()) {
+                    setProviderToFilterCondition(filterConditionLoop);
+                }
+            }
+        }
 
-		if (filterCondition.getFilterConditionType().equals(
-				OrCompositeFilterCondition.class.getAnnotation(DiscriminatorValue.class).value())) {
-			OrCompositeFilterCondition orCompositeFilterCondition = (OrCompositeFilterCondition) filterCondition;
-			if (orCompositeFilterCondition.getFilterConditions() != null) {
-				for (FilterCondition filterConditionLoop : orCompositeFilterCondition.getFilterConditions()) {
-					setProviderToFilterCondition(filterConditionLoop);
-				}
-			}
-		}
+        if (filterCondition.getFilterConditionType().equals(OrCompositeFilterCondition.class.getAnnotation(DiscriminatorValue.class).value())) {
+            OrCompositeFilterCondition orCompositeFilterCondition = (OrCompositeFilterCondition) filterCondition;
+            if (orCompositeFilterCondition.getFilterConditions() != null) {
+                for (FilterCondition filterConditionLoop : orCompositeFilterCondition.getFilterConditions()) {
+                    setProviderToFilterCondition(filterConditionLoop);
+                }
+            }
+        }
 
-		return filterCondition;
-	}
+        return filterCondition;
+    }
 
 }

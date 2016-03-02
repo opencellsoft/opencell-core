@@ -100,21 +100,20 @@ public class LanguageApi extends BaseApi {
 
         Language language = languageService.findByCode(postData.getCode());
 
-        if (language != null) {
-            Auditable auditable = new Auditable();
-            auditable.setUpdated(new Date());
-            auditable.setUpdater(currentUser);
-
-            language.setDescriptionEn(postData.getDescription());
-            language.setAuditable(auditable);
-
-            tradingLanguage.setAuditable(auditable);
-            tradingLanguage.setLanguage(language);
-            tradingLanguage.setLanguageCode(postData.getCode());
-            tradingLanguage.setPrDescription(postData.getDescription());
-        } else {
+        if (language == null) {
             throw new EntityDoesNotExistsException(Language.class, postData.getCode());
         }
+        Auditable auditable = new Auditable();
+        auditable.setUpdated(new Date());
+        auditable.setUpdater(currentUser);
+
+        language.setDescriptionEn(postData.getDescription());
+        language.setAuditable(auditable);
+
+        tradingLanguage.setAuditable(auditable);
+        tradingLanguage.setLanguage(language);
+        tradingLanguage.setLanguageCode(postData.getCode());
+        tradingLanguage.setPrDescription(postData.getDescription());
     }
 
     public LanguageDto find(String code, Provider provider) throws MeveoApiException {

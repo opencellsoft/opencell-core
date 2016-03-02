@@ -141,8 +141,13 @@ public class ProviderApi extends BaseApi {
         if (!missingParameters.isEmpty()) {
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
+        
+        Provider provider = providerService.findByCode(postData.getCode());
+        if (provider != null) {
+            throw new EntityAlreadyExistsException(Provider.class, postData.getCode());
+        }
 
-        Provider provider = new Provider();
+        provider = new Provider();
         provider.setCode(postData.getCode().toUpperCase());
         provider.setDescription(postData.getDescription());
         provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
@@ -189,11 +194,6 @@ public class ProviderApi extends BaseApi {
         if (!StringUtils.isBlank(postData.getUserAccount())) {
             UserAccount ua = userAccountService.findByCode(postData.getUserAccount(), currentUser.getProvider());
             provider.setUserAccount(ua);
-        }
-
-        // check if provider already exists
-        if (providerService.findByCode(postData.getCode()) != null) {
-            throw new EntityAlreadyExistsException(Provider.class, postData.getCode());
         }
 
         InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
@@ -256,8 +256,7 @@ public class ProviderApi extends BaseApi {
         }
 
         // search for provider
-        Provider provider = providerService.findByCode(postData.getCode());
-
+        Provider provider = providerService.findByCodeWithFetch(postData.getCode(), Arrays.asList("currency", "country", "language"));
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, postData.getCode());
         }
@@ -335,7 +334,7 @@ public class ProviderApi extends BaseApi {
         }
 
         provider = providerService.update(provider, currentUser);
-        providerService.refresh(provider);
+        
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), provider, false, currentUser);
@@ -358,7 +357,7 @@ public class ProviderApi extends BaseApi {
             providerCode = currentUser.getProvider().getCode();
         }
 
-        Provider provider = providerService.findByCodeWithFetch(providerCode, null);
+        Provider provider = providerService.findByCode(providerCode);
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
@@ -401,7 +400,7 @@ public class ProviderApi extends BaseApi {
             providerCode = currentUser.getProvider().getCode();
         }
 
-        Provider provider = providerService.findByCodeWithFetch(providerCode, null);
+        Provider provider = providerService.findByCode(providerCode);
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
@@ -465,7 +464,7 @@ public class ProviderApi extends BaseApi {
             providerCode = currentUser.getProvider().getCode();
         }
 
-        Provider provider = providerService.findByCodeWithFetch(providerCode, null);
+        Provider provider = providerService.findByCode(providerCode);
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
@@ -505,7 +504,7 @@ public class ProviderApi extends BaseApi {
             providerCode = currentUser.getProvider().getCode();
         }
 
-        Provider provider = providerService.findByCodeWithFetch(providerCode, null);
+        Provider provider = providerService.findByCode(providerCode);
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
@@ -532,13 +531,12 @@ public class ProviderApi extends BaseApi {
      * @throws MeveoApiException
      */
     public void createOrUpdate(ProviderDto postData, User currentUser) throws MeveoApiException {
-        Provider provider = providerService.findByCodeWithFetch(postData.getCode(), null);
+        Provider provider = providerService.findByCode(postData.getCode());
 
         if (provider == null) {
             create(postData, currentUser);
         } else {
             update(postData, currentUser);
         }
-
     }
 }
