@@ -711,11 +711,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		DateFormat dateFormat = new SimpleDateFormat(DATE_PATERN);
 		return dateFormat.format(invoiceDate);
 	}
-	
-	public  Map<String,List<String>> getJasperFilesNotFound(){
-		Map<String,List<String>> jasperFiles = new HashMap<String, List<String>>(); 
-		return jasperFiles;
-	}
 
 	@SuppressWarnings("unchecked")
 	public void deleteInvoice(Invoice invoice) {
