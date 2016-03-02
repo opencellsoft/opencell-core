@@ -30,7 +30,6 @@ import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
-import org.meveo.api.dto.catalog.DiscountPlansDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
