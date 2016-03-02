@@ -11,9 +11,7 @@ public class JsonUtils {
 	    }
 	    final GsonBuilder builder = new GsonBuilder();
 	    builder.setVersion(1.0);
-	    final Gson gson = builder.setPrettyPrinting().create();
+	    final Gson gson = builder.setPrettyPrinting().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
 	    return gson.toJson(object);
-
 	}
-
 }
