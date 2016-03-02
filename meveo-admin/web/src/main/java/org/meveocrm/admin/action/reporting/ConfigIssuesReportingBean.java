@@ -1,5 +1,6 @@
 package org.meveocrm.admin.action.reporting;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,8 +11,10 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.io.FileUtils;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.CurrentProvider;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -84,6 +87,8 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
 
     @Inject
     private InvoiceService invoiceService;
+    
+	private ParamBean paramBean = ParamBean.getInstance();
 
     @Inject
     @CurrentProvider
@@ -169,9 +174,43 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     public void constructScriptInstancesWithError(TabChangeEvent event) {
         scriptInstanceWithErrorList = scriptInstanceService.getScriptInstancesWithError(currentProvider);
     }
+    
+    private  Map<String,List<String>> getJasperFiles(){
+    	List<String> jaspersNotFound =null; 
+    	Map<String,List<String>> jasperFiles = new HashMap<String, List<String>>(); 
+    	String[] filter ={"jasper"};
+    	String[] jaspersName = paramBean.getProperty("reports.jasperTemplatesName","invoice,invoice_tva,invoice_categories,invoice_detail").split(",");
+
+    	//check jaspers files
+    	File jasperDir= new File(paramBean.getProperty("providers.rootDir","/tmp/meveo/")+ File.separator+ getCurrentProvider().getCode() + File.separator+"jasper");
+    	log.info("Jaspers template used :"+jasperDir.getPath());
+    	List<File> jasperList=null; 
+    	List<String> filesName=null;
+    	File[] foldersList = jasperDir.listFiles(); 
+
+    	if (foldersList != null && foldersList.length >0) {
+    		for (int i = 0; i < foldersList.length; i++) {
+    			jaspersNotFound=new ArrayList<String>();
+    			jasperList = (List<File>) FileUtils.listFiles(foldersList[i].getAbsoluteFile(),filter, true); 
+    			filesName=new ArrayList<String>();
+    			for(File file :jasperList){ 
+    				filesName.add(file.getName().substring(0, file.getName().lastIndexOf(".")));
+    			} 
+    			for(String f :jaspersName){
+    				if(!filesName.contains(f)){
+    					jaspersNotFound.add(f);
+    				}
+    			} 
+    			if(jaspersNotFound!=null && jaspersNotFound.size()>0){	
+    				jasperFiles.put(foldersList[i].getName(), jaspersNotFound);
+    			}
+    		}
+    	} 
+    	return jasperFiles;
+    }
 
     public void getJasperFilesNotFound(TabChangeEvent event) {
-        jasperFilesList = invoiceService.getJasperFilesNotFound();
+        jasperFilesList =getJasperFiles();
         if (jasperFilesList != null && jasperFilesList.size() > 0) {
             jaspers = new ArrayList<>(jasperFilesList.entrySet());
         }
@@ -191,7 +230,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
         reportConfigDto.setNbrEdrOpen(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.OPEN, currentProvider).intValue());
         reportConfigDto.setNbrEdrRated(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.RATED, currentProvider).intValue());
         reportConfigDto.setNbrEdrRejected(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.REJECTED, currentProvider).intValue());
-        reportConfigDto.setNbrJasperDir(invoiceService.getJasperFilesNotFound().size());
+        reportConfigDto.setNbrJasperDir(getJasperFiles().size());
     }
 
     public Integer getNbrChargesWithNotPricePlan() {
