@@ -287,7 +287,6 @@ public class RecurringChargeTemplateApi extends BaseApi {
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
 
-        RecurringChargeTemplateDto result = new RecurringChargeTemplateDto();
 
         // check if code already exists
         RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code, provider, Arrays.asList("invoiceSubCategory", "calendar"));
@@ -295,7 +294,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
             throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, code);
         }
 
-        result = new RecurringChargeTemplateDto(chargeTemplate, customFieldInstanceService.getCustomFieldInstances(chargeTemplate));
+        RecurringChargeTemplateDto result = new RecurringChargeTemplateDto(chargeTemplate, customFieldInstanceService.getCustomFieldInstances(chargeTemplate));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
         for (CatMessages msg : catMessagesService.getCatMessagesList(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId())) {

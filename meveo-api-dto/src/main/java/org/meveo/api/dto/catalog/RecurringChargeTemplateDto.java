@@ -42,6 +42,9 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 		if (e.getShareLevel() != null) {
 			shareLevel = e.getShareLevel().getId();
 		}
+		if (e.getCalendar()!=null){
+		    calendar = e.getCalendar().getCode();
+		}
 	}
 
 	public Integer getDurationTermInMonth() {
