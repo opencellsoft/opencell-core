@@ -15,22 +15,19 @@ import org.meveo.service.script.CustomScriptService;
 @Stateless
 public class OfferScriptService extends CustomScriptService<OfferModelScript, OfferScriptInterface> {
 
-	public void subscribe(String code, Map<String, Object> scriptContext, User creator, Provider provider)
+	public void subscribe(String scriptCode, Map<String, Object> scriptContext, User currentUser, Provider provider)
 			throws InvalidPermissionException, ElementNotFoundException, BusinessException {
-		// TODO Auto-generated method stub
-
+		execute(scriptCode, scriptContext, currentUser, provider);
 	}
 
-	public void terminate(String code, Map<String, Object> scriptContext, User user, Provider provider)
+	public void terminate(String scriptCode, Map<String, Object> scriptContext, User currentUser, Provider provider)
 			throws InvalidPermissionException, ElementNotFoundException, BusinessException {
-		// TODO Auto-generated method stub
-
+		execute(scriptCode, scriptContext, currentUser, provider);
 	}
 
-	public void onCreated(String code, Map<String, Object> scriptContext, User user, Provider provider)
+	public void onCreated(String scriptCode, Map<String, Object> scriptContext, User currentUser, Provider provider)
 			throws InvalidPermissionException, ElementNotFoundException, BusinessException {
-		// TODO Auto-generated method stub
-
+		execute(scriptCode, scriptContext, currentUser, provider);
 	}
 
 }
