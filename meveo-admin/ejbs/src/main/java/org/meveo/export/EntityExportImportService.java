@@ -1258,7 +1258,9 @@ public class EntityExportImportService implements Serializable {
                         Map targetValue = (Map) FieldUtils.readField(field, entityFromDB, true);
                         if (targetValue != null) {
                             targetValue.clear();
-                            targetValue.putAll((Map) sourceValue);
+                            if (sourceValue != null) {
+                                targetValue.putAll((Map) sourceValue);
+                            }
                         } else {
                             FieldUtils.writeField(field, entityFromDB, sourceValue, true);
                         }
@@ -1268,7 +1270,9 @@ public class EntityExportImportService implements Serializable {
                         Set targetValue = (Set) FieldUtils.readField(field, entityFromDB, true);
                         if (targetValue != null) {
                             targetValue.clear();
-                            targetValue.addAll((Set) sourceValue);
+                            if (sourceValue != null) {
+                                targetValue.addAll((Set) sourceValue);
+                            }
                         } else {
                             FieldUtils.writeField(field, entityFromDB, sourceValue, true);
                         }
@@ -1278,7 +1282,9 @@ public class EntityExportImportService implements Serializable {
                         List targetValue = (List) FieldUtils.readField(field, entityFromDB, true);
                         if (targetValue != null) {
                             targetValue.clear();
-                            targetValue.addAll((List) sourceValue);
+                            if (sourceValue != null) {
+                                targetValue.addAll((List) sourceValue);
+                            }
                         } else {
                             FieldUtils.writeField(field, entityFromDB, sourceValue, true);
                         }

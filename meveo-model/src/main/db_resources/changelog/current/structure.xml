@@ -1461,5 +1461,19 @@
         <addUniqueConstraint columnNames="provider_id" constraintName="uk_billing_invoice_configuration" deferrable="false" disabled="false"
             initiallyDeferred="false" tableName="billing_invoice_configuration" />
     </changeSet>
-    
+      <changeSet id="#1517-20160301" author="AndriusKarpavicius">
+        <modifyDataType tableName="CRM_CUSTOM_FIELD_INST" columnName="APPLIES_TO_UUID" newDataType="VARCHAR(60)"/>
+        <modifyDataType tableName="MEDINA_ACCESS" columnName="UUID" newDataType="VARCHAR(60)"/>
+        <modifyDataType tableName="CRM_PROVIDER" columnName="UUID" newDataType="VARCHAR(60)"/>
+        <modifyDataType tableName="ACCOUNT_ENTITY" columnName="UUID" newDataType="VARCHAR(60)"/>
+        <modifyDataType tableName="CAT_CHARGE_TEMPLATE" columnName="UUID" newDataType="VARCHAR(60)"/>
+        <modifyDataType tableName="MEVEO_JOB_INSTANCE" columnName="UUID" newDataType="VARCHAR(60)"/>
+        <modifyDataType tableName="CAT_OFFER_TEMPLATE" columnName="UUID" newDataType="VARCHAR(60)"/>
+        <modifyDataType tableName="CRM_SELLER" columnName="UUID" newDataType="VARCHAR(60)"/>
+        <modifyDataType tableName="CAT_SERVICE_TEMPLATE" columnName="UUID" newDataType="VARCHAR(60)"/>
+        <modifyDataType tableName="BILLING_SUBSCRIPTION" columnName="UUID" newDataType="VARCHAR(60)"/>
+        <modifyDataType tableName="CUST_CEI" columnName="UUID" newDataType="VARCHAR(60)"/>
+        <modifyDataType tableName="cat_offer_template_category" columnName="UUID" newDataType="VARCHAR(60)"/>
+      </changeSet>
+          
 </databaseChangeLog>
