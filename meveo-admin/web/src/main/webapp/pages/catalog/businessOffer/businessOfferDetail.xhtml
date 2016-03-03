@@ -74,6 +74,7 @@
 				icon="ui-icon-extlink"
 				value="#{messages['action.createOfferFromBOM']}">
 				<f:param name="objectId" value="#{businessOfferBean.entity.id}"></f:param>
+				 <p:ajax event="dialogReturn" listener="#{businessOfferBean.onBOMOfferCreation}" update="formId:messages" />
 			</p:commandButton>
 		</h:panelGroup>
 

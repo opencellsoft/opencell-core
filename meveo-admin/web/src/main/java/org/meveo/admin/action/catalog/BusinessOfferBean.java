@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -66,8 +67,12 @@ public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 	}
 
 	public void createOfferFromBOM() throws BusinessException {
-		businessOfferService.createOfferFromBOM(getEntity(), bomOfferInstancePrefix, currentUser);
+		businessOfferService.createOfferFromBOM(getEntity(), bomOfferInstancePrefix, currentUser);		
 		RequestContext.getCurrentInstance().closeDialog(getEntity());
+	}
+
+	public void onBOMOfferCreation(SelectEvent event) {
+		messages.info(new BundleKey("messages", "message.bom.offerCreation.ok"));
 	}
 
 	public DualListModel<ServiceTemplate> getServiceTemplates() {
