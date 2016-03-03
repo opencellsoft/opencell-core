@@ -18,6 +18,7 @@ package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,7 @@ import org.meveo.service.catalog.impl.OfferServiceTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.script.offer.OfferScriptService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DualListModel;
 
@@ -52,6 +54,9 @@ import org.primefaces.model.DualListModel;
 public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     private static final long serialVersionUID = 1L;
+    
+    @Inject
+    private OfferScriptService offerScriptService;
 
     @Inject
     private SubscriptionService subscriptionService;
@@ -153,6 +158,15 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         boolean newEntity = (entity.getId() == null);
 
         String outcome = super.saveOrUpdate(killConversation);
+        
+    	if (getEntity().getBusinessOfferModel() != null) {
+			if (getEntity().getBusinessOfferModel().getScript() != null) {
+				Map<String, Object> scriptContext = new HashMap<String, Object>();
+				scriptContext.put("event", getEntity());
+				offerScriptService.onCreated(getEntity().getBusinessOfferModel().getScript().getCode(), scriptContext,
+						currentUser, currentUser.getProvider());
+			}
+		}
 
         if (outcome != null) {
             return newEntity ? getEditViewName() : outcome;
