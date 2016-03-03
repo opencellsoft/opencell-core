@@ -569,6 +569,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				Element serviceTag = doc.createElement("service");
 				serviceTag.setAttribute("id", serviceTemplate.getId() + "");
 				serviceTag.setAttribute("code", serviceTemplate.getCode() != null ? serviceTemplate.getCode() : "");
+				serviceTag.setAttribute("offerCode", offerTemplate.getCode() != null ? offerTemplate.getCode() : "");
 				serviceTag.setAttribute("description",
 						serviceTemplate.getDescription() != null ? serviceTemplate.getDescription() : "");
 
