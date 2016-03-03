@@ -107,7 +107,6 @@
 							label="#{messages['serviceTemplate.calendar']}"
 							field="invoicingCalendar" valueLabelField="code" required="false" popup="false"
 							listBean="#{calendarBean}" />
-						<hftl:customFields backingBean="#{serviceTemplateBean}" messagesId=":tabView:formId:messages" />
 					</hftl:formPanel>
 				</p:tab>
 				
@@ -480,6 +479,16 @@
 									</ui:define>
 								</hftl:formPanel>
 						</p:panel>
+				</p:tab>
+				<p:tab title="#{messages['menu.customFieldTemplates']}" id="tab6"
+					rendered="#{customFieldDataEntryBean.getGroupedFieldTemplates(serviceTemplateBean.entity).childCount > 0}">
+					<hftl:formPanel formId="customFieldTemplatesForm"
+							backingBean="#{serviceTemplateBean}"
+							ajaxSubmit="true"
+							showDeleteButton="false">
+						<hftl:customFields backingBean="#{serviceTemplateBean}" 
+							messagesId=":tabView:customFieldTemplatesForm:messages" />
+					</hftl:formPanel>
 				</p:tab>
 			</p:tabView>
 		</p:panel>
