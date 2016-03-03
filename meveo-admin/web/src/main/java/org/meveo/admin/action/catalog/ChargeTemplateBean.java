@@ -23,6 +23,9 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
@@ -74,6 +77,24 @@ public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
 	protected IPersistenceService<ChargeTemplate> getPersistenceService() {
 		return chargeTemplateService;
 	}
+	
+	public String getChargeTemplateDetail(ChargeTemplate chargeTemplate) {
+		if(chargeTemplate!=null){
+		if(chargeTemplate instanceof RecurringChargeTemplate){
+			return "/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.jsf?objectId="+chargeTemplate.getId()+"&cid="
+					+ conversation.getId() + "&edit=true&faces-redirect=true&includeViewParams=true";
+		}else if(chargeTemplate instanceof UsageChargeTemplate){
+			return "/pages/catalog/usageChargeTemplates/usageChargeTemplateDetail.jsf?objectId="+chargeTemplate.getId()+ "&cid="
+					+ conversation.getId() + "&edit=true&faces-redirect=true&includeViewParams=true";
+		}else if (chargeTemplate instanceof OneShotChargeTemplate){
+			return "/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.jsf?objectId="+chargeTemplate.getId()+ "&cid="
+					+ conversation.getId() + "&edit=true&faces-redirect=true&includeViewParams=true";
+		} 
+		}
+		return null;
+	} 
+	
+	
 
 	
 }

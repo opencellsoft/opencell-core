@@ -687,6 +687,12 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>chargeTemplates</from-outcome>
+			<to-view-id>/pages/catalog/chargeTemplates/chargeTemplates.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>oneShotChargeTemplates</from-outcome>
 			<to-view-id>/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplates.xhtml
 			</to-view-id>

@@ -400,7 +400,7 @@
 			<f:param name="chargeId" value="#{chargeTemplateBean.entity.id}" />
 			 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
            </p:button> 
-			 <p:commandButton update=":#{p:component('datatable_pp_results_omitFromSubmit')}" icon="ui-icon-trash" action="#{pricePlanMatrixBean.delete(entity.id)}"> 
+			 <p:commandButton update="@form" icon="ui-icon-trash" action="#{pricePlanMatrixBean.delete(entity.id)}"> 
 			<p:confirm header="#{messages['message.confirmation']}"
 				message="#{messages['commons.confirmDelete']}"
 				icon="ui-icon-alert" />

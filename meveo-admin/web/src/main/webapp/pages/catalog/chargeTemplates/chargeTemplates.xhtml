@@ -1,0 +1,80 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml"
+	xmlns:p="http://primefaces.org/ui" 
+	xmlns:c="http://java.sun.com/jsp/jstl/core"> 
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{chargeTemplateListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body"> 
+	
+		<hftl:searchPanel label="#{messages['chargeTemplate.search']}" renderNewButton="false"
+			backingBean="#{chargeTemplateListBean}">
+			<hftl:searchField label="#{messages['chargeTemplate.code']}"
+				field="code" />
+			<hftl:searchField label="#{messages['chargeTemplate.description']}"
+				id="description" field="description" />
+			<hftl:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['chargeTemplate.title']}"
+		     backingBean="#{chargeTemplateListBean}" sortBy="code">
+			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
+			<hftl:column label="#{messages['chargeTemplate.description']}"
+				field="description" />
+			<hftl:column
+				label="#{messages['chargeTemplate.unitMultiplicator']}"
+				field="unitMultiplicator" converterParam="12digits" />
+			<hftl:column
+				label="#{messages['chargeTemplate.ratingUnitDescription']}"
+				field="ratingUnitDescription" />	
+				
+			<hftl:column
+				label="#{messages['chargeTemplate.roundingMode']}"
+				field="roundingMode" />
+				
+		   <hftl:column
+				label="#{messages['chargeTemplate.unitNbDecimal']}"
+				field="unitNbDecimal" />
+				
+			 <hftl:column
+				label="#{messages['chargeTemplate.type']}"
+				field="type" />	
+				
+          <hftl:column label="#{messages['chargeTemplate.amountEditable']}"
+				field="amountEditable" isMessage="true" />
+			
+			<hftl:column label="#{messages['charge.subCategory']}"
+				field="invoiceSubCategory.code" valueIdField="invoiceSubCategory.id"
+				entityView="invoiceSubCategoryDetail" propagateConversation="false"
+				backView="invoiceCategories" />
+				
+			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates"
+				valueLabelField="code" isList="true" />
+				
+			<hftl:column label="#{messages['enableEntity.active']}"
+				field="active" isMessage="true" />
+			<p:column width="35">
+			<f:facet name="header">
+				<h:outputText value="#{messages['commons.actions']}" />
+			</f:facet>
+		   <p:commandButton 
+			action="#{chargeTemplateBean.getChargeTemplateDetail(entity)}" icon="ui-icon-document" ajax="false"> 
+		  </p:commandButton>
+		   </p:column>
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>
