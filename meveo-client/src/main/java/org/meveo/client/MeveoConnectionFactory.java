@@ -27,20 +27,20 @@ public class MeveoConnectionFactory {
 	}
 	private static  CloseableHttpClient httpClient = null;
 
-	public static CloseableHttpClient getClient(String proxyHost, Integer proxyPort,String proxyLogin,String proxyPasswd) {
+	public static CloseableHttpClient getClient(ProxyInfos proxyInfos) {
 		if (httpClient == null) {
 			HttpClientBuilder httpClientBuilder = HttpClients.custom();
 			httpClientBuilder.setConnectionManager(connPool);
-			if (proxyHost != null && proxyHost.trim().length() > 0) {
+			if (proxyInfos != null && proxyInfos.getHost() != null && proxyInfos.getHost().length() > 0) {
 				int port = 80;
-				if (proxyPort != null) {
-					port = proxyPort.intValue();
+				if (proxyInfos.getPort() != null) {
+					port = proxyInfos.getPort().intValue();
 				}
-				HttpHost proxy = new HttpHost(proxyHost, port);
+				HttpHost proxy = new HttpHost(proxyInfos.getHost(), port,proxyInfos.getSchemeName());
 				httpClientBuilder.setProxy(proxy);							
-				if(proxyLogin != null && proxyLogin.trim().length() > 0){
-					Credentials credentials = new UsernamePasswordCredentials(proxyLogin,proxyPasswd);
-					AuthScope authScope = new AuthScope(proxyHost, port);
+				if(proxyInfos.getLogin() != null && proxyInfos.getLogin().trim().length() > 0){
+					Credentials credentials = new UsernamePasswordCredentials(proxyInfos.getLogin(),proxyInfos.getPasswd());
+					AuthScope authScope = new AuthScope(proxyInfos.getLogin(), port);
 					CredentialsProvider credsProvider = new BasicCredentialsProvider();
 					credsProvider.setCredentials(authScope, credentials);
 					httpClientBuilder.setDefaultCredentialsProvider(credsProvider);
