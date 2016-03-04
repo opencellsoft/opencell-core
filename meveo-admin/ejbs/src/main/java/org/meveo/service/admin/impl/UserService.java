@@ -213,7 +213,7 @@ public class UserService extends PersistenceService<User> {
 	}
 
 	public User loginChecks(String username, String password, boolean skipPasswordExpiracy) throws LoginException {
-		if(username==null | password==null){
+		if(username==null || password==null){
 			throw new UnknownUserException(username);
 		}
 		User user = findByUsernameAndPassword(username, password);
