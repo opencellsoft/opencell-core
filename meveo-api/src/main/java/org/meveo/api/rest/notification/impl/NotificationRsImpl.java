@@ -11,7 +11,7 @@ import org.meveo.api.dto.response.notification.GetNotificationResponseDto;
 import org.meveo.api.dto.response.notification.InboundRequestsResponseDto;
 import org.meveo.api.dto.response.notification.NotificationHistoriesResponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.notification.NotificationApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.notification.NotificationRs;
@@ -20,7 +20,7 @@ import org.meveo.api.rest.notification.NotificationRs;
  * @author Edward P. Legaspi
  **/
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 
 public class NotificationRsImpl extends BaseRs implements NotificationRs {
 

@@ -15,12 +15,12 @@ import org.meveo.api.dto.response.billing.GetBillingRunInfoResponseDto;
 import org.meveo.api.dto.response.billing.GetPostInvoicingReportsResponseDto;
 import org.meveo.api.dto.response.billing.GetPreInvoicingReportsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.InvoicingRs;
 import org.meveo.api.rest.impl.BaseRs;
 
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
 
     @Inject

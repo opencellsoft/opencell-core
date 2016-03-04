@@ -11,14 +11,14 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.response.GetLanguageResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.LanguageRs;
 
 /**
  * @author Edward P. Legaspi
  **/
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class LanguageRsImpl extends BaseRs implements LanguageRs {
 
 	@Inject

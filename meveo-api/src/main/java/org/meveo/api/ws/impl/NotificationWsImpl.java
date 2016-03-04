@@ -15,7 +15,7 @@ import org.meveo.api.dto.response.notification.GetWebHookNotificationResponseDto
 import org.meveo.api.dto.response.notification.InboundRequestsResponseDto;
 import org.meveo.api.dto.response.notification.NotificationHistoriesResponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.notification.EmailNotificationApi;
 import org.meveo.api.notification.NotificationApi;
 import org.meveo.api.notification.WebhookNotificationApi;
@@ -25,7 +25,7 @@ import org.meveo.api.ws.NotificationWs;
  * @author Edward P. Legaspi
  **/
 @WebService(serviceName = "NotificationWs", endpointInterface = "org.meveo.api.ws.NotificationWs")
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class NotificationWsImpl extends BaseWs implements NotificationWs {
 
 	@Inject

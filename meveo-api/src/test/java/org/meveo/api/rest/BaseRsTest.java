@@ -13,8 +13,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.logging.Logged;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.security.RSSecured;
 import org.meveo.api.rest.security.RSUser;
@@ -73,7 +72,7 @@ public class BaseRsTest {
 		result = result
 				.addClasses(JaxRsActivator.class, RSUser.class,
 						RSSecured.class, IBaseRs.class, BaseRs.class,
-						BaseApi.class, LoggingInterceptor.class, Logged.class,
+						BaseApi.class, WsRestApiInterceptor.class, 
 						MeveoApiErrorCodeEnum.class);
 
 		result = result.addPackages(true, "org/meveo/api/dto");

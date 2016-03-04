@@ -13,7 +13,7 @@ import org.meveo.api.dto.module.ModuleDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtoResponse;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.ModuleApi;
 import org.meveo.api.ws.ModuleWs;
 
@@ -22,7 +22,7 @@ import org.meveo.api.ws.ModuleWs;
  *
  **/
 @WebService(serviceName = "ModuleWs", endpointInterface = "org.meveo.api.ws.ModuleWs")
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class ModuleWsImpl extends BaseWs implements ModuleWs {
 
 	@Inject

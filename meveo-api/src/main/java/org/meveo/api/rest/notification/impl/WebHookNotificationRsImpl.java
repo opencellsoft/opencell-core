@@ -9,7 +9,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.notification.WebhookNotificationDto;
 import org.meveo.api.dto.response.notification.GetWebHookNotificationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.notification.WebhookNotificationApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.notification.WebHookNotificationRs;
@@ -18,7 +18,7 @@ import org.meveo.api.rest.notification.WebHookNotificationRs;
  * @author Edward P. Legaspi
  **/
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 
 public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotificationRs {
 

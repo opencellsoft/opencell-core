@@ -16,12 +16,12 @@ import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.dto.response.InvoiceCreationResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.invoice.InvoiceApi;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.InvoiceWs;
 import org.meveo.model.billing.InvoiceTypeEnum;
 
 @WebService(serviceName = "InvoiceWs", endpointInterface = "org.meveo.api.ws.InvoiceWs")
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 
 	@Inject

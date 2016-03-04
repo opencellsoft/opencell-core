@@ -12,7 +12,7 @@ import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.SellerRs;
 import org.meveo.service.crm.impl.SellerApiService;
 
@@ -20,7 +20,7 @@ import org.meveo.service.crm.impl.SellerApiService;
  * @author Edward P. Legaspi
  **/
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 
 public class SellerRsImpl extends BaseRs implements SellerRs {
 

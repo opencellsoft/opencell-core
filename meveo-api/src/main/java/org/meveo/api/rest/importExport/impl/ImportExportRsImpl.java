@@ -27,7 +27,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.utilities.FieldsNotImportedStringCollectionDto;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.api.exception.LoginException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.importExport.ImportExportRs;
 import org.meveo.export.EntityExportImportService;
@@ -40,7 +40,7 @@ import org.meveo.model.admin.User;
  * 
  */
 @ApplicationScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
 
     @Inject

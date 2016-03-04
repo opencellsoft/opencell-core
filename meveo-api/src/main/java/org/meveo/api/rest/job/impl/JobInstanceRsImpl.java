@@ -11,7 +11,7 @@ import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.job.JobInstanceApi;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.job.JobInstanceRs;
 
@@ -21,7 +21,7 @@ import org.meveo.api.rest.job.JobInstanceRs;
  *
  */
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class JobInstanceRsImpl extends BaseRs implements JobInstanceRs {
 	
 	@Inject

@@ -11,11 +11,11 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.TerminationReasonDto;
 import org.meveo.api.dto.response.GetTerminationReasonResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.TerminationReasonRs;
 
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class TerminationReasonRsImpl extends BaseRs implements TerminationReasonRs {
 
 	@Inject

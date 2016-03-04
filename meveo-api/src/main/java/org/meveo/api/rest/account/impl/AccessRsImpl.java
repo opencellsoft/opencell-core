@@ -12,7 +12,7 @@ import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.dto.response.account.GetAccessResponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.AccessRs;
 import org.meveo.api.rest.impl.BaseRs;
 
@@ -20,7 +20,7 @@ import org.meveo.api.rest.impl.BaseRs;
  * @author Edward P. Legaspi
  **/
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class AccessRsImpl extends BaseRs implements AccessRs {
 
 	@Inject

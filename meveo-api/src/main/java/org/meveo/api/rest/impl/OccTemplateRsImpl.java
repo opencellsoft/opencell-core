@@ -11,12 +11,12 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.OccTemplateRs;
 import org.slf4j.Logger;
 
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 
 public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
 

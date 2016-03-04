@@ -10,7 +10,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.FilterRs;
 
 /**
@@ -18,7 +18,7 @@ import org.meveo.api.rest.FilterRs;
  * 
  **/
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class FilterRsImpl extends BaseRs implements FilterRs {
     @Inject
     private FilterApi filterApi;

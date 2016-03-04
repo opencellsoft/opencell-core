@@ -20,7 +20,7 @@ import org.meveo.api.dto.response.EntityActionScriptResponseDto;
 import org.meveo.api.dto.response.EntityCustomizationResponseDto;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.custom.EntityCustomizationRs;
 import org.meveo.api.rest.impl.BaseRs;
 
@@ -28,7 +28,7 @@ import org.meveo.api.rest.impl.BaseRs;
  * @author Andrius Karpavicius
  **/
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomizationRs {
 
     @Inject

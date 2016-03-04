@@ -9,7 +9,7 @@ import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.dto.response.billing.FilteredListResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.filter.FilteredListApi;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.FilteredListWs;
 import org.slf4j.Logger;
 
@@ -17,7 +17,7 @@ import org.slf4j.Logger;
  * @author Edward P. Legaspi
  **/
 @WebService(serviceName = "FilteredListWs", endpointInterface = "org.meveo.api.ws.FilteredListWs")
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
 
 	@Inject

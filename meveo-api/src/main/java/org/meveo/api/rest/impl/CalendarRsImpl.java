@@ -13,14 +13,14 @@ import org.meveo.api.dto.CalendarsDto;
 import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CalendarRs;
 
 /**
  * @author Edward P. Legaspi
  **/
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class CalendarRsImpl extends BaseRs implements CalendarRs {
 
 	@Inject

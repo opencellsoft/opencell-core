@@ -13,7 +13,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.response.GetCountryResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CountryRs;
 
 /**
@@ -22,7 +22,7 @@ import org.meveo.api.rest.CountryRs;
  * @author Edward P. Legaspi
  **/
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class CountryRsImpl extends BaseRs implements CountryRs {
 
 	@Inject

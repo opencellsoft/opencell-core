@@ -9,12 +9,12 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.communication.CommunicationRequestDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.communication.CommunicationRs;
 import org.meveo.api.rest.impl.BaseRs;
 
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class CommunicationRsImpl extends BaseRs implements CommunicationRs {
 
     @Inject

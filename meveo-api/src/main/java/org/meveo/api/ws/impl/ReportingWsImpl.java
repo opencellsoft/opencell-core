@@ -16,14 +16,14 @@ import org.meveo.api.dto.response.dwh.GetChartResponse;
 import org.meveo.api.dwh.ChartApi;
 import org.meveo.api.dwh.MeasurableQuantityApi;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.ReportingWs;
 
 /**
  * @author Edward P. Legaspi
  **/
 @WebService(serviceName = "ReportingWs", endpointInterface = "org.meveo.api.ws.ReportingWs")
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class ReportingWsImpl extends BaseWs implements ReportingWs {
 	
 	@Inject

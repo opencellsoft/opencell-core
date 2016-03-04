@@ -21,7 +21,7 @@ import org.meveo.api.dto.response.EntityActionScriptResponseDto;
 import org.meveo.api.dto.response.EntityCustomizationResponseDto;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.EntityCustomizationWs;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 
@@ -29,7 +29,7 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
  * @author Andrius Karpavicius
  **/
 @WebService(serviceName = "EntityCustomizationWs", endpointInterface = "org.meveo.api.ws.EntityCustomizationWs")
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomizationWs {
 
     @Inject

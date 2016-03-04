@@ -8,7 +8,7 @@ import javax.ws.rs.QueryParam;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.PdfInvoiceResponse;
 import org.meveo.api.invoice.PdfInvoiceApi;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.PdfInvoiceRs;
 
 /**
@@ -16,7 +16,7 @@ import org.meveo.api.rest.PdfInvoiceRs;
  *
  */
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class PdfInvoiceRsImpl extends BaseRs implements PdfInvoiceRs {
 
 	@Inject

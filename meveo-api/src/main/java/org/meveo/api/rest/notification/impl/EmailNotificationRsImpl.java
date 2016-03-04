@@ -9,7 +9,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.notification.EmailNotificationDto;
 import org.meveo.api.dto.response.notification.GetEmailNotificationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.notification.EmailNotificationApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.notification.EmailNotificationRs;
@@ -18,7 +18,7 @@ import org.meveo.api.rest.notification.EmailNotificationRs;
  * @author Edward P. Legaspi
  **/
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class EmailNotificationRsImpl extends BaseRs implements EmailNotificationRs {
 
 	@Inject

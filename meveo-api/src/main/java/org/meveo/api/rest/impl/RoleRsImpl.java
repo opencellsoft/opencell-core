@@ -11,11 +11,11 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.response.GetRoleResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.RoleRs;
 
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 
 public class RoleRsImpl extends BaseRs implements RoleRs {
 

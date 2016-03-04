@@ -9,7 +9,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.notification.JobTriggerDto;
 import org.meveo.api.dto.response.notification.GetJobTriggerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.notification.JobTriggerApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.notification.JobTriggerRs;
@@ -18,7 +18,7 @@ import org.meveo.api.rest.notification.JobTriggerRs;
  * @author Tyshan Shi
  **/
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
 
 	@Inject

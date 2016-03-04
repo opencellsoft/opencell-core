@@ -12,7 +12,7 @@ import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.response.CustomEntityInstanceResponseDto;
 import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.custom.CustomEntityInstanceRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.admin.User;
@@ -22,7 +22,7 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
  * @author Andrius Karpavicius
  **/
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityInstanceRs {
 
     @Inject

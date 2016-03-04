@@ -16,7 +16,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.job.JobApi;
 import org.meveo.api.job.JobInstanceApi;
 import org.meveo.api.job.TimerEntityApi;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.job.JobRs;
 
@@ -24,7 +24,7 @@ import org.meveo.api.rest.job.JobRs;
  * @author Edward P. Legaspi
  **/
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class JobRsImpl extends BaseRs implements JobRs {
 
     @Inject

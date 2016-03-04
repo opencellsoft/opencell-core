@@ -54,7 +54,7 @@ import org.meveo.api.dto.response.catalog.GetTriggeredEdrResponseDto;
 import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.CatalogWs;
 import org.meveo.model.shared.DateUtils;
 
@@ -62,7 +62,7 @@ import org.meveo.model.shared.DateUtils;
  * @author Edward P. Legaspi
  **/
 @WebService(serviceName = "CatalogWs", endpointInterface = "org.meveo.api.ws.CatalogWs")
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class CatalogWsImpl extends BaseWs implements CatalogWs {
 
 	@Inject

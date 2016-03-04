@@ -10,14 +10,14 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.FilterWs;
 
 /**
  * @author Edward P. Legaspi
  **/
 @WebService(serviceName = "FilterWs", endpointInterface = "org.meveo.api.ws.FilterWs")
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class FilterWsImpl extends BaseWs implements FilterWs {
 
 	@Inject

@@ -16,14 +16,14 @@ import org.meveo.api.dto.billing.WalletTemplateDto;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.WalletWs;
 
 /**
  * @author Edward P. Legaspi
  **/
 @WebService(serviceName = "WalletWs", endpointInterface = "org.meveo.api.ws.WalletWs")
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class WalletWsImpl extends BaseWs implements WalletWs {
 
 	@Inject

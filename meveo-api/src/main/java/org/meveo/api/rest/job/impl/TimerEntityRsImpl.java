@@ -11,7 +11,7 @@ import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.dto.response.GetTimerEntityResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.job.TimerEntityApi;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.job.TimerEntityRs;
 
@@ -21,7 +21,7 @@ import org.meveo.api.rest.job.TimerEntityRs;
  *
  */
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class TimerEntityRsImpl extends BaseRs implements TimerEntityRs {
 	
 	@Inject

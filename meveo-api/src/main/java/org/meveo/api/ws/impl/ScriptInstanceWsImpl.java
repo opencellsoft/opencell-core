@@ -12,11 +12,11 @@ import org.meveo.api.dto.ScriptInstanceDto;
 import org.meveo.api.dto.response.GetScriptInstanceResponseDto;
 import org.meveo.api.dto.response.ScriptInstanceReponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.ScriptInstanceWs;
 
 @WebService(serviceName = "ScriptInstanceWs", endpointInterface = "org.meveo.api.ws.ScriptInstanceWs")
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class ScriptInstanceWsImpl extends BaseWs implements ScriptInstanceWs {
 
     @Inject

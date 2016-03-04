@@ -16,14 +16,14 @@ import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.MediationWs;
 
 /**
  * @author Edward P. Legaspi
  **/
 @WebService(serviceName = "MediationWs", endpointInterface = "org.meveo.api.ws.MediationWs")
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class MediationWsImpl extends BaseWs implements MediationWs {
 
 	@Inject

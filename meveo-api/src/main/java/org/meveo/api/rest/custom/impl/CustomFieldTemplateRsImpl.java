@@ -11,7 +11,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.custom.CustomFieldTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
 
@@ -19,7 +19,7 @@ import org.meveo.api.rest.impl.BaseRs;
  * @author Edward P. Legaspi
  **/
 @RequestScoped
-@Interceptors({ LoggingInterceptor.class })
+@Interceptors({ WsRestApiInterceptor.class })
 public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemplateRs {
 
     @Inject
