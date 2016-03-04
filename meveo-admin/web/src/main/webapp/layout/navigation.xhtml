@@ -167,7 +167,11 @@
 				value="#{messages['menu.serviceTemplates']}" />
 
 			<p:submenu id="charges" label="#{messages['menu.charges']}">
-
+                  
+				<p:menuitem id="chargeTemplates"
+					outcome="chargeTemplates"
+					value="#{messages['menu.chargeTemplates']}" />
+					
 				<p:menuitem id="recurringChargeTemplate"
 					outcome="recurringChargeTemplates"
 					value="#{messages['menu.recurringChargeTemplates']}" />
@@ -178,11 +182,6 @@
 
 				<p:menuitem id="usageChargeTemplates" outcome="usageChargeTemplates"
 					value="#{messages['menu.usageChargeTemplates']}" />
-					
-				<p:menuitem id="chargeTemplates"
-					outcome="chargeTemplates"
-					value="#{messages['menu.chargeTemplates']}" />	
-
 			</p:submenu>
 
 			<p:menuitem id="walletTemplates" outcome="walletTemplates"
