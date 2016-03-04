@@ -977,8 +977,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 						.add(subCategoryInvoiceAgregate.getAmountWithTax());
 			}
 
-			subCategoryInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax().setScale(
-					rounding, RoundingMode.HALF_UP));
+			subCategoryInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax()!=null ? subCategoryInvoiceAgregate.getAmountWithoutTax().setScale(
+					rounding, RoundingMode.HALF_UP):BigDecimal.ZERO);
 
 			subCategoryInvoiceAgregate.getCategoryInvoiceAgregate().addAmountWithoutTax(
 					subCategoryInvoiceAgregate.getAmountWithoutTax());
