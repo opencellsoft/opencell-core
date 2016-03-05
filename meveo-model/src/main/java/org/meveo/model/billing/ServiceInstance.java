@@ -38,198 +38,201 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.StringUtils;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ServiceTemplate;
 
 @Entity
 @ObservableEntity
+@CustomFieldEntity(cftCodePrefix = "SERVICE")
 @Table(name = "BILLING_SERVICE_INSTANCE")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SERVICE_INSTANCE_SEQ")
-public class ServiceInstance extends BusinessEntity {
+public class ServiceInstance extends BusinessCFEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SUBSCRIPTION_ID")
-	private Subscription subscription;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SUBSCRIPTION_ID")
+    private Subscription subscription;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SERVICE_TEMPLATE_ID")
-	private ServiceTemplate serviceTemplate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SERVICE_TEMPLATE_ID")
+    private ServiceTemplate serviceTemplate;
 
-	@ManyToOne
-	@JoinColumn(name = "INVOICING_CALENDAR_ID")
-	private Calendar invoicingCalendar;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS")
-	private InstanceStatusEnum status;
+    @ManyToOne
+    @JoinColumn(name = "INVOICING_CALENDAR_ID")
+    private Calendar invoicingCalendar;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "STATUS_DATE")
-	private Date statusDate;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "STATUS")
+    private InstanceStatusEnum status;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "SUBSCRIPTION_DATE")
-	private Date subscriptionDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "STATUS_DATE")
+    private Date statusDate;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "TERMINATION_DATE")
-	private Date terminationDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "SUBSCRIPTION_DATE")
+    private Date subscriptionDate;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "END_AGREMENT_DATE")
-	private Date endAgreementDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "TERMINATION_DATE")
+    private Date terminationDate;
 
-	@OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	// TODO : Add orphanRemoval annotation.
-	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	private List<RecurringChargeInstance> recurringChargeInstances = new ArrayList<RecurringChargeInstance>();
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "END_AGREMENT_DATE")
+    private Date endAgreementDate;
 
-	@OneToMany(mappedBy = "subscriptionServiceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	// TODO : Add orphanRemoval annotation.
-	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	private List<OneShotChargeInstance> subscriptionChargeInstances = new ArrayList<OneShotChargeInstance>();
+    @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // TODO : Add orphanRemoval annotation.
+    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<RecurringChargeInstance> recurringChargeInstances = new ArrayList<RecurringChargeInstance>();
 
-	@OneToMany(mappedBy = "terminationServiceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	// TODO : Add orphanRemoval annotation.
-	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	private List<OneShotChargeInstance> terminationChargeInstances = new ArrayList<OneShotChargeInstance>();
+    @OneToMany(mappedBy = "subscriptionServiceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // TODO : Add orphanRemoval annotation.
+    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<OneShotChargeInstance> subscriptionChargeInstances = new ArrayList<OneShotChargeInstance>();
 
-	@OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	// TODO : Add orphanRemoval annotation.
-	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	private List<UsageChargeInstance> usageChargeInstances = new ArrayList<UsageChargeInstance>();
+    @OneToMany(mappedBy = "terminationServiceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // TODO : Add orphanRemoval annotation.
+    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<OneShotChargeInstance> terminationChargeInstances = new ArrayList<OneShotChargeInstance>();
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SUB_TERMIN_REASON_ID", nullable = true)
-	private SubscriptionTerminationReason subscriptionTerminationReason;
+    @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // TODO : Add orphanRemoval annotation.
+    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<UsageChargeInstance> usageChargeInstances = new ArrayList<UsageChargeInstance>();
 
-	@Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
-	protected BigDecimal quantity = BigDecimal.ONE;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SUB_TERMIN_REASON_ID", nullable = true)
+    private SubscriptionTerminationReason subscriptionTerminationReason;
 
-	public Date getEndAgreementDate() {
-		return endAgreementDate;
-	}
+    @Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
+    protected BigDecimal quantity = BigDecimal.ONE;
 
-	public void setEndAgreementDate(Date endAgreementDate) {
-		this.endAgreementDate = endAgreementDate;
-	}
+    public Date getEndAgreementDate() {
+        return endAgreementDate;
+    }
 
-	public Subscription getSubscription() {
-		return subscription;
-	}
+    public void setEndAgreementDate(Date endAgreementDate) {
+        this.endAgreementDate = endAgreementDate;
+    }
 
-	public void setSubscription(Subscription subscription) {
-		this.subscription = subscription;
-	}
+    public Subscription getSubscription() {
+        return subscription;
+    }
 
-	public InstanceStatusEnum getStatus() {
-		return status;
-	}
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
 
-	public void setStatus(InstanceStatusEnum status) {
-		this.status = status;
-		this.statusDate = new Date();
-	}
+    public InstanceStatusEnum getStatus() {
+        return status;
+    }
 
-	public Date getStatusDate() {
-		return statusDate;
-	}
+    public void setStatus(InstanceStatusEnum status) {
+        this.status = status;
+        this.statusDate = new Date();
+    }
 
-	public void setStatusDate(Date statusDate) {
-		this.statusDate = statusDate;
-	}
+    public Date getStatusDate() {
+        return statusDate;
+    }
 
-	public Date getSubscriptionDate() {
-		return subscriptionDate;
-	}
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
+    }
 
-	public void setSubscriptionDate(Date subscriptionDate) {
-		this.subscriptionDate = subscriptionDate;
-	}
+    public Date getSubscriptionDate() {
+        return subscriptionDate;
+    }
 
-	public Date getTerminationDate() {
-		return terminationDate;
-	}
+    public void setSubscriptionDate(Date subscriptionDate) {
+        this.subscriptionDate = subscriptionDate;
+    }
 
-	public void setTerminationDate(Date terminationDate) {
-		this.terminationDate = terminationDate;
-	}
+    public Date getTerminationDate() {
+        return terminationDate;
+    }
 
-	public ServiceTemplate getServiceTemplate() {
-		return serviceTemplate;
-	}
+    public void setTerminationDate(Date terminationDate) {
+        this.terminationDate = terminationDate;
+    }
 
-	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
-		this.serviceTemplate = serviceTemplate;
-	}
+    public ServiceTemplate getServiceTemplate() {
+        return serviceTemplate;
+    }
 
-	public Calendar getInvoicingCalendar() {
-		return invoicingCalendar;
-	}
+    public void setServiceTemplate(ServiceTemplate serviceTemplate) {
+        this.serviceTemplate = serviceTemplate;
+    }
 
-	public void setInvoicingCalendar(Calendar invoicingCalendar) {
-		this.invoicingCalendar = invoicingCalendar;
-	}
+    public Calendar getInvoicingCalendar() {
+        return invoicingCalendar;
+    }
 
-	public List<RecurringChargeInstance> getRecurringChargeInstances() {
-		return recurringChargeInstances;
-	}
+    public void setInvoicingCalendar(Calendar invoicingCalendar) {
+        this.invoicingCalendar = invoicingCalendar;
+    }
 
-	public void setRecurringChargeInstances(List<RecurringChargeInstance> recurringChargeInstances) {
-		this.recurringChargeInstances = recurringChargeInstances;
-	}
+    public List<RecurringChargeInstance> getRecurringChargeInstances() {
+        return recurringChargeInstances;
+    }
 
-	public List<OneShotChargeInstance> getSubscriptionChargeInstances() {
-		return subscriptionChargeInstances;
-	}
+    public void setRecurringChargeInstances(List<RecurringChargeInstance> recurringChargeInstances) {
+        this.recurringChargeInstances = recurringChargeInstances;
+    }
 
-	public void setSubscriptionChargeInstances(List<OneShotChargeInstance> subscriptionChargeInstances) {
-		this.subscriptionChargeInstances = subscriptionChargeInstances;
-	}
+    public List<OneShotChargeInstance> getSubscriptionChargeInstances() {
+        return subscriptionChargeInstances;
+    }
 
-	public List<OneShotChargeInstance> getTerminationChargeInstances() {
-		return terminationChargeInstances;
-	}
+    public void setSubscriptionChargeInstances(List<OneShotChargeInstance> subscriptionChargeInstances) {
+        this.subscriptionChargeInstances = subscriptionChargeInstances;
+    }
 
-	public void setTerminationChargeInstances(List<OneShotChargeInstance> terminationChargeInstances) {
-		this.terminationChargeInstances = terminationChargeInstances;
-	}
+    public List<OneShotChargeInstance> getTerminationChargeInstances() {
+        return terminationChargeInstances;
+    }
 
-	public List<UsageChargeInstance> getUsageChargeInstances() {
-		return usageChargeInstances;
-	}
+    public void setTerminationChargeInstances(List<OneShotChargeInstance> terminationChargeInstances) {
+        this.terminationChargeInstances = terminationChargeInstances;
+    }
 
-	public void setUsageChargeInstances(List<UsageChargeInstance> usageChargeInstances) {
-		this.usageChargeInstances = usageChargeInstances;
-	}
+    public List<UsageChargeInstance> getUsageChargeInstances() {
+        return usageChargeInstances;
+    }
 
-	public BigDecimal getQuantity() {
-		return quantity;
-	}
+    public void setUsageChargeInstances(List<UsageChargeInstance> usageChargeInstances) {
+        this.usageChargeInstances = usageChargeInstances;
+    }
 
-	public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
 
-	public SubscriptionTerminationReason getSubscriptionTerminationReason() {
-		return subscriptionTerminationReason;
-	}
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
 
-	public void setSubscriptionTerminationReason(SubscriptionTerminationReason subscriptionTerminationReason) {
-		this.subscriptionTerminationReason = subscriptionTerminationReason;
-	}
+    public SubscriptionTerminationReason getSubscriptionTerminationReason() {
+        return subscriptionTerminationReason;
+    }
 
-	public String getDescriptionAndStatus() {
-		if (!StringUtils.isBlank(description))
-			return description + ", " + status;
-		else
-			return status.name();
-	}
+    public void setSubscriptionTerminationReason(SubscriptionTerminationReason subscriptionTerminationReason) {
+        this.subscriptionTerminationReason = subscriptionTerminationReason;
+    }
+
+    public String getDescriptionAndStatus() {
+        if (!StringUtils.isBlank(description))
+            return description + ", " + status;
+        else
+            return status.name();
+    }
 
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -247,5 +250,10 @@ public class ServiceInstance extends BusinessEntity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public ICustomFieldEntity getParentCFEntity() {
+        return serviceTemplate;
     }
 }

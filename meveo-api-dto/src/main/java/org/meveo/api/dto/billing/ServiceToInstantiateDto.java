@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.ServiceTemplate;
 
 /**
@@ -20,67 +21,78 @@ import org.meveo.model.catalog.ServiceTemplate;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceToInstantiateDto implements Serializable {
 
-	private static final long serialVersionUID = -3815026205495621916L;
+    private static final long serialVersionUID = -3815026205495621916L;
 
-	@XmlAttribute(required = true)
-	private String code;
+    @XmlAttribute(required = true)
+    private String code;
 
-	@XmlElement(required = true)
-	private BigDecimal quantity;
+    @XmlElement(required = true)
+    private BigDecimal quantity;
 
-	private Date subscriptionDate;
-	private ChargeInstanceOverridesDto chargeInstanceOverrides;
+    private Date subscriptionDate;
 
-	@XmlTransient
-//	@ApiModelProperty(hidden = true)
-	private ServiceTemplate serviceTemplate;
+    private ChargeInstanceOverridesDto chargeInstanceOverrides;
 
-	public String getCode() {
-		return code;
-	}
+    private CustomFieldsDto customFields = new CustomFieldsDto();
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    @XmlTransient
+    // @ApiModelProperty(hidden = true)
+    private ServiceTemplate serviceTemplate;
 
-	public BigDecimal getQuantity() {
-		if (quantity == null)
-			return new BigDecimal(0);
-		return quantity;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public Date getSubscriptionDate() {
-		return subscriptionDate;
-	}
+    public BigDecimal getQuantity() {
+        if (quantity == null)
+            return new BigDecimal(0);
+        return quantity;
+    }
 
-	public void setSubscriptionDate(Date subscriptionDate) {
-		this.subscriptionDate = subscriptionDate;
-	}
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
 
-	@Override
-	public String toString() {
-		return "ServiceToInstantiateDto [code=" + code + ", quantity=" + quantity + ", subscriptionDate=" + subscriptionDate + ", chargeInstanceOverrides="
-				+ chargeInstanceOverrides + ", serviceTemplate=" + serviceTemplate + "]";
-	}
+    public Date getSubscriptionDate() {
+        return subscriptionDate;
+    }
 
-	public ServiceTemplate getServiceTemplate() {
-		return serviceTemplate;
-	}
+    public void setSubscriptionDate(Date subscriptionDate) {
+        this.subscriptionDate = subscriptionDate;
+    }
 
-	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
-		this.serviceTemplate = serviceTemplate;
-	}
 
-	public ChargeInstanceOverridesDto getChargeInstanceOverrides() {
-		return chargeInstanceOverrides;
-	}
+    @Override
+    public String toString() {
+        return String.format("ServiceToInstantiateDto [code=%s, quantity=%s, subscriptionDate=%s, chargeInstanceOverrides=%s, customFields=%s]", code, quantity, subscriptionDate,
+            chargeInstanceOverrides, customFields);
+    }
 
-	public void setChargeInstanceOverrides(ChargeInstanceOverridesDto chargeInstanceOverrides) {
-		this.chargeInstanceOverrides = chargeInstanceOverrides;
-	}
+    public ServiceTemplate getServiceTemplate() {
+        return serviceTemplate;
+    }
 
+    public void setServiceTemplate(ServiceTemplate serviceTemplate) {
+        this.serviceTemplate = serviceTemplate;
+    }
+
+    public ChargeInstanceOverridesDto getChargeInstanceOverrides() {
+        return chargeInstanceOverrides;
+    }
+
+    public void setChargeInstanceOverrides(ChargeInstanceOverridesDto chargeInstanceOverrides) {
+        this.chargeInstanceOverrides = chargeInstanceOverrides;
+    }
+
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 }

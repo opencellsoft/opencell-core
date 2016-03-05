@@ -236,10 +236,10 @@ public class AccountHierarchyApiService extends BaseApi {
         }
         if (StringUtils.isBlank(postData.getCountryCode())) {
             missingParameters.add("countryCode");
-        }        
+        }
         if (!StringUtils.isBlank(postData.getTitleCode()) && StringUtils.isBlank(postData.getLastName())) {
             missingParameters.add("lastName");
-        }        
+        }
         if (StringUtils.isBlank(postData.getBillingCycleCode())) {
             missingParameters.add("billingCycleCode");
         }
@@ -467,7 +467,7 @@ public class AccountHierarchyApiService extends BaseApi {
         }
         if (!StringUtils.isBlank(postData.getTitleCode()) && StringUtils.isBlank(postData.getLastName())) {
             missingParameters.add("lastName");
-        }   
+        }
         if (StringUtils.isBlank(postData.getBillingCycleCode())) {
             missingParameters.add("billingCycleCode");
         }
@@ -876,8 +876,8 @@ public class AccountHierarchyApiService extends BaseApi {
                 populateCustomFields(sellerDto.getCustomFields(), seller, isNewSeller, currentUser);
 
             } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+                log.error("Failed to associate custom field instance to a seller {}", sellerDto.getCode(), e);
+                throw new MeveoApiException("Failed to associate custom field instance to a seller " + sellerDto.getCode());
             }
 
             // customers
@@ -969,8 +969,8 @@ public class AccountHierarchyApiService extends BaseApi {
                         populateCustomFields(customerDto.getCustomFields(), customer, isNewCustomer, currentUser);
 
                     } catch (IllegalArgumentException | IllegalAccessException e) {
-                        log.error("Failed to associate custom field instance to an entity {}", customerDto.getCode(), e);
-                        throw new MeveoApiException("Failed to associate custom field instance to an entity " + customerDto.getCode());
+                        log.error("Failed to associate custom field instance to a customer {}", customerDto.getCode(), e);
+                        throw new MeveoApiException("Failed to associate custom field instance to a customer " + customerDto.getCode());
                     }
 
                     // customerAccounts
@@ -1123,8 +1123,8 @@ public class AccountHierarchyApiService extends BaseApi {
                                 populateCustomFields(customerAccountDto.getCustomFields(), customerAccount, isNewCA, currentUser);
 
                             } catch (IllegalArgumentException | IllegalAccessException e) {
-                                log.error("Failed to associate custom field instance to an entity {}", customerAccountDto.getCode(), e);
-                                throw new MeveoApiException("Failed to associate custom field instance to an entity " + customerAccountDto.getCode());
+                                log.error("Failed to associate custom field instance to a customer account {}", customerAccountDto.getCode(), e);
+                                throw new MeveoApiException("Failed to associate custom field instance to a customer account " + customerAccountDto.getCode());
                             }
 
                             // billing accounts
@@ -1264,8 +1264,8 @@ public class AccountHierarchyApiService extends BaseApi {
                                         populateCustomFields(billingAccountDto.getCustomFields(), billingAccount, isNewBA, currentUser);
 
                                     } catch (IllegalArgumentException | IllegalAccessException e) {
-                                        log.error("Failed to associate custom field instance to an entity {}", billingAccountDto.getCode(), e);
-                                        throw new MeveoApiException("Failed to associate custom field instance to an entity " + billingAccountDto.getCode());
+                                        log.error("Failed to associate custom field instance to a billing account {}", billingAccountDto.getCode(), e);
+                                        throw new MeveoApiException("Failed to associate custom field instance to a billing account " + billingAccountDto.getCode());
                                     }
 
                                     // user accounts
@@ -1340,8 +1340,8 @@ public class AccountHierarchyApiService extends BaseApi {
                                                 populateCustomFields(userAccountDto.getCustomFields(), userAccount, isNewUA, currentUser);
 
                                             } catch (IllegalArgumentException | IllegalAccessException e) {
-                                                log.error("Failed to associate custom field instance to an entity {}", userAccountDto.getCode(), e);
-                                                throw new MeveoApiException("Failed to associate custom field instance to an entity " + userAccountDto.getCode());
+                                                log.error("Failed to associate custom field instance to a user account {}", userAccountDto.getCode(), e);
+                                                throw new MeveoApiException("Failed to associate custom field instance to a user account " + userAccountDto.getCode());
                                             }
 
                                             // subscriptions
@@ -1560,6 +1560,15 @@ public class AccountHierarchyApiService extends BaseApi {
                                                                     serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
                                                                 } catch (BusinessException e) {
                                                                     throw new MeveoApiException(e.getMessage());
+                                                                }
+
+                                                                // populate customFields
+                                                                try {
+                                                                    populateCustomFields(serviceInstanceDto.getCustomFields(), serviceInstance, true, currentUser);
+                                                                } catch (IllegalArgumentException | IllegalAccessException e) {
+                                                                    log.error("Failed to associate custom field instance to a service instance {}", serviceInstanceDto.getCode(), e);
+                                                                    throw new MeveoApiException("Failed to associate custom field instance to a service instance "
+                                                                            + serviceInstanceDto.getCode());
                                                                 }
 
                                                                 if (serviceInstanceDto.getSubscriptionDate() != null) {

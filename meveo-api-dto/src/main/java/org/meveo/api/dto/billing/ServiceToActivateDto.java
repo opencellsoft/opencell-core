@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.ServiceTemplate;
 
 /**
@@ -20,68 +21,76 @@ import org.meveo.model.catalog.ServiceTemplate;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceToActivateDto implements Serializable {
 
-	private static final long serialVersionUID = -3815026205495621916L;
+    private static final long serialVersionUID = -3815026205495621916L;
 
-	@XmlAttribute(required = true)
-	private String code;
+    @XmlAttribute(required = true)
+    private String code;
 
-	@XmlElement(required = true)
-	private BigDecimal quantity;
+    @XmlElement(required = true)
+    private BigDecimal quantity;
 
-	private Date subscriptionDate;
-	private ChargeInstanceOverridesDto chargeInstanceOverrides;
+    private Date subscriptionDate;
+    private ChargeInstanceOverridesDto chargeInstanceOverrides;
 
-	@XmlTransient
-//	@ApiModelProperty(hidden = true)
-	private ServiceTemplate serviceTemplate;
+    private CustomFieldsDto customFields = new CustomFieldsDto();
 
-	public String getCode() {
-		return code;
-	}
+    @XmlTransient
+    // @ApiModelProperty(hidden = true)
+    private ServiceTemplate serviceTemplate;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public BigDecimal getQuantity() {
-		if (quantity == null)
-			return new BigDecimal(0);
-		return quantity;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
+    public BigDecimal getQuantity() {
+        if (quantity == null)
+            return new BigDecimal(0);
+        return quantity;
+    }
 
-	public Date getSubscriptionDate() {
-		return subscriptionDate;
-	}
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
 
-	public void setSubscriptionDate(Date subscriptionDate) {
-		this.subscriptionDate = subscriptionDate;
-	}
+    public Date getSubscriptionDate() {
+        return subscriptionDate;
+    }
 
-	@Override
-	public String toString() {
-		return "ServiceToActivateDto [code=" + code + ", quantity=" + quantity + ", subscriptionDate="
-				+ subscriptionDate + ", chargeInstanceOverrides=" + chargeInstanceOverrides + ", serviceTemplate="
-				+ serviceTemplate + "]";
-	}
+    public void setSubscriptionDate(Date subscriptionDate) {
+        this.subscriptionDate = subscriptionDate;
+    }
 
-	public ServiceTemplate getServiceTemplate() {
-		return serviceTemplate;
-	}
+    @Override
+    public String toString() {
+        return String.format("ServiceToActivateDto [code=%s, quantity=%s, subscriptionDate=%s, chargeInstanceOverrides=%s, customFields=%s]", code, quantity, subscriptionDate,
+            chargeInstanceOverrides, customFields);
+    }
 
-	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
-		this.serviceTemplate = serviceTemplate;
-	}
+    public ServiceTemplate getServiceTemplate() {
+        return serviceTemplate;
+    }
 
-	public ChargeInstanceOverridesDto getChargeInstanceOverrides() {
-		return chargeInstanceOverrides;
-	}
+    public void setServiceTemplate(ServiceTemplate serviceTemplate) {
+        this.serviceTemplate = serviceTemplate;
+    }
 
-	public void setChargeInstanceOverrides(ChargeInstanceOverridesDto chargeInstanceOverrides) {
-		this.chargeInstanceOverrides = chargeInstanceOverrides;
-	}
+    public ChargeInstanceOverridesDto getChargeInstanceOverrides() {
+        return chargeInstanceOverrides;
+    }
 
+    public void setChargeInstanceOverrides(ChargeInstanceOverridesDto chargeInstanceOverrides) {
+        this.chargeInstanceOverrides = chargeInstanceOverrides;
+    }
+
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 }

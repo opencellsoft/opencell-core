@@ -1475,5 +1475,11 @@
         <modifyDataType tableName="CUST_CEI" columnName="UUID" newDataType="VARCHAR(60)"/>
         <modifyDataType tableName="cat_offer_template_category" columnName="UUID" newDataType="VARCHAR(60)"/>
       </changeSet>
-          
+    
+    <changeSet id="#1531-20160304" author="AndriusKarpavicius">
+        <addColumn tableName="BILLING_SERVICE_INSTANCE">
+            <column name="UUID" type="VARCHAR(60)"/>
+        </addColumn>
+        <sql>update BILLING_SERVICE_INSTANCE set UUID ='ServiceInstance-'|| id </sql>  
+    </changeSet>        
 </databaseChangeLog>

@@ -23,6 +23,7 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -300,7 +301,16 @@ public class SubscriptionApi extends BaseApi {
                         serviceInstances.add(serviceInstance);
                     }
                 } catch (BusinessException e) {
-                    throw new MeveoApiException(e.getMessage());
+                    log.error("Failed to instantiate a service {} on subscription {}", serviceToActivateDto.getCode(), subscription.getCode(), e);
+                    throw new BusinessApiException(e.getMessage());
+                }
+
+                // populate customFields
+                try {
+                    populateCustomFields(serviceToActivateDto.getCustomFields(), serviceInstance, true, currentUser);
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    log.error("Failed to associate custom field instance to an entity {}", serviceToActivateDto.getCode(), e);
+                    throw new MeveoApiException("Failed to associate custom field instance to an entity " + serviceToActivateDto.getCode());
                 }
             }
         }
@@ -385,8 +395,8 @@ public class SubscriptionApi extends BaseApi {
         }
 
         // instantiate
-        for (ServiceToInstantiateDto serviceToActivateDto : serviceToInstantiateDtos) {
-            ServiceTemplate serviceTemplate = serviceToActivateDto.getServiceTemplate();
+        for (ServiceToInstantiateDto serviceToInstantiateDto : serviceToInstantiateDtos) {
+            ServiceTemplate serviceTemplate = serviceToInstantiateDto.getServiceTemplate();
             log.debug("instanciateService id={} checked, quantity={}", serviceTemplate.getId(), 1);
 
             ServiceInstance serviceInstance = null;
@@ -402,7 +412,7 @@ public class SubscriptionApi extends BaseApi {
             }
 
             if (alreadyinstanciated) {
-                throw new MeveoApiException("ServiceInstance with code=" + serviceToActivateDto.getCode() + " must instanciated.");
+                throw new MeveoApiException("ServiceInstance with code=" + serviceToInstantiateDto.getCode() + " must instanciated.");
             }
             if (serviceInstance == null) {
                 serviceInstance = new ServiceInstance();
@@ -412,7 +422,7 @@ public class SubscriptionApi extends BaseApi {
                 serviceInstance.setServiceTemplate(serviceTemplate);
                 serviceInstance.setSubscription(subscription);
 
-                if (serviceToActivateDto.getSubscriptionDate() == null) {
+                if (serviceToInstantiateDto.getSubscriptionDate() == null) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date());
                     calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -421,19 +431,26 @@ public class SubscriptionApi extends BaseApi {
                     calendar.set(Calendar.MILLISECOND, 0);
                     serviceInstance.setSubscriptionDate(calendar.getTime());
                 } else {
-                    serviceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
+                    serviceInstance.setSubscriptionDate(serviceToInstantiateDto.getSubscriptionDate());
                 }
-                serviceInstance.setQuantity(serviceToActivateDto.getQuantity());
+                serviceInstance.setQuantity(serviceToInstantiateDto.getQuantity());
                 try {
                     serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
 
                 } catch (BusinessException e) {
-                    throw new MeveoApiException(e.getMessage());
+                    log.error("Failed to instantiate a service {} on subscription {}", serviceToInstantiateDto.getCode(), subscription.getCode(), e);
+                    throw new BusinessApiException(e.getMessage());
+                }
+
+                // populate customFields
+                try {
+                    populateCustomFields(serviceToInstantiateDto.getCustomFields(), serviceInstance, true, currentUser);
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    log.error("Failed to associate custom field instance to an entity {}", serviceToInstantiateDto.getCode(), e);
+                    throw new MeveoApiException("Failed to associate custom field instance to an entity " + serviceToInstantiateDto.getCode());
                 }
             }
-
         }
-
     }
 
     public void applyOneShotChargeInstance(ApplyOneShotChargeInstanceRequestDto postData, User currentUser) throws MeveoApiException {
@@ -659,7 +676,7 @@ public class SubscriptionApi extends BaseApi {
 
         if (subscription.getServiceInstances() != null) {
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
-                dto.getServices().getServiceInstance().add(new ServiceInstanceDto(serviceInstance));
+                dto.getServices().getServiceInstance().add(new ServiceInstanceDto(serviceInstance, customFieldInstanceService.getCustomFieldInstances(serviceInstance)));
             }
         }
         return dto;

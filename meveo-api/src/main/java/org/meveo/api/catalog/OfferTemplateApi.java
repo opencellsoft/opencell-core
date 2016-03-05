@@ -48,7 +48,7 @@ public class OfferTemplateApi extends BaseApi {
 
     @Inject
     private BusinessOfferService businessOfferService;
-    
+
     @Inject
     private OfferTemplateCategoryService offerTemplateCategoryService;
 
@@ -72,25 +72,24 @@ public class OfferTemplateApi extends BaseApi {
                 throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
             }
         }
-        
+
         OfferTemplate offerTemplate = new OfferTemplate();
         offerTemplate.setBusinessOfferModel(businessOffer);
         offerTemplate.setProvider(provider);
         offerTemplate.setCode(postData.getCode());
         offerTemplate.setDescription(postData.getDescription());
         offerTemplate.setDisabled(postData.isDisabled());
-        
+
         OfferTemplateCategory offerTemplateCategory = null;
         String categoryCode = postData.getOfferTemplateCategoryCode();
         if (!StringUtils.isBlank(categoryCode)) {
-        	offerTemplateCategory = offerTemplateCategoryService.findByCode(categoryCode, currentUser.getProvider());
-        	if (offerTemplateCategory == null) {
-        		throw new EntityDoesNotExistsException(OfferTemplateCategory.class, categoryCode);
-        	}
-        	offerTemplate.setOfferTemplateCategory(offerTemplateCategory);
+            offerTemplateCategory = offerTemplateCategoryService.findByCode(categoryCode, currentUser.getProvider());
+            if (offerTemplateCategory == null) {
+                throw new EntityDoesNotExistsException(OfferTemplateCategory.class, categoryCode);
+            }
+            offerTemplate.setOfferTemplateCategory(offerTemplateCategory);
         }
-        
-        
+
         offerTemplateService.create(offerTemplate, currentUser, provider);
 
         // check service templates
@@ -159,42 +158,45 @@ public class OfferTemplateApi extends BaseApi {
             }
             offerTemplate.setBusinessOfferModel(businessOffer);
         }
-        
+
         offerTemplate.setBusinessOfferModel(businessOffer);
         offerTemplate.setDescription(postData.getDescription());
         offerTemplate.setDisabled(postData.isDisabled());
-        
+
         OfferTemplateCategory offerTemplateCategory = null;
         String categoryCode = postData.getOfferTemplateCategoryCode();
         if (!StringUtils.isBlank(categoryCode)) {
-        	offerTemplateCategory = offerTemplateCategoryService.findByCode(categoryCode, currentUser.getProvider());
-        	if (offerTemplateCategory == null) {
-        		throw new EntityDoesNotExistsException(OfferTemplateCategory.class, categoryCode);
-        	}
-        	offerTemplate.setOfferTemplateCategory(offerTemplateCategory);
-        }
-        
-        // check service templates
-        if (postData.getServiceTemplates() != null && postData.getServiceTemplates().getServiceTemplate().size() > 0) {
-            List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
-            for (ServiceTemplateDto serviceTemplateDto : postData.getServiceTemplates().getServiceTemplate()) {
-                ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateDto.getCode(), provider);
-                if (serviceTemplate == null) {
-                    throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateDto.getCode());
-                }
-
-                OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
-                offerServiceTemplate.setMandatory(serviceTemplateDto.isMandatory());
-                offerServiceTemplate.setOfferTemplate(offerTemplate);
-                offerServiceTemplate.setServiceTemplate(serviceTemplate);
-                offerServiceTemplate.setProvider(currentUser.getProvider());
-                offerServiceTemplateService.create(offerServiceTemplate, currentUser);
-
-                offerServiceTemplates.add(offerServiceTemplate);
+            offerTemplateCategory = offerTemplateCategoryService.findByCode(categoryCode, currentUser.getProvider());
+            if (offerTemplateCategory == null) {
+                throw new EntityDoesNotExistsException(OfferTemplateCategory.class, categoryCode);
             }
-            offerTemplate.setOfferServiceTemplates(offerServiceTemplates);
-            offerTemplateService.update(offerTemplate, currentUser);
+            offerTemplate.setOfferTemplateCategory(offerTemplateCategory);
         }
+
+        // check service templates
+        
+        // TODO Invalid code
+        
+//        if (postData.getServiceTemplates() != null && postData.getServiceTemplates().getServiceTemplate().size() > 0) {
+//            List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
+//            for (ServiceTemplateDto serviceTemplateDto : postData.getServiceTemplates().getServiceTemplate()) {
+//                ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateDto.getCode(), provider);
+//                if (serviceTemplate == null) {
+//                    throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateDto.getCode());
+//                }
+//
+//                OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
+//                offerServiceTemplate.setMandatory(serviceTemplateDto.isMandatory());
+//                offerServiceTemplate.setOfferTemplate(offerTemplate);
+//                offerServiceTemplate.setServiceTemplate(serviceTemplate);
+//                offerServiceTemplate.setProvider(currentUser.getProvider());
+//                offerServiceTemplateService.create(offerServiceTemplate, currentUser);
+//
+//                offerServiceTemplates.add(offerServiceTemplate);
+//            }
+//            offerTemplate.setOfferServiceTemplates(offerServiceTemplates);
+//        }
+        offerTemplateService.update(offerTemplate, currentUser);
 
         // populate customFields
         try {

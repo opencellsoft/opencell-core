@@ -2,6 +2,8 @@ package org.meveo.api.dto.billing;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -9,111 +11,125 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.crm.CustomFieldInstance;
 
 @XmlType(name = "ServiceInstance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceInstanceDto extends BaseDto {
 
-	private static final long serialVersionUID = -4084004747483067153L;
+    private static final long serialVersionUID = -4084004747483067153L;
 
-	@XmlAttribute(required = true)
-	private String code;
+    @XmlAttribute(required = true)
+    private String code;
 
-	@XmlAttribute()
-	private String description;
+    @XmlAttribute()
+    private String description;
 
-	private String status;
-	private Date subscriptionDate;
-	private Date terminationDate;
-	private BigDecimal quantity;
-	private String terminationReason;
-	private Date endAgreementDate;
+    private String status;
+    private Date subscriptionDate;
+    private Date terminationDate;
+    private BigDecimal quantity;
+    private String terminationReason;
+    private Date endAgreementDate;
 
-	public ServiceInstanceDto() {
+    private CustomFieldsDto customFields = new CustomFieldsDto();
 
-	}
+    public ServiceInstanceDto() {
 
-	public ServiceInstanceDto(ServiceInstance e) {
-		code = e.getCode();
-		description = e.getDescription();
-		status = e.getStatus().name();
-		subscriptionDate = e.getSubscriptionDate();
-		terminationDate = e.getTerminationDate();
-		quantity = e.getQuantity();
-		if (e.getSubscriptionTerminationReason() != null) {
-			terminationReason = e.getSubscriptionTerminationReason().getCode();
-		}
-		endAgreementDate = e.getEndAgreementDate();
-	}
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public ServiceInstanceDto(ServiceInstance e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
+        code = e.getCode();
+        description = e.getDescription();
+        status = e.getStatus().name();
+        subscriptionDate = e.getSubscriptionDate();
+        terminationDate = e.getTerminationDate();
+        quantity = e.getQuantity();
+        if (e.getSubscriptionTerminationReason() != null) {
+            terminationReason = e.getSubscriptionTerminationReason().getCode();
+        }
+        endAgreementDate = e.getEndAgreementDate();
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+        customFields = CustomFieldsDto.toDTO(customFieldInstances);
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public Date getSubscriptionDate() {
-		return subscriptionDate;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setSubscriptionDate(Date subscriptionDate) {
-		this.subscriptionDate = subscriptionDate;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public Date getTerminationDate() {
-		return terminationDate;
-	}
+    public Date getSubscriptionDate() {
+        return subscriptionDate;
+    }
 
-	public void setTerminationDate(Date terminationDate) {
-		this.terminationDate = terminationDate;
-	}
+    public void setSubscriptionDate(Date subscriptionDate) {
+        this.subscriptionDate = subscriptionDate;
+    }
 
-	public BigDecimal getQuantity() {
-		return quantity;
-	}
+    public Date getTerminationDate() {
+        return terminationDate;
+    }
 
-	public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
+    public void setTerminationDate(Date terminationDate) {
+        this.terminationDate = terminationDate;
+    }
 
-	@Override
-	public String toString() {
-		return "ServiceInstanceDto [code=" + code + ", description=" + description + ", status=" + status + ", subscriptionDate=" + subscriptionDate + ", terminationDate="
-				+ terminationDate + ", quantity=" + quantity + ", terminationReason=" + terminationReason + "]";
-	}
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
 
-	public String getTerminationReason() {
-		return terminationReason;
-	}
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
 
-	public void setTerminationReason(String terminationReason) {
-		this.terminationReason = terminationReason;
-	}
+    @Override
+    public String toString() {
+        return "ServiceInstanceDto [code=" + code + ", description=" + description + ", status=" + status + ", subscriptionDate=" + subscriptionDate + ", terminationDate="
+                + terminationDate + ", quantity=" + quantity + ", terminationReason=" + terminationReason + "]";
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getTerminationReason() {
+        return terminationReason;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setTerminationReason(String terminationReason) {
+        this.terminationReason = terminationReason;
+    }
 
-	public Date getEndAgreementDate() {
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Date getEndAgreementDate() {
         return endAgreementDate;
     }
-	
-	public void setEndAgreementDate(Date endAgreementDate) {
+
+    public void setEndAgreementDate(Date endAgreementDate) {
         this.endAgreementDate = endAgreementDate;
+    }
+
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
     }
 }
