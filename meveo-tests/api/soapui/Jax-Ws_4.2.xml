@@ -52602,4 +52602,97 @@ public class TestScript${#TestSuite#ticket} extends org.meveo.service.script.Scr
 5. Click on Execute Job Now.</con:description><con:settings/><con:config xsi:type="con:ManualTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:expectedResult>1. An invoice_number will be generated.
 2.  Open pgAdmin and go to the the billing_invoice table.
 3.  Take note of the invoice_number and paste that invoice number in the next step.
-4. Select Pass on this step to proceed.</con:expectedResult></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1471</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" outgoingWss="" wssTimeToLive="">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+4. Select Pass on this step to proceed.</con:expectedResult></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1471</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties></con:testSuite><con:testSuite id="4bafffc1-68f3-41b6-a19d-ef0c02ebb0b4" name="#1503_account_type_hierarchy_GENERIC_API_EXCEPTION"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="4473d31d-27e5-46f6-911c-deaeb5fbdd74" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Test Requests" searchProperties="true"><con:settings/><con:testStep type="request" name="createAccountHierarchy" id="591426dd-8a7c-4ff4-94d9-cff17ce3b3d7"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createAccountHierarchy</con:operation><con:request name="createAccountHierarchy" id="7b138dae-43cf-43d6-b793-1f1538f86feb"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+    <soapenv:Header />
+    <soapenv:Body>
+        <ws:createAccountHierarchy>
+            <!--Optional:-->
+            <accountHierarchy>
+                <email>test@manaty.net</email>
+                <paymentMethod>1</paymentMethod>
+                <!--Optional:-->
+                <customerId>SOAP_CUST3</customerId>
+                <!--Optional:-->
+                <sellerCode>MAIN_SELLER</sellerCode>
+                <!--Optional:-->
+                <customerBrandCode>DEFAULTY</customerBrandCode>
+                <!--Optional:-->
+                <customerCategoryCode>CLIENTY</customerCategoryCode>
+                <!--Optional:-->
+                <currencyCode>USD</currencyCode>
+                <!--Optional:-->
+                <countryCode>US</countryCode>
+                <!--Optional:-->
+                <languageCode>ENG</languageCode>
+                <!--Optional:-->
+                <titleCode />
+                <!--Optional:-->
+                <firstName>Edward</firstName>
+                <!--Optional:-->
+                <lastName>Legaspi</lastName>
+                <!--Optional:-->
+                <!--<birthDate>?</birthDate>-->
+                <!--Optional:-->
+                <phoneNumber>1234</phoneNumber>
+                <!--Optional:-->
+                <billingCycleCode>CYC_INV_MT_1</billingCycleCode>
+                <!--Optional:-->
+                <address1 />
+                <!--Optional:-->
+                <address2 />
+                <!--Optional:-->
+                <zipCode>4030</zipCode>
+                <!--Optional:-->
+                <city>Laguna</city>
+            </accountHierarchy>
+        </ws:createAccountHierarchy>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c06f643e-2276-4c15-ad67-5121f897fada"/><con:assertion type="Schema Compliance" id="aa7f5f00-4faa-4e6d-b184-bd6904c2d622"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="1e899881-b216-4624-8361-be6ea9b38082"/><con:assertion type="XPath Match" id="3a048520-bda5-4a03-aa25-58524e8a9eb7" name="Success Status"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
+matches(//ns2:createAccountHierarchyResponse[1]/return[1]/status[1]/text(), 'SUCCESS')</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="updateAccountHierarchy" id="3d8dd96a-cc6e-46ce-944a-c7089f8818dd"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>updateAccountHierarchy</con:operation><con:request name="updateAccountHierarchy" id="5b7e13a8-b898-44a3-9805-45ce82a2404e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateAccountHierarchy>\r
+         <!--Optional:-->
+            <accountHierarchy>
+                <email>test@manaty.net</email>
+                <paymentMethod>1</paymentMethod>
+                <!--Optional:-->
+                <customerId>CUST_SOAP_CUST3</customerId>
+                <!--Optional:-->
+                <sellerCode>MAIN_SELLER</sellerCode>
+                <!--Optional:-->
+                <customerBrandCode>DEFAULTY</customerBrandCode>
+                <!--Optional:-->
+                <customerCategoryCode>CLIENTY</customerCategoryCode>
+                <!--Optional:-->
+                <currencyCode>USD</currencyCode>
+                <!--Optional:-->
+                <countryCode>US</countryCode>
+                <!--Optional:-->
+                <languageCode>ENG</languageCode>
+                <!--Optional:-->
+                <titleCode />
+                <!--Optional:-->
+                <firstName>Edward</firstName>
+                <!--Optional:-->
+                <lastName>Legaspi</lastName>
+                <!--Optional:-->
+                <!--<birthDate>?</birthDate>-->
+                <!--Optional:-->
+                <phoneNumber>1234</phoneNumber>
+                <!--Optional:-->
+                <billingCycleCode>CYC_INV_MT_1</billingCycleCode>
+                <!--Optional:-->
+                <address1 />
+                <!--Optional:-->
+                <address2 />
+                <!--Optional:-->
+                <zipCode>4030</zipCode>
+                <!--Optional:-->
+                <city>Laguna</city>
+            </accountHierarchy>\r
+      </ws:updateAccountHierarchy>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="6acbbef8-4810-4ea1-9c46-a2e59e8940dd"/><con:assertion type="Schema Compliance" id="f5eb7354-6e42-45ee-9d88-cf8a2169f760"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="9985834f-8959-4ba3-a1b2-a7ed1d44bdec"/><con:assertion type="XPath Match" id="de0d53e1-d1c2-4a91-a028-7aad7c27a92c" name="Success Status"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
+matches(//ns2:updateAccountHierarchyResponse[1]/return[1]/status[1]/text(), 'SUCCESS')</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>currentDate</con:name><con:value>2015-09-23</con:value></con:property><con:property><con:name>ticket</con:name><con:value>1503</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" outgoingWss="" wssTimeToLive="">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
