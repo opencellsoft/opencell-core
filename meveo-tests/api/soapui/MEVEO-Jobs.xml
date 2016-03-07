@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="09e82c05-24b2-41a9-af77-8fa107c5ba98" activeEnvironment="Default" name="MEVEO Jobs" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="6916dfeb-391d-4446-b0a6-92d300d1b838" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/JobWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/JobWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/JobWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="JobWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+<con:soapui-project id="09e82c05-24b2-41a9-af77-8fa107c5ba98" activeEnvironment="Default" name="MEVEO Jobs" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="6916dfeb-391d-4446-b0a6-92d300d1b838" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/JobWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/JobWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/JobWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="JobWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/JobWs?wsdl=JobWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="JobWsSoapBinding" type="ns1:JobWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -5882,42 +5882,21 @@
          <!--Optional:-->
          <offerTemplate code="${#TestSuite#ticket}_OFFER1" description="${#TestSuite#ticket}_OFFER1">
             <disabled>false</disabled>
-            <!--Optional:-->
-            <serviceTemplates>
+            <offerServiceTemplates>
                <!--Zero or more repetitions:-->
-               <serviceTemplate code="${#TestSuite#ticket}_SERVICE1" description="">
+               <offerServiceTemplate>
                   <!--Optional:-->
-                  <invoicingCalendar>MONTHLY</invoicingCalendar>
+                  <serviceTemplate code="${#TestSuite#ticket}_SERVICE1">
+                  </serviceTemplate>
+                  <mandatory>true</mandatory>
+               </offerServiceTemplate>
+               <offerServiceTemplate>
                   <!--Optional:-->
-                  <serviceChargeTemplateRecurrings>
-                     <!--Zero or more repetitions:-->
-                     <serviceChargeTemplateRecurring>
-                        <!--Optional:-->
-                        <code>${#TestSuite#ticket}_REC1</code>
-                     </serviceChargeTemplateRecurring>
-                  </serviceChargeTemplateRecurrings>
-                  <!--Optional:-->
-                  <serviceChargeTemplateSubscriptions>
-                     <!--Zero or more repetitions:-->
-                     <serviceChargeTemplateSubscription>
-                        <!--Optional:-->
-                        <code>${#TestSuite#ticket}_OS1</code>
-                     </serviceChargeTemplateSubscription>
-                  </serviceChargeTemplateSubscriptions>
-                  <!--Optional:-->
-                  <serviceChargeTemplateUsages>
-                     <!--Zero or more repetitions:-->
-                     <serviceChargeTemplateUsage>
-                        <!--Optional:-->
-                        <code>${#TestSuite#ticket}_USAGE1</code>
-                        <!--Optional:-->
-                        <counterTemplate></counterTemplate>
-                     </serviceChargeTemplateUsage>
-                  </serviceChargeTemplateUsages>
-               </serviceTemplate>
-               <serviceTemplate code="${#TestSuite#ticket}_SERVICE2" description="">
-               </serviceTemplate>
-            </serviceTemplates>
+                  <serviceTemplate code="${#TestSuite#ticket}_SERVICE2">
+                  </serviceTemplate>
+                  <mandatory>true</mandatory>
+               </offerServiceTemplate>
+             </offerServiceTemplates>
          </offerTemplate>
       </ws:createOfferTemplate>
    </soapenv:Body>
@@ -5929,11 +5908,15 @@
          <offerTemplate code="${#TestSuite#ticket}_OFFER2" description="${#TestSuite#ticket}_OFFER1">
             <disabled>false</disabled>
             <!--Optional:-->
-            <serviceTemplates>
+             <offerServiceTemplates>
                <!--Zero or more repetitions:-->
-               <serviceTemplate code="${#TestSuite#ticket}_SERVICE3" description="">                 
-               </serviceTemplate>
-            </serviceTemplates>
+               <offerServiceTemplate>
+                  <!--Optional:-->
+                  <serviceTemplate code="${#TestSuite#ticket}_SERVICE3">
+                  </serviceTemplate>
+                  <mandatory>true</mandatory>
+               </offerServiceTemplate>
+             </offerServiceTemplates>
          </offerTemplate>
       </ws:createOfferTemplate>
    </soapenv:Body>
@@ -6737,41 +6720,21 @@ From=2015-07-01 To=2015-12-30</con:description><con:settings/><con:config xsi:ty
          <offerTemplate code="${#TestSuite#ticket}_OFFER1" description="${#TestSuite#ticket}_OFFER1">
             <disabled>false</disabled>
             <!--Optional:-->
-            <serviceTemplates>
+             <offerServiceTemplates>
                <!--Zero or more repetitions:-->
-               <serviceTemplate code="${#TestSuite#ticket}_SERVICE1" description="">
+               <offerServiceTemplate>
                   <!--Optional:-->
-                  <invoicingCalendar>MONTHLY</invoicingCalendar>
+                  <serviceTemplate code="${#TestSuite#ticket}_SERVICE1">
+                  </serviceTemplate>
+                  <mandatory>true</mandatory>
+               </offerServiceTemplate>
+               <offerServiceTemplate>
                   <!--Optional:-->
-                  <serviceChargeTemplateRecurrings>
-                     <!--Zero or more repetitions:-->
-                     <serviceChargeTemplateRecurring>
-                        <!--Optional:-->
-                        <code>${#TestSuite#ticket}_REC1</code>
-                     </serviceChargeTemplateRecurring>
-                  </serviceChargeTemplateRecurrings>
-                  <!--Optional:-->
-                  <serviceChargeTemplateSubscriptions>
-                     <!--Zero or more repetitions:-->
-                     <serviceChargeTemplateSubscription>
-                        <!--Optional:-->
-                        <code>${#TestSuite#ticket}_OS1</code>
-                     </serviceChargeTemplateSubscription>
-                  </serviceChargeTemplateSubscriptions>
-                  <!--Optional:-->
-                  <serviceChargeTemplateUsages>
-                     <!--Zero or more repetitions:-->
-                     <serviceChargeTemplateUsage>
-                        <!--Optional:-->
-                        <code>${#TestSuite#ticket}_USAGE1</code>
-                        <!--Optional:-->
-                        <counterTemplate></counterTemplate>
-                     </serviceChargeTemplateUsage>
-                  </serviceChargeTemplateUsages>
-               </serviceTemplate>
-               <serviceTemplate code="${#TestSuite#ticket}_SERVICE2" description="">
-               </serviceTemplate>
-            </serviceTemplates>
+                  <serviceTemplate code="${#TestSuite#ticket}_SERVICE2">
+                  </serviceTemplate>
+                  <mandatory>true</mandatory>
+               </offerServiceTemplate>
+             </offerServiceTemplates>
          </offerTemplate>
       </ws:createOfferTemplate>
    </soapenv:Body>
@@ -6782,12 +6745,15 @@ From=2015-07-01 To=2015-12-30</con:description><con:settings/><con:config xsi:ty
          <!--Optional:-->
          <offerTemplate code="${#TestSuite#ticket}_OFFER2" description="${#TestSuite#ticket}_OFFER1">
             <disabled>false</disabled>
-            <!--Optional:-->
-            <serviceTemplates>
+            <offerServiceTemplates>
                <!--Zero or more repetitions:-->
-               <serviceTemplate code="${#TestSuite#ticket}_SERVICE3" description="">                 
-               </serviceTemplate>
-            </serviceTemplates>
+               <offerServiceTemplate>
+                  <!--Optional:-->
+                  <serviceTemplate code="${#TestSuite#ticket}_SERVICE3">
+                  </serviceTemplate>
+                  <mandatory>true</mandatory>
+               </offerServiceTemplate>
+             </offerServiceTemplates>
          </offerTemplate>
       </ws:createOfferTemplate>
    </soapenv:Body>
