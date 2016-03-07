@@ -35,24 +35,7 @@ public class OfferTemplate4_1RsImpl extends BaseRs implements OfferTemplate4_1Rs
 	public ActionStatus create(OfferTemplate4_1Dto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		OfferTemplateDto offerTemplateDto = new OfferTemplateDto();
-		offerTemplateDto.setCode(postData.getCode());
-		offerTemplateDto.setDescription(postData.getDescription());
-		offerTemplateDto.setDisabled(postData.isDisabled());
-		offerTemplateDto.setBomCode(postData.getBomCode());
-		offerTemplateDto.setOfferTemplateCategoryCode(postData.getOfferTemplateCategoryCode());
-		offerTemplateDto.setCustomFields(postData.getCustomFields());
-
-		if (postData.getServiceTemplates() != null && postData.getServiceTemplates().getServiceTemplate() != null) {
-			List<OfferServiceTemplateDto> offerServiceTemplateDtos = new ArrayList<>();
-			for (ServiceTemplateDto st : postData.getServiceTemplates().getServiceTemplate()) {
-				OfferServiceTemplateDto offerServiceTemplateDto = new OfferServiceTemplateDto();
-				offerServiceTemplateDto.setMandatory(false);
-				offerServiceTemplateDto.setServiceTemplate(st);
-				offerServiceTemplateDtos.add(offerServiceTemplateDto);
-			}
-			offerTemplateDto.setOfferServiceTemplates(offerServiceTemplateDtos);
-		}
+		OfferTemplateDto offerTemplateDto = convertOfferTemplateDto(postData);
 
 		try {
 			offerTemplateApi.create(offerTemplateDto, getCurrentUser());
@@ -74,24 +57,7 @@ public class OfferTemplate4_1RsImpl extends BaseRs implements OfferTemplate4_1Rs
 	public ActionStatus update(OfferTemplate4_1Dto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		OfferTemplateDto offerTemplateDto = new OfferTemplateDto();
-		offerTemplateDto.setCode(postData.getCode());
-		offerTemplateDto.setDescription(postData.getDescription());
-		offerTemplateDto.setDisabled(postData.isDisabled());
-		offerTemplateDto.setBomCode(postData.getBomCode());
-		offerTemplateDto.setOfferTemplateCategoryCode(postData.getOfferTemplateCategoryCode());
-		offerTemplateDto.setCustomFields(postData.getCustomFields());
-
-		if (postData.getServiceTemplates() != null && postData.getServiceTemplates().getServiceTemplate() != null) {
-			List<OfferServiceTemplateDto> offerServiceTemplateDtos = new ArrayList<>();
-			for (ServiceTemplateDto st : postData.getServiceTemplates().getServiceTemplate()) {
-				OfferServiceTemplateDto offerServiceTemplateDto = new OfferServiceTemplateDto();
-				offerServiceTemplateDto.setMandatory(false);
-				offerServiceTemplateDto.setServiceTemplate(st);
-				offerServiceTemplateDtos.add(offerServiceTemplateDto);
-			}
-			offerTemplateDto.setOfferServiceTemplates(offerServiceTemplateDtos);
-		}
+		OfferTemplateDto offerTemplateDto = convertOfferTemplateDto(postData);
 
 		try {
 			offerTemplateApi.update(offerTemplateDto, getCurrentUser());
@@ -153,6 +119,25 @@ public class OfferTemplate4_1RsImpl extends BaseRs implements OfferTemplate4_1Rs
 	public ActionStatus createOrUpdate(OfferTemplate4_1Dto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		
+		OfferTemplateDto offerTemplateDto = convertOfferTemplateDto(postData);
+
+		try {
+			offerTemplateApi.createOrUpdate(offerTemplateDto, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	private OfferTemplateDto convertOfferTemplateDto(OfferTemplate4_1Dto postData) {
 		OfferTemplateDto offerTemplateDto = new OfferTemplateDto();
 		offerTemplateDto.setCode(postData.getCode());
 		offerTemplateDto.setDescription(postData.getDescription());
@@ -171,21 +156,8 @@ public class OfferTemplate4_1RsImpl extends BaseRs implements OfferTemplate4_1Rs
 			}
 			offerTemplateDto.setOfferServiceTemplates(offerServiceTemplateDtos);
 		}
-
-		try {
-			offerTemplateApi.createOrUpdate(offerTemplateDto, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
-
-		log.debug("RESPONSE={}", result);
-		return result;
+		
+		return offerTemplateDto;
 	}
 
 }

@@ -202,7 +202,7 @@ public class OfferTemplateApi extends BaseApi {
 					}
 				}
 
-				// check if already exists
+				// check if it doesn't exists
 				for (OfferServiceTemplate offerServiceTemplate : offerTemplate.getOfferServiceTemplates()) {
 					boolean found = false;
 
@@ -216,6 +216,30 @@ public class OfferTemplateApi extends BaseApi {
 
 					if (!found) {
 						toBeDeleted.add(offerServiceTemplate);
+					}
+				}
+
+				// update incompatible services
+				for (OfferServiceTemplateDto offerServiceTemplateDto : postData.getOfferServiceTemplates()) {
+					// check if already exists
+					for (OfferServiceTemplate offerServiceTemplate : offerTemplate.getOfferServiceTemplates()) {
+						if (offerServiceTemplate.getServiceTemplate().getCode()
+								.equals(offerServiceTemplateDto.getServiceTemplate().getCode())) {
+							if (offerServiceTemplateDto.getIncompatibleServices() != null
+									&& offerServiceTemplateDto.getIncompatibleServices().size() > 0) {
+								offerServiceTemplate.getIncompatibleServices().clear();
+								for (ServiceTemplateDto serviceTemplateDto : offerServiceTemplateDto
+										.getIncompatibleServices()) {
+									ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(
+											serviceTemplateDto.getCode(), provider);
+									if (serviceTemplate == null) {
+										throw new EntityDoesNotExistsException(ServiceTemplate.class,
+												serviceTemplateDto.getCode());
+									}
+									offerServiceTemplate.getIncompatibleServices().add(serviceTemplate);
+								}
+							}
+						}
 					}
 				}
 
@@ -257,7 +281,7 @@ public class OfferTemplateApi extends BaseApi {
 						offerServiceTemplateService.create(offerServiceTemplate, currentUser);
 						offerServiceTemplates.add(offerServiceTemplate);
 					}
-					
+
 					if (offerServiceTemplates.size() > 0) {
 						offerTemplate.setOfferServiceTemplates(offerServiceTemplates);
 					}
