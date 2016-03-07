@@ -20,7 +20,6 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
-
 public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 
 	@Inject

@@ -1,15 +1,12 @@
 package org.meveo.api.dto.catalog;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
@@ -20,9 +17,9 @@ import org.meveo.model.crm.CustomFieldInstance;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "OfferTemplate")
+@XmlRootElement(name = "OfferTemplate4_1")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OfferTemplateDto implements Serializable {
+public class OfferTemplate4_1Dto implements Serializable {
 
 	private static final long serialVersionUID = 9156372453581362595L;
 
@@ -33,20 +30,19 @@ public class OfferTemplateDto implements Serializable {
 	private String description;
 
 	private boolean disabled = false;
-	private String bomCode;
-	private String offerTemplateCategoryCode;
-
-	@XmlElementWrapper(name = "offerServiceTemplates")
-	@XmlElement(name = "offerServiceTemplate")
-	private List<OfferServiceTemplateDto> offerServiceTemplates;
+	private ServiceTemplatesDto serviceTemplates = new ServiceTemplatesDto();
 
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 
-	public OfferTemplateDto() {
+	private String bomCode;
+
+	private String offerTemplateCategoryCode;
+
+	public OfferTemplate4_1Dto() {
 
 	}
 
-	public OfferTemplateDto(OfferTemplate e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
+	public OfferTemplate4_1Dto(OfferTemplate e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
 		code = e.getCode();
 		description = e.getDescription();
 		disabled = e.isDisabled();
@@ -59,9 +55,8 @@ public class OfferTemplateDto implements Serializable {
 		}
 
 		if (e.getOfferServiceTemplates() != null && e.getOfferServiceTemplates().size() > 0) {
-			offerServiceTemplates = new ArrayList<>();
 			for (OfferServiceTemplate st : e.getOfferServiceTemplates()) {
-				offerServiceTemplates.add(new OfferServiceTemplateDto(st));
+				serviceTemplates.getServiceTemplate().add(new ServiceTemplateDto(st.getServiceTemplate().getCode()));
 			}
 		}
 
@@ -95,8 +90,16 @@ public class OfferTemplateDto implements Serializable {
 	@Override
 	public String toString() {
 		return "OfferTemplateDto [code=" + code + ", description=" + description + ", disabled=" + disabled
-				+ ", bomCode=" + bomCode + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode
-				+ ", offerServiceTemplates=" + offerServiceTemplates + ", customFields=" + customFields + "]";
+				+ ", serviceTemplates=" + serviceTemplates + ", customFields=" + customFields + ", bomCode=" + bomCode
+				+ ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + "]";
+	}
+
+	public ServiceTemplatesDto getServiceTemplates() {
+		return serviceTemplates;
+	}
+
+	public void setServiceTemplates(ServiceTemplatesDto serviceTemplates) {
+		this.serviceTemplates = serviceTemplates;
 	}
 
 	public CustomFieldsDto getCustomFields() {
@@ -121,14 +124,6 @@ public class OfferTemplateDto implements Serializable {
 
 	public void setOfferTemplateCategoryCode(String offerTemplateCategoryCode) {
 		this.offerTemplateCategoryCode = offerTemplateCategoryCode;
-	}
-
-	public List<OfferServiceTemplateDto> getOfferServiceTemplates() {
-		return offerServiceTemplates;
-	}
-
-	public void setOfferServiceTemplates(List<OfferServiceTemplateDto> offerServiceTemplates) {
-		this.offerServiceTemplates = offerServiceTemplates;
 	}
 
 }
