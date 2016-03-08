@@ -47,8 +47,12 @@
 						<hftl:formField label="#{messages['offerTemplate.code']}"
 							field="code" required="true" validateUnique="true" />
 						<hftl:formField label="#{messages['offerTemplate.description']}"
-							field="description" useConverter="false"
-							id="description" maxlength="50" />
+							field="description" useConverter="false" id="description"
+							maxlength="50" />
+						<hftl:formField id="offerTemplateCategoryId"
+							label="#{messages['offerTemplate.category']}"
+							field="offerTemplateCategory" valueLabelField="code"
+							listElements="#{offerTemplateCategoryBean.listActive}" />
 						<hftl:formField label="#{messages['enableEntity.disabled']}"
 							doNotShowOnNew="true" allowEdit="false" field="disabled"
 							isMessage="true" />
@@ -61,15 +65,15 @@
 						<hftl:decorateFormField fieldId="offerTemplateCode"
 							label="#{messages['offerTemplate.code']}">
 							<h:outputText id="offerTemplateCode"
-								value="#{offerTemplateBean.entity.code}" 
-								disabled="true" style="font-weight:bold;" />
+								value="#{offerTemplateBean.entity.code}" disabled="true"
+								style="font-weight:bold;" />
 							<h:inputHidden rendered="#{offerTemplateBean.edit}" />
 						</hftl:decorateFormField>
 						<hftl:decorateFormField fieldId="offerTemplateDescription"
 							label="#{messages['offerTemplate.description']}">
 							<h:outputText id="offerTemplateDescription"
-								value="#{offerTemplateBean.entity.description}" 
-								disabled="true" style="font-weight:bold;" />
+								value="#{offerTemplateBean.entity.description}" disabled="true"
+								style="font-weight:bold;" />
 							<h:inputHidden rendered="#{offerTemplateBean.edit}" />
 						</hftl:decorateFormField>
 					</p:panel>
@@ -81,7 +85,8 @@
 							resultsId="services_results" exportToXml="false">
 							<hftl:column
 								label="#{messages['offerServiceTemplate.serviceTemplate']}"
-								field="serviceTemplate.code" entityView="serviceTemplateDetail" valueIdField="serviceTemplate.id" />
+								field="serviceTemplate.code" entityView="serviceTemplateDetail"
+								valueIdField="serviceTemplate.id" />
 							<hftl:column
 								label="#{messages['offerServiceTemplate.mandatory']}"
 								field="mandatory" />
@@ -116,7 +121,8 @@
 								id="serviceTemplateCode" field="serviceTemplate"
 								valueLabelField="code" popup="true"
 								popupId="searchServiceTemplatePopup" clearButton="true"
-								required="true" disabled="#{!offerTemplateBean.offerServiceTemplate.transient}" />
+								required="true"
+								disabled="#{!offerTemplateBean.offerServiceTemplate.transient}" />
 							<hftl:formField
 								label="#{messages['offerServiceTemplate.mandatory']}"
 								id="mandatory" field="mandatory" />
@@ -156,9 +162,8 @@
 				<p:tab title="#{messages['menu.customFieldTemplates']}" id="tab2"
 					rendered="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).childCount > 0}">
 					<hftl:formPanel formId="customFieldTemplatesForm"
-							backingBean="#{offerTemplateBean}" 
-							ajaxSubmit="true"
-							showDeleteButton="false">
+						backingBean="#{offerTemplateBean}" ajaxSubmit="true"
+						showDeleteButton="false">
 						<hftl:customFields backingBean="#{offerTemplateBean}"
 							messagesId=":tabView:customFieldTemplatesForm:messages" />
 					</hftl:formPanel>

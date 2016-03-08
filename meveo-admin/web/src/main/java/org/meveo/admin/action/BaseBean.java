@@ -50,6 +50,7 @@ import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
@@ -1115,5 +1116,13 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         } catch (InstantiationException | IllegalAccessException e) {
             log.error("Failed to instantiate a new item of {} class", itemClass.getName());
         }
+    }
+    
+    public List<T> listActive() {
+        Map<String, Object> filters = getFilters();
+        filters.put("disabled", false);
+        PaginationConfiguration config = new PaginationConfiguration(filters);
+
+        return getPersistenceService().list(config);
     }
 }
