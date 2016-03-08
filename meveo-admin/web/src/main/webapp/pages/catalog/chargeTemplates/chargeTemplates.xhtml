@@ -30,49 +30,27 @@
 
 		<hftl:dataList label="#{messages['chargeTemplate.title']}"
 		     backingBean="#{chargeTemplateListBean}" sortBy="code">
-			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
+			
+			<p:column width="25%">
+			<f:facet name="header">
+				<h:outputText value="#{messages['chargeTemplate.code']}" />
+			</f:facet>
+		   <p:commandLink 
+			action="#{chargeTemplateBean.getChargeTemplateDetail(entity)}" value="#{entity.code}"> 
+		  </p:commandLink>
+		   </p:column>
+		   
 			<hftl:column label="#{messages['chargeTemplate.description']}"
 				field="description" />
-			<hftl:column
-				label="#{messages['chargeTemplate.unitMultiplicator']}"
-				field="unitMultiplicator" converterParam="12digits" />
-			<hftl:column
-				label="#{messages['chargeTemplate.ratingUnitDescription']}"
-				field="ratingUnitDescription" />	
-				
-			<hftl:column
-				label="#{messages['chargeTemplate.roundingMode']}"
-				field="roundingMode" />
-				
-		   <hftl:column
-				label="#{messages['chargeTemplate.unitNbDecimal']}"
-				field="unitNbDecimal" />
-				
-			 <hftl:column
-				label="#{messages['chargeTemplate.type']}"
-				field="type" />	
-				
-          <hftl:column label="#{messages['chargeTemplate.amountEditable']}"
-				field="amountEditable" isMessage="true" />
 			
 			<hftl:column label="#{messages['charge.subCategory']}"
 				field="invoiceSubCategory.code" valueIdField="invoiceSubCategory.id"
 				entityView="invoiceSubCategoryDetail" propagateConversation="false"
 				backView="invoiceCategories" />
 				
-			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates"
-				valueLabelField="code" isList="true" />
-				
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
-			<p:column width="35">
-			<f:facet name="header">
-				<h:outputText value="#{messages['commons.actions']}" />
-			</f:facet>
-		   <p:commandButton 
-			action="#{chargeTemplateBean.getChargeTemplateDetail(entity)}" icon="ui-icon-document" ajax="false"> 
-		  </p:commandButton>
-		   </p:column>
+			
 		</hftl:dataList>
 
 	</ui:define>
