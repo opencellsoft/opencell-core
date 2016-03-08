@@ -49,5 +49,8 @@
             <column name="role_id" valueNumeric="2" />
             <column name="permission_id" valueNumeric="14" />
         </insert>     
-     </changeSet>    
+     </changeSet>   
+     <changeSet id="1349_20160308" author="anasseh">
+		<sql>UPDATE CAT_CHARGE_TEMPLATE SET UNIT_NB_DECIMAL=2 WHERE UNIT_NB_DECIMAL < 2 </sql>
+	</changeSet>
 </databaseChangeLog>
