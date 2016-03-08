@@ -22,7 +22,7 @@
 			backingBean="#{taxBean}" columns="1">
 			<hftl:formField label="#{messages['tax.code']}" field="code"
 				required="true" />
-			<hftl:formLanguageFields entity="#{taxBean.entity}"  backingBean="#{taxBean}" multiLang="false"/>
+			<hftl:formLanguageFields entity="#{taxBean.entity}"  backingBean="#{taxBean}" multiLang="true"/>
 			<hftl:formField label="#{messages['tax.percent']}" field="percent"
 				required="true" />
 			<hftl:formField
