@@ -5,13 +5,26 @@ import com.google.gson.GsonBuilder;
 
 public class JsonUtils {
 	
+	static  Gson gson = null;
+	static{
+	     GsonBuilder builder = new GsonBuilder();
+	    builder.setVersion(1.0);
+	      gson = builder.setPrettyPrinting().registerTypeAdapter(java.util.Date.class, new MillisDate()).create();
+	}
+	
+	
 	public static String toJson(Object object) {
 	    if (object == null) {
 	        return "";
-	    }
-	    final GsonBuilder builder = new GsonBuilder();
-	    builder.setVersion(1.0);
-	    final Gson gson = builder.setPrettyPrinting().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
+	    }	    
 	    return gson.toJson(object);
 	}
+	
+	public static <T> T toObject(String jsonString,Class<T> clazz) {
+	    if (jsonString == null) {
+	        return null;
+	    }	    
+	    return gson.fromJson(jsonString, clazz);
+	}
+
 }
