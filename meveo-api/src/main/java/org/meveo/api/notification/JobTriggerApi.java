@@ -104,7 +104,7 @@ public class JobTriggerApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getEventTypeFilter())) {
 				missingParameters.add("eventTypeFilter");
 			}
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 
@@ -122,7 +122,7 @@ public class JobTriggerApi extends BaseApi {
 		} else {
 			missingParameters.add("code");
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 
 		return result;
@@ -189,7 +189,7 @@ public class JobTriggerApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getEventTypeFilter())) {
 				missingParameters.add("eventTypeFilter");
 			}
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 
@@ -205,7 +205,7 @@ public class JobTriggerApi extends BaseApi {
 		} else {
 			missingParameters.add("code");
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 

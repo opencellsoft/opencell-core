@@ -50,7 +50,7 @@ public class JobInstanceApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("Code");
 			}			
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 
 		Provider provider = currentUser.getProvider();
@@ -123,7 +123,7 @@ public class JobInstanceApi extends BaseApi {
 		
 		if (StringUtils.isBlank(jobInstanceCode)) {
 			missingParameters.add("Code");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		} else {
 			
 			JobInstance jobInstance = jobInstanceService.findByCode(jobInstanceCode, provider); 
@@ -203,7 +203,7 @@ public class JobInstanceApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         
         JobInstance jobInstance = jobInstanceService.findByCode(code, provider);
@@ -227,7 +227,7 @@ public class JobInstanceApi extends BaseApi {
     public void remove(String code, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         JobInstance jobInstance = jobInstanceService.findByCode(code, provider);
         if (jobInstance == null) {

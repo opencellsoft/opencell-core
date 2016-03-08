@@ -27,7 +27,6 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
@@ -104,7 +103,7 @@ public class SubscriptionApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -160,7 +159,7 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("subscriptionDate");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -203,7 +202,7 @@ public class SubscriptionApi extends BaseApi {
 
     }
 
-    public void activateServices(ActivateServicesRequestDto postData, User currentUser) throws MeveoApiException {
+    public void activateServices(ActivateServicesRequestDto postData, User currentUser, boolean ignoreAlreadyActivatedError) throws MeveoApiException {
 
         if (StringUtils.isBlank(postData.getSubscription())) {
             missingParameters.add("subscription");
@@ -212,7 +211,7 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("services");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -231,7 +230,7 @@ public class SubscriptionApi extends BaseApi {
         for (ServiceToActivateDto serviceToActivateDto : postData.getServicesToActivateDto().getService()) {
             if (StringUtils.isBlank(serviceToActivateDto.getSubscriptionDate())) {
                 missingParameters.add("SubscriptionDate");
-                throw new MissingParameterException(getMissingParametersExceptionMessage());
+                handleMissingParameters();
             }
             ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode(), provider);
             if (serviceTemplate == null) {
@@ -249,7 +248,8 @@ public class SubscriptionApi extends BaseApi {
             log.debug("instanciateService id={} checked, quantity={}", serviceTemplate.getId(), 1);
 
             List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription);
-            boolean alreadyActiveOrSuspended = false;
+            boolean alreadyActive = false;
+            boolean alreadySuspended = false;
             ServiceInstance serviceInstance = null;
             for (ServiceInstance subscriptionServiceInstance : subscriptionServiceInstances) {
                 if (subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CANCELED && subscriptionServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED
@@ -263,17 +263,27 @@ public class SubscriptionApi extends BaseApi {
                             serviceInstance = subscriptionServiceInstance;
                             serviceInstances.add(serviceInstance);
                         }
+                    } else if (subscriptionServiceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
+                        serviceInstance = subscriptionServiceInstance;
+                        alreadyActive = true;
+                        
                     } else {
-                        alreadyActiveOrSuspended = true;
+                        alreadySuspended = true;
                     }
                     break;
                 }
 
             }
 
-            if (alreadyActiveOrSuspended) {
-                throw new MeveoApiException("ServiceInstance with code=" + serviceToActivateDto.getCode() + " must not be ACTIVE or SUSPENDED.");
+            if (alreadyActive && !ignoreAlreadyActivatedError) {
+                throw new MeveoApiException("ServiceInstance with code=" + serviceToActivateDto.getCode() + " must not be ACTIVE.");
             }
+            
+            if (alreadySuspended) {
+                throw new MeveoApiException("ServiceInstance with code=" + serviceToActivateDto.getCode() + " must not be SUSPENDED.");
+            }
+
+            // Instantiate if it was not instantiated earlier
             if (serviceInstance == null) {
                 serviceInstance = new ServiceInstance();
                 serviceInstance.setProvider(serviceTemplate.getProvider());
@@ -368,7 +378,7 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("services");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -466,7 +476,7 @@ public class SubscriptionApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -521,7 +531,7 @@ public class SubscriptionApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -564,7 +574,7 @@ public class SubscriptionApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -597,7 +607,7 @@ public class SubscriptionApi extends BaseApi {
     public SubscriptionsDto listByUserAccount(String userAccountCode, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(userAccountCode)) {
             missingParameters.add("userAccountCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         UserAccount userAccount = userAccountService.findByCode(userAccountCode, provider);
@@ -622,7 +632,7 @@ public class SubscriptionApi extends BaseApi {
 
         if (StringUtils.isBlank(subscriptionCode)) {
             missingParameters.add("subscriptionCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         Subscription subscription = subscriptionService.findByCode(subscriptionCode, provider);
         if (subscription == null) {

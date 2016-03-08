@@ -42,7 +42,7 @@ public class CounterTemplateApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -92,7 +92,7 @@ public class CounterTemplateApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -133,7 +133,7 @@ public class CounterTemplateApi extends BaseApi {
     public CounterTemplateDto find(String code, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("counterTemplateCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         CounterTemplate counterTemplate = counterTemplateService.findByCode(code, provider);
         if (counterTemplate == null) {
@@ -146,7 +146,7 @@ public class CounterTemplateApi extends BaseApi {
     public void remove(String code, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("counterTemplateCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         CounterTemplate counterTemplate = counterTemplateService.findByCode(code, provider);
         if (counterTemplate == null) {

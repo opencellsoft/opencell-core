@@ -250,7 +250,7 @@ public class AccountHierarchyApiService extends BaseApi {
             missingParameters.add("email");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         if (customerService.findByCode(postData.getCustomerId(), provider) != null) {
@@ -479,7 +479,7 @@ public class AccountHierarchyApiService extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Customer customer = customerService.findByCode(postData.getCustomerId(), provider);
@@ -815,13 +815,13 @@ public class AccountHierarchyApiService extends BaseApi {
     public void customerHierarchyUpdate(CustomerHierarchyDto postData, User currentUser) throws MeveoApiException {
         if (postData.getSellers() == null || postData.getSellers().getSeller().isEmpty()) {
             missingParameters.add("sellers");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         for (SellerDto sellerDto : postData.getSellers().getSeller()) {
             if (StringUtils.isBlank(sellerDto.getCode())) {
                 missingParameters.add("seller.code");
-                throw new MissingParameterException(getMissingParametersExceptionMessage());
+                handleMissingParameters();
             }
             Provider provider = currentUser.getProvider();
 
@@ -908,7 +908,7 @@ public class AccountHierarchyApiService extends BaseApi {
                             }
                         } else {
                             missingParameters.add("customer.customerCategory");
-                            throw new MissingParameterException(getMissingParametersExceptionMessage());
+                            handleMissingParameters();
                         }
 
                         customer.setMandateDate(customerDto.getMandateDate());
@@ -997,7 +997,7 @@ public class AccountHierarchyApiService extends BaseApi {
                                     customerAccount.setTradingCurrency(tradingCurrency);
                                 } else {
                                     missingParameters.add("customerAccount.currency");
-                                    throw new MissingParameterException(getMissingParametersExceptionMessage());
+                                    handleMissingParameters();
                                 }
 
                                 if (!StringUtils.isBlank(customerAccountDto.getLanguage())) {
@@ -1009,7 +1009,7 @@ public class AccountHierarchyApiService extends BaseApi {
                                     customerAccount.setTradingLanguage(tradingLanguage);
                                 } else {
                                     missingParameters.add("customerAccount.language");
-                                    throw new MissingParameterException(getMissingParametersExceptionMessage());
+                                    handleMissingParameters();
                                 }
 
                                 customerAccount.setDateStatus(customerAccountDto.getDateStatus());
@@ -1149,7 +1149,7 @@ public class AccountHierarchyApiService extends BaseApi {
                                             }
                                         } else {
                                             missingParameters.add("billingAccount.billingCycle");
-                                            throw new MissingParameterException(getMissingParametersExceptionMessage());
+                                            handleMissingParameters();
                                         }
 
                                         if (!StringUtils.isBlank(billingAccountDto.getCountry())) {
@@ -1159,7 +1159,7 @@ public class AccountHierarchyApiService extends BaseApi {
                                             }
                                         } else {
                                             missingParameters.add("billingAccount.country");
-                                            throw new MissingParameterException(getMissingParametersExceptionMessage());
+                                            handleMissingParameters();
                                         }
 
                                         if (!StringUtils.isBlank(billingAccountDto.getLanguage())) {
@@ -1169,7 +1169,7 @@ public class AccountHierarchyApiService extends BaseApi {
                                             }
                                         } else {
                                             missingParameters.add("billingAccount.language");
-                                            throw new MissingParameterException(getMissingParametersExceptionMessage());
+                                            handleMissingParameters();
                                         }
 
                                         billingAccount.setProvider(provider);
@@ -1177,7 +1177,7 @@ public class AccountHierarchyApiService extends BaseApi {
                                         if (billingAccountDto.getTerminationDate() != null) {
                                             if (StringUtils.isBlank(billingAccountDto.getTerminationReason())) {
                                                 missingParameters.add("billingAccount.terminationReason");
-                                                throw new MissingParameterException(getMissingParametersExceptionMessage());
+                                                handleMissingParameters();
                                             }
 
                                             SubscriptionTerminationReason terminationReason = terminationReasonService.findByCode(billingAccountDto.getTerminationReason(),
@@ -1287,7 +1287,7 @@ public class AccountHierarchyApiService extends BaseApi {
                                                 if (userAccountDto.getTerminationDate() != null) {
                                                     if (StringUtils.isBlank(userAccountDto.getTerminationReason())) {
                                                         missingParameters.add("userAccount.terminationReason");
-                                                        throw new MissingParameterException(getMissingParametersExceptionMessage());
+                                                        handleMissingParameters();
                                                     }
 
                                                     SubscriptionTerminationReason terminationReason = terminationReasonService.findByCode(userAccountDto.getTerminationReason(),
@@ -1374,7 +1374,7 @@ public class AccountHierarchyApiService extends BaseApi {
                                                         if (subscriptionDto.getTerminationDate() != null) {
                                                             if (StringUtils.isBlank(subscriptionDto.getTerminationReason())) {
                                                                 missingParameters.add("subscription.terminationReason");
-                                                                throw new MissingParameterException(getMissingParametersExceptionMessage());
+                                                                handleMissingParameters();
                                                             }
 
                                                             SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(
@@ -1509,7 +1509,7 @@ public class AccountHierarchyApiService extends BaseApi {
 
                                                                     } else {
                                                                         missingParameters.add("serviceInstance.terminationReason");
-                                                                        throw new MissingParameterException(getMissingParametersExceptionMessage());
+                                                                        handleMissingParameters();
                                                                     }
                                                                 } else {
                                                                     throw new MeveoApiException("ServiceInstance with code=" + subscriptionDto.getCode() + " must be ACTIVE.");

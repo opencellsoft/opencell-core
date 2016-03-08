@@ -49,7 +49,7 @@ public class UserAccountApiService extends AccountApiService {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -96,7 +96,7 @@ public class UserAccountApiService extends AccountApiService {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -138,7 +138,7 @@ public class UserAccountApiService extends AccountApiService {
 
         if (StringUtils.isBlank(userAccountCode)) {
             missingParameters.add("userAccountCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         UserAccount userAccount = userAccountService.findByCode(userAccountCode, provider);
@@ -153,7 +153,7 @@ public class UserAccountApiService extends AccountApiService {
 
         if (StringUtils.isBlank(userAccountCode)) {
             missingParameters.add("userAccountCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         UserAccount userAccount = userAccountService.findByCode(userAccountCode, provider);
@@ -175,7 +175,7 @@ public class UserAccountApiService extends AccountApiService {
 
         if (StringUtils.isBlank(billingAccountCode)) {
             missingParameters.add("billingAccountCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, provider);

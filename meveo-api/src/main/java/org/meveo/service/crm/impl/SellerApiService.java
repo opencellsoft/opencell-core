@@ -54,7 +54,7 @@ public class SellerApiService extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -132,7 +132,7 @@ public class SellerApiService extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -214,7 +214,7 @@ public class SellerApiService extends BaseApi {
 
         if (StringUtils.isBlank(sellerCode)) {
             missingParameters.add("sellerCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         SellerDto result = new SellerDto();
@@ -233,7 +233,7 @@ public class SellerApiService extends BaseApi {
 
         if (StringUtils.isBlank(sellerCode)) {
             missingParameters.add("sellerCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Seller seller = sellerService.findByCode(sellerCode, provider);

@@ -28,7 +28,7 @@ public class CommunicationApi extends BaseApi {
 			missingParameters.add("Subject");
 		}
 		if (!missingParameters.isEmpty()) {
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 
 		MeveoInstance meveoInstance = meveoInstanceService.findByCode(communicationRequestDto.getMeveoInstanceCode());

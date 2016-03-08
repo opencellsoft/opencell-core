@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 
@@ -77,6 +78,32 @@ public class CustomFieldDto {
         dto.setMapValue(CustomFieldValueDto.toDTO(cfi.getCfValue().getMapValue()));
         if (cfi.getCfValue().getEntityReferenceValue() != null) {
             dto.setEntityReferenceValue(new EntityReferenceDto(cfi.getCfValue().getEntityReferenceValue()));
+        }
+
+        return dto;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static CustomFieldDto toDTO(String code, Object value) {
+
+        
+        CustomFieldDto dto = new CustomFieldDto();
+        dto.setCode(code);
+        if (value instanceof String) {
+            dto.setStringValue((String) value);
+        } else if (value instanceof Date) {
+            dto.setDateValue((Date) value);
+        } else if (value instanceof Long) {
+            dto.setLongValue((Long) value);
+        } else if (value instanceof Double) {
+            dto.setDoubleValue((Double) value);
+        } else if (value instanceof List) {
+            dto.setListValue(CustomFieldValueDto.toDTO((List) value));
+        } else if (value instanceof Map) {
+            dto.setMapValue(CustomFieldValueDto.toDTO((Map) value));
+        } else if (value instanceof EntityReferenceWrapper) {
+            dto.setEntityReferenceValue(new EntityReferenceDto((EntityReferenceWrapper) value));
+            // TODO add to handle child entity
         }
 
         return dto;
@@ -153,7 +180,7 @@ public class CustomFieldDto {
     public Integer getValuePeriodPriority() {
         return valuePeriodPriority;
     }
-    
+
     public List<CustomFieldValueDto> getListValue() {
         return listValue;
     }
@@ -187,7 +214,7 @@ public class CustomFieldDto {
      * 
      */
     public boolean isEmpty(CustomFieldTypeEnum fieldType, CustomFieldStorageTypeEnum storageType) {
-        if (storageType == CustomFieldStorageTypeEnum.MAP) {
+        if (storageType == CustomFieldStorageTypeEnum.MAP || storageType == CustomFieldStorageTypeEnum.MATRIX) {
             if (mapValue == null || mapValue.isEmpty()) {
                 return true;
             }
@@ -197,6 +224,7 @@ public class CustomFieldDto {
                     return true;
                 }
             }
+
         } else if (storageType == CustomFieldStorageTypeEnum.LIST) {
             if (listValue == null || listValue.isEmpty()) {
                 return true;
@@ -222,6 +250,8 @@ public class CustomFieldDto {
                 return stringValue == null;
             case ENTITY:
                 return entityReferenceValue == null || entityReferenceValue.isEmpty();
+            case CHILD_ENTITY:
+                return true; // TODO add implementation for child entity value
             }
         }
         return false;
@@ -233,6 +263,8 @@ public class CustomFieldDto {
      * @return True if value is empty
      */
     public boolean isEmpty() {
+        // TODO add implementation for child entity value
+
         if (mapValue != null) {
             for (Entry<String, CustomFieldValueDto> mapItem : mapValue.entrySet()) {
                 if (mapItem.getKey() != null && !mapItem.getKey().isEmpty() && mapItem.getValue() != null && mapItem.getValue().isEmpty()) {
@@ -265,11 +297,14 @@ public class CustomFieldDto {
     }
 
     /**
-     * Get a value converted from DTO a propper Map, List, EntityWrapper, Date, Long, Double or String value
+     * Get a value converted from DTO a proper Map, List, EntityWrapper, Date, Long, Double or String value
      * 
      * @return
      */
     public Object getValueConverted() {
+
+        // TODO add implementation for child entity value
+
         if (mapValue != null && !mapValue.isEmpty()) {
             return CustomFieldValueDto.fromDTO(mapValue);
         } else if (listValue != null && !listValue.isEmpty()) {

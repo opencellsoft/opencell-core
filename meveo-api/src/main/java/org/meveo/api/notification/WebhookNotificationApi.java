@@ -121,7 +121,7 @@ public class WebhookNotificationApi extends BaseApi {
 				missingParameters.add("httpMethod");
 			}
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 
@@ -139,7 +139,7 @@ public class WebhookNotificationApi extends BaseApi {
 		} else {
 			missingParameters.add("code");
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 
 		return result;
@@ -227,7 +227,7 @@ public class WebhookNotificationApi extends BaseApi {
 				missingParameters.add("httpMethod");
 			}
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 
@@ -243,7 +243,7 @@ public class WebhookNotificationApi extends BaseApi {
 		} else {
 			missingParameters.add("code");
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 	

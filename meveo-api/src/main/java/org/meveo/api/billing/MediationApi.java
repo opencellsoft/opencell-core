@@ -79,7 +79,7 @@ public class MediationApi extends BaseApi {
 				missingParameters.add("cdr");
 			}
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 
@@ -119,7 +119,7 @@ public class MediationApi extends BaseApi {
 			}
 		} else {
 			missingParameters.add("cdr");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 
@@ -183,7 +183,7 @@ public class MediationApi extends BaseApi {
 			}
 		} else {
 			missingParameters.add("cdr");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 		return result;
 	}
@@ -244,7 +244,7 @@ public class MediationApi extends BaseApi {
 			}
 		} else {
 			missingParameters.add("reservation");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 
@@ -269,7 +269,7 @@ public class MediationApi extends BaseApi {
 			}
 		} else {
 			missingParameters.add("reservation");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 

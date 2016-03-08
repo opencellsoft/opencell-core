@@ -47,7 +47,7 @@ public class BillingCycleApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -95,7 +95,7 @@ public class BillingCycleApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -127,7 +127,7 @@ public class BillingCycleApi extends BaseApi {
 
         if (StringUtils.isBlank(billingCycleCode)) {
             missingParameters.add("billingCycleCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         BillingCycleDto result = new BillingCycleDto();
@@ -145,7 +145,7 @@ public class BillingCycleApi extends BaseApi {
     public void remove(String billingCycleCode, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(billingCycleCode)) {
             missingParameters.add("billingCycleCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, provider);

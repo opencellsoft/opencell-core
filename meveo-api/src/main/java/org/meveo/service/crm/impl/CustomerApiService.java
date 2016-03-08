@@ -16,7 +16,6 @@ import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -67,7 +66,7 @@ public class CustomerApiService extends AccountApiService {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         // check if customer already exists
         if (customerService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
@@ -141,7 +140,7 @@ public class CustomerApiService extends AccountApiService {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         // check if customer exists
@@ -218,25 +217,23 @@ public class CustomerApiService extends AccountApiService {
     }
 
     public CustomerDto find(String customerCode, Provider provider) throws MeveoApiException {
-        if (!StringUtils.isBlank(customerCode)) {
-            Customer customer = customerService.findByCode(customerCode, provider);
-            if (customer == null) {
-                throw new EntityDoesNotExistsException(Customer.class, customerCode);
-            }
-
-            return accountHierarchyApiService.customerToDto(customer);
-
-        } else {
+        if (StringUtils.isBlank(customerCode)) {
             missingParameters.add("customerCode");
-
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
+        handleMissingParameters();
+
+        Customer customer = customerService.findByCode(customerCode, provider);
+        if (customer == null) {
+            throw new EntityDoesNotExistsException(Customer.class, customerCode);
+        }
+
+        return accountHierarchyApiService.customerToDto(customer);
     }
 
     public void remove(String customerCode, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(customerCode)) {
             missingParameters.add("customerCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         Customer customer = customerService.findByCode(customerCode, provider);
         if (customer == null) {
@@ -293,7 +290,7 @@ public class CustomerApiService extends AccountApiService {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         if (customerBrandService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
@@ -311,7 +308,7 @@ public class CustomerApiService extends AccountApiService {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCode(), currentUser.getProvider());
@@ -330,7 +327,7 @@ public class CustomerApiService extends AccountApiService {
     public void createCategory(CustomerCategoryDto postData, User currentUser) throws MeveoApiException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         if (customerCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
@@ -349,7 +346,7 @@ public class CustomerApiService extends AccountApiService {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCode(), currentUser.getProvider());
@@ -367,7 +364,7 @@ public class CustomerApiService extends AccountApiService {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         if (customerCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
@@ -380,7 +377,7 @@ public class CustomerApiService extends AccountApiService {
     public void removeBrand(String code, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("brandCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         CustomerBrand customerBrand = customerBrandService.findByCode(code, provider);
         if (customerBrand == null) {
@@ -401,7 +398,7 @@ public class CustomerApiService extends AccountApiService {
     public void removeCategory(String code, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("categoryCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         CustomerCategory customerCategory = customerCategoryService.findByCode(code, provider);
         if (customerCategory == null) {
@@ -437,7 +434,7 @@ public class CustomerApiService extends AccountApiService {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         if (customerBrandService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {

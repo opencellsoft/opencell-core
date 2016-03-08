@@ -37,7 +37,7 @@ public class OccTemplateApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -75,7 +75,7 @@ public class OccTemplateApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -103,7 +103,7 @@ public class OccTemplateApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("occTemplateCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         OCCTemplate occTemplate = occTemplateService.findByCode(code, provider);
@@ -119,7 +119,7 @@ public class OccTemplateApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("occTemplateCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         OCCTemplate occTemplate = occTemplateService.findByCode(code, provider);

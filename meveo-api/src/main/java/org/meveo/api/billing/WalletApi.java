@@ -353,7 +353,7 @@ public class WalletApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -460,7 +460,7 @@ public class WalletApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getUserAccount())) {
             missingParameters.add("userAccount");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         WalletOperationStatusEnum status = null;
@@ -504,7 +504,7 @@ public class WalletApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         if (walletTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
@@ -531,7 +531,7 @@ public class WalletApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         WalletTemplate wt = walletTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
@@ -555,7 +555,7 @@ public class WalletApi extends BaseApi {
     public WalletTemplateDto find(String walletTemplateCode, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(walletTemplateCode)) {
             missingParameters.add("walletTemplateCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         WalletTemplate wt = walletTemplateService.findByCode(walletTemplateCode, provider);
         if (wt == null) {
@@ -569,7 +569,7 @@ public class WalletApi extends BaseApi {
 
         if (StringUtils.isBlank(walletTemplateCode)) {
             missingParameters.add("walletTemplateCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         WalletTemplate wt = walletTemplateService.findByCode(walletTemplateCode, provider);

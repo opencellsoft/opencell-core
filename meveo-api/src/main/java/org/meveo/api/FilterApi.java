@@ -33,7 +33,7 @@ public class FilterApi extends BaseApi {
             missingParameters.add("inputXml");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Filter filter = filterService.parse(dto.getInputXml());
@@ -61,7 +61,7 @@ public class FilterApi extends BaseApi {
             missingParameters.add("inputXml");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -79,7 +79,7 @@ public class FilterApi extends BaseApi {
     public void createOrUpdate(FilterDto dto, User currentUser) throws MeveoApiException {
         if (StringUtils.isBlank(dto.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -94,7 +94,7 @@ public class FilterApi extends BaseApi {
     public FilterDto findFilter(String code, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Filter filter = filterService.findByCode(code, provider);

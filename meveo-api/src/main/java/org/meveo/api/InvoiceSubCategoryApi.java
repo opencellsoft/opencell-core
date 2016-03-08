@@ -49,7 +49,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -111,7 +111,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -164,7 +164,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("invoiceSubCategoryCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         InvoiceSubCategoryDto result = new InvoiceSubCategoryDto();
@@ -190,7 +190,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("invoiceSubCategoryCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(code, provider);

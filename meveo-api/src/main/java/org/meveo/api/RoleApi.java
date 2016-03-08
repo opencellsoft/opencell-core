@@ -40,7 +40,7 @@ public class RoleApi extends BaseApi {
         String name = postData.getName();
         if (name == null) {
             missingParameters.add("name");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         
         if (roleService.findByName(name, currentUser.getProvider()) != null) {
@@ -103,7 +103,7 @@ public class RoleApi extends BaseApi {
         String name = postData.getName();
         if (name == null) {
             missingParameters.add("name");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         Role role = roleService.findByName(name, currentUser.getProvider());
 
@@ -179,7 +179,7 @@ public class RoleApi extends BaseApi {
         String name = postData.getName();
         if (name == null) {
             missingParameters.add("name");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Role role = roleService.findByName(name, currentUser.getProvider());

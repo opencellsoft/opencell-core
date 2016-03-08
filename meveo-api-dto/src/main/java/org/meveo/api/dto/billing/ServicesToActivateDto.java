@@ -16,25 +16,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServicesToActivateDto implements Serializable {
 
-	private static final long serialVersionUID = -6088111478916521480L;
+    private static final long serialVersionUID = -6088111478916521480L;
 
-	@XmlElement(required = true)
-	private List<ServiceToActivateDto> service;
+    @XmlElement(required = true)
+    private List<ServiceToActivateDto> service;
 
-	public List<ServiceToActivateDto> getService() {
-		if (service == null) {
-			service = new ArrayList<>();
-		}
-		return service;
-	}
+    public List<ServiceToActivateDto> getService() {
+        if (service == null) {
+            service = new ArrayList<>();
+        }
+        return service;
+    }
 
-	public void setService(List<ServiceToActivateDto> services) {
-		this.service = services;
-	}
+    public void setService(List<ServiceToActivateDto> services) {
+        this.service = services;
+    }
 
-	@Override
-	public String toString() {
-		return "ServicesToActivateDto [service=" + service + "]";
-	}
+    public void addService(ServiceToActivateDto service) {
+        getService().add(service);
+    }
+
+    @Override
+    public String toString() {
+        return "ServicesToActivateDto [service=" + service + "]";
+    }
 
 }

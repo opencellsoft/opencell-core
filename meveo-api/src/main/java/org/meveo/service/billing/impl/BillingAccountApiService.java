@@ -79,7 +79,7 @@ public class BillingAccountApiService extends AccountApiService {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -196,7 +196,7 @@ public class BillingAccountApiService extends AccountApiService {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -339,7 +339,7 @@ public class BillingAccountApiService extends AccountApiService {
     public BillingAccountDto find(String billingAccountCode, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(billingAccountCode)) {
             missingParameters.add("billingAccountCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, provider);
         if (billingAccount == null) {
@@ -352,7 +352,7 @@ public class BillingAccountApiService extends AccountApiService {
     public void remove(String billingAccountCode, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(billingAccountCode)) {
             missingParameters.add("billingAccountCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, provider);
         if (billingAccount == null) {
@@ -373,7 +373,7 @@ public class BillingAccountApiService extends AccountApiService {
 
         if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);

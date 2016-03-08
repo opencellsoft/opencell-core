@@ -571,11 +571,16 @@ public class CustomFieldValue implements Serializable {
                 for (Object value : mapValue.values()) {
                     boolean empty = StringUtils.isBlank(value);
                     if (!empty) {
+                        // Logger log = LoggerFactory.getLogger(getClass());
+                        // log.error("AKK cfv matrix is NOT empty {}", matrixValuesForGUI);
                         return false;
                     }
                 }
             }
         }
+
+        // Logger log = LoggerFactory.getLogger(getClass());
+        // log.error("AKK cfv is NOT empty {}", toString());
         return false;
     }
 
@@ -647,11 +652,49 @@ public class CustomFieldValue implements Serializable {
     }
 
     /**
-     * Deserialize serializedValue field to a reference to an entity, list or map of values. See method serialize() for serialized value format
+     * Deserialize JSON value serializedValue to a reference to an entity, list or map of values. See method serialize() for serialized value format
+     * 
+     * @param jsonValue Serialized value - contains only JSON part of serialized value. A prefix information is determined and added before passed to deserialize method
+     * @param fieldType Field type
+     * @param storageType Storage type
      */
-    public void deserializeValue() {
+    public static Object deserializeValue(String jsonValue, CustomFieldTypeEnum fieldType, CustomFieldStorageTypeEnum storageType, List<String> matrixColumnNames) {
+
+        if (jsonValue == null) {
+            return null;
+        }
+
+        String serializedValue = null;
+        if (storageType == CustomFieldStorageTypeEnum.SINGLE && fieldType == CustomFieldTypeEnum.ENTITY) {
+            serializedValue = "entity" + SERIALIZATION_SEPARATOR + jsonValue;
+
+        } else if (storageType == CustomFieldStorageTypeEnum.SINGLE && fieldType == CustomFieldTypeEnum.CHILD_ENTITY) {
+            serializedValue = "childEntity" + SERIALIZATION_SEPARATOR + jsonValue;
+
+        } else if (storageType == CustomFieldStorageTypeEnum.LIST) {
+            serializedValue = "list_" + fieldType.getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR + jsonValue;
+
+        } else if (storageType == CustomFieldStorageTypeEnum.MAP) {
+            serializedValue = "map_" + fieldType.getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR + jsonValue;
+
+        } else if (storageType == CustomFieldStorageTypeEnum.MATRIX) {
+            serializedValue = "matrix_" + fieldType.getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR
+                    + StringUtils.concatenate(MATRIX_COLUMN_NAME_SEPARATOR, matrixColumnNames) + SERIALIZATION_SEPARATOR + jsonValue;
+        }
+
+        Object deserializedValue = CustomFieldValue.deserializeValue(serializedValue);
+        return deserializedValue;
+    }
+
+    /**
+     * Deserialize a serialized reference to an entity, list or map of values. See method serialize() for serialized value format
+     * 
+     * @param serializedValue Serialized value
+     * @return EntityReferenceWrapper, ChildEntityValueWrapper, List or Map object
+     */
+    public static Object deserializeValue(String serializedValue) {
         if (serializedValue == null) {
-            return;
+            return null;
         }
 
         GsonBuilder builder = new GsonBuilder().setDateFormat("yyyy-dd-MM HH:mm:ss zzz");
@@ -661,6 +704,8 @@ public class CustomFieldValue implements Serializable {
 
         String type = serializedValue.substring(0, firstSeparatorIndex);
         String subType = null;
+
+        Object deserializedValue = null;
         if (type.indexOf('_') > 0) {
             subType = type.substring(serializedValue.indexOf("_") + 1);
             type = type.substring(0, serializedValue.indexOf("_"));
@@ -668,11 +713,13 @@ public class CustomFieldValue implements Serializable {
 
         if ("entity".equals(type)) {
             String sValue = serializedValue.substring(firstSeparatorIndex + 1);
-            entityReferenceValue = gson.fromJson(sValue, EntityReferenceWrapper.class);
+            EntityReferenceWrapper entityReferenceValue = gson.fromJson(sValue, EntityReferenceWrapper.class);
+            deserializedValue = entityReferenceValue;
 
         } else if ("childEntity".equals(type)) {
             String sValue = serializedValue.substring(firstSeparatorIndex + 1);
-            childEntityValue = gson.fromJson(sValue, ChildEntityValueWrapper.class);
+            ChildEntityValueWrapper childEntityValue = gson.fromJson(sValue, ChildEntityValueWrapper.class);
+            deserializedValue = childEntityValue;
 
         } else if ("list".equals(type)) {
 
@@ -699,7 +746,8 @@ public class CustomFieldValue implements Serializable {
             }
 
             String sValue = serializedValue.substring(firstSeparatorIndex + 1);
-            listValue = gson.fromJson(sValue, itemType);
+            List<Object> listValue = gson.fromJson(sValue, itemType);
+            deserializedValue = listValue;
 
         } else if ("map".equals(type)) {
 
@@ -726,7 +774,8 @@ public class CustomFieldValue implements Serializable {
             }
 
             String sValue = serializedValue.substring(firstSeparatorIndex + 1);
-            mapValue = gson.fromJson(sValue, itemType);
+            Map<String, Object> mapValue = gson.fromJson(sValue, itemType);
+            deserializedValue = mapValue;
 
         } else if ("matrix".equals(type)) {
 
@@ -756,9 +805,24 @@ public class CustomFieldValue implements Serializable {
             String keys = serializedValue.substring(firstSeparatorIndex + 1, secondSeparatorIndex);
             String sValue = serializedValue.substring(secondSeparatorIndex + 1);
 
-            mapValue = gson.fromJson(sValue, itemType);
+            Map<String, Object> mapValue = gson.fromJson(sValue, itemType);
             mapValue.put(MAP_KEY, keys);
+            deserializedValue = mapValue;
         }
+
+        Logger log = LoggerFactory.getLogger(CustomFieldValue.class);
+        log.trace("Value {} deserialized to {}", serializedValue, deserializedValue);
+        return deserializedValue;
+    }
+
+    /**
+     * Deserialize serializedValue field to a reference to an entity, list or map of values. See method serialize() for serialized value format
+     */
+    public void deserializeValue() {
+        if (serializedValue == null) {
+            return;
+        }
+        setValue(CustomFieldValue.deserializeValue(serializedValue));
     }
 
     /**

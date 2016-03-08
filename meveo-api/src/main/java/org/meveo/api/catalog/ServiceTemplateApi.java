@@ -225,7 +225,7 @@ public class ServiceTemplateApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -276,7 +276,7 @@ public class ServiceTemplateApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -330,7 +330,7 @@ public class ServiceTemplateApi extends BaseApi {
 
         if (StringUtils.isBlank(serviceTemplateCode)) {
             missingParameters.add("serviceTemplateCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateCode, provider);
@@ -375,7 +375,7 @@ public class ServiceTemplateApi extends BaseApi {
 
         if (StringUtils.isBlank(serviceTemplateCode)) {
             missingParameters.add("serviceTemplateCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateCode, provider);

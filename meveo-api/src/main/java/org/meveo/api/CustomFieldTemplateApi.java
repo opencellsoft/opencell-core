@@ -1,9 +1,12 @@
 package org.meveo.api;
 
+import java.util.ArrayList;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.api.dto.CustomFieldMatrixColumnDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -14,6 +17,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.service.catalog.impl.CalendarService;
@@ -50,7 +54,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         if (appliesTo != null) {
@@ -94,7 +98,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         if (appliesTo != null) {
@@ -128,7 +132,7 @@ public class CustomFieldTemplateApi extends BaseApi {
             missingParameters.add("appliesTo");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, provider);
@@ -147,7 +151,7 @@ public class CustomFieldTemplateApi extends BaseApi {
             missingParameters.add("appliesTo");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, provider);
@@ -168,7 +172,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         if (appliesTo != null) {
@@ -184,7 +188,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         CustomFieldTemplate customFieldTemplate = customFieldTemplateService.findByCodeAndAppliesToNoCache(postData.getCode(), appliesTo, currentUser.getProvider());
-        
+
         if (customFieldTemplate == null) {
             create(postData, appliesTo, currentUser);
         } else {
@@ -195,7 +199,7 @@ public class CustomFieldTemplateApi extends BaseApi {
     protected CustomFieldTemplate fromDTO(CustomFieldTemplateDto dto, User currentUser, String appliesTo, CustomFieldTemplate cftToUpdate) {
 
         // Set default values
-        if (CustomFieldTypeEnum.STRING.name().equals(dto.getFieldType()) && dto.getMaxValue() == null) {
+        if (dto.getFieldType() == CustomFieldTypeEnum.STRING && dto.getMaxValue() == null) {
             dto.setMaxValue(CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING);
         }
 
@@ -240,6 +244,19 @@ public class CustomFieldTemplateApi extends BaseApi {
 
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP && cft.getMapKeyType() == null) {
             cft.setMapKeyType(CustomFieldMapKeyEnum.STRING);
+        }
+
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+            if (cft.getMatrixColumns() == null) {
+                cft.setMatrixColumns(new ArrayList<CustomFieldMatrixColumn>());
+            } else {
+                cft.getMatrixColumns().clear();
+            }
+
+            for (CustomFieldMatrixColumnDto columnDto : dto.getMatrixColumns()) {
+                cft.getMatrixColumns().add(CustomFieldMatrixColumnDto.fromDto(columnDto));
+            }
+
         }
 
         if (!StringUtils.isBlank(dto.getCalendar())) {

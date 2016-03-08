@@ -88,7 +88,7 @@ public class CustomerAccountApiService extends AccountApiService {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -172,7 +172,7 @@ public class CustomerAccountApiService extends AccountApiService {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -262,7 +262,7 @@ public class CustomerAccountApiService extends AccountApiService {
 
         if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -288,7 +288,7 @@ public class CustomerAccountApiService extends AccountApiService {
 
         if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
@@ -311,7 +311,7 @@ public class CustomerAccountApiService extends AccountApiService {
 
         if (StringUtils.isBlank(customerCode)) {
             missingParameters.add("customerCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         Customer customer = customerService.findByCode(customerCode, provider);
         if (customer == null) {
@@ -362,7 +362,7 @@ public class CustomerAccountApiService extends AccountApiService {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         if (creditCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
@@ -386,7 +386,7 @@ public class CustomerAccountApiService extends AccountApiService {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CreditCategory creditCategory = creditCategoryService.findByCode(postData.getCode(), currentUser.getProvider());
@@ -411,7 +411,7 @@ public class CustomerAccountApiService extends AccountApiService {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         if (creditCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
@@ -424,7 +424,7 @@ public class CustomerAccountApiService extends AccountApiService {
     public void removeCreditCategory(String code, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("creditCategoryCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         CreditCategory creditCategory = creditCategoryService.findByCode(code, provider);
         if (creditCategory == null) {

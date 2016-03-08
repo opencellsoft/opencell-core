@@ -68,7 +68,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -179,7 +179,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -284,7 +284,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("recurringChargeTemplateCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
 
@@ -310,7 +310,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("recurringChargeTemplateCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         // check if code already exists

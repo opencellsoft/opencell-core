@@ -60,7 +60,7 @@ public class CalendarApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -117,7 +117,7 @@ public class CalendarApi extends BaseApi {
 
             if (StringUtils.isBlank(postData.getPeriodUnit())) {
                 missingParameters.add("periodUnit");
-                throw new MissingParameterException(getMissingParametersExceptionMessage());
+                handleMissingParameters();
             }
 
             CalendarPeriod calendar = new CalendarPeriod();
@@ -157,7 +157,7 @@ public class CalendarApi extends BaseApi {
             }
 
             if (!missingParameters.isEmpty()) {
-                throw new MissingParameterException(getMissingParametersExceptionMessage());
+                handleMissingParameters();
             }
 
             Calendar cal1 = calendarService.findByCode(postData.getJoinCalendar1Code(), provider);
@@ -194,7 +194,7 @@ public class CalendarApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -267,7 +267,7 @@ public class CalendarApi extends BaseApi {
             }
 
             if (!missingParameters.isEmpty()) {
-                throw new MissingParameterException(getMissingParametersExceptionMessage());
+                handleMissingParameters();
             }
 
             Calendar cal1 = calendarService.findByCode(postData.getJoinCalendar1Code(), provider);
@@ -304,7 +304,7 @@ public class CalendarApi extends BaseApi {
                 missingParameters.add("calendarCode");
             }
 
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         return result;
@@ -331,7 +331,7 @@ public class CalendarApi extends BaseApi {
                 missingParameters.add("calendarCode");
             }
 
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
     }
 

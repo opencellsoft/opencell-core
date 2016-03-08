@@ -35,7 +35,7 @@ public class LanguageApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -73,7 +73,7 @@ public class LanguageApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(code, provider);
@@ -88,7 +88,7 @@ public class LanguageApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -120,7 +120,7 @@ public class LanguageApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(code, provider);

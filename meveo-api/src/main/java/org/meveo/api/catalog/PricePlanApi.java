@@ -67,7 +67,7 @@ public class PricePlanApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -158,7 +158,7 @@ public class PricePlanApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -243,7 +243,7 @@ public class PricePlanApi extends BaseApi {
     public PricePlanDto find(String pricePlanCode, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(pricePlanCode)) {
             missingParameters.add("pricePlanCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanCode, provider);
@@ -258,7 +258,7 @@ public class PricePlanApi extends BaseApi {
 
         if (StringUtils.isBlank(pricePlanCode)) {
             missingParameters.add("pricePlanCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanCode, provider);
@@ -272,7 +272,7 @@ public class PricePlanApi extends BaseApi {
     public List<PricePlanDto> list(String eventCode, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(eventCode)) {
             missingParameters.add("eventCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(eventCode, provider);

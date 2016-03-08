@@ -87,7 +87,7 @@ public class CatMessagesApi extends BaseApi {
             missingParameters.add("descriptionTranslation");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         String objectType = postData.getObjectType();
@@ -202,7 +202,7 @@ public class CatMessagesApi extends BaseApi {
             missingParameters.add("languageCode");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CatMessagesDto catMessagesDto = null;
@@ -239,7 +239,7 @@ public class CatMessagesApi extends BaseApi {
             missingParameters.add("descriptionTranslation");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CatMessages catMessages = catMessagesService.findByCodeAndLanguage(postData.getCatMessagesCode(), postData.getLanguageCode(), currentUser.getProvider());
@@ -263,7 +263,7 @@ public class CatMessagesApi extends BaseApi {
             missingParameters.add("languageCode");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CatMessages catMessages = catMessagesService.findByCodeAndLanguage(catMessagesCode, languageCode, provider);
@@ -285,7 +285,7 @@ public class CatMessagesApi extends BaseApi {
         }
         
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         String catMessagesCode = postData.getCatMessagesCode();

@@ -105,7 +105,7 @@ public class EmailNotificationApi extends BaseApi {
 				missingParameters.add("subject");
 			}
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 
@@ -123,7 +123,7 @@ public class EmailNotificationApi extends BaseApi {
 		} else {
 			missingParameters.add("code");
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 
 		return result;
@@ -194,7 +194,7 @@ public class EmailNotificationApi extends BaseApi {
 				missingParameters.add("subject");
 			}
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 
@@ -210,7 +210,7 @@ public class EmailNotificationApi extends BaseApi {
 		} else {
 			missingParameters.add("code");
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 	

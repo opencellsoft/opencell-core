@@ -46,7 +46,7 @@ public class TaxApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         ActionStatus result = new ActionStatus();
@@ -108,7 +108,7 @@ public class TaxApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         ActionStatus result = new ActionStatus();
@@ -166,7 +166,7 @@ public class TaxApi extends BaseApi {
 
         if (StringUtils.isBlank(taxCode)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         TaxDto result = new TaxDto();
@@ -192,7 +192,7 @@ public class TaxApi extends BaseApi {
 
         if (StringUtils.isBlank(taxCode)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         ActionStatus result = new ActionStatus();

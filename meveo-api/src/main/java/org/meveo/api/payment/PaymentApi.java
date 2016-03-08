@@ -84,7 +84,7 @@ public class PaymentApi extends BaseApi {
 			missingParameters.add("PaymentMethod");
 		}
 		if (!missingParameters.isEmpty()) {
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 		
 		PaymentMethodEnum paymentMethod = null;

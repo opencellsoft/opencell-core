@@ -111,7 +111,7 @@ public class NotificationApi extends BaseApi {
 				missingParameters.add("eventTypeFilter");
 			}
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 
@@ -129,7 +129,7 @@ public class NotificationApi extends BaseApi {
 		} else {
 			missingParameters.add("code");
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 
 		return result;
@@ -187,7 +187,7 @@ public class NotificationApi extends BaseApi {
 				missingParameters.add("eventTypeFilter");
 			}
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 
@@ -203,7 +203,7 @@ public class NotificationApi extends BaseApi {
 		} else {
 			missingParameters.add("code");
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 

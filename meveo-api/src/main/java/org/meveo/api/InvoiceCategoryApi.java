@@ -37,7 +37,7 @@ public class InvoiceCategoryApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -85,7 +85,7 @@ public class InvoiceCategoryApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -136,7 +136,7 @@ public class InvoiceCategoryApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("invoiceCategoryCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         InvoiceCategoryDto result = new InvoiceCategoryDto();
@@ -162,7 +162,7 @@ public class InvoiceCategoryApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("invoiceCategoryCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(code, provider);

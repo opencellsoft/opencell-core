@@ -80,7 +80,7 @@ public class BusinessOfferApi extends BaseApi {
 				missingParameters.add("bomCode");
 			}
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 	}
 }

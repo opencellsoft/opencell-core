@@ -35,7 +35,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            productOrder = orderApi.createProductOrderOld(productOrder, getCurrentUser());
+            productOrder = orderApi.createProductOrder(productOrder, getCurrentUser());
             responseBuilder = Response.status(Response.Status.CREATED).entity(productOrder);
 
         } catch (MeveoApiException e) {

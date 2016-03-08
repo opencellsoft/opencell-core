@@ -98,7 +98,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			subscriptionApi.activateServices(postData, getCurrentUser());
+			subscriptionApi.activateServices(postData, getCurrentUser(), false);
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

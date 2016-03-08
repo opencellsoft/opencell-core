@@ -138,7 +138,7 @@ public class ProviderApi extends BaseApi {
             missingParameters.add("code");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = providerService.findByCode(postData.getCode());
@@ -244,7 +244,7 @@ public class ProviderApi extends BaseApi {
             missingParameters.add("code");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         // search for provider

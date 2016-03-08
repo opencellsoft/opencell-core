@@ -1,41 +1,82 @@
 package org.meveo.model.crm.custom;
 
+import java.util.Date;
+
+import org.meveo.model.crm.EntityReferenceWrapper;
 
 public enum CustomFieldTypeEnum {
-  STRING(1, "customFieldTypeEnum.string"),
-  DATE(2, "customFieldTypeEnum.date"),
-  LONG(3, "customFieldTypeEnum.long"),
-  DOUBLE(4, "customFieldTypeEnum.double"),
-  LIST(5, "customFieldTypeEnum.list"),
-  ENTITY(6,"customFieldTypeEnum.entity"),
-  TEXT_AREA(7,"customFieldTypeEnum.textArea"),
-  CHILD_ENTITY(8,"customFieldTypeEnum.childEntity");
-  
+    /**
+     * String value
+     */
+    STRING("customFieldTypeEnum.string", false, String.class),
 
-  private Integer id;
-  private String label;
+    /**
+     * Date value
+     */
+    DATE("customFieldTypeEnum.date", false, Date.class),
 
-  CustomFieldTypeEnum(Integer id, String label) {
-      this.id = id;
-      this.label = label;
-  }
+    /**
+     * Long value
+     */
+    LONG("customFieldTypeEnum.long", false, Long.class),
 
-  public Integer getId() {
-      return id;
-  }
+    /**
+     * Double value
+     */
+    DOUBLE("customFieldTypeEnum.double", false, Double.class),
 
-  public String getLabel() {
-      return this.label;
-  }
+    /**
+     * String value picked from a list of values
+     */
+    LIST("customFieldTypeEnum.list", false, String.class),
 
-  public static CustomFieldTypeEnum getValue(Integer id) {
-      if (id != null) {
-          for (CustomFieldTypeEnum type : values()) {
-              if (id.equals(type.getId())) {
-                  return type;
-              }
-          }
-      }
-      return null;
-  }
+    /**
+     * A reference to an entity
+     */
+    ENTITY("customFieldTypeEnum.entity", true, EntityReferenceWrapper.class),
+
+    /**
+     * A long string value
+     */
+    TEXT_AREA("customFieldTypeEnum.textArea", false, String.class),
+
+    /**
+     * An embedded entity data
+     */
+    CHILD_ENTITY("customFieldTypeEnum.childEntity", true, ChildEntityValueWrapper.class);
+
+    /**
+     * Label for display in GUI
+     */
+    private String label;
+
+    /**
+     * Is value stored in a serialized form in DB
+     */
+    private boolean storedSerialized;
+
+    /**
+     * Corresponding class of field type
+     */
+    @SuppressWarnings("rawtypes")
+    private Class dataClass;
+
+    CustomFieldTypeEnum(String label, boolean storedSerialized, @SuppressWarnings("rawtypes") Class dataClass) {
+        this.label = label;
+        this.storedSerialized = storedSerialized;
+        this.dataClass = dataClass;
+    }
+
+    public String getLabel() {
+        return this.label;
+    }
+
+    public boolean isStoredSerialized() {
+        return storedSerialized;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public Class getDataClass() {
+        return dataClass;
+    }
 }

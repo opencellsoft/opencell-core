@@ -41,7 +41,7 @@ public class DiscountPlanApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         if (discountPlanService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
             throw new EntityAlreadyExistsException(DiscountPlan.class, postData.getCode());
@@ -65,7 +65,7 @@ public class DiscountPlanApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         DiscountPlan discountPlan = discountPlanService.findByCode(postData.getCode(), currentUser.getProvider());
 
@@ -89,7 +89,7 @@ public class DiscountPlanApi extends BaseApi {
 
         if (StringUtils.isBlank(discountPlanCode)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         DiscountPlanDto discountPlanDto = new DiscountPlanDto();
@@ -116,7 +116,7 @@ public class DiscountPlanApi extends BaseApi {
 
         if (StringUtils.isBlank(discountPlanCode)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanCode, provider);
@@ -138,7 +138,7 @@ public class DiscountPlanApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         String discountPlanCode = postData.getCode();

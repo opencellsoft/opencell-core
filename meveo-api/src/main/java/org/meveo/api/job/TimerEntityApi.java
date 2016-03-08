@@ -48,7 +48,7 @@ public class TimerEntityApi extends BaseApi {
                 missingParameters.add("dayOfWeek");
             }
 
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
 
         }
 
@@ -70,7 +70,7 @@ public class TimerEntityApi extends BaseApi {
 
         if (StringUtils.isBlank(timerEntityCode)) {
             missingParameters.add("Code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         TimerEntity timerEntity = timerEntityService.findByCode(timerEntityCode, provider);
@@ -96,7 +96,7 @@ public class TimerEntityApi extends BaseApi {
         TimerEntityDto result = new TimerEntityDto();
         if (StringUtils.isBlank(timerEntityCode)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         TimerEntity timerEntity = timerEntityService.findByCode(timerEntityCode, currentUser.getProvider());
         if (timerEntity == null) {
@@ -110,7 +110,7 @@ public class TimerEntityApi extends BaseApi {
     public void remove(String timerEntityCode, User currentUser) throws MeveoApiException {
         if (StringUtils.isBlank(timerEntityCode)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         TimerEntity timerEntity = timerEntityService.findByCode(timerEntityCode, currentUser.getProvider());
         if (timerEntity == null) {

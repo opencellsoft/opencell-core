@@ -60,7 +60,7 @@ public class ChartApi extends BaseApi {
         }
         
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Chart chart = chartService.findByCode(postData.getCode(), currentUser.getProvider());
@@ -104,7 +104,7 @@ public class ChartApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Chart chart = chartService.findByCode(postData.getCode(), currentUser.getProvider());
@@ -132,7 +132,7 @@ public class ChartApi extends BaseApi {
 
         if (StringUtils.isBlank(chartCode)) {
             missingParameters.add("chartCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         ChartDto result = null;
@@ -159,7 +159,7 @@ public class ChartApi extends BaseApi {
 
         if (StringUtils.isBlank(chartCode)) {
             missingParameters.add("chartCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Chart chart = chartService.findByCode(chartCode, currentUser.getProvider());

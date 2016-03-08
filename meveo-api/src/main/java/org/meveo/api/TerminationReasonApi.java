@@ -34,7 +34,7 @@ public class TerminationReasonApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         if (terminationReasonService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
@@ -63,7 +63,7 @@ public class TerminationReasonApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(postData.getCode(), currentUser.getProvider());
 
@@ -90,7 +90,7 @@ public class TerminationReasonApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(code, currentUser.getProvider());
@@ -113,7 +113,7 @@ public class TerminationReasonApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(postData.getCode(), currentUser.getProvider());
@@ -138,7 +138,7 @@ public class TerminationReasonApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(code, currentUser.getProvider());
 

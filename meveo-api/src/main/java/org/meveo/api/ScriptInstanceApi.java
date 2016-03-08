@@ -157,7 +157,7 @@ public class ScriptInstanceApi extends BaseApi {
         ScriptInstanceDto scriptInstanceDtoResult = null;
         if (StringUtils.isBlank(scriptInstanceCode)) {
             missingParameters.add("scriptInstanceCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         ScriptInstance scriptInstance = scriptInstanceService.findByCode(scriptInstanceCode, currentUser.getProvider());
         if (scriptInstance == null) {
@@ -174,11 +174,11 @@ public class ScriptInstanceApi extends BaseApi {
         EntityActionScriptDto scriptInstanceDtoResult = null;
         if (StringUtils.isBlank(scriptCode)) {
             missingParameters.add("scriptCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
 
         } else if (StringUtils.isBlank(appliesTo)) {
             missingParameters.add("appliesTo");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         EntityActionScript scriptInstance = entityActionScriptService.findByCodeAndAppliesTo(EntityActionScript.composeCode(scriptCode, appliesTo), appliesTo,
@@ -194,7 +194,7 @@ public class ScriptInstanceApi extends BaseApi {
     public void removeScriptInstance(String scriptInstanceCode, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
         if (StringUtils.isBlank(scriptInstanceCode)) {
             missingParameters.add("scriptInstanceCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         ScriptInstance scriptInstance = scriptInstanceService.findByCode(scriptInstanceCode, currentUser.getProvider());
         if (scriptInstance == null) {
@@ -207,10 +207,10 @@ public class ScriptInstanceApi extends BaseApi {
 
         if (StringUtils.isBlank(scriptCode)) {
             missingParameters.add("scriptInstanceCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         } else if (StringUtils.isBlank(appliesTo)) {
             missingParameters.add("appliesTo");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         EntityActionScript scriptInstance = entityActionScriptService.findByCodeAndAppliesTo(EntityActionScript.composeCode(scriptCode, appliesTo), appliesTo,
@@ -259,13 +259,13 @@ public class ScriptInstanceApi extends BaseApi {
     private void checkDtoAndUpdateCode(ScriptInstanceDto dto) throws MeveoApiException {
         if (dto == null) {
             missingParameters.add("scriptInstanceDto");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         if (StringUtils.isBlank(dto.getScript())) {
             missingParameters.add("script");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         String packageName = scriptInstanceService.getPackageName(dto.getScript());
@@ -280,7 +280,7 @@ public class ScriptInstanceApi extends BaseApi {
     private void checkDtoAndSetAppliesTo(EntityActionScriptDto dto, String appliesTo) throws MeveoApiException {
         if (dto == null) {
             missingParameters.add("entityActionScriptDto");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         if (StringUtils.isBlank(dto.getCode())) {
             missingParameters.add("code");
@@ -298,7 +298,7 @@ public class ScriptInstanceApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
     }
 

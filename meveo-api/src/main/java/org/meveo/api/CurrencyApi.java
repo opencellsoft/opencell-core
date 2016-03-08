@@ -9,7 +9,6 @@ import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
@@ -26,147 +25,118 @@ import org.meveo.service.admin.impl.TradingCurrencyService;
 @Stateless
 public class CurrencyApi extends BaseApi {
 
-	@Inject
-	private CurrencyService currencyService;
+    @Inject
+    private CurrencyService currencyService;
 
-	@Inject
-	private TradingCurrencyService tradingCurrencyService;
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
 
-	public void create(CurrencyDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())) {
-			Provider provider = currentUser.getProvider();
+    public void create(CurrencyDto postData, User currentUser) throws MeveoApiException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
 
-			if (tradingCurrencyService.findByTradingCurrencyCode(
-					postData.getCode(), provider) != null) {
-				throw new EntityAlreadyExistsException(TradingCurrency.class,
-						postData.getCode());
-			}
+        handleMissingParameters();
 
-			Currency currency = currencyService.findByCode(postData.getCode());
+        Provider provider = currentUser.getProvider();
 
-			Auditable auditable = new Auditable();
-			auditable.setCreated(new Date());
-			auditable.setCreator(currentUser);
+        if (tradingCurrencyService.findByTradingCurrencyCode(postData.getCode(), provider) != null) {
+            throw new EntityAlreadyExistsException(TradingCurrency.class, postData.getCode());
+        }
 
-			if (currency == null) {
-				// create
-				currency = new Currency();
-				currency.setCurrencyCode(postData.getCode());
-				currency.setDescriptionEn(postData.getDescription());
-				currency.setAuditable(auditable);
-				currencyService.create(currency, currentUser);
-			}
+        Currency currency = currencyService.findByCode(postData.getCode());
 
-			TradingCurrency tradingCurrency = new TradingCurrency();
-			tradingCurrency.setAuditable(auditable);
-			tradingCurrency.setCurrency(currency);
-			tradingCurrency.setCurrencyCode(postData.getCode());
-			tradingCurrency.setPrDescription(postData.getDescription());
-			tradingCurrency.setProvider(provider);
-			tradingCurrency.setActive(true);
-			tradingCurrencyService.create(tradingCurrency, currentUser);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+        Auditable auditable = new Auditable();
+        auditable.setCreated(new Date());
+        auditable.setCreator(currentUser);
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
+        if (currency == null) {
+            // create
+            currency = new Currency();
+            currency.setCurrencyCode(postData.getCode());
+            currency.setDescriptionEn(postData.getDescription());
+            currency.setAuditable(auditable);
+            currencyService.create(currency, currentUser);
+        }
 
-	}
+        TradingCurrency tradingCurrency = new TradingCurrency();
+        tradingCurrency.setAuditable(auditable);
+        tradingCurrency.setCurrency(currency);
+        tradingCurrency.setCurrencyCode(postData.getCode());
+        tradingCurrency.setPrDescription(postData.getDescription());
+        tradingCurrency.setProvider(provider);
+        tradingCurrency.setActive(true);
+        tradingCurrencyService.create(tradingCurrency, currentUser);
+    }
 
-	public CurrencyDto find(String code, Provider provider)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(code)) {
-			TradingCurrency tradingCurrency = tradingCurrencyService
-					.findByTradingCurrencyCode(code, provider);
+    public CurrencyDto find(String code, Provider provider) throws MeveoApiException {
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+        handleMissingParameters();
 
-			if (tradingCurrency != null) {
-				return new CurrencyDto(tradingCurrency);
-			}
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(code, provider);
 
-			throw new EntityDoesNotExistsException(TradingLanguage.class, code);
-		} else {
-			if (StringUtils.isBlank(code)) {
-				missingParameters.add("code");
-			}
+        if (tradingCurrency != null) {
+            return new CurrencyDto(tradingCurrency);
+        }
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+        throw new EntityDoesNotExistsException(TradingLanguage.class, code);
+    }
 
-	public void remove(String code, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(code)) {
-			TradingCurrency tradingCurrency = tradingCurrencyService
-					.findByTradingCurrencyCode(code, provider);
-			if (tradingCurrency == null) {
-				throw new EntityDoesNotExistsException(TradingCurrency.class,
-						code);
-			} else {
-				tradingCurrencyService.remove(tradingCurrency);
-			}
-		} else {
-			if (StringUtils.isBlank(code)) {
-				missingParameters.add("code");
-			}
+    public void remove(String code, Provider provider) throws MeveoApiException {
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+        handleMissingParameters();
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(code, provider);
+        if (tradingCurrency == null) {
+            throw new EntityDoesNotExistsException(TradingCurrency.class, code);
+        } else {
+            tradingCurrencyService.remove(tradingCurrency);
+        }
+    }
 
-	public void update(CurrencyDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())) {
-			TradingCurrency tradingCurrency = tradingCurrencyService
-					.findByTradingCurrencyCode(postData.getCode(),
-							currentUser.getProvider());
-			if (tradingCurrency == null) {
-				throw new EntityDoesNotExistsException(TradingCurrency.class,
-						postData.getCode());
-			}
+    public void update(CurrencyDto postData, User currentUser) throws MeveoApiException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        handleMissingParameters();
 
-			Currency currency = currencyService.findByCode(postData.getCode());
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCode(), currentUser.getProvider());
+        if (tradingCurrency == null) {
+            throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCode());
+        }
 
-			if (currency != null) {
-				Auditable auditable = new Auditable();
-				auditable.setUpdated(new Date());
-				auditable.setUpdater(currentUser);
+        Currency currency = currencyService.findByCode(postData.getCode());
 
-				currency.setDescriptionEn(postData.getDescription());
-				currency.setAuditable(auditable);
+        if (currency != null) {
+            Auditable auditable = new Auditable();
+            auditable.setUpdated(new Date());
+            auditable.setUpdater(currentUser);
 
-				tradingCurrency.setAuditable(auditable);
-				tradingCurrency.setCurrency(currency);
-				tradingCurrency.setCurrencyCode(postData.getCode());
-				tradingCurrency.setPrDescription(postData.getDescription());
-			} else {
-				throw new EntityDoesNotExistsException(Currency.class,
-						postData.getCode());
-			}
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+            currency.setDescriptionEn(postData.getDescription());
+            currency.setAuditable(auditable);
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
-	
-	public void createOrUpdate(CurrencyDto postData, User currentUser) throws MeveoApiException {
-		TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCode(), 
-				currentUser.getProvider());
-		if (tradingCurrency == null) {
-			//create
-			create(postData, currentUser);
-		} else {
-			//update
-			update(postData, currentUser);
-		}
-	}
-	
+            tradingCurrency.setAuditable(auditable);
+            tradingCurrency.setCurrency(currency);
+            tradingCurrency.setCurrencyCode(postData.getCode());
+            tradingCurrency.setPrDescription(postData.getDescription());
+        } else {
+            throw new EntityDoesNotExistsException(Currency.class, postData.getCode());
+        }
+    }
+
+    public void createOrUpdate(CurrencyDto postData, User currentUser) throws MeveoApiException {
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCode(), currentUser.getProvider());
+        if (tradingCurrency == null) {
+            // create
+            create(postData, currentUser);
+        } else {
+            // update
+            update(postData, currentUser);
+        }
+    }
+
 }

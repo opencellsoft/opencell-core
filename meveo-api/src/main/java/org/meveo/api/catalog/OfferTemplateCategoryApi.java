@@ -46,7 +46,7 @@ public class OfferTemplateCategoryApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -105,7 +105,7 @@ public class OfferTemplateCategoryApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -160,7 +160,7 @@ public class OfferTemplateCategoryApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         OfferTemplateCategoryDto offerTemplateCategoryDto = null;
@@ -188,7 +188,7 @@ public class OfferTemplateCategoryApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(code, provider);
@@ -212,7 +212,7 @@ public class OfferTemplateCategoryApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(code, provider);
@@ -237,7 +237,7 @@ public class OfferTemplateCategoryApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         if (offerTemplateCategoryService.findByCode(code, currentUser.getProvider()) == null) {
@@ -331,7 +331,7 @@ public class OfferTemplateCategoryApi extends BaseApi {
 
         if (StringUtils.isBlank(offerTemplateCategoryId)) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         try {

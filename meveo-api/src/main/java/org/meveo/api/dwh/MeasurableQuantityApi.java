@@ -30,7 +30,7 @@ public class MeasurableQuantityApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         if (measurableQuantityService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
@@ -45,7 +45,7 @@ public class MeasurableQuantityApi extends BaseApi {
     private void update(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("measurableQuantityCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(postData.getCode(), currentUser.getProvider());
@@ -62,7 +62,7 @@ public class MeasurableQuantityApi extends BaseApi {
 
         if (StringUtils.isBlank(measurableQuantityCode)) {
             missingParameters.add("measurableQuantityCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(measurableQuantityCode, currentUser.getProvider());
@@ -79,7 +79,7 @@ public class MeasurableQuantityApi extends BaseApi {
 
         if (StringUtils.isBlank(measurableQuantityCode)) {
             missingParameters.add("measurableQuantityCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(measurableQuantityCode, currentUser.getProvider());

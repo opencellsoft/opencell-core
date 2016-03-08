@@ -11,7 +11,6 @@ import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccessesDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Subscription;
@@ -52,7 +51,7 @@ public class AccessApi extends BaseApi {
             }
 
             accessService.create(access, currentUser, provider);
-            
+
             // populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), access, true, currentUser);
@@ -69,7 +68,7 @@ public class AccessApi extends BaseApi {
                 missingParameters.add("subscription");
             }
 
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
     }
 
@@ -90,9 +89,8 @@ public class AccessApi extends BaseApi {
             access.setStartDate(postData.getStartDate());
             access.setEndDate(postData.getEndDate());
 
-
             access = accessService.update(access, currentUser);
-            
+
             // populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), access, false, currentUser);
@@ -109,33 +107,31 @@ public class AccessApi extends BaseApi {
                 missingParameters.add("subscription");
             }
 
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
     }
 
     public AccessDto find(String accessCode, String subscriptionCode, Provider provider) throws MeveoApiException {
-        if (!StringUtils.isBlank(accessCode) && !StringUtils.isBlank(subscriptionCode)) {
-            Subscription subscription = subscriptionService.findByCode(subscriptionCode, provider);
-            if (subscription == null) {
-                throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
-            }
-
-            Access access = accessService.findByUserIdAndSubscription(accessCode, subscription);
-            if (access == null) {
-                throw new EntityDoesNotExistsException(Access.class, accessCode);
-            }
-
-            return new AccessDto(access, customFieldInstanceService.getCustomFieldInstances(access));
-        } else {
-            if (StringUtils.isBlank(accessCode)) {
-                missingParameters.add("accessCode");
-            }
-            if (StringUtils.isBlank(subscriptionCode)) {
-                missingParameters.add("subscriptionCode");
-            }
-
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        if (StringUtils.isBlank(accessCode)) {
+            missingParameters.add("accessCode");
         }
+        if (StringUtils.isBlank(subscriptionCode)) {
+            missingParameters.add("subscriptionCode");
+        }
+
+        handleMissingParameters();
+
+        Subscription subscription = subscriptionService.findByCode(subscriptionCode, provider);
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+        }
+
+        Access access = accessService.findByUserIdAndSubscription(accessCode, subscription);
+        if (access == null) {
+            throw new EntityDoesNotExistsException(Access.class, accessCode);
+        }
+
+        return new AccessDto(access, customFieldInstanceService.getCustomFieldInstances(access));
     }
 
     public void remove(String accessCode, String subscriptionCode, Provider provider) throws MeveoApiException {
@@ -159,33 +155,32 @@ public class AccessApi extends BaseApi {
                 missingParameters.add("subscriptionCode");
             }
 
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
     }
 
     public AccessesDto listBySubscription(String subscriptionCode, Provider provider) throws MeveoApiException {
-        if (!StringUtils.isBlank(subscriptionCode)) {
-            Subscription subscription = subscriptionService.findByCode(subscriptionCode, provider);
-            if (subscription == null) {
-                throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
-            }
-
-            AccessesDto result = new AccessesDto();
-            List<Access> accesses = accessService.listBySubscription(subscription);
-            if (accesses != null) {
-                for (Access ac : accesses) {
-                    result.getAccess().add(new AccessDto(ac, customFieldInstanceService.getCustomFieldInstances(ac)));
-                }
-            }
-
-            return result;
-        } else {
+        if (StringUtils.isBlank(subscriptionCode)) {
             missingParameters.add("subscriptionCode");
-
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
+        handleMissingParameters();
+
+        Subscription subscription = subscriptionService.findByCode(subscriptionCode, provider);
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+        }
+
+        AccessesDto result = new AccessesDto();
+        List<Access> accesses = accessService.listBySubscription(subscription);
+        if (accesses != null) {
+            for (Access ac : accesses) {
+                result.getAccess().add(new AccessDto(ac, customFieldInstanceService.getCustomFieldInstances(ac)));
+            }
+        }
+
+        return result;
     }
-    
+
     /**
      * 
      * Create or update access based on the access user id and its subscription
@@ -195,18 +190,18 @@ public class AccessApi extends BaseApi {
      * @throws MeveoApiException
      */
     public void createOrUpdate(AccessDto postData, User currentUser) throws MeveoApiException {
-    	
-    	Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), currentUser.getProvider());
+
+        Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), currentUser.getProvider());
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
         }
-    	
-    	Access access = accessService.findByUserIdAndSubscription(postData.getCode(), subscription);
-    			
-    	if (access == null) {
-    		create(postData, currentUser);
-    	} else {
-    		update(postData, currentUser);
-    	}
+
+        Access access = accessService.findByUserIdAndSubscription(postData.getCode(), subscription);
+
+        if (access == null) {
+            create(postData, currentUser);
+        } else {
+            update(postData, currentUser);
+        }
     }
 }

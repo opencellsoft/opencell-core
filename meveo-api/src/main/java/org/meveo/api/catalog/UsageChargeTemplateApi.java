@@ -61,7 +61,7 @@ public class UsageChargeTemplateApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -169,7 +169,7 @@ public class UsageChargeTemplateApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -291,7 +291,7 @@ public class UsageChargeTemplateApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("usageChargeTemplateCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         UsageChargeTemplateDto result = new UsageChargeTemplateDto();
@@ -318,7 +318,7 @@ public class UsageChargeTemplateApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("usageChargeTemplateCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         // check if code already exists

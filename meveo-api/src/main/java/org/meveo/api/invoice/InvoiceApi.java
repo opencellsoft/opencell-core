@@ -133,7 +133,7 @@ public class InvoiceApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -186,7 +186,7 @@ public class InvoiceApi extends BaseApi {
             String invoiceNumber = invoiceDTO.getInvoiceNumber();
             if (invoiceNumber == null) {
                 missingParameters.add("invoiceNumber");
-                throw new MissingParameterException(getMissingParametersExceptionMessage());
+                handleMissingParameters();
             }
             Invoice commercialInvoice = invoiceService.getInvoiceByNumber(invoiceNumber);
             if (commercialInvoice == null) {
@@ -230,7 +230,7 @@ public class InvoiceApi extends BaseApi {
             }
 
             if (!missingParameters.isEmpty()) {
-                throw new MissingParameterException(getMissingParametersExceptionMessage());
+                handleMissingParameters();
             }
 
             SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate();
@@ -320,7 +320,7 @@ public class InvoiceApi extends BaseApi {
 
         if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("CustomerAccountCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         List<InvoiceDto> customerInvoiceDtos = new ArrayList<InvoiceDto>();
@@ -424,7 +424,7 @@ public class InvoiceApi extends BaseApi {
 
         if (generateInvoiceRequestDto == null) {
             missingParameters.add("generateInvoiceRequest");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         if (StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
             missingParameters.add("billingAccountCode");
@@ -437,7 +437,7 @@ public class InvoiceApi extends BaseApi {
             missingParameters.add("lastTransactionDate");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         BillingAccount billingAccount = billingAccountService.findByCode(generateInvoiceRequestDto.getBillingAccountCode(), currentUser.getProvider(), Arrays.asList("billingRun"));
@@ -494,7 +494,7 @@ public class InvoiceApi extends BaseApi {
         log.debug("getXMLInvoice  invoiceNumber:{}", invoiceNumber);
         if (StringUtils.isBlank(invoiceNumber)) {
             missingParameters.add("invoiceNumber");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         InvoiceTypeEnum invoiceTypeEnum = InvoiceTypeEnum.COMMERCIAL;
@@ -535,7 +535,7 @@ public class InvoiceApi extends BaseApi {
         log.debug("getPdfInvoince  invoiceNumber:{}", invoiceNumber);
         if (StringUtils.isBlank(invoiceNumber)) {
             missingParameters.add("invoiceNumber");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         InvoiceTypeEnum invoiceTypeEnum = InvoiceTypeEnum.COMMERCIAL;

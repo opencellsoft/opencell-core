@@ -66,7 +66,7 @@ public class InvoicingApi extends BaseApi {
 			missingParameters.add("billingRunType");
 		}
 		if(! missingParameters.isEmpty()){
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 
 		BillingCycle billingCycleInput = billingCycleService.findByBillingCycleCode(createBillingRunDto.getBillingCycleCode(), provider);
@@ -127,7 +127,7 @@ public class InvoicingApi extends BaseApi {
 	private BillingRun getBillingRun(Long billingRunId, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException{
 		if(billingRunId == null || billingRunId.longValue() ==0){
 			missingParameters.add("billingRunId");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			handleMissingParameters();
 		}
 			
 		if(billingRunId.longValue() <= 0){

@@ -126,7 +126,7 @@ public class ModuleApi extends BaseApi {
             missingParameters.add("license");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -152,7 +152,7 @@ public class ModuleApi extends BaseApi {
             missingParameters.add("module license is null");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();

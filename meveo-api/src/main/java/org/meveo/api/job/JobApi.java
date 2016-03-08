@@ -7,7 +7,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.service.job.JobInstanceService;
@@ -18,28 +17,26 @@ import org.meveo.service.job.JobInstanceService;
 @Stateless
 public class JobApi extends BaseApi {
 
-	@Inject
-	private JobInstanceService jobInstanceService;
+    @Inject
+    private JobInstanceService jobInstanceService;
 
-	/**
-	 * 
-	 * @param timerInfoDTO
-	 *            , timerInfoDTO.getTimerName() contains the code of JobInstance
-	 * @param currentUser
-	 * @throws Exception
-	 */
+    /**
+     * 
+     * @param timerInfoDTO , timerInfoDTO.getTimerName() contains the code of JobInstance
+     * @param currentUser
+     * @throws Exception
+     */
 
-	public Long executeJob(JobInstanceInfoDto timerInfoDTO, User currentUser) throws MeveoApiException {
-		if (StringUtils.isBlank(timerInfoDTO.getCode()) && StringUtils.isBlank(timerInfoDTO.getTimerName())) {
-			missingParameters.add("timerName or code");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		} else {
-			try {
-				return jobInstanceService.executeAPITimer(timerInfoDTO, currentUser);
-			} catch (BusinessException e) {
-				throw new MeveoApiException(e.getMessage());
-			}
-		}
-	}
+    public Long executeJob(JobInstanceInfoDto timerInfoDTO, User currentUser) throws MeveoApiException {
+        if (StringUtils.isBlank(timerInfoDTO.getCode()) && StringUtils.isBlank(timerInfoDTO.getTimerName())) {
+            missingParameters.add("timerName or code");
+        }
+        handleMissingParameters();
 
+        try {
+            return jobInstanceService.executeAPITimer(timerInfoDTO, currentUser);
+        } catch (BusinessException e) {
+            throw new MeveoApiException(e.getMessage());
+        }
+    }
 }

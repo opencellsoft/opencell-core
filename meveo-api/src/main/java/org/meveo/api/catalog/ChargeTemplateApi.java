@@ -7,7 +7,6 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.crm.Provider;
@@ -20,25 +19,23 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 @Stateless
 public class ChargeTemplateApi extends BaseApi {
 
-	@Inject
-	private ChargeTemplateServiceAll chargeTemplateService;
-    
+    @Inject
+    private ChargeTemplateServiceAll chargeTemplateService;
+
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
-	public ChargeTemplateDto find(String chargeTemplateCode, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(chargeTemplateCode)) {
-			ChargeTemplate chargeTemplate = (ChargeTemplate) chargeTemplateService.findByCode(chargeTemplateCode, provider);
-			if (chargeTemplate == null) {
-				throw new EntityDoesNotExistsException(ChargeTemplate.class, chargeTemplateCode);
-			}
+    public ChargeTemplateDto find(String chargeTemplateCode, Provider provider) throws MeveoApiException {
+        if (StringUtils.isBlank(chargeTemplateCode)) {
+            missingParameters.add("chargeTemplateCode");
+        }
+        handleMissingParameters();
+        
+        ChargeTemplate chargeTemplate = (ChargeTemplate) chargeTemplateService.findByCode(chargeTemplateCode, provider);
+        if (chargeTemplate == null) {
+            throw new EntityDoesNotExistsException(ChargeTemplate.class, chargeTemplateCode);
+        }
 
-			return new ChargeTemplateDto(chargeTemplate, customFieldInstanceService.getCustomFieldInstances(chargeTemplate));
-		} else {
-			missingParameters.add("chargeTemplateCode");
-
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
-
+        return new ChargeTemplateDto(chargeTemplate, customFieldInstanceService.getCustomFieldInstances(chargeTemplate));
+    }
 }

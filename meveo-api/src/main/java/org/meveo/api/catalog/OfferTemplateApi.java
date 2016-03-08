@@ -57,7 +57,7 @@ public class OfferTemplateApi extends BaseApi {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
 		}
 
 		Provider provider = currentUser.getProvider();
@@ -145,7 +145,7 @@ public class OfferTemplateApi extends BaseApi {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
 		}
 
 		Provider provider = currentUser.getProvider();
@@ -340,7 +340,7 @@ public class OfferTemplateApi extends BaseApi {
 
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("offerTemplateCode");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
 		}
 
 		OfferTemplate offerTemplate = offerTemplateService.findByCode(code, provider);
@@ -356,7 +356,7 @@ public class OfferTemplateApi extends BaseApi {
 
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("offerTemplateCode");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
 		}
 
 		OfferTemplate offerTemplate = offerTemplateService.findByCode(code, provider);

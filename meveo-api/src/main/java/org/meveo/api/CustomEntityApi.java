@@ -65,7 +65,7 @@ public class CustomEntityApi extends BaseApi {
             missingParameters.add("name");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         if (customEntityTemplateService.findByCode(dto.getCode(), currentUser.getProvider()) != null) {
@@ -97,7 +97,7 @@ public class CustomEntityApi extends BaseApi {
             missingParameters.add("name");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCode(), currentUser.getProvider());
@@ -117,7 +117,7 @@ public class CustomEntityApi extends BaseApi {
             missingParameters.add("customEntityTemplateCode");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(code, currentUser.getProvider());
@@ -134,7 +134,7 @@ public class CustomEntityApi extends BaseApi {
             missingParameters.add("customEntityTemplateCode");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(code, currentUser.getProvider());
@@ -167,7 +167,7 @@ public class CustomEntityApi extends BaseApi {
             missingParameters.add("cetCode");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCetCode(), currentUser.getProvider());
@@ -202,7 +202,7 @@ public class CustomEntityApi extends BaseApi {
             missingParameters.add("cetCode");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCetCode(), currentUser.getProvider());
@@ -237,7 +237,7 @@ public class CustomEntityApi extends BaseApi {
             missingParameters.add("customEntityTemplateCode");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code, currentUser.getProvider());
@@ -256,7 +256,7 @@ public class CustomEntityApi extends BaseApi {
             missingParameters.add("customEntityTemplateCode");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code, currentUser.getProvider());
@@ -306,7 +306,7 @@ public class CustomEntityApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Class clazz;
@@ -397,7 +397,7 @@ public class CustomEntityApi extends BaseApi {
             missingParameters.add("customizedEntityClass");
         }
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Class clazz;

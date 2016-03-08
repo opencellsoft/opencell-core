@@ -15609,40 +15609,44 @@
                </customField>\r
             </customFields>\r
             <disabled>false</disabled>\r
-            <serviceTemplates>\r
-               <!--Zero or more repetitions:-->\r
-               <serviceTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1">\r
-                  <!--Optional:-->\r
-                  <invoicingCalendar>MONTHLY</invoicingCalendar>\r
-                  <!--Optional:-->\r
-                  <serviceChargeTemplateRecurrings>\r
-                     <!--Zero or more repetitions:-->\r
-                     <serviceChargeTemplateRecurring>\r
-                        <!--Optional:-->\r
-                        <code>${#TestSuite#ticket}_${#TestSuite#index}_REC1</code>\r
-                     </serviceChargeTemplateRecurring>\r
-                  </serviceChargeTemplateRecurrings>\r
-                  <!--Optional:-->\r
-                  <serviceChargeTemplateSubscriptions>\r
-                     <!--Zero or more repetitions:-->\r
-                     <serviceChargeTemplateSubscription>\r
-                        <!--Optional:-->\r
-                        <code>${#TestSuite#ticket}_${#TestSuite#index}_OS1</code>\r
-                     </serviceChargeTemplateSubscription>\r
-                  </serviceChargeTemplateSubscriptions>\r
-                  <!--Optional:-->\r
-                  <serviceChargeTemplateUsages>\r
-                     <!--Zero or more repetitions:-->\r
-                     <serviceChargeTemplateUsage>\r
-                        <!--Optional:-->\r
-                        <code>${#TestSuite#ticket}_${#TestSuite#index}_USAGE1</code>\r
-                        <!--Optional:-->\r
-                        <counterTemplate/>\r
-                     </serviceChargeTemplateUsage>\r
-                  </serviceChargeTemplateUsages>\r
-               </serviceTemplate>\r
-               <serviceTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2"/>\r
-            </serviceTemplates>\r
+            <offerServiceTemplates>\r
+               <offerServiceTemplate>\r
+                  <!--Zero or more repetitions:-->\r
+                  <serviceTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1">\r
+                     <!--Optional:-->\r
+                     <invoicingCalendar>MONTHLY</invoicingCalendar>\r
+                     <!--Optional:-->\r
+                     <serviceChargeTemplateRecurrings>\r
+                        <!--Zero or more repetitions:-->\r
+                        <serviceChargeTemplateRecurring>\r
+                           <!--Optional:-->\r
+                           <code>${#TestSuite#ticket}_${#TestSuite#index}_REC1</code>\r
+                        </serviceChargeTemplateRecurring>\r
+                     </serviceChargeTemplateRecurrings>\r
+                     <!--Optional:-->\r
+                     <serviceChargeTemplateSubscriptions>\r
+                        <!--Zero or more repetitions:-->\r
+                        <serviceChargeTemplateSubscription>\r
+                           <!--Optional:-->\r
+                           <code>${#TestSuite#ticket}_${#TestSuite#index}_OS1</code>\r
+                        </serviceChargeTemplateSubscription>\r
+                     </serviceChargeTemplateSubscriptions>\r
+                     <!--Optional:-->\r
+                     <serviceChargeTemplateUsages>\r
+                        <!--Zero or more repetitions:-->\r
+                        <serviceChargeTemplateUsage>\r
+                           <!--Optional:-->\r
+                           <code>${#TestSuite#ticket}_${#TestSuite#index}_USAGE1</code>\r
+                           <!--Optional:-->\r
+                           <counterTemplate/>\r
+                        </serviceChargeTemplateUsage>\r
+                     </serviceChargeTemplateUsages>\r
+                  </serviceTemplate>\r
+               </offerServiceTemplate>\r
+               <offerServiceTemplate>\r
+                  <serviceTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2"/>\r
+               </offerServiceTemplate>\r
+            </offerServiceTemplates>\r
          </offerTemplate>\r
       </ws:createOfferTemplate>\r
    </soapenv:Body>\r
@@ -16045,82 +16049,87 @@
          </serviceTemplate>
       </ws:updateServiceTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="abdbb71f-5915-4088-81b6-ad83632b6320"/><con:assertion type="Simple Contains" name="Contains" id="87b88568-55ba-4fa1-92a9-ab0ed22dc685"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update offer" id="9226b0e3-7a4f-4533-9829-f788c7fb589c"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>updateOfferTemplate</con:operation><con:request name="Update offer" id="106fb7fe-2a26-4916-8ed2-8b532cd2ff24"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:updateOfferTemplate>
-         <offerTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_OFFER1" description="${#TestSuite#ticket}_${#TestSuite#index}_OFFER1">
-            <customFields>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_OFFER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <mapValue>
-                     <entry>
-                        <key>vv</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY2"/>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>uu</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY2"/>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_OFFER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <mapValue>
-                     <entry>
-                        <key>xx</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY3"/>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>yy</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY3"/>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-            </customFields>
-            <disabled>false</disabled>
-            <serviceTemplates>
-               <!--Zero or more repetitions:-->
-               <serviceTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1" description="">
-                  <!--Optional:-->
-                  <invoicingCalendar>MONTHLY</invoicingCalendar>
-                  <!--Optional:-->
-                  <serviceChargeTemplateRecurrings>
-                     <!--Zero or more repetitions:-->
-                     <serviceChargeTemplateRecurring>
-                        <!--Optional:-->
-                        <code>${#TestSuite#ticket}_${#TestSuite#index}_REC1</code>
-                     </serviceChargeTemplateRecurring>
-                  </serviceChargeTemplateRecurrings>
-                  <!--Optional:-->
-                  <serviceChargeTemplateSubscriptions>
-                     <!--Zero or more repetitions:-->
-                     <serviceChargeTemplateSubscription>
-                        <!--Optional:-->
-                        <code>${#TestSuite#ticket}_${#TestSuite#index}_OS1</code>
-                     </serviceChargeTemplateSubscription>
-                  </serviceChargeTemplateSubscriptions>
-                  <!--Optional:-->
-                  <serviceChargeTemplateUsages>
-                     <!--Zero or more repetitions:-->
-                     <serviceChargeTemplateUsage>
-                        <!--Optional:-->
-                        <code>${#TestSuite#ticket}_${#TestSuite#index}_USAGE1</code>
-                        <!--Optional:-->
-                        <counterTemplate/>
-                     </serviceChargeTemplateUsage>
-                  </serviceChargeTemplateUsages>
-               </serviceTemplate>
-            </serviceTemplates>
-         </offerTemplate>
-      </ws:updateOfferTemplate>
-   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="abdbb71f-5915-4088-81b6-ad83632b6320"/><con:assertion type="Simple Contains" name="Contains" id="87b88568-55ba-4fa1-92a9-ab0ed22dc685"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update offer" id="9226b0e3-7a4f-4533-9829-f788c7fb589c"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>updateOfferTemplate</con:operation><con:request name="Update offer" id="106fb7fe-2a26-4916-8ed2-8b532cd2ff24"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateOfferTemplate>\r
+         <offerTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_OFFER1" description="${#TestSuite#ticket}_${#TestSuite#index}_OFFER1">\r
+            <customFields>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_OFFER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>vv</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY2"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>uu</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY2"/>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_OFFER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>xx</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY3"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>yy</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY3"/>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+            </customFields>\r
+            <disabled>false</disabled>\r
+            <offerServiceTemplates>\r
+               <offerServiceTemplate>\r
+                  <!--Zero or more repetitions:-->\r
+                  <serviceTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1" description="">\r
+                     <!--Optional:-->\r
+                     <invoicingCalendar>MONTHLY</invoicingCalendar>\r
+                     <!--Optional:-->\r
+                     <serviceChargeTemplateRecurrings>\r
+                        <!--Zero or more repetitions:-->\r
+                        <serviceChargeTemplateRecurring>\r
+                           <!--Optional:-->\r
+                           <code>${#TestSuite#ticket}_${#TestSuite#index}_REC1</code>\r
+                        </serviceChargeTemplateRecurring>\r
+                     </serviceChargeTemplateRecurrings>\r
+                     <!--Optional:-->\r
+                     <serviceChargeTemplateSubscriptions>\r
+                        <!--Zero or more repetitions:-->\r
+                        <serviceChargeTemplateSubscription>\r
+                           <!--Optional:-->\r
+                           <code>${#TestSuite#ticket}_${#TestSuite#index}_OS1</code>\r
+                        </serviceChargeTemplateSubscription>\r
+                     </serviceChargeTemplateSubscriptions>\r
+                     <!--Optional:-->\r
+                     <serviceChargeTemplateUsages>\r
+                        <!--Zero or more repetitions:-->\r
+                        <serviceChargeTemplateUsage>\r
+                           <!--Optional:-->\r
+                           <code>${#TestSuite#ticket}_${#TestSuite#index}_USAGE1</code>\r
+                           <!--Optional:-->\r
+                           <counterTemplate/>\r
+                        </serviceChargeTemplateUsage>\r
+                     </serviceChargeTemplateUsages>\r
+                  </serviceTemplate>\r
+               </offerServiceTemplate>\r
+               <offerServiceTemplate>\r
+                  <serviceTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2"/>\r
+               </offerServiceTemplate>\r
+            </offerServiceTemplates>\r
+         </offerTemplate>\r
+      </ws:updateOfferTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="6b7d21ee-49b9-491a-a3b8-c44030316b28"/><con:assertion type="Simple Contains" name="Contains" id="8acfac97-1574-4d3e-b81c-51673d058038"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update JobInstance" id="6ec00209-28da-411a-840a-6b53d7d8691f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="Update JobInstance" id="b00bfe38-1e1e-40ca-b9e8-a3a899dc4b14"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -16653,10 +16662,14 @@
       <ws:createOfferTemplate>\r
          <offerTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_H_OFFER" description="${#TestSuite#ticket}_${#TestSuite#index}_OFFER1">\r
             <disabled>false</disabled>\r
-            <serviceTemplates>\r
-               <serviceTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1"/>\r
-               <serviceTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2"/>
-            </serviceTemplates>\r
+            <offerServiceTemplates>\r
+               <offerServiceTemplate>\r
+                  <serviceTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1"/>\r
+               </offerServiceTemplate>\r
+               <offerServiceTemplate>\r
+                  <serviceTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2"/>\r
+               </offerServiceTemplate>\r
+            </offerServiceTemplates>\r
          </offerTemplate>\r
       </ws:createOfferTemplate>\r
    </soapenv:Body>\r
@@ -17069,7 +17082,9 @@
                      <listValues/>
                      <allowEdit>true</allowEdit>
                      <hideOnNew>false</hideOnNew>
+                     <maxValue>50</maxValue>
                      <cacheValue>false</cacheValue>
+                     <matrixColumns/>
                   </field>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="de5f3d52-0be9-4bf7-84de-fba46ae6e1e2" name="Contains 3"><con:configuration><token><![CDATA[                  <field code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT2" description="Entity field2">
                      <fieldType>LONG</fieldType>
                      <accountLevel>CE_${#TestSuite#ticket}_${#TestSuite#index}_CET</accountLevel>
@@ -17083,6 +17098,7 @@
                      <allowEdit>true</allowEdit>
                      <hideOnNew>false</hideOnNew>
                      <cacheValue>false</cacheValue>
+                     <matrixColumns/>
                   </field>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="4e54810e-c205-4378-b8bc-57c1f6dbae02" name="Contains 4"><con:configuration><token><![CDATA[                  <action appliesTo="CE_${#TestSuite#ticket}_${#TestSuite#index}_CET" code="${#TestSuite#ticket}_${#TestSuite#index}_CET_ACTION1" description="Action 1">
                      <type>JAVA</type>
                      <script>import org.meveo.service.script.Script;
@@ -17141,7 +17157,7 @@
          </customEntityInstance>\r
       </ws:createCustomEntityInstance>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a464ddf1-406f-414d-990c-6eba31007964"/><con:assertion type="Simple Contains" id="28936afe-2905-458b-bf02-9b15711da958" name="Contains"><con:configuration><token>&lt;errorCode>MISSING_PARAMETER&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="829eb74d-f1b4-475e-aa66-ec1cbc98633e" name="Contains 1"><con:configuration><token>&lt;message>Custom field template with code ${#TestSuite#ticket}_${#TestSuite#index}_XXX_CFT1 and provider Provider [code=DEMO] not found.&lt;/message></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create cei1 - error nonexitstant CET" id="e21be697-b18b-4eb4-a0c5-86b8c21a6ee5"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>createCustomEntityInstance</con:operation><con:request name="Create cei1 - error nonexitstant CET" id="772da35a-86be-4c3e-8c87-60d666cb4a64"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a464ddf1-406f-414d-990c-6eba31007964"/><con:assertion type="Simple Contains" id="28936afe-2905-458b-bf02-9b15711da958" name="Contains"><con:configuration><token>&lt;errorCode>MISSING_PARAMETER&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="829eb74d-f1b4-475e-aa66-ec1cbc98633e" name="Contains 1"><con:configuration><token>&lt;message>The following parameters are required or contain invalid values: Custom field template with code ${#TestSuite#ticket}_${#TestSuite#index}_XXX_CFT1 and provider Provider [code=DEMO] not found.&lt;/message></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create cei1 - error nonexitstant CET" id="e21be697-b18b-4eb4-a0c5-86b8c21a6ee5"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>createCustomEntityInstance</con:operation><con:request name="Create cei1 - error nonexitstant CET" id="772da35a-86be-4c3e-8c87-60d666cb4a64"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createCustomEntityInstance>\r
@@ -17220,7 +17236,9 @@
                      <listValues/>
                      <allowEdit>true</allowEdit>
                      <hideOnNew>false</hideOnNew>
+                     <maxValue>50</maxValue>
                      <cacheValue>false</cacheValue>
+                     <matrixColumns/>
                   </field>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="de5f3d52-0be9-4bf7-84de-fba46ae6e1e2" name="Contains 3"><con:configuration><token><![CDATA[                  <field code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT2" description="Custom field 2">
                      <fieldType>LONG</fieldType>
                      <accountLevel>CE_${#TestSuite#ticket}_${#TestSuite#index}_CET</accountLevel>
@@ -17234,6 +17252,7 @@
                      <allowEdit>true</allowEdit>
                      <hideOnNew>false</hideOnNew>
                      <cacheValue>false</cacheValue>
+                     <matrixColumns/>
                   </field>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="96f00e2d-f3fa-4a40-b9b8-3737acb19212" name="Contains 4"><con:configuration><token><![CDATA[                  <action appliesTo="CE_${#TestSuite#ticket}_${#TestSuite#index}_CET" code="${#TestSuite#ticket}_${#TestSuite#index}_CET_ACTION1" description="Action 1">
                      <type>JAVA</type>
                      <script>import org.meveo.service.script.Script;
@@ -17508,7 +17527,7 @@
          </customer>
       </ws:createCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_STRING_REQUIRED value 12345678913245678988888888888888888888888888888888888888444444444444444444444444444444444444444 length is longer then 50 symbols&lt;/message></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete CFT String required" id="ab9db50a-9611-4949-9f9a-aa9300652543"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>removeField</con:operation><con:request name="Delete CFT String required" id="4d7824f9-b675-4361-a1a7-a642a78a7cad"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>The following parameters are required or contain invalid values: Custom field ${#TestSuite#ticket}_${#TestSuite#index}_STRING_REQUIRED value 12345678913245678988888888888888888888888888888888888888444444444444444444444444444444444444444 length is longer then 50 symbols&lt;/message></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete CFT String required" id="ab9db50a-9611-4949-9f9a-aa9300652543"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>removeField</con:operation><con:request name="Delete CFT String required" id="4d7824f9-b675-4361-a1a7-a642a78a7cad"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeField>\r
@@ -17563,7 +17582,7 @@
          </customer>
       </ws:createCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_STRING_MAXVALUE value 123456789132456789 length is longer then 15 symbols&lt;/message>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>The following parameters are required or contain invalid values: Custom field ${#TestSuite#ticket}_${#TestSuite#index}_STRING_MAXVALUE value 123456789132456789 length is longer then 15 symbols&lt;/message>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer String maxValue OK" id="52b318c3-2dee-4dfc-869f-42a8556eedb9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer String maxValue OK" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -17645,7 +17664,7 @@
          </customer>
       </ws:createCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_STRING_REGEXP value aaaa does not match regular expression c.*g&lt;/message>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>The following parameters are required or contain invalid values: Custom field ${#TestSuite#ticket}_${#TestSuite#index}_STRING_REGEXP value aaaa does not match regular expression c.*g&lt;/message>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer String regExp OK" id="72e43a53-dbba-4b88-a649-6a16c52889f2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer String regExp OK" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -17726,7 +17745,7 @@
          </customer>
       </ws:createCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_LONG_MINVALUE value -30 is smaller then -15. Allowed value range is from -15 to unspecified.&lt;/message>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>The following parameters are required or contain invalid values: Custom field ${#TestSuite#ticket}_${#TestSuite#index}_LONG_MINVALUE value -30 is smaller then -15. Allowed value range is from -15 to unspecified.&lt;/message>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Long minValue Ok" id="30aea331-2f67-4e3e-b550-57d967feb887"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Long minValue Ok" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -17807,7 +17826,7 @@
          </customer>
       </ws:createCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_LONG_MAXVALUE value 30 is bigger then 15. Allowed value range is from unspecified to 15.&lt;/message>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>The following parameters are required or contain invalid values: Custom field ${#TestSuite#ticket}_${#TestSuite#index}_LONG_MAXVALUE value 30 is bigger then 15. Allowed value range is from unspecified to 15.&lt;/message>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Long maxValue Ok" id="57a6bdf2-44e3-4a6a-bb6e-0735c06b3c6b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Long maxValue Ok" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -17889,7 +17908,7 @@
          </customer>
       </ws:createCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_LONG_MINMAXVALUE value 30 is bigger then 15. Allowed value range is from -15 to 15.&lt;/message>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>The following parameters are required or contain invalid values: Custom field ${#TestSuite#ticket}_${#TestSuite#index}_LONG_MINMAXVALUE value 30 is bigger then 15. Allowed value range is from -15 to 15.&lt;/message>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Long minmaxValue Ok" id="a616896e-2109-4452-b7b9-a4933de21a10"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Long minmaxValue Ok" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -17970,7 +17989,7 @@
          </customer>
       </ws:createCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MINVALUE value -30.78 is smaller then -15. Allowed value range is from -15 to unspecified.&lt;/message>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>The following parameters are required or contain invalid values: Custom field ${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MINVALUE value -30.78 is smaller then -15. Allowed value range is from -15 to unspecified.&lt;/message>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Double minValue Ok" id="1b67ce64-dd0d-4148-bca7-c442f1a2279b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Double minValue Ok" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -18051,7 +18070,7 @@
          </customer>
       </ws:createCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MAXVALUE value 30.79 is bigger then 15. Allowed value range is from unspecified to 15.&lt;/message>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>The following parameters are required or contain invalid values: Custom field ${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MAXVALUE value 30.79 is bigger then 15. Allowed value range is from unspecified to 15.&lt;/message>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Double maxValue Ok" id="f86bdd3f-ee8e-42aa-82ec-a5a03619494b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Double maxValue Ok" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -18133,7 +18152,7 @@
          </customer>
       </ws:createCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MINMAXVALUE value 30.97 is bigger then 15. Allowed value range is from -15 to 15.&lt;/message>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>The following parameters are required or contain invalid values: Custom field ${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MINMAXVALUE value 30.97 is bigger then 15. Allowed value range is from -15 to 15.&lt;/message>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Double minmaxValue Ok" id="d611e8da-cb93-475e-9c1e-1bd16d6d270d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Double minmaxValue Ok" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -18221,7 +18240,7 @@
          </customer>
       </ws:createCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MAXVALUE_LIST value 30.79 is bigger then 15. Allowed value range is from unspecified to 15.&lt;/message>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>The following parameters are required or contain invalid values: Custom field ${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MAXVALUE_LIST value 30.79 is bigger then 15. Allowed value range is from unspecified to 15.&lt;/message>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Double maxValue Ok List" id="3942b4c4-c1d2-45af-bc2c-29d33eace490"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Double maxValue Ok List" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -18590,6 +18609,7 @@
                      <listValues/>
                      <allowEdit>true</allowEdit>
                      <hideOnNew>false</hideOnNew>
+                     <maxValue>50</maxValue>
                      <cacheValue>false</cacheValue>
                   </field>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="de5f3d52-0be9-4bf7-84de-fba46ae6e1e2" name="Contains 3"><con:configuration><token><![CDATA[                  <field code="${#TestSuite#ticket}_${#TestSuite#index}_PurgeJob_CFT2" description="Entity field2">
                      <fieldType>LONG</fieldType>
@@ -18680,6 +18700,7 @@
                      <listValues/>
                      <allowEdit>true</allowEdit>
                      <hideOnNew>false</hideOnNew>
+                     <maxValue>50</maxValue>
                      <cacheValue>false</cacheValue>
                   </field>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="de5f3d52-0be9-4bf7-84de-fba46ae6e1e2" name="Contains 3"><con:configuration><token><![CDATA[                  <field code="${#TestSuite#ticket}_${#TestSuite#index}_PurgeJob_CFT2" description="Custom field 2">
                      <fieldType>LONG</fieldType>
@@ -18803,7 +18824,7 @@
       </ws:findEntityCustomizations>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a0d930a4-fcda-4758-bc4d-f90c5778b278"/><con:assertion type="Simple Contains" id="0e570331-b92b-4421-99d2-1fed729e547c" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple NotContains" id="3071f92b-9fe4-44e6-b8f4-ef54c178116b" name="Not Contains"><con:configuration><token>${#TestSuite#ticket}_${#TestSuite#index}_PurgeJob_ACTION4</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>151</con:value></con:property></con:properties><con:setupScript>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple NotContains" id="3071f92b-9fe4-44e6-b8f4-ef54c178116b" name="Not Contains"><con:configuration><token>${#TestSuite#ticket}_${#TestSuite#index}_PurgeJob_ACTION4</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>154</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript><con:reportParameters/></con:testSuite><con:testSuite id="9b9a3a43-4576-4cb5-a078-379d65785ca4" name="CRM Account Hierarchy"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="c28a1e28-09b3-4a00-855f-1c675813d8d0" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create" searchProperties="true"><con:settings/><con:testStep type="request" name="S" id="2efb24c3-af43-4d4c-9c3b-75851733a639"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCRMAccountHierarchy</con:operation><con:request name="S" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>

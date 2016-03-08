@@ -7,7 +7,6 @@ import org.meveo.api.dto.CountryDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
@@ -51,7 +50,7 @@ public class CountryApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         // If countryCode exist in the trading country table ("billing_trading_country"), return error.
@@ -122,8 +121,9 @@ public class CountryApi extends BaseApi {
     public CountryDto find(String countryCode, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(countryCode)) {
             missingParameters.add("countryCode");
-            throw new MeveoApiException(getMissingParametersExceptionMessage());
         }
+        
+        handleMissingParameters();
 
         TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode, provider);
 
@@ -145,7 +145,7 @@ public class CountryApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode, provider);
@@ -173,7 +173,7 @@ public class CountryApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();

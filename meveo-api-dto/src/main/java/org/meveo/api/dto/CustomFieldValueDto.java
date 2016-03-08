@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.crm.EntityReferenceWrapper;
 
 /**
+ * Represents a single CF simple value inside a more complex CF value (list, map, matrix)
+ * 
  * @author Andrius Karpavicius
  **/
 @XmlRootElement(name = "CustomFieldValue")

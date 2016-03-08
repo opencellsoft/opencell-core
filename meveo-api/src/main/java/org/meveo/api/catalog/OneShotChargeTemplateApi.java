@@ -96,7 +96,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -196,7 +196,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
         }
 
         if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         Provider provider = currentUser.getProvider();
@@ -291,7 +291,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("oneShotChargeTemplateCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
 
         OneShotChargeTemplateDto result = new OneShotChargeTemplateDto();
@@ -318,7 +318,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("oneShotChargeTemplateCode");
-            throw new MissingParameterException(getMissingParametersExceptionMessage());
+            handleMissingParameters();
         }
         // check if code already exists
         OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(code, provider);
