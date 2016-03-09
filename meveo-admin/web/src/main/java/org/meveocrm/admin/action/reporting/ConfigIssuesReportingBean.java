@@ -1,6 +1,7 @@
 package org.meveocrm.admin.action.reporting;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -94,7 +95,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     @CurrentProvider
     private Provider currentProvider;
 
-    private List<Entry<String, List<String>>> jaspers;
+    private List<Entry<String, String>> jaspers;
 
     List<Tax> taxesNotAssociatedList = new ArrayList<Tax>();
     List<UsageChargeTemplate> usagesWithNotPricePlList = new ArrayList<UsageChargeTemplate>();
@@ -110,7 +111,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     List<OneShotChargeTemplate> terminationNotAssociatedList = new ArrayList<OneShotChargeTemplate>();
     List<OneShotChargeTemplate> subNotAssociatedList = new ArrayList<OneShotChargeTemplate>();
     List<CustomScript> scriptInstanceWithErrorList = new ArrayList<CustomScript>();
-    Map<String, List<String>> jasperFilesList = new HashMap<String, List<String>>();
+    Map<String, String> jasperFilesList = new HashMap<String, String>();
 
     public int getNbrUsagesWithNotPricePlan() {
         return usageChargeTemplateService.getNbrUsagesChrgWithNotPricePlan(currentProvider);
@@ -175,41 +176,34 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
         scriptInstanceWithErrorList = scriptInstanceService.getScriptInstancesWithError(currentProvider);
     }
     
-    private  Map<String,List<String>> getJasperFiles(){
-    	List<String> jaspersNotFound =null; 
-    	Map<String,List<String>> jasperFiles = new HashMap<String, List<String>>(); 
-    	String[] filter ={"jasper"};
-    	String[] jaspersName = paramBean.getProperty("reports.jasperTemplatesName","invoice,invoice_tva,invoice_categories,invoice_detail").split(",");
-
+    private  Map<String, String> getJasperFiles() throws IOException{
+    	Map<String,String> jasperFiles = new HashMap<String,String>(); 
+    	String jasperCommercial = paramBean.getProperty("jasper.invoiceTemplate.commercial","invoice.jasper");
+    	String jasperAdjustment = paramBean.getProperty("jasper.invoiceTemplate.adjustment","invoice.jasper");
     	//check jaspers files
     	File jasperDir= new File(paramBean.getProperty("providers.rootDir","/tmp/meveo/")+ File.separator+ getCurrentProvider().getCode() + File.separator+"jasper");
     	log.info("Jaspers template used :"+jasperDir.getPath());
-    	List<File> jasperList=null; 
-    	List<String> filesName=null;
     	File[] foldersList = jasperDir.listFiles(); 
-
-    	if (foldersList != null && foldersList.length >0) {
-    		for (int i = 0; i < foldersList.length; i++) {
-    			jaspersNotFound=new ArrayList<String>();
-    			jasperList = (List<File>) FileUtils.listFiles(foldersList[i].getAbsoluteFile(),filter, true); 
-    			filesName=new ArrayList<String>();
-    			for(File file :jasperList){ 
-    				filesName.add(file.getName().substring(0, file.getName().lastIndexOf(".")));
-    			} 
-    			for(String f :jaspersName){
-    				if(!filesName.contains(f)){
-    					jaspersNotFound.add(f);
-    				}
-    			} 
-    			if(jaspersNotFound!=null && jaspersNotFound.size()>0){	
-    				jasperFiles.put(foldersList[i].getName(), jaspersNotFound);
-    			}
-    		}
-    	} 
+    	String commercialRep=null;
+    	String adjustRep=null;
+    	File commercialInvoice=null;
+    	File adjustInvoice=null;
+		for(File f:foldersList){
+			adjustRep= f.getCanonicalPath()+File.separator+"invoiceAdjustmentPdf";
+			adjustInvoice= new File(adjustRep+File.separator+jasperCommercial); 
+			if(!adjustInvoice.exists()){
+              jasperFiles.put(adjustRep, jasperAdjustment);
+			}
+			commercialRep= f.getCanonicalPath()+File.separator+"pdf";
+			commercialInvoice= new File(commercialRep+File.separator+jasperCommercial); 
+			if(!commercialInvoice.exists()){
+              jasperFiles.put(commercialRep, jasperCommercial);
+			}  
+			}
     	return jasperFiles;
     }
 
-    public void getJasperFilesNotFound(TabChangeEvent event) {
+    public void getJasperFilesNotFound(TabChangeEvent event) throws IOException {
         jasperFilesList =getJasperFiles();
         if (jasperFilesList != null && jasperFilesList.size() > 0) {
             jaspers = new ArrayList<>(jasperFilesList.entrySet());
@@ -219,7 +213,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     ConfigIssuesReportingDTO reportConfigDto;
 
     @PostConstruct
-    public void init() {
+    public void init() throws IOException {
         reportConfigDto = new ConfigIssuesReportingDTO();
         reportConfigDto.setNbrWalletOpOpen(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.OPEN, currentProvider).intValue());
         reportConfigDto.setNbrWalletOpRerated(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.RERATED, currentProvider).intValue());
@@ -351,11 +345,13 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
         return "";
     }
 
-    public List<Entry<String, List<String>>> getJaspers() {
-        return jaspers;
-    }
+	public List<Entry<String, String>> getJaspers() {
+		return jaspers;
+	}
 
-    public Map<String, List<String>> getJasperFilesList() {
-        return jasperFilesList;
-    }
+	public void setJaspers(List<Entry<String, String>> jaspers) {
+		this.jaspers = jaspers;
+	}
+
+
 }
