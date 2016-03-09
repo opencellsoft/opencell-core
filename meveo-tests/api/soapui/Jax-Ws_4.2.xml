@@ -51156,22 +51156,24 @@ public class TestScript${#TestSuite#ticket} extends org.meveo.service.script.Scr
          <offerTemplate code="${#TestSuite#ticket}_OFFER1" description="${#TestSuite#ticket}_OFFER1">
             <disabled>false</disabled>
             <!--Optional:-->
-            <serviceTemplates>
-               <!--Zero or more repetitions:-->
-               <serviceTemplate code="${#TestSuite#ticket}_SERVICE1" description="">
-                  <!--Optional:-->
-                  <invoicingCalendar>MONTHLY</invoicingCalendar>
-                  <!--Optional:-->
-                  <serviceChargeTemplateRecurrings>
-                     <!--Zero or more repetitions:-->
-                     <serviceChargeTemplateRecurring>
-                        <!--Optional:-->
-                        <code>${#TestSuite#ticket}_REC1</code>
-                     </serviceChargeTemplateRecurring>
-                  </serviceChargeTemplateRecurrings>
-                  <!--Optional:-->  
-               </serviceTemplate>
-            </serviceTemplates>
+            <offerServiceTemplates>
+            	<offerServiceTemplate>
+	               <!--Zero or more repetitions:-->
+	               <serviceTemplate code="${#TestSuite#ticket}_SERVICE1" description="">
+	                  <!--Optional:-->
+	                  <invoicingCalendar>MONTHLY</invoicingCalendar>
+	                  <!--Optional:-->
+	                  <serviceChargeTemplateRecurrings>
+	                     <!--Zero or more repetitions:-->
+	                     <serviceChargeTemplateRecurring>
+	                        <!--Optional:-->
+	                        <code>${#TestSuite#ticket}_REC1</code>
+	                     </serviceChargeTemplateRecurring>
+	                  </serviceChargeTemplateRecurrings>
+	                  <!--Optional:-->  
+	               </serviceTemplate>
+            	</offerServiceTemplate>
+            </offerServiceTemplates>
          </offerTemplate>
       </ws:createOfferTemplate>
    </soapenv:Body>
@@ -51183,22 +51185,24 @@ public class TestScript${#TestSuite#ticket} extends org.meveo.service.script.Scr
          <offerTemplate code="${#TestSuite#ticket}_OFFER2" description="${#TestSuite#ticket}_OFFER2">
             <disabled>false</disabled>
             <!--Optional:-->
-            <serviceTemplates>
-               <!--Zero or more repetitions:-->
-               <serviceTemplate code="${#TestSuite#ticket}_SERVICE2" description="">
-                  <!--Optional:-->
-                  <invoicingCalendar>MONTHLY</invoicingCalendar>
-                  <!--Optional:-->
-                  <serviceChargeTemplateRecurrings>
-                     <!--Zero or more repetitions:-->
-                     <serviceChargeTemplateRecurring>
-                        <!--Optional:-->
-                        <code>${#TestSuite#ticket}_REC1</code>
-                     </serviceChargeTemplateRecurring>
-                  </serviceChargeTemplateRecurrings>
-                  <!--Optional:-->  
-               </serviceTemplate>
-            </serviceTemplates>
+            <offerServiceTemplates>
+            	<offerServiceTemplate>
+	               <!--Zero or more repetitions:-->
+	               <serviceTemplate code="${#TestSuite#ticket}_SERVICE2" description="">
+	                  <!--Optional:-->
+	                  <invoicingCalendar>MONTHLY</invoicingCalendar>
+	                  <!--Optional:-->
+	                  <serviceChargeTemplateRecurrings>
+	                     <!--Zero or more repetitions:-->
+	                     <serviceChargeTemplateRecurring>
+	                        <!--Optional:-->
+	                        <code>${#TestSuite#ticket}_REC1</code>
+	                     </serviceChargeTemplateRecurring>
+	                  </serviceChargeTemplateRecurrings>
+	                  <!--Optional:-->  
+	               </serviceTemplate>
+            	</offerServiceTemplate>
+            </offerServiceTemplates>
          </offerTemplate>
       </ws:createOfferTemplate>
    </soapenv:Body>
