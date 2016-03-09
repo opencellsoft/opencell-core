@@ -480,7 +480,8 @@ public class AccountHierarchyApiService extends BaseApi {
         handleMissingParameters();
         
 
-        Customer customer = customerService.findByCode(postData.getCustomerId(), provider);
+        String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId());
+        Customer customer = customerService.findByCode(customerCode, provider);
 
         if (customer == null) {
             throw new EntityDoesNotExistsException(Customer.class, postData.getCustomerId());
