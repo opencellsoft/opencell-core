@@ -234,6 +234,8 @@ public class CustomFieldValue implements Serializable {
             result += longValue;
         } else if (doubleValue != null) {
             result += doubleValue;
+        } else if (serializedValue != null) {
+            result += serializedValue.replaceAll("\"", "'");
         } else {
             result = "";
         }
