@@ -45,9 +45,8 @@ public class OfferTemplateCategoryApi extends BaseApi {
             missingParameters.add("name");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
 
@@ -104,9 +103,8 @@ public class OfferTemplateCategoryApi extends BaseApi {
             missingParameters.add("name");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
 

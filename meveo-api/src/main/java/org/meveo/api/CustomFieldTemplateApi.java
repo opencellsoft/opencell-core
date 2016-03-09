@@ -53,9 +53,8 @@ public class CustomFieldTemplateApi extends BaseApi {
             missingParameters.add("storageType");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         if (appliesTo != null) {
             postData.setAppliesTo(appliesTo);
@@ -97,9 +96,8 @@ public class CustomFieldTemplateApi extends BaseApi {
             missingParameters.add("storageType");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         if (appliesTo != null) {
             postData.setAppliesTo(appliesTo);
@@ -131,9 +129,9 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (StringUtils.isBlank(appliesTo)) {
             missingParameters.add("appliesTo");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, provider);
         if (cft != null) {
@@ -150,9 +148,9 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (StringUtils.isBlank(appliesTo)) {
             missingParameters.add("appliesTo");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, provider);
 
@@ -171,9 +169,9 @@ public class CustomFieldTemplateApi extends BaseApi {
             missingParameters.add("appliesTo");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         if (appliesTo != null) {
             postData.setAppliesTo(appliesTo);

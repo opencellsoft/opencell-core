@@ -36,7 +36,7 @@ public class DateUtils {
     private static long lastTime = System.currentTimeMillis() / 1000;
 
     public static String DATE_PATTERN = "yyyy-MM-dd";
-    public static String DATE_TIME_PATTERN = "yyyy-MM-dd'T'hh:mm:hh";
+    public static String DATE_TIME_PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
 
     public static synchronized Date getCurrentDateWithUniqueSeconds() {
         long current = System.currentTimeMillis();

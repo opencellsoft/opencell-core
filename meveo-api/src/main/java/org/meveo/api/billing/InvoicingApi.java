@@ -65,10 +65,10 @@ public class InvoicingApi extends BaseApi {
 		if (StringUtils.isBlank(createBillingRunDto.getBillingRunTypeEnum())) {
 			missingParameters.add("billingRunType");
 		}
-		if(! missingParameters.isEmpty()){
-			handleMissingParameters();
-		}
 
+        handleMissingParameters();
+
+        
 		BillingCycle billingCycleInput = billingCycleService.findByBillingCycleCode(createBillingRunDto.getBillingCycleCode(), provider);
 		if (billingCycleInput == null) {
 			throw new EntityDoesNotExistsException(BillingCycle.class, createBillingRunDto.getBillingCycleCode());

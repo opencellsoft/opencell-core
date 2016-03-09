@@ -13,7 +13,6 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
@@ -86,9 +85,9 @@ public class CatMessagesApi extends BaseApi {
         if (StringUtils.isBlank(postData.getDescriptionTranslation())) {
             missingParameters.add("descriptionTranslation");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         String objectType = postData.getObjectType();
         String languageCode = postData.getLanguageCode();
@@ -201,9 +200,9 @@ public class CatMessagesApi extends BaseApi {
         if (StringUtils.isBlank(languageCode)) {
             missingParameters.add("languageCode");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         CatMessagesDto catMessagesDto = null;
 
@@ -238,9 +237,9 @@ public class CatMessagesApi extends BaseApi {
         if (StringUtils.isBlank(postData.getDescriptionTranslation())) {
             missingParameters.add("descriptionTranslation");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         CatMessages catMessages = catMessagesService.findByCodeAndLanguage(postData.getCatMessagesCode(), postData.getLanguageCode(), currentUser.getProvider());
 
@@ -262,9 +261,9 @@ public class CatMessagesApi extends BaseApi {
         if (StringUtils.isBlank(languageCode)) {
             missingParameters.add("languageCode");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         CatMessages catMessages = catMessagesService.findByCodeAndLanguage(catMessagesCode, languageCode, provider);
 
@@ -283,10 +282,9 @@ public class CatMessagesApi extends BaseApi {
         if (StringUtils.isBlank(postData.getLanguageCode())) {
             missingParameters.add("languageCode");
         }
+                
+        handleMissingParameters();
         
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
 
         String catMessagesCode = postData.getCatMessagesCode();
         String languageCode = postData.getLanguageCode();

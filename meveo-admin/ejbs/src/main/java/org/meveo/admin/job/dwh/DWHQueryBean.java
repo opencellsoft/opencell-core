@@ -48,7 +48,7 @@ public class DWHQueryBean {
 
 	// iso 8601 date and datetime format
 	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-	SimpleDateFormat tf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:hh");
+	SimpleDateFormat tf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })

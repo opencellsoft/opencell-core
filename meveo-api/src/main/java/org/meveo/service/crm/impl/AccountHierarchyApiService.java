@@ -42,7 +42,6 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -249,9 +248,9 @@ public class AccountHierarchyApiService extends BaseApi {
         if (StringUtils.isBlank(postData.getEmail())) {
             missingParameters.add("email");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         if (customerService.findByCode(postData.getCustomerId(), provider) != null) {
             throw new EntityAlreadyExistsException(Customer.class, postData.getCustomerId());
@@ -478,9 +477,8 @@ public class AccountHierarchyApiService extends BaseApi {
             missingParameters.add("email");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Customer customer = customerService.findByCode(postData.getCustomerId(), provider);
 

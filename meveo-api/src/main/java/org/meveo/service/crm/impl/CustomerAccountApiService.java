@@ -20,7 +20,6 @@ import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCurrency;
@@ -87,9 +86,8 @@ public class CustomerAccountApiService extends AccountApiService {
             missingParameters.add("name.lastName");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
         // check if already exists
@@ -171,9 +169,8 @@ public class CustomerAccountApiService extends AccountApiService {
             missingParameters.add("name.lastName");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
         // check if already exists

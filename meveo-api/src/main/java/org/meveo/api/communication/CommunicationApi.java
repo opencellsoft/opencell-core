@@ -7,7 +7,6 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.communication.CommunicationRequestDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.communication.impl.MeveoInstanceService;
@@ -27,9 +26,9 @@ public class CommunicationApi extends BaseApi {
 		if (communicationRequestDto == null || StringUtils.isBlank(communicationRequestDto.getSubject())) {
 			missingParameters.add("Subject");
 		}
-		if (!missingParameters.isEmpty()) {
-			handleMissingParameters();
-		}
+		
+		handleMissingParameters();
+		
 
 		MeveoInstance meveoInstance = meveoInstanceService.findByCode(communicationRequestDto.getMeveoInstanceCode());
 		if (meveoInstance != null) {

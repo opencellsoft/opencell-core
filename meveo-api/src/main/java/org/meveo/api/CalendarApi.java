@@ -16,7 +16,6 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.Calendar;
@@ -59,9 +58,8 @@ public class CalendarApi extends BaseApi {
             missingParameters.add("calendarType");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
 
@@ -156,9 +154,8 @@ public class CalendarApi extends BaseApi {
                 missingParameters.add("joinCalendar2Code");
             }
 
-            if (!missingParameters.isEmpty()) {
-                handleMissingParameters();
-            }
+            handleMissingParameters();
+            
 
             Calendar cal1 = calendarService.findByCode(postData.getJoinCalendar1Code(), provider);
             Calendar cal2 = calendarService.findByCode(postData.getJoinCalendar2Code(), provider);
@@ -193,9 +190,8 @@ public class CalendarApi extends BaseApi {
             missingParameters.add("calendarType");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
 
@@ -266,9 +262,8 @@ public class CalendarApi extends BaseApi {
                 missingParameters.add("joinCalendar2Code");
             }
 
-            if (!missingParameters.isEmpty()) {
-                handleMissingParameters();
-            }
+            handleMissingParameters();
+            
 
             Calendar cal1 = calendarService.findByCode(postData.getJoinCalendar1Code(), provider);
             Calendar cal2 = calendarService.findByCode(postData.getJoinCalendar2Code(), provider);

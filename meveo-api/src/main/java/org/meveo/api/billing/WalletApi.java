@@ -352,9 +352,8 @@ public class WalletApi extends BaseApi {
             missingParameters.add("seller");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
 

@@ -11,10 +11,15 @@ public class InvalidParameterException extends MeveoApiException {
 
     public InvalidParameterException() {
     }
+    
+    public InvalidParameterException(String message) {
+        super(message);
+        setErrorCode(MeveoApiErrorCodeEnum.INVALID_PARAMETER);
+    }
 
     public InvalidParameterException(String field, String value) {
-        super("Invalid value '" + value + "' for field " + field);
+        this("Invalid value '" + value + "' for field " + field);
 
-        setErrorCode(MeveoApiErrorCodeEnum.INVALID_PARAMETER);
+        
     }
 }

@@ -14,7 +14,6 @@ import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
@@ -48,9 +47,8 @@ public class UserAccountApiService extends AccountApiService {
             missingParameters.add("billingAccount");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
 
@@ -95,9 +93,8 @@ public class UserAccountApiService extends AccountApiService {
             missingParameters.add("billingAccount");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
 

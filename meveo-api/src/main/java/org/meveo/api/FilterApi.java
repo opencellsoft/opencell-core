@@ -32,9 +32,9 @@ public class FilterApi extends BaseApi {
         if (StringUtils.isBlank(dto.getInputXml())) {
             missingParameters.add("inputXml");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         Filter filter = filterService.parse(dto.getInputXml());
 
@@ -60,9 +60,9 @@ public class FilterApi extends BaseApi {
         if (StringUtils.isBlank(dto.getInputXml())) {
             missingParameters.add("inputXml");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
         Filter filter = filterService.findByCode(dto.getCode(), provider);

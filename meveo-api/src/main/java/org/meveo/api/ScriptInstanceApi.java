@@ -264,9 +264,9 @@ public class ScriptInstanceApi extends BaseApi {
         if (StringUtils.isBlank(dto.getScript())) {
             missingParameters.add("script");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         String packageName = scriptInstanceService.getPackageName(dto.getScript());
         String className = scriptInstanceService.getClassName(dto.getScript());
@@ -297,9 +297,8 @@ public class ScriptInstanceApi extends BaseApi {
             missingParameters.add("script");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
     }
 
     /**
