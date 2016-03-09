@@ -132,6 +132,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	
 
 	private String PDF_DIR_NAME = "pdf";
+	private String ADJUSTEMENT_DIR_NAME = "invoiceAdjustmentPdf";
 	private String INVOICE_TEMPLATE_FILENAME = "invoice.jasper";
 	private String DATE_PATERN = "yyyy.MM.dd";
 
@@ -572,18 +573,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		String billingTemplate = (billingCycle != null && billingCycle.getBillingTemplateName() != null) ? billingCycle
 				.getBillingTemplateName() : "default";
 		String resDir = meveoDir + "jasper";
-		File destDir = new File(resDir + File.separator + billingTemplate + File.separator + "pdf");
-		File sourceJapsers = new File(resDir + File.separator + "default" + File.separator + "pdf");
-		if (!destDir.exists()) {
-			destDir.mkdirs();
-			FileUtils.copyDirectory(sourceJapsers, destDir);
-		}
 		
-		/*>> it's not working with meveo.war no-exploded
-		 * 
-		 * if (!destDir.exists()) {
+		File destDir = new File(resDir + File.separator + billingTemplate + File.separator + "pdf");
+		  if (!destDir.exists()) {
 			destDir.mkdirs();
-
 			String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath();
 			File sourceFile = new File(sourcePath);
 			if (!sourceFile.exists()) {
@@ -597,9 +590,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				}
 			}
 			FileUtils.copyDirectory(sourceFile, destDir);
-		}*/
-		
-		File jasperFile = getJasperTemplateFile(resDir, billingTemplate, billingAccount.getPaymentMethod());
+		}
+		File destDirInvoiceAdjustment = new File(resDir + File.separator + billingTemplate + File.separator+ "invoiceAdjustmentPdf");
+		if (!destDirInvoiceAdjustment.exists()) {
+			destDirInvoiceAdjustment.mkdirs();
+			String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./invoiceAdjustment").getPath();
+			File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
+			if (!sourceFileInvoiceAdjustment.exists()) {
+				VirtualFile vfDir = VFS.getChild("/content/"+ ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+ ".war/WEB-INF/classes/invoiceAdjustment");
+				URL vfPath = VFSUtils.getPhysicalURL(vfDir);
+				sourceFileInvoiceAdjustment = new File(vfPath.getPath());
+				if (!sourceFileInvoiceAdjustment.exists()) {
+					throw new BusinessException("embedded jasper report for invoice isn't existed!");
+				}
+			}
+			FileUtils.copyDirectory(sourceFileInvoiceAdjustment, destDirInvoiceAdjustment);
+		}
+		File jasperFile = getJasperTemplateFile(resDir, billingTemplate, billingAccount.getPaymentMethod(),isInvoiceAdjustment);
 		if (!jasperFile.exists()) {
 			throw new InvoiceJasperNotFoundException("The jasper file doesn't exist.");
 		}
@@ -673,9 +680,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 	}
 
-	private File getJasperTemplateFile(String resDir, String billingTemplate, PaymentMethodEnum paymentMethod) {
+	private File getJasperTemplateFile(String resDir, String billingTemplate, PaymentMethodEnum paymentMethod,boolean isInvoiceAdjustment) {
 		String pdfDirName = new StringBuilder(resDir).append(File.separator).append(billingTemplate)
-				.append(File.separator).append(PDF_DIR_NAME).toString();
+				.append(File.separator).append(isInvoiceAdjustment?ADJUSTEMENT_DIR_NAME:PDF_DIR_NAME).toString();
+		
 		File pdfDir = new File(pdfDirName);
 		String paymentMethodFileName = new StringBuilder("invoice_").append(paymentMethod).append(".jasper").toString();
 		File paymentMethodFile = new File(pdfDir, paymentMethodFileName);
