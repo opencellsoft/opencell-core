@@ -534,57 +534,81 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	}
 
 	private void addOffers(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element invoiceTag) {
-		NodeList offerList = doc.getElementsByTagName("offers");
-
-		Element offersTag = null;
-		if (offerList != null && offerList.getLength() > 0) {
-			offersTag = (Element) offerList.item(0);
-		} else {
-			offersTag = doc.createElement("offers");
-			invoiceTag.appendChild(offersTag);
+		
+		Element offersTag = getCollectionTag(doc, invoiceTag, "offers");
+		
+		String id = offerTemplate.getId() + "";
+		Element offerTag = null;
+		if (!isExists(offersTag.getChildNodes(), id)) {
+			offerTag = doc.createElement("offer");
+			offerTag.setAttribute("id", id);
+			offerTag.setAttribute("code", offerTemplate.getCode() != null ? offerTemplate.getCode() : "");
+			offerTag.setAttribute("description",
+					offerTemplate.getDescription() != null ? offerTemplate.getDescription() : "");
+			offersTag.appendChild(offerTag);
 		}
-
-		Element offerTag = doc.createElement("offer");
-		offerTag.setAttribute("id", offerTemplate.getId() + "");
-		offerTag.setAttribute("code", offerTemplate.getCode() != null ? offerTemplate.getCode() : "");
-		offerTag.setAttribute("description", offerTemplate.getDescription() != null ? offerTemplate.getDescription()
-				: "");
-		offersTag.appendChild(offerTag);
 	}
 
 	private void addServices(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element invoiceTag) {
 		if (offerTemplate.getOfferServiceTemplates() != null && offerTemplate.getOfferServiceTemplates().size() > 0) {
-			NodeList serviceList = doc.getElementsByTagName("services");
 
-			Element servicesTag = null;
-			if (serviceList != null && serviceList.getLength() > 0) {
-				servicesTag = (Element) serviceList.item(0);
-			} else {
-				servicesTag = doc.createElement("services");
-				invoiceTag.appendChild(servicesTag);
-			}
+			Element servicesTag = getCollectionTag(doc, invoiceTag, "services");
+
+			ServiceTemplate serviceTemplate = null;
+			String id = null;
+			Element serviceTag = null;
+			Element calendarTag = null;
 
 			for (OfferServiceTemplate offerServiceTemplate : offerTemplate.getOfferServiceTemplates()) {
-				ServiceTemplate serviceTemplate=offerServiceTemplate.getServiceTemplate();
-				Element serviceTag = doc.createElement("service");
-				serviceTag.setAttribute("id", serviceTemplate.getId() + "");
-				serviceTag.setAttribute("code", serviceTemplate.getCode() != null ? serviceTemplate.getCode() : "");
-				serviceTag.setAttribute("offerCode", offerTemplate.getCode() != null ? offerTemplate.getCode() : "");
-				serviceTag.setAttribute("description",
-						serviceTemplate.getDescription() != null ? serviceTemplate.getDescription() : "");
+				serviceTemplate = offerServiceTemplate.getServiceTemplate();
+				id = serviceTemplate.getId() + "";
+				if (!isExists(servicesTag.getChildNodes(), id)) {
+					serviceTag = doc.createElement("service");
+					serviceTag.setAttribute("id", id);
+					serviceTag.setAttribute("code", serviceTemplate.getCode() != null ? serviceTemplate.getCode() : "");
+					serviceTag.setAttribute("offerCode",
+							offerTemplate.getCode() != null ? offerTemplate.getCode() : "");
+					serviceTag.setAttribute("description",
+							serviceTemplate.getDescription() != null ? serviceTemplate.getDescription() : "");
 
-				Element calendarTag = doc.createElement("calendar");
-				Text calendarText = null;
-				if (serviceTemplate.getInvoicingCalendar() != null) {
-					calendarText = doc.createTextNode(serviceTemplate.getInvoicingCalendar().getCode());
-				} else {
-					calendarText = doc.createTextNode("");
+					calendarTag = doc.createElement("calendar");
+					Text calendarText = null;
+					if (serviceTemplate.getInvoicingCalendar() != null) {
+						calendarText = doc.createTextNode(serviceTemplate.getInvoicingCalendar().getCode());
+					} else {
+						calendarText = doc.createTextNode("");
+					}
+					calendarTag.appendChild(calendarText);
+
+					servicesTag.appendChild(serviceTag);
 				}
-				calendarTag.appendChild(calendarText);
-
-				servicesTag.appendChild(serviceTag);
 			}
 		}
+	}
+	
+	private Element getCollectionTag(Document doc, Element parent, String tagName){
+		NodeList nodeList = doc.getElementsByTagName(tagName);
+		Element collectionTag = null;
+
+		if (nodeList != null && nodeList.getLength() > 0) {
+			collectionTag = (Element) nodeList.item(0);
+		} else {
+			collectionTag = doc.createElement(tagName);
+			parent.appendChild(collectionTag);
+		}
+		return collectionTag;
+	}
+
+	private boolean isExists(NodeList items, String id) {
+		Element item = null;
+		boolean exists = false;
+		for (int index = 0; index < items.getLength(); index++) {
+			item = (Element) items.item(index);
+			if (item.getAttribute("id").equals(id)) {
+				exists = true;
+			}
+		}
+		return exists;
 	}
 
 	private void addCustomFields(Subscription subscription, Invoice invoice, Document doc, Element parent) {
