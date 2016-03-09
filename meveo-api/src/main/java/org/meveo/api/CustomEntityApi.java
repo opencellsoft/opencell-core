@@ -64,9 +64,9 @@ public class CustomEntityApi extends BaseApi {
         if (StringUtils.isBlank(dto.getName())) {
             missingParameters.add("name");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         if (customEntityTemplateService.findByCode(dto.getCode(), currentUser.getProvider()) != null) {
             throw new EntityAlreadyExistsException(CustomEntityTemplate.class, dto.getCode());
@@ -96,9 +96,9 @@ public class CustomEntityApi extends BaseApi {
         if (StringUtils.isBlank(dto.getName())) {
             missingParameters.add("name");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCode(), currentUser.getProvider());
         if (cet == null) {
@@ -116,9 +116,9 @@ public class CustomEntityApi extends BaseApi {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("customEntityTemplateCode");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(code, currentUser.getProvider());
         if (cet != null) {
@@ -133,9 +133,9 @@ public class CustomEntityApi extends BaseApi {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("customEntityTemplateCode");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(code, currentUser.getProvider());
 
@@ -166,9 +166,9 @@ public class CustomEntityApi extends BaseApi {
         if (StringUtils.isBlank(dto.getCetCode())) {
             missingParameters.add("cetCode");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCetCode(), currentUser.getProvider());
         if (cet == null) {
@@ -201,9 +201,9 @@ public class CustomEntityApi extends BaseApi {
         if (StringUtils.isBlank(dto.getCetCode())) {
             missingParameters.add("cetCode");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCetCode(), currentUser.getProvider());
         if (cet == null) {
@@ -236,9 +236,9 @@ public class CustomEntityApi extends BaseApi {
         if (StringUtils.isBlank(cetCode)) {
             missingParameters.add("customEntityTemplateCode");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code, currentUser.getProvider());
         if (cei != null) {
@@ -255,9 +255,9 @@ public class CustomEntityApi extends BaseApi {
         if (StringUtils.isBlank(cetCode)) {
             missingParameters.add("customEntityTemplateCode");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code, currentUser.getProvider());
 
@@ -304,10 +304,9 @@ public class CustomEntityApi extends BaseApi {
         if (StringUtils.isBlank(dto.getClassname())) {
             missingParameters.add("className");
         }
-
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         Class clazz;
         try {
@@ -396,9 +395,9 @@ public class CustomEntityApi extends BaseApi {
         if (StringUtils.isBlank(customizedEntityClass)) {
             missingParameters.add("customizedEntityClass");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         Class clazz;
         try {

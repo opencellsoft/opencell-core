@@ -65,9 +65,8 @@ public class CustomerApiService extends AccountApiService {
             missingParameters.add("name.lastName");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
         // check if customer already exists
         if (customerService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
             throw new EntityAlreadyExistsException(Customer.class, postData.getCode());
@@ -139,9 +138,8 @@ public class CustomerApiService extends AccountApiService {
             missingParameters.add("name.lastName");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         // check if customer exists
         Customer customer = customerService.findByCode(postData.getCode(), currentUser.getProvider());

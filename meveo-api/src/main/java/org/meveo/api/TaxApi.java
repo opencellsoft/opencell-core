@@ -13,7 +13,6 @@ import org.meveo.api.dto.TaxesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
@@ -45,9 +44,8 @@ public class TaxApi extends BaseApi {
             missingParameters.add("percent");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         ActionStatus result = new ActionStatus();
 
@@ -107,9 +105,8 @@ public class TaxApi extends BaseApi {
             missingParameters.add("percent");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         ActionStatus result = new ActionStatus();
 

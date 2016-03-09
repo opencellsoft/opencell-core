@@ -49,9 +49,8 @@ public class CountryApi extends BaseApi {
             missingParameters.add("countryCode");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         // If countryCode exist in the trading country table ("billing_trading_country"), return error.
         Provider provider = currentUser.getProvider();
@@ -144,9 +143,8 @@ public class CountryApi extends BaseApi {
             missingParameters.add("currencyCode");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode, provider);
         Currency currency = currencyService.findByCode(currencyCode);
@@ -172,9 +170,8 @@ public class CountryApi extends BaseApi {
             missingParameters.add("currencyCode");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
         Currency currency = currencyService.findByCode(postData.getCurrencyCode());

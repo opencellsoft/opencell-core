@@ -132,9 +132,8 @@ public class InvoiceApi extends BaseApi {
             missingParameters.add("amountWithTax");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
 
@@ -229,9 +228,8 @@ public class InvoiceApi extends BaseApi {
                 missingParameters.add("amountWithTax");
             }
 
-            if (!missingParameters.isEmpty()) {
-                handleMissingParameters();
-            }
+            handleMissingParameters();
+            
 
             SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate();
             String sciaDTOUserAccountCode = subCategoryInvoiceAgregateDTO.getUserAccountCode();
@@ -436,9 +434,9 @@ public class InvoiceApi extends BaseApi {
         if (generateInvoiceRequestDto.getLastTransactionDate() == null) {
             missingParameters.add("lastTransactionDate");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         BillingAccount billingAccount = billingAccountService.findByCode(generateInvoiceRequestDto.getBillingAccountCode(), currentUser.getProvider(), Arrays.asList("billingRun"));
         if (billingAccount == null) {

@@ -101,10 +101,9 @@ public class SubscriptionApi extends BaseApi {
         if (StringUtils.isBlank(postData.getSubscriptionDate())) {
             missingParameters.add("subscriptionDate");
         }
-
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
 
@@ -158,10 +157,10 @@ public class SubscriptionApi extends BaseApi {
         if (StringUtils.isBlank(postData.getSubscriptionDate())) {
             missingParameters.add("subscriptionDate");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
-
+        
+        handleMissingParameters();
+        
+    
         Provider provider = currentUser.getProvider();
 
         Subscription subscription = subscriptionService.findByCode(postData.getCode(), provider);
@@ -210,9 +209,9 @@ public class SubscriptionApi extends BaseApi {
         if (postData.getServicesToActivateDto().getService() == null || postData.getServicesToActivateDto().getService().size() == 0) {
             missingParameters.add("services");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
 
@@ -377,9 +376,9 @@ public class SubscriptionApi extends BaseApi {
         if (postData.getServicesToInstantiate().getService() == null || postData.getServicesToInstantiate().getService().size() == 0) {
             missingParameters.add("services");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
 
@@ -474,10 +473,9 @@ public class SubscriptionApi extends BaseApi {
         if (postData.getOperationDate() == null) {
             missingParameters.add("operationDate");
         }
-
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
 
@@ -530,9 +528,8 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("terminationDate");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
 
@@ -572,10 +569,9 @@ public class SubscriptionApi extends BaseApi {
         if (postData.getTerminationDate() == null) {
             missingParameters.add("terminationDate");
         }
-
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
 

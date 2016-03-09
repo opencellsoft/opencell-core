@@ -36,7 +36,6 @@ import org.meveo.api.dwh.MeasurableQuantityApi;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.job.JobInstanceApi;
 import org.meveo.api.job.TimerEntityApi;
 import org.meveo.api.notification.EmailNotificationApi;
@@ -125,9 +124,9 @@ public class ModuleApi extends BaseApi {
         if (StringUtils.isBlank(moduleDto.getLicense())) {
             missingParameters.add("license");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
         if (meveoModuleService.findByCode(moduleDto.getCode(), provider) != null) {
@@ -151,9 +150,9 @@ public class ModuleApi extends BaseApi {
         if (StringUtils.isBlank(moduleDto.getLicense())) {
             missingParameters.add("module license is null");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
         MeveoModule meveoModule = meveoModuleService.findByCode(moduleDto.getCode(), provider);

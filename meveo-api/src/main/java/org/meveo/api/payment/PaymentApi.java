@@ -13,7 +13,6 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidEnumValueException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -83,9 +82,9 @@ public class PaymentApi extends BaseApi {
 		if (StringUtils.isBlank(paymentDto.getPaymentMethod())) {
 			missingParameters.add("PaymentMethod");
 		}
-		if (!missingParameters.isEmpty()) {
-			handleMissingParameters();
-		}
+		
+		handleMissingParameters();
+		
 		
 		PaymentMethodEnum paymentMethod = null;
 		try {

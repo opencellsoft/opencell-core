@@ -15,7 +15,6 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveocrm.model.dwh.BarChart;
@@ -59,9 +58,8 @@ public class ChartApi extends BaseApi {
             missingParameters.add("measurableQuantity.code");
         }
         
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Chart chart = chartService.findByCode(postData.getCode(), currentUser.getProvider());
         if (chart != null) {
@@ -103,9 +101,8 @@ public class ChartApi extends BaseApi {
             missingParameters.add("measurableQuantity.code");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Chart chart = chartService.findByCode(postData.getCode(), currentUser.getProvider());
         if (chart == null) {

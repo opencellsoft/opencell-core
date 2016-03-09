@@ -19,6 +19,7 @@ import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.User;
@@ -98,9 +99,10 @@ public abstract class BaseApi {
      * @throws IllegalAccessException
      * @throws MissingParameterException
      * @throws BusinessApiException
+     * @throws InvalidParameterException 
      */
     protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, User currentUser) throws IllegalArgumentException,
-            IllegalAccessException, MissingParameterException, BusinessApiException {
+            IllegalAccessException, MissingParameterException, BusinessApiException, InvalidParameterException {
         populateCustomFields(customFieldsDto, entity, isNewEntity, currentUser, true);
     }
 
@@ -116,9 +118,10 @@ public abstract class BaseApi {
      * @throws IllegalAccessException
      * @throws MissingParameterException
      * @throws BusinessApiException
+     * @throws InvalidParameterException 
      */
     protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, User currentUser, boolean checkCustomField)
-            throws IllegalArgumentException, IllegalAccessException, MissingParameterException, BusinessApiException {
+            throws IllegalArgumentException, IllegalAccessException, MissingParameterException, BusinessApiException, InvalidParameterException {
 
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity, currentUser.getProvider());
 
@@ -145,10 +148,11 @@ public abstract class BaseApi {
      * @throws IllegalAccessException
      * @throws MissingParameterException
      * @throws BusinessApiException
+     * @throws InvalidParameterException 
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void populateCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, boolean isNewEntity,
-            User currentUser, boolean checkCustomFields) throws IllegalArgumentException, IllegalAccessException, MissingParameterException, BusinessApiException {
+            User currentUser, boolean checkCustomFields) throws IllegalArgumentException, IllegalAccessException, MissingParameterException, BusinessApiException, InvalidParameterException {
 
         // check if any templates are applicable
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
@@ -173,7 +177,7 @@ public abstract class BaseApi {
 
                 if (checkCustomFields && cft == null) {
                     log.error("No custom field template found with code={} for entity {}. Value will be ignored.", cfDto.getCode(), entity.getClass());
-                    throw new MissingParameterException("Custom field template with code " + cfDto.getCode() + " and provider " + currentUser.getProvider() + " not found.");
+                    throw new InvalidParameterException("Custom field template with code " + cfDto.getCode() + " and provider " + currentUser.getProvider() + " not found.");
                 }
 
                 // Ignore the value when creating entity and CFT.hideOnNew=true or editing entity and CFT.allowEdit=false or when CFT.applicableOnEL expression evaluates to false
@@ -218,7 +222,7 @@ public abstract class BaseApi {
                             }
                             // Validate String length
                             if (stringValue.length() > cft.getMaxValue()) {
-                                throw new MissingParameterException("Custom field " + cft.getCode() + " value " + stringValue + " length is longer then " + cft.getMaxValue()
+                                throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + stringValue + " length is longer then " + cft.getMaxValue()
                                         + " symbols");
 
                                 // Validate String regExp
@@ -227,11 +231,11 @@ public abstract class BaseApi {
                                     Pattern pattern = Pattern.compile(cft.getRegExp());
                                     Matcher matcher = pattern.matcher(stringValue);
                                     if (!matcher.matches()) {
-                                        throw new MissingParameterException("Custom field " + cft.getCode() + " value " + stringValue + " does not match regular expression "
+                                        throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + stringValue + " does not match regular expression "
                                                 + cft.getRegExp());
                                     }
                                 } catch (PatternSyntaxException pse) {
-                                    throw new MissingParameterException("Custom field " + cft.getCode() + " definition specifies an invalid regular expression " + cft.getRegExp());
+                                    throw new InvalidParameterException("Custom field " + cft.getCode() + " definition specifies an invalid regular expression " + cft.getRegExp());
                                 }
                             }
 
@@ -239,12 +243,12 @@ public abstract class BaseApi {
                             Long longValue = (Long) valueToCheck;
 
                             if (cft.getMaxValue() != null && longValue.compareTo(cft.getMaxValue()) > 0) {
-                                throw new MissingParameterException("Custom field " + cft.getCode() + " value " + longValue + " is bigger then " + cft.getMaxValue()
+                                throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + longValue + " is bigger then " + cft.getMaxValue()
                                         + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
                                         + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
 
                             } else if (cft.getMinValue() != null && longValue.compareTo(cft.getMinValue()) < 0) {
-                                throw new MissingParameterException("Custom field " + cft.getCode() + " value " + longValue + " is smaller then " + cft.getMinValue()
+                                throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + longValue + " is smaller then " + cft.getMinValue()
                                         + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
                                         + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
                             }
@@ -252,12 +256,12 @@ public abstract class BaseApi {
                             Double doubleValue = (Double) valueToCheck;
 
                             if (cft.getMaxValue() != null && doubleValue.compareTo(cft.getMaxValue().doubleValue()) > 0) {
-                                throw new MissingParameterException("Custom field " + cft.getCode() + " value " + doubleValue + " is bigger then " + cft.getMaxValue()
+                                throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + doubleValue + " is bigger then " + cft.getMaxValue()
                                         + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
                                         + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
 
                             } else if (cft.getMinValue() != null && doubleValue.compareTo(cft.getMinValue().doubleValue()) < 0) {
-                                throw new MissingParameterException("Custom field " + cft.getCode() + " value " + doubleValue + " is smaller then " + cft.getMinValue()
+                                throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + doubleValue + " is smaller then " + cft.getMinValue()
                                         + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
                                         + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
                             }

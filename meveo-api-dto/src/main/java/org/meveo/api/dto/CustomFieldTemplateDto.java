@@ -68,7 +68,7 @@ public class CustomFieldTemplateDto extends BaseDto {
     protected String entityClazz;
 
     @XmlElement
-    protected Map<String, String> listValues = new HashMap<String, String>();
+    protected Map<String, String> listValues;
 
     @XmlElement
     protected boolean allowEdit = true;
@@ -128,7 +128,9 @@ public class CustomFieldTemplateDto extends BaseDto {
         cacheValue = cf.isCacheValue();
         cacheValueTimeperiod = cf.getCacheValueTimeperiod();
         guiPosition = cf.getGuiPosition();
-        listValues = cf.getListValues();
+        if (cf.getFieldType() == CustomFieldTypeEnum.LIST) {
+            listValues = cf.getListValues();
+        }
         applicableOnEl = cf.getApplicableOnEl();
         mapKeyType = cf.getMapKeyType();
 
@@ -246,6 +248,9 @@ public class CustomFieldTemplateDto extends BaseDto {
      * @return the listValues
      */
     public Map<String, String> getListValues() {
+        if (listValues == null) {
+            listValues = new HashMap<String, String>();
+        }
         return listValues;
     }
 

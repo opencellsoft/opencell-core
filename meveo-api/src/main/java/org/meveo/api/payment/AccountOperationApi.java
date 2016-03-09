@@ -274,9 +274,9 @@ public class AccountOperationApi extends BaseApi {
         if (StringUtils.isBlank(postData.getAccountOperationId())) {
             missingParameters.add("accountOperationId");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
         CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode(), currentUser.getProvider());
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());
@@ -313,9 +313,9 @@ public class AccountOperationApi extends BaseApi {
         if (StringUtils.isBlank(postData.getAccountOperationId())) {
             missingParameters.add("accountOperationId");
         }
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        
+        handleMissingParameters();
+        
         CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode(), currentUser.getProvider());
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());

@@ -7,7 +7,6 @@ import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingCycle;
@@ -46,9 +45,8 @@ public class BillingCycleApi extends BaseApi {
             missingParameters.add("invoiceDateDelay");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
 
@@ -94,9 +92,8 @@ public class BillingCycleApi extends BaseApi {
             missingParameters.add("invoiceDateDelay");
         }
 
-        if (!missingParameters.isEmpty()) {
-            handleMissingParameters();
-        }
+        handleMissingParameters();
+        
 
         Provider provider = currentUser.getProvider();
 
