@@ -130,7 +130,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
             return groupedFields;
         }
 
-        Map<String, CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesTo(cetPrefix, getCurrentProvider());
+        Map<String, CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesToNoCache(cetPrefix, getCurrentProvider());
 
         GroupedCustomField groupedCFT = new GroupedCustomField(fields.values(), CustomEntityTemplate.class.isAssignableFrom(entityClass) ? entity.getName() : "Custom fields", true);
 

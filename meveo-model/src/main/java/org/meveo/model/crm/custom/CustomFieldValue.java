@@ -638,7 +638,7 @@ public class CustomFieldValue implements Serializable {
                     columnNamesString = StringUtils.concatenate(MATRIX_COLUMN_NAME_SEPARATOR, (Collection) columnNames);
                 }
 
-                Class itemClass = mapValue.values().iterator().next().getClass();
+                Class itemClass = mapCopy.values().iterator().next().getClass();
                 sValue = "matrix_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + columnNamesString + SERIALIZATION_SEPARATOR + gson.toJson(mapCopy);
 
                 // A regular map
@@ -647,6 +647,8 @@ public class CustomFieldValue implements Serializable {
                 sValue = "map_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + gson.toJson(mapValue);
             }
         }
+        Logger log = LoggerFactory.getLogger(getClass());
+        log.trace("Serialized to value {}", sValue);
         serializedValue = sValue;
 
     }
@@ -731,7 +733,7 @@ public class CustomFieldValue implements Serializable {
             if (Date.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<List<Date>>() {
                 }.getType();
-            } else if (Double.class.getSimpleName().equals(subType)) {
+            } else if (Double.class.getSimpleName().equals(subType) || BigDecimal.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<List<Double>>() {
                 }.getType();
             } else if (Long.class.getSimpleName().equals(subType)) {
@@ -759,7 +761,7 @@ public class CustomFieldValue implements Serializable {
             if (Date.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<Map<String, Date>>() {
                 }.getType();
-            } else if (Double.class.getSimpleName().equals(subType)) {
+            } else if (Double.class.getSimpleName().equals(subType) || BigDecimal.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<Map<String, Double>>() {
                 }.getType();
             } else if (Long.class.getSimpleName().equals(subType)) {
@@ -787,7 +789,7 @@ public class CustomFieldValue implements Serializable {
             if (Date.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<Map<String, Date>>() {
                 }.getType();
-            } else if (Double.class.getSimpleName().equals(subType)) {
+            } else if (Double.class.getSimpleName().equals(subType) || BigDecimal.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<Map<String, Double>>() {
                 }.getType();
             } else if (Long.class.getSimpleName().equals(subType)) {
@@ -822,7 +824,7 @@ public class CustomFieldValue implements Serializable {
         if (serializedValue == null) {
             return;
         }
-        setValue(CustomFieldValue.deserializeValue(serializedValue));
+        setValue(CustomFieldValue.deserializeValue(serializedValue), false);
     }
 
     /**
@@ -1100,11 +1102,20 @@ public class CustomFieldValue implements Serializable {
     /**
      * Set value of a given type
      * 
-     * @param value
-     * @param fieldType
+     * @param value Value to set
+     */
+    public void setValue(Object value) {
+        setValue(value, true);
+    }
+
+    /**
+     * Set value of a given type with an option whether complex values should be serialized
+     * 
+     * @param value Value to set
+     * @param toSerialize whether complex values should be serialized
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void setValue(Object value) {
+    private void setValue(Object value, boolean toSerialize) {
 
         if (value instanceof Date) {
             dateValue = (Date) value;
@@ -1122,22 +1133,46 @@ public class CustomFieldValue implements Serializable {
             stringValue = (String) value;
 
         } else if (value instanceof BusinessEntity) {
-            setEntityReferenceValue(new EntityReferenceWrapper((BusinessEntity) value));
+            if (toSerialize) {
+                setEntityReferenceValue(new EntityReferenceWrapper((BusinessEntity) value));
+            } else {
+                entityReferenceValue = new EntityReferenceWrapper((BusinessEntity) value);
+            }
 
         } else if (value instanceof EntityReferenceWrapper) {
-            setEntityReferenceValue((EntityReferenceWrapper) value);
+            if (toSerialize) {
+                setEntityReferenceValue((EntityReferenceWrapper) value);
+            } else {
+                entityReferenceValue = (EntityReferenceWrapper) value;
+            }
 
         } else if (value instanceof CustomFieldValueHolder) {
-            setChildEntityValue(new ChildEntityValueWrapper((CustomFieldValueHolder) value));
+            if (toSerialize) {
+                setChildEntityValue(new ChildEntityValueWrapper((CustomFieldValueHolder) value));
+            } else {
+                childEntityValue = new ChildEntityValueWrapper((CustomFieldValueHolder) value);
+            }
 
         } else if (value instanceof ChildEntityValueWrapper) {
-            setChildEntityValue((ChildEntityValueWrapper) value);
+            if (toSerialize) {
+                setChildEntityValue((ChildEntityValueWrapper) value);
+            } else {
+                childEntityValue = (ChildEntityValueWrapper) value;
+            }
 
         } else if (value instanceof Map) {
-            setMapValue((Map) value);
+            if (toSerialize) {
+                setMapValue((Map) value);
+            } else {
+                mapValue = (Map) value;
+            }
 
         } else if (value instanceof List) {
-            setListValue((List) value);
+            if (toSerialize) {
+                setListValue((List) value);
+            } else {
+                listValue = (List) value;
+            }
         }
     }
 

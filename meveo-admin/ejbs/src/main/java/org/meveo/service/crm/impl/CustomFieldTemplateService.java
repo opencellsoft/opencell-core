@@ -62,7 +62,6 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @param provider Provider
      * @return A list of custom field templates mapped by a template key
      */
-    @SuppressWarnings("unchecked")
     public Map<String, CustomFieldTemplate> findByAppliesTo(String appliesTo, Provider provider) {
 
         // Handles cases when creating a new provider
@@ -75,19 +74,31 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
             return customFieldsCache.getCustomFieldTemplates(appliesTo, provider);
 
         } else {
-
-            QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", Arrays.asList("calendar"), provider);
-            qb.addCriterion("c.appliesTo", "=", appliesTo, true);
-
-            List<CustomFieldTemplate> values = (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
-
-            Map<String, CustomFieldTemplate> cftMap = new HashMap<String, CustomFieldTemplate>();
-            for (CustomFieldTemplate cft : values) {
-                cftMap.put(cft.getCode(), cft);
-            }
-
-            return cftMap;
+            return findByAppliesToNoCache(appliesTo, provider);
         }
+    }
+
+    /**
+     * Find a list of custom field templates corresponding to a given entity - always do a lookup in DB
+     * 
+     * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
+     * @param provider Provider
+     * @return A list of custom field templates mapped by a template key
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, CustomFieldTemplate> findByAppliesToNoCache(String appliesTo, Provider provider) {
+
+        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", Arrays.asList("calendar"), provider);
+        qb.addCriterion("c.appliesTo", "=", appliesTo, true);
+
+        List<CustomFieldTemplate> values = (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
+
+        Map<String, CustomFieldTemplate> cftMap = new HashMap<String, CustomFieldTemplate>();
+        for (CustomFieldTemplate cft : values) {
+            cftMap.put(cft.getCode(), cft);
+        }
+
+        return cftMap;
     }
 
     /**
