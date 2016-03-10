@@ -1,10 +1,11 @@
-package org.meveo.api.dto;
+package org.meveo.api.dto.script;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.meveo.api.dto.BaseDto;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 
 /**
@@ -71,4 +72,10 @@ public abstract class CustomScriptDto extends BaseDto {
     public void setScript(String script) {
         this.script = script;
     }
+
+	@Override
+	public String toString() {
+		return "CustomScriptDto [code=" + code + ", description=" + description + ", type=" + type + ", script="
+				+ script + "]";
+	}
 }

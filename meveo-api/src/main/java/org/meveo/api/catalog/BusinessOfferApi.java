@@ -1,8 +1,5 @@
 package org.meveo.api.catalog;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -11,7 +8,6 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -66,10 +62,8 @@ public class BusinessOfferApi extends BaseApi {
 			}
 
 			if (businessOfferModel.getScript() != null) {
-				Map<String, Object> scriptContext = new HashMap<String, Object>();
-				scriptContext.put("event", newOfferTemplate);
 				try {
-					offerScriptService.onCreated(businessOfferModel.getScript().getCode(), scriptContext, currentUser,
+					offerScriptService.create(newOfferTemplate, businessOfferModel.getScript().getCode(), currentUser,
 							currentUser.getProvider());
 				} catch (BusinessException e) {
 					throw new MeveoApiException(e.getMessage());

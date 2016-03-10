@@ -75,6 +75,12 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 
 		// 1 create offer
 		OfferTemplate newOfferTemplate = new OfferTemplate();
+
+		// check if offer already exists
+		if (offerTemplateService.findByCode(prefix + bomOffer.getCode(), currentUser.getProvider()) != null) {
+			throw new BusinessException("ENTITY_ALREADY_EXISTS_EXCEPTION");
+		}
+
 		newOfferTemplate.setCode(prefix + bomOffer.getCode());
 
 		newOfferTemplate.setBusinessOfferModel(businessOfferModel);

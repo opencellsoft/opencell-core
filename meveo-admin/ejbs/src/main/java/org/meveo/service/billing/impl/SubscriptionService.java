@@ -48,7 +48,7 @@ import org.meveo.service.script.offer.OfferScriptService;
 
 @Stateless
 public class SubscriptionService extends BusinessService<Subscription> {
-	
+
 	@Inject
 	private OfferScriptService scriptInstanceService;
 
@@ -57,22 +57,21 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
 	@Inject
 	private AccessService accessService;
-	
+
 	@Override
 	public void create(Subscription subscription, User creator, Provider provider) {
 		super.create(subscription, creator, provider);
 
 		// execute subscription script
-		if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript()!=null) {
-			Map<String, Object> scriptContext = new HashMap<>();
-			scriptContext.put("subscription", subscription);
-
+		if (subscription.getOffer().getBusinessOfferModel() != null
+				&& subscription.getOffer().getBusinessOfferModel().getScript() != null) {
 			try {
-                scriptInstanceService.subscribe(subscription.getOffer().getBusinessOfferModel().getScript().getCode(),
-                		scriptContext, creator, provider);
-            } catch (BusinessException e) {
-                log.error("Failed to execute a script {}", subscription.getOffer().getBusinessOfferModel().getScript().getCode(), e);
-            }
+				scriptInstanceService.subscribe(subscription, subscription.getOffer().getBusinessOfferModel()
+						.getScript().getCode(), creator, provider);
+			} catch (BusinessException e) {
+				log.error("Failed to execute a script {}", subscription.getOffer().getBusinessOfferModel().getScript()
+						.getCode(), e);
+			}
 		}
 	}
 
@@ -81,24 +80,19 @@ public class SubscriptionService extends BusinessService<Subscription> {
 	}
 
 	public void terminateSubscription(Subscription subscription, Date terminationDate,
-			SubscriptionTerminationReason terminationReason, User user)
-			throws IncorrectSusbcriptionException,
+			SubscriptionTerminationReason terminationReason, User user) throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
 
 		if (terminationReason == null) {
 			throw new BusinessException("terminationReason is null");
 		}
 
-		terminateSubscription(subscription, terminationDate, terminationReason,
-				terminationReason.isApplyAgreement(),
-				terminationReason.isApplyReimbursment(),
-				terminationReason.isApplyTerminationCharges(), user);
+		terminateSubscription(subscription, terminationDate, terminationReason, terminationReason.isApplyAgreement(),
+				terminationReason.isApplyReimbursment(), terminationReason.isApplyTerminationCharges(), user);
 	}
 
-	public void subscriptionCancellation(Subscription subscription,
-			Date terminationDate, User updater)
-			throws IncorrectSusbcriptionException,
-			IncorrectServiceInstanceException, BusinessException {
+	public void subscriptionCancellation(Subscription subscription, Date terminationDate, User updater)
+			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 		if (terminationDate == null) {
 			terminationDate = new Date();
 		}
@@ -116,19 +110,15 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		update(subscription, updater);
 	}
 
-	public void subscriptionSuspension(Subscription subscription,
-			Date suspensionDate, User updater)
-			throws IncorrectSusbcriptionException,
-			IncorrectServiceInstanceException, BusinessException {
+	public void subscriptionSuspension(Subscription subscription, Date suspensionDate, User updater)
+			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 		if (suspensionDate == null) {
 			suspensionDate = new Date();
 		}
-		List<ServiceInstance> serviceInstances = subscription
-				.getServiceInstances();
+		List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
 		for (ServiceInstance serviceInstance : serviceInstances) {
 			if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus())) {
-				serviceInstanceService.serviceSuspension(serviceInstance,
-						suspensionDate, updater);
+				serviceInstanceService.serviceSuspension(serviceInstance, suspensionDate, updater);
 			}
 		}
 
@@ -138,10 +128,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		update(subscription, updater);
 	}
 
-	public void subscriptionReactivation(Subscription subscription,
-			Date activationDate, User updater)
-			throws IncorrectSusbcriptionException,
-			ElementNotResiliatedOrCanceledException,
+	public void subscriptionReactivation(Subscription subscription, Date activationDate, User updater)
+			throws IncorrectSusbcriptionException, ElementNotResiliatedOrCanceledException,
 			IncorrectServiceInstanceException, BusinessException {
 
 		if (activationDate == null) {
@@ -151,8 +139,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		if (subscription.getStatus() != SubscriptionStatusEnum.RESILIATED
 				&& subscription.getStatus() != SubscriptionStatusEnum.CANCELED
 				&& subscription.getStatus() != SubscriptionStatusEnum.SUSPENDED) {
-			throw new ElementNotResiliatedOrCanceledException("subscription",
-					subscription.getCode());
+			throw new ElementNotResiliatedOrCanceledException("subscription", subscription.getCode());
 		}
 
 		subscription.setTerminationDate(null);
@@ -160,54 +147,45 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 		subscription.setStatusDate(activationDate);
 
-		List<ServiceInstance> serviceInstances = subscription
-				.getServiceInstances();
+		List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
 		for (ServiceInstance serviceInstance : serviceInstances) {
-			if (InstanceStatusEnum.SUSPENDED.equals(serviceInstance
-							.getStatus())) {
-				serviceInstanceService.serviceReactivation(serviceInstance,
-						updater);
+			if (InstanceStatusEnum.SUSPENDED.equals(serviceInstance.getStatus())) {
+				serviceInstanceService.serviceReactivation(serviceInstance, updater);
 			}
 		}
 
 		update(subscription, updater);
 	}
 
-
-	private void terminateSubscription(Subscription subscription,
-			Date terminationDate,
-			SubscriptionTerminationReason terminationReason,
-			boolean applyAgreement, boolean applyReimbursment,
-			boolean applyTerminationCharges, User user)
-			throws IncorrectSusbcriptionException,
+	private void terminateSubscription(Subscription subscription, Date terminationDate,
+			SubscriptionTerminationReason terminationReason, boolean applyAgreement, boolean applyReimbursment,
+			boolean applyTerminationCharges, User user) throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
 		if (terminationDate == null) {
 			terminationDate = new Date();
 		}
-		
+
 		// execute termination script
-		if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
+		if (subscription.getOffer().getBusinessOfferModel() != null
+				&& subscription.getOffer().getBusinessOfferModel().getScript() != null) {
 			Map<String, Object> scriptContext = new HashMap<>();
 			scriptContext.put("subscription", subscription);
 			scriptContext.put("terminationDate", terminationDate);
 			scriptContext.put("terminationReason", terminationReason);
 
-			scriptInstanceService.terminate(subscription.getOffer().getBusinessOfferModel().getScript().getCode(),
-					scriptContext, user, user.getProvider());
+			scriptInstanceService.terminate(subscription, subscription.getOffer().getBusinessOfferModel().getScript()
+					.getCode(), scriptContext, user, user.getProvider());
 		}
 
-		List<ServiceInstance> serviceInstances = subscription
-				.getServiceInstances();
+		List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
 		for (ServiceInstance serviceInstance : serviceInstances) {
-			if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus()) 
+			if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus())
 					|| InstanceStatusEnum.SUSPENDED.equals(serviceInstance.getStatus())) {
 				if (terminationReason != null) {
-					serviceInstanceService.terminateService(serviceInstance,
-							terminationDate, terminationReason, user);
+					serviceInstanceService.terminateService(serviceInstance, terminationDate, terminationReason, user);
 				} else {
-					serviceInstanceService.terminateService(serviceInstance,
-							terminationDate, applyAgreement, applyReimbursment,
-							applyTerminationCharges, user, null);
+					serviceInstanceService.terminateService(serviceInstance, terminationDate, applyAgreement,
+							applyReimbursment, applyTerminationCharges, user, null);
 				}
 			}
 		}
@@ -224,24 +202,21 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		update(subscription, user);
 	}
 
-	
 	@SuppressWarnings("unchecked")
-	public List<Subscription> findByOfferTemplate(OfferTemplate offerTemplate){
+	public List<Subscription> findByOfferTemplate(OfferTemplate offerTemplate) {
 		QueryBuilder qb = new QueryBuilder(Subscription.class, "s");
 		qb.addCriterionEntity("offer", offerTemplate);
 
 		try {
-			return (List<Subscription>) qb.getQuery(getEntityManager())
-					.getResultList();
+			return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
-			log.warn("failed to find subscription by offer template",e);
+			log.warn("failed to find subscription by offer template", e);
 			return null;
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Subscription> findByOfferTemplate(EntityManager em,
-			OfferTemplate offerTemplate, Provider provider) {
+	public List<Subscription> findByOfferTemplate(EntityManager em, OfferTemplate offerTemplate, Provider provider) {
 		QueryBuilder qb = new QueryBuilder(Subscription.class, "s");
 
 		try {
@@ -260,10 +235,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		qb.addCriterionEntity("userAccount", userAccount);
 
 		try {
-			return (List<Subscription>) qb.getQuery(getEntityManager())
-					.getResultList();
+			return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
-			log.warn("error while getting list subscription by user account",e);
+			log.warn("error while getting list subscription by user account", e);
 			return null;
 		}
 	}

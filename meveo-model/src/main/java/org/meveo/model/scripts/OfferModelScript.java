@@ -11,5 +11,9 @@ import org.meveo.model.ExportIdentifier;
 public class OfferModelScript extends CustomScript {
 
 	private static final long serialVersionUID = -2688817434026306258L;
+	
+    public OfferModelScript() {
+
+    }
 
 }
