@@ -183,7 +183,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     	//check jaspers files
     	File jasperDir= new File(paramBean.getProperty("providers.rootDir","/tmp/meveo/")+ File.separator+ getCurrentProvider().getCode() + File.separator+"jasper");
     	if(!jasperDir.exists()){
-    		jasperDir.mkdir();
+    		jasperDir.mkdirs();
     	}
     	log.info("Jaspers template used :"+jasperDir.getPath());
     	File[] foldersList = jasperDir.listFiles(); 
