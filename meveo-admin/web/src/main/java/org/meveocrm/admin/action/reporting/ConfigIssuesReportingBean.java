@@ -182,12 +182,16 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     	String jasperAdjustment = paramBean.getProperty("jasper.invoiceTemplate.adjustment","invoice.jasper");
     	//check jaspers files
     	File jasperDir= new File(paramBean.getProperty("providers.rootDir","/tmp/meveo/")+ File.separator+ getCurrentProvider().getCode() + File.separator+"jasper");
+    	if(!jasperDir.exists()){
+    		jasperDir.mkdir();
+    	}
     	log.info("Jaspers template used :"+jasperDir.getPath());
     	File[] foldersList = jasperDir.listFiles(); 
     	String commercialRep=null;
     	String adjustRep=null;
     	File commercialInvoice=null;
     	File adjustInvoice=null;
+    	if (foldersList != null && foldersList.length >0) {
 		for(File f:foldersList){
 			adjustRep= f.getCanonicalPath()+File.separator+"invoiceAdjustmentPdf";
 			adjustInvoice= new File(adjustRep+File.separator+jasperCommercial); 
@@ -200,6 +204,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
               jasperFiles.put(commercialRep, jasperCommercial);
 			}  
 			}
+    	}
     	return jasperFiles;
     }
 
