@@ -7,12 +7,12 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.PermissionDto;
 import org.meveo.api.dto.RoleDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
@@ -38,15 +38,20 @@ public class RoleApi extends BaseApi {
     public Role create(RoleDto postData, User currentUser) throws MeveoApiException {
 
         String name = postData.getName();
-        if (name == null) {
+        if (StringUtils.isBlank(name)) {
             missingParameters.add("name");
-            handleMissingParameters();
+        }
+
+        if (StringUtils.isBlank(postData.getDescription())) {
+            missingParameters.add("description");
         }
         
+        handleMissingParameters();
+
         if (roleService.findByName(name, currentUser.getProvider()) != null) {
-        	throw new EntityAlreadyExistsException(Role.class, name, "role name");
+            throw new EntityAlreadyExistsException(Role.class, name, "role name");
         }
-        
+
         Role role = new Role();
         role.setName(name);
         role.setDescription(postData.getDescription());
@@ -101,10 +106,16 @@ public class RoleApi extends BaseApi {
     public Role update(RoleDto postData, User currentUser) throws MeveoApiException {
 
         String name = postData.getName();
-        if (name == null) {
+        if (StringUtils.isBlank(name)) {
             missingParameters.add("name");
-            handleMissingParameters();
         }
+
+        if (StringUtils.isBlank(postData.getDescription())) {
+            missingParameters.add("description");
+        }
+        
+        handleMissingParameters();
+
         Role role = roleService.findByName(name, currentUser.getProvider());
 
         if (role == null) {
