@@ -123,6 +123,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 		try {
 			Invoice invoice = findById(invoiceId);
+			getEntityManager().refresh(invoice);
 			String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguage()
 					.getLanguageCode();
 
@@ -890,6 +891,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					subCategory.setAttribute("taxPercent", taxesPercent);
 
 					for (RatedTransaction ratedTransaction : transactions) {
+						getEntityManager().refresh(ratedTransaction);
 						BigDecimal transactionAmount = entreprise ? ratedTransaction.getAmountWithTax()
 								: ratedTransaction.getAmountWithoutTax();
 						if (transactionAmount == null) {
