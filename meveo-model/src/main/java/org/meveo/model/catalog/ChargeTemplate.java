@@ -36,6 +36,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessCFEntity;
@@ -77,9 +78,11 @@ public class ChargeTemplate extends BusinessCFEntity {
 	private List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
 
 	@Column(name = "INPUT_UNIT_DESCRIPTION", length = 20)
+    @Size(max = 20)
 	private String inputUnitDescription;
 	
 	@Column(name = "RATING_UNIT_DESCRIPTION", length = 20)
+    @Size(max = 20)
 	private String ratingUnitDescription;
 	
 	@Column(name = "UNIT_MULTIPLICATOR", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
