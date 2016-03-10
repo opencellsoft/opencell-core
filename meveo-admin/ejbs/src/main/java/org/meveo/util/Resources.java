@@ -16,7 +16,7 @@
  */
 package org.meveo.util;
 
-import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -28,7 +28,7 @@ import org.jboss.solder.core.ExtensionManaged;
 public class Resources {
 
     @ExtensionManaged
-    @ConversationScoped
+    @RequestScoped
     @Produces
     @PersistenceUnit(unitName = "MeveoAdmin")
     @MeveoJpa
