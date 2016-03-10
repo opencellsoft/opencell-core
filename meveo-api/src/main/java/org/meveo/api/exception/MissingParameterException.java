@@ -17,6 +17,7 @@ public class MissingParameterException extends MeveoApiException {
 
     public MissingParameterException(List<String> missingFields) {
         super(composeMessage(missingFields));
+        setErrorCode(MeveoApiErrorCodeEnum.MISSING_PARAMETER);
     }
 
     private static String composeMessage(List<String> missingFields) {

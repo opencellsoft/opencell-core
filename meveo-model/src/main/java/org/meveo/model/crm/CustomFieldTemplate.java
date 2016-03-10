@@ -23,6 +23,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
@@ -54,9 +55,12 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     @Column(name = "FIELD_TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
+    @NotNull
     private CustomFieldTypeEnum fieldType;
 
     @Column(name = "APPLIES_TO", nullable = false, length = 100)
+    @Size(max = 100)
+    @NotNull
     private String appliesTo;
 
     @Column(name = "VALUE_REQUIRED")
@@ -87,16 +91,19 @@ public class CustomFieldTemplate extends BusinessEntity {
     private Integer cacheValueTimeperiod;
 
     @Column(name = "DEFAULT_VALUE", length = 50)
+    @Size(max = 50)
     private String defaultValue;
 
-    @Column(name = "ENTITY_CLAZZ")
+    @Column(name = "ENTITY_CLAZZ", length = 255)
+    @Size(max = 255)
     private String entityClazz;
 
     @Column(name = "STORAGE_TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
+    @NotNull
     private CustomFieldStorageTypeEnum storageType = CustomFieldStorageTypeEnum.SINGLE;
 
-    @Column(name = "MAPKEY_TYPE", nullable = false)
+    @Column(name = "MAPKEY_TYPE")
     @Enumerated(EnumType.STRING)
     private CustomFieldMapKeyEnum mapKeyType;
 
@@ -104,6 +111,7 @@ public class CustomFieldTemplate extends BusinessEntity {
     private boolean triggerEndPeriodEvent;
 
     @Column(name = "GUI_POSITION", length = 100)
+    @Size(max = 100)
     private String guiPosition;
 
     @Column(name = "ALLOW_EDIT")
@@ -119,6 +127,7 @@ public class CustomFieldTemplate extends BusinessEntity {
     private Long minValue;
 
     @Column(name = "REG_EXP", length = 80)
+    @Size(max = 80)
     private String regExp;
 
     @Column(name = "APPLICABLE_ON_EL", length = 150)
