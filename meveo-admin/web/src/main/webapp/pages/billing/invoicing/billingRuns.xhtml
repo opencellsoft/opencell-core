@@ -32,7 +32,20 @@
 
 		<hftl:dataList label="#{messages['billingRuns.title']}"
 			backingBean="#{billingRunListBean}"  sortOrder="descending">
-			<hftl:column label="Id" field="id" />
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="#{messages['role.id']}" />
+				</f:facet>
+				<h:link id="showInvoices" outcome="postInvoicingReports"
+					rendered="#{entity.status.toString() == 'VALIDATED'}"
+					value="#{entity.id}">
+					<f:param name="objectId" value="#{entity.id}" />
+					<f:param name="postReport" value="true" />
+					<f:param name="cid"
+						value="#{javax.enterprise.context.conversation.id}" />
+				</h:link>
+				<h:outputText value="#{entity.id}" rendered="#{entity.status.toString() != 'VALIDATED'}" />
+			</p:column>
 			<hftl:column label="#{messages['billingRun.status']}" field="status.label" isMessage="true" />
 			<hftl:column label="#{messages['billingRun.processDate']}"
 				field="processDate" isDate="true"/>

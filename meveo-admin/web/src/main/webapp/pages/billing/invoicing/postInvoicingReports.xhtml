@@ -168,7 +168,8 @@
 				showEffect="slide" hideEffect="slide" />
 			<p:commandButton id="excludeBa" style="left:10px; top:-26px" 
 				value="#{messages['postInvoicingReport.excludeBillingAccounts']}"
-				update=":results_form :messages" action="#{invoiceBean.excludeBillingAccounts(billingRunBean.entity)}" rendered="#{billingRunBean.entity.getInvoices().size()>0}">
+				update=":results_form :messages" action="#{invoiceBean.excludeBillingAccounts(billingRunBean.entity)}" 
+				rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED' and billingRunBean.entity.getInvoices().size()>0}">
 				<p:confirm header="#{messages['message.confirmation']}"
 					message="#{messages['commons.excludeBillingAccounts']}"
 					icon="ui-icon-alert" />
@@ -237,14 +238,19 @@
 		<h:form id="operationsForm" rendered="#{!edit}">
 			<div class="action-buttons">
 				<p:commandButton action="#{billingRunBean.validateInvoicing()}"
-					value="#{messages['action.validate']}" />
+					value="#{messages['action.validate']}" 
+					rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED'}"/>
 				<!-- <h:commandButton
 				action="#{billingRunBean.rerateConfirmedInvoicing()}"
 				value="Rerate" /> -->
 				<p:commandButton
 					action="#{billingRunBean.cancelConfirmedInvoicing()}"
 					value="#{messages['action.cancel']}"
+					rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED'}"
 					onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}" />
+				<p:button id="backToBillingRuns" outcome="billingRuns"
+					value="#{messages['action.back']}"
+					rendered="#{billingRunBean.entity.status.toString() == 'VALIDATED'}" />
 			</div>
 		</h:form>
 	</ui:define>
