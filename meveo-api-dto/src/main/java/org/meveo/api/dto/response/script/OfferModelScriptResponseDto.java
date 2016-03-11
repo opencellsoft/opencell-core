@@ -26,4 +26,10 @@ public class OfferModelScriptResponseDto extends BaseResponse {
 		this.offerModelScript = offerModelScript;
 	}
 
+	@Override
+	public String toString() {
+		return "OfferModelScriptResponseDto [offerModelScript=" + offerModelScript + ", toString()=" + super.toString()
+				+ "]";
+	}
+
 }

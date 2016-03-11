@@ -16,66 +16,66 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.CustomScript;
-import org.meveo.model.scripts.OfferModelScript;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
-import org.meveo.service.script.offer.OfferScriptInterface;
+import org.meveo.model.scripts.ServiceModelScript;
+import org.meveo.service.script.service.ServiceScriptInterface;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Singleton
 @Startup
-public class OfferModelScriptService extends CustomScriptService<OfferModelScript, OfferScriptInterface> {
+public class ServiceModelScriptService extends CustomScriptService<ServiceModelScript, ServiceScriptInterface> {
 
 	@Inject
 	private ResourceBundle resourceMessages;
 
 	@Override
-	public void create(OfferModelScript offerModelScript, User creator, Provider provider) {
-		String packageName = getPackageName(offerModelScript.getScript());
-		String className = getClassName(offerModelScript.getScript());
+	public void create(ServiceModelScript serviceModelScript, User creator, Provider provider) {
+		String packageName = getPackageName(serviceModelScript.getScript());
+		String className = getClassName(serviceModelScript.getScript());
 		if (packageName == null || className == null) {
-			throw new RuntimeException(resourceMessages.getString("message.OfferModelScript.sourceInvalid"));
+			throw new RuntimeException(resourceMessages.getString("message.ServiceModelScript.sourceInvalid"));
 		}
-		offerModelScript.setCode(packageName + "." + className);
+		serviceModelScript.setCode(packageName + "." + className);
 
-		super.create(offerModelScript, creator, provider);
+		super.create(serviceModelScript, creator, provider);
 	}
 
 	@Override
-	public OfferModelScript update(OfferModelScript offerModelScript, User updater) {
+	public ServiceModelScript update(ServiceModelScript serviceModelScript, User updater) {
 
-		String packageName = getPackageName(offerModelScript.getScript());
-		String className = getClassName(offerModelScript.getScript());
+		String packageName = getPackageName(serviceModelScript.getScript());
+		String className = getClassName(serviceModelScript.getScript());
 		if (packageName == null || className == null) {
-			throw new RuntimeException(resourceMessages.getString("message.OfferModelScript.sourceInvalid"));
+			throw new RuntimeException(resourceMessages.getString("message.ServiceModelScript.sourceInvalid"));
 		}
-		offerModelScript.setCode(packageName + "." + className);
+		serviceModelScript.setCode(packageName + "." + className);
 
-		offerModelScript = super.update(offerModelScript, updater);
+		serviceModelScript = super.update(serviceModelScript, updater);
 
-		return offerModelScript;
+		return serviceModelScript;
 	}
 
 	/**
-	 * Get all OfferModelScripts with error for a provider
+	 * Get all ServiceModelScripts with error for a provider
 	 * 
 	 * @param provider
 	 * @return
 	 */
-	public List<CustomScript> getOfferModelScriptsWithError(Provider provider) {
+	public List<CustomScript> getServiceModelScriptsWithError(Provider provider) {
 		return ((List<CustomScript>) getEntityManager()
-				.createNamedQuery("CustomScript.getOfferModelScriptOnError", CustomScript.class)
+				.createNamedQuery("CustomScript.getServiceModelScriptOnError", CustomScript.class)
 				.setParameter("isError", Boolean.TRUE).setParameter("provider", provider).getResultList());
 	}
 
 	/**
-	 * Compile all OfferModelScripts
+	 * Compile all ServiceModelScripts
 	 */
 	@PostConstruct
 	void compileAll() {
-		List<OfferModelScript> offerModelScripts = findByType(ScriptSourceTypeEnum.JAVA);
-		compile(offerModelScripts);
+		List<ServiceModelScript> ServiceModelScripts = findByType(ScriptSourceTypeEnum.JAVA);
+		compile(ServiceModelScripts);
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class OfferModelScriptService extends CustomScriptService<OfferModelScrip
 	 * methods are called.
 	 * 
 	 * @param scriptCode
-	 *            OfferModelScriptCode
+	 *            ServiceModelScriptCode
 	 * @param context
 	 *            Context parameters (optional)
 	 * @param currentUser
@@ -105,7 +105,7 @@ public class OfferModelScriptService extends CustomScriptService<OfferModelScrip
 			InvalidPermissionException, BusinessException {
 		return super.execute(scriptCode, context, currentUser, currentProvider);
 	}
-
+	
 	public String getDerivedCode(String script) {
 		return getPackageName(script) + "." + getClassName(script);
 	}

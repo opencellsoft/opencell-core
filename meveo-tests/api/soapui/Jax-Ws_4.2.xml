@@ -34639,6 +34639,24 @@
   <wsdl:import location="http://localhost:8080/meveo/ScriptWs?wsdl=ScriptWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="ScriptWsSoapBinding" type="ns1:ScriptWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="createOrUpdateServiceModelScript">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateServiceModelScript">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateServiceModelScriptResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createServiceModelScript">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createServiceModelScript">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createServiceModelScriptResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="index">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="index">
@@ -34663,6 +34681,33 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="removeOfferModelScriptResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateServiceModelScript">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateServiceModelScript">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateServiceModelScriptResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeServiceModelScript">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeServiceModelScript">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeServiceModelScriptResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findServiceModelScript">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findServiceModelScript">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findServiceModelScriptResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -34705,39 +34750,36 @@
       <xs:element name="ActionStatus" type="tns:ActionStatus"/>
       <xs:element name="OfferModelScript" type="tns:offerModelScriptDto"/>
       <xs:element name="OfferModelScriptResponse" type="tns:offerModelScriptResponseDto"/>
+      <xs:element name="ServiceModelScript" type="tns:serviceModelScriptDto"/>
+      <xs:element name="ServiceModelScriptResponse" type="tns:serviceModelScriptResponseDto"/>
       <xs:element name="createOfferModelScript" type="tns:createOfferModelScript"/>
       <xs:element name="createOfferModelScriptResponse" type="tns:createOfferModelScriptResponse"/>
       <xs:element name="createOrUpdateOfferModelScript" type="tns:createOrUpdateOfferModelScript"/>
       <xs:element name="createOrUpdateOfferModelScriptResponse" type="tns:createOrUpdateOfferModelScriptResponse"/>
+      <xs:element name="createOrUpdateServiceModelScript" type="tns:createOrUpdateServiceModelScript"/>
+      <xs:element name="createOrUpdateServiceModelScriptResponse" type="tns:createOrUpdateServiceModelScriptResponse"/>
+      <xs:element name="createServiceModelScript" type="tns:createServiceModelScript"/>
+      <xs:element name="createServiceModelScriptResponse" type="tns:createServiceModelScriptResponse"/>
       <xs:element name="findOfferModelScript" type="tns:findOfferModelScript"/>
       <xs:element name="findOfferModelScriptResponse" type="tns:findOfferModelScriptResponse"/>
+      <xs:element name="findServiceModelScript" type="tns:findServiceModelScript"/>
+      <xs:element name="findServiceModelScriptResponse" type="tns:findServiceModelScriptResponse"/>
       <xs:element name="index" type="tns:index"/>
       <xs:element name="indexResponse" type="tns:indexResponse"/>
       <xs:element name="removeOfferModelScript" type="tns:removeOfferModelScript"/>
       <xs:element name="removeOfferModelScriptResponse" type="tns:removeOfferModelScriptResponse"/>
+      <xs:element name="removeServiceModelScript" type="tns:removeServiceModelScript"/>
+      <xs:element name="removeServiceModelScriptResponse" type="tns:removeServiceModelScriptResponse"/>
       <xs:element name="updateOfferModelScript" type="tns:updateOfferModelScript"/>
       <xs:element name="updateOfferModelScriptResponse" type="tns:updateOfferModelScriptResponse"/>
-      <xs:complexType name="index">
-        <xs:sequence/>
-      </xs:complexType>
-      <xs:complexType name="indexResponse">
+      <xs:element name="updateServiceModelScript" type="tns:updateServiceModelScript"/>
+      <xs:element name="updateServiceModelScriptResponse" type="tns:updateServiceModelScriptResponse"/>
+      <xs:complexType name="createOrUpdateServiceModelScript">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+          <xs:element minOccurs="0" name="serviceModelScript" type="tns:serviceModelScriptDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="ActionStatus">
-        <xs:sequence>
-          <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element minOccurs="0" name="errorCode" type="tns:meveoApiErrorCodeEnum"/>
-          <xs:element name="message" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateOfferModelScript">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="offerModelScript" type="tns:offerModelScriptDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="offerModelScriptDto">
+      <xs:complexType name="serviceModelScriptDto">
         <xs:complexContent>
           <xs:extension base="tns:customScriptDto">
             <xs:sequence/>
@@ -34759,7 +34801,59 @@
       <xs:complexType abstract="true" name="baseDto">
         <xs:sequence/>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateServiceModelScriptResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ActionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element minOccurs="0" name="errorCode" type="tns:meveoApiErrorCodeEnum"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createServiceModelScript">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="serviceModelScript" type="tns:serviceModelScriptDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createServiceModelScriptResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="index">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="indexResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateOfferModelScript">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="offerModelScript" type="tns:offerModelScriptDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="offerModelScriptDto">
+        <xs:complexContent>
+          <xs:extension base="tns:customScriptDto">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
       <xs:complexType name="createOrUpdateOfferModelScriptResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateServiceModelScript">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="serviceModelScript" type="tns:serviceModelScriptDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateServiceModelScriptResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
@@ -34772,6 +34866,40 @@
       <xs:complexType name="removeOfferModelScriptResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeServiceModelScript">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="serviceModelScriptCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeServiceModelScriptResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findServiceModelScript">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="serviceModelScriptCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findServiceModelScriptResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:serviceModelScriptResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="serviceModelScriptResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="serviceModelScript" type="tns:serviceModelScriptDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateOfferModelScript">
@@ -34802,11 +34930,6 @@
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType abstract="true" name="baseResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="actionStatus" type="tns:ActionStatus"/>
-        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOfferModelScript">
         <xs:sequence>
@@ -34842,29 +34965,56 @@
       </xs:simpleType>
     </xs:schema>
   </wsdl:types>
-  <wsdl:message name="index">
-    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  <wsdl:message name="createOrUpdateServiceModelScriptResponse">
+    <wsdl:part element="ns1:createOrUpdateServiceModelScriptResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateOfferModelScriptResponse">
     <wsdl:part element="ns1:updateOfferModelScriptResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateOfferModelScriptResponse">
-    <wsdl:part element="ns1:createOrUpdateOfferModelScriptResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="findServiceModelScript">
+    <wsdl:part element="ns1:findServiceModelScript" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createServiceModelScriptResponse">
+    <wsdl:part element="ns1:createServiceModelScriptResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdateOfferModelScript">
     <wsdl:part element="ns1:createOrUpdateOfferModelScript" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOfferModelScriptResponse">
-    <wsdl:part element="ns1:createOfferModelScriptResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findOfferModelScriptResponse">
     <wsdl:part element="ns1:findOfferModelScriptResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findOfferModelScript">
-    <wsdl:part element="ns1:findOfferModelScript" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateOfferModelScript">
     <wsdl:part element="ns1:updateOfferModelScript" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="indexResponse">
+    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createServiceModelScript">
+    <wsdl:part element="ns1:createServiceModelScript" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeServiceModelScript">
+    <wsdl:part element="ns1:removeServiceModelScript" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeServiceModelScriptResponse">
+    <wsdl:part element="ns1:removeServiceModelScriptResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateOfferModelScriptResponse">
+    <wsdl:part element="ns1:createOrUpdateOfferModelScriptResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateServiceModelScriptResponse">
+    <wsdl:part element="ns1:updateServiceModelScriptResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOfferModelScriptResponse">
+    <wsdl:part element="ns1:createOfferModelScriptResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateServiceModelScript">
+    <wsdl:part element="ns1:updateServiceModelScript" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findOfferModelScript">
+    <wsdl:part element="ns1:findOfferModelScript" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeOfferModelScriptResponse">
     <wsdl:part element="ns1:removeOfferModelScriptResponse" name="parameters"></wsdl:part>
@@ -34872,13 +35022,24 @@
   <wsdl:message name="createOfferModelScript">
     <wsdl:part element="ns1:createOfferModelScript" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateServiceModelScript">
+    <wsdl:part element="ns1:createOrUpdateServiceModelScript" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeOfferModelScript">
     <wsdl:part element="ns1:removeOfferModelScript" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="indexResponse">
-    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="findServiceModelScriptResponse">
+    <wsdl:part element="ns1:findServiceModelScriptResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:portType name="ScriptWs">
+    <wsdl:operation name="createOrUpdateServiceModelScript">
+      <wsdl:input message="ns1:createOrUpdateServiceModelScript" name="createOrUpdateServiceModelScript"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateServiceModelScriptResponse" name="createOrUpdateServiceModelScriptResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createServiceModelScript">
+      <wsdl:input message="ns1:createServiceModelScript" name="createServiceModelScript"></wsdl:input>
+      <wsdl:output message="ns1:createServiceModelScriptResponse" name="createServiceModelScriptResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="index">
       <wsdl:input message="ns1:index" name="index"></wsdl:input>
       <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
@@ -34887,9 +35048,21 @@
       <wsdl:input message="ns1:createOrUpdateOfferModelScript" name="createOrUpdateOfferModelScript"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateOfferModelScriptResponse" name="createOrUpdateOfferModelScriptResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateServiceModelScript">
+      <wsdl:input message="ns1:updateServiceModelScript" name="updateServiceModelScript"></wsdl:input>
+      <wsdl:output message="ns1:updateServiceModelScriptResponse" name="updateServiceModelScriptResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeOfferModelScript">
       <wsdl:input message="ns1:removeOfferModelScript" name="removeOfferModelScript"></wsdl:input>
       <wsdl:output message="ns1:removeOfferModelScriptResponse" name="removeOfferModelScriptResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeServiceModelScript">
+      <wsdl:input message="ns1:removeServiceModelScript" name="removeServiceModelScript"></wsdl:input>
+      <wsdl:output message="ns1:removeServiceModelScriptResponse" name="removeServiceModelScriptResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findServiceModelScript">
+      <wsdl:input message="ns1:findServiceModelScript" name="findServiceModelScript"></wsdl:input>
+      <wsdl:output message="ns1:findServiceModelScriptResponse" name="findServiceModelScriptResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updateOfferModelScript">
       <wsdl:input message="ns1:updateOfferModelScript" name="updateOfferModelScript"></wsdl:input>
@@ -34961,7 +35134,59 @@
          </offerModelScript>\r
       </ws:updateOfferModelScript>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptWs/updateOfferModelScript"/></con:call></con:operation></con:interface><con:testSuite id="e734e237-ed42-4c1a-9392-f113827bea4b" name="#1089_crm_new account_type_hierarchy"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="afee19fb-16ed-4427-9560-eb51c75772db" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create" searchProperties="true"><con:settings/><con:testStep type="request" name="S" id="0b6f566b-bd40-4798-b83b-15dc08fb4bc6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCRMAccountHierarchy</con:operation><con:request name="S" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptWs/updateOfferModelScript"/></con:call></con:operation><con:operation id="c1b6e517-f284-433c-8f16-8b0bc7904c7a" isOneWay="false" action="" name="createOrUpdateServiceModelScript" bindingOperationName="createOrUpdateServiceModelScript" type="Request-Response" outputName="createOrUpdateServiceModelScriptResponse" inputName="createOrUpdateServiceModelScript" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c52c2e53-83ef-44bb-b08b-344209b94355" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateServiceModelScript>\r
+         <!--Optional:-->\r
+         <serviceModelScript code="?" description="?">\r
+            <!--Optional:-->\r
+            <type>?</type>\r
+            <script>?</script>\r
+         </serviceModelScript>\r
+      </ws:createOrUpdateServiceModelScript>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptWs/createOrUpdateServiceModelScript"/></con:call></con:operation><con:operation id="bbb9542a-f107-4d37-b2b7-f1dd5cb04366" isOneWay="false" action="" name="createServiceModelScript" bindingOperationName="createServiceModelScript" type="Request-Response" outputName="createServiceModelScriptResponse" inputName="createServiceModelScript" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="3302aef2-4f15-42af-899a-6a465c98edf6" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createServiceModelScript>\r
+         <!--Optional:-->\r
+         <serviceModelScript code="?" description="?">\r
+            <!--Optional:-->\r
+            <type>?</type>\r
+            <script>?</script>\r
+         </serviceModelScript>\r
+      </ws:createServiceModelScript>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptWs/createServiceModelScript"/></con:call></con:operation><con:operation id="5bc0508d-e646-40c2-b15b-382b6c7aaa1f" isOneWay="false" action="" name="updateServiceModelScript" bindingOperationName="updateServiceModelScript" type="Request-Response" outputName="updateServiceModelScriptResponse" inputName="updateServiceModelScript" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="ecfda429-a698-4efb-ad76-4798e9db72b6" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateServiceModelScript>\r
+         <!--Optional:-->\r
+         <serviceModelScript code="?" description="?">\r
+            <!--Optional:-->\r
+            <type>?</type>\r
+            <script>?</script>\r
+         </serviceModelScript>\r
+      </ws:updateServiceModelScript>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptWs/updateServiceModelScript"/></con:call></con:operation><con:operation id="fff64303-269a-406c-b5a7-17e0beb08764" isOneWay="false" action="" name="removeServiceModelScript" bindingOperationName="removeServiceModelScript" type="Request-Response" outputName="removeServiceModelScriptResponse" inputName="removeServiceModelScript" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="df4cce03-6feb-476f-8fd1-2cbac7c1ea25" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeServiceModelScript>\r
+         <!--Optional:-->\r
+         <serviceModelScriptCode>?</serviceModelScriptCode>\r
+      </ws:removeServiceModelScript>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptWs/removeServiceModelScript"/></con:call></con:operation><con:operation id="8fe3dc39-d560-4a03-9cdf-112973d4b049" isOneWay="false" action="" name="findServiceModelScript" bindingOperationName="findServiceModelScript" type="Request-Response" outputName="findServiceModelScriptResponse" inputName="findServiceModelScript" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5eba0f8f-3062-42ad-8607-c48bd2a3b24e" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findServiceModelScript>\r
+         <!--Optional:-->\r
+         <serviceModelScriptCode>?</serviceModelScriptCode>\r
+      </ws:findServiceModelScript>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptWs/findServiceModelScript"/></con:call></con:operation></con:interface><con:testSuite id="e734e237-ed42-4c1a-9392-f113827bea4b" name="#1089_crm_new account_type_hierarchy"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="afee19fb-16ed-4427-9560-eb51c75772db" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create" searchProperties="true"><con:settings/><con:testStep type="request" name="S" id="0b6f566b-bd40-4798-b83b-15dc08fb4bc6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCRMAccountHierarchy</con:operation><con:request name="S" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
@@ -44969,9 +45194,9 @@ import org.meveo.service.script.offer.OfferScriptInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BOMCatalog_3OMScript extends Script implements OfferScriptInterface {
+public class ${#TestSuite#ticket}_OMScript1 extends Script implements OfferScriptInterface {
   
-  	private static final Logger log = LoggerFactory.getLogger(BOMCatalog_3OMScript.class);
+  	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}_OMScript1.class);
 
   @Override
 	public void create(Map<String, Object> methodContext, Provider provider, User currentUser) {
@@ -45233,7 +45458,7 @@ public class BOMCatalog_3OMScript extends Script implements OfferScriptInterface
          <businessOfferModel code="${#TestSuite#ticket}PLAN_ONE_LEVEL" description="${#TestSuite#ticket}PLAN_ONE_LEVEL">\r
             <offerTemplateCode>${#TestSuite#ticket}PLAN_ONE_LEVEL</offerTemplateCode>\r
             <!--Optional:-->\r
-            <scriptCode>${#TestSuite#ticket}_OMScript1</scriptCode>\r
+            <scriptCode>org.meveo.service.script.${#TestSuite#ticket}_OMScript1</scriptCode>\r
          </businessOfferModel>\r
       </ws:createBusinessOfferModel>\r
    </soapenv:Body>\r
@@ -45436,7 +45661,7 @@ public class BOMCatalog_3OMScript extends Script implements OfferScriptInterface
          </terminateSubscription>\r
       </ws:terminateSubscription>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="abe39448-091b-405e-98f3-d26c3e658ca6"/><con:assertion type="Simple Contains" id="ec8586d7-c243-4661-915d-ddbf6a19ec67" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>BOMCatalog_3</con:value></con:property><con:property><con:name>terminationDate</con:name><con:value>2015-12-23</con:value></con:property></con:properties></con:testSuite><con:testSuite id="d3e42d43-30fa-4afe-a91a-30149f59d935" name="#filter_use_case"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="e88a0bd1-cdbb-4484-9028-4c097eed235c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create catalog" searchProperties="true"><con:settings/><con:testStep type="request" name="create counter template PLAN_COUNTER" id="1b8d9274-3878-4ac4-9d7b-19768a678a28"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomerAccount</con:operation><con:request name="create counter template PLAN_COUNTER" id="c024bcc6-b433-4497-82c6-e231d9645796"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="abe39448-091b-405e-98f3-d26c3e658ca6"/><con:assertion type="Simple Contains" id="ec8586d7-c243-4661-915d-ddbf6a19ec67" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>BOMCatalog_7</con:value></con:property><con:property><con:name>terminationDate</con:name><con:value>2015-12-23</con:value></con:property></con:properties></con:testSuite><con:testSuite id="d3e42d43-30fa-4afe-a91a-30149f59d935" name="#filter_use_case"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="e88a0bd1-cdbb-4484-9028-4c097eed235c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create catalog" searchProperties="true"><con:settings/><con:testStep type="request" name="create counter template PLAN_COUNTER" id="1b8d9274-3878-4ac4-9d7b-19768a678a28"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomerAccount</con:operation><con:request name="create counter template PLAN_COUNTER" id="c024bcc6-b433-4497-82c6-e231d9645796"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCounterTemplate>
@@ -53440,7 +53665,7 @@ import org.meveo.model.crm.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ${#TestSuite#ticket}OMScript implements OfferScriptInterface {
+public class ${#TestSuite#ticket}_OMScript1 implements OfferScriptInterface {
   
   	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}OMScript.class);
 
@@ -53490,7 +53715,7 @@ import org.meveo.model.crm.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ${#TestSuite#ticket}OMScript implements OfferScriptInterface {
+public class ${#TestSuite#ticket}_OMScript1 implements OfferScriptInterface {
   
   	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}OMScript.class);
 
@@ -53524,7 +53749,7 @@ public class ${#TestSuite#ticket}OMScript implements OfferScriptInterface {
    <soapenv:Body>\r
       <ws:findOfferModelScript>\r
          <!--Optional:-->\r
-         <offerModelScriptCode>${#TestSuite#ticket}_OMScript1</offerModelScriptCode>\r
+         <offerModelScriptCode>org.meveo.service.script.${#TestSuite#ticket}_OMScript1</offerModelScriptCode>\r
       </ws:findOfferModelScript>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="228335e7-749c-4804-888c-344f1f665be8"/><con:assertion type="Simple Contains" id="ab29ccef-e472-48fd-865b-fb68fb1c38f8" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="delete" id="3e4322bf-9147-492e-b2c9-877f3b1cfa97"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptWsSoapBinding</con:interface><con:operation>removeOfferModelScript</con:operation><con:request name="delete" id="e86b64d5-eddb-4e2b-9f6d-4df904221fce"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
@@ -53532,7 +53757,7 @@ public class ${#TestSuite#ticket}OMScript implements OfferScriptInterface {
    <soapenv:Body>\r
       <ws:removeOfferModelScript>\r
          <!--Optional:-->\r
-         <offerModelScriptCode>${#TestSuite#ticket}_OMScript1</offerModelScriptCode>\r
+         <offerModelScriptCode>org.meveo.service.script.${#TestSuite#ticket}_OMScript1</offerModelScriptCode>\r
       </ws:removeOfferModelScript>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="33f81be0-ffb4-485a-b588-282566801d4b"/><con:assertion type="Simple Contains" id="8760deb2-e1c9-4e8f-8ede-2319bd1da2b6" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="createOrUpdate" id="c310de8e-8b60-4f0a-adcf-d2c885578769"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptWsSoapBinding</con:interface><con:operation>createOrUpdateOfferModelScript</con:operation><con:request name="createOrUpdate" id="b42ce413-6e14-403e-9927-6e4bfea8fb09"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
@@ -53556,7 +53781,7 @@ import org.meveo.model.crm.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ${#TestSuite#ticket}OMScript implements OfferScriptInterface {
+public class ${#TestSuite#ticket}_OMScript2 implements OfferScriptInterface {
   
   	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}OMScript.class);
 
@@ -53607,7 +53832,7 @@ import org.meveo.model.crm.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ${#TestSuite#ticket}OMScript implements OfferScriptInterface {
+public class ${#TestSuite#ticket}_OMScript2 implements OfferScriptInterface {
   
   	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}OMScript.class);
 
@@ -53642,7 +53867,7 @@ public class ${#TestSuite#ticket}OMScript implements OfferScriptInterface {
    <soapenv:Body>\r
       <ws:findOfferModelScript>\r
          <!--Optional:-->\r
-         <offerModelScriptCode>${#TestSuite#ticket}_OMScript2</offerModelScriptCode>\r
+         <offerModelScriptCode>org.meveo.service.script.${#TestSuite#ticket}_OMScript2</offerModelScriptCode>\r
       </ws:findOfferModelScript>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="228335e7-749c-4804-888c-344f1f665be8"/><con:assertion type="Simple Contains" id="ab29ccef-e472-48fd-865b-fb68fb1c38f8" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="delete 2" id="6ee9fb52-eaf8-4fef-9f59-0b3583e4a99b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptWsSoapBinding</con:interface><con:operation>removeOfferModelScript</con:operation><con:request name="delete 2" id="e86b64d5-eddb-4e2b-9f6d-4df904221fce"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
@@ -53650,7 +53875,283 @@ public class ${#TestSuite#ticket}OMScript implements OfferScriptInterface {
    <soapenv:Body>\r
       <ws:removeOfferModelScript>\r
          <!--Optional:-->\r
-         <offerModelScriptCode>${#TestSuite#ticket}_OMScript2</offerModelScriptCode>\r
+         <offerModelScriptCode>org.meveo.service.script.${#TestSuite#ticket}_OMScript2</offerModelScriptCode>\r
       </ws:removeOfferModelScript>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="33f81be0-ffb4-485a-b588-282566801d4b"/><con:assertion type="Simple Contains" id="8760deb2-e1c9-4e8f-8ede-2319bd1da2b6" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1549</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" outgoingWss="" wssTimeToLive="">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="33f81be0-ffb4-485a-b588-282566801d4b"/><con:assertion type="Simple Contains" id="8760deb2-e1c9-4e8f-8ede-2319bd1da2b6" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>OM_1549_</con:value></con:property></con:properties></con:testSuite><con:testSuite id="53a02ac6-c598-4b17-9894-dd8264511506" name="#1552_service_model_script"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="d42e358b-5f8b-452c-aed8-9e607e6186f0" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase 1" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="43c2875f-ef53-457e-bb9e-45528d04b028"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptWsSoapBinding</con:interface><con:operation>createServiceModelScript</con:operation><con:request name="create" id="5d259a2e-5446-458d-a952-2503495dcfea"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ScriptWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createServiceModelScript>\r
+         <!--Optional:-->\r
+         <serviceModelScript code="${#TestSuite#ticket}_SMScript1" description="${#TestSuite#ticket}_SMScript1">\r
+            <!--Optional:-->\r
+            <type>JAVA</type>\r
+            <script>
+
+<![CDATA[
+package org.meveo.service.script;
+
+import java.util.Map;
+import java.math.BigDecimal;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ${#TestSuite#ticket}_SMScript1 implements ServiceScriptInterface {
+
+	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}SMScript.class);
+
+	public void create(Map<String, Object> methodContext, Provider provider, User currentUser) {
+		log.debug("serviceModelScript creation...");	
+	}
+
+	public void update(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript update...");	
+	}
+
+	public void instantiate(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript instantiate...");	
+	}
+
+	public void activate(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript activate...");	
+	}
+
+	public void suspend(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript suspend...");	
+	}
+
+	public void reactivate(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript reactivate...");	
+	}
+
+	public void terminate(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript terminate...");	
+	}
+
+}
+
+]]]]>><![CDATA[
+            
+            </script>\r
+         </serviceModelScript>\r
+      </ws:createServiceModelScript>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="6606bc17-4bef-4e7e-b630-12e5f4dc956f"/><con:assertion type="Simple Contains" id="7549b2c9-46b3-4120-a903-dea0c30a4200" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update" id="221642c3-112a-43ef-ba77-acda9a723613"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptWsSoapBinding</con:interface><con:operation>updateServiceModelScript</con:operation><con:request name="update" id="86b5fc74-c984-4399-860f-ea3eab1fd147"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ScriptWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateServiceModelScript>\r
+         <!--Optional:-->\r
+         <serviceModelScript code="org.meveo.service.script.${#TestSuite#ticket}_SMScript1" description="${#TestSuite#ticket}_SMScript1-updated">\r
+            <!--Optional:-->\r
+            <type>JAVA</type>\r
+            <script>
+
+<![CDATA[
+package org.meveo.service.script;
+
+import java.util.Map;
+import java.math.BigDecimal;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ${#TestSuite#ticket}_SMScript1 implements ServiceScriptInterface {
+
+	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}SMScript.class);
+
+	public void create(Map<String, Object> methodContext, Provider provider, User currentUser) {
+		log.debug("serviceModelScript creation...");	
+	}
+
+	public void update(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript update...");	
+	}
+
+	public void instantiate(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript instantiate...");	
+	}
+
+	public void activate(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript activate...");	
+	}
+
+	public void suspend(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript suspend...");	
+	}
+
+	public void reactivate(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript reactivate...");	
+	}
+
+	public void terminate(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript terminate...");	
+	}
+
+}
+
+]]]]>><![CDATA[
+            
+            </script>\r
+         </serviceModelScript>\r
+      </ws:updateServiceModelScript>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="0714c2a5-79f7-4d04-9b40-ae5867ea5ecc"/><con:assertion type="Simple Contains" id="b8c06c05-8157-44a8-a1a1-83b0a94b56c5" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="get" id="a924a4de-1332-4881-a0d5-7352316165e6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptWsSoapBinding</con:interface><con:operation>findServiceModelScript</con:operation><con:request name="get" id="3f92bd2b-f879-4303-a53e-ae35bab371e2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ScriptWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findServiceModelScript>\r
+         <!--Optional:-->\r
+         <serviceModelScriptCode>org.meveo.service.script.${#TestSuite#ticket}_SMScript1</serviceModelScriptCode>\r
+      </ws:findServiceModelScript>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c19e4568-cb33-4a64-81b6-a486674c5e08"/><con:assertion type="Simple Contains" id="71b74c38-06e8-4c8a-99c8-ee565c2cb351" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="delete" id="c68f1a06-a329-49e1-8ae7-71595a897460"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptWsSoapBinding</con:interface><con:operation>removeServiceModelScript</con:operation><con:request name="delete" id="5b0385a5-b2f5-4344-9ef5-4802f81607ad"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ScriptWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeServiceModelScript>\r
+         <!--Optional:-->\r
+         <serviceModelScriptCode>org.meveo.service.script.${#TestSuite#ticket}_SMScript1</serviceModelScriptCode>\r
+      </ws:removeServiceModelScript>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a94ea1a3-ae27-4505-b510-1dce6ecb208e"/><con:assertion type="Simple Contains" id="245640e1-2367-456d-bceb-9c68e0da976c" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="createOrUpdate" id="62662a66-92bc-4949-aadb-9ab9583c23c2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptWsSoapBinding</con:interface><con:operation>createOrUpdateServiceModelScript</con:operation><con:request name="createOrUpdate" id="23fc7b90-3ac5-43c8-a3b3-19c57aaab85f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ScriptWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateServiceModelScript>\r
+         <!--Optional:-->
+         <serviceModelScript code="org.meveo.service.script.${#TestSuite#ticket}_SMScript2" description="${#TestSuite#ticket}_SMScript2">
+            <!--Optional:-->
+            <type>JAVA</type>
+            <script>
+
+<![CDATA[
+package org.meveo.service.script;
+
+import java.util.Map;
+import java.math.BigDecimal;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ${#TestSuite#ticket}_SMScript2 implements ServiceScriptInterface {
+
+	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}SMScript.class);
+
+	public void create(Map<String, Object> methodContext, Provider provider, User currentUser) {
+		log.debug("serviceModelScript creation...");	
+	}
+
+	public void update(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript update...");	
+	}
+
+	public void instantiate(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript instantiate...");	
+	}
+
+	public void activate(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript activate...");	
+	}
+
+	public void suspend(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript suspend...");	
+	}
+
+	public void reactivate(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript reactivate...");	
+	}
+
+	public void terminate(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript terminate...");	
+	}
+
+}
+
+]]]]>><![CDATA[
+            
+            </script>
+         </serviceModelScript>
+      </ws:createOrUpdateServiceModelScript>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="ba75a778-02fb-471f-baf6-aa771f56626c"/><con:assertion type="Simple Contains" id="284f4761-402c-47d5-8a40-21985cee88d9" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="createOrUpdate - update" id="16a96310-2c9d-4786-b708-a824acb18214"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptWsSoapBinding</con:interface><con:operation>createOrUpdateServiceModelScript</con:operation><con:request name="createOrUpdate - update" id="23fc7b90-3ac5-43c8-a3b3-19c57aaab85f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ScriptWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateServiceModelScript>\r
+         <!--Optional:-->\r
+         <serviceModelScript code="org.meveo.service.script.${#TestSuite#ticket}_SM2" description="${#TestSuite#ticket}_SM2-updated">
+            <!--Optional:-->
+            <type>JAVA</type>
+            <script>
+
+<![CDATA[
+package org.meveo.service.script;
+
+import java.util.Map;
+import java.math.BigDecimal;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ${#TestSuite#ticket}_SMScript2 implements ServiceScriptInterface {
+
+	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}SMScript.class);
+
+	public void create(Map<String, Object> methodContext, Provider provider, User currentUser) {
+		log.debug("serviceModelScript creation...");	
+	}
+
+	public void update(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript update...");	
+	}
+
+	public void instantiate(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript instantiate...");	
+	}
+
+	public void activate(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript activate...");	
+	}
+
+	public void suspend(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript suspend...");	
+	}
+
+	public void reactivate(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript reactivate...");	
+	}
+
+	public void terminate(Map<String, Object> methodContext, Provider provider, User currentUser) {
+	log.debug("serviceModelScript terminate...");	
+	}
+
+}
+
+]]]]>><![CDATA[
+            
+            </script>
+         </serviceModelScript>
+      </ws:createOrUpdateServiceModelScript>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="ba75a778-02fb-471f-baf6-aa771f56626c"/><con:assertion type="Simple Contains" id="28317fc5-19de-4348-a1fc-d477aca5cd50" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="get 2" id="88f55a5f-9a97-4bdb-89e7-a78d7f9552ba"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptWsSoapBinding</con:interface><con:operation>findServiceModelScript</con:operation><con:request name="get 2" id="3f92bd2b-f879-4303-a53e-ae35bab371e2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ScriptWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findServiceModelScript>\r
+         <!--Optional:-->\r
+         <serviceModelScriptCode>org.meveo.service.script.${#TestSuite#ticket}_SMScript2</serviceModelScriptCode>\r
+      </ws:findServiceModelScript>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c19e4568-cb33-4a64-81b6-a486674c5e08"/><con:assertion type="Simple Contains" id="01bcdeec-2614-48cd-a171-8bf3ffd775b8" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="delete 2" id="d87392b8-9e94-450d-9247-3d8b25cbe76e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptWsSoapBinding</con:interface><con:operation>removeServiceModelScript</con:operation><con:request name="delete 2" id="5b0385a5-b2f5-4344-9ef5-4802f81607ad"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ScriptWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeServiceModelScript>\r
+         <!--Optional:-->\r
+         <serviceModelScriptCode>org.meveo.service.script.${#TestSuite#ticket}_SMScript2</serviceModelScriptCode>\r
+      </ws:removeServiceModelScript>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a94ea1a3-ae27-4505-b510-1dce6ecb208e"/><con:assertion type="Simple Contains" id="fe28406f-a839-464c-85e3-ee2dd446f03d" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>SM_1552_</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" outgoingWss="" wssTimeToLive="">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

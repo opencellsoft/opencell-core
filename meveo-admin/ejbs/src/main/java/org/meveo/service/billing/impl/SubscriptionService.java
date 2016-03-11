@@ -50,7 +50,7 @@ import org.meveo.service.script.offer.OfferScriptService;
 public class SubscriptionService extends BusinessService<Subscription> {
 
 	@Inject
-	private OfferScriptService scriptInstanceService;
+	private OfferScriptService offerScriptService;
 
 	@EJB
 	private ServiceInstanceService serviceInstanceService;
@@ -66,7 +66,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		if (subscription.getOffer().getBusinessOfferModel() != null
 				&& subscription.getOffer().getBusinessOfferModel().getScript() != null) {
 			try {
-				scriptInstanceService.subscribe(subscription, subscription.getOffer().getBusinessOfferModel()
+				offerScriptService.subscribe(subscription, subscription.getOffer().getBusinessOfferModel()
 						.getScript().getCode(), creator, provider);
 			} catch (BusinessException e) {
 				log.error("Failed to execute a script {}", subscription.getOffer().getBusinessOfferModel().getScript()
@@ -173,7 +173,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 			scriptContext.put("terminationDate", terminationDate);
 			scriptContext.put("terminationReason", terminationReason);
 
-			scriptInstanceService.terminate(subscription, subscription.getOffer().getBusinessOfferModel().getScript()
+			offerScriptService.terminate(subscription, subscription.getOffer().getBusinessOfferModel().getScript()
 					.getCode(), scriptContext, user, user.getProvider());
 		}
 
