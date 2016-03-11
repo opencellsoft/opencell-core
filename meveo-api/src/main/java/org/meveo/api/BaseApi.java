@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,7 +26,9 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -99,7 +102,7 @@ public abstract class BaseApi {
      * @throws IllegalAccessException
      * @throws MissingParameterException
      * @throws BusinessApiException
-     * @throws InvalidParameterException 
+     * @throws InvalidParameterException
      */
     protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, User currentUser) throws IllegalArgumentException,
             IllegalAccessException, MissingParameterException, BusinessApiException, InvalidParameterException {
@@ -118,7 +121,7 @@ public abstract class BaseApi {
      * @throws IllegalAccessException
      * @throws MissingParameterException
      * @throws BusinessApiException
-     * @throws InvalidParameterException 
+     * @throws InvalidParameterException
      */
     protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, User currentUser, boolean checkCustomField)
             throws IllegalArgumentException, IllegalAccessException, MissingParameterException, BusinessApiException, InvalidParameterException {
@@ -148,11 +151,12 @@ public abstract class BaseApi {
      * @throws IllegalAccessException
      * @throws MissingParameterException
      * @throws BusinessApiException
-     * @throws InvalidParameterException 
+     * @throws InvalidParameterException
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void populateCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, boolean isNewEntity,
-            User currentUser, boolean checkCustomFields) throws IllegalArgumentException, IllegalAccessException, MissingParameterException, BusinessApiException, InvalidParameterException {
+            User currentUser, boolean checkCustomFields) throws IllegalArgumentException, IllegalAccessException, MissingParameterException, BusinessApiException,
+            InvalidParameterException {
 
         // check if any templates are applicable
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
@@ -203,7 +207,19 @@ public abstract class BaseApi {
 
                     Object valueConverted = cfDto.getValueConverted();
                     if (valueConverted instanceof Map) {
-                        valuesToCheck.addAll(((Map) valueConverted).values());
+
+                        // Skip Key item if Storage type is Matrix
+                        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+
+                            for (Entry<String, Object> mapEntry : ((Map<String, Object>) valueConverted).entrySet()) {
+                                if (CustomFieldValue.MAP_KEY.equals(mapEntry.getKey())) {
+                                    continue;
+                                }
+                            }
+
+                        } else {
+                            valuesToCheck.addAll(((Map) valueConverted).values());
+                        }
 
                     } else if (valueConverted instanceof List) {
                         valuesToCheck.addAll((List) valueConverted);

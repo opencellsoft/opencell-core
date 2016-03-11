@@ -1561,7 +1561,7 @@ public class EntityExportImportService implements Serializable {
                     }
                     parameters.put(attributeName, attrValue);
                 }
-            } catch (IllegalAccessException e) {
+            } catch (IllegalAccessException | IllegalArgumentException e) {
                 throw new RuntimeException("Failed to access " + entityToSave.getClass().getName() + "." + attributeName + "field", e);
             }
         }

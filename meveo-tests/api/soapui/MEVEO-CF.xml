@@ -12851,755 +12851,1308 @@
       <wsdl:output message="ns1:activateServicesResponse" name="activateServicesResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint></con:endpoints><con:operation id="01920c32-0161-4c09-84a7-528acd168aea" isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="a0cfa8a5-e743-4bc4-a1e0-9fa863e3bb94" isOneWay="false" action="" name="applyOneShotChargeInstance" bindingOperationName="applyOneShotChargeInstance" type="Request-Response" outputName="applyOneShotChargeInstanceResponse" inputName="applyOneShotChargeInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="bf660402-6cda-4d02-bec7-347dc9233ad9" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="b424369e-8ccb-4796-b824-f4dba1c0c8d8" isOneWay="false" action="" name="createOrUpdateSubscription" bindingOperationName="createOrUpdateSubscription" type="Request-Response" outputName="createOrUpdateSubscriptionResponse" inputName="createOrUpdateSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="c186395a-7d3b-4b5b-9d2d-e100a0e34daa" isOneWay="false" action="" name="findSubscription" bindingOperationName="findSubscription" type="Request-Response" outputName="findSubscriptionResponse" inputName="findSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="83b66ff0-0603-4434-a66e-b773698bc51d" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="1581d29b-75f5-4e8f-842e-a5c4af44d587" isOneWay="false" action="" name="instantiateServices" bindingOperationName="instantiateServices" type="Request-Response" outputName="instantiateServicesResponse" inputName="instantiateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="cc2b7b5c-39cb-4c14-87b1-857a52c35574" isOneWay="false" action="" name="listSubscriptionByUserAccount" bindingOperationName="listSubscriptionByUserAccount" type="Request-Response" outputName="listSubscriptionByUserAccountResponse" inputName="listSubscriptionByUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="b4af1edc-15f9-4866-81ee-f90fbe22cf50" isOneWay="false" action="" name="terminateServices" bindingOperationName="terminateServices" type="Request-Response" outputName="terminateServicesResponse" inputName="terminateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="66c68412-91b2-426f-a06b-771fc3fd628f" isOneWay="false" action="" name="terminateSubscription" bindingOperationName="terminateSubscription" type="Request-Response" outputName="terminateSubscriptionResponse" inputName="terminateSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="1289097b-1e25-4bad-8b50-2079c00fd3c2" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation></con:interface><con:testSuite id="217182c9-4237-4dff-af63-8cad8b3874de" name="CF"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CFT - Create CFT for all entities" searchProperties="true" id="5b439f67-d207-4c93-bb38-f1f1887d7706"><con:settings/><con:testStep type="calltestcase" name="Create CFT for customer" id="050be43f-fda0-42f2-acc2-7ccaac82557d"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CUST</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for customer account" id="145e0c5a-c6f9-4d1d-a1a1-c7963c66dc74"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for billing account" id="305f83e3-a058-4444-a420-c3cb13390241"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>BA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for user account" id="1a538fca-7032-4bbb-87a9-03a8ea56d9bf"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>UA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for subscription" id="571fe5cb-11f3-4c2f-bcc3-46314a5e9a09"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SUB</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for access" id="4c9308f2-2df1-4435-8645-0116fafdc018"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>ACC</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for provider" id="3acd3ae8-a220-4487-b534-aac056c39e42"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>PROVIDER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for service template" id="5346204a-1592-412f-b66c-7c2f5cfeb5fb"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SERVICE</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for offer template" id="ba1027f1-331f-4918-9cb2-da0d4e3f90fc"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>OFFER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for charge template" id="74d70e84-d8b5-4b30-a79d-c8b450dec95d"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CHARGE</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for seller" id="ffa7550a-5947-40c4-88dd-b9428f635afe"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SELLER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties/><con:reportParameters/></con:testCase><con:testCase id="b2563788-a6d0-442a-bac1-3467999e030c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CFT - Test all CF types" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="44a0292e-a0ad-46f1-bfa1-5290ea4bb585"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createSeller</con:operation><con:request name="create" id="fed3e654-710d-40df-9ccd-cb9e29c803b7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createSeller>
-         <seller code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ALL" description="${#TestSuite#ticket}_${#TestSuite#index}_SELLER">
-            <invoicePrefix>TEST</invoicePrefix>
-            <currencyCode>EUR</currencyCode>
-            <countryCode>FR</countryCode>
-            <languageCode>FRA</languageCode>
-            <parentSeller></parentSeller>
-            <customFields>
-               <!--Simple values not versioned-->
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_SINGLE_NV">
-                  <stringValue>SELLER_STRING_VALUE_0</stringValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_SINGLE_NV">
-                  <longValue>15</longValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_SINGLE_NV">
-                  <doubleValue>16.17</doubleValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_SINGLE_NV">
-                  <dateValue>2015-06-01</dateValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_SINGLE_NV">
-                  <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>
-               </customField>
-               <!--Simple values versioned by a calendar-->
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_SINGLE_VC" valueDate="2015-09-10">
-                  <stringValue>SELLER_STRING_VALUE_1</stringValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_SINGLE_VC" valueDate="2015-08-10">
-                  <stringValue>SELLER_STRING_VALUE_2</stringValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_SINGLE_VC" valueDate="2015-09-10">
-                  <longValue>18</longValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_SINGLE_VC" valueDate="2015-08-10">
-                  <longValue>19</longValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_SINGLE_VC" valueDate="2015-09-10">
-                  <doubleValue>20.21</doubleValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_SINGLE_VC" valueDate="2015-08-10">
-                  <doubleValue>22.23</doubleValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_SINGLE_VC" valueDate="2015-09-10">
-                  <dateValue>2014-06-01</dateValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_SINGLE_VC" valueDate="2015-08-10">
-                  <dateValue>2014-05-01</dateValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_SINGLE_VC" valueDate="2015-09-10">
-                  <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_SINGLE_VC" valueDate="2015-08-10">
-                  <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY"/>
-               </customField>
-               <!--Simple values versioned by date range-->
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_SINGLE_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <stringValue>SELLER_STRING_VALUE_3</stringValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_SINGLE_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <stringValue>SELLER_STRING_VALUE_4</stringValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_SINGLE_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <longValue>24</longValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_SINGLE_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <longValue>25</longValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <doubleValue>26.27</doubleValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <doubleValue>28.29</doubleValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_SINGLE_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <dateValue>2013-04-01</dateValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <dateValue>2013-02-01</dateValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_SINGLE_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_SINGLE_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY"/>
-               </customField>
-               <!--List values not versioned-->
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_LIST_NV">
-                  <listValue>
-                     <value>
-                        <stringValue>SELLER_STRING_VALUE_5</stringValue>
-                     </value>
-                     <value>
-                        <stringValue>SELLER_STRING_VALUE_6</stringValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_LIST_NV">
-                  <listValue>
-                     <value>
-                        <longValue>30</longValue>
-                     </value>
-                     <value>
-                        <longValue>31</longValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_LIST_NV">
-                  <listValue>
-                     <value>
-                        <doubleValue>32.33</doubleValue>
-                     </value>
-                     <value>
-                        <doubleValue>34.35</doubleValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_LIST_NV">
-                  <listValue>
-                     <value>
-                        <dateValue>2012-08-01</dateValue>
-                     </value>
-                     <value>
-                        <dateValue>2012-09-01</dateValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_LIST_NV">
-                  <listValue>
-                     <value>
-                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>
-                     </value>
-                     <value>
-                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY"/>
-                     </value>
-                  </listValue>
-               </customField>
-               <!--List values versioned by a calendar-->
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_LIST_VC" valueDate="2015-09-10">
-                  <listValue>
-                     <value>
-                        <stringValue>SELLER_STRING_VALUE_7</stringValue>
-                     </value>
-                     <value>
-                        <stringValue>SELLER_STRING_VALUE_8</stringValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_LIST_VC" valueDate="2015-08-10">
-                  <listValue>
-                     <value>
-                        <stringValue>SELLER_STRING_VALUE_9</stringValue>
-                     </value>
-                     <value>
-                        <stringValue>SELLER_STRING_VALUE_10</stringValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_LIST_VC" valueDate="2015-09-10">
-                  <listValue>
-                     <value>
-                        <longValue>36</longValue>
-                     </value>
-                     <value>
-                        <longValue>37</longValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_LIST_VC" valueDate="2015-08-10">
-                  <listValue>
-                     <value>
-                        <longValue>38</longValue>
-                     </value>
-                     <value>
-                        <longValue>39</longValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_LIST_VC" valueDate="2015-09-10">
-                  <listValue>
-                     <value>
-                        <doubleValue>40.41</doubleValue>
-                     </value>
-                     <value>
-                        <doubleValue>42.43</doubleValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_LIST_VC" valueDate="2015-08-10">
-                  <listValue>
-                     <value>
-                        <doubleValue>44.45</doubleValue>
-                     </value>
-                     <value>
-                        <doubleValue>46.47</doubleValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_LIST_VC" valueDate="2015-09-10">
-                  <listValue>
-                     <value>
-                        <dateValue>2011-08-01</dateValue>
-                     </value>
-                     <value>
-                        <dateValue>2011-09-01</dateValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_LIST_VC" valueDate="2015-08-10">
-                  <listValue>
-                     <value>
-                        <dateValue>2010-08-01</dateValue>
-                     </value>
-                     <value>
-                        <dateValue>2010-09-01</dateValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_LIST_VC" valueDate="2015-09-10">
-                  <listValue>
-                     <value>
-                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY0"/>
-                     </value>
-                     <value>
-                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY0"/>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_LIST_VC" valueDate="2015-08-10">
-                  <listValue>
-                     <value>
-                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY1"/>
-                     </value>
-                     <value>
-                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY1"/>
-                     </value>
-                  </listValue>
-               </customField>
-               <!--List values versioned by date range-->
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_LIST_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <listValue>
-                     <value>
-                        <stringValue>SELLER_STRING_VALUE_11</stringValue>
-                     </value>
-                     <value>
-                        <stringValue>SELLER_STRING_VALUE_12</stringValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_LIST_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <listValue>
-                     <value>
-                        <stringValue>SELLER_STRING_VALUE_13</stringValue>
-                     </value>
-                     <value>
-                        <stringValue>SELLER_STRING_VALUE_14</stringValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_LIST_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <listValue>
-                     <value>
-                        <longValue>48</longValue>
-                     </value>
-                     <value>
-                        <longValue>49</longValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_LIST_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <listValue>
-                     <value>
-                        <longValue>50</longValue>
-                     </value>
-                     <value>
-                        <longValue>51</longValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_LIST_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <listValue>
-                     <value>
-                        <doubleValue>52.53</doubleValue>
-                     </value>
-                     <value>
-                        <doubleValue>54.55</doubleValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_LIST_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <listValue>
-                     <value>
-                        <doubleValue>56.57</doubleValue>
-                     </value>
-                     <value>
-                        <doubleValue>58.59</doubleValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_LIST_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <listValue>
-                     <value>
-                        <dateValue>2009-08-01</dateValue>
-                     </value>
-                     <value>
-                        <dateValue>2009-09-01</dateValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_LIST_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <listValue>
-                     <value>
-                        <dateValue>2008-08-01</dateValue>
-                     </value>
-                     <value>
-                        <dateValue>2008-09-01</dateValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_LIST_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <listValue>
-                     <value>
-                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY2"/>
-                     </value>
-                     <value>
-                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY2"/>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_LIST_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <listValue>
-                     <value>
-                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY3"/>
-                     </value>
-                     <value>
-                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY3"/>
-                     </value>
-                  </listValue>
-               </customField>
-               <!--Map values not versioned-->
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MAP_NV">
-                  <mapValue>
-                     <entry>
-                        <key>a</key>
-                        <value>
-                           <stringValue>SELLER_STRING_VALUE_15</stringValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>b</key>
-                        <value>
-                           <stringValue>SELLER_STRING_VALUE_16</stringValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MAP_NV">
-                  <mapValue>
-                     <entry>
-                        <key>c</key>
-                        <value>
-                           <longValue>60</longValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>d</key>
-                        <value>
-                           <longValue>61</longValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MAP_NV">
-                  <mapValue>
-                     <entry>
-                        <key>e</key>
-                        <value>
-                           <doubleValue>62.63</doubleValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>f</key>
-                        <value>
-                           <doubleValue>64.65</doubleValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MAP_NV">
-                  <mapValue>
-                     <entry>
-                        <key>g</key>
-                        <value>
-                           <dateValue>2008-08-01</dateValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>h</key>
-                        <value>
-                           <dateValue>2008-09-01</dateValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MAP_NV">
-                  <mapValue>
-                     <entry>
-                        <key>i</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>j</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY"/>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <!--Map values versioned by a calendar-->
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MAP_VC" valueDate="2015-09-10">
-                  <mapValue>
-                     <entry>
-                        <key>k</key>
-                        <value>
-                           <stringValue>SELLER_STRING_VALUE_17</stringValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>l</key>
-                        <value>
-                           <stringValue>SELLER_STRING_VALUE_18</stringValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MAP_VC" valueDate="2015-08-10">
-                  <mapValue>
-                     <entry>
-                        <key>m</key>
-                        <value>
-                           <stringValue>SELLER_STRING_VALUE_19</stringValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>n</key>
-                        <value>
-                           <stringValue>SELLER_STRING_VALUE_20</stringValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MAP_VC" valueDate="2015-09-10">
-                  <mapValue>
-                     <entry>
-                        <key>o</key>
-                        <value>
-                           <longValue>66</longValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>p</key>
-                        <value>
-                           <longValue>67</longValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MAP_VC" valueDate="2015-08-10">
-                  <mapValue>
-                     <entry>
-                        <key>q</key>
-                        <value>
-                           <longValue>68</longValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>r</key>
-                        <value>
-                           <longValue>69</longValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MAP_VC" valueDate="2015-09-10">
-                  <mapValue>
-                     <entry>
-                        <key>s</key>
-                        <value>
-                           <doubleValue>70.71</doubleValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>t</key>
-                        <value>
-                           <doubleValue>72.73</doubleValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MAP_VC" valueDate="2015-08-10">
-                  <mapValue>
-                     <entry>
-                        <key>t</key>
-                        <value>
-                           <doubleValue>74.75</doubleValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>v</key>
-                        <value>
-                           <doubleValue>76.77</doubleValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MAP_VC" valueDate="2015-09-10">
-                  <mapValue>
-                     <entry>
-                        <key>x</key>
-                        <value>
-                           <dateValue>2007-08-01</dateValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>y</key>
-                        <value>
-                           <dateValue>2007-09-01</dateValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MAP_VC" valueDate="2015-08-10">
-                  <mapValue>
-                     <entry>
-                        <key>z</key>
-                        <value>
-                           <dateValue>2006-08-01</dateValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>aa</key>
-                        <value>
-                           <dateValue>2006-09-01</dateValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MAP_VC" valueDate="2015-09-10">
-                  <mapValue>
-                     <entry>
-                        <key>bb</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY0"/>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>cc</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY0"/>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MAP_VC" valueDate="2015-08-10">
-                  <mapValue>
-                     <entry>
-                        <key>dd</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY1"/>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>ee</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY1"/>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <!--Map values versioned by date range-->
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <mapValue>
-                     <entry>
-                        <key>ff</key>
-                        <value>
-                           <stringValue>SELLER_STRING_VALUE_21</stringValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>gg</key>
-                        <value>
-                           <stringValue>SELLER_STRING_VALUE_22</stringValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MAP_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <mapValue>
-                     <entry>
-                        <key>hh</key>
-                        <value>
-                           <stringValue>SELLER_STRING_VALUE_23</stringValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>ii</key>
-                        <value>
-                           <stringValue>SELLER_STRING_VALUE_24</stringValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <mapValue>
-                     <entry>
-                        <key>jj</key>
-                        <value>
-                           <longValue>78</longValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>kk</key>
-                        <value>
-                           <longValue>79</longValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MAP_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <mapValue>
-                     <entry>
-                        <key>ll</key>
-                        <value>
-                           <longValue>80</longValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>mm</key>
-                        <value>
-                           <longValue>81</longValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <mapValue>
-                     <entry>
-                        <key>nn</key>
-                        <value>
-                           <doubleValue>82.83</doubleValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>oo</key>
-                        <value>
-                           <doubleValue>84.85</doubleValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MAP_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <mapValue>
-                     <entry>
-                        <key>pp</key>
-                        <value>
-                           <doubleValue>86.87</doubleValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>qq</key>
-                        <value>
-                           <doubleValue>88.89</doubleValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <mapValue>
-                     <entry>
-                        <key>rr</key>
-                        <value>
-                           <dateValue>2005-08-01</dateValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>ss</key>
-                        <value>
-                           <dateValue>2005-09-01</dateValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MAP_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <mapValue>
-                     <entry>
-                        <key>tt</key>
-                        <value>
-                           <dateValue>2004-08-01</dateValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>uu</key>
-                        <value>
-                           <dateValue>2004-09-01</dateValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <mapValue>
-                     <entry>
-                        <key>vv</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY2"/>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>vv</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY2"/>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <mapValue>
-                     <entry>
-                        <key>xx</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY3"/>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>yy</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY3"/>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-            </customFields>
-         </seller>
-      </ws:createSeller>
-   </soapenv:Body>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint></con:endpoints><con:operation id="01920c32-0161-4c09-84a7-528acd168aea" isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="a0cfa8a5-e743-4bc4-a1e0-9fa863e3bb94" isOneWay="false" action="" name="applyOneShotChargeInstance" bindingOperationName="applyOneShotChargeInstance" type="Request-Response" outputName="applyOneShotChargeInstanceResponse" inputName="applyOneShotChargeInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="bf660402-6cda-4d02-bec7-347dc9233ad9" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="b424369e-8ccb-4796-b824-f4dba1c0c8d8" isOneWay="false" action="" name="createOrUpdateSubscription" bindingOperationName="createOrUpdateSubscription" type="Request-Response" outputName="createOrUpdateSubscriptionResponse" inputName="createOrUpdateSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="c186395a-7d3b-4b5b-9d2d-e100a0e34daa" isOneWay="false" action="" name="findSubscription" bindingOperationName="findSubscription" type="Request-Response" outputName="findSubscriptionResponse" inputName="findSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="83b66ff0-0603-4434-a66e-b773698bc51d" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="1581d29b-75f5-4e8f-842e-a5c4af44d587" isOneWay="false" action="" name="instantiateServices" bindingOperationName="instantiateServices" type="Request-Response" outputName="instantiateServicesResponse" inputName="instantiateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="cc2b7b5c-39cb-4c14-87b1-857a52c35574" isOneWay="false" action="" name="listSubscriptionByUserAccount" bindingOperationName="listSubscriptionByUserAccount" type="Request-Response" outputName="listSubscriptionByUserAccountResponse" inputName="listSubscriptionByUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="b4af1edc-15f9-4866-81ee-f90fbe22cf50" isOneWay="false" action="" name="terminateServices" bindingOperationName="terminateServices" type="Request-Response" outputName="terminateServicesResponse" inputName="terminateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="66c68412-91b2-426f-a06b-771fc3fd628f" isOneWay="false" action="" name="terminateSubscription" bindingOperationName="terminateSubscription" type="Request-Response" outputName="terminateSubscriptionResponse" inputName="terminateSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="1289097b-1e25-4bad-8b50-2079c00fd3c2" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation></con:interface><con:testSuite id="217182c9-4237-4dff-af63-8cad8b3874de" name="CF"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CFT - Create CFT for all entities" searchProperties="true" id="5b439f67-d207-4c93-bb38-f1f1887d7706"><con:settings/><con:testStep type="calltestcase" name="Create CFT for customer" id="050be43f-fda0-42f2-acc2-7ccaac82557d"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CUST</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for customer account" id="145e0c5a-c6f9-4d1d-a1a1-c7963c66dc74"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for billing account" id="305f83e3-a058-4444-a420-c3cb13390241"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>BA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for user account" id="1a538fca-7032-4bbb-87a9-03a8ea56d9bf"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>UA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for subscription" id="571fe5cb-11f3-4c2f-bcc3-46314a5e9a09"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SUB</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for access" id="4c9308f2-2df1-4435-8645-0116fafdc018"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>ACC</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for provider" id="3acd3ae8-a220-4487-b534-aac056c39e42"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>PROVIDER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for service template" id="5346204a-1592-412f-b66c-7c2f5cfeb5fb"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SERVICE</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for offer template" id="ba1027f1-331f-4918-9cb2-da0d4e3f90fc"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>OFFER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for charge template" id="74d70e84-d8b5-4b30-a79d-c8b450dec95d"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CHARGE</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for seller" id="ffa7550a-5947-40c4-88dd-b9428f635afe"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SELLER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties/><con:reportParameters/></con:testCase><con:testCase id="b2563788-a6d0-442a-bac1-3467999e030c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CFT - Test all CF types" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="44a0292e-a0ad-46f1-bfa1-5290ea4bb585"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createSeller</con:operation><con:request name="create" id="fed3e654-710d-40df-9ccd-cb9e29c803b7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createSeller>\r
+         <seller code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ALL" description="${#TestSuite#ticket}_${#TestSuite#index}_SELLER">\r
+            <invoicePrefix>TEST</invoicePrefix>\r
+            <currencyCode>EUR</currencyCode>\r
+            <countryCode>FR</countryCode>\r
+            <languageCode>FRA</languageCode>\r
+            <parentSeller/>\r
+            <customFields>\r
+               <!--Simple values not versioned-->\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_SINGLE_NV">\r
+                  <stringValue>SELLER_STRING_VALUE_0</stringValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_SINGLE_NV">\r
+                  <longValue>15</longValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_SINGLE_NV">\r
+                  <doubleValue>16.17</doubleValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_SINGLE_NV">\r
+                  <dateValue>2015-06-01</dateValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_SINGLE_NV">\r
+                  <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>\r
+               </customField>\r
+               <!--Simple values versioned by a calendar-->\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_SINGLE_VC" valueDate="2015-09-10">\r
+                  <stringValue>SELLER_STRING_VALUE_1</stringValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_SINGLE_VC" valueDate="2015-08-10">\r
+                  <stringValue>SELLER_STRING_VALUE_2</stringValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_SINGLE_VC" valueDate="2015-09-10">\r
+                  <longValue>18</longValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_SINGLE_VC" valueDate="2015-08-10">\r
+                  <longValue>19</longValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_SINGLE_VC" valueDate="2015-09-10">\r
+                  <doubleValue>20.21</doubleValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_SINGLE_VC" valueDate="2015-08-10">\r
+                  <doubleValue>22.23</doubleValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_SINGLE_VC" valueDate="2015-09-10">\r
+                  <dateValue>2014-06-01</dateValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_SINGLE_VC" valueDate="2015-08-10">\r
+                  <dateValue>2014-05-01</dateValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_SINGLE_VC" valueDate="2015-09-10">\r
+                  <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_SINGLE_VC" valueDate="2015-08-10">\r
+                  <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY"/>\r
+               </customField>\r
+               <!--Simple values versioned by date range-->\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_SINGLE_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <stringValue>SELLER_STRING_VALUE_3</stringValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_SINGLE_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <stringValue>SELLER_STRING_VALUE_4</stringValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_SINGLE_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <longValue>24</longValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_SINGLE_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <longValue>25</longValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <doubleValue>26.27</doubleValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <doubleValue>28.29</doubleValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_SINGLE_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <dateValue>2013-04-01</dateValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <dateValue>2013-02-01</dateValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_SINGLE_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_SINGLE_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY"/>\r
+               </customField>\r
+               <!--List values not versioned-->\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_LIST_NV">\r
+                  <listValue>\r
+                     <value>\r
+                        <stringValue>SELLER_STRING_VALUE_5</stringValue>\r
+                     </value>\r
+                     <value>\r
+                        <stringValue>SELLER_STRING_VALUE_6</stringValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_LIST_NV">\r
+                  <listValue>\r
+                     <value>\r
+                        <longValue>30</longValue>\r
+                     </value>\r
+                     <value>\r
+                        <longValue>31</longValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_LIST_NV">\r
+                  <listValue>\r
+                     <value>\r
+                        <doubleValue>32.33</doubleValue>\r
+                     </value>\r
+                     <value>\r
+                        <doubleValue>34.35</doubleValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_LIST_NV">\r
+                  <listValue>\r
+                     <value>\r
+                        <dateValue>2012-08-01</dateValue>\r
+                     </value>\r
+                     <value>\r
+                        <dateValue>2012-09-01</dateValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_LIST_NV">\r
+                  <listValue>\r
+                     <value>\r
+                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>\r
+                     </value>\r
+                     <value>\r
+                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY"/>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <!--List values versioned by a calendar-->\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_LIST_VC" valueDate="2015-09-10">\r
+                  <listValue>\r
+                     <value>\r
+                        <stringValue>SELLER_STRING_VALUE_7</stringValue>\r
+                     </value>\r
+                     <value>\r
+                        <stringValue>SELLER_STRING_VALUE_8</stringValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_LIST_VC" valueDate="2015-08-10">\r
+                  <listValue>\r
+                     <value>\r
+                        <stringValue>SELLER_STRING_VALUE_9</stringValue>\r
+                     </value>\r
+                     <value>\r
+                        <stringValue>SELLER_STRING_VALUE_10</stringValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_LIST_VC" valueDate="2015-09-10">\r
+                  <listValue>\r
+                     <value>\r
+                        <longValue>36</longValue>\r
+                     </value>\r
+                     <value>\r
+                        <longValue>37</longValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_LIST_VC" valueDate="2015-08-10">\r
+                  <listValue>\r
+                     <value>\r
+                        <longValue>38</longValue>\r
+                     </value>\r
+                     <value>\r
+                        <longValue>39</longValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_LIST_VC" valueDate="2015-09-10">\r
+                  <listValue>\r
+                     <value>\r
+                        <doubleValue>40.41</doubleValue>\r
+                     </value>\r
+                     <value>\r
+                        <doubleValue>42.43</doubleValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_LIST_VC" valueDate="2015-08-10">\r
+                  <listValue>\r
+                     <value>\r
+                        <doubleValue>44.45</doubleValue>\r
+                     </value>\r
+                     <value>\r
+                        <doubleValue>46.47</doubleValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_LIST_VC" valueDate="2015-09-10">\r
+                  <listValue>\r
+                     <value>\r
+                        <dateValue>2011-08-01</dateValue>\r
+                     </value>\r
+                     <value>\r
+                        <dateValue>2011-09-01</dateValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_LIST_VC" valueDate="2015-08-10">\r
+                  <listValue>\r
+                     <value>\r
+                        <dateValue>2010-08-01</dateValue>\r
+                     </value>\r
+                     <value>\r
+                        <dateValue>2010-09-01</dateValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_LIST_VC" valueDate="2015-09-10">\r
+                  <listValue>\r
+                     <value>\r
+                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY0"/>\r
+                     </value>\r
+                     <value>\r
+                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY0"/>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_LIST_VC" valueDate="2015-08-10">\r
+                  <listValue>\r
+                     <value>\r
+                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY1"/>\r
+                     </value>\r
+                     <value>\r
+                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY1"/>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <!--List values versioned by date range-->\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_LIST_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <listValue>\r
+                     <value>\r
+                        <stringValue>SELLER_STRING_VALUE_11</stringValue>\r
+                     </value>\r
+                     <value>\r
+                        <stringValue>SELLER_STRING_VALUE_12</stringValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_LIST_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <listValue>\r
+                     <value>\r
+                        <stringValue>SELLER_STRING_VALUE_13</stringValue>\r
+                     </value>\r
+                     <value>\r
+                        <stringValue>SELLER_STRING_VALUE_14</stringValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_LIST_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <listValue>\r
+                     <value>\r
+                        <longValue>48</longValue>\r
+                     </value>\r
+                     <value>\r
+                        <longValue>49</longValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_LIST_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <listValue>\r
+                     <value>\r
+                        <longValue>50</longValue>\r
+                     </value>\r
+                     <value>\r
+                        <longValue>51</longValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_LIST_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <listValue>\r
+                     <value>\r
+                        <doubleValue>52.53</doubleValue>\r
+                     </value>\r
+                     <value>\r
+                        <doubleValue>54.55</doubleValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_LIST_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <listValue>\r
+                     <value>\r
+                        <doubleValue>56.57</doubleValue>\r
+                     </value>\r
+                     <value>\r
+                        <doubleValue>58.59</doubleValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_LIST_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <listValue>\r
+                     <value>\r
+                        <dateValue>2009-08-01</dateValue>\r
+                     </value>\r
+                     <value>\r
+                        <dateValue>2009-09-01</dateValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_LIST_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <listValue>\r
+                     <value>\r
+                        <dateValue>2008-08-01</dateValue>\r
+                     </value>\r
+                     <value>\r
+                        <dateValue>2008-09-01</dateValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_LIST_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <listValue>\r
+                     <value>\r
+                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY2"/>\r
+                     </value>\r
+                     <value>\r
+                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY2"/>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_LIST_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <listValue>\r
+                     <value>\r
+                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY3"/>\r
+                     </value>\r
+                     <value>\r
+                        <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY3"/>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <!--Map values not versioned-->\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MAP_NV">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>a</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_15</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>b</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_16</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MAP_NV">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>c</key>\r
+                        <value>\r
+                           <longValue>60</longValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>d</key>\r
+                        <value>\r
+                           <longValue>61</longValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MAP_NV">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>e</key>\r
+                        <value>\r
+                           <doubleValue>62.63</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>f</key>\r
+                        <value>\r
+                           <doubleValue>64.65</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MAP_NV">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>g</key>\r
+                        <value>\r
+                           <dateValue>2008-08-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>h</key>\r
+                        <value>\r
+                           <dateValue>2008-09-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MAP_NV">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>i</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>j</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY"/>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <!--Map values versioned by a calendar-->\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MAP_VC" valueDate="2015-09-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>k</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_17</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>l</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_18</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MAP_VC" valueDate="2015-08-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>m</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_19</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>n</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_20</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MAP_VC" valueDate="2015-09-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>o</key>\r
+                        <value>\r
+                           <longValue>66</longValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>p</key>\r
+                        <value>\r
+                           <longValue>67</longValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MAP_VC" valueDate="2015-08-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>q</key>\r
+                        <value>\r
+                           <longValue>68</longValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>r</key>\r
+                        <value>\r
+                           <longValue>69</longValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MAP_VC" valueDate="2015-09-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>s</key>\r
+                        <value>\r
+                           <doubleValue>70.71</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>t</key>\r
+                        <value>\r
+                           <doubleValue>72.73</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MAP_VC" valueDate="2015-08-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>t</key>\r
+                        <value>\r
+                           <doubleValue>74.75</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>v</key>\r
+                        <value>\r
+                           <doubleValue>76.77</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MAP_VC" valueDate="2015-09-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>x</key>\r
+                        <value>\r
+                           <dateValue>2007-08-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>y</key>\r
+                        <value>\r
+                           <dateValue>2007-09-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MAP_VC" valueDate="2015-08-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>z</key>\r
+                        <value>\r
+                           <dateValue>2006-08-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>aa</key>\r
+                        <value>\r
+                           <dateValue>2006-09-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MAP_VC" valueDate="2015-09-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>bb</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY0"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>cc</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY0"/>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MAP_VC" valueDate="2015-08-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>dd</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY1"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>ee</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY1"/>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <!--Map values versioned by date range-->\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>ff</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_21</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>gg</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_22</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MAP_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>hh</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_23</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>ii</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_24</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>jj</key>\r
+                        <value>\r
+                           <longValue>78</longValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>kk</key>\r
+                        <value>\r
+                           <longValue>79</longValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MAP_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>ll</key>\r
+                        <value>\r
+                           <longValue>80</longValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>mm</key>\r
+                        <value>\r
+                           <longValue>81</longValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>nn</key>\r
+                        <value>\r
+                           <doubleValue>82.83</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>oo</key>\r
+                        <value>\r
+                           <doubleValue>84.85</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MAP_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>pp</key>\r
+                        <value>\r
+                           <doubleValue>86.87</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>qq</key>\r
+                        <value>\r
+                           <doubleValue>88.89</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>rr</key>\r
+                        <value>\r
+                           <dateValue>2005-08-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>ss</key>\r
+                        <value>\r
+                           <dateValue>2005-09-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MAP_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>tt</key>\r
+                        <value>\r
+                           <dateValue>2004-08-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>uu</key>\r
+                        <value>\r
+                           <dateValue>2004-09-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>vv</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY2"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>vv</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY2"/>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>xx</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY3"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>yy</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY3"/>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <!--Matrix values not versioned-->\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MATRIX_NV">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>a|b</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_15</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>c|d</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_16</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MATRIX_NV">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>c|e</key>\r
+                        <value>\r
+                           <longValue>60</longValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>d|y</key>\r
+                        <value>\r
+                           <longValue>61</longValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MATRIX_NV">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>three|four</key>\r
+                        <value>\r
+                           <doubleValue>62.63</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>one|two</key>\r
+                        <value>\r
+                           <doubleValue>64.65</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MATRIX_NV">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>g|q</key>\r
+                        <value>\r
+                           <dateValue>2008-08-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>h|h</key>\r
+                        <value>\r
+                           <dateValue>2008-09-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MATRIX_NV">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>i|o</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>j|u</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <!--Map values versioned by a calendar-->\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MATRIX_VC" valueDate="2015-09-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>k|x</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_17</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>l|r</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_18</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MATRIX_VC" valueDate="2015-08-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>m|a</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_19</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>n|a</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_20</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MATRIX_VC" valueDate="2015-09-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>o|e</key>\r
+                        <value>\r
+                           <longValue>66</longValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>p|r</key>\r
+                        <value>\r
+                           <longValue>67</longValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MATRIX_VC" valueDate="2015-08-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>q|t</key>\r
+                        <value>\r
+                           <longValue>68</longValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>r|i</key>\r
+                        <value>\r
+                           <longValue>69</longValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MATRIX_VC" valueDate="2015-09-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>s|s</key>\r
+                        <value>\r
+                           <doubleValue>70.71</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>t|w</key>\r
+                        <value>\r
+                           <doubleValue>72.73</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MATRIX_VC" valueDate="2015-08-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>t|a</key>\r
+                        <value>\r
+                           <doubleValue>74.75</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>v|t</key>\r
+                        <value>\r
+                           <doubleValue>76.77</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MATRIX_VC" valueDate="2015-09-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>x|x</key>\r
+                        <value>\r
+                           <dateValue>2007-08-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>y|g</key>\r
+                        <value>\r
+                           <dateValue>2007-09-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MATRIX_VC" valueDate="2015-08-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>z|l</key>\r
+                        <value>\r
+                           <dateValue>2006-08-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>aa|qq</key>\r
+                        <value>\r
+                           <dateValue>2006-09-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MATRIX_VC" valueDate="2015-09-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>bb|qq</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY0"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>cc|rr</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY0"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MATRIX_VC" valueDate="2015-08-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>dd|aa</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY1"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>ee|tt</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY1"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <!--Map values versioned by date range-->\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MATRIX_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>ff|jj</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_21</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>gg|ll</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_22</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MATRIX_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>hh|qq</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_23</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>ii|jh</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_24</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MATRIX_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>jj|df</key>\r
+                        <value>\r
+                           <longValue>78</longValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>kk|lk</key>\r
+                        <value>\r
+                           <longValue>79</longValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MATRIX_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>ll|s</key>\r
+                        <value>\r
+                           <longValue>80</longValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>mm|l</key>\r
+                        <value>\r
+                           <longValue>81</longValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MATRIX_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>nn|o</key>\r
+                        <value>\r
+                           <doubleValue>82.83</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>oo|u</key>\r
+                        <value>\r
+                           <doubleValue>84.85</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MATRIX_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>pp|q</key>\r
+                        <value>\r
+                           <doubleValue>86.87</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>qq|o</key>\r
+                        <value>\r
+                           <doubleValue>88.89</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MATRIX_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>rr|j</key>\r
+                        <value>\r
+                           <dateValue>2005-08-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>ss|l</key>\r
+                        <value>\r
+                           <dateValue>2005-09-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MATRIX_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>tt|p</key>\r
+                        <value>\r
+                           <dateValue>2004-08-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>uu|w</key>\r
+                        <value>\r
+                           <dateValue>2004-09-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MATRIX_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>vv|w</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY2"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>vv|h</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY2"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MATRIX_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>xx|q</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY3"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>yy|l</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY3"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>key</key>\r
+                        <value>\r
+                           <stringValue>MAT_1/MAT_2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+            </customFields>\r
+         </seller>\r
+      </ws:createSeller>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="52a86b20-f03c-4fe8-8595-0187c1e3cfdb"/><con:assertion type="Simple Contains" name="Contains" id="80c9844c-d96d-4fd9-983a-94696dbb190b"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="1e05998b-1bba-4676-8cf8-d2c076fe7bdb"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findProvider</con:operation><con:request name="find" id="f42e03cc-ba46-43a1-878f-05e8e6e75ea6"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
    <soapenv:Header/> 
    <soapenv:Body> 
@@ -14464,6 +15017,557 @@
                            <longValue>31</longValue>
                         </value>
                      </listValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="4b5fb5e2-0d5d-4762-bd63-81a7bc2cca44" name="Contains"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MATRIX_NV">
+                     <mapValue>
+                        <entry>
+                           <key>c|d</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_16</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>a|b</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_15</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="5cc99552-bdd4-4e02-b11b-203c36a1ddb4" name="Contains 76"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MATRIX_NV">
+                     <mapValue>
+                        <entry>
+                           <key>c|e</key>
+                           <value>
+                              <longValue>60</longValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>d|y</key>
+                           <value>
+                              <longValue>61</longValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="0233a6fb-7b68-4109-ad1e-2073f651b186" name="Contains 77"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MATRIX_NV">
+                     <mapValue>
+                        <entry>
+                           <key>one|two</key>
+                           <value>
+                              <doubleValue>64.65</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>three|four</key>
+                           <value>
+                              <doubleValue>62.63</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="6623ed4a-55b3-4ead-a954-f3ce62b4eef0" name="Contains 78"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MATRIX_NV">
+                     <mapValue>
+                        <entry>
+                           <key>g|q</key>
+                           <value>
+                              <dateValue>2008-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>h|h</key>
+                           <value>
+                              <dateValue>2008-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="3e5fef52-0feb-479a-a041-298f28ab03ad" name="Contains 79"><con:configuration><token><![CDATA[
+                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MATRIX_NV">
+                     <mapValue>
+                        <entry>
+                           <key>j|u</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY"/>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>i|o</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="f393f102-e948-455f-822b-ecc68e4d3527" name="Contains 80"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>k|x</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_17</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>l|r</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_18</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="de26f43b-d68b-444f-9ad1-4ed59867cc7c" name="Contains 81"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>m|a</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_19</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>n|a</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_20</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="a01c11fc-4a3f-438d-be08-981c455f97d5" name="Contains 82"><con:configuration><token><![CDATA[  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>o|e</key>
+                           <value>
+                              <longValue>66</longValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>p|r</key>
+                           <value>
+                              <longValue>67</longValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="540a42aa-a055-4c16-abff-cbeef4ed4195" name="Contains 83"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>q|t</key>
+                           <value>
+                              <longValue>68</longValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>r|i</key>
+                           <value>
+                              <longValue>69</longValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="747614c8-d461-4915-a46f-b9200f90440b" name="Contains 84"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>t|w</key>
+                           <value>
+                              <doubleValue>72.73</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>s|s</key>
+                           <value>
+                              <doubleValue>70.71</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="f7fc282e-0b2b-49df-b6e1-3124109bd4f6" name="Contains 85"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>v|t</key>
+                           <value>
+                              <doubleValue>76.77</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>t|a</key>
+                           <value>
+                              <doubleValue>74.75</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="20c26967-9432-43a2-9fd7-3b873dd5004e" name="Contains 86"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>x|x</key>
+                           <value>
+                              <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>y|g</key>
+                           <value>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="74d28737-884b-41f4-b8b7-36ce5920dd40" name="Contains 87"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>aa|qq</key>
+                           <value>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>z|l</key>
+                           <value>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="0e2d4bcd-9b73-4df9-86d0-5ff08e56ba0f" name="Contains 88"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>cc|rr</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY0"/>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>bb|qq</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY0"/>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="79193ae5-cae6-45ab-9c18-fefbbe5a8c8f" name="Contains 89"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>ee|tt</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY1"/>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>dd|aa</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY1"/>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="63d3a823-35ee-41ce-8fbc-32e2f7a0befe" name="Contains 90"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                     <mapValue>
+                        <entry>
+                           <key>ff|jj</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_21</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>gg|ll</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_22</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="5ee9b478-9e71-4287-a173-c90089ceeaf9" name="Contains 91"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_STRING_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                     <mapValue>
+                        <entry>
+                           <key>hh|qq</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_23</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>ii|jh</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_24</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="cfabfa57-7600-4e9c-a29e-73beb394ccf6" name="Contains 92"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                     <mapValue>
+                        <entry>
+                           <key>jj|df</key>
+                           <value>
+                              <longValue>78</longValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>kk|lk</key>
+                           <value>
+                              <longValue>79</longValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="3e08a615-13d0-4858-af32-de61c1a57b0c" name="Contains 93"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_LONG_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                     <mapValue>
+                        <entry>
+                           <key>ll|s</key>
+                           <value>
+                              <longValue>80</longValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>mm|l</key>
+                           <value>
+                              <longValue>81</longValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="71918a87-b907-4a5e-9af7-7d7f8c0794fc" name="Contains 94"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                     <mapValue>
+                        <entry>
+                           <key>oo|u</key>
+                           <value>
+                              <doubleValue>84.85</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>nn|o</key>
+                           <value>
+                              <doubleValue>82.83</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="d14efdbe-2898-479e-8ef8-aaf76b9ce1e8" name="Contains 95"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DOUBLE_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                     <mapValue>
+                        <entry>
+                           <key>pp|q</key>
+                           <value>
+                              <doubleValue>86.87</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>qq|o</key>
+                           <value>
+                              <doubleValue>88.89</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="506a38c7-47c3-4969-ad7c-a5ddd850eb17" name="Contains 96"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                     <mapValue>
+                        <entry>
+                           <key>ss|l</key>
+                           <value>
+                              <dateValue>2005-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>rr|j</key>
+                           <value>
+                              <dateValue>2005-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="a7423054-8025-4610-9503-94eb2faf1f7a" name="Contains 97"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_DATE_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                     <mapValue>
+                        <entry>
+                           <key>tt|p</key>
+                           <value>
+                              <dateValue>2004-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>uu|w</key>
+                           <value>
+                              <dateValue>2004-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="71260bb8-1c89-4a95-bbc9-fbb4403d71ce" name="Contains 98"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                     <mapValue>
+                        <entry>
+                           <key>vv|w</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY2"/>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>vv|h</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY2"/>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="9803df74-d2f6-4ebb-9f18-e478836b895c" name="Contains 99"><con:configuration><token><![CDATA[                  <customField code="${#TestSuite#ticket}_${#TestSuite#index}_SELLER_ENTITY_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                     <mapValue>
+                        <entry>
+                           <key>yy|l</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY3"/>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>xx|q</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY3"/>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
                   </customField>
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update" id="1694800c-cfdf-4dc4-98ff-7d28b585669b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateSeller</con:operation><con:request name="update" id="5f7d9e42-a380-4444-b7f3-46fcf25bec50"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
@@ -16584,14 +17688,13 @@
                         </value>
                      </listValue>
                   </customField>
-]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="6c6b1925-14ca-402f-9c80-087ecb466fbb" name="Contains 3"><con:configuration><token><![CDATA[                  <serviceInstance code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1" description="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1">
-                     <status>INACTIVE</status>
-                     <subscriptionDate>2015-06-01T00:00:00${#Project#timezone}:00</subscriptionDate>
-                     <quantity>2.000000000000</quantity>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="294cb757-6e2c-403d-8c6e-fa3424ee5c36" name="Contains 4"><con:configuration><token>                        &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE_LONG_SINGLE_NV">
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="6c6b1925-14ca-402f-9c80-087ecb466fbb" name="Contains 3"><con:configuration><token>                  &lt;serviceInstance code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1" description="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1">
+                     &lt;status>INACTIVE&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="294cb757-6e2c-403d-8c6e-fa3424ee5c36" name="Contains 4"><con:configuration><token>                        &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE_LONG_SINGLE_NV">
                            &lt;longValue>154&lt;/longValue>
                         &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="5e487e70-a3d1-47c7-a123-f407806937f2" name="Contains 5"><con:configuration><token>                        &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
                            &lt;dateValue>2015-09-24T00:00:00${#Project#timezone}:00&lt;/dateValue>
-                        &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Activate service" id="42b2d284-781a-43be-aed5-36dc77ff27db"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SubscriptionWsSoapBinding</con:interface><con:operation>activateServices</con:operation><con:request name="Activate service" id="5d2b57dd-6922-4337-a545-a869d4bafd8f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+                        &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="30158110-3b2c-4f3f-bf66-f8bbf6b57f0c" name="XPath Match"><con:configuration><path>//serviceInstance[@code='${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1']/subscriptionDate</path><content>2015-06-01T00:00:00${#Project#timezone}:00</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="e8deb3b5-4bea-4a7e-a935-d633cb9f6e5b" name="XPath Match 1"><con:configuration><path>//serviceInstance[@code='${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1']/quantity</path><content>2.000000000000</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Activate service" id="42b2d284-781a-43be-aed5-36dc77ff27db"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SubscriptionWsSoapBinding</con:interface><con:operation>activateServices</con:operation><con:request name="Activate service" id="5d2b57dd-6922-4337-a545-a869d4bafd8f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:activateServices>\r
@@ -16640,15 +17743,10 @@
                         </value>
                      </listValue>
                   </customField>
-]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="6c6b1925-14ca-402f-9c80-087ecb466fbb" name="Contains 3"><con:configuration><token><![CDATA[                  <serviceInstance code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1" description="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1">
-                     <status>INACTIVE</status>
-                     <subscriptionDate>2015-06-01T00:00:00${#Project#timezone}:00</subscriptionDate>
-                     <quantity>2.000000000000</quantity>
-]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="320d8297-3fc2-43b0-95d8-e80d0bc4aaba" name="Contains 4"><con:configuration><token><![CDATA[    <serviceInstance code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2" description="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2">
-                     <status>ACTIVE</status>
-                     <subscriptionDate>2016-04-08T00:00:00${#Project#timezone}:00</subscriptionDate>
-                     <quantity>3.000000000000</quantity>
-]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="9d489887-7ea8-4ca2-b9b1-c962e25b2022" name="Contains 5"><con:configuration><token>                        &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE_LONG_SINGLE_NV">
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="6c6b1925-14ca-402f-9c80-087ecb466fbb" name="Contains 3"><con:configuration><token>                  &lt;serviceInstance code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1" description="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1">
+                     &lt;status>INACTIVE&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="320d8297-3fc2-43b0-95d8-e80d0bc4aaba" name="Contains 4"><con:configuration><token>    &lt;serviceInstance code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2" description="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2">
+                     &lt;status>ACTIVE&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="9d489887-7ea8-4ca2-b9b1-c962e25b2022" name="Contains 5"><con:configuration><token>                        &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE_LONG_SINGLE_NV">
                            &lt;longValue>154&lt;/longValue>
                         &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="d9032aeb-be94-430f-b52a-d2f28d7e0f8b" name="Contains 6"><con:configuration><token>                        &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
                            &lt;dateValue>2015-09-24T00:00:00${#Project#timezone}:00&lt;/dateValue>
@@ -16656,7 +17754,7 @@
                            &lt;doubleValue>15.78&lt;/doubleValue>
                         &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="a33a48d9-bebb-45a7-9d34-fdafcc40e7e2" name="Contains 8"><con:configuration><token>                        &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE_STRING_SINGLE_V" valuePeriodStartDate="2016-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2016-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="3">
                            &lt;stringValue>Service2 activated&lt;/stringValue>
-                        &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684a</con:value></con:property></con:properties><con:reportParameters/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CFT - Customer Hierarchy" searchProperties="true" id="7c6d8f0c-1b29-4161-9376-955070e8493a"><con:settings/><con:testStep type="request" name="Create offer H" id="a004328a-e15f-4eb1-acc4-77d19e82e6e6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="Create offer H" id="106fb7fe-2a26-4916-8ed2-8b532cd2ff24"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+                        &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="e651999b-4c84-4732-b06d-2ea5b3081f02" name="XPath Match"><con:configuration><path>//serviceInstance[@code='${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1']/quantity</path><content>2.000000000000</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="66e836a0-8b40-4080-852a-6fc1b8b3b42a" name="XPath Match 1"><con:configuration><path>//serviceInstance[@code='${#TestSuite#ticket}_${#TestSuite#index}_SERVICE1']/subscriptionDate</path><content>2015-06-01T00:00:00${#Project#timezone}:00</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="81033d32-a7e3-4179-98f7-9ba35c00809c" name="XPath Match 2"><con:configuration><path>//serviceInstance[@code='${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2']/quantity</path><content>3.000000000000</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="7e9b1fc6-d074-4493-bc27-121dafe205ff" name="XPath Match 3"><con:configuration><path>//serviceInstance[@code='${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2']/subscriptionDate</path><content>2016-04-08T00:00:00${#Project#timezone}:00</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684a</con:value></con:property></con:properties><con:reportParameters/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CFT - Customer Hierarchy" searchProperties="true" id="7c6d8f0c-1b29-4161-9376-955070e8493a"><con:settings/><con:testStep type="request" name="Create offer H" id="a004328a-e15f-4eb1-acc4-77d19e82e6e6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="Create offer H" id="106fb7fe-2a26-4916-8ed2-8b532cd2ff24"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOfferTemplate>\r
@@ -16997,14 +18095,12 @@
                            &lt;longValue>154&lt;/longValue>
                         &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="342ecf78-6b58-468a-95a9-697720aa6b65" name="Contains 5"><con:configuration><token>                        &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE_DATE_SINGLE_V" valuePeriodStartDate="2015-12-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-12-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
                            &lt;dateValue>2015-09-24T00:00:00${#Project#timezone}:00&lt;/dateValue>
-                        &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="3447953d-f5a1-4143-a49c-7e7b7464b6c3" name="Contains 6"><con:configuration><token><![CDATA[                  <serviceInstance code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2" description="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2">
-                     <status>ACTIVE</status>
-                     <subscriptionDate>2016-01-09T00:00:00${#Project#timezone}:00</subscriptionDate>
-                     <quantity>1.000000000000</quantity>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="3f1c878b-dd7b-4756-b311-5c58f1263ddc" name="Contains 7"><con:configuration><token>                        &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE_DATE_SINGLE_NV">
+                        &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="3447953d-f5a1-4143-a49c-7e7b7464b6c3" name="Contains 6"><con:configuration><token>                  &lt;serviceInstance code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2" description="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2">
+                     &lt;status>ACTIVE&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="3f1c878b-dd7b-4756-b311-5c58f1263ddc" name="Contains 7"><con:configuration><token>                        &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE_DATE_SINGLE_NV">
                            &lt;dateValue>2015-12-24T00:00:00${#Project#timezone}:00&lt;/dateValue>
                         &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="0bef5428-8189-48d0-b0e0-de3b528d3a1f" name="Contains 8"><con:configuration><token>                        &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_SERVICE_STRING_SINGLE_NV">
                            &lt;stringValue>NV value&lt;/stringValue>
-                        &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find access H" id="3c9f41dc-20d5-4676-8572-c8550b3eb34a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccess</con:operation><con:request name="Find access H" id="0fa1da51-7005-4a3e-a9ba-bc29dc3e6c06"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
+                        &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="73a706c8-d6cb-4411-b406-2b0933b9fd09" name="XPath Match"><con:configuration><path>//serviceInstance[@code='${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2']/quantity</path><content>1.000000000000</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="d8310d26-0739-45cd-a18f-8b176024e547" name="XPath Match 1"><con:configuration><path>//serviceInstance[@code='${#TestSuite#ticket}_${#TestSuite#index}_SERVICE2']/subscriptionDate</path><content>2016-01-09T00:00:00${#Project#timezone}:00</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find access H" id="3c9f41dc-20d5-4676-8572-c8550b3eb34a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccess</con:operation><con:request name="Find access H" id="0fa1da51-7005-4a3e-a9ba-bc29dc3e6c06"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
    <soapenv:Header/> 
    <soapenv:Body> 
       <ws:findAccess> 
@@ -17406,6 +18502,59 @@
             <mapKeyType>STRING</mapKeyType>
             <versionable>true</versionable>
             <calendar>MONTHLY</calendar>
+         </customField>
+      </ws:createField>
+   </soapenv:Body> 
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e7d3951b-b7c9-48cd-8a4f-b2804af6cf14"/><con:assertion type="Simple Contains" name="Contains" id="112602db-0cd7-4c28-a357-e28f18bf2c7c"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Storage=Matrix, versioned=false" id="2616b1cd-6e3f-442d-a106-a5ed977faf6a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>createField</con:operation><con:request name="Storage=Matrix, versioned=false" id="6b508b87-8014-4b1f-b1bd-ddd89ae847a5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createField>\r
+         <customField code="${#TestSuite#ticket}_${#TestSuite#index}_${#TestCase#cfType}_${#TestCase#fieldType}_MATRIX_NV" description="${#TestCase#cfType}_${#TestCase#fieldType}_MAP_NV field">\r
+            <fieldType>${#TestCase#fieldType}</fieldType>\r
+            <appliesTo>${#TestCase#cfType}</appliesTo>\r
+            <entityClazz>${#TestCase#entityClazz}</entityClazz>\r
+            <storageType>MATRIX</storageType>\r
+            <mapKeyType>STRING</mapKeyType>\r
+            <matrixColumns>\r
+               <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+               <matrixColumn code="MAT_2" position="2" label="Two" keyType="STRING"/>\r
+            </matrixColumns>\r
+         </customField>\r
+      </ws:createField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e7d3951b-b7c9-48cd-8a4f-b2804af6cf14"/><con:assertion type="Simple Contains" name="Contains" id="981165c0-a939-4c5d-8f43-8ab97d735a5c"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Storage=Matrix, versioned=true" id="42af2b68-a9e3-4d32-86dc-da2eb7130b6e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>createField</con:operation><con:request name="Storage=Matrix, versioned=true" id="6b508b87-8014-4b1f-b1bd-ddd89ae847a5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
+   <soapenv:Header/> 
+   <soapenv:Body> 
+      <ws:createField> 
+         <customField code="${#TestSuite#ticket}_${#TestSuite#index}_${#TestCase#cfType}_${#TestCase#fieldType}_MATRIX_V" description="${#TestCase#cfType}_${#TestCase#fieldType}_MAP_V field"> 
+            <fieldType>${#TestCase#fieldType}</fieldType>
+            <appliesTo>${#TestCase#cfType}</appliesTo>
+            <storageType>MATRIX</storageType>
+            <mapKeyType>STRING</mapKeyType>
+            <versionable>true</versionable>
+            <matrixColumns>
+               <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>
+               <matrixColumn code="MAT_2" position="2" label="Two" keyType="STRING"/>
+            </matrixColumns>
+         </customField>
+      </ws:createField>
+   </soapenv:Body> 
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e7d3951b-b7c9-48cd-8a4f-b2804af6cf14"/><con:assertion type="Simple Contains" name="Contains" id="f44d67c5-035a-4494-873a-3a3a055311c7"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Storage=Matrix, versioned=calendar" id="b35d4e96-612d-408e-bdaa-2157dc23f729"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>createField</con:operation><con:request name="Storage=Matrix, versioned=calendar" id="6b508b87-8014-4b1f-b1bd-ddd89ae847a5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
+   <soapenv:Header/> 
+   <soapenv:Body> 
+      <ws:createField> 
+         <customField code="${#TestSuite#ticket}_${#TestSuite#index}_${#TestCase#cfType}_${#TestCase#fieldType}_MATRIX_VC" description="${#TestCase#cfType}_${#TestCase#fieldType}_MAP_VC field"> 
+            <fieldType>${#TestCase#fieldType}</fieldType>
+            <appliesTo>${#TestCase#cfType}</appliesTo>
+            <entityClazz>${#TestCase#entityClazz}</entityClazz>
+            <storageType>MATRIX</storageType>
+            <mapKeyType>STRING</mapKeyType>
+            <versionable>true</versionable>
+            <calendar>MONTHLY</calendar>
+            <matrixColumns>
+               <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>
+               <matrixColumn code="MAT_2" position="2" label="Two" keyType="STRING"/>
+            </matrixColumns>
          </customField>
       </ws:createField>
    </soapenv:Body> 
@@ -18812,7 +19961,7 @@
       </ws:findEntityCustomizations>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a0d930a4-fcda-4758-bc4d-f90c5778b278"/><con:assertion type="Simple Contains" id="0e570331-b92b-4421-99d2-1fed729e547c" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple NotContains" id="3071f92b-9fe4-44e6-b8f4-ef54c178116b" name="Not Contains"><con:configuration><token>${#TestSuite#ticket}_${#TestSuite#index}_PurgeJob_ACTION4</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>158</con:value></con:property></con:properties><con:setupScript>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple NotContains" id="3071f92b-9fe4-44e6-b8f4-ef54c178116b" name="Not Contains"><con:configuration><token>${#TestSuite#ticket}_${#TestSuite#index}_PurgeJob_ACTION4</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>167</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript><con:reportParameters/></con:testSuite><con:testSuite id="9b9a3a43-4576-4cb5-a078-379d65785ca4" name="CRM Account Hierarchy"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="c28a1e28-09b3-4a00-855f-1c675813d8d0" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create" searchProperties="true"><con:settings/><con:testStep type="request" name="S" id="2efb24c3-af43-4d4c-9c3b-75851733a639"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCRMAccountHierarchy</con:operation><con:request name="S" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>

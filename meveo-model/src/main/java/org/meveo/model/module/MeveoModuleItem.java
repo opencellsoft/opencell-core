@@ -15,7 +15,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.crm.CustomFieldTemplate;
 
 @Entity
-@ExportIdentifier({ "meveoModule.code", "meveoModule.provider", "appliesTo", "itemType", "itemCode" })
+@ExportIdentifier({ "meveoModule.code", "meveoModule.provider", "appliesTo", "itemClass", "itemCode" })
 @Table(name = "MEVEO_MODULE_ITEM")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_MODULE_ITEM_SEQ")
 public class MeveoModuleItem extends BaseProviderlessEntity {
