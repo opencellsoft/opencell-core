@@ -382,7 +382,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		if (tax == null) {
 			throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
 		}
-
+		
 		WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeTemplate.getCode(), subscription, chargeInstance,
 				ApplicationTypeEnum.PUNCTUAL, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency,
 				countryId, tax.getPercent(), null, null, invoiceSubCategory, chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), null,
@@ -524,6 +524,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		if (!recurringChargeTemplate.getApplyInAdvance()) {
 			applicationDate = nextapplicationDate;
 		}
+		
 		if (subscriptionDate == null) {
 			result = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(), chargeInstance.getServiceInstance().getSubscription(), chargeInstance,
 					ApplicationTypeEnum.PRORATA_SUBSCRIPTION, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency,
@@ -733,6 +734,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		if (tax == null) {
 			throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
 		}
+		
 
 		log.debug("next step for {}, applicationDate={}, nextApplicationDate={}, nextApplicationDate={}", chargeInstance.getId(), applicationDate, nextApplicationDate,
 				nextApplicationDate);

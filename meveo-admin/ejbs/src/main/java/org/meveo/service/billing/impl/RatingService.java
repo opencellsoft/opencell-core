@@ -179,7 +179,11 @@ public class RatingService extends BusinessService<WalletOperation>{
 			String criteria3, Date startdate, Date endDate, ChargeApplicationModeEnum mode) throws BusinessException {
 
 		WalletOperation result = new WalletOperation();
-
+		//TODO do this in the right place (one time by userAccount)
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		userMap.put("ca", chargeInstance.getSubscription().getUserAccount());
+		boolean isExonerated = (boolean) ValueExpressionWrapper.evaluateExpression(chargeInstance.getProvider().getExonerationTaxEl(), userMap, Boolean.class);
+		
 		if (chargeInstance instanceof RecurringChargeInstance) {
 			result.setSubscriptionDate(subscriptionDate);
 		}
@@ -207,7 +211,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		}
 		result.setCode(code);
 		result.setDescription(chargeInstance.getDescription());
-		result.setTaxPercent(taxPercent);
+		result.setTaxPercent(isExonerated?BigDecimal.ZERO:taxPercent);
 		result.setCurrency(tCurrency.getCurrency());
 		result.setStartDate(startdate);
 		result.setEndDate(endDate);
@@ -236,7 +240,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, Date startdate,
 			Date endDate, ChargeApplicationModeEnum mode) throws BusinessException {
 		Date subscriptionDate = null;
-
+		
 		if (chargeInstance instanceof RecurringChargeInstance) {
 			subscriptionDate = ((RecurringChargeInstance) chargeInstance).getServiceInstance().getSubscriptionDate();
 		}

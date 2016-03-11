@@ -364,7 +364,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 				if (invoiceSubcategoryCountry != null && invoiceSubcategoryCountry.getTax() != null) {
 					Tax tax = invoiceSubcategoryCountry.getTax();
 					oneShotChargeDto.setTaxCode(tax.getCode());
-					oneShotChargeDto.setTaxDescription(tax.getDescription());
+					oneShotChargeDto.setTaxDescription(tax.getDescription());					
 					oneShotChargeDto.setTaxPercent(tax.getPercent() == null ? 0.0 : tax.getPercent().doubleValue());
 				}
 				try {

@@ -215,6 +215,9 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 	
 	@Column(name = "INVOICE_SEQUENCE_SIZE")
 	private Integer invoiceSequenceSize=9;
+	
+	@Column(name = "EXONERATION_TAX_EL")
+	private String exonerationTaxEl;
 
 	public String getCode() {
 		return code;
@@ -732,5 +735,19 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
         }
         cfi.setValue(value, valueDate);
     }
+
+	/**
+	 * @return the exonerationTaxEl
+	 */
+	public String getExonerationTaxEl() {
+		return exonerationTaxEl;
+	}
+
+	/**
+	 * @param exonerationTaxEl the exonerationTaxEl to set
+	 */
+	public void setExonerationTaxEl(String exonerationTaxEl) {
+		this.exonerationTaxEl = exonerationTaxEl;
+	}
 
 }

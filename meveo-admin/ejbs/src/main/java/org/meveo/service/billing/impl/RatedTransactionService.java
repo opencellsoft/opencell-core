@@ -237,13 +237,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	public void createInvoiceAndAgregates(BillingAccount billingAccount, Invoice invoice,Date lastTransactionDate, User currentUser, boolean isInvoiceAdjustment)
 			throws BusinessException {
 		boolean entreprise = billingAccount.getProvider().isEntreprise();
-		int rounding = billingAccount.getProvider().getRounding()==null?2:billingAccount.getProvider().getRounding();
-		boolean exoneratedFromTaxes=billingAccount.getCustomerAccount().getCustomer().getCustomerCategory().getExoneratedFromTaxes();
+		int rounding = billingAccount.getProvider().getRounding()==null?2:billingAccount.getProvider().getRounding();		
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
 
 		for (UserAccount userAccount : billingAccount.getUsersAccounts()) {
 			WalletInstance wallet = userAccount.getWallet();
-
+			
+			//TODO do this in the right place (one time by userAccount)
+			Map<Object, Object> userMap = new HashMap<Object, Object>();
+			userMap.put("ca", userAccount);
+			boolean isExonerated = (boolean) ValueExpressionWrapper.evaluateExpression(userAccount.getProvider().getExonerationTaxEl(), userMap, Boolean.class);
+			
 			// TODO : use Named queries
 			CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
 			CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
@@ -331,42 +335,44 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					}
 
 					// start agregate T
-					for (Tax tax:taxes) {
-						TaxInvoiceAgregate invoiceAgregateTax = null;
-						Long taxId = tax.getId();
-
-						if (taxInvoiceAgregateMap.containsKey(taxId)) {
-							invoiceAgregateTax = taxInvoiceAgregateMap.get(taxId);
-						} else {
-							invoiceAgregateTax = new TaxInvoiceAgregate();
-							invoiceAgregateTax.setAuditable(billingAccount.getAuditable());
+					if(!isExonerated){
+						for (Tax tax:taxes) {
+							TaxInvoiceAgregate invoiceAgregateTax = null;
+							Long taxId = tax.getId();
+	
+							if (taxInvoiceAgregateMap.containsKey(taxId)) {
+								invoiceAgregateTax = taxInvoiceAgregateMap.get(taxId);
+							} else {
+								invoiceAgregateTax = new TaxInvoiceAgregate();
+								invoiceAgregateTax.setAuditable(billingAccount.getAuditable());
+								invoiceAgregateTax.setProvider(billingAccount.getProvider());
+								invoiceAgregateTax.setInvoice(invoice);
+								invoiceAgregateTax.setBillingRun(billingAccount.getBillingRun());
+								invoiceAgregateTax.setTax(tax);
+								invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
+								
+								taxInvoiceAgregateMap.put(taxId, invoiceAgregateTax);
+							}
+	
+							if (tax.getPercent().compareTo(BigDecimal.ZERO) == 0 ) {
+								invoiceAgregateTax.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
+								invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
+								invoiceAgregateTax.addAmountWithTax(invoiceAgregateSubcat.getAmountWithoutTax());
+								invoiceAgregateTax.setTaxPercent(BigDecimal.ZERO);
+							}
+	
+							fillAgregates(invoiceAgregateTax, wallet);
+							if (tax.getPercent().compareTo(BigDecimal.ZERO) != 0 ) {
+								invoiceAgregateTax.setTaxPercent(tax.getPercent());
+							}
 							invoiceAgregateTax.setProvider(billingAccount.getProvider());
-							invoiceAgregateTax.setInvoice(invoice);
-							invoiceAgregateTax.setBillingRun(billingAccount.getBillingRun());
-							invoiceAgregateTax.setTax(tax);
-							invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
+	
+							if (invoiceAgregateTax.getId() == null) {
+								invoiceAgregateService.create(invoiceAgregateTax, currentUser, currentUser.getProvider());
+							}
 							
-							taxInvoiceAgregateMap.put(taxId, invoiceAgregateTax);
+							invoiceAgregateSubcat.addSubCategoryTax(tax);
 						}
-
-						if (tax.getPercent().compareTo(BigDecimal.ZERO) == 0 || exoneratedFromTaxes) {
-							invoiceAgregateTax.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
-							invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
-							invoiceAgregateTax.addAmountWithTax(invoiceAgregateSubcat.getAmountWithoutTax());
-							invoiceAgregateTax.setTaxPercent(BigDecimal.ZERO);
-						}
-
-						fillAgregates(invoiceAgregateTax, wallet);
-						if (tax.getPercent().compareTo(BigDecimal.ZERO) != 0 && !exoneratedFromTaxes) {
-							invoiceAgregateTax.setTaxPercent(tax.getPercent());
-						}
-						invoiceAgregateTax.setProvider(billingAccount.getProvider());
-
-						if (invoiceAgregateTax.getId() == null) {
-							invoiceAgregateService.create(invoiceAgregateTax, currentUser, currentUser.getProvider());
-						}
-						
-						invoiceAgregateSubcat.addSubCategoryTax(tax);
 					}
 
 
@@ -410,7 +416,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 							RoundingMode.HALF_UP));
 					// add it to taxAggregate and CategoryAggregate
 					for(Tax tax:invoiceAgregateSubcat.getSubCategoryTaxes()){
-						if (tax.getPercent().compareTo(BigDecimal.ZERO) != 0 && !exoneratedFromTaxes) {
+						if (tax.getPercent().compareTo(BigDecimal.ZERO) != 0 && !isExonerated) {
 							TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(tax.getId());
 							taxInvoiceAgregate.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
 							log.info("  tax " + tax.getPercent() + " ht ->"
@@ -434,7 +440,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				}
 
 				// compute the tax
-				if(!exoneratedFromTaxes){
+				if(!isExonerated){
 					for (Map.Entry<Long, TaxInvoiceAgregate> taxCatMap : taxInvoiceAgregateMap.entrySet()) {
 						TaxInvoiceAgregate taxCat = taxCatMap.getValue();
 						if (taxCat.getTax().getPercent().compareTo(BigDecimal.ZERO) != 0) {
@@ -466,7 +472,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					invoice.setAmountWithTax(invoice.getAmountWithoutTax().add(invoice.getAmountTax()));
 				}
 				BigDecimal balance=BigDecimal.ZERO;
-				if (!entreprise && biggestSubCat != null && !exoneratedFromTaxes) {
+				if (!entreprise && biggestSubCat != null && !isExonerated) {
 					BigDecimal delta = nonEnterprisePriceWithTax.subtract(invoice.getAmountWithTax());
 					log.debug("delta= " + nonEnterprisePriceWithTax + " - " + invoice.getAmountWithTax() + "=" + delta);
 					biggestSubCat.setAmountWithoutTax(biggestSubCat.getAmountWithoutTax().add(delta)
@@ -660,15 +666,21 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			}
 			SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
 			BigDecimal discountAmountTax=BigDecimal.ZERO;
-			for (Tax tax:taxes) {
-				BigDecimal amountTax=discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED));
-				discountAmountTax=discountAmountTax.add(amountTax);
-				invoiceAgregateSubcat.addSubCategoryTax(tax);
-				TaxInvoiceAgregate 	taxInvoiceAgregate= taxInvoiceAgregateMap.get(tax.getId());
-				if(taxInvoiceAgregate!=null){
-					taxInvoiceAgregate.addAmountTax(amountTax);
-					taxInvoiceAgregate.addAmountWithoutTax(discountAmountWithoutTax);
-					invoiceAgregateService.update(taxInvoiceAgregate,currentUser);
+			//TODO do this in the right place (one time by userAccount)
+			Map<Object, Object> userMap = new HashMap<Object, Object>();
+			userMap.put("ca", userAccount);
+			boolean isExonerated = (boolean) ValueExpressionWrapper.evaluateExpression(userAccount.getProvider().getExonerationTaxEl(), userMap, Boolean.class);
+			if(!isExonerated){
+				for (Tax tax:taxes) {
+					BigDecimal amountTax=discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED));
+					discountAmountTax=discountAmountTax.add(amountTax);
+					invoiceAgregateSubcat.addSubCategoryTax(tax);
+					TaxInvoiceAgregate 	taxInvoiceAgregate= taxInvoiceAgregateMap.get(tax.getId());
+					if(taxInvoiceAgregate!=null){
+						taxInvoiceAgregate.addAmountTax(amountTax);
+						taxInvoiceAgregate.addAmountWithoutTax(discountAmountWithoutTax);
+						invoiceAgregateService.update(taxInvoiceAgregate,currentUser);
+					}
 				}
 			}
 

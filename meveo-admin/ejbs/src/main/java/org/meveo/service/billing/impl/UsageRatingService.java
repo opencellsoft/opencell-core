@@ -157,6 +157,11 @@ public class UsageRatingService {
 				.getTradingCurrency();
 		Tax tax = invoiceSubcategoryCountry.getTax();
 
+		//TODO do this in the right place (one time by userAccount)
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		userMap.put("ca", chargeInstance.getSubscription().getUserAccount());
+		boolean isExonerated = (boolean) ValueExpressionWrapper.evaluateExpression(provider.getExonerationTaxEl(), userMap, Boolean.class);
+		
 		walletOperation.setChargeInstance(chargeInstance);
 		walletOperation.setRatingUnitDescription(chargeInstance.getRatingUnitDescription());
 		walletOperation.setSeller(chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount()
@@ -173,9 +178,8 @@ public class UsageRatingService {
 			walletOperation.setQuantity(edr.getQuantity());
 		}
 
-		walletOperation.setQuantity( NumberUtil.getInChargeUnit(walletOperation.getQuantity(), chargeInstance.getChargeTemplate().getUnitMultiplicator(), chargeInstance.getChargeTemplate().getUnitNbDecimal(), chargeInstance.getChargeTemplate().getRoundingMode()));
-		
-		walletOperation.setTaxPercent(tax.getPercent());
+		walletOperation.setQuantity( NumberUtil.getInChargeUnit(walletOperation.getQuantity(), chargeInstance.getChargeTemplate().getUnitMultiplicator(), chargeInstance.getChargeTemplate().getUnitNbDecimal(), chargeInstance.getChargeTemplate().getRoundingMode()));		
+		walletOperation.setTaxPercent(isExonerated ? BigDecimal.ZERO : tax.getPercent());
 		walletOperation.setStartDate(null);
 		walletOperation.setEndDate(null);
 		walletOperation.setCurrency(currency.getCurrency());

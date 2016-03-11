@@ -904,8 +904,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		boolean entreprise = invoice.getBillingAccount().getProvider().isEntreprise();
 		int rounding = invoice.getBillingAccount().getProvider().getRounding() == null ? 2 : invoice
 				.getBillingAccount().getProvider().getRounding();
-		boolean exoneratedFromTaxes = invoice.getBillingAccount().getCustomerAccount().getCustomer()
-				.getCustomerCategory().getExoneratedFromTaxes();
+		
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		userMap.put("ca", invoice.getBillingAccount().getUsersAccounts().get(0));
+		boolean exoneratedFromTaxes = (boolean) ValueExpressionWrapper.evaluateExpression(invoice.getBillingAccount().getProvider().getExonerationTaxEl(), userMap, Boolean.class);		
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
 
 		Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();

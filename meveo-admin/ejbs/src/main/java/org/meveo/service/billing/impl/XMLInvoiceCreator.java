@@ -77,6 +77,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -1050,8 +1051,17 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	private void addTaxes(Invoice invoice, Document doc, Element parent) throws BusinessException {
 		// log.debug("adding taxes...");
 		Element taxes = doc.createElement("taxes");
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		userMap.put("ca", invoice.getBillingAccount().getUsersAccounts().get(0));
+		boolean exoneratedFromTaxes = (boolean) ValueExpressionWrapper.evaluateExpression(invoice.getBillingAccount().getProvider().getExonerationTaxEl(), userMap, Boolean.class);		
+		if(exoneratedFromTaxes){
+			Element exonerated = doc.createElement("exonerated");
+			String motifCode = (String) invoice.getProvider().getCFValue("exonerated.reason.code");
+			if(motifCode == null) motifCode = "";
+			exonerated.setAttribute("reason", paramBean.getProperty("exonerated.reason_"+motifCode, "DOM-TOM"));
+			taxes.appendChild(exonerated);
+		}else{			
 		int rounding = invoice.getProvider().getRounding() == null ? 2 : invoice.getProvider().getRounding();
-
 		taxes.setAttribute("total", round(invoice.getAmountTax(), rounding));
 		parent.appendChild(taxes);
 		Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
@@ -1118,6 +1128,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			tax.appendChild(amountHT);
 
 			taxes.appendChild(tax);
+		}
 		}
 	}
 

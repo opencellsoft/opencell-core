@@ -2,6 +2,8 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -26,6 +28,7 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.slf4j.Logger;
 
 @Stateless
@@ -107,7 +110,10 @@ public class RealtimeChargingService {
 					"no tax exists for invoiceSubcategoryCountry id="
 							+ invoiceSubcategoryCountry.getId());
 		}
-
+		
+		Map<Object, Object> userMap = new HashMap<Object, Object>();		
+		boolean isExonerated = (boolean) ValueExpressionWrapper.evaluateExpression(provider.getExonerationTaxEl(), userMap, Boolean.class);
+		
 		WalletOperation op = new WalletOperation();
 
 		op.setOperationDate(subscriptionDate);
@@ -125,8 +131,8 @@ public class RealtimeChargingService {
 		op.setCode(chargeTemplate.getCode());
 
 		op.setDescription("");
-		op.setQuantity(NumberUtil.getInChargeUnit(quantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));	
-		op.setTaxPercent(tax.getPercent());
+		op.setQuantity(NumberUtil.getInChargeUnit(quantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));			
+		op.setTaxPercent(isExonerated ? BigDecimal.ZERO : tax.getPercent());
 		op.setCurrency(currency.getCurrency());
 		op.setStartDate(null);
 		op.setEndDate(null);

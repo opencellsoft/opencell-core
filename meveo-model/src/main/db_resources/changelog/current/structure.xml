@@ -2036,5 +2036,11 @@
         </addColumn>
         <sql>UPDATE CAT_CHARGE_TEMPLATE SET ROUNDING_MODE='NEAREST';</sql>
     </changeSet> 	
+
+    <changeSet id="#1528_20160311" author="anasseh">
+        <addColumn tableName="CRM_PROVIDER">
+            <column name="EXONERATION_TAX_EL" type="VARCHAR(2000)" />
+        </addColumn>        
+    </changeSet> 	    
 	
 </databaseChangeLog>
