@@ -52,9 +52,11 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (postData.getStorageType() == null) {
             missingParameters.add("storageType");
         }
+        if (postData.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && (postData.getMatrixColumns() == null || postData.getMatrixColumns().isEmpty())) {
+            missingParameters.add("matrixColumns");
+        }
 
         handleMissingParameters();
-        
 
         if (appliesTo != null) {
             postData.setAppliesTo(appliesTo);
@@ -95,9 +97,11 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (postData.getStorageType() == null) {
             missingParameters.add("storageType");
         }
+        if (postData.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && (postData.getMatrixColumns() == null || postData.getMatrixColumns().isEmpty())) {
+            missingParameters.add("matrixColumns");
+        }
 
         handleMissingParameters();
-        
 
         if (appliesTo != null) {
             postData.setAppliesTo(appliesTo);
@@ -129,9 +133,8 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (StringUtils.isBlank(appliesTo)) {
             missingParameters.add("appliesTo");
         }
-        
+
         handleMissingParameters();
-        
 
         CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, provider);
         if (cft != null) {
@@ -148,9 +151,8 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (StringUtils.isBlank(appliesTo)) {
             missingParameters.add("appliesTo");
         }
-        
+
         handleMissingParameters();
-        
 
         CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, provider);
 
@@ -169,9 +171,7 @@ public class CustomFieldTemplateApi extends BaseApi {
             missingParameters.add("appliesTo");
         }
 
-        
         handleMissingParameters();
-        
 
         if (appliesTo != null) {
             postData.setAppliesTo(appliesTo);
