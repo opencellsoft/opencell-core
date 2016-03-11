@@ -276,7 +276,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				int endIndex = prefix.indexOf("%", startIndex);
 				if (endIndex > 0) {
 					String datePattern = prefix.substring(startIndex, endIndex);
-					String invioceDate = DateUtils.formatDateWithPattern(new Date(), datePattern);
+					String invioceDate = DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), datePattern);
 					prefix = prefix.replace("%" + datePattern + "%", invioceDate);
 				}
 			}
@@ -765,7 +765,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				int endIndex = prefix.indexOf("%", startIndex);
 				if (endIndex > 0) {
 					String datePattern = prefix.substring(startIndex, endIndex);
-					String invoiceAdjustmentDate = DateUtils.formatDateWithPattern(new Date(), datePattern);
+					String invoiceAdjustmentDate = DateUtils.formatDateWithPattern(invoiceAdjustment.getInvoiceDate(), datePattern);
 					prefix = prefix.replace("%" + datePattern + "%", invoiceAdjustmentDate);
 				}
 			}
