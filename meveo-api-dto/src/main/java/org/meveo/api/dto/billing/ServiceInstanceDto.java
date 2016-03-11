@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.crm.CustomFieldInstance;
 
@@ -27,11 +28,18 @@ public class ServiceInstanceDto extends BaseDto {
     @XmlAttribute()
     private String description;
 
-    private String status;
+    private InstanceStatusEnum status;
+
+    private Date statusDate;
+
     private Date subscriptionDate;
+
     private Date terminationDate;
+
     private BigDecimal quantity;
+
     private String terminationReason;
+
     private Date endAgreementDate;
 
     private CustomFieldsDto customFields = new CustomFieldsDto();
@@ -43,7 +51,8 @@ public class ServiceInstanceDto extends BaseDto {
     public ServiceInstanceDto(ServiceInstance e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
         code = e.getCode();
         description = e.getDescription();
-        status = e.getStatus().name();
+        status = e.getStatus();
+        statusDate = e.getStatusDate();
         subscriptionDate = e.getSubscriptionDate();
         terminationDate = e.getTerminationDate();
         quantity = e.getQuantity();
@@ -63,12 +72,20 @@ public class ServiceInstanceDto extends BaseDto {
         this.code = code;
     }
 
-    public String getStatus() {
+    public InstanceStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(InstanceStatusEnum status) {
         this.status = status;
+    }
+
+    public Date getStatusDate() {
+        return statusDate;
+    }
+
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
     }
 
     public Date getSubscriptionDate() {
