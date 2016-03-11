@@ -54,24 +54,24 @@ public class AccountOperationsGenerationJob extends Job {
            Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
    		CustomFieldTemplate nbRuns = new CustomFieldTemplate();
-   		nbRuns.setCode("AccOpGeneratioJobb_nbRuns");
+   		nbRuns.setCode("AccountOperationsGenerationJob_nbRuns");
    		nbRuns.setAccountLevel(AccountLevelEnum.TIMER);
    		nbRuns.setActive(true);
    		nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
    		nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
    		nbRuns.setValueRequired(false);
    		nbRuns.setDefaultValue("1");
-   		result.put("AccOpGeneratioJobb_nbRuns", nbRuns);
+   		result.put("AccountOperationsGenerationJob_nbRuns", nbRuns);
 
    		CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
-   		waitingMillis.setCode("AccOpGeneratioJobb_waitingMillis");
+   		waitingMillis.setCode("AccountOperationsGenerationJob_waitingMillis");
    		waitingMillis.setAccountLevel(AccountLevelEnum.TIMER);
    		waitingMillis.setActive(true);
    		waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
    		waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
    		waitingMillis.setValueRequired(false);
    		waitingMillis.setDefaultValue("0");
-   		result.put("AccOpGeneratioJobb_waitingMillis", waitingMillis);
+   		result.put("AccountOperationsGenerationJob_waitingMillis", waitingMillis);
 
    		return result;
    	}
