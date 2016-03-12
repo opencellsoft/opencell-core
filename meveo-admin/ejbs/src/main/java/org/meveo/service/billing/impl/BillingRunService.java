@@ -649,6 +649,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			refreshOrRetrieve(billingRun);
 			for (Invoice invoice : billingRun.getInvoices()) {
 				invoiceService.setInvoiceNumber(invoice, currentUser);
+				invoice.setPdf(null);
 				BillingAccount billingAccount = invoice.getBillingAccount();
 				Date initCalendarDate = billingAccount.getSubscriptionDate();
 				if(initCalendarDate==null){
