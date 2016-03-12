@@ -553,6 +553,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		user = getEntityManager().find(User.class, user.getId());
 		for (Invoice invoice : billingRun.getInvoices()) {
 			invoiceService.setInvoiceNumber(invoice, user);
+			invoice.setPdf(null);
+			invoiceService.update(invoice);
 			BillingAccount billingAccount = invoice.getBillingAccount();
 			Date initCalendarDate = billingAccount.getSubscriptionDate();
 			if(initCalendarDate==null){
