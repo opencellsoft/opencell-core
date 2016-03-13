@@ -77,7 +77,6 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -104,10 +103,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	@Inject
 	private InvoiceAgregateService invoiceAgregateService;
 
-	TransformerFactory transfac = TransformerFactory.newInstance();
+	@Inject
+	private UserAccountService userAccountService;
 
-	// private static Logger log =
-	// LoggerFactory.getLogger(XMLInvoiceCreator.class);
+	TransformerFactory transfac = TransformerFactory.newInstance();
 
 	public void createXMLInvoiceAdjustment(Long invoiceId, File billingRundir) throws BusinessException {
 		createXMLInvoice(invoiceId, billingRundir, true);
@@ -1050,86 +1049,85 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	private void addTaxes(Invoice invoice, Document doc, Element parent) throws BusinessException {
 		// log.debug("adding taxes...");
-		Element taxes = doc.createElement("taxes");
-		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		userMap.put("ca", invoice.getBillingAccount().getUsersAccounts().get(0));
-		boolean exoneratedFromTaxes = (boolean) ValueExpressionWrapper.evaluateExpression(invoice.getBillingAccount().getProvider().getExonerationTaxEl(), userMap, Boolean.class);		
+		Element taxes = doc.createElement("taxes");		
+		boolean exoneratedFromTaxes = userAccountService.isExonerated(invoice.getBillingAccount().getUsersAccounts().get(0), invoice.getBillingAccount().getProvider());
+		
 		if(exoneratedFromTaxes){
-			Element exonerated = doc.createElement("exonerated");
+			Element exoneratedElement = doc.createElement("exonerated");
 			String motifCode = (String) invoice.getProvider().getCFValue("exonerated.reason.code");
 			if(motifCode == null) motifCode = "";
-			exonerated.setAttribute("reason", paramBean.getProperty("exonerated.reason_"+motifCode, "DOM-TOM"));
-			taxes.appendChild(exonerated);
+			exoneratedElement.setAttribute("reason", paramBean.getProperty("exonerated.reason_"+motifCode, "DOM-TOM"));
+			taxes.appendChild(exoneratedElement);
 		}else{			
-		int rounding = invoice.getProvider().getRounding() == null ? 2 : invoice.getProvider().getRounding();
-		taxes.setAttribute("total", round(invoice.getAmountTax(), rounding));
-		parent.appendChild(taxes);
-		Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
-		for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
-			if (invoiceAgregate instanceof TaxInvoiceAgregate) {
-				TaxInvoiceAgregate taxInvoiceAgregate = (TaxInvoiceAgregate) invoiceAgregate;
-				TaxInvoiceAgregate taxAgregate = null;
-
-				if (taxInvoiceAgregateMap.containsKey(taxInvoiceAgregate.getTax().getId())) {
-					taxAgregate = taxInvoiceAgregateMap.get(taxInvoiceAgregate.getTax().getId());
-					taxAgregate.setAmountTax(taxAgregate.getAmountTax().add(taxInvoiceAgregate.getAmountTax()));
-					taxAgregate.setAmountWithoutTax(taxAgregate.getAmountWithoutTax().add(
-							taxInvoiceAgregate.getAmountWithoutTax()));
-				} else {
-					taxAgregate = new TaxInvoiceAgregate();
-					taxAgregate.setTaxPercent(taxInvoiceAgregate.getTaxPercent());
-					taxAgregate.setTax(taxInvoiceAgregate.getTax());
-					taxAgregate.setAmountTax(taxInvoiceAgregate.getAmountTax());
-					taxAgregate.setAmountWithoutTax(taxInvoiceAgregate.getAmountWithoutTax());
-					taxInvoiceAgregateMap.put(taxInvoiceAgregate.getTax().getId(), taxAgregate);
+			int rounding = invoice.getProvider().getRounding() == null ? 2 : invoice.getProvider().getRounding();
+			taxes.setAttribute("total", round(invoice.getAmountTax(), rounding));			
+			Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
+			for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
+				if (invoiceAgregate instanceof TaxInvoiceAgregate) {
+					TaxInvoiceAgregate taxInvoiceAgregate = (TaxInvoiceAgregate) invoiceAgregate;
+					TaxInvoiceAgregate taxAgregate = null;
+	
+					if (taxInvoiceAgregateMap.containsKey(taxInvoiceAgregate.getTax().getId())) {
+						taxAgregate = taxInvoiceAgregateMap.get(taxInvoiceAgregate.getTax().getId());
+						taxAgregate.setAmountTax(taxAgregate.getAmountTax().add(taxInvoiceAgregate.getAmountTax()));
+						taxAgregate.setAmountWithoutTax(taxAgregate.getAmountWithoutTax().add(
+								taxInvoiceAgregate.getAmountWithoutTax()));
+					} else {
+						taxAgregate = new TaxInvoiceAgregate();
+						taxAgregate.setTaxPercent(taxInvoiceAgregate.getTaxPercent());
+						taxAgregate.setTax(taxInvoiceAgregate.getTax());
+						taxAgregate.setAmountTax(taxInvoiceAgregate.getAmountTax());
+						taxAgregate.setAmountWithoutTax(taxInvoiceAgregate.getAmountWithoutTax());
+						taxInvoiceAgregateMap.put(taxInvoiceAgregate.getTax().getId(), taxAgregate);
+					}
 				}
+	
 			}
-
-		}
-
-		int taxId = 0;
-		for (TaxInvoiceAgregate taxInvoiceAgregate : taxInvoiceAgregateMap.values()) {
-
-			Element tax = doc.createElement("tax");
-
-			tax.setAttribute("id", ++taxId + "");
-			tax.setAttribute("code", taxInvoiceAgregate.getTax().getCode() + "");
-
-			String languageCode = "";
-			try {
-				// log.debug("ba={}, tradingLanguage={}",
-				// invoice.getBillingAccount(),
-				// invoice.getBillingAccount().getTradingLanguage());
-				languageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-			} catch (NullPointerException e) {
-				log.error("Billing account must have a trading language.");
-				throw new BusinessException("Billing account must have a trading language.");
+	
+			int taxId = 0;
+			for (TaxInvoiceAgregate taxInvoiceAgregate : taxInvoiceAgregateMap.values()) {
+	
+				Element tax = doc.createElement("tax");
+	
+				tax.setAttribute("id", ++taxId + "");
+				tax.setAttribute("code", taxInvoiceAgregate.getTax().getCode() + "");
+	
+				String languageCode = "";
+				try {
+					// log.debug("ba={}, tradingLanguage={}",
+					// invoice.getBillingAccount(),
+					// invoice.getBillingAccount().getTradingLanguage());
+					languageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
+				} catch (NullPointerException e) {
+					log.error("Billing account must have a trading language.");
+					throw new BusinessException("Billing account must have a trading language.");
+				}
+	
+				String taxDescription = catMessagesService.getMessageDescription(taxInvoiceAgregate.getTax(), languageCode);
+				Element taxName = doc.createElement("name");
+				Text taxNameTxt = doc.createTextNode(taxDescription != null ? taxDescription : "");
+				taxName.appendChild(taxNameTxt);
+				tax.appendChild(taxName);
+	
+				Element percent = doc.createElement("percent");
+				Text percentTxt = doc.createTextNode(round(taxInvoiceAgregate.getTaxPercent(), rounding));
+				percent.appendChild(percentTxt);
+				tax.appendChild(percent);
+	
+				Element taxAmount = doc.createElement("amount");
+				Text amountTxt = doc.createTextNode(round(taxInvoiceAgregate.getAmountTax(), rounding));
+				taxAmount.appendChild(amountTxt);
+				tax.appendChild(taxAmount);
+	
+				Element amountHT = doc.createElement("amountHT");
+				Text amountHTTxt = doc.createTextNode(round(taxInvoiceAgregate.getAmountWithoutTax(), rounding));
+				amountHT.appendChild(amountHTTxt);
+				tax.appendChild(amountHT);
+	
+				taxes.appendChild(tax);
 			}
-
-			String taxDescription = catMessagesService.getMessageDescription(taxInvoiceAgregate.getTax(), languageCode);
-			Element taxName = doc.createElement("name");
-			Text taxNameTxt = doc.createTextNode(taxDescription != null ? taxDescription : "");
-			taxName.appendChild(taxNameTxt);
-			tax.appendChild(taxName);
-
-			Element percent = doc.createElement("percent");
-			Text percentTxt = doc.createTextNode(round(taxInvoiceAgregate.getTaxPercent(), rounding));
-			percent.appendChild(percentTxt);
-			tax.appendChild(percent);
-
-			Element taxAmount = doc.createElement("amount");
-			Text amountTxt = doc.createTextNode(round(taxInvoiceAgregate.getAmountTax(), rounding));
-			taxAmount.appendChild(amountTxt);
-			tax.appendChild(taxAmount);
-
-			Element amountHT = doc.createElement("amountHT");
-			Text amountHTTxt = doc.createTextNode(round(taxInvoiceAgregate.getAmountWithoutTax(), rounding));
-			amountHT.appendChild(amountHTTxt);
-			tax.appendChild(amountHT);
-
-			taxes.appendChild(tax);
 		}
-		}
+		parent.appendChild(taxes);
 	}
 
 	private void addHeaderCategories(Invoice invoice, Document doc, Element parent) {

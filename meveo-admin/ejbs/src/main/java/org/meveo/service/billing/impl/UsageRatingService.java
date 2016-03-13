@@ -79,6 +79,10 @@ public class UsageRatingService {
 	
     @Inject
     private RatingCacheContainerProvider ratingCacheContainerProvider;
+    
+    @Inject
+    private UserAccountService userAccountService;
+
 
 	// @PreDestroy
 	// accessing Entity manager in predestroy is bugged in jboss7.1.3
@@ -158,10 +162,8 @@ public class UsageRatingService {
 		Tax tax = invoiceSubcategoryCountry.getTax();
 
 		//TODO do this in the right place (one time by userAccount)
-		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		userMap.put("ca", chargeInstance.getSubscription().getUserAccount());
-		boolean isExonerated = (boolean) ValueExpressionWrapper.evaluateExpression(provider.getExonerationTaxEl(), userMap, Boolean.class);
 		
+		boolean isExonerated =  userAccountService.isExonerated(chargeInstance.getSubscription().getUserAccount(), provider);
 		walletOperation.setChargeInstance(chargeInstance);
 		walletOperation.setRatingUnitDescription(chargeInstance.getRatingUnitDescription());
 		walletOperation.setSeller(chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount()

@@ -2,8 +2,6 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -28,7 +26,6 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.base.ValueExpressionWrapper;
 import org.slf4j.Logger;
 
 @Stateless
@@ -45,6 +42,9 @@ public class RealtimeChargingService {
 
 	@Inject
 	private WalletOperationService walletOperationService;
+	
+	@Inject
+	private UserAccountService userAccountService;
 
 
 	public BigDecimal getApplicationPrice(BillingAccount ba,
@@ -110,9 +110,8 @@ public class RealtimeChargingService {
 					"no tax exists for invoiceSubcategoryCountry id="
 							+ invoiceSubcategoryCountry.getId());
 		}
-		
-		Map<Object, Object> userMap = new HashMap<Object, Object>();		
-		boolean isExonerated = (boolean) ValueExpressionWrapper.evaluateExpression(provider.getExonerationTaxEl(), userMap, Boolean.class);
+	
+		boolean isExonerated = userAccountService.isExonerated(null, provider);
 		
 		WalletOperation op = new WalletOperation();
 

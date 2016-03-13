@@ -97,7 +97,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 	@Inject
 	private RatingService chargeApplicationRatingService;
-
+	
 	@Inject
 	private WalletCacheContainerProvider walletCacheContainerProvider;
 

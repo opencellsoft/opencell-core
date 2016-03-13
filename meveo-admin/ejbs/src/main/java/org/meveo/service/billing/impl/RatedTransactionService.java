@@ -94,6 +94,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	
 	@Inject
 	private BillingAccountService billingAccountService;
+	
+	@Inject
+	private UserAccountService userAccountService;
 
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -243,10 +246,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		for (UserAccount userAccount : billingAccount.getUsersAccounts()) {
 			WalletInstance wallet = userAccount.getWallet();
 			
-			//TODO do this in the right place (one time by userAccount)
-			Map<Object, Object> userMap = new HashMap<Object, Object>();
-			userMap.put("ca", userAccount);
-			boolean isExonerated = (boolean) ValueExpressionWrapper.evaluateExpression(userAccount.getProvider().getExonerationTaxEl(), userMap, Boolean.class);
+			//TODO do this in the right place (one time by userAccount)			
+			boolean isExonerated = userAccountService.isExonerated(userAccount, userAccount.getProvider());
 			
 			// TODO : use Named queries
 			CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
@@ -469,7 +470,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				}
 				if(invoice.getAmountWithoutTax()!=null){
 
-					invoice.setAmountWithTax(invoice.getAmountWithoutTax().add(invoice.getAmountTax()));
+					invoice.setAmountWithTax(invoice.getAmountWithoutTax().add(invoice.getAmountTax() == null ? BigDecimal.ZERO : invoice.getAmountTax()));
 				}
 				BigDecimal balance=BigDecimal.ZERO;
 				if (!entreprise && biggestSubCat != null && !isExonerated) {
@@ -666,10 +667,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			}
 			SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
 			BigDecimal discountAmountTax=BigDecimal.ZERO;
-			//TODO do this in the right place (one time by userAccount)
-			Map<Object, Object> userMap = new HashMap<Object, Object>();
-			userMap.put("ca", userAccount);
-			boolean isExonerated = (boolean) ValueExpressionWrapper.evaluateExpression(userAccount.getProvider().getExonerationTaxEl(), userMap, Boolean.class);
+			//TODO do this in the right place (one time by userAccount)			
+			boolean isExonerated = userAccountService.isExonerated(userAccount,userAccount.getProvider());			
 			if(!isExonerated){
 				for (Tax tax:taxes) {
 					BigDecimal amountTax=discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED));

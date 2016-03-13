@@ -73,6 +73,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 	@Inject
 	private RatingCacheContainerProvider ratingCacheContainerProvider;
 	
+	@Inject
+	private UserAccountService userAccountService;
+	
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
 	/*
@@ -180,9 +183,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 		WalletOperation result = new WalletOperation();
 		//TODO do this in the right place (one time by userAccount)
-		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		userMap.put("ca", chargeInstance.getSubscription().getUserAccount());
-		boolean isExonerated = (boolean) ValueExpressionWrapper.evaluateExpression(chargeInstance.getProvider().getExonerationTaxEl(), userMap, Boolean.class);
+		boolean  isExonerated = userAccountService.isExonerated(chargeInstance.getSubscription().getUserAccount(), chargeInstance.getProvider());				
 		
 		if (chargeInstance instanceof RecurringChargeInstance) {
 			result.setSubscriptionDate(subscriptionDate);
@@ -211,7 +212,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		}
 		result.setCode(code);
 		result.setDescription(chargeInstance.getDescription());
-		result.setTaxPercent(isExonerated?BigDecimal.ZERO:taxPercent);
+		result.setTaxPercent(isExonerated?BigDecimal.ZERO:taxPercent);		
 		result.setCurrency(tCurrency.getCurrency());
 		result.setStartDate(startdate);
 		result.setEndDate(endDate);
@@ -318,7 +319,6 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 		PricePlanMatrix ratePrice = null;
 		String providerCode = provider.getCode();
-
 		if (unitPriceWithoutTax == null) {
             List<PricePlanMatrix> chargePricePlans = ratingCacheContainerProvider.getPricePlansByChargeCode(provider.getId(), bareWalletOperation.getCode());
             if (chargePricePlans == null || chargePricePlans.isEmpty()) {
@@ -329,20 +329,19 @@ public class RatingService extends BusinessService<WalletOperation>{
 			if (ratePrice == null || ratePrice.getAmountWithoutTax() == null) {
 				throw new BusinessException("Invalid price plan for provider " + providerCode + " and charge code "
 						+ bareWalletOperation.getCode());
-			} else {
-				log.debug("found ratePrice:" + ratePrice.getId());
-				unitPriceWithoutTax = ratePrice.getAmountWithoutTax();
-				unitPriceWithTax = ratePrice.getAmountWithTax();
-				if(ratePrice.getAmountWithoutTaxEL()!=null){
-					unitPriceWithoutTax = getExpressionValue(ratePrice.getAmountWithoutTaxEL(),ratePrice, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),unitPriceWithoutTax);
-				}
-				if(ratePrice.getAmountWithTaxEL()!=null){
-					unitPriceWithTax = getExpressionValue(ratePrice.getAmountWithTaxEL(),ratePrice, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),unitPriceWithoutTax);
-				}
-
+			} 
+			log.debug("found ratePrice:" + ratePrice.getId());
+			unitPriceWithoutTax = ratePrice.getAmountWithoutTax();
+			unitPriceWithTax = ratePrice.getAmountWithTax();
+			if(ratePrice.getAmountWithoutTaxEL()!=null){
+				unitPriceWithoutTax = getExpressionValue(ratePrice.getAmountWithoutTaxEL(),ratePrice, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),unitPriceWithoutTax);
 			}
-
+			if(ratePrice.getAmountWithTaxEL()!=null){
+				unitPriceWithTax = getExpressionValue(ratePrice.getAmountWithTaxEL(),ratePrice, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),unitPriceWithoutTax);
+			}
 		}
+		log.debug("ratePrice unitPriceWithoutTax:" + unitPriceWithoutTax);
+		log.debug("ratePrice unitPriceWithTax:" + unitPriceWithTax);
 		// if the wallet operation correspond to a recurring charge that is
 		// shared, we divide the price by the number of
 		// shared charges
@@ -400,6 +399,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		bareWalletOperation.setAmountWithoutTax(priceWithoutTax);
 		bareWalletOperation.setAmountWithTax(priceWithTax);
 		bareWalletOperation.setAmountTax(amountTax);
+		
 	}
 
 	private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation,

@@ -130,6 +130,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	@Inject
 	private CustomFieldTemplateService customFieldTemplateService;
 	
+	@Inject
+	private UserAccountService userAccountService;
+	
 
 	private String PDF_DIR_NAME = "pdf";
 	private String INVOICE_TEMPLATE_FILENAME = "invoice.jasper";
@@ -905,9 +908,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		int rounding = invoice.getBillingAccount().getProvider().getRounding() == null ? 2 : invoice
 				.getBillingAccount().getProvider().getRounding();
 		
-		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		userMap.put("ca", invoice.getBillingAccount().getUsersAccounts().get(0));
-		boolean exoneratedFromTaxes = (boolean) ValueExpressionWrapper.evaluateExpression(invoice.getBillingAccount().getProvider().getExonerationTaxEl(), userMap, Boolean.class);		
+		boolean  exoneratedFromTaxes = userAccountService.isExonerated(invoice.getBillingAccount().getUsersAccounts().get(0),invoice.getBillingAccount().getProvider());		
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
 
 		Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
