@@ -17,6 +17,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.admin.util.NumberUtil;
 import org.meveo.cache.RatingCacheContainerProvider;
@@ -28,8 +29,11 @@ import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
@@ -68,6 +72,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 	@Inject
 	private RatingCacheContainerProvider ratingCacheContainerProvider;
+	
+	@Inject
+	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
 	
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -607,11 +614,25 @@ public class RatingService extends BusinessService<WalletOperation>{
 				operation.setAmountTax(operation.getAmountWithTax().subtract(
 						operation.getAmountWithoutTax()));
 			} else {
-				if(operation.getPriceplan()==null){
-					operation.setUnitAmountWithoutTax(null);
-					operation.setUnitAmountWithTax(null);
-					operation.setUnitAmountTax(null);
+				operation.setUnitAmountWithoutTax(null);
+				operation.setUnitAmountWithTax(null);
+				operation.setUnitAmountTax(null);
+								
+				TradingCountry tradingCountry = operationToRerate.getChargeInstance().getSubscription().getUserAccount().getBillingAccount().getTradingCountry();				
+				InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.
+						findInvoiceSubCategoryCountry(operationToRerate.getChargeInstance().getChargeTemplate().getInvoiceSubCategory().getId(), tradingCountry.getId(),
+								operationToRerate.getProvider());
+				if (invoiceSubcategoryCountry == null) {
+					throw new IncorrectChargeTemplateException("reRate: No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + operationToRerate.getChargeInstance().getChargeTemplate().getInvoiceSubCategory().getCode() + " and trading country="
+							+ tradingCountry.getCountryCode());
 				}
+
+				Tax tax = invoiceSubcategoryCountry.getTax();
+				if (tax == null) {
+					throw new IncorrectChargeTemplateException("reRate: no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+				}
+								
+				operation.setTaxPercent(tax.getPercent());
 				rateBareWalletOperation(operation, null,
 							null, operation.getPriceplan().getTradingCountry()==null?null:
 								operation.getPriceplan().getTradingCountry().getId(), operation.getPriceplan()
