@@ -986,8 +986,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 		}
 
-		if (invoice.getAmountWithoutTax() != null) {
-			invoice.setAmountWithTax(invoice.getAmountWithoutTax().add(invoice.getAmountTax()));
+		if (invoice.getAmountWithoutTax() != null) {			
+			invoice.setAmountWithTax(invoice.getAmountWithoutTax().add(invoice.getAmountTax() == null ? BigDecimal.ZERO : invoice.getAmountTax()));
 		}
 
 		if (!entreprise && biggestSubCat != null && !exoneratedFromTaxes) {
