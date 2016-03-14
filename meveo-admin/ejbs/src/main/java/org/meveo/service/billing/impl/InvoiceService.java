@@ -292,7 +292,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			seller.updateAudit(seller.getAuditable().getCreator());
 		}
 
-		long nextInvoiceNb = getNextValue(seller, currentUser);
+		long nextInvoiceNb = getNextValue(seller, currentUser,invoice.getInvoiceDate());
 
 		int sequenceSize = getSequenceSize(seller, currentUser);
 
@@ -307,56 +307,53 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 	}
 
-	public synchronized long getNextValue(Seller seller, User currentUser) {
+	public synchronized long getNextValue(Seller seller, User currentUser,Date invoiceDate) {
 		long result = 0;
 
-		if (seller != null) {
-			Date now = new Date();
-			if (seller.getCFValue(INVOICE_SEQUENCE, now) != null) {	
+		if (seller != null) {		
+			if (seller.getCFValue(INVOICE_SEQUENCE, invoiceDate) != null) {	
 				CustomFieldTemplate cft = customFieldTemplateService.findByCode(INVOICE_SEQUENCE, seller.getProvider());
 				if(cft == null){
 					throw new RuntimeException("Can not foud template for INVOICE_SEQUENCE CustomField");
 				}
 				Long sequenceVal = 1L;
 				try {
-					sequenceVal = Long.parseLong(seller.getCFValue(INVOICE_SEQUENCE, now).toString());
+					sequenceVal = Long.parseLong(seller.getCFValue(INVOICE_SEQUENCE, invoiceDate).toString());
 				} catch (NumberFormatException e) {
 					sequenceVal = 1L;
 				}
 
 				result = 1 + sequenceVal;
-				seller.setCFValue(InvoiceService.INVOICE_SEQUENCE, result, new Date(), cft);
+				seller.setCFValue(InvoiceService.INVOICE_SEQUENCE, result,invoiceDate, cft);
 			} else if (seller.getCurrentInvoiceNb() != null) {
 				long currentInvoiceNbre = seller.getCurrentInvoiceNb();
 				result = 1 + currentInvoiceNbre;
 				seller.setCurrentInvoiceNb(result);
 			} else {
-				result = getNextValue(seller.getProvider(), currentUser);
+				result = getNextValue(seller.getProvider(), currentUser,invoiceDate);
 			}
 		}
 
 		return result;
 	}
 
-	public synchronized long getNextValue(Provider provider, User currentUser) {
-		long result = 0;
-
-		Date now = new Date();
+	public synchronized long getNextValue(Provider provider, User currentUser,Date invoiceDate) {
+		long result = 0;		
 		if (provider != null) {
-			if (provider.getCFValue(INVOICE_SEQUENCE, now) != null) {
+			if (provider.getCFValue(INVOICE_SEQUENCE, invoiceDate) != null) {
 				CustomFieldTemplate cft = customFieldTemplateService.findByCode(INVOICE_SEQUENCE, provider);
 				if(cft == null){
 					throw new RuntimeException("Can not foud template for INVOICE_SEQUENCE CustomField");
 				}
 				Long sequenceVal = 1L;
 				try {
-					sequenceVal = Long.parseLong(provider.getCFValue(INVOICE_SEQUENCE, now).toString());
+					sequenceVal = Long.parseLong(provider.getCFValue(INVOICE_SEQUENCE, invoiceDate).toString());
 				} catch (NumberFormatException e) {
 					sequenceVal = 1L;
 				}
 
 				result = 1 + sequenceVal;
-				provider.setCFValue(InvoiceService.INVOICE_SEQUENCE, result, new Date(), cft);
+				provider.setCFValue(InvoiceService.INVOICE_SEQUENCE, result, invoiceDate, cft);
 			} else {
 				long currentInvoiceNbre = provider.getCurrentInvoiceNb() != null ? provider.getCurrentInvoiceNb() : 0;
 				result = 1 + currentInvoiceNbre;
@@ -760,7 +757,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 		}
 
-		long nextInvoiceAdjustmentNb = getInvoiceAdjustmentNextValue(invoiceAdjustment, seller, currentUser);
+		long nextInvoiceAdjustmentNb = getInvoiceAdjustmentNextValue(invoiceAdjustment, seller, currentUser,invoiceAdjustment.getInvoiceDate());
 
 		int padSize = getNBOfChars(seller, currentUser);
 
@@ -791,15 +788,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return result;
 	}
 
-	public synchronized long getInvoiceAdjustmentNextValue(Invoice invoiceAdjustment, Seller seller, User currentUser) {
+	public synchronized long getInvoiceAdjustmentNextValue(Invoice invoiceAdjustment, Seller seller, User currentUser, Date dateInvoice) {
 		long result = 0;
 
-		if (seller != null) {
-			Date now = new Date();
-			if (seller.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, now) != null) {
+		if (seller != null) {			
+			if (seller.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, dateInvoice) != null) {
 				Long sequenceVal = 1L;
 				try {
-					sequenceVal = Long.parseLong(seller.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, now).toString());
+					sequenceVal = Long.parseLong(seller.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, dateInvoice).toString());
 				} catch (NumberFormatException e) {
 					sequenceVal = 1L;
 				}
@@ -810,7 +806,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				long currentInvoiceAdjustmentNo = seller.getCurrentInvoiceAdjustmentNb();
 				result = 1 + currentInvoiceAdjustmentNo;
 			} else {
-				result = getInvoiceAdjustmentNextValue(invoiceAdjustment, seller.getProvider(), currentUser);
+				result = getInvoiceAdjustmentNextValue(invoiceAdjustment, seller.getProvider(), currentUser,dateInvoice);
 			}
 		}
 
@@ -818,15 +814,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	public synchronized long getInvoiceAdjustmentNextValue(Invoice invoiceAdjustment, Provider provider,
-			User currentUser) {
+			User currentUser,Date dateInvoice) {
 		long result = 0;
-
-		Date now = new Date();
+		
 		if (provider != null) {
-			if (provider.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, now) != null) {
+			if (provider.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, dateInvoice) != null) {
 				Long sequenceVal = 1L;
 				try {
-					sequenceVal = Long.parseLong(provider.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, now).toString());
+					sequenceVal = Long.parseLong(provider.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, dateInvoice).toString());
 				} catch (NumberFormatException e) {
 					sequenceVal = 1L;
 				}
