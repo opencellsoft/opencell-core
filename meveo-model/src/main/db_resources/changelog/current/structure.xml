@@ -1482,4 +1482,8 @@
         </addColumn>
         <sql>update BILLING_SERVICE_INSTANCE set UUID ='ServiceInstance-'|| id </sql>  
     </changeSet>        
+
+    <changeSet id="#1551-20160314" author="AndriusKarpavicius">
+        <modifyDataType tableName="crm_custom_field_inst" columnName="serialized_value" newDataType="text"/>
+    </changeSet>
 </databaseChangeLog>
