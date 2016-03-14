@@ -174,6 +174,9 @@ public class UserAccountService extends AccountService<UserAccount> {
 	 */
 	public boolean isExonerated(UserAccount ua,Provider provider){
 		boolean isExonerated = false;
+		if(ua != null && ua.getBillingAccount().getCustomerAccount().getCustomer().getCustomerCategory().getExoneratedFromTaxes()){
+			return true;
+		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		if(provider != null &&  !StringUtils.isBlank(provider.getExonerationTaxEl())){
 			if(provider.getExonerationTaxEl().indexOf("ua")>-1){

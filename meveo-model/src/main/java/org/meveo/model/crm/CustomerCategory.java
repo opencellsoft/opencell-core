@@ -36,7 +36,6 @@ public class CustomerCategory extends BusinessEntity {
 	@Column(name = "EXONERATED_FROM_TAXES")
 	private boolean exoneratedFromTaxes=false ;
 
-	@Deprecated
 	public boolean getExoneratedFromTaxes() {
 		return exoneratedFromTaxes;
 	}
