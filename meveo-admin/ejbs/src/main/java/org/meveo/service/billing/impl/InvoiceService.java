@@ -804,8 +804,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					sequenceVal = 1L;
 				}
 
-				result = sequenceVal;
-				invoiceAdjustment.setInvoiceAdjustmentCurrentSellerNb(sequenceVal);
+				result = 1+sequenceVal;
+				invoiceAdjustment.setInvoiceAdjustmentCurrentSellerNb(result);
 			} else if (seller.getCurrentInvoiceAdjustmentNb() != null) {
 				long currentInvoiceAdjustmentNo = seller.getCurrentInvoiceAdjustmentNb();
 				result = 1 + currentInvoiceAdjustmentNo;
@@ -831,8 +831,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					sequenceVal = 1L;
 				}
 
-				result = sequenceVal;
-				invoiceAdjustment.setInvoiceAdjustmentCurrentProviderNb(sequenceVal);
+				result = 1+sequenceVal;
+				invoiceAdjustment.setInvoiceAdjustmentCurrentProviderNb(result);
 			} else {
 				long currentInvoiceAdjustmentNo = provider.getCurrentInvoiceAdjustmentNb() != null ? provider
 						.getCurrentInvoiceAdjustmentNb() : 0;
