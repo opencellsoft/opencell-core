@@ -793,6 +793,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 		if (seller != null) {			
 			if (seller.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, dateInvoice) != null) {
+				CustomFieldTemplate cft = customFieldTemplateService.findByCode(INVOICE_ADJUSTMENT_SEQUENCE, seller.getProvider());
 				Long sequenceVal = 1L;
 				try {
 					sequenceVal = Long.parseLong(seller.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, dateInvoice).toString());
@@ -801,6 +802,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				}
 
 				result = 1+sequenceVal;
+				seller.setCFValue(InvoiceService.INVOICE_ADJUSTMENT_SEQUENCE, result,dateInvoice, cft);
 				invoiceAdjustment.setInvoiceAdjustmentCurrentSellerNb(result);
 			} else if (seller.getCurrentInvoiceAdjustmentNb() != null) {
 				long currentInvoiceAdjustmentNo = seller.getCurrentInvoiceAdjustmentNb();
@@ -816,9 +818,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public synchronized long getInvoiceAdjustmentNextValue(Invoice invoiceAdjustment, Provider provider,
 			User currentUser,Date dateInvoice) {
 		long result = 0;
-		
+		CustomFieldTemplate cft = customFieldTemplateService.findByCode(INVOICE_ADJUSTMENT_SEQUENCE, provider);
 		if (provider != null) {
 			if (provider.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, dateInvoice) != null) {
+				
 				Long sequenceVal = 1L;
 				try {
 					sequenceVal = Long.parseLong(provider.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, dateInvoice).toString());
@@ -827,6 +830,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				}
 
 				result = 1+sequenceVal;
+				provider.setCFValue(InvoiceService.INVOICE_ADJUSTMENT_SEQUENCE, result,dateInvoice, cft);
 				invoiceAdjustment.setInvoiceAdjustmentCurrentProviderNb(result);
 			} else {
 				long currentInvoiceAdjustmentNo = provider.getCurrentInvoiceAdjustmentNb() != null ? provider
@@ -1044,18 +1048,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	public void updateInvoiceAdjustmentCurrentNb(Invoice invoice) {
-		// update seller or provider current invoice sequence value
-		if (invoice.getInvoiceAdjustmentCurrentSellerNb() != null) {
-			Seller seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-			seller.setCFValue(InvoiceService.INVOICE_ADJUSTMENT_SEQUENCE,
-					invoice.getInvoiceAdjustmentCurrentSellerNb() + 1, new Date(), null);
-			sellerService.update(seller, getCurrentUser());
-		} else if (invoice.getInvoiceAdjustmentCurrentProviderNb() != null) {
-			Provider provider = invoice.getProvider();
-			provider.setCFValue(InvoiceService.INVOICE_ADJUSTMENT_SEQUENCE,
-					invoice.getInvoiceAdjustmentCurrentProviderNb() + 1, new Date(), null);
-			providerService.update(provider, getCurrentUser());
-		}
+		//why do this here ?
+//		the seq as CF is updated on getSeqValue methode, just like currentSeq field
+				
+//		
+//		// update seller or provider current invoice sequence value
+//		if (invoice.getInvoiceAdjustmentCurrentSellerNb() != null) {
+//			Seller seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+//			seller.setCFValue(InvoiceService.INVOICE_ADJUSTMENT_SEQUENCE,
+//					invoice.getInvoiceAdjustmentCurrentSellerNb() + 1, new Date(), null);
+//			sellerService.update(seller, getCurrentUser());
+//		} else if (invoice.getInvoiceAdjustmentCurrentProviderNb() != null) {
+//			Provider provider = invoice.getProvider();
+//			provider.setCFValue(InvoiceService.INVOICE_ADJUSTMENT_SEQUENCE,
+//					invoice.getInvoiceAdjustmentCurrentProviderNb() + 1, new Date(), null);
+//			providerService.update(provider, getCurrentUser());
+//		}
 	}
 
 	public void recomputeSubCategoryAggregate(Invoice invoice, User currentUser) {
