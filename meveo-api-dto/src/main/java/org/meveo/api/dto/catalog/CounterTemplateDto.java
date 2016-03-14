@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.CounterTemplateLevel;
+import org.meveo.model.catalog.CounterTypeEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -30,10 +32,10 @@ public class CounterTemplateDto extends BaseDto implements Serializable {
     private String calendar;
 
     private String unity;
-    private String type;
+    private CounterTypeEnum type;
     private BigDecimal ceiling;
     private boolean disabled;
-    private String counterLevel;
+    private CounterTemplateLevel counterLevel;
     private String ceilingExpressionEl;
 
     public CounterTemplateDto() {
@@ -43,11 +45,11 @@ public class CounterTemplateDto extends BaseDto implements Serializable {
         code = e.getCode();
         description = e.getDescription();
         unity = e.getUnityDescription();
-        type = e.getCounterType().getLabel();
+        type = e.getCounterType();
         ceiling = e.getCeiling();
         disabled = e.isDisabled();
         calendar = e.getCalendar().getCode();
-        counterLevel = String.valueOf(e.getCounterLevel());
+        counterLevel = e.getCounterLevel();
         ceilingExpressionEl = e.getCeilingExpressionEl();
     }
 
@@ -75,11 +77,11 @@ public class CounterTemplateDto extends BaseDto implements Serializable {
         this.unity = unity;
     }
 
-    public String getType() {
+    public CounterTypeEnum getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(CounterTypeEnum type) {
         this.type = type;
     }
 
@@ -107,11 +109,11 @@ public class CounterTemplateDto extends BaseDto implements Serializable {
         this.calendar = calendar;
     }
 
-    public String getCounterLevel() {
+    public CounterTemplateLevel getCounterLevel() {
         return counterLevel;
     }
 
-    public void setCounterLevel(String counterLevel) {
+    public void setCounterLevel(CounterTemplateLevel counterLevel) {
         this.counterLevel = counterLevel;
     }
 

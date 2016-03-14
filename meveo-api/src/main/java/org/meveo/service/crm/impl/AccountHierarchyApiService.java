@@ -14,13 +14,13 @@ import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.account.AccountHierarchyTypeEnum;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
+import org.meveo.api.dto.account.AccountHierarchyTypeEnum;
 import org.meveo.api.dto.account.AddressDto;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.account.BillingAccountDto;
@@ -40,7 +40,6 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -75,9 +74,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
-import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.PaymentTermEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
@@ -248,9 +245,8 @@ public class AccountHierarchyApiService extends BaseApi {
         if (StringUtils.isBlank(postData.getEmail())) {
             missingParameters.add("email");
         }
-        
+
         handleMissingParameters();
-        
 
         if (customerService.findByCode(postData.getCustomerId(), provider) != null) {
             throw new EntityAlreadyExistsException(Customer.class, postData.getCustomerId());
@@ -478,7 +474,6 @@ public class AccountHierarchyApiService extends BaseApi {
         }
 
         handleMissingParameters();
-        
 
         String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId());
         Customer customer = customerService.findByCode(customerCode, provider);
@@ -1019,19 +1014,15 @@ public class AccountHierarchyApiService extends BaseApi {
 
                                 customerAccount.setProvider(provider);
                             } else {
-                                if (!StringUtils.isBlank(customerAccountDto.getStatus())) {
-                                    try {
-                                        CustomerAccountStatusEnum customerAccountStatusEnum = CustomerAccountStatusEnum.valueOf(customerAccountDto.getStatus());
-                                        if (customerAccountStatusEnum == CustomerAccountStatusEnum.CLOSE) {
-                                            try {
-                                                customerAccountService.closeCustomerAccount(customerAccount, currentUser);
-                                            } catch (Exception e) {
-                                                throw new MeveoApiException("Failed closing customerAccount with code=" + customerAccountDto.getCode() + ". " + e.getMessage());
-                                            }
+                                if (customerAccountDto.getStatus() != null) {
+                                    if (customerAccountDto.getStatus() == CustomerAccountStatusEnum.CLOSE) {
+                                        try {
+                                            customerAccountService.closeCustomerAccount(customerAccount, currentUser);
+                                        } catch (Exception e) {
+                                            throw new MeveoApiException("Failed closing customerAccount with code=" + customerAccountDto.getCode() + ". " + e.getMessage());
                                         }
-                                    } catch (IllegalStateException e) {
-                                        log.warn("error generated while getting customer account status ", e);
                                     }
+
                                 } else {
                                     if (!StringUtils.isBlank(customerAccountDto.getCurrency())) {
                                         TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(customerAccountDto.getCurrency(), provider);
@@ -1068,29 +1059,17 @@ public class AccountHierarchyApiService extends BaseApi {
 
                             customerAccount.setCustomer(customer);
 
-                            if (!StringUtils.isBlank(customerAccountDto.getStatus())) {
-                                try {
-                                    customerAccount.setStatus(CustomerAccountStatusEnum.valueOf(customerAccountDto.getStatus()));
-                                } catch (IllegalArgumentException | NullPointerException e) {
-                                    log.warn("error while setting customer account status", e);
-                                }
+                            if (customerAccountDto.getStatus() != null) {
+                                customerAccount.setStatus(customerAccountDto.getStatus());
                             }
-                            if (!StringUtils.isBlank(customerAccountDto.getPaymentMethod())) {
-                                try {
-                                    customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(customerAccountDto.getPaymentMethod()));
-                                } catch (IllegalArgumentException | NullPointerException e) {
-                                    log.warn("error while setting customerAccount.paymentMethod", e);
-                                }
+                            if (customerAccountDto.getPaymentMethod() != null) {
+                                customerAccount.setPaymentMethod(customerAccountDto.getPaymentMethod());
                             }
                             if (!StringUtils.isBlank(customerAccountDto.getCreditCategory())) {
                                 customerAccount.setCreditCategory(creditCategoryService.findByCode(customerAccountDto.getCreditCategory(), provider));
                             }
-                            if (!StringUtils.isBlank(customerAccountDto.getDunningLevel())) {
-                                try {
-                                    customerAccount.setDunningLevel(DunningLevelEnum.valueOf(customerAccountDto.getDunningLevel()));
-                                } catch (IllegalArgumentException | NullPointerException e) {
-                                    log.warn("error while setting customerAccount.dunningLevel ", e);
-                                }
+                            if (customerAccountDto.getDunningLevel() != null) {
+                                customerAccount.setDunningLevel(customerAccountDto.getDunningLevel());
                             }
 
                             if (customerAccountDto.getContactInformation() != null) {
@@ -1218,19 +1197,11 @@ public class AccountHierarchyApiService extends BaseApi {
 
                                     billingAccount.setCustomerAccount(customerAccount);
 
-                                    if (!StringUtils.isBlank(billingAccountDto.getPaymentMethod())) {
-                                        try {
-                                            billingAccount.setPaymentMethod(PaymentMethodEnum.valueOf(billingAccountDto.getPaymentMethod()));
-                                        } catch (IllegalArgumentException | NullPointerException e) {
-                                            log.warn("error while setting billingAccount.paymentMethod", e);
-                                        }
+                                    if (billingAccountDto.getPaymentMethod() != null) {
+                                        billingAccount.setPaymentMethod(billingAccountDto.getPaymentMethod());
                                     }
-                                    if (!StringUtils.isBlank(billingAccountDto.getPaymentTerms())) {
-                                        try {
-                                            billingAccount.setPaymentTerm(PaymentTermEnum.valueOf(billingAccountDto.getPaymentTerms()));
-                                        } catch (IllegalArgumentException | NullPointerException e) {
-                                            log.warn("error while setting billingAccount.paymentTerms ", e);
-                                        }
+                                    if (billingAccountDto.getPaymentTerms() != null) {
+                                        billingAccount.setPaymentTerm(billingAccountDto.getPaymentTerms());
                                     }
 
                                     if (!StringUtils.isBlank(billingAccountDto.getNextInvoiceDate())) {
@@ -1306,12 +1277,8 @@ public class AccountHierarchyApiService extends BaseApi {
 
                                             userAccount.setBillingAccount(billingAccount);
 
-                                            if (!StringUtils.isBlank(userAccountDto.getStatus())) {
-                                                try {
-                                                    userAccount.setStatus(AccountStatusEnum.valueOf(userAccountDto.getStatus()));
-                                                } catch (IllegalArgumentException | NullPointerException e) {
-                                                    log.warn("error while setting userAccountDto.status ", e);
-                                                }
+                                            if (userAccountDto.getStatus() != null) {
+                                                userAccount.setStatus(userAccountDto.getStatus());
                                             }
 
                                             if (!StringUtils.isBlank(userAccountDto.getSubscriptionDate())) {
@@ -1810,6 +1777,13 @@ public class AccountHierarchyApiService extends BaseApi {
     }
 
     public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, DuplicateDefaultAccountException {
+
+        if (postData.getCrmAccountType() == null) {
+            missingParameters.add("crmAccountType");
+        }
+
+        handleMissingParameters();
+
         NameDto name = new NameDto();
         name.setFirstName(postData.getName().getFirstName());
         name.setLastName(postData.getName().getLastName());
@@ -1834,12 +1808,7 @@ public class AccountHierarchyApiService extends BaseApi {
             contactInformation.setPhone(postData.getContactInformation().getPhone());
         }
 
-        AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
-        try {
-            accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(postData.getCrmAccountType());
-        } catch (IllegalArgumentException e) {
-            throw new InvalidEnumValueException(AccountHierarchyTypeEnum.class.getName(), postData.getCrmAccountType());
-        }
+        AccountHierarchyTypeEnum accountHierarchyTypeEnum = postData.getCrmAccountType();
 
         if (accountHierarchyTypeEnum.getHighLevel() == 4) {
             // create seller
@@ -2055,6 +2024,13 @@ public class AccountHierarchyApiService extends BaseApi {
     }
 
     public void updateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, DuplicateDefaultAccountException {
+
+        if (postData.getCrmAccountType() == null) {
+            missingParameters.add("crmAccountType");
+        }
+
+        handleMissingParameters();
+
         NameDto name = new NameDto();
         name.setFirstName(postData.getName().getFirstName());
         name.setLastName(postData.getName().getLastName());
@@ -2079,12 +2055,7 @@ public class AccountHierarchyApiService extends BaseApi {
             contactInformation.setPhone(postData.getContactInformation().getPhone());
         }
 
-        AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
-        try {
-            accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(postData.getCrmAccountType());
-        } catch (IllegalArgumentException e) {
-            throw new InvalidEnumValueException(AccountHierarchyTypeEnum.class.getName(), postData.getCrmAccountType());
-        }
+        AccountHierarchyTypeEnum accountHierarchyTypeEnum = postData.getCrmAccountType();
 
         if (accountHierarchyTypeEnum.getHighLevel() == 4) {
             // update seller
@@ -2324,12 +2295,14 @@ public class AccountHierarchyApiService extends BaseApi {
      * @throws MeveoApiException
      */
     public void createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, DuplicateDefaultAccountException {
-        AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
-        try {
-            accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(postData.getCrmAccountType());
-        } catch (IllegalArgumentException e) {
-            throw new InvalidEnumValueException(AccountHierarchyTypeEnum.class.getName(), postData.getCrmAccountType());
+
+        if (postData.getCrmAccountType() == null) {
+            missingParameters.add("crmAccountType");
         }
+
+        handleMissingParameters();
+
+        AccountHierarchyTypeEnum accountHierarchyTypeEnum = postData.getCrmAccountType();
 
         boolean accountExist = false;
 
@@ -2427,23 +2400,13 @@ public class AccountHierarchyApiService extends BaseApi {
             dto.setLanguage(ca.getTradingLanguage().getLanguageCode());
         }
 
-        try {
-            dto.setStatus(ca.getStatus().name());
-        } catch (NullPointerException ex) {
-        }
-        try {
-            dto.setPaymentMethod(ca.getPaymentMethod().name());
-        } catch (NullPointerException ex) {
-        }
+        dto.setStatus(ca.getStatus());
+        dto.setPaymentMethod(ca.getPaymentMethod());
         try {
             dto.setCreditCategory(ca.getCreditCategory().getCode());
         } catch (NullPointerException ex) {
         }
-        try {
-            dto.setDunningLevel(ca.getDunningLevel().name());
-        } catch (NullPointerException ex) {
-        }
-
+        dto.setDunningLevel(ca.getDunningLevel());
         dto.setDateStatus(ca.getDateStatus());
         dto.setDateDunningLevel(ca.getDateDunningLevel());
         if (ca.getContactInformation() != null) {
@@ -2482,19 +2445,13 @@ public class AccountHierarchyApiService extends BaseApi {
         if (ba.getTradingLanguage() != null) {
             dto.setLanguage(ba.getTradingLanguage().getLanguageCode());
         }
-        if (ba.getPaymentMethod() != null) {
-            dto.setPaymentMethod(ba.getPaymentMethod().name());
-        }
+        dto.setPaymentMethod(ba.getPaymentMethod());
         dto.setNextInvoiceDate(ba.getNextInvoiceDate());
         dto.setSubscriptionDate(ba.getSubscriptionDate());
         dto.setTerminationDate(ba.getTerminationDate());
-        if (ba.getPaymentTerm() != null) {
-            dto.setPaymentTerms(ba.getPaymentTerm().name());
-        }
+        dto.setPaymentTerms(ba.getPaymentTerm());
         dto.setElectronicBilling(ba.getElectronicBilling());
-        if (ba.getStatus() != null) {
-            dto.setStatus(ba.getStatus().name());
-        }
+        dto.setStatus(ba.getStatus());
         if (ba.getTerminationReason() != null) {
             dto.setTerminationReason(ba.getTerminationReason().getCode());
         }
@@ -2527,10 +2484,7 @@ public class AccountHierarchyApiService extends BaseApi {
 
         dto.setSubscriptionDate(ua.getSubscriptionDate());
         dto.setTerminationDate(ua.getTerminationDate());
-        try {
-            dto.setStatus(ua.getStatus().name());
-        } catch (NullPointerException ex) {
-        }
+        dto.setStatus(ua.getStatus());
 
         dto.setLoaded(true);
 

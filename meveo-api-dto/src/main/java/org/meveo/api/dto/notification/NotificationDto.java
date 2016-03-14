@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.notification.Notification;
+import org.meveo.model.notification.NotificationEventTypeEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -32,7 +33,7 @@ public class NotificationDto extends BaseDto {
 	 * REJECTED, REJECTED_CDR, LOGGED_IN, INBOUND_REQ, ENABLED
 	 */
 	@XmlElement(required = true)
-	private String eventTypeFilter;
+	private NotificationEventTypeEnum eventTypeFilter;
 
 	private String elFilter;
 	private String scriptInstanceCode;
@@ -47,7 +48,7 @@ public class NotificationDto extends BaseDto {
 	public NotificationDto(Notification e) {
 		code = e.getCode();
 		classNameFilter = e.getClassNameFilter();
-		eventTypeFilter = e.getEventTypeFilter().name();
+		eventTypeFilter = e.getEventTypeFilter();
 		elFilter = e.getElFilter();
 		scriptInstanceCode = e.getScriptInstance()==null?null:e.getScriptInstance().getCode();
 		if (e.getCounterTemplate() != null) {
@@ -76,11 +77,11 @@ public class NotificationDto extends BaseDto {
 		this.classNameFilter = classNameFilter;
 	}
 
-	public String getEventTypeFilter() {
+	public NotificationEventTypeEnum getEventTypeFilter() {
 		return eventTypeFilter;
 	}
 
-	public void setEventTypeFilter(String eventTypeFilter) {
+	public void setEventTypeFilter(NotificationEventTypeEnum eventTypeFilter) {
 		this.eventTypeFilter = eventTypeFilter;
 	}
 

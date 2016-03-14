@@ -12,7 +12,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -26,7 +25,6 @@ import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.AutomatedPaymentService;
@@ -71,28 +69,20 @@ public class PaymentApi extends BaseApi {
 			missingParameters.add("amount");
 		}
 		if (StringUtils.isBlank(paymentDto.getCustomerAccountCode())) {
-			missingParameters.add("CustomerAccountCode");
+			missingParameters.add("customerAccountCode");
 		}
 		if (StringUtils.isBlank(paymentDto.getOccTemplateCode())) {
-			missingParameters.add("OccTemplateCode");
+			missingParameters.add("occTemplateCode");
 		}
 		if (StringUtils.isBlank(paymentDto.getReference())) {
-			missingParameters.add("Reference");
+			missingParameters.add("reference");
 		}
 		if (StringUtils.isBlank(paymentDto.getPaymentMethod())) {
-			missingParameters.add("PaymentMethod");
+			missingParameters.add("paymentMethod");
 		}
 		
 		handleMissingParameters();
 		
-		
-		PaymentMethodEnum paymentMethod = null;
-		try {
-			paymentMethod=PaymentMethodEnum.valueOf(paymentDto.getPaymentMethod());
-		} catch (Exception e) {
-			throw new InvalidEnumValueException(PaymentMethodEnum.class.getName(), paymentDto.getPaymentMethod());
-		}
-
 		Provider provider = currentUser.getProvider();
 		CustomerAccount customerAccount = customerAccountService.findByCode(paymentDto.getCustomerAccountCode(), provider);
 		if (customerAccount == null) {
@@ -106,7 +96,7 @@ public class PaymentApi extends BaseApi {
 
 		AutomatedPayment automatedPayment = new AutomatedPayment();
 		automatedPayment.setProvider(provider);
-		automatedPayment.setPaymentMethod(paymentMethod);
+		automatedPayment.setPaymentMethod(paymentDto.getPaymentMethod());
 		automatedPayment.setAmount(paymentDto.getAmount());
 		automatedPayment.setUnMatchingAmount(paymentDto.getAmount());
 		automatedPayment.setMatchingAmount(BigDecimal.ZERO);
@@ -186,7 +176,7 @@ public class PaymentApi extends BaseApi {
 				paymentDto.setAmount(p.getAmount());
 				paymentDto.setDueDate(p.getDueDate());
 				paymentDto.setOccTemplateCode(p.getOccCode());
-				paymentDto.setPaymentMethod(p.getPaymentMethod().name());
+				paymentDto.setPaymentMethod(p.getPaymentMethod());
 				paymentDto.setReference(p.getReference());
 				paymentDto.setTransactionDate(p.getTransactionDate());
 				if (p instanceof AutomatedPayment) {

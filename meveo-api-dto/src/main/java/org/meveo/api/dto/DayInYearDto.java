@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.DayInYear;
+import org.meveo.model.catalog.MonthEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -22,7 +23,7 @@ public class DayInYearDto implements Serializable {
 	private Integer day;
 
 	@XmlAttribute(required = true)
-	private String month;
+	private MonthEnum month;
 
 	public DayInYearDto() {
 
@@ -32,7 +33,7 @@ public class DayInYearDto implements Serializable {
 		day = d.getDay();
 
 		if (d.getMonth() != null) {
-			month = d.getMonth().name();
+			month = d.getMonth();
 		}
 	}
 
@@ -44,11 +45,11 @@ public class DayInYearDto implements Serializable {
 		this.day = day;
 	}
 
-	public String getMonth() {
+	public MonthEnum getMonth() {
 		return month;
 	}
 
-	public void setMonth(String month) {
+	public void setMonth(MonthEnum month) {
 		this.month = month;
 	}
 

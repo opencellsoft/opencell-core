@@ -40,6 +40,11 @@ public class CustomFieldTemplateDto extends BaseDto {
     @Deprecated
     protected String accountLevel;
 
+    /**
+     * PROVIDER - Provider, SELLER - Seller, CUST - customer, CA - Customer account, BA - Billing Account, UA - User account, SUB - subscription, ACC - access, CHARGE - charge
+     * template, SERVICE - service template or service instance, OFFER_CATEGORY - Offer template category, OFFER - Offer template, JOB_XX - Job instance, CE_ - Custom entity
+     * instance
+     */
     @XmlElement(required = false)
     protected String appliesTo;
 

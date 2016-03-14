@@ -28,7 +28,6 @@ import org.meveo.model.catalog.CalendarPeriod;
 import org.meveo.model.catalog.CalendarYearly;
 import org.meveo.model.catalog.DayInYear;
 import org.meveo.model.catalog.HourInDay;
-import org.meveo.model.catalog.MonthEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DayInYearService;
@@ -75,13 +74,9 @@ public class CalendarApi extends BaseApi {
             if (postData.getDays() != null && postData.getDays().size() > 0) {
                 List<DayInYear> days = new ArrayList<DayInYear>();
                 for (DayInYearDto d : postData.getDays()) {
-                    try {
-                        DayInYear dayInYear = dayInYearService.findByMonthAndDay(MonthEnum.valueOf(d.getMonth()), d.getDay());
-                        if (dayInYear != null) {
-                            days.add(dayInYear);
-                        }
-                    } catch (IllegalArgumentException e) {
-                        log.warn("failed to find by month and day", e);
+                    DayInYear dayInYear = dayInYearService.findByMonthAndDay(d.getMonth(), d.getDay());
+                    if (dayInYear != null) {
+                        days.add(dayInYear);
                     }
                 }
 
@@ -170,7 +165,7 @@ public class CalendarApi extends BaseApi {
             CalendarJoin calendar = new CalendarJoin();
             calendar.setCode(postData.getCode());
             calendar.setDescription(postData.getDescription());
-            calendar.setJoinType(CalendarJoinTypeEnum.valueOf(postData.getCalendarType().name()));
+            calendar.setJoinType(CalendarJoinTypeEnum.valueOf(postData.getCalendarType().name())); // Join type is expressed as Calendar type in DTO
             calendar.setJoinCalendar1(cal1);
             calendar.setJoinCalendar2(cal2);
 
@@ -206,13 +201,9 @@ public class CalendarApi extends BaseApi {
             if (postData.getDays() != null && postData.getDays().size() > 0) {
                 List<DayInYear> days = new ArrayList<DayInYear>();
                 for (DayInYearDto d : postData.getDays()) {
-                    try {
-                        DayInYear dayInYear = dayInYearService.findByMonthAndDay(MonthEnum.valueOf(d.getMonth()), d.getDay());
-                        if (dayInYear != null) {
-                            days.add(dayInYear);
-                        }
-                    } catch (IllegalArgumentException e) {
-                        log.warn("failed to find by month and day", e);
+                    DayInYear dayInYear = dayInYearService.findByMonthAndDay(d.getMonth(), d.getDay());
+                    if (dayInYear != null) {
+                        days.add(dayInYear);
                     }
                 }
 
@@ -276,7 +267,7 @@ public class CalendarApi extends BaseApi {
             }
 
             CalendarJoin calendarJoin = (CalendarJoin) calendar;
-            calendarJoin.setJoinType(CalendarJoinTypeEnum.valueOf(postData.getCalendarType().name()));
+            calendarJoin.setJoinType(CalendarJoinTypeEnum.valueOf(postData.getCalendarType().name()));// Join type is expressed as Calendar type in DTO
             calendarJoin.setJoinCalendar1(cal1);
             calendarJoin.setJoinCalendar2(cal2);
         }

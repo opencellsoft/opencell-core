@@ -47,7 +47,6 @@ import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CreditCategory;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
@@ -504,10 +503,6 @@ public class ProviderApi extends BaseApi {
         }
 
         GetCustomerAccountConfigurationResponseDto result = new GetCustomerAccountConfigurationResponseDto();
-
-        for (PaymentMethodEnum e : PaymentMethodEnum.values()) {
-            result.getPaymentMethods().add(e.name());
-        }
 
         List<CreditCategory> creditCategories = creditCategoryService.list(provider);
         for (CreditCategory cc : creditCategories) {

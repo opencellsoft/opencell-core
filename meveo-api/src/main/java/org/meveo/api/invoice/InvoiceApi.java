@@ -167,21 +167,14 @@ public class InvoiceApi extends BaseApi {
         invoice.setAmountWithTax(invoiceDTO.getAmountWithTax());
         invoice.setDiscount(invoiceDTO.getDiscount());
 
-        InvoiceTypeEnum invoiceTypeEnum = null;
-
-        if (invoiceDTO.getType() == null) {
-            invoiceTypeEnum = InvoiceTypeEnum.COMMERCIAL;
+        
+        if (invoiceDTO.getType() != null) {
+            invoice.setInvoiceTypeEnum(invoiceDTO.getType());
         } else {
-            try {
-                invoiceTypeEnum = InvoiceTypeEnum.valueOf(invoiceDTO.getType());
-            } catch (IllegalArgumentException e) {
-                log.error("enum: {}", e);
-                throw new InvalidEnumValueException(InvoiceTypeEnum.class.getName(), invoiceDTO.getType());
-            }
+            invoice.setInvoiceTypeEnum(InvoiceTypeEnum.COMMERCIAL);
         }
-        invoice.setInvoiceTypeEnum(invoiceTypeEnum);
-
-        if (invoiceTypeEnum.equals(InvoiceTypeEnum.CREDIT_NOTE_ADJUST)) {
+        
+        if (invoice.getInvoiceTypeEnum() == InvoiceTypeEnum.CREDIT_NOTE_ADJUST) {
             String invoiceNumber = invoiceDTO.getInvoiceNumber();
             if (invoiceNumber == null) {
                 missingParameters.add("invoiceNumber");
@@ -199,7 +192,7 @@ public class InvoiceApi extends BaseApi {
 
         invoiceService.create(invoice, currentUser, provider);
 
-        if (invoiceTypeEnum.equals(InvoiceTypeEnum.CREDIT_NOTE_ADJUST)) {
+        if (invoice.getInvoiceTypeEnum() == InvoiceTypeEnum.CREDIT_NOTE_ADJUST) {
             invoiceService.updateInvoiceAdjustmentCurrentNb(invoice, currentUser);
         }
 
@@ -317,7 +310,7 @@ public class InvoiceApi extends BaseApi {
     public List<InvoiceDto> list(String customerAccountCode, Provider provider) throws MeveoApiException {
 
         if (StringUtils.isBlank(customerAccountCode)) {
-            missingParameters.add("CustomerAccountCode");
+            missingParameters.add("customerAccountCode");
             handleMissingParameters();
         }
 
@@ -341,8 +334,8 @@ public class InvoiceApi extends BaseApi {
                 customerInvoiceDto.setAmountTax(invoice.getAmountTax());
                 customerInvoiceDto.setAmountWithTax(invoice.getAmountWithTax());
                 customerInvoiceDto.setInvoiceNumber(invoice.getInvoiceNumber());
-                customerInvoiceDto.setPaymentMethod(invoice.getPaymentMethod().toString());
-                customerInvoiceDto.setType(invoice.getInvoiceTypeEnum().name());
+                customerInvoiceDto.setPaymentMethod(invoice.getPaymentMethod());
+                customerInvoiceDto.setType(invoice.getInvoiceTypeEnum());
                 customerInvoiceDto.setPDFpresent(invoice.getPdf() != null);
                 customerInvoiceDto.setPdf(invoice.getPdf());
                 SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;

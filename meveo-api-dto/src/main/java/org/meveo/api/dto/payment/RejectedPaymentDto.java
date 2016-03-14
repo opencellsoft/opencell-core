@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
+import org.meveo.model.payments.RejectedType;
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -16,7 +18,7 @@ public class RejectedPaymentDto extends AccountOperationDto implements Serializa
 
 	private static final long serialVersionUID = 4498720672406401363L;
 
-	private String rejectedType;
+	private RejectedType rejectedType;
 	private String bankLot;
 	private String bankReference;
 	private Date rejectedDate;
@@ -27,11 +29,11 @@ public class RejectedPaymentDto extends AccountOperationDto implements Serializa
 		super.setType("R");
 	}
 
-	public String getRejectedType() {
+	public RejectedType getRejectedType() {
 		return rejectedType;
 	}
 
-	public void setRejectedType(String rejectedType) {
+	public void setRejectedType(RejectedType rejectedType) {
 		this.rejectedType = rejectedType;
 	}
 

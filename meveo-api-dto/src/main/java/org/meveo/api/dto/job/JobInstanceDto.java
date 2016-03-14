@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
 
 @XmlRootElement(name = "JobInstance")
@@ -21,7 +22,7 @@ public class JobInstanceDto extends BaseDto {
     private static final long serialVersionUID = 5166093858617578774L;
 
     @XmlElement(required = true)
-    private String jobCategory;
+    private JobCategoryEnum jobCategory;
 
     @XmlAttribute(required = true)
     private String jobTemplate;
@@ -58,7 +59,7 @@ public class JobInstanceDto extends BaseDto {
         if (jobInstance.getFollowingJob() != null) {
             this.followingJob = jobInstance.getFollowingJob().getCode();
         }
-        this.jobCategory = jobInstance.getJobCategoryEnum() == null ? null:jobInstance.getJobCategoryEnum().name(); 
+        this.jobCategory = jobInstance.getJobCategoryEnum();
         this.jobTemplate = jobInstance.getJobTemplate();
         this.parameter = jobInstance.getParametres();
         
@@ -68,14 +69,14 @@ public class JobInstanceDto extends BaseDto {
     /**
      * @return the jobCategory
      */
-    public String getJobCategory() {
+    public JobCategoryEnum getJobCategory() {
         return jobCategory;
     }
 
     /**
      * @param jobCategory the jobCategory to set
      */
-    public void setJobCategory(String jobCategory) {
+    public void setJobCategory(JobCategoryEnum jobCategory) {
         this.jobCategory = jobCategory;
     }
 

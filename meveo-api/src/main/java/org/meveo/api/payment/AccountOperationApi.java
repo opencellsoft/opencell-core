@@ -28,13 +28,9 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
-import org.meveo.model.payments.MatchingStatusEnum;
-import org.meveo.model.payments.MatchingTypeEnum;
-import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.RejectedPayment;
-import org.meveo.model.payments.RejectedType;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingAmountService;
@@ -83,13 +79,7 @@ public class AccountOperationApi extends BaseApi {
             // rejectedPayment
             RejectedPayment rejectedPayment = new RejectedPayment();
 
-            try {
-                rejectedPayment.setRejectedType(RejectedType.valueOf(postData.getRejectedPayment().getRejectedType()));
-            } catch (IllegalStateException e) {
-                log.warn("error occurred while setting rejected type", e);
-            } catch (NullPointerException e) {
-                log.warn("error generated while setting rejected type", e);
-            }
+            rejectedPayment.setRejectedType(postData.getRejectedPayment().getRejectedType());
 
             rejectedPayment.setBankLot(postData.getRejectedPayment().getBankLot());
             rejectedPayment.setBankReference(postData.getRejectedPayment().getBankReference());
@@ -107,13 +97,7 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setDueDate(postData.getDueDate());
         accountOperation.setType(postData.getType());
         accountOperation.setTransactionDate(postData.getTransactionDate());
-        try {
-            accountOperation.setTransactionCategory(OperationCategoryEnum.valueOf(postData.getTransactionCategory()));
-        } catch (IllegalStateException e) {
-            log.warn("error occurred while setting transaction category", e);
-        } catch (NullPointerException e) {
-            log.warn("error generated while setting transaction category", e);
-        }
+        accountOperation.setTransactionCategory(postData.getTransactionCategory());
         accountOperation.setReference(postData.getReference());
         accountOperation.setAccountCode(postData.getAccountCode());
         accountOperation.setAccountCodeClientSide(postData.getAccountCodeClientSide());
@@ -122,13 +106,7 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setUnMatchingAmount(postData.getUnMatchingAmount());
         accountOperation.setCustomerAccount(customerAccount);
 
-        try {
-            accountOperation.setMatchingStatus(MatchingStatusEnum.valueOf(postData.getMatchingStatus()));
-        } catch (IllegalStateException e) {
-            log.warn("error occurred while setting matching status", e);
-        } catch (NullPointerException e) {
-            log.warn("error generated while setting matching status", e);
-        }
+        accountOperation.setMatchingStatus(postData.getMatchingStatus());
 
         accountOperation.setOccCode(postData.getOccCode());
         accountOperation.setOccDescription(postData.getOccDescription());
@@ -153,13 +131,7 @@ public class AccountOperationApi extends BaseApi {
                             matchingCode.setCode(matchingCodeDto.getCode());
                         }
 
-                        try {
-                            matchingCode.setMatchingType(MatchingTypeEnum.valueOf(matchingCodeDto.getMatchingType()));
-                        } catch (IllegalStateException e) {
-                            log.warn("error occurred while setting matching type", e);
-                        } catch (NullPointerException e) {
-                            log.warn("error generated while setting matching type", e);
-                        }
+                        matchingCode.setMatchingType(matchingCodeDto.getMatchingType());
 
                         matchingCode.setMatchingDate(matchingCodeDto.getMatchingDate());
                         matchingCode.setMatchingAmountCredit(matchingCodeDto.getMatchingAmountCredit());
@@ -207,14 +179,14 @@ public class AccountOperationApi extends BaseApi {
             accountOperationDto.setDueDate(accountOp.getDueDate());
             accountOperationDto.setType(accountOp.getType());
             accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
-            accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory() != null ? accountOp.getTransactionCategory().toString() : null);
+            accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory());
             accountOperationDto.setReference(accountOp.getReference());
             accountOperationDto.setAccountCode(accountOp.getAccountCode());
             accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
             accountOperationDto.setAmount(accountOp.getAmount());
             accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());
             accountOperationDto.setUnMatchingAmount(accountOp.getUnMatchingAmount());
-            accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus() != null ? accountOp.getMatchingStatus().toString() : null);
+            accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus());
             accountOperationDto.setOccCode(accountOp.getOccCode());
             accountOperationDto.setOccDescription(accountOp.getOccDescription());
 
@@ -274,9 +246,9 @@ public class AccountOperationApi extends BaseApi {
         if (StringUtils.isBlank(postData.getAccountOperationId())) {
             missingParameters.add("accountOperationId");
         }
-        
+
         handleMissingParameters();
-        
+
         CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode(), currentUser.getProvider());
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());
@@ -313,9 +285,9 @@ public class AccountOperationApi extends BaseApi {
         if (StringUtils.isBlank(postData.getAccountOperationId())) {
             missingParameters.add("accountOperationId");
         }
-        
+
         handleMissingParameters();
-        
+
         CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode(), currentUser.getProvider());
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());

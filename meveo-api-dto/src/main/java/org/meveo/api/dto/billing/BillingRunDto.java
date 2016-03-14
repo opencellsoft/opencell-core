@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.BillingCycleDto;
+import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 
@@ -32,7 +33,7 @@ public class BillingRunDto  extends BaseDto{
 		private BigDecimal prAmountWithoutTax;
 		private BigDecimal prAmountWithTax;
 		private BigDecimal prAmountTax;
-		private BillingRunTypeEnum processType;
+		private BillingProcessTypesEnum processType;
 		private Date startDate;
 		private Date endDate;
 	    private Date invoiceDate;
@@ -247,14 +248,14 @@ public class BillingRunDto  extends BaseDto{
 		/**
 		 * @return the processType
 		 */
-		public BillingRunTypeEnum getProcessType() {
+		public BillingProcessTypesEnum getProcessType() {
 			return processType;
 		}
 
 		/**
 		 * @param processType the processType to set
 		 */
-		public void setProcessType(BillingRunTypeEnum processType) {
+		public void setProcessType(BillingProcessTypesEnum processType) {
 			this.processType = processType;
 		}
 
@@ -423,7 +424,7 @@ public class BillingRunDto  extends BaseDto{
 			setPrAmountWithoutTax(billingRunEntity.getPrAmountWithoutTax());
 			setPrAmountWithTax(billingRunEntity.getPrAmountWithTax());
 			setPrAmountTax(billingRunEntity.getPrAmountTax());
-			setProcessType(BillingRunTypeEnum.valueOf(billingRunEntity.getProcessType().toString()));
+			setProcessType(billingRunEntity.getProcessType());
 			setStartDate(billingRunEntity.getStartDate());
 			setEndDate(billingRunEntity.getEndDate());
 			setInvoiceDate(billingRunEntity.getInvoiceDate());

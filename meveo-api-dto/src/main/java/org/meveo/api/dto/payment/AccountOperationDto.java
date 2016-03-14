@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.OperationCategoryEnum;
 
 @XmlRootElement(name = "AccountOperation")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -19,14 +21,14 @@ public class AccountOperationDto extends BaseDto {
 	private Date dueDate;
 	private String type;
 	private Date transactionDate;
-	private String transactionCategory;
+	private OperationCategoryEnum transactionCategory;
 	private String reference;
 	private String accountCode;
 	private String accountCodeClientSide;
 	private BigDecimal amount;
 	private BigDecimal matchingAmount = BigDecimal.ZERO;
 	private BigDecimal unMatchingAmount = BigDecimal.ZERO;
-	private String matchingStatus;
+	private MatchingStatusEnum matchingStatus;
 	private String occCode;
 	private String occDescription;
 	private String customerAccount;
@@ -61,11 +63,11 @@ public class AccountOperationDto extends BaseDto {
 		this.transactionDate = transactionDate;
 	}
 
-	public String getTransactionCategory() {
+	public OperationCategoryEnum getTransactionCategory() {
 		return transactionCategory;
 	}
 
-	public void setTransactionCategory(String transactionCategory) {
+	public void setTransactionCategory(OperationCategoryEnum transactionCategory) {
 		this.transactionCategory = transactionCategory;
 	}
 
@@ -117,11 +119,11 @@ public class AccountOperationDto extends BaseDto {
 		this.unMatchingAmount = unMatchingAmount;
 	}
 
-	public String getMatchingStatus() {
+	public MatchingStatusEnum getMatchingStatus() {
 		return matchingStatus;
 	}
 
-	public void setMatchingStatus(String matchingStatus) {
+	public void setMatchingStatus(MatchingStatusEnum matchingStatus) {
 		this.matchingStatus = matchingStatus;
 	}
 

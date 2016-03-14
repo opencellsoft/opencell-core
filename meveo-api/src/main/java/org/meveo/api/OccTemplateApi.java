@@ -11,15 +11,10 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.payments.impl.OCCTemplateService;
-import org.slf4j.Logger;
 
 @Stateless
 public class OccTemplateApi extends BaseApi {
-
-    @Inject
-    private Logger log;
 
     @Inject
     private OCCTemplateService occTemplateService;
@@ -36,7 +31,6 @@ public class OccTemplateApi extends BaseApi {
         }
 
         handleMissingParameters();
-        
 
         Provider provider = currentUser.getProvider();
 
@@ -50,12 +44,7 @@ public class OccTemplateApi extends BaseApi {
         occTemplate.setDescription(postData.getDescription());
         occTemplate.setAccountCode(postData.getAccountCode());
         occTemplate.setAccountCodeClientSide(postData.getAccountCodeClientSide());
-        try {
-            occTemplate.setOccCategory(OperationCategoryEnum.valueOf(postData.getOccCategory()));
-        } catch (IllegalArgumentException e) {
-            log.error("InvalidEnum for type with name={}", postData.getOccCategory());
-            throw new MeveoApiException(MeveoApiErrorCodeEnum.INVALID_ENUM_VALUE, "Enum for OperationCategoryEnum with name=" + postData.getOccCategory() + " does not exists.");
-        }
+        occTemplate.setOccCategory(postData.getOccCategory());
 
         occTemplateService.create(occTemplate, currentUser, provider);
     }
@@ -73,7 +62,6 @@ public class OccTemplateApi extends BaseApi {
         }
 
         handleMissingParameters();
-        
 
         Provider provider = currentUser.getProvider();
 
@@ -85,12 +73,7 @@ public class OccTemplateApi extends BaseApi {
         occTemplate.setDescription(postData.getDescription());
         occTemplate.setAccountCode(postData.getAccountCode());
         occTemplate.setAccountCodeClientSide(postData.getAccountCodeClientSide());
-        try {
-            occTemplate.setOccCategory(OperationCategoryEnum.valueOf(postData.getOccCategory()));
-        } catch (IllegalArgumentException e) {
-            log.error("InvalidEnum for type with name={}", postData.getOccCategory());
-            throw new MeveoApiException(MeveoApiErrorCodeEnum.INVALID_ENUM_VALUE, "Enum for OperationCategoryEnum with name=" + postData.getOccCategory() + " does not exists.");
-        }
+        occTemplate.setOccCategory(postData.getOccCategory());
 
         occTemplateService.update(occTemplate, currentUser);
 

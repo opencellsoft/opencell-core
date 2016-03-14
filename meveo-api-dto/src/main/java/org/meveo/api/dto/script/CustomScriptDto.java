@@ -23,7 +23,7 @@ public abstract class CustomScriptDto extends BaseDto {
     private String description;
 
     @XmlElement
-    private String type;
+    private ScriptSourceTypeEnum type;
 
     @XmlElement(required = true)
     private String script;
@@ -35,9 +35,7 @@ public abstract class CustomScriptDto extends BaseDto {
     public CustomScriptDto(String code, String description, ScriptSourceTypeEnum type, String script) {
         this.code = code;
         this.description = description;
-        if (type != null) {
-            this.type = type.name();
-        }
+        this.type = type;
         this.script = script;
     }
 
@@ -57,11 +55,11 @@ public abstract class CustomScriptDto extends BaseDto {
         this.description = description;
     }
 
-    public String getType() {
+    public ScriptSourceTypeEnum getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ScriptSourceTypeEnum type) {
         this.type = type;
     }
 

@@ -13,17 +13,14 @@ import org.meveo.api.dto.notification.NotificationHistoriesDto;
 import org.meveo.api.dto.notification.NotificationHistoryDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.Notification;
-import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.ScriptNotification;
 import org.meveo.model.scripts.ScriptInstance;
@@ -39,205 +36,184 @@ import org.meveo.service.script.ScriptInstanceService;
 @Stateless
 public class NotificationApi extends BaseApi {
 
-	@Inject
-	private NotificationService notificationService;
+    @Inject
+    private NotificationService notificationService;
 
-	@SuppressWarnings("rawtypes")
-	@Inject
-	private CounterTemplateService counterTemplateService;
+    @SuppressWarnings("rawtypes")
+    @Inject
+    private CounterTemplateService counterTemplateService;
 
-	@Inject
-	private NotificationHistoryService notificationHistoryService;
-	
-	@Inject
-	private ScriptInstanceService scriptInstanceService;
+    @Inject
+    private NotificationHistoryService notificationHistoryService;
 
-	@Inject
-	private InboundRequestService inboundRequestService;
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
-	public void create(NotificationDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getClassNameFilter()) && !StringUtils.isBlank(postData.getEventTypeFilter())) {
-			if (notificationService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
-				throw new EntityAlreadyExistsException(Notification.class, postData.getCode());
-			}
-			ScriptInstance scriptInstance = null;
-			if(!StringUtils.isBlank(postData.getScriptInstanceCode()) ){
-				scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
-				if ( scriptInstance == null) {
-					throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
-				}
-			}
-			// check class
-			try {
-				Class.forName(postData.getClassNameFilter());
-			} catch (Exception e) {
-				throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
-			}
-			
+    @Inject
+    private InboundRequestService inboundRequestService;
 
-			NotificationEventTypeEnum notificationEventType = null;
-			try {
-				notificationEventType = NotificationEventTypeEnum.valueOf(postData.getEventTypeFilter());
-			} catch (IllegalArgumentException e) {
-				log.error("enum: {}", e);
-				throw new InvalidEnumValueException(NotificationEventTypeEnum.class.getName(), postData.getEventTypeFilter());
-			}
+    public void create(NotificationDto postData, User currentUser) throws MeveoApiException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getClassNameFilter())) {
+            missingParameters.add("classNameFilter");
+        }
+        if (postData.getEventTypeFilter() == null) {
+            missingParameters.add("eventTypeFilter");
+        }
 
-			CounterTemplate counterTemplate = null;
-			if (!StringUtils.isBlank(postData.getCounterTemplate())) {
-				counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
-			}
+        handleMissingParameters();
 
-			ScriptNotification notif = new ScriptNotification();
-			notif.setProvider(currentUser.getProvider());
-			notif.setCode(postData.getCode());
-			notif.setClassNameFilter(postData.getClassNameFilter());
-			notif.setEventTypeFilter(notificationEventType);
-			notif.setScriptInstance(scriptInstance);
-			notif.setParams(postData.getScriptParams());
-			notif.setElFilter(postData.getElFilter());
-			notif.setCounterTemplate(counterTemplate);
-			
+        if (notificationService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+            throw new EntityAlreadyExistsException(Notification.class, postData.getCode());
+        }
+        ScriptInstance scriptInstance = null;
+        if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
+            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
+            }
+        }
+        // check class
+        try {
+            Class.forName(postData.getClassNameFilter());
+        } catch (Exception e) {
+            throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
+        }
 
-			notificationService.create(notif, currentUser, currentUser.getProvider());
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getClassNameFilter())) {
-				missingParameters.add("classNameFilter");
-			}
-			if (StringUtils.isBlank(postData.getEventTypeFilter())) {
-				missingParameters.add("eventTypeFilter");
-			}
+        CounterTemplate counterTemplate = null;
+        if (!StringUtils.isBlank(postData.getCounterTemplate())) {
+            counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+        }
 
-			handleMissingParameters();
-		}
-	}
+        ScriptNotification notif = new ScriptNotification();
+        notif.setProvider(currentUser.getProvider());
+        notif.setCode(postData.getCode());
+        notif.setClassNameFilter(postData.getClassNameFilter());
+        notif.setEventTypeFilter(postData.getEventTypeFilter());
+        notif.setScriptInstance(scriptInstance);
+        notif.setParams(postData.getScriptParams());
+        notif.setElFilter(postData.getElFilter());
+        notif.setCounterTemplate(counterTemplate);
 
-	public NotificationDto find(String notificationCode, Provider provider) throws MeveoApiException {
-		NotificationDto result = new NotificationDto();
+        notificationService.create(notif, currentUser, currentUser.getProvider());
+    }
 
-		if (!StringUtils.isBlank(notificationCode)) {
-			ScriptNotification notif = notificationService.findByCode(notificationCode, provider);
+    public NotificationDto find(String notificationCode, Provider provider) throws MeveoApiException {
+        NotificationDto result = new NotificationDto();
 
-			if (notif == null) {
-				throw new EntityDoesNotExistsException(Notification.class, notificationCode);
-			}
+        if (!StringUtils.isBlank(notificationCode)) {
+            ScriptNotification notif = notificationService.findByCode(notificationCode, provider);
 
-			result = new NotificationDto(notif);
-		} else {
-			missingParameters.add("code");
+            if (notif == null) {
+                throw new EntityDoesNotExistsException(Notification.class, notificationCode);
+            }
 
-			handleMissingParameters();
-		}
+            result = new NotificationDto(notif);
+        } else {
+            missingParameters.add("code");
 
-		return result;
-	}
+            handleMissingParameters();
+        }
 
-	public void update(NotificationDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getClassNameFilter()) && !StringUtils.isBlank(postData.getEventTypeFilter())) {
-			ScriptNotification notif = notificationService.findByCode(postData.getCode(), currentUser.getProvider());
-			if (notif == null) {
-				throw new EntityDoesNotExistsException(Notification.class, postData.getCode());
-			}
-			ScriptInstance scriptInstance = null;
-			if(!StringUtils.isBlank(postData.getScriptInstanceCode()) ){
-				scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
-				if ( scriptInstance == null) {
-					throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
-				}
-			}
-			// check class
-			try {
-				Class.forName(postData.getClassNameFilter());
-			} catch (Exception e) {
-				throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
-			}
+        return result;
+    }
 
-			NotificationEventTypeEnum notificationEventType = null;
-			try {
-				notificationEventType = NotificationEventTypeEnum.valueOf(postData.getEventTypeFilter());
-			} catch (IllegalArgumentException e) {
-				log.error("enum: {}", e);
-				throw new InvalidEnumValueException(NotificationEventTypeEnum.class.getName(), postData.getEventTypeFilter());
-			}
+    public void update(NotificationDto postData, User currentUser) throws MeveoApiException {
 
-			CounterTemplate counterTemplate = null;
-			if (!StringUtils.isBlank(postData.getCounterTemplate())) {
-				counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
-			}
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getClassNameFilter())) {
+            missingParameters.add("classNameFilter");
+        }
+        if (postData.getEventTypeFilter() == null) {
+            missingParameters.add("eventTypeFilter");
+        }
 
-			notif.setClassNameFilter(postData.getClassNameFilter());
-			notif.setEventTypeFilter(notificationEventType);
-			notif.setScriptInstance(scriptInstance);
-			notif.setElFilter(postData.getElFilter());
-			notif.setCounterTemplate(counterTemplate);
-			notif.setParams(postData.getScriptParams());
+        handleMissingParameters();
 
-			notificationService.update(notif, currentUser);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getClassNameFilter())) {
-				missingParameters.add("classNameFilter");
-			}
-			if (StringUtils.isBlank(postData.getEventTypeFilter())) {
-				missingParameters.add("eventTypeFilter");
-			}
+        ScriptNotification notif = notificationService.findByCode(postData.getCode(), currentUser.getProvider());
+        if (notif == null) {
+            throw new EntityDoesNotExistsException(Notification.class, postData.getCode());
+        }
+        ScriptInstance scriptInstance = null;
+        if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
+            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
+            }
+        }
+        // check class
+        try {
+            Class.forName(postData.getClassNameFilter());
+        } catch (Exception e) {
+            throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
+        }
 
-			handleMissingParameters();
-		}
-	}
+        CounterTemplate counterTemplate = null;
+        if (!StringUtils.isBlank(postData.getCounterTemplate())) {
+            counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+        }
 
-	public void remove(String notificationCode, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(notificationCode)) {
-			ScriptNotification notif = notificationService.findByCode(notificationCode, provider);
+        notif.setClassNameFilter(postData.getClassNameFilter());
+        notif.setEventTypeFilter(postData.getEventTypeFilter());
+        notif.setScriptInstance(scriptInstance);
+        notif.setElFilter(postData.getElFilter());
+        notif.setCounterTemplate(counterTemplate);
+        notif.setParams(postData.getScriptParams());
 
-			if (notif == null) {
-				throw new EntityDoesNotExistsException(Notification.class, notificationCode);
-			}
+        notificationService.update(notif, currentUser);
+    }
 
-			notificationService.remove(notif);
-		} else {
-			missingParameters.add("code");
+    public void remove(String notificationCode, Provider provider) throws MeveoApiException {
+        if (!StringUtils.isBlank(notificationCode)) {
+            ScriptNotification notif = notificationService.findByCode(notificationCode, provider);
 
-			handleMissingParameters();
-		}
-	}
+            if (notif == null) {
+                throw new EntityDoesNotExistsException(Notification.class, notificationCode);
+            }
 
-	public NotificationHistoriesDto listNotificationHistory(Provider provider) throws MeveoApiException {
-		NotificationHistoriesDto result = new NotificationHistoriesDto();
+            notificationService.remove(notif);
+        } else {
+            missingParameters.add("code");
 
-		List<NotificationHistory> notificationHistories = notificationHistoryService.list(provider);
-		if (notificationHistories != null) {
-			for (NotificationHistory nh : notificationHistories) {
-				result.getNotificationHistory().add(new NotificationHistoryDto(nh));
-			}
-		}
+            handleMissingParameters();
+        }
+    }
 
-		return result;
-	}
+    public NotificationHistoriesDto listNotificationHistory(Provider provider) throws MeveoApiException {
+        NotificationHistoriesDto result = new NotificationHistoriesDto();
 
-	public InboundRequestsDto listInboundRequest(Provider provider) throws MeveoApiException {
-		InboundRequestsDto result = new InboundRequestsDto();
+        List<NotificationHistory> notificationHistories = notificationHistoryService.list(provider);
+        if (notificationHistories != null) {
+            for (NotificationHistory nh : notificationHistories) {
+                result.getNotificationHistory().add(new NotificationHistoryDto(nh));
+            }
+        }
 
-		List<InboundRequest> inboundRequests = inboundRequestService.list(provider);
-		if (inboundRequests != null) {
-			for (InboundRequest ir : inboundRequests) {
-				result.getInboundRequest().add(new InboundRequestDto(ir));
-			}
-		}
+        return result;
+    }
 
-		return result;
-	}
-	
-	public void createOrUpdate(NotificationDto postData, User currentUser) throws MeveoApiException {
-		if (notificationService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-			create(postData, currentUser);
-		} else {
-			update(postData, currentUser);
-		}
-	}
+    public InboundRequestsDto listInboundRequest(Provider provider) throws MeveoApiException {
+        InboundRequestsDto result = new InboundRequestsDto();
+
+        List<InboundRequest> inboundRequests = inboundRequestService.list(provider);
+        if (inboundRequests != null) {
+            for (InboundRequest ir : inboundRequests) {
+                result.getInboundRequest().add(new InboundRequestDto(ir));
+            }
+        }
+
+        return result;
+    }
+
+    public void createOrUpdate(NotificationDto postData, User currentUser) throws MeveoApiException {
+        if (notificationService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+            create(postData, currentUser);
+        } else {
+            update(postData, currentUser);
+        }
+    }
 }

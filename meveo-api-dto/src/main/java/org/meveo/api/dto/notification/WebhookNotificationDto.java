@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.WebHook;
+import org.meveo.model.notification.WebHookMethodEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -32,7 +33,7 @@ public class WebhookNotificationDto extends NotificationDto {
 	 * Valid values: HTTP_GET, HTTP_POST, HTTP_PUT, HTTP_DELETE.
 	 */
 	@XmlElement(required = true)
-	private String httpMethod;
+	private WebHookMethodEnum  httpMethod;
 
 	private String username;
 	private String password;
@@ -48,7 +49,7 @@ public class WebhookNotificationDto extends NotificationDto {
 		host = e.getHost();
 		port=e.getPort();
 		page = e.getPage();
-		httpMethod = e.getHttpMethod().name();
+		httpMethod = e.getHttpMethod();
 		username = e.getUsername();
 		password = e.getUsername();
 		if (e.getHeaders() != null) {
@@ -82,11 +83,11 @@ public class WebhookNotificationDto extends NotificationDto {
 		this.page = page;
 	}
 
-	public String getHttpMethod() {
+	public WebHookMethodEnum  getHttpMethod() {
 		return httpMethod;
 	}
 
-	public void setHttpMethod(String httpMethod) {
+	public void setHttpMethod(WebHookMethodEnum  httpMethod) {
 		this.httpMethod = httpMethod;
 	}
 

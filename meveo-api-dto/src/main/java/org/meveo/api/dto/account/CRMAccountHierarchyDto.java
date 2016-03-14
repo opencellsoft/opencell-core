@@ -11,6 +11,11 @@ import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.billing.AccountStatusEnum;
+import org.meveo.model.payments.CustomerAccountStatusEnum;
+import org.meveo.model.payments.DunningLevelEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentTermEnum;
 
 
 /**
@@ -26,7 +31,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	public static final String ACCOUNT_TYPE_CORP = "CORP";
 	public static final String ACCOUNT_TYPE_BRANCH = "BRANCH";
 
-	private String crmAccountType;
+	private AccountHierarchyTypeEnum crmAccountType;
 
 	// shared
 	private String crmParentCode;
@@ -39,7 +44,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	private ContactInformationDto contactInformation = new ContactInformationDto();
 
 	private String language;
-	private String paymentMethod;
+	private PaymentMethodEnum paymentMethod;
 
 	private String terminationReason;
 	private Date subscriptionDate;
@@ -58,24 +63,24 @@ public class CRMAccountHierarchyDto extends BaseDto {
 
 	// customer account
 	private String currency;
-	private String caStatus;
+	private CustomerAccountStatusEnum caStatus;
 	private String creditCategory;
 	private Date dateStatus;
 	private Date dateDunningLevel;
-	private String dunningLevel;
+	private DunningLevelEnum dunningLevel;
 
 	// billing account
 	private String billingCycle;
 	private String country;
 	private Date nextInvoiceDate;
-	private String paymentTerms;
+	private PaymentTermEnum paymentTerms;
 	private Boolean electronicBilling;
-	private String baStatus;
+	private AccountStatusEnum baStatus;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
 	
 	// user account
-	private String uaStatus;
+	private AccountStatusEnum uaStatus;
 	
 	private CustomFieldDto cfToAdd = new CustomFieldDto();
 	private CustomFieldDto cfMapToAdd = new CustomFieldDto();
@@ -87,11 +92,11 @@ public class CRMAccountHierarchyDto extends BaseDto {
 
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 
-	public String getCrmAccountType() {
+	public AccountHierarchyTypeEnum getCrmAccountType() {
 		return crmAccountType;
 	}
 
-	public void setCrmAccountType(String crmAccountType) {
+	public void setCrmAccountType(AccountHierarchyTypeEnum crmAccountType) {
 		this.crmAccountType = crmAccountType;
 	}
 
@@ -159,11 +164,11 @@ public class CRMAccountHierarchyDto extends BaseDto {
 		this.language = language;
 	}
 
-	public String getPaymentMethod() {
+	public PaymentMethodEnum getPaymentMethod() {
 		return paymentMethod;
 	}
 
-	public void setPaymentMethod(String paymentMethod) {
+	public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
 		this.paymentMethod = paymentMethod;
 	}
 
@@ -239,11 +244,11 @@ public class CRMAccountHierarchyDto extends BaseDto {
 		this.currency = currency;
 	}
 
-	public String getCaStatus() {
+	public CustomerAccountStatusEnum getCaStatus() {
 		return caStatus;
 	}
 
-	public void setCaStatus(String caStatus) {
+	public void setCaStatus(CustomerAccountStatusEnum caStatus) {
 		this.caStatus = caStatus;
 	}
 
@@ -271,11 +276,11 @@ public class CRMAccountHierarchyDto extends BaseDto {
 		this.dateDunningLevel = dateDunningLevel;
 	}
 
-	public String getDunningLevel() {
+	public DunningLevelEnum getDunningLevel() {
 		return dunningLevel;
 	}
 
-	public void setDunningLevel(String dunningLevel) {
+	public void setDunningLevel(DunningLevelEnum dunningLevel) {
 		this.dunningLevel = dunningLevel;
 	}
 
@@ -303,11 +308,11 @@ public class CRMAccountHierarchyDto extends BaseDto {
 		this.nextInvoiceDate = nextInvoiceDate;
 	}
 
-	public String getPaymentTerms() {
+	public PaymentTermEnum getPaymentTerms() {
 		return paymentTerms;
 	}
 
-	public void setPaymentTerms(String paymentTerms) {
+	public void setPaymentTerms(PaymentTermEnum paymentTerms) {
 		this.paymentTerms = paymentTerms;
 	}
 
@@ -319,11 +324,11 @@ public class CRMAccountHierarchyDto extends BaseDto {
 		this.electronicBilling = electronicBilling;
 	}
 
-	public String getBaStatus() {
+	public AccountStatusEnum getBaStatus() {
 		return baStatus;
 	}
 
-	public void setBaStatus(String baStatus) {
+	public void setBaStatus(AccountStatusEnum baStatus) {
 		this.baStatus = baStatus;
 	}
 
@@ -355,11 +360,11 @@ public class CRMAccountHierarchyDto extends BaseDto {
 				+ billingCycle + ", country=" + country + ", nextInvoiceDate=" + nextInvoiceDate + ", paymentTerms=" + paymentTerms + ", electronicBilling=" + electronicBilling + ", baStatus=" + baStatus + ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", uaStatus=" + uaStatus + ",customFields=" + customFields + "]";
 	}
 
-	public String getUaStatus() {
+	public AccountStatusEnum getUaStatus() {
 		return uaStatus;
 	}
 
-	public void setUaStatus(String uaStatus) {
+	public void setUaStatus(AccountStatusEnum uaStatus) {
 		this.uaStatus = uaStatus;
 	}
 

@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.LanguageDescriptionDto;
-import org.meveo.api.dto.catalog.RoundingModeDtoEnum;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -93,9 +92,6 @@ public class UsageChargeTemplateApi extends BaseApi {
             }
         }
 
-        if (postData.getRoundingModeDtoEnum() == null) {
-            postData.setRoundingModeDtoEnum(RoundingModeDtoEnum.NEAREST);
-        }
         UsageChargeTemplate chargeTemplate = new UsageChargeTemplate();
         chargeTemplate.setCode(postData.getCode());
         chargeTemplate.setDescription(postData.getDescription());
@@ -117,7 +113,9 @@ public class UsageChargeTemplateApi extends BaseApi {
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
         if (postData.getRoundingModeDtoEnum() != null) {
-            chargeTemplate.setRoundingMode(RoundingModeEnum.valueOf(postData.getRoundingModeDtoEnum().name()));
+            chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
+        } else {
+            chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
         }
 
         if (postData.getTriggeredEdrs() != null) {
@@ -200,9 +198,7 @@ public class UsageChargeTemplateApi extends BaseApi {
                 }
             }
         }
-        if (postData.getRoundingModeDtoEnum() == null) {
-            postData.setRoundingModeDtoEnum(RoundingModeDtoEnum.NEAREST);
-        }
+
         chargeTemplate.setDescription(postData.getDescription());
         chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
@@ -222,7 +218,9 @@ public class UsageChargeTemplateApi extends BaseApi {
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
         if (postData.getRoundingModeDtoEnum() != null) {
-            chargeTemplate.setRoundingMode(RoundingModeEnum.valueOf(postData.getRoundingModeDtoEnum().name()));
+            chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
+        } else {
+            chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
         }
 
         if (provider.getTradingLanguages() != null) {

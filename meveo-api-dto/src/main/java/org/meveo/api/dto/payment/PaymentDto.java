@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 @XmlRootElement(name = "Payment")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -34,7 +35,7 @@ public class PaymentDto extends BaseDto {
 
 	private String type;
 	private String description;
-	private String paymentMethod;
+	private PaymentMethodEnum paymentMethod;
 	private String occTemplateCode;
 	private BigDecimal amount;
 	private String customerAccountCode;
@@ -151,11 +152,11 @@ public class PaymentDto extends BaseDto {
 		this.isToMatching = isToMatching;
 	}
 
-	public String getPaymentMethod() {
+	public PaymentMethodEnum getPaymentMethod() {
 		return paymentMethod;
 	}
 
-	public void setPaymentMethod(String paymentMethod) {
+	public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
 		this.paymentMethod = paymentMethod;
 	}
 

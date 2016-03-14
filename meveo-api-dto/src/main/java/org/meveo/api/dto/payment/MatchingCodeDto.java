@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.payments.MatchingTypeEnum;
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -18,7 +20,7 @@ public class MatchingCodeDto implements Serializable {
 	private static final long serialVersionUID = 5657981714421497476L;
 
 	private String code;
-	private String matchingType;
+	private MatchingTypeEnum matchingType;
 	private Date matchingDate;
 	private BigDecimal matchingAmountCredit;
 	private BigDecimal matchingAmountDebit;
@@ -31,11 +33,11 @@ public class MatchingCodeDto implements Serializable {
 		this.code = code;
 	}
 
-	public String getMatchingType() {
+	public MatchingTypeEnum getMatchingType() {
 		return matchingType;
 	}
 
-	public void setMatchingType(String matchingType) {
+	public void setMatchingType(MatchingTypeEnum matchingType) {
 		this.matchingType = matchingType;
 	}
 

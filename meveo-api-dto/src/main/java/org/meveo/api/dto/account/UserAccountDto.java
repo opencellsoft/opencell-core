@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.billing.SubscriptionsDto;
+import org.meveo.model.billing.AccountStatusEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -25,7 +26,7 @@ public class UserAccountDto extends AccountDto {
 
 	private Date subscriptionDate;
 	private Date terminationDate;
-	private String status;
+	private AccountStatusEnum status;
 	private String terminationReason;
 
 	/**
@@ -67,11 +68,11 @@ public class UserAccountDto extends AccountDto {
 		this.terminationDate = terminationDate;
 	}
 
-	public String getStatus() {
+	public AccountStatusEnum getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(AccountStatusEnum status) {
 		this.status = status;
 	}
 

@@ -19,22 +19,18 @@ import org.meveo.api.dto.billing.WalletTemplateDto;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
@@ -353,7 +349,6 @@ public class WalletApi extends BaseApi {
         }
 
         handleMissingParameters();
-        
 
         Provider provider = currentUser.getProvider();
 
@@ -416,17 +411,8 @@ public class WalletApi extends BaseApi {
         walletOperation.setCurrency(currency);
         walletOperation.setWallet(walletInstance);
         walletOperation.setChargeInstance(chargeInstance);
-
-        try {
-            walletOperation.setType(OperationTypeEnum.valueOf(postData.getType()));
-        } catch (IllegalArgumentException e) {
-            log.warn("error in type={}", e);
-        }
-        try {
-            walletOperation.setStatus(WalletOperationStatusEnum.valueOf(postData.getStatus()));
-        } catch (IllegalArgumentException e) {
-            log.warn("error in status={}", e);
-        }
+        walletOperation.setType(postData.getType());
+        walletOperation.setStatus(postData.getStatus());
         walletOperation.setCounter(null);
         walletOperation.setRatingUnitDescription(postData.getRatingUnitDescription());
         walletOperation.setTaxPercent(postData.getTaxPercent());
@@ -462,7 +448,6 @@ public class WalletApi extends BaseApi {
             handleMissingParameters();
         }
 
-        WalletOperationStatusEnum status = null;
         WalletTemplate walletTemplate = null;
         WalletInstance walletInstance = null;
         UserAccount userAccount = null;
@@ -481,16 +466,8 @@ public class WalletApi extends BaseApi {
             walletInstance = walletService.findByUserAccountAndCode(userAccount, WalletTemplate.PRINCIPAL);
         }
 
-        if (!StringUtils.isBlank(postData.getStatus())) {
-            try {
-                status = WalletOperationStatusEnum.valueOf(postData.getStatus());
-            } catch (IllegalArgumentException e) {
-                log.warn("enum: {}", e);
-            }
-        }
-
-        List<WalletOperation> walletOperations = walletOperationService.findWalletOperation(status, walletTemplate, walletInstance, userAccount, Arrays.asList("wallet"), provider,
-            1000);
+        List<WalletOperation> walletOperations = walletOperationService.findWalletOperation(postData.getStatus(), walletTemplate, walletInstance, userAccount,
+            Arrays.asList("wallet"), provider, 1000);
 
         for (WalletOperation wo : walletOperations) {
             result.getWalletOperations().add(new WalletOperationDto(wo));
@@ -503,8 +480,13 @@ public class WalletApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            handleMissingParameters();
         }
+
+        if (StringUtils.isBlank(postData.getWalletType())) {
+            missingParameters.add("walletType");
+        }
+
+        handleMissingParameters();
 
         if (walletTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
             throw new EntityAlreadyExistsException(WalletTemplate.class, postData.getCode());
@@ -513,11 +495,7 @@ public class WalletApi extends BaseApi {
         WalletTemplate wt = new WalletTemplate();
         wt.setCode(postData.getCode());
         wt.setDescription(postData.getDescription());
-        try {
-            wt.setWalletType(BillingWalletTypeEnum.valueOf(postData.getWalletType()));
-        } catch (IllegalArgumentException e) {
-            throw new InvalidEnumValueException(BillingWalletTypeEnum.class.getName(), postData.getWalletType());
-        }
+        wt.setWalletType(postData.getWalletType());
         wt.setConsumptionAlertSet(postData.isConsumptionAlertSet());
         wt.setFastRatingLevel(postData.getFastRatingLevel());
         wt.setLowBalanceLevel(postData.getLowBalanceLevel());
@@ -530,8 +508,13 @@ public class WalletApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            handleMissingParameters();
         }
+
+        if (StringUtils.isBlank(postData.getWalletType())) {
+            missingParameters.add("walletType");
+        }
+
+        handleMissingParameters();
 
         WalletTemplate wt = walletTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
         if (wt == null) {
@@ -539,11 +522,8 @@ public class WalletApi extends BaseApi {
         }
 
         wt.setDescription(postData.getDescription());
-        try {
-            wt.setWalletType(BillingWalletTypeEnum.valueOf(postData.getWalletType()));
-        } catch (IllegalArgumentException e) {
-            throw new InvalidEnumValueException(BillingWalletTypeEnum.class.getName(), postData.getWalletType());
-        }
+        wt.setWalletType(postData.getWalletType());
+
         wt.setConsumptionAlertSet(postData.isConsumptionAlertSet());
         wt.setFastRatingLevel(postData.getFastRatingLevel());
         wt.setLowBalanceLevel(postData.getLowBalanceLevel());

@@ -7,16 +7,13 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.notification.EmailNotificationDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.notification.EmailNotification;
-import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.EmailNotificationService;
@@ -28,197 +25,177 @@ import org.meveo.service.script.ScriptInstanceService;
 @Stateless
 public class EmailNotificationApi extends BaseApi {
 
-	@Inject
-	private EmailNotificationService emailNotificationService;
+    @Inject
+    private EmailNotificationService emailNotificationService;
 
-	@SuppressWarnings("rawtypes")
-	@Inject
-	private CounterTemplateService counterTemplateService;
-	
-	@Inject
-	private ScriptInstanceService scriptInstanceService;
+    @SuppressWarnings("rawtypes")
+    @Inject
+    private CounterTemplateService counterTemplateService;
 
-	public void create(EmailNotificationDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getClassNameFilter()) && !StringUtils.isBlank(postData.getEventTypeFilter())
-				&& !StringUtils.isBlank(postData.getEmailFrom()) && !StringUtils.isBlank(postData.getSubject())) {
-			if (emailNotificationService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
-				throw new EntityAlreadyExistsException(EmailNotification.class, postData.getCode());
-			}
-			ScriptInstance scriptInstance = null;
-			if(!StringUtils.isBlank(postData.getScriptInstanceCode()) ){
-				scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
-				if ( scriptInstance == null) {
-					throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
-				}
-			}
-			// check class
-			try {
-				Class.forName(postData.getClassNameFilter());
-			} catch (Exception e) {
-				throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
-			}
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
-			NotificationEventTypeEnum notificationEventType = null;
-			try {
-				notificationEventType = NotificationEventTypeEnum.valueOf(postData.getEventTypeFilter());
-			} catch (IllegalArgumentException e) {
-				log.error("enum: {}", e);
-				throw new InvalidEnumValueException(NotificationEventTypeEnum.class.getName(), postData.getEventTypeFilter());
-			}
+    public void create(EmailNotificationDto postData, User currentUser) throws MeveoApiException {
 
-			CounterTemplate counterTemplate = null;
-			if (!StringUtils.isBlank(postData.getCounterTemplate())) {
-				counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
-			}
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getClassNameFilter())) {
+            missingParameters.add("classNameFilter");
+        }
+        if (postData.getEventTypeFilter() == null) {
+            missingParameters.add("eventTypeFilter");
+        }
+        if (StringUtils.isBlank(postData.getEmailFrom())) {
+            missingParameters.add("emailFrom");
+        }
+        if (StringUtils.isBlank(postData.getSubject())) {
+            missingParameters.add("subject");
+        }
 
-			EmailNotification notif = new EmailNotification();
-			notif.setProvider(currentUser.getProvider());
-			notif.setCode(postData.getCode());
-			notif.setClassNameFilter(postData.getClassNameFilter());
-			notif.setEventTypeFilter(notificationEventType);
-			notif.setScriptInstance(scriptInstance);
-			notif.setParams(postData.getScriptParams());
-			notif.setElFilter(postData.getElFilter());
-			notif.setCounterTemplate(counterTemplate);
+        handleMissingParameters();
 
-			notif.setEmailFrom(postData.getEmailFrom());
-			notif.setEmailToEl(postData.getEmailToEl());
-			notif.setSubject(postData.getSubject());
-			notif.setBody(postData.getBody());
-			notif.setHtmlBody(postData.getHtmlBody());
+        if (emailNotificationService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+            throw new EntityAlreadyExistsException(EmailNotification.class, postData.getCode());
+        }
+        ScriptInstance scriptInstance = null;
+        if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
+            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
+            }
+        }
+        // check class
+        try {
+            Class.forName(postData.getClassNameFilter());
+        } catch (Exception e) {
+            throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
+        }
 
-			emailNotificationService.create(notif, currentUser, currentUser.getProvider());
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getClassNameFilter())) {
-				missingParameters.add("classNameFilter");
-			}
-			if (StringUtils.isBlank(postData.getEventTypeFilter())) {
-				missingParameters.add("eventTypeFilter");
-			}
-			if (StringUtils.isBlank(postData.getEmailFrom())) {
-				missingParameters.add("emailFrom");
-			}
-			if (StringUtils.isBlank(postData.getSubject())) {
-				missingParameters.add("subject");
-			}
+        CounterTemplate counterTemplate = null;
+        if (!StringUtils.isBlank(postData.getCounterTemplate())) {
+            counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+        }
 
-			handleMissingParameters();
-		}
-	}
+        EmailNotification notif = new EmailNotification();
+        notif.setProvider(currentUser.getProvider());
+        notif.setCode(postData.getCode());
+        notif.setClassNameFilter(postData.getClassNameFilter());
+        notif.setEventTypeFilter(postData.getEventTypeFilter());
+        notif.setScriptInstance(scriptInstance);
+        notif.setParams(postData.getScriptParams());
+        notif.setElFilter(postData.getElFilter());
+        notif.setCounterTemplate(counterTemplate);
 
-	public EmailNotificationDto find(String notificationCode, Provider provider) throws MeveoApiException {
-		EmailNotificationDto result = new EmailNotificationDto();
+        notif.setEmailFrom(postData.getEmailFrom());
+        notif.setEmailToEl(postData.getEmailToEl());
+        notif.setSubject(postData.getSubject());
+        notif.setBody(postData.getBody());
+        notif.setHtmlBody(postData.getHtmlBody());
 
-		if (!StringUtils.isBlank(notificationCode)) {
-			EmailNotification notif = emailNotificationService.findByCode(notificationCode, provider);
+        emailNotificationService.create(notif, currentUser, currentUser.getProvider());
+    }
 
-			if (notif == null) {
-				throw new EntityDoesNotExistsException(EmailNotification.class, notificationCode);
-			}
+    public EmailNotificationDto find(String notificationCode, Provider provider) throws MeveoApiException {
+        EmailNotificationDto result = new EmailNotificationDto();
 
-			result = new EmailNotificationDto(notif);
-		} else {
-			missingParameters.add("code");
+        if (!StringUtils.isBlank(notificationCode)) {
+            EmailNotification notif = emailNotificationService.findByCode(notificationCode, provider);
 
-			handleMissingParameters();
-		}
+            if (notif == null) {
+                throw new EntityDoesNotExistsException(EmailNotification.class, notificationCode);
+            }
 
-		return result;
-	}
+            result = new EmailNotificationDto(notif);
+        } else {
+            missingParameters.add("code");
 
-	public void update(EmailNotificationDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getClassNameFilter()) && !StringUtils.isBlank(postData.getEventTypeFilter())
-				&& !StringUtils.isBlank(postData.getEmailFrom()) && !StringUtils.isBlank(postData.getSubject())) {
-			EmailNotification notif = emailNotificationService.findByCode(postData.getCode(), currentUser.getProvider());
-			if (notif == null) {
-				throw new EntityDoesNotExistsException(EmailNotification.class, postData.getCode());
-			}
-			ScriptInstance scriptInstance = null;
-			if(!StringUtils.isBlank(postData.getScriptInstanceCode()) ){
-				scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
-				if ( scriptInstance == null) {
-					throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
-				}
-			}
-			// check class
-			try {
-				Class.forName(postData.getClassNameFilter());
-			} catch (Exception e) {
-				throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
-			}
+            handleMissingParameters();
+        }
 
-			NotificationEventTypeEnum notificationEventType = null;
-			try {
-				notificationEventType = NotificationEventTypeEnum.valueOf(postData.getEventTypeFilter());
-			} catch (IllegalArgumentException e) {
-				log.error("enum: {}", e);
-				throw new InvalidEnumValueException(NotificationEventTypeEnum.class.getName(), postData.getEventTypeFilter());
-			}
+        return result;
+    }
 
-			CounterTemplate counterTemplate = null;
-			if (!StringUtils.isBlank(postData.getCounterTemplate())) {
-				counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
-			}
+    public void update(EmailNotificationDto postData, User currentUser) throws MeveoApiException {
 
-			notif.setClassNameFilter(postData.getClassNameFilter());
-			notif.setEventTypeFilter(notificationEventType);
-			notif.setScriptInstance(scriptInstance);
-			notif.setParams(postData.getScriptParams());
-			notif.setElFilter(postData.getElFilter());
-			notif.setCounterTemplate(counterTemplate);
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getClassNameFilter())) {
+            missingParameters.add("classNameFilter");
+        }
+        if (postData.getEventTypeFilter() == null) {
+            missingParameters.add("eventTypeFilter");
+        }
+        if (StringUtils.isBlank(postData.getEmailFrom())) {
+            missingParameters.add("emailFrom");
+        }
+        if (StringUtils.isBlank(postData.getSubject())) {
+            missingParameters.add("subject");
+        }
 
-			notif.setEmailFrom(postData.getEmailFrom());
-			notif.setEmailToEl(postData.getEmailToEl());
-			notif.setSubject(postData.getSubject());
-			notif.setBody(postData.getBody());
-			notif.setHtmlBody(postData.getHtmlBody());
+        handleMissingParameters();
 
-			emailNotificationService.update(notif, currentUser);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getClassNameFilter())) {
-				missingParameters.add("classNameFilter");
-			}
-			if (StringUtils.isBlank(postData.getEventTypeFilter())) {
-				missingParameters.add("eventTypeFilter");
-			}
-			if (StringUtils.isBlank(postData.getEmailFrom())) {
-				missingParameters.add("emailFrom");
-			}
-			if (StringUtils.isBlank(postData.getSubject())) {
-				missingParameters.add("subject");
-			}
+        EmailNotification notif = emailNotificationService.findByCode(postData.getCode(), currentUser.getProvider());
+        if (notif == null) {
+            throw new EntityDoesNotExistsException(EmailNotification.class, postData.getCode());
+        }
+        ScriptInstance scriptInstance = null;
+        if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
+            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
+            }
+        }
+        // check class
+        try {
+            Class.forName(postData.getClassNameFilter());
+        } catch (Exception e) {
+            throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
+        }
 
-			handleMissingParameters();
-		}
-	}
+        CounterTemplate counterTemplate = null;
+        if (!StringUtils.isBlank(postData.getCounterTemplate())) {
+            counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+        }
 
-	public void remove(String notificationCode, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(notificationCode)) {
-			EmailNotification notif = emailNotificationService.findByCode(notificationCode, provider);
+        notif.setClassNameFilter(postData.getClassNameFilter());
+        notif.setEventTypeFilter(postData.getEventTypeFilter());
+        notif.setScriptInstance(scriptInstance);
+        notif.setParams(postData.getScriptParams());
+        notif.setElFilter(postData.getElFilter());
+        notif.setCounterTemplate(counterTemplate);
 
-			if (notif == null) {
-				throw new EntityDoesNotExistsException(EmailNotification.class, notificationCode);
-			}
+        notif.setEmailFrom(postData.getEmailFrom());
+        notif.setEmailToEl(postData.getEmailToEl());
+        notif.setSubject(postData.getSubject());
+        notif.setBody(postData.getBody());
+        notif.setHtmlBody(postData.getHtmlBody());
 
-			emailNotificationService.remove(notif);
-		} else {
-			missingParameters.add("code");
+        emailNotificationService.update(notif, currentUser);
+    }
 
-			handleMissingParameters();
-		}
-	}
-	
-	public void createOrUpdate(EmailNotificationDto postData, User currentUser) throws MeveoApiException {
-		if (emailNotificationService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-			create(postData, currentUser);
-		} else {
-			update(postData, currentUser);
-		}
-	}
+    public void remove(String notificationCode, Provider provider) throws MeveoApiException {
+        if (!StringUtils.isBlank(notificationCode)) {
+            EmailNotification notif = emailNotificationService.findByCode(notificationCode, provider);
+
+            if (notif == null) {
+                throw new EntityDoesNotExistsException(EmailNotification.class, notificationCode);
+            }
+
+            emailNotificationService.remove(notif);
+        } else {
+            missingParameters.add("code");
+
+            handleMissingParameters();
+        }
+    }
+
+    public void createOrUpdate(EmailNotificationDto postData, User currentUser) throws MeveoApiException {
+        if (emailNotificationService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+            create(postData, currentUser);
+        } else {
+            update(postData, currentUser);
+        }
+    }
 }

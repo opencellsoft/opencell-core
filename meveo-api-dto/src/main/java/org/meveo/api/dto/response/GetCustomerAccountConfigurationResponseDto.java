@@ -1,6 +1,6 @@
 package org.meveo.api.dto.response;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.account.CreditCategoriesDto;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -18,14 +19,14 @@ public class GetCustomerAccountConfigurationResponseDto extends BaseResponse {
 
 	private static final long serialVersionUID = -8195022047384406801L;
 
-	private List<String> paymentMethods = new ArrayList<String>();
+	private List<PaymentMethodEnum> paymentMethods = Arrays.asList(PaymentMethodEnum.values());
 	private CreditCategoriesDto creditCategories = new CreditCategoriesDto();
 
-	public List<String> getPaymentMethods() {
+	public List<PaymentMethodEnum> getPaymentMethods() {
 		return paymentMethods;
 	}
 
-	public void setPaymentMethods(List<String> paymentMethods) {
+	public void setPaymentMethods(List<PaymentMethodEnum> paymentMethods) {
 		this.paymentMethods = paymentMethods;
 	}
 

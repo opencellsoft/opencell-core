@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -18,7 +19,7 @@ public class FindWalletOperationsDto extends BaseDto {
 
 	private static final long serialVersionUID = 4342970913973071312L;
 
-	private String status;
+	private WalletOperationStatusEnum status;
 	private String walletTemplate;
 
 	@XmlElement(required = true)
@@ -29,11 +30,11 @@ public class FindWalletOperationsDto extends BaseDto {
 		return "FindWalletOperationsDto [status=" + status + ", walletTemplate=" + walletTemplate + ", userAccount=" + userAccount + "]";
 	}
 
-	public String getStatus() {
+	public WalletOperationStatusEnum getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(WalletOperationStatusEnum status) {
 		this.status = status;
 	}
 

@@ -10,7 +10,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -43,8 +45,8 @@ public class WalletOperationDto extends BaseDto {
 	private String chargeInstance;
 
 	private String currency;
-	private String type;
-	private String status;
+	private OperationTypeEnum type;
+	private WalletOperationStatusEnum status;
 
 	private String ratingUnitDescription;
 	private BigDecimal taxPercent;
@@ -77,10 +79,8 @@ public class WalletOperationDto extends BaseDto {
 		}
 
 		currency = wo.getCurrency().getCurrencyCode();
-		if (wo.getType() != null) {
-			type = wo.getType().name();
-		}
-		status = wo.getStatus().name();
+		type = wo.getType();
+		status = wo.getStatus();
 		ratingUnitDescription = wo.getRatingUnitDescription();
 		taxPercent = wo.getTaxPercent();
 		unitAmountWithoutTax = wo.getUnitAmountWithoutTax();
@@ -135,19 +135,19 @@ public class WalletOperationDto extends BaseDto {
 		this.seller = seller;
 	}
 
-	public String getType() {
+	public OperationTypeEnum getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(OperationTypeEnum type) {
 		this.type = type;
 	}
 
-	public String getStatus() {
+	public WalletOperationStatusEnum getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(WalletOperationStatusEnum status) {
 		this.status = status;
 	}
 

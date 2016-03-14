@@ -9,82 +9,82 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.payments.OCCTemplate;
-
+import org.meveo.model.payments.OperationCategoryEnum;
 
 @XmlRootElement(name = "OCCTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OccTemplateDto implements Serializable {
 
-	private static final long serialVersionUID = 2587489734648000805L;
+    private static final long serialVersionUID = 2587489734648000805L;
 
-	@XmlAttribute(required = true)
-	private String code;
+    @XmlAttribute(required = true)
+    private String code;
 
-	@XmlAttribute()
-	private String description;
-    
-	@XmlElement(required = true)
-	private String accountCode;
-	
-	@XmlElement(required = true)
-	private String occCategory; 
-	
-	private String accountCodeClientSide; 
- 
-	public OccTemplateDto() {
-	}
+    @XmlAttribute()
+    private String description;
 
-	public OccTemplateDto(OCCTemplate e) {
-		code = e.getCode();
-		description = e.getDescription();
-		accountCode = e.getAccountCode();
-		occCategory = String.valueOf(e.getOccCategory());
-		accountCodeClientSide = e.getAccountCodeClientSide();
-	}
+    @XmlElement(required = true)
+    private String accountCode;
 
-	public String getCode() {
-		return code;
-	}
+    @XmlElement(required = true)
+    private OperationCategoryEnum occCategory;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    private String accountCodeClientSide;
 
-	public String getDescription() {
-		return description;
-	}
+    public OccTemplateDto() {
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public OccTemplateDto(OCCTemplate e) {
+        code = e.getCode();
+        description = e.getDescription();
+        accountCode = e.getAccountCode();
+        occCategory = e.getOccCategory();
+        accountCodeClientSide = e.getAccountCodeClientSide();
+    }
 
-	public String getAccountCode() {
-		return accountCode;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setAccountCode(String accountCode) {
-		this.accountCode = accountCode;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getOccCategory() {
-		return occCategory;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setOccCategory(String occCategory) {
-		this.occCategory = occCategory;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getAccountCodeClientSide() {
-		return accountCodeClientSide;
-	}
+    public String getAccountCode() {
+        return accountCode;
+    }
 
-	public void setAccountCodeClientSide(String accountCodeClientSide) {
-		this.accountCodeClientSide = accountCodeClientSide;
-	}
+    public void setAccountCode(String accountCode) {
+        this.accountCode = accountCode;
+    }
 
-	@Override
-	public String toString() {
-		return "OCCTemplateDto [code=" + code + ", description=" + description + ", accountCode=" + accountCode + ", occCategory="+ occCategory + ", accountCodeClientSide=" + accountCodeClientSide + "]";
-	}
+    public OperationCategoryEnum getOccCategory() {
+        return occCategory;
+    }
 
+    public void setOccCategory(OperationCategoryEnum occCategory) {
+        this.occCategory = occCategory;
+    }
+
+    public String getAccountCodeClientSide() {
+        return accountCodeClientSide;
+    }
+
+    public void setAccountCodeClientSide(String accountCodeClientSide) {
+        this.accountCodeClientSide = accountCodeClientSide;
+    }
+
+    @Override
+    public String toString() {
+        return "OCCTemplateDto [code=" + code + ", description=" + description + ", accountCode=" + accountCode + ", occCategory=" + occCategory + ", accountCodeClientSide="
+                + accountCodeClientSide + "]";
+    }
 }

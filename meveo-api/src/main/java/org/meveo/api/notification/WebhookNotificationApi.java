@@ -7,17 +7,13 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.notification.WebhookNotificationDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.WebHook;
-import org.meveo.model.notification.WebHookMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.WebHookService;
@@ -29,229 +25,199 @@ import org.meveo.service.script.ScriptInstanceService;
 @Stateless
 public class WebhookNotificationApi extends BaseApi {
 
-	@Inject
-	private WebHookService webHookService;
+    @Inject
+    private WebHookService webHookService;
 
-	@SuppressWarnings("rawtypes")
-	@Inject
-	private CounterTemplateService counterTemplateService;
-	
-	@Inject
-	private ScriptInstanceService scriptInstanceService;
+    @SuppressWarnings("rawtypes")
+    @Inject
+    private CounterTemplateService counterTemplateService;
 
-	public void create(WebhookNotificationDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getClassNameFilter()) && !StringUtils.isBlank(postData.getEventTypeFilter())
-				&& !StringUtils.isBlank(postData.getHost()) && !StringUtils.isBlank(postData.getPage()) && !StringUtils.isBlank(postData.getHttpMethod())) {
-			if (webHookService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
-				throw new EntityAlreadyExistsException(WebHook.class, postData.getCode());
-			}
-			ScriptInstance scriptInstance = null;
-			if(!StringUtils.isBlank(postData.getScriptInstanceCode()) ){
-				scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
-				if ( scriptInstance == null) {
-					throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
-				}
-			}
-			// check class
-			try {
-				Class.forName(postData.getClassNameFilter());
-			} catch (Exception e) {
-				throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
-			}
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
-			NotificationEventTypeEnum notificationEventType = null;
-			try {
-				notificationEventType = NotificationEventTypeEnum.valueOf(postData.getEventTypeFilter());
-			} catch (IllegalArgumentException e) {
-				log.error("enum: {}", e);
-				throw new InvalidEnumValueException(NotificationEventTypeEnum.class.getName(), postData.getEventTypeFilter());
-			}
+    public void create(WebhookNotificationDto postData, User currentUser) throws MeveoApiException {
 
-			CounterTemplate counterTemplate = null;
-			if (!StringUtils.isBlank(postData.getCounterTemplate())) {
-				counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
-			}
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getClassNameFilter())) {
+            missingParameters.add("classNameFilter");
+        }
+        if (postData.getEventTypeFilter() == null) {
+            missingParameters.add("eventTypeFilter");
+        }
+        if (StringUtils.isBlank(postData.getHost())) {
+            missingParameters.add("host");
+        }
+        if (StringUtils.isBlank(postData.getPage())) {
+            missingParameters.add("page");
+        }
+        if (postData.getHttpMethod() == null) {
+            missingParameters.add("httpMethod");
+        }
 
-			WebHook webHook = new WebHook();
-			webHook.setProvider(currentUser.getProvider());
-			webHook.setCode(postData.getCode());
-			webHook.setClassNameFilter(postData.getClassNameFilter());
-			webHook.setEventTypeFilter(notificationEventType);
-			webHook.setScriptInstance(scriptInstance);
-			webHook.setParams(postData.getScriptParams());
-			webHook.setElFilter(postData.getElFilter());
-			webHook.setCounterTemplate(counterTemplate);
+        handleMissingParameters();
 
-			webHook.setHost(postData.getHost());
-			webHook.setPort(postData.getPort());
-			webHook.setPage(postData.getPage());
-			try {
-				webHook.setHttpMethod(WebHookMethodEnum.valueOf(postData.getHttpMethod()));
-			} catch (IllegalArgumentException e) {
-				log.error("error while setting httpMethod ",e);
-				throw new InvalidEnumValueException(WebHookMethodEnum.class.getName(), postData.getHttpMethod());
-			}
-			webHook.setUsername(postData.getUsername());
-			webHook.setPassword(postData.getPassword());
-			if (postData.getHeaders() != null) {
-				webHook.getHeaders().putAll(postData.getHeaders());
-			}
-			if (postData.getParams() != null) {
-				webHook.getWebhookParams().putAll(postData.getParams());
-			}
+        if (webHookService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+            throw new EntityAlreadyExistsException(WebHook.class, postData.getCode());
+        }
+        ScriptInstance scriptInstance = null;
+        if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
+            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
+            }
+        }
+        // check class
+        try {
+            Class.forName(postData.getClassNameFilter());
+        } catch (Exception e) {
+            throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
+        }
 
-			webHookService.create(webHook, currentUser, currentUser.getProvider());
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getClassNameFilter())) {
-				missingParameters.add("classNameFilter");
-			}
-			if (StringUtils.isBlank(postData.getEventTypeFilter())) {
-				missingParameters.add("eventTypeFilter");
-			}
-			if (StringUtils.isBlank(postData.getHost())) {
-				missingParameters.add("host");
-			}
-			if (StringUtils.isBlank(postData.getPage())) {
-				missingParameters.add("page");
-			}
-			if (StringUtils.isBlank(postData.getHttpMethod())) {
-				missingParameters.add("httpMethod");
-			}
+        CounterTemplate counterTemplate = null;
+        if (!StringUtils.isBlank(postData.getCounterTemplate())) {
+            counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+        }
 
-			handleMissingParameters();
-		}
-	}
+        WebHook webHook = new WebHook();
+        webHook.setProvider(currentUser.getProvider());
+        webHook.setCode(postData.getCode());
+        webHook.setClassNameFilter(postData.getClassNameFilter());
+        webHook.setEventTypeFilter(postData.getEventTypeFilter());
+        webHook.setScriptInstance(scriptInstance);
+        webHook.setParams(postData.getScriptParams());
+        webHook.setElFilter(postData.getElFilter());
+        webHook.setCounterTemplate(counterTemplate);
 
-	public WebhookNotificationDto find(String notificationCode, Provider provider) throws MeveoApiException {
-		WebhookNotificationDto result = new WebhookNotificationDto();
+        webHook.setHost(postData.getHost());
+        webHook.setPort(postData.getPort());
+        webHook.setPage(postData.getPage());
+        webHook.setHttpMethod(postData.getHttpMethod());
+        webHook.setUsername(postData.getUsername());
+        webHook.setPassword(postData.getPassword());
+        if (postData.getHeaders() != null) {
+            webHook.getHeaders().putAll(postData.getHeaders());
+        }
+        if (postData.getParams() != null) {
+            webHook.getWebhookParams().putAll(postData.getParams());
+        }
 
-		if (!StringUtils.isBlank(notificationCode)) {
-			WebHook notif = webHookService.findByCode(notificationCode, provider);
+        webHookService.create(webHook, currentUser, currentUser.getProvider());
+    }
 
-			if (notif == null) {
-				throw new EntityDoesNotExistsException(WebHook.class, notificationCode);
-			}
+    public WebhookNotificationDto find(String notificationCode, Provider provider) throws MeveoApiException {
+        WebhookNotificationDto result = new WebhookNotificationDto();
 
-			result = new WebhookNotificationDto(notif);
-		} else {
-			missingParameters.add("code");
+        if (!StringUtils.isBlank(notificationCode)) {
+            WebHook notif = webHookService.findByCode(notificationCode, provider);
 
-			handleMissingParameters();
-		}
+            if (notif == null) {
+                throw new EntityDoesNotExistsException(WebHook.class, notificationCode);
+            }
 
-		return result;
-	}
+            result = new WebhookNotificationDto(notif);
+        } else {
+            missingParameters.add("code");
 
-	public void update(WebhookNotificationDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getClassNameFilter()) && !StringUtils.isBlank(postData.getEventTypeFilter())
-				&& !StringUtils.isBlank(postData.getHost()) && !StringUtils.isBlank(postData.getPage()) && !StringUtils.isBlank(postData.getHttpMethod())) {
-			WebHook webHook = webHookService.findByCode(postData.getCode(), currentUser.getProvider());
-			if (webHook == null) {
-				throw new EntityDoesNotExistsException(WebHook.class, postData.getCode());
-			}
-			
-			ScriptInstance scriptInstance = null;
-			if(!StringUtils.isBlank(postData.getScriptInstanceCode()) ){
-				scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
-				if ( scriptInstance == null) {
-					throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
-				}
-			}
+            handleMissingParameters();
+        }
 
-			// check class
-			try {
-				Class.forName(postData.getClassNameFilter());
-			} catch (Exception e) {
-				throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
-			}
+        return result;
+    }
 
-			NotificationEventTypeEnum notificationEventType = null;
-			try {
-				notificationEventType = NotificationEventTypeEnum.valueOf(postData.getEventTypeFilter());
-			} catch (IllegalArgumentException e) {
-				log.error("enum: {}", e);
-				throw new InvalidEnumValueException(NotificationEventTypeEnum.class.getName(), postData.getEventTypeFilter());
-			}
+    public void update(WebhookNotificationDto postData, User currentUser) throws MeveoApiException {
 
-			CounterTemplate counterTemplate = null;
-			if (!StringUtils.isBlank(postData.getCounterTemplate())) {
-				counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
-			}
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getClassNameFilter())) {
+            missingParameters.add("classNameFilter");
+        }
+        if (postData.getEventTypeFilter()==null) {
+            missingParameters.add("eventTypeFilter");
+        }
+        if (StringUtils.isBlank(postData.getHost())) {
+            missingParameters.add("host");
+        }
+        if (StringUtils.isBlank(postData.getPage())) {
+            missingParameters.add("page");
+        }
+        if (postData.getHttpMethod()==null) {
+            missingParameters.add("httpMethod");
+        }
 
-			webHook.setClassNameFilter(postData.getClassNameFilter());
-			webHook.setEventTypeFilter(notificationEventType);
-			webHook.setScriptInstance(scriptInstance);
-			webHook.setParams(postData.getScriptParams());
-			webHook.setElFilter(postData.getElFilter());
-			webHook.setCounterTemplate(counterTemplate);
+        handleMissingParameters();
+        
+     WebHook webHook = webHookService.findByCode(postData.getCode(), currentUser.getProvider());
+            if (webHook == null) {
+                throw new EntityDoesNotExistsException(WebHook.class, postData.getCode());
+            }
 
-			webHook.setHost(postData.getHost());
-			webHook.setPort(postData.getPort());
-			webHook.setPage(postData.getPage());
-			try {
-				webHook.setHttpMethod(WebHookMethodEnum.valueOf(postData.getHttpMethod()));
-			} catch (IllegalArgumentException e) {
-				log.error("error generated while setting http method",e);
-				throw new InvalidEnumValueException(WebHookMethodEnum.class.getName(), postData.getHttpMethod());
-			}
-			webHook.setUsername(postData.getUsername());
-			webHook.setPassword(postData.getPassword());
-			if (postData.getHeaders() != null) {
-				webHook.getHeaders().putAll(postData.getHeaders());
-			}
-			if (postData.getParams() != null) {
-				webHook.getWebhookParams().putAll(postData.getParams());
-			}
+            ScriptInstance scriptInstance = null;
+            if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
+                scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
+                if (scriptInstance == null) {
+                    throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
+                }
+            }
 
-			webHookService.update(webHook, currentUser);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getClassNameFilter())) {
-				missingParameters.add("classNameFilter");
-			}
-			if (StringUtils.isBlank(postData.getEventTypeFilter())) {
-				missingParameters.add("eventTypeFilter");
-			}
-			if (StringUtils.isBlank(postData.getHost())) {
-				missingParameters.add("host");
-			}
-			if (StringUtils.isBlank(postData.getPage())) {
-				missingParameters.add("page");
-			}
-			if (StringUtils.isBlank(postData.getHttpMethod())) {
-				missingParameters.add("httpMethod");
-			}
+            // check class
+            try {
+                Class.forName(postData.getClassNameFilter());
+            } catch (Exception e) {
+                throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
+            }
 
-			handleMissingParameters();
-		}
-	}
+            CounterTemplate counterTemplate = null;
+            if (!StringUtils.isBlank(postData.getCounterTemplate())) {
+                counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+            }
 
-	public void remove(String notificationCode, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(notificationCode)) {
-			WebHook webHook = webHookService.findByCode(notificationCode, provider);
+            webHook.setClassNameFilter(postData.getClassNameFilter());
+            webHook.setEventTypeFilter(postData.getEventTypeFilter());
+            webHook.setScriptInstance(scriptInstance);
+            webHook.setParams(postData.getScriptParams());
+            webHook.setElFilter(postData.getElFilter());
+            webHook.setCounterTemplate(counterTemplate);
 
-			if (webHook == null) {
-				throw new EntityDoesNotExistsException(WebHook.class, notificationCode);
-			}
+            webHook.setHost(postData.getHost());
+            webHook.setPort(postData.getPort());
+            webHook.setPage(postData.getPage());
+            webHook.setHttpMethod(postData.getHttpMethod());
+            webHook.setUsername(postData.getUsername());
+            webHook.setPassword(postData.getPassword());
+            if (postData.getHeaders() != null) {
+                webHook.getHeaders().putAll(postData.getHeaders());
+            }
+            if (postData.getParams() != null) {
+                webHook.getWebhookParams().putAll(postData.getParams());
+            }
 
-			webHookService.remove(webHook);
-		} else {
-			missingParameters.add("code");
+            webHookService.update(webHook, currentUser);
+    }
 
-			handleMissingParameters();
-		}
-	}
-	
-	public void createOrUpdate(WebhookNotificationDto postData, User currentUser) throws MeveoApiException {
-		if (webHookService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-			create(postData, currentUser);
-		} else {
-			update(postData, currentUser);
-		}
-	}
+    public void remove(String notificationCode, Provider provider) throws MeveoApiException {
+        if (!StringUtils.isBlank(notificationCode)) {
+            WebHook webHook = webHookService.findByCode(notificationCode, provider);
+
+            if (webHook == null) {
+                throw new EntityDoesNotExistsException(WebHook.class, notificationCode);
+            }
+
+            webHookService.remove(webHook);
+        } else {
+            missingParameters.add("code");
+
+            handleMissingParameters();
+        }
+    }
+
+    public void createOrUpdate(WebhookNotificationDto postData, User currentUser) throws MeveoApiException {
+        if (webHookService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+            create(postData, currentUser);
+        } else {
+            update(postData, currentUser);
+        }
+    }
 }

@@ -9,6 +9,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.meveo.model.payments.CustomerAccountStatusEnum;
+import org.meveo.model.payments.DunningLevelEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
+
 @XmlRootElement(name = "CustomerAccount")
 @XmlType(name = "CustomerAccount")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -25,15 +29,15 @@ public class CustomerAccountDto extends AccountDto {
 	@XmlElement(required = true)
 	private String language;
 
-	private String status;
-	private String paymentMethod;
+	private CustomerAccountStatusEnum status;
+	private PaymentMethodEnum paymentMethod;
 	private String creditCategory;
 	private Date dateStatus;
 	private Date dateDunningLevel;
 
 	private ContactInformationDto contactInformation;
 
-	private String dunningLevel;
+	private DunningLevelEnum dunningLevel;
 	private String mandateIdentification = "";
 	private Date mandateDate;
 	private BigDecimal balance = BigDecimal.ZERO;
@@ -49,11 +53,11 @@ public class CustomerAccountDto extends AccountDto {
 		super();
 	}
 	
-	public String getStatus() {
+	public CustomerAccountStatusEnum getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(CustomerAccountStatusEnum status) {
 		this.status = status;
 	}
 
@@ -89,19 +93,19 @@ public class CustomerAccountDto extends AccountDto {
 		this.customer = customer;
 	}
 
-	public String getPaymentMethod() {
+	public PaymentMethodEnum getPaymentMethod() {
 		return paymentMethod;
 	}
 
-	public void setPaymentMethod(String paymentMethod) {
+	public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
 		this.paymentMethod = paymentMethod;
 	}
 
-	public String getDunningLevel() {
+	public DunningLevelEnum getDunningLevel() {
 		return dunningLevel;
 	}
 
-	public void setDunningLevel(String dunningLevel) {
+	public void setDunningLevel(DunningLevelEnum dunningLevel) {
 		this.dunningLevel = dunningLevel;
 	}
 

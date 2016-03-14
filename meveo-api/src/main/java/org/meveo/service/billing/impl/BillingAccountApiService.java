@@ -26,8 +26,6 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.PaymentTermEnum;
 import org.meveo.service.crm.impl.AccountApiService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
@@ -73,12 +71,14 @@ public class BillingAccountApiService extends AccountApiService {
         if (StringUtils.isBlank(postData.getLanguage())) {
             missingParameters.add("language");
         }
-        if (StringUtils.isBlank(postData.getPaymentMethod())) {
+        if (postData.getPaymentMethod() == null) {
             missingParameters.add("paymentMethod");
+        }
+        if (postData.getPaymentTerms() == null) {
+            missingParameters.add("paymentTerms");
         }
 
         handleMissingParameters();
-        
 
         Provider provider = currentUser.getProvider();
 
@@ -106,14 +106,6 @@ public class BillingAccountApiService extends AccountApiService {
             throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
         }
 
-        PaymentMethodEnum paymentMethod = null;
-
-        try {
-            paymentMethod = PaymentMethodEnum.valueOf(postData.getPaymentMethod());
-        } catch (IllegalArgumentException e) {
-            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid payment method=" + postData.getPaymentMethod());
-        }
-
         BillingAccount billingAccount = new BillingAccount();
         populate(postData, billingAccount, currentUser);
 
@@ -121,15 +113,8 @@ public class BillingAccountApiService extends AccountApiService {
         billingAccount.setBillingCycle(billingCycle);
         billingAccount.setTradingCountry(tradingCountry);
         billingAccount.setTradingLanguage(tradingLanguage);
-        billingAccount.setPaymentMethod(paymentMethod);
-        if (!StringUtils.isBlank(postData.getPaymentTerms())) {
-            try {
-                billingAccount.setPaymentTerm(PaymentTermEnum.valueOf(postData.getPaymentTerms()));
-            } catch (IllegalArgumentException e) {
-                log.error("InvalidEnum for paymentTerm with name={}", postData.getPaymentTerms());
-                throw new MeveoApiException(MeveoApiErrorCodeEnum.INVALID_ENUM_VALUE, "Enum for PaymentTerm with name=" + postData.getPaymentTerms() + " does not exists.");
-            }
-        }
+        billingAccount.setPaymentMethod(postData.getPaymentMethod());
+        billingAccount.setPaymentTerm(postData.getPaymentTerms());
         billingAccount.setNextInvoiceDate(postData.getNextInvoiceDate());
         billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
         billingAccount.setTerminationDate(postData.getTerminationDate());
@@ -189,12 +174,14 @@ public class BillingAccountApiService extends AccountApiService {
         if (StringUtils.isBlank(postData.getLanguage())) {
             missingParameters.add("language");
         }
-        if (StringUtils.isBlank(postData.getPaymentMethod())) {
+        if (postData.getPaymentMethod() == null) {
             missingParameters.add("paymentMethod");
+        }
+        if (postData.getPaymentTerms() == null) {
+            missingParameters.add("paymentTerms");
         }
 
         handleMissingParameters();
-        
 
         Provider provider = currentUser.getProvider();
 
@@ -235,25 +222,12 @@ public class BillingAccountApiService extends AccountApiService {
             billingAccount.setTradingLanguage(tradingLanguage);
         }
 
-        if (!StringUtils.isBlank(postData.getPaymentMethod())) {
-            PaymentMethodEnum paymentMethod = null;
-
-            try {
-                paymentMethod = PaymentMethodEnum.valueOf(postData.getPaymentMethod());
-            } catch (IllegalArgumentException e) {
-                log.error("InvalidEnum for paymentMethod with name={}", postData.getPaymentMethod());
-                throw new MeveoApiException(MeveoApiErrorCodeEnum.INVALID_ENUM_VALUE, "Enum for PaymentMethod with name=" + postData.getPaymentMethod() + " does not exists.");
-            }
-
-            billingAccount.setPaymentMethod(paymentMethod);
+        if (postData.getPaymentMethod() != null) {
+            billingAccount.setPaymentMethod(postData.getPaymentMethod());
         }
 
         if (!StringUtils.isBlank(postData.getPaymentTerms())) {
-            try {
-                billingAccount.setPaymentTerm(PaymentTermEnum.valueOf(postData.getPaymentTerms()));
-            } catch (IllegalArgumentException e) {
-                log.warn("InvalidEnum for paymentTerm with name={}", postData.getPaymentTerms());
-            }
+            billingAccount.setPaymentTerm(postData.getPaymentTerms());
         }
 
         if (!StringUtils.isBlank(postData.getExternalRef1())) {

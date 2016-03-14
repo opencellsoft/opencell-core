@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.model.billing.BillingProcessTypesEnum;
 
 /**
  * @author anasseh
@@ -30,7 +31,7 @@ public class CreateBillingRunDto extends BaseDto{
 	private String  billingCycleCode;
 	
 	@XmlAttribute(required = true)
-	private  BillingRunTypeEnum  billingRunTypeEnum;
+	private  BillingProcessTypesEnum  billingRunTypeEnum;
 	
 	private Date startDate;
 	private Date endDate;
@@ -58,14 +59,14 @@ public class CreateBillingRunDto extends BaseDto{
 	/**
 	 * @return the billingRunTypeEnum
 	 */
-	public BillingRunTypeEnum getBillingRunTypeEnum() {
+	public BillingProcessTypesEnum getBillingRunTypeEnum() {
 		return billingRunTypeEnum;
 	}
 
 	/**
 	 * @param billingRunTypeEnum the billingRunTypeEnum to set
 	 */
-	public void setBillingRunTypeEnum(BillingRunTypeEnum billingRunTypeEnum) {
+	public void setBillingRunTypeEnum(BillingProcessTypesEnum billingRunTypeEnum) {
 		this.billingRunTypeEnum = billingRunTypeEnum;
 	}
 

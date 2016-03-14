@@ -32,7 +32,6 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingLanguageService;
@@ -116,11 +115,7 @@ public class CustomerAccountApiService extends AccountApiService {
         customerAccount.setCustomer(customer);
         customerAccount.setTradingCurrency(tradingCurrency);
         customerAccount.setTradingLanguage(tradingLanguage);
-        try {
-            customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
-        } catch (IllegalArgumentException | NullPointerException e) {
-            log.warn("error generated while setting payment method", e);
-        }
+        customerAccount.setPaymentMethod(postData.getPaymentMethod());
         if (!StringUtils.isBlank(postData.getCreditCategory())) {
             customerAccount.setCreditCategory(creditCategoryService.findByCode(postData.getCreditCategory(), provider));
         }
@@ -220,12 +215,8 @@ public class CustomerAccountApiService extends AccountApiService {
 
         updateAccount(customerAccount, postData, currentUser, checkCustomFields);
 
-        if (!StringUtils.isBlank(postData.getPaymentMethod())) {
-            try {
-                customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
-            } catch (IllegalArgumentException e) {
-                log.warn("PaymentMethodEnum={}", MeveoApiErrorCodeEnum.INVALID_ENUM_VALUE);
-            }
+        if (postData.getPaymentMethod() != null) {
+            customerAccount.setPaymentMethod(postData.getPaymentMethod());
         }
         if (!StringUtils.isBlank(postData.getCreditCategory())) {
             customerAccount.setCreditCategory(creditCategoryService.findByCode(postData.getCreditCategory(), provider));

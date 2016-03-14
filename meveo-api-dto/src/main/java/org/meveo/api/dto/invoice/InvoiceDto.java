@@ -24,6 +24,7 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * @author R.AITYAAZZA
@@ -33,256 +34,227 @@ import org.meveo.model.payments.MatchingAmount;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InvoiceDto extends BaseDto {
 
-	private static final long serialVersionUID = 1072382628068718580L;
+    private static final long serialVersionUID = 1072382628068718580L;
 
-	@XmlElement(required = true)
-	private String billingAccountCode;
+    @XmlElement(required = true)
+    private String billingAccountCode;
 
-	@XmlElement(required = true)
-	private Date dueDate;
+    @XmlElement(required = true)
+    private Date dueDate;
 
-	private String invoiceNumber;
-	private Date invoiceDate;
-	private BigDecimal discount;
-	private BigDecimal amountWithoutTax;
-	private BigDecimal amountTax;
-	private BigDecimal amountWithTax;
-	private String paymentMethod;
-	private boolean PDFpresent;
-	private String type;
-	private byte[] pdf;
-	private List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
-	private List<AccountOperationDto> accountOperations = new ArrayList<AccountOperationDto>();
-	
-	public InvoiceDto() {}
-	
-	public InvoiceDto(Invoice invoice, String billingAccountCode) {
-		super();
-		this.setBillingAccountCode(billingAccountCode);
-		this.setInvoiceDate(invoice.getInvoiceDate());
-		this.setDueDate(invoice.getDueDate());
-		this.pdf=invoice.getPdf();
+    private String invoiceNumber;
+    private Date invoiceDate;
+    private BigDecimal discount;
+    private BigDecimal amountWithoutTax;
+    private BigDecimal amountTax;
+    private BigDecimal amountWithTax;
+    private PaymentMethodEnum paymentMethod;
+    private boolean PDFpresent;
+    private InvoiceTypeEnum type;
+    private byte[] pdf;
+    private List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
+    private List<AccountOperationDto> accountOperations = new ArrayList<AccountOperationDto>();
 
-		this.setAmountWithoutTax(invoice
-				.getAmountWithoutTax());
-		this.setAmountTax(invoice.getAmountTax());
-		this.setAmountWithTax(invoice
-				.getAmountWithTax());
-		this.setInvoiceNumber(invoice
-				.getInvoiceNumber());
-		this.setPaymentMethod(invoice
-				.getPaymentMethod().toString());
-		this.setType(invoice.getInvoiceTypeEnum().name());
-		this.setPDFpresent(invoice.getPdf() != null);
-				
-		InvoiceTypeEnum type = invoice.getInvoiceTypeEnum();
-		if (type != null) {
-			this.setType(invoice.getInvoiceTypeEnum().name());
-		} else {
-			this.setType(InvoiceTypeEnum.COMMERCIAL.name());
-		}
-		
-		SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
+    public InvoiceDto() {
+    }
 
-		for (InvoiceAgregate invoiceAgregate : invoice
-				.getInvoiceAgregates()) {
+    public InvoiceDto(Invoice invoice, String billingAccountCode) {
+        super();
+        this.setBillingAccountCode(billingAccountCode);
+        this.setInvoiceDate(invoice.getInvoiceDate());
+        this.setDueDate(invoice.getDueDate());
+        this.pdf = invoice.getPdf();
 
-			subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
+        this.setAmountWithoutTax(invoice.getAmountWithoutTax());
+        this.setAmountTax(invoice.getAmountTax());
+        this.setAmountWithTax(invoice.getAmountWithTax());
+        this.setInvoiceNumber(invoice.getInvoiceNumber());
+        this.setPaymentMethod(invoice.getPaymentMethod());
+        this.setPDFpresent(invoice.getPdf() != null);
 
-			if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-				subCategoryInvoiceAgregateDto.setType("R");
-			} else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-				subCategoryInvoiceAgregateDto.setType("F");
-			} else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
-				subCategoryInvoiceAgregateDto.setType("T");
-			}
+        this.type = invoice.getInvoiceTypeEnum();
+        if (this.type == null) {
+            this.setType(InvoiceTypeEnum.COMMERCIAL);
+        }
 
-			subCategoryInvoiceAgregateDto
-			.setItemNumber(invoiceAgregate.getItemNumber());
-			subCategoryInvoiceAgregateDto
-			.setAccountingCode(invoiceAgregate
-					.getAccountingCode());
-			subCategoryInvoiceAgregateDto
-			.setDescription(invoiceAgregate
-					.getDescription());
-			subCategoryInvoiceAgregateDto
-			.setQuantity(invoiceAgregate.getQuantity());
-			subCategoryInvoiceAgregateDto
-			.setDiscount(invoiceAgregate.getDiscount());
-			subCategoryInvoiceAgregateDto
-			.setAmountWithoutTax(invoiceAgregate
-					.getAmountWithoutTax());
-			subCategoryInvoiceAgregateDto
-			.setAmountTax(invoiceAgregate.getAmountTax());
-			subCategoryInvoiceAgregateDto
-			.setAmountWithTax(invoiceAgregate
-					.getAmountWithTax());
-			this.getSubCategoryInvoiceAgregates()
-			.add(subCategoryInvoiceAgregateDto);
-		}
-		
-		CustomerAccount ca=invoice.getBillingAccount().getCustomerAccount();
-		AccountOperationDto accountOperationDto=null;
-	   for(AccountOperation accountOp:ca.getAccountOperations()){
-		    accountOperationDto = new AccountOperationDto();
-		    accountOperationDto.setId(accountOp.getId());
-			accountOperationDto.setDueDate(accountOp.getDueDate());
-			accountOperationDto.setType(accountOp.getType());
-			accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
-			accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory() != null ? accountOp.getTransactionCategory().toString() : null);
-			accountOperationDto.setReference(accountOp.getReference());
-			accountOperationDto.setAccountCode(accountOp.getAccountCode());
-			accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
-			accountOperationDto.setAmount(accountOp.getAmount());
-			accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());
-			accountOperationDto.setUnMatchingAmount(accountOp.getUnMatchingAmount());
-			accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus() != null ? accountOp.getMatchingStatus().toString() : null);
-			accountOperationDto.setOccCode(accountOp.getOccCode());
-			accountOperationDto.setOccDescription(accountOp.getOccDescription());
-	
-			List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
-			MatchingAmountDto matchingAmountDto=null;
-			MatchingAmountsDto matchingAmountsDto = new MatchingAmountsDto();
-			if(matchingAmounts!=null && matchingAmounts.size()>0){
-			for (MatchingAmount matchingAmount : matchingAmounts) {
-				matchingAmountDto= new MatchingAmountDto();
-				matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
-				matchingAmountDto.setMatchingAmount(matchingAmount.getMatchingAmount());
-				matchingAmountsDto.getMatchingAmount().add(matchingAmountDto);
-			}
-			accountOperationDto.setMatchingAmounts(matchingAmountsDto);
-			}
-		   
-		   this.getAccountOperations().add(accountOperationDto);
-	   }
-	}
+        SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
 
-	public String getInvoiceNumber() {
-		return invoiceNumber;
-	}
+        for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
 
-	public void setInvoiceNumber(String invoiceNumber) {
-		this.invoiceNumber = invoiceNumber;
-	}
+            subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
 
-	public String getBillingAccountCode() {
-		return billingAccountCode;
-	}
+            if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
+                subCategoryInvoiceAgregateDto.setType("R");
+            } else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
+                subCategoryInvoiceAgregateDto.setType("F");
+            } else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
+                subCategoryInvoiceAgregateDto.setType("T");
+            }
 
-	public void setBillingAccountCode(String billingAccountCode) {
-		this.billingAccountCode = billingAccountCode;
-	}
+            subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
+            subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
+            subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
+            subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
+            subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
+            subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
+            subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
+            subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
+            this.getSubCategoryInvoiceAgregates().add(subCategoryInvoiceAgregateDto);
+        }
 
-	public List<SubCategoryInvoiceAgregateDto> getSubCategoryInvoiceAgregates() {
-		return subCategoryInvoiceAgregates;
-	}
+        CustomerAccount ca = invoice.getBillingAccount().getCustomerAccount();
+        AccountOperationDto accountOperationDto = null;
+        for (AccountOperation accountOp : ca.getAccountOperations()) {
+            accountOperationDto = new AccountOperationDto();
+            accountOperationDto.setId(accountOp.getId());
+            accountOperationDto.setDueDate(accountOp.getDueDate());
+            accountOperationDto.setType(accountOp.getType());
+            accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
+            accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory());
+            accountOperationDto.setReference(accountOp.getReference());
+            accountOperationDto.setAccountCode(accountOp.getAccountCode());
+            accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
+            accountOperationDto.setAmount(accountOp.getAmount());
+            accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());
+            accountOperationDto.setUnMatchingAmount(accountOp.getUnMatchingAmount());
+            accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus());
+            accountOperationDto.setOccCode(accountOp.getOccCode());
+            accountOperationDto.setOccDescription(accountOp.getOccDescription());
 
-	public void setSubCategoryInvoiceAgregates(List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates) {
-		this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
-	}
+            List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
+            MatchingAmountDto matchingAmountDto = null;
+            MatchingAmountsDto matchingAmountsDto = new MatchingAmountsDto();
+            if (matchingAmounts != null && matchingAmounts.size() > 0) {
+                for (MatchingAmount matchingAmount : matchingAmounts) {
+                    matchingAmountDto = new MatchingAmountDto();
+                    matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
+                    matchingAmountDto.setMatchingAmount(matchingAmount.getMatchingAmount());
+                    matchingAmountsDto.getMatchingAmount().add(matchingAmountDto);
+                }
+                accountOperationDto.setMatchingAmounts(matchingAmountsDto);
+            }
 
-	public Date getInvoiceDate() {
-		return invoiceDate;
-	}
+            this.getAccountOperations().add(accountOperationDto);
+        }
+    }
 
-	public void setInvoiceDate(Date invoiceDate) {
-		this.invoiceDate = invoiceDate;
-	}
+    public String getInvoiceNumber() {
+        return invoiceNumber;
+    }
 
-	public Date getDueDate() {
-		return dueDate;
-	}
+    public void setInvoiceNumber(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+    }
 
-	public void setDueDate(Date dueDate) {
-		this.dueDate = dueDate;
-	}
+    public String getBillingAccountCode() {
+        return billingAccountCode;
+    }
 
-	public BigDecimal getDiscount() {
-		return discount;
-	}
+    public void setBillingAccountCode(String billingAccountCode) {
+        this.billingAccountCode = billingAccountCode;
+    }
 
-	public void setDiscount(BigDecimal discount) {
-		this.discount = discount;
-	}
+    public List<SubCategoryInvoiceAgregateDto> getSubCategoryInvoiceAgregates() {
+        return subCategoryInvoiceAgregates;
+    }
 
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
+    public void setSubCategoryInvoiceAgregates(List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates) {
+        this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
+    }
 
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
+    public Date getInvoiceDate() {
+        return invoiceDate;
+    }
 
-	public BigDecimal getAmountTax() {
-		return amountTax;
-	}
+    public void setInvoiceDate(Date invoiceDate) {
+        this.invoiceDate = invoiceDate;
+    }
 
-	public void setAmountTax(BigDecimal amountTax) {
-		this.amountTax = amountTax;
-	}
+    public Date getDueDate() {
+        return dueDate;
+    }
 
-	public BigDecimal getAmountWithTax() {
-		return amountWithTax;
-	}
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
 
-	public void setAmountWithTax(BigDecimal amountWithTax) {
-		this.amountWithTax = amountWithTax;
-	}
+    public BigDecimal getDiscount() {
+        return discount;
+    }
 
-	public boolean isPDFpresent() {
-		return PDFpresent;
-	}
+    public void setDiscount(BigDecimal discount) {
+        this.discount = discount;
+    }
 
-	public void setPDFpresent(boolean pDFpresent) {
-		PDFpresent = pDFpresent;
-	}
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
 
-	public String getPaymentMethod() {
-		return paymentMethod;
-	}
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
 
-	public void setPaymentMethod(String paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
+    public BigDecimal getAmountTax() {
+        return amountTax;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void setAmountTax(BigDecimal amountTax) {
+        this.amountTax = amountTax;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
-	
-	
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
 
-	public List<AccountOperationDto> getAccountOperations() {
-		return accountOperations;
-	}
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
 
-	public void setAccountOperations(List<AccountOperationDto> accountOperations) {
-		this.accountOperations = accountOperations;
-	}
-	
-	
+    public boolean isPDFpresent() {
+        return PDFpresent;
+    }
 
-	public byte[] getPdf() {
-		return pdf;
-	}
+    public void setPDFpresent(boolean pDFpresent) {
+        PDFpresent = pDFpresent;
+    }
 
-	public void setPdf(byte[] pdf) {
-		this.pdf = pdf;
-	}
+    public PaymentMethodEnum getPaymentMethod() {
+        return paymentMethod;
+    }
 
-	@Override
-	public String toString() {
-		return "InvoiceDto [billingAccountCode=" + billingAccountCode
-				+ ", dueDate=" + dueDate + ", invoiceNumber=" + invoiceNumber
-				+ ", invoiceDate=" + invoiceDate + ", discount=" + discount
-				+ ", amountWithoutTax=" + amountWithoutTax + ", amountTax="
-				+ amountTax + ", amountWithTax=" + amountWithTax
-				+ ", paymentMethod=" + paymentMethod + ", PDFpresent="
-				+ PDFpresent + ", type=" + type
-				+ ", subCategoryInvoiceAgregates="
-				+ subCategoryInvoiceAgregates + "accountOperations "+accountOperations+"]";
-	}
+    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public InvoiceTypeEnum getType() {
+        return type;
+    }
+
+    public void setType(InvoiceTypeEnum type) {
+        this.type = type;
+    }
+
+    public List<AccountOperationDto> getAccountOperations() {
+        return accountOperations;
+    }
+
+    public void setAccountOperations(List<AccountOperationDto> accountOperations) {
+        this.accountOperations = accountOperations;
+    }
+
+    public byte[] getPdf() {
+        return pdf;
+    }
+
+    public void setPdf(byte[] pdf) {
+        this.pdf = pdf;
+    }
+
+    @Override
+    public String toString() {
+        return "InvoiceDto [billingAccountCode=" + billingAccountCode + ", dueDate=" + dueDate + ", invoiceNumber=" + invoiceNumber + ", invoiceDate=" + invoiceDate
+                + ", discount=" + discount + ", amountWithoutTax=" + amountWithoutTax + ", amountTax=" + amountTax + ", amountWithTax=" + amountWithTax + ", paymentMethod="
+                + paymentMethod + ", PDFpresent=" + PDFpresent + ", type=" + type + ", subCategoryInvoiceAgregates=" + subCategoryInvoiceAgregates + "accountOperations "
+                + accountOperations + "]";
+    }
 }

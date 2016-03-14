@@ -21,102 +21,101 @@ import org.meveo.service.script.ServiceModelScriptService;
 @Stateless
 public class ServiceModelScriptApi extends BaseApi {
 
-	@Inject
-	private ServiceModelScriptService serviceModelScriptService;
+    @Inject
+    private ServiceModelScriptService serviceModelScriptService;
 
-	public void create(ServiceModelScriptDto postData, User currentUser) throws MeveoApiException {
-		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
-		}
-		if (StringUtils.isBlank(postData.getScript())) {
-			missingParameters.add("script");
-		}
+    public void create(ServiceModelScriptDto postData, User currentUser) throws MeveoApiException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getScript())) {
+            missingParameters.add("script");
+        }
 
-		handleMissingParameters();
+        handleMissingParameters();
 
-		String derivedCode = serviceModelScriptService.getDerivedCode(postData.getScript());
+        String derivedCode = serviceModelScriptService.getDerivedCode(postData.getScript());
 
-		if (serviceModelScriptService.findByCode(derivedCode, currentUser.getProvider()) != null) {
-			throw new EntityAlreadyExistsException(ServiceModelScript.class, postData.getCode());
-		}
+        if (serviceModelScriptService.findByCode(derivedCode, currentUser.getProvider()) != null) {
+            throw new EntityAlreadyExistsException(ServiceModelScript.class, postData.getCode());
+        }
 
-		ServiceModelScript serviceModelScript = new ServiceModelScript();
-		serviceModelScript.setCode(postData.getCode());
-		serviceModelScript.setDescription(postData.getDescription());
-		try {
-			serviceModelScript.setSourceTypeEnum(ScriptSourceTypeEnum.valueOf(postData.getType()));
-		} catch (IllegalArgumentException e) {
-			serviceModelScript.setSourceTypeEnum(ScriptSourceTypeEnum.JAVA);
-		}
-		serviceModelScript.setScript(postData.getScript());
+        ServiceModelScript serviceModelScript = new ServiceModelScript();
+        serviceModelScript.setCode(postData.getCode());
+        serviceModelScript.setDescription(postData.getDescription());
 
-		serviceModelScriptService.create(serviceModelScript, currentUser, currentUser.getProvider());
-	}
+        if (postData.getType() != null) {
+            serviceModelScript.setSourceTypeEnum(postData.getType());
+        } else {
+            serviceModelScript.setSourceTypeEnum(ScriptSourceTypeEnum.JAVA);
+        }
+        serviceModelScript.setScript(postData.getScript());
 
-	public void update(ServiceModelScriptDto postData, User currentUser) throws MeveoApiException {
-		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
-		}
-		if (StringUtils.isBlank(postData.getScript())) {
-			missingParameters.add("script");
-		}
+        serviceModelScriptService.create(serviceModelScript, currentUser, currentUser.getProvider());
+    }
 
-		handleMissingParameters();
+    public void update(ServiceModelScriptDto postData, User currentUser) throws MeveoApiException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getScript())) {
+            missingParameters.add("script");
+        }
 
-		String derivedCode = serviceModelScriptService.getDerivedCode(postData.getScript());
+        handleMissingParameters();
 
-		ServiceModelScript serviceModelScript = serviceModelScriptService.findByCode(derivedCode,
-				currentUser.getProvider());
-		if (serviceModelScript == null) {
-			throw new EntityDoesNotExistsException(ServiceModelScript.class, postData.getCode());
-		}
+        String derivedCode = serviceModelScriptService.getDerivedCode(postData.getScript());
 
-		serviceModelScript.setDescription(postData.getDescription());
-		try {
-			serviceModelScript.setSourceTypeEnum(ScriptSourceTypeEnum.valueOf(postData.getType()));
-		} catch (IllegalArgumentException e) {
-			serviceModelScript.setSourceTypeEnum(ScriptSourceTypeEnum.JAVA);
-		}
-		serviceModelScript.setScript(postData.getScript());
+        ServiceModelScript serviceModelScript = serviceModelScriptService.findByCode(derivedCode, currentUser.getProvider());
+        if (serviceModelScript == null) {
+            throw new EntityDoesNotExistsException(ServiceModelScript.class, postData.getCode());
+        }
 
-		serviceModelScriptService.update(serviceModelScript, currentUser);
-	}
+        serviceModelScript.setDescription(postData.getDescription());
+        if (postData.getType() != null) {
+            serviceModelScript.setSourceTypeEnum(postData.getType());
+        } else {
+            serviceModelScript.setSourceTypeEnum(ScriptSourceTypeEnum.JAVA);
+        }
+        serviceModelScript.setScript(postData.getScript());
 
-	public void createOrUpdate(ServiceModelScriptDto postData, User currentUser) throws MeveoApiException {
-		String derivedCode = serviceModelScriptService.getDerivedCode(postData.getScript());
-		ServiceModelScript ServiceModelScript = serviceModelScriptService.findByCode(derivedCode,
-				currentUser.getProvider());
-		if (ServiceModelScript == null) {
-			// create
-			create(postData, currentUser);
-		} else {
-			// update
-			update(postData, currentUser);
-		}
-	}
+        serviceModelScriptService.update(serviceModelScript, currentUser);
+    }
 
-	public void delete(String code, User currentUser) throws EntityDoesNotExistsException {
-		ServiceModelScript ServiceModelScript = serviceModelScriptService.findByCode(code, currentUser.getProvider());
-		if (ServiceModelScript == null) {
-			throw new EntityDoesNotExistsException(ServiceModelScript.class, code);
-		}
+    public void createOrUpdate(ServiceModelScriptDto postData, User currentUser) throws MeveoApiException {
+        String derivedCode = serviceModelScriptService.getDerivedCode(postData.getScript());
+        ServiceModelScript ServiceModelScript = serviceModelScriptService.findByCode(derivedCode, currentUser.getProvider());
+        if (ServiceModelScript == null) {
+            // create
+            create(postData, currentUser);
+        } else {
+            // update
+            update(postData, currentUser);
+        }
+    }
 
-		serviceModelScriptService.remove(ServiceModelScript);
-	}
+    public void delete(String code, User currentUser) throws EntityDoesNotExistsException {
+        ServiceModelScript ServiceModelScript = serviceModelScriptService.findByCode(code, currentUser.getProvider());
+        if (ServiceModelScript == null) {
+            throw new EntityDoesNotExistsException(ServiceModelScript.class, code);
+        }
 
-	public ServiceModelScriptDto get(String code, Provider provider) throws MeveoApiException {
-		if (StringUtils.isBlank(code)) {
-			missingParameters.add("code");
-		}
+        serviceModelScriptService.remove(ServiceModelScript);
+    }
 
-		handleMissingParameters();
+    public ServiceModelScriptDto get(String code, Provider provider) throws MeveoApiException {
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
 
-		ServiceModelScript ServiceModelScript = serviceModelScriptService.findByCode(code, provider);
-		if (ServiceModelScript == null) {
-			throw new EntityDoesNotExistsException(ServiceModelScript.class, code);
-		}
+        handleMissingParameters();
 
-		return new ServiceModelScriptDto(ServiceModelScript);
-	}
+        ServiceModelScript ServiceModelScript = serviceModelScriptService.findByCode(code, provider);
+        if (ServiceModelScript == null) {
+            throw new EntityDoesNotExistsException(ServiceModelScript.class, code);
+        }
+
+        return new ServiceModelScriptDto(ServiceModelScript);
+    }
 
 }
