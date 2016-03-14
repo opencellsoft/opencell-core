@@ -29359,8 +29359,8 @@
             <multiLanguage>true</multiLanguage>
             <userAccount></userAccount>
             <invoiceSequenceSize>9</invoiceSequenceSize>
-            <!--
             <enterprise>true</enterprise>
+            <!--
             <invoicePrefix></invoicePrefix>
             <currentInvoiceNb></currentInvoiceNb>
             <invoiceAdjustmentPrefix></invoiceAdjustmentPrefix>
