@@ -165,8 +165,10 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 			entity.setInvoiceConfiguration(invoiceConfiguration); 
 	   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
             messages.info(new BundleKey("messages", "provider.createdWithDefaultUser"), entity.getCode() + ".ADMIN", entity.getCode() + ".password");
+         }else{
+        	 providerService.commit();
          }
-
+        
         return entity;
     }
     
