@@ -291,7 +291,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			seller.updateAudit(seller.getAuditable().getCreator());
 		}
 
-		long nextInvoiceNb = getNextValue(seller, currentUser);
+		long nextInvoiceNb = getNextValue(seller, currentUser,invoice.getInvoiceDate());
 		int sequenceSize = getSequenceSize(seller, currentUser);
 		StringBuffer num1 = new StringBuffer(org.apache.commons.lang3.StringUtils.leftPad("", sequenceSize, "0"));
 		num1.append(nextInvoiceNb + "");
@@ -303,12 +303,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return (prefix + invoiceNumber);
 	}
 
-	public synchronized long getNextValue(Seller seller, User currentUser) {
+	public synchronized long getNextValue(Seller seller, User currentUser,Date invoiceDate) {
 		long result = 0;
 
 		if (seller != null) {
-			Date now = new Date();
-			Object sequenceValObj = customFieldInstanceService.getCFValue(seller, INVOICE_SEQUENCE, now, currentUser);
+			Object sequenceValObj = customFieldInstanceService.getCFValue(seller, INVOICE_SEQUENCE, invoiceDate, currentUser);
 			if (sequenceValObj != null) {
 				Long sequenceVal = 1L;
 				try {
@@ -319,7 +318,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 				result = 1 + sequenceVal;
                 try {
-                    customFieldInstanceService.setCFValue(seller, INVOICE_SEQUENCE, result, now, currentUser);
+                    customFieldInstanceService.setCFValue(seller, INVOICE_SEQUENCE, result, invoiceDate, currentUser);
                 } catch (BusinessException e) {
                     log.error("Failed to set custom field " + INVOICE_SEQUENCE + " value on provider", e);
                 }
@@ -328,19 +327,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				result = 1 + currentInvoiceNbre;
 				seller.setCurrentInvoiceNb(result);
 			} else {
-				result = getNextValue(seller.getProvider(), currentUser);
+				result = getNextValue(seller.getProvider(), currentUser,invoiceDate);
 			}
 		}
 
 		return result;
 	}
 
-	public synchronized long getNextValue(Provider provider, User currentUser) {
+	public synchronized long getNextValue(Provider provider, User currentUser,Date invoiceDate) {
 		long result = 0;
-		Date now = new Date();
 		if (provider != null) {
 		    
-		    Object sequenceValObj = customFieldInstanceService.getCFValue(provider, INVOICE_SEQUENCE, now, currentUser);
+		    Object sequenceValObj = customFieldInstanceService.getCFValue(provider, INVOICE_SEQUENCE, invoiceDate, currentUser);
 			if (sequenceValObj != null) {
 				Long sequenceVal = 1L;
 				try {
@@ -351,7 +349,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 				result = 1 + sequenceVal;
 				try {
-                    customFieldInstanceService.setCFValue(provider, INVOICE_SEQUENCE, result, now, currentUser);
+                    customFieldInstanceService.setCFValue(provider, INVOICE_SEQUENCE, result, invoiceDate, currentUser);
                 } catch (BusinessException e) {
                     log.error("Failed to set custom field " + INVOICE_SEQUENCE + " value on provider", e);
                 }
@@ -781,7 +779,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 		}
 
-		long nextInvoiceAdjustmentNb = getInvoiceAdjustmentNextValue(invoiceAdjustment, seller, currentUser);
+		long nextInvoiceAdjustmentNb = getInvoiceAdjustmentNextValue(invoiceAdjustment, seller, currentUser,invoiceAdjustment.getInvoiceDate());
 
 		int padSize = getNBOfChars(seller, currentUser);
 
@@ -812,12 +810,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return result;
 	}
 
-	public synchronized long getInvoiceAdjustmentNextValue(Invoice invoiceAdjustment, Seller seller, User currentUser) {
+	public synchronized long getInvoiceAdjustmentNextValue(Invoice invoiceAdjustment, Seller seller, User currentUser,Date dateInvoice) {
 		long result = 0;
 
 		if (seller != null) {
-		    Date now = new Date();
-            Object sequenceValObj = customFieldInstanceService.getCFValue(seller, INVOICE_ADJUSTMENT_SEQUENCE, now, currentUser);
+            Object sequenceValObj = customFieldInstanceService.getCFValue(seller, INVOICE_ADJUSTMENT_SEQUENCE, dateInvoice, currentUser);
 			if (sequenceValObj != null) {
 				Long sequenceVal = 1L;
 				try {
@@ -832,7 +829,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				long currentInvoiceAdjustmentNo = seller.getCurrentInvoiceAdjustmentNb();
 				result = 1 + currentInvoiceAdjustmentNo;
 			} else {
-				result = getInvoiceAdjustmentNextValue(invoiceAdjustment, seller.getProvider(), currentUser);
+				result = getInvoiceAdjustmentNextValue(invoiceAdjustment, seller.getProvider(), currentUser,dateInvoice);
 			}
 		}
 
@@ -840,12 +837,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	public synchronized long getInvoiceAdjustmentNextValue(Invoice invoiceAdjustment, Provider provider,
-			User currentUser) {
+			User currentUser,Date dateInvoice) {
 		long result = 0;
 
-		Date now = new Date();
 		if (provider != null) {
-		    Object sequenceValObj = customFieldInstanceService.getCFValue(provider, INVOICE_ADJUSTMENT_SEQUENCE, now, currentUser);
+		    Object sequenceValObj = customFieldInstanceService.getCFValue(provider, INVOICE_ADJUSTMENT_SEQUENCE, dateInvoice, currentUser);
 			if (sequenceValObj != null) {
 				Long sequenceVal = 1L;
 				try {
