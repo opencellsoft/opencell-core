@@ -50,8 +50,8 @@ public class AccountOperationsGenerationJobBean {
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-				nbRuns = (Long) jobInstance.getCFValue("AccOpGeneratioJobb_nbRuns");  			
-				waitingMillis = (Long) jobInstance.getCFValue("AccOpGeneratioJobb_waitingMillis");
+				nbRuns = (Long) jobInstance.getCFValue("AccountOperationsGenerationJob_nbRuns");  			
+				waitingMillis = (Long) jobInstance.getCFValue("AccountOperationsGenerationJob_waitingMillis");
 				if(nbRuns == -1){
 					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
 				}
