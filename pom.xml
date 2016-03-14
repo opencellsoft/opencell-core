@@ -52,6 +52,10 @@
 			<id>pentaho.repo</id>
 			<url>http://repository.pentaho.org/artifactory/repo/</url>
 		</repository>
+        <repository>
+            <id>opencell-repo</id>
+            <url>http://libs.opencellsoft.com/</url>
+        </repository>		
 		<repository>
 			<id>sonatype-oss-public</id>
 			<url>https://oss.sonatype.org/content/groups/public/</url>
@@ -258,6 +262,11 @@
 					<artifactId>sonar-maven-plugin</artifactId>
 					<version>2.5</version>
 				</plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>

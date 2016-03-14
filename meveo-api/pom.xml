@@ -157,52 +157,45 @@
 			</dependencies>
 
 			<build>
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<groupId>org.eclipse.m2e</groupId>
-							<artifactId>lifecycle-mapping</artifactId>
-							<version>1.0.0</version>
-							<configuration>
-								<lifecycleMappingMetadata>
-									<pluginExecutions>
-										<pluginExecution>
-											<pluginExecutionFilter>
-												<groupId>org.codehaus.enunciate</groupId>
-												<artifactId>maven-enunciate-plugin</artifactId>
-												<versionRange>[1.29,)</versionRange>
-												<goals>
-													<goal>docs</goal>
-												</goals>
-											</pluginExecutionFilter>
-											<action>
-												<ignore></ignore>
-											</action>
-										</pluginExecution>
-									</pluginExecutions>
-								</lifecycleMappingMetadata>
-							</configuration>
-						</plugin>
-					</plugins>
-				</pluginManagement>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>clean_docs</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                                <configuration>
+                                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                                    <filesets>
+                                        <fileset>
+                                            <directory>${project.build.directory}/docs</directory>
+                                        </fileset>
+                                    </filesets>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
 
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.enunciate</groupId>
-						<artifactId>maven-enunciate-plugin</artifactId>
-						<version>1.29</version>
-						<executions>
-							<execution>
-								<goals>
-									<goal>docs</goal>
-								</goals>
-								<configuration>
-									<docsDir>${project.build.directory}/docs</docsDir>
-									<configFile>src/main/resources/enunciate.xml</configFile>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
+
+                    <plugin>
+                        <groupId>com.webcohesion.enunciate</groupId>
+                        <artifactId>enunciate-maven-plugin</artifactId>
+                        <version>2.2.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>docs</goal>
+                                </goals>
+                                <configuration>
+                                    <docsDir>${project.build.directory}/docs</docsDir>
+                                    <configFile>src/main/resources/enunciate.xml</configFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
 
 					<plugin>
 						<artifactId>maven-resources-plugin</artifactId>
