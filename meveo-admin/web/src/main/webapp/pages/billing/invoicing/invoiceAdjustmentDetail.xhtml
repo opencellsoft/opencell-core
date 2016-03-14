@@ -125,8 +125,8 @@
 									<p:column headerText="#{messages['charge.subCategory']}" />
 									<p:column headerText="#{messages['invoice.amountWithoutTax']}"
 										rendered="#{invoiceBean.entity.transient}" />
-									<p:column headerText="trs_#{messages['invoice.amountWithTax']}"
-										rendered="#{invoiceBean.entity.transient}" />
+									<p:column headerText="#{messages['invoice.amountWithTax']}"
+										rendered="#{invoiceBean.entity.transient and ! invoiceBean.entity.provider.entreprise}" />
 									<p:column headerText="#{messages['invoice.amountWithoutTax']}" />
 									<p:column headerText="#{messages['invoice.amountWithTax']}"  rendered="#{ ! invoiceBean.entity.provider.entreprise}"/>
 								</p:row>
@@ -139,7 +139,7 @@
 								<h:outputText value="#{entity.oldAmountWithoutTax}"
 									converter="#{getConverter.forType(entity.oldAmountWithoutTax,'4digits')}" />
 							</p:column>
-							<p:column rendered="#{invoiceBean.entity.transient}">
+							<p:column rendered="#{invoiceBean.entity.transient and ! invoiceBean.entity.provider.entreprise}">
 								<h:outputText value="#{entity.oldAmountWithTax}"
 									converter="#{getConverter.forType(entity.oldAmountWithTax,'4digits')}" />
 							</p:column>
@@ -179,7 +179,7 @@
 										</f:facet>
 									</p:column>
 
-									<p:column rendered="#{invoiceBean.entity.transient}">
+									<p:column rendered="#{invoiceBean.entity.transient and ! invoiceBean.entity.provider.entreprise}">
 										<f:facet name="footer">
 											<h:outputText
 												value="#{invoiceBean.totalOldInvoiceAdjustmentAmountWithTax}"
