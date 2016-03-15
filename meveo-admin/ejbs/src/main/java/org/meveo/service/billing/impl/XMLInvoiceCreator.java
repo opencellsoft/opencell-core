@@ -20,15 +20,13 @@ import java.io.File;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -444,6 +442,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		BillingAccount billingAccount = invoice.getBillingAccount();
 		String billingAccountLanguage = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
 
+		Set<String> serviceIds = new HashSet<>();
+		Set<String> offerIds = new HashSet<>();
 		for (UserAccount userAccount : billingAccount.getUsersAccounts()) {
 			Element userAccountTag = doc.createElement("userAccount");
 			userAccountTag.setAttribute("id", userAccount.getId() + "");
@@ -461,13 +461,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				addCategories(userAccount, invoice, doc, userAccountTag, invoice.getProvider()
 						.getInvoiceConfiguration().getDisplayDetail(), enterprise);
 			}
-
-			addSubscriptions(userAccount, invoice, doc, userAccountTag, invoiceTag);
+			
+			addSubscriptions(userAccount, invoice, doc, userAccountTag, invoiceTag, serviceIds, offerIds);
 		}
 
 	}
 
-	private void addSubscriptions(UserAccount userAccount, Invoice invoice, Document doc, Element userAccountTag, Element invoiceTag) {
+	private void addSubscriptions(UserAccount userAccount, Invoice invoice, Document doc, Element userAccountTag, Element invoiceTag, Set<String> serviceIds, Set<String> offerIds) {
 		if (userAccount.getSubscriptions() != null && userAccount.getSubscriptions().size() > 0) {
 
 			Element subscriptionsTag = null;
@@ -520,26 +520,26 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					if (invoice.getProvider().getInvoiceConfiguration() != null
 							&& invoice.getProvider().getInvoiceConfiguration().getDisplayOffers() != null
 							&& invoice.getProvider().getInvoiceConfiguration().getDisplayOffers()) {
-						addOffers(offerTemplate, invoice, doc, invoiceTag);
+						addOffers(offerTemplate, invoice, doc, invoiceTag, offerIds);
 					}
 
 					if (invoice.getProvider().getInvoiceConfiguration() != null
 							&& invoice.getProvider().getInvoiceConfiguration().getDisplayServices() != null
 							&& invoice.getProvider().getInvoiceConfiguration().getDisplayServices()) {
-						addServices(offerTemplate, invoice, doc, invoiceTag);
+						addServices(offerTemplate, invoice, doc, invoiceTag, serviceIds);
 					}
 				}
 			}
 		}
 	}
 
-	private void addOffers(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element invoiceTag) {
+	private void addOffers(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element invoiceTag, Set<String> offerIds) {
 		
 		Element offersTag = getCollectionTag(doc, invoiceTag, "offers");
 		
 		String id = offerTemplate.getId() + "";
 		Element offerTag = null;
-		if (!isExists(offersTag.getChildNodes(), id)) {
+		if (!isExists(offerIds, id)) {
 			offerTag = doc.createElement("offer");
 			offerTag.setAttribute("id", id);
 			offerTag.setAttribute("code", offerTemplate.getCode() != null ? offerTemplate.getCode() : "");
@@ -549,7 +549,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		}
 	}
 
-	private void addServices(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element invoiceTag) {
+	private void addServices(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element invoiceTag, Set<String> serviceIds) {
 		if (offerTemplate.getOfferServiceTemplates() != null && offerTemplate.getOfferServiceTemplates().size() > 0) {
 
 			Element servicesTag = getCollectionTag(doc, invoiceTag, "services");
@@ -562,7 +562,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			for (OfferServiceTemplate offerServiceTemplate : offerTemplate.getOfferServiceTemplates()) {
 				serviceTemplate = offerServiceTemplate.getServiceTemplate();
 				id = serviceTemplate.getId() + "";
-				if (!isExists(servicesTag.getChildNodes(), id)) {
+				if (!isExists(serviceIds, id)) {
 					serviceTag = doc.createElement("service");
 					serviceTag.setAttribute("id", id);
 					serviceTag.setAttribute("code", serviceTemplate.getCode() != null ? serviceTemplate.getCode() : "");
@@ -599,14 +599,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		return collectionTag;
 	}
 
-	private boolean isExists(NodeList items, String id) {
-		Element item = null;
+	private boolean isExists(Set<String> ids, String id) {
 		boolean exists = false;
-		for (int index = 0; index < items.getLength(); index++) {
-			item = (Element) items.item(index);
-			if (item.getAttribute("id").equals(id)) {
-				exists = true;
-			}
+		if(ids.contains(id)){
+			exists = true;
+		} else {
+			ids.add(id);
 		}
 		return exists;
 	}
