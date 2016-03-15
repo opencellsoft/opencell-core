@@ -317,10 +317,10 @@ public class UsageRatingService {
 			Provider provider = charge.getProvider();
 			UsageChargeInstance chargeInstance = usageChargeInstanceService.findById(charge.getId());
 			if (deducedQuantity == null) {
-				rateEDRwithMatchingCharge(walletOperation, edr, charge.getInChargeUnit(edr.getQuantity()), charge, chargeInstance, provider);
+				rateEDRwithMatchingCharge(walletOperation, edr, edr.getQuantity(), charge, chargeInstance, provider);
 			} else {
 				edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
-				rateEDRwithMatchingCharge(walletOperation, edr, charge.getInChargeUnit(deducedQuantity), charge, chargeInstance, provider);
+				rateEDRwithMatchingCharge(walletOperation, edr, deducedQuantity, charge, chargeInstance, provider);
 			}
 			
 			walletOperationService.chargeWalletOperation(walletOperation, currentUser, provider);

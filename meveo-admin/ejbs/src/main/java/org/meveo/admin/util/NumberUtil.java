@@ -10,28 +10,24 @@ import org.meveo.model.catalog.RoundingModeEnum;
  **/
 public class NumberUtil {
 
-	public static BigDecimal getInChargeUnit(BigDecimal unitValue, BigDecimal unitMultiplicator, Integer unitNbDecimal, RoundingModeEnum roundingModeEnum) {
+	public static BigDecimal getInChargeUnit(BigDecimal unitValue, BigDecimal unitMultiplicator, Integer unitNbDecimal, RoundingModeEnum roundingModeEnum) {		
 		if (unitMultiplicator == null){
 			unitMultiplicator = BigDecimal.ONE;
 		}	
-
 		if (unitNbDecimal == null){
 			unitNbDecimal = new Integer(2);
 		}
 		if (roundingModeEnum == null){
 			roundingModeEnum = RoundingModeEnum.NEAREST;
 		}
-
-		BigDecimal result = unitValue.multiply(unitMultiplicator);
-		
-		if (RoundingModeEnum.DOWN == roundingModeEnum) {
+		BigDecimal result = unitValue.multiply(unitMultiplicator);				
+		if (RoundingModeEnum.DOWN.name().equals(roundingModeEnum.name())) {
 			result = result.setScale(unitNbDecimal, RoundingMode.FLOOR);
-		} else if (RoundingModeEnum.UP == roundingModeEnum) {
+		} else if (RoundingModeEnum.UP.name().equals(roundingModeEnum.name())) {
 			result = result.setScale(unitNbDecimal, RoundingMode.CEILING);
 		} else {
 			result = result.setScale(unitNbDecimal, RoundingMode.HALF_UP);
 		}
-
 		return result;
 	}
 }
