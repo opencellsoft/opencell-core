@@ -28,6 +28,7 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -38,177 +39,172 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
- * Standard backing bean for {@link ServiceInstance} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link ServiceInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
-public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
+public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -4881285967381681922L;
 
-	/**
-	 * Injected
-	 * 
-	 * @{link ServiceInstance} service. Extends {@link PersistenceService}.
-	 */
-	@Inject
-	private ServiceInstanceService serviceInstanceService;
+    /**
+     * Injected
+     * 
+     * @{link ServiceInstance} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private ServiceInstanceService serviceInstanceService;
 
-	@Inject
-	private Messages messages;
+    @Inject
+    private Messages messages;
 
-	/**
-	 * Offer Id passed as a parameter. Used when creating new Service from Offer
-	 * window, so default offer will be set on newly created service.
-	 */
-	@Inject
-	@RequestParam
-	private Instance<Long> offerInstanceId;
+    /**
+     * Offer Id passed as a parameter. Used when creating new Service from Offer window, so default offer will be set on newly created service.
+     */
+    @Inject
+    @RequestParam
+    private Instance<Long> offerInstanceId;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public ServiceInstanceBean() {
-		super(ServiceInstance.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public ServiceInstanceBean() {
+        super(ServiceInstance.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Override
-	public ServiceInstance initEntity() {
-		super.initEntity();
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Override
+    public ServiceInstance initEntity() {
+        super.initEntity();
 
-		if (offerInstanceId != null && offerInstanceId.get() != null) {
-			// entity.setOfferInstance(offerInstanceService.findById(offerInstanceId.get());
-		}
+        if (offerInstanceId != null && offerInstanceId.get() != null) {
+            // entity.setOfferInstance(offerInstanceService.findById(offerInstanceId.get());
+        }
 
-		return entity;
-	}
+        return entity;
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<ServiceInstance> getPersistenceService() {
-		return serviceInstanceService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<ServiceInstance> getPersistenceService() {
+        return serviceInstanceService;
+    }
 
-	public String serviceInstanciation(ServiceInstance serviceInstance) {
-		log.info("serviceInstanciation serviceInstanceId:" + serviceInstance.getId());
-		try {
-			serviceInstanceService.serviceInstanciation(serviceInstance, getCurrentUser());
-			
-		} catch (BusinessException e) {
-			log.error("error occurred in service instanciation ",e);
-			messages.error(e.getMessage());
-		} catch (Exception e) {
-			log.error("error generated in service instanciation ",e);
-			messages.error(e.getMessage());
-		}
-		return null;
-	}
+    public String serviceInstanciation(ServiceInstance serviceInstance) {
+        log.info("serviceInstanciation serviceInstanceId:" + serviceInstance.getId());
+        try {
+            serviceInstanceService.serviceInstanciation(serviceInstance, getCurrentUser());
 
-	public String activateService() {
-		log.info("activateService serviceInstanceId:" + entity.getId());
+        } catch (BusinessException e) {
+            log.error("error occurred in service instanciation ", e);
+            messages.error(e.getMessage());
+        } catch (Exception e) {
+            log.error("error generated in service instanciation ", e);
+            messages.error(e.getMessage());
+        }
+        return null;
+    }
 
-		try {
-			serviceInstanceService.serviceActivation(entity, null, null, getCurrentUser());
-			messages.info(new BundleKey("messages", "activation.activateSuccessful"));
-			
-		} catch (BusinessException e) {
-			log.error("error in service activation ",e);
-			messages.error(e.getMessage());
-			
-		} catch (Exception e) {
-			log.error("error generated in service activation ",e);
+    public String activateService() {
+        log.info("activateService serviceInstanceId:" + entity.getId());
+
+        try {
+            serviceInstanceService.serviceActivation(entity, null, null, getCurrentUser());
+            messages.info(new BundleKey("messages", "activation.activateSuccessful"));
+
+        } catch (BusinessException e) {
+            log.error("error in service activation ", e);
+            messages.error(e.getMessage());
+
+        } catch (Exception e) {
+            log.error("error generated in service activation ", e);
             messages.error(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
-	public String resiliateService() {
-		log.info("resiliateService serviceInstanceId:" + entity.getId());
+    public String resiliateService() {
+        log.info("resiliateService serviceInstanceId:" + entity.getId());
 
-		try {
-			// serviceInstanceService.serviceTermination(serviceInstance, new
-			// Date(), currentUser);
-			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-			
-		} catch (Exception e) {
-			log.error("error in resiliate service",e);
+        try {
+            // serviceInstanceService.serviceTermination(serviceInstance, new
+            // Date(), currentUser);
+            messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
+
+        } catch (Exception e) {
+            log.error("error in resiliate service", e);
             messages.error(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
-	public String resiliateWithoutFeeService() {
-		log.info("cancelService serviceInstanceId:" + entity.getId());
+    public String resiliateWithoutFeeService() {
+        log.info("cancelService serviceInstanceId:" + entity.getId());
 
-		try {
-			// serviceInstanceService.serviceCancellation(serviceInstance, new
-			// Date(), currentUser);
-			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
-		
-		} catch (Exception e) {
-			log.error("failed to resiliate without fee service",e);
+        try {
+            // serviceInstanceService.serviceCancellation(serviceInstance, new
+            // Date(), currentUser);
+            messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
+
+        } catch (Exception e) {
+            log.error("failed to resiliate without fee service", e);
             messages.error(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
-	public String cancelService() {
-		log.info("cancelService serviceInstanceId:" + entity.getId());
+    public String cancelService() {
+        log.info("cancelService serviceInstanceId:" + entity.getId());
 
-		try {
-			entity.setStatus(InstanceStatusEnum.CANCELED);
-			serviceInstanceService.update(entity, getCurrentUser());
-			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
+        try {
+            entity.setStatus(InstanceStatusEnum.CANCELED);
+            serviceInstanceService.update(entity, getCurrentUser());
+            messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 
-		} catch (Exception e) {
-			log.error("failed to cancel service ",e);
+        } catch (Exception e) {
+            log.error("failed to cancel service ", e);
             messages.error(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
-	public String suspendService() {
-		log.info("closeAccount serviceInstanceId:" + entity.getId());
+    public String suspendService() {
+        log.info("closeAccount serviceInstanceId:" + entity.getId());
 
-		try {
-			serviceInstanceService.serviceSuspension(entity, new Date(), getCurrentUser());
-			messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
+        try {
+            serviceInstanceService.serviceSuspension(entity, new Date(), getCurrentUser());
+            messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
 
-		} catch (BusinessException e) {
-			log.error("failed to suspend service",e);
-			messages.error(e.getMessage());
-		} catch (Exception e) {
-			log.error("error generated in suspend service ",e);
+        } catch (BusinessException e) {
+            log.error("failed to suspend service", e);
+            messages.error(e.getMessage());
+        } catch (Exception e) {
+            log.error("error generated in suspend service ", e);
             messages.error(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
-	@Override
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		// update recurring charges
-		if (entity.getRecurringChargeInstances() != null) {
-			for (RecurringChargeInstance recurringChargeInstance : entity.getRecurringChargeInstances()) {
-				recurringChargeInstance.setSubscriptionDate(entity.getSubscriptionDate());
-			}
-		}
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        // update recurring charges
+        if (entity.getRecurringChargeInstances() != null) {
+            for (RecurringChargeInstance recurringChargeInstance : entity.getRecurringChargeInstances()) {
+                recurringChargeInstance.setSubscriptionDate(entity.getSubscriptionDate());
+            }
+        }
 
-		return super.saveOrUpdate(killConversation);
-	}
-	
+        return super.saveOrUpdate(killConversation);
+    }
+
     protected List<String> getFormFieldsToFetch() {
         return Arrays.asList("recurringChargeInstances");
     }
