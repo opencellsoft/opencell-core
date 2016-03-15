@@ -1486,4 +1486,12 @@
     <changeSet id="#1551-20160314" author="AndriusKarpavicius">
         <modifyDataType tableName="crm_custom_field_inst" columnName="serialized_value" newDataType="text"/>
     </changeSet>
+    
+    <changeSet id="#1556-20160315" author="SebastienMichea">
+        <addColumn tableName="CAT_PRICE_PLAN_MATRIX">
+            <column name="UUID" type="VARCHAR(60)"/>
+        </addColumn>
+        <sql>update CAT_PRICE_PLAN_MATRIX set UUID ='PricePlanMatrix-'|| id </sql>  
+    </changeSet>        
+    
 </databaseChangeLog>

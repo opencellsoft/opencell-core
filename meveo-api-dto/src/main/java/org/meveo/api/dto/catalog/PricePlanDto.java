@@ -3,6 +3,8 @@ package org.meveo.api.dto.catalog;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -11,10 +13,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.crm.CustomFieldInstance;
 
-/**
- * @author Edward P. Legaspi
- **/
+
 @XmlRootElement(name = "PricePlan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PricePlanDto implements Serializable {
@@ -58,12 +60,14 @@ public class PricePlanDto implements Serializable {
     private String criteriaEL;
 
     private String validityCalendarCode;
-
+	
+    private CustomFieldsDto customFields = new CustomFieldsDto();
+    
     public PricePlanDto() {
 
     }
 
-    public PricePlanDto(PricePlanMatrix e) {
+    public PricePlanDto(PricePlanMatrix e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
 
         code = e.getCode();
         eventCode = e.getEventCode();
@@ -98,6 +102,7 @@ public class PricePlanDto implements Serializable {
         }
         description = e.getDescription();
         criteriaEL = e.getCriteriaEL();
+        customFields = CustomFieldsDto.toDTO(customFieldInstances);
     }
 
     public String getEventCode() {
@@ -309,4 +314,13 @@ public class PricePlanDto implements Serializable {
     public void setCriteriaEL(String criteriaEL) {
         this.criteriaEL = criteriaEL;
     }
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}
+    
 }

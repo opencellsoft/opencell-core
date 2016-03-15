@@ -34,8 +34,10 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
@@ -45,11 +47,12 @@ import org.meveo.model.billing.TradingCurrency;
 @Entity
 @ObservableEntity
 @MultilanguageEntity
+@CustomFieldEntity(cftCodePrefix = "PRICEPLAN")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "CAT_PRICE_PLAN_MATRIX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_PRICE_PLAN_MATRIX_SEQ")
 @NamedQueries({ @NamedQuery(name = "PricePlanMatrix.getPricePlansForCache", query = "SELECT ppm from PricePlanMatrix ppm left join ppm.offerTemplate ot left join ppm.validityCalendar vc where ppm.disabled is false order by ppm.priority ASC") })
-public class PricePlanMatrix extends BusinessEntity implements Comparable<PricePlanMatrix> {
+public class PricePlanMatrix extends BusinessCFEntity implements Comparable<PricePlanMatrix> {
     private static final long serialVersionUID = 1L;
 
 	@Column(name = "EVENT_CODE", length = 100, nullable = false)
@@ -444,5 +447,10 @@ public class PricePlanMatrix extends BusinessEntity implements Comparable<PriceP
 	@Override
 	public int compareTo(PricePlanMatrix o) {
 		return this.getPriority()-o.getPriority();
+	}
+
+	@Override
+	public ICustomFieldEntity getParentCFEntity() {
+		return null;
 	}
 }

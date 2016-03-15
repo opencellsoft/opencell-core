@@ -24,12 +24,11 @@ import javax.enterprise.inject.Instance;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.NoResultException;
 
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -53,10 +52,10 @@ import org.primefaces.model.LazyDataModel;
  */
 @Named
 @ViewScoped
-public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
+public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = -7046887530976683885L;
+
 	/**
 	 * Injected @{link PricePlanMatrix} service. Extends
 	 * {@link PersistenceService}.

@@ -142,7 +142,12 @@ public class PricePlanApi extends BaseApi {
         pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
-
+        try {
+			populateCustomFields(postData.getCustomFields(),pricePlanMatrix,true,currentUser);
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			log.error("Failed to associate custom field instance to a priceplan entity {}", postData.getCode(), e);
+			throw new MeveoApiException("Failed to associate custom field instance to a priceplan entity " + postData.getCode());
+		}
         pricePlanMatrixService.create(pricePlanMatrix, currentUser, provider);
     }
 
@@ -232,7 +237,12 @@ public class PricePlanApi extends BaseApi {
         pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
-
+        try {
+			populateCustomFields(postData.getCustomFields(),pricePlanMatrix,false,currentUser);
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			log.error("Failed to associate custom field instance to a priceplan entity {}", postData.getCode(), e);
+			throw new MeveoApiException("Failed to associate custom field instance to a priceplan entity " + postData.getCode());
+		}
         pricePlanMatrixService.update(pricePlanMatrix, currentUser);
 
     }
@@ -248,7 +258,7 @@ public class PricePlanApi extends BaseApi {
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
         }
 
-        return new PricePlanDto(pricePlanMatrix);
+        return new PricePlanDto(pricePlanMatrix,customFieldInstanceService.getCustomFieldInstances(pricePlanMatrix));
     }
 
     public void remove(String pricePlanCode, Provider provider) throws MeveoApiException {
@@ -279,7 +289,7 @@ public class PricePlanApi extends BaseApi {
 
         List<PricePlanDto> pricePlanDtos = new ArrayList<>();
         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-            pricePlanDtos.add(new PricePlanDto(pricePlanMatrix));
+            pricePlanDtos.add(new PricePlanDto(pricePlanMatrix,customFieldInstanceService.getCustomFieldInstances(pricePlanMatrix)));
         }
 
         return pricePlanDtos;
