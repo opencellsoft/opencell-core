@@ -67,7 +67,7 @@ public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 	}
 
 	public void createOfferFromBOM() throws BusinessException {
-		businessOfferService.createOfferFromBOM(getEntity(), bomOfferInstancePrefix, currentUser);		
+		businessOfferService.createOfferFromBOM(getEntity(), bomOfferInstancePrefix, null, currentUser);		
 		RequestContext.getCurrentInstance().closeDialog(getEntity());
 	}
 
