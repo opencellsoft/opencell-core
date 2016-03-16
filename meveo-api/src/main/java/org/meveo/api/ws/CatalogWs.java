@@ -7,6 +7,7 @@ import javax.jws.WebService;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
+import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
@@ -19,6 +20,7 @@ import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
+import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlanResponseDto;
@@ -214,6 +216,22 @@ public interface CatalogWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus createOrUpdateBusinessOfferModel(@WebParam(name = "businessOfferModel") BusinessOfferModelDto postData);
+	
+	// som
+	@WebMethod
+	ActionStatus createBusinessServiceModel(@WebParam(name = "businessServiceModel") BusinessServiceModelDto postData);
+
+	@WebMethod
+	ActionStatus updateBusinessServiceModel(@WebParam(name = "businessServiceModel") BusinessServiceModelDto postData);
+
+	@WebMethod
+	GetBusinessServiceModelResponseDto findBusinessServiceModel(@WebParam(name = "businessServiceModelCode") String businessServiceModelCode);
+
+	@WebMethod
+	ActionStatus removeBusinessServiceModel(@WebParam(name = "businessServiceModelCode") String businessServiceModelCode);
+
+	@WebMethod
+	ActionStatus createOrUpdateBusinessServiceModel(@WebParam(name = "businessServiceModel") BusinessServiceModelDto postData);	
 
 	// bom offer
 

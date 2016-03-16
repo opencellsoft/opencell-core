@@ -1,9 +1,13 @@
 package org.meveo.api.dto.catalog;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
@@ -22,6 +26,10 @@ public class BomOfferDto extends BaseDto {
 	private CustomFieldsDto offerCustomFields;
 
 	private String prefix;
+
+	@XmlElementWrapper(name = "serviceCodes")
+	@XmlElement(name = "service")
+	private List<String> serviceCodes;
 
 	public String getBomCode() {
 		return bomCode;
@@ -49,8 +57,15 @@ public class BomOfferDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "BomOfferDto [bomCode=" + bomCode + ", offerCustomFields=" + offerCustomFields + ", prefix=" + prefix
-				+ "]";
+		return "BomOfferDto [bomCode=" + bomCode + ", offerCustomFields=" + offerCustomFields + ", prefix=" + prefix + ", serviceCodes=" + serviceCodes + "]";
+	}
+
+	public List<String> getServiceCodes() {
+		return serviceCodes;
+	}
+
+	public void setServiceCodes(List<String> serviceCodes) {
+		this.serviceCodes = serviceCodes;
 	}
 
 	// private String bomVersion;

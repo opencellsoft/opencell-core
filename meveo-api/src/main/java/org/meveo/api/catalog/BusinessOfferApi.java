@@ -28,8 +28,7 @@ public class BusinessOfferApi extends BaseApi {
 		validate(postData);
 		if (!StringUtils.isBlank(postData.getBomCode())) {
 			// find bom
-			BusinessOfferModel businessOfferModel = businessOfferService.findByCode(postData.getBomCode(),
-					currentUser.getProvider());
+			BusinessOfferModel businessOfferModel = businessOfferService.findByCode(postData.getBomCode(), currentUser.getProvider());
 			if (businessOfferModel == null) {
 				throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
 			}
@@ -46,8 +45,7 @@ public class BusinessOfferApi extends BaseApi {
 
 			OfferTemplate newOfferTemplate = null;
 			try {
-				newOfferTemplate = businessOfferService.createOfferFromBOM(businessOfferModel, postData.getPrefix(),
-						currentUser);
+				newOfferTemplate = businessOfferService.createOfferFromBOM(businessOfferModel, postData.getPrefix(), postData.getServiceCodes(), currentUser);
 			} catch (BusinessException e) {
 				throw new MeveoApiException(e.getMessage());
 			}
@@ -63,8 +61,7 @@ public class BusinessOfferApi extends BaseApi {
 
 			if (businessOfferModel.getScript() != null) {
 				try {
-					offerScriptService.create(newOfferTemplate, businessOfferModel.getScript().getCode(), currentUser,
-							currentUser.getProvider());
+					offerScriptService.create(newOfferTemplate, businessOfferModel.getScript().getCode(), currentUser, currentUser.getProvider());
 				} catch (BusinessException e) {
 					throw new MeveoApiException(e.getMessage());
 				}
