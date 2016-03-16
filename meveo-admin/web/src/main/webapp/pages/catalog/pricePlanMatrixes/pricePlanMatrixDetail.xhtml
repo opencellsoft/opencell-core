@@ -40,7 +40,7 @@
 			column1Label="#{messages['charge.description']}" column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" eventBackingBean="#{pricePlanMatrixBean}"
-			updateField=":formPricePlan:chargeSelectId,:formPricePlan:pricePlanCode">
+			updateField=":formPricePlan:tabView:chargeSelectId,:formPricePlan:tabView:pricePlanCode">
 		</hftl:entityPopup>
 
 		<!-- 		<hftl:entityPopup id="pricPlanMatCurrencyPopup" -->
@@ -95,15 +95,13 @@
 			</h:form>
 		</p:panel>
 
-		<p:panel header="#{messages['pricePlanMatrix.panel]}">
+			<hftl:formPanel label="#{messages['pricePlanMatrix.panel']}"
+			    showFormButtons="false" 
+				backingBean="#{pricePlanMatrixBean}" formId="formPricePlan">
 
-			<p:tabView id="tabView"
-				activeIndex="#{pricePlanMatrixBean.activeTab}">
-				<p:tab title="#{messages['commons.tab.information']}">
-					<hftl:formPanel
-						showBackButton="#{pricePlanMatrixBean.chargeTemplateId==0}"
-						label="#{messages['pricePlanMatrix.panel']}"
-						backingBean="#{pricePlanMatrixBean}" formId="formPricePlan">
+				<p:tabView id="tabView"
+					activeIndex="#{pricePlanMatrixBean.activeTab}">
+					<p:tab title="#{messages['commons.tab.information']}">
 						<hftl:formField label="#{messages['BusinessEntity.code']}"
 							field="code" required="true" id="pricePlanCode" />
 						<hftl:formField id="chargeSelectId" required="true"
@@ -197,20 +195,32 @@
 						<hftl:formField
 							label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}"
 							field="maxSubscriptionAgeInMonth" maxValue="9999" maxlength="4" />
-					</hftl:formPanel>
 
-					<ui:param name="buttons" value="true" />
-					<ui:define name="buttons">
-						<p:commandButton id="backButton"
-							value="#{messages['action.back']}" style="left: 35px;"
-							rendered="#{pricePlanMatrixBean.chargeTemplateId!=null}"
-							action="#{pricePlanMatrixBean.getBackCharge()}" />
-					</ui:define>
-					
-					
-				<hftl:customFields backingBean="#{pricePlanMatrixBean}"
-					messagesId=":formId:messages" />
-					
+					</p:tab>
+					<p:tab title="#{messages['menu.customFieldTemplates']}" id="tab2"
+						rendered="#{customFieldDataEntryBean.getGroupedFieldTemplates(pricePlanMatrixBean.entity).childCount > 0}">
+						<hftl:customFields backingBean="#{pricePlanMatrixBean}"
+							messagesId=":tabView:customFieldTemplatesForm:messages" />
+					</p:tab>
+				</p:tabView>
+				<ui:param name="buttons" value="true" />
+				<ui:define name="buttons">
+					<p:commandButton
+						rendered="#{pricePlanMatrixBean.entity.id==null}"
+						action="#{pricePlanMatrixBean.saveOrUpdate(false)}"
+						value="#{messages['action.addSave']}">
+						<f:param name="objectId" value="#{offerTemplateBean.entity.id}"></f:param>
+					</p:commandButton>
+					<p:commandButton
+						rendered="#{pricePlanMatrixBean.entity.id!=null}"
+						action="#{pricePlanMatrixBean.saveOrUpdate(false)}"
+						value="#{messages['action.update']}"/>
+					<p:commandButton id="backButton" value="#{messages['action.back']}"
+						style="left: 35px;"
+						rendered="#{pricePlanMatrixBean.chargeTemplateId!=null}"
+						action="#{pricePlanMatrixBean.getBackCharge()}" />
+				</ui:define>
+			</hftl:formPanel>
 	</ui:define>
 
 </ui:composition>
