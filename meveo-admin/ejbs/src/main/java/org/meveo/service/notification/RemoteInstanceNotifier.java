@@ -17,8 +17,9 @@ public class RemoteInstanceNotifier {
 	private Logger log;
 	
 	public void invoke(String input,String url) {
+		//TODO: find a better way to send logs
+		/*
 		try {
-			
 			log.debug("Request  ={}",input);
 			log.debug("Url ={}",url);
 			ClientRequest request = new ClientRequest(url);			
@@ -48,6 +49,7 @@ public class RemoteInstanceNotifier {
 			log.error("Exception on invoke : ",e);
 			
 		}
+		*/
 	}
 	
 	//TODO use this  (no deprecation ), also for checkUpdate
