@@ -15,9 +15,9 @@ import org.meveo.api.dto.catalog.ServiceUsageChargeTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -31,6 +31,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.BusinessServiceService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
@@ -81,6 +82,9 @@ public class ServiceTemplateApi extends BaseApi {
     @SuppressWarnings("rawtypes")
     @Inject
     private CounterTemplateService counterTemplateService;
+    
+    @Inject
+    private BusinessServiceService businessServiceService;
 
     private void createServiceChargeTemplateRecurring(ServiceTemplateDto postData, User currentUser, ServiceTemplate serviceTemplate) throws MeveoApiException {
         Provider provider = currentUser.getProvider();
@@ -242,8 +246,17 @@ public class ServiceTemplateApi extends BaseApi {
                 throw new EntityDoesNotExistsException(Calendar.class, postData.getInvoicingCalendar());
             }
         }
+        
+    	BusinessServiceModel businessService = null;
+		if (!StringUtils.isBlank(postData.getSomCode())) {
+			businessService = businessServiceService.findByCode(postData.getSomCode(), currentUser.getProvider());
+			if (businessService == null) {
+				throw new EntityDoesNotExistsException(BusinessServiceModel.class, postData.getSomCode());
+			}
+		}
 
         ServiceTemplate serviceTemplate = new ServiceTemplate();
+        serviceTemplate.setBusinessServiceModel(businessService);
         serviceTemplate.setCode(postData.getCode());
         serviceTemplate.setDescription(postData.getDescription());
         serviceTemplate.setInvoicingCalendar(invoicingCalendar);
@@ -295,6 +308,15 @@ public class ServiceTemplateApi extends BaseApi {
             }
         }
         serviceTemplate.setInvoicingCalendar(invoicingCalendar);
+        
+        BusinessServiceModel businessService = null;
+		if (!StringUtils.isBlank(postData.getSomCode())) {
+			businessService = businessServiceService.findByCode(postData.getSomCode(), currentUser.getProvider());
+			if (businessService == null) {
+				throw new EntityDoesNotExistsException(BusinessServiceModel.class, postData.getSomCode());
+			}
+		}
+		serviceTemplate.setBusinessServiceModel(businessService);
 
         setAllWalletTemplatesToNull(serviceTemplate);
 

@@ -44,6 +44,11 @@ public class ServiceTemplateDto implements Serializable {
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 	
 	private boolean mandatory;
+	
+	/**
+	 * BusinessServiceModel code.
+	 */
+	private String somCode;
 
 	public ServiceTemplateDto() {
 	}
@@ -52,6 +57,10 @@ public class ServiceTemplateDto implements Serializable {
 		code = serviceTemplate.getCode();
 		description = serviceTemplate.getDescription();
 		invoicingCalendar=serviceTemplate.getInvoicingCalendar()==null?null:serviceTemplate.getInvoicingCalendar().getCode();
+		
+		if (serviceTemplate.getBusinessServiceModel() != null) {
+			somCode = serviceTemplate.getBusinessServiceModel().getCode();
+		}
 
 		// set serviceChargeTemplateRecurrings
 		if (serviceTemplate.getServiceRecurringCharges().size() > 0) {
@@ -197,7 +206,7 @@ public class ServiceTemplateDto implements Serializable {
 				+ ", serviceChargeTemplateSubscriptions=" + serviceChargeTemplateSubscriptions
 				+ ", serviceChargeTemplateTerminations=" + serviceChargeTemplateTerminations
 				+ ", serviceChargeTemplateUsages=" + serviceChargeTemplateUsages + ", customFields=" + customFields
-				+ ", mandatory=" + mandatory + "]";
+				+ ", mandatory=" + mandatory + ", somCode=" + somCode + "]";
 	}
 
 	public CustomFieldsDto getCustomFields() {
@@ -214,6 +223,14 @@ public class ServiceTemplateDto implements Serializable {
 
 	public void setMandatory(boolean mandatory) {
 		this.mandatory = mandatory;
+	}
+
+	public String getSomCode() {
+		return somCode;
+	}
+
+	public void setSomCode(String somCode) {
+		this.somCode = somCode;
 	}
 
 }

@@ -1,10 +1,13 @@
 package org.meveo.api.dto.catalog;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
@@ -28,6 +31,10 @@ public class BusinessOfferModelDto extends BaseDto {
 
 	private String scriptCode;
 
+	@XmlElementWrapper(name = "bsmCodes")
+	@XmlElement(name = "bsmCode")
+	private List<String> bsmCodes;
+
 	public String getOfferTemplateCode() {
 		return offerTemplateCode;
 	}
@@ -38,8 +45,8 @@ public class BusinessOfferModelDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "BusinessOfferModelDto [code=" + code + ", description=" + description + ", offerTemplateCode="
-				+ offerTemplateCode + ", scriptCode=" + scriptCode + "]";
+		return "BusinessOfferModelDto [code=" + code + ", description=" + description + ", offerTemplateCode=" + offerTemplateCode + ", scriptCode=" + scriptCode + ", bsmCodes="
+				+ bsmCodes + "]";
 	}
 
 	public String getDescription() {
@@ -66,5 +73,12 @@ public class BusinessOfferModelDto extends BaseDto {
 		this.scriptCode = scriptCode;
 	}
 
+	public List<String> getBsmCodes() {
+		return bsmCodes;
+	}
+
+	public void setBsmCodes(List<String> bsmCodes) {
+		this.bsmCodes = bsmCodes;
+	}
 
 }
