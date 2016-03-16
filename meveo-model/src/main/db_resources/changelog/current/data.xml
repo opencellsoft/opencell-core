@@ -429,7 +429,7 @@
 				UPDATE billing_invoice_configuration SET  display_provider = FALSE WHERE  display_provider IS NULL;
 	   </sql>
 	</changeSet>	
-     <changeSet id="1349_20160308" author="anasseh">
-		<sql><![CDATA[UPDATE CAT_CHARGE_TEMPLATE SET UNIT_NB_DECIMAL=2 WHERE UNIT_NB_DECIMAL < 2 ]]></sql>
+     <changeSet id="1349_20160308_2" author="anasseh">
+		<sql><![CDATA[UPDATE CAT_CHARGE_TEMPLATE SET UNIT_NB_DECIMAL=23 WHERE UNIT_NB_DECIMAL < 2 ]]></sql>
 	</changeSet>		
 </databaseChangeLog>
