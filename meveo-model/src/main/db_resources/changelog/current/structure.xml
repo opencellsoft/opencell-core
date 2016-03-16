@@ -1494,4 +1494,12 @@
         <sql>update CAT_PRICE_PLAN_MATRIX set UUID ='PricePlanMatrix-'|| id </sql>  
     </changeSet>        
     
+    <changeSet id="#1556_20160316" author="SebastienMichea">
+		<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+			<column name="DISPLAY_PRICEPLANS" type="BOOL" defaultValueBoolean="false"></column>
+			<column name="DISPLAY_CF_AS_XML" type="BOOL" defaultValueBoolean="false"></column>
+		</addColumn>
+	</changeSet>
+	
+    
 </databaseChangeLog>

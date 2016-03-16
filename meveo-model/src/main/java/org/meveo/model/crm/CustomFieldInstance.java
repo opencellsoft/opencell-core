@@ -24,6 +24,9 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 @Entity
 @ExportIdentifier({ "appliesToEntity", "code", "periodStartDate", "periodEndDate", "provider" })
@@ -42,6 +45,7 @@ public class CustomFieldInstance extends AuditableEntity {
     private static final long serialVersionUID = 8691447585410651639L;
 
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static SimpleDateFormat xmlsdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     @Column(name = "CODE", nullable = false, length = 60)
     @Size(max = 60, min = 1)
@@ -188,14 +192,6 @@ public class CustomFieldInstance extends AuditableEntity {
         } else {
             getCfValue().setValue(value);
         }
-    }
-
-    public String toJson() {
-        String result = code + ":";
-
-        result += getCfValue().toJson(sdf);
-
-        return result;
     }
 
     /**
@@ -412,4 +408,26 @@ public class CustomFieldInstance extends AuditableEntity {
         return String.format("CustomFieldInstance [code=%s, appliesToEntity=%s, periodStartDate=%s, periodEndDate=%s, priority=%s, cfValue=%s, disabled=%s]", code,
             appliesToEntity, periodStartDate, periodEndDate, priority, cfValue, isDisabled());
     }
+    
+    public String toJson() {
+        String result = code + ":";
+        result += getCfValue().toJson(sdf);
+        return result;
+    }
+    
+	public Element toDomElement(Document doc) {
+ 		Element customFieldTag=doc.createElement("customField");
+ 		customFieldTag.setAttribute("code",code);
+ 		if(periodStartDate!=null){
+ 	 		customFieldTag.setAttribute("periodStartDate",xmlsdf.format(periodStartDate));
+ 		}
+ 		if(periodEndDate!=null){
+ 	 		customFieldTag.setAttribute("periodEndDate",xmlsdf.format(periodEndDate));
+ 		}
+ 		
+ 		Text customFieldText = doc.createTextNode(getCfValue().toXmlText(xmlsdf));
+        customFieldTag.appendChild(customFieldText);
+        
+		return customFieldTag;
+	}
 }

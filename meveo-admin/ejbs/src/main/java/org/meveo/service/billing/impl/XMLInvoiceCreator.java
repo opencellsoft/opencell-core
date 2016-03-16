@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +47,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRunStatusEnum;
@@ -68,8 +68,8 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.XMLInvoiceHeaderCategoryDTO;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -107,6 +107,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	private CustomFieldInstanceService customFieldInstanceService;
 
 	TransformerFactory transfac = TransformerFactory.newInstance();
+
+	List<Long> serviceIds = new ArrayList<>();
+	List<Long> offerIds = new ArrayList<>();
+	List<Long> priceplanIds = new ArrayList<>();
 
 	private static String DEFAULT_DATE_PATTERN = "dd/MM/yyyy";
 	private static String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
@@ -220,11 +224,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				customerTag.setAttribute("mandateIdentification",
 						customer.getMandateIdentification() != null ? customer.getMandateIdentification() : "");
 			}
-			String json = customFieldInstanceService.getCFValuesAsJson(customer);
-			if (json!=null && json.length() > 0) {
-				customerTag.setAttribute("customFields", json);
-			}
-			header.appendChild(customerTag);
+			addCustomFields(customer, invoice, doc, customerTag);
 			addNameAndAdress(customer, doc, customerTag, billingAccountLanguage);
 
 			// log.debug("creating ca");
@@ -248,10 +248,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						customerAccount.getMandateIdentification() != null ? customerAccount.getMandateIdentification()
 								: "");
 			}
-			json = customFieldInstanceService.getCFValuesAsJson(customerAccount);
-			if (json!=null && json.length() > 0) {
-				customerAccountTag.setAttribute("customFields", json);
-			}
+			addCustomFields(customerAccount, invoice, doc, customerAccountTag);
 			header.appendChild(customerAccountTag);
 
 			/*
@@ -292,11 +289,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					billingAccount.getExternalRef1() != null ? billingAccount.getExternalRef1() : "");
 			billingAccountTag.setAttribute("externalRef2",
 					billingAccount.getExternalRef2() != null ? billingAccount.getExternalRef2() : "");
-			json = customFieldInstanceService.getCFValuesAsJson(billingAccount);
-			if (json!=null && json.length() > 0) {
-				billingAccountTag.setAttribute("customFields", json);
-			}
-			header.appendChild(billingAccountTag);
+			
+			addCustomFields(billingAccount, invoice, doc, billingAccountTag);
 
 			/*
 			 * if (billingAccount.getName() != null &&
@@ -442,32 +436,27 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		BillingAccount billingAccount = invoice.getBillingAccount();
 		String billingAccountLanguage = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
 
-		Set<String> serviceIds = new HashSet<>();
-		Set<String> offerIds = new HashSet<>();
 		for (UserAccount userAccount : billingAccount.getUsersAccounts()) {
 			Element userAccountTag = doc.createElement("userAccount");
 			userAccountTag.setAttribute("id", userAccount.getId() + "");
 			userAccountTag.setAttribute("code", userAccount.getCode() != null ? userAccount.getCode() : "");
 			userAccountTag.setAttribute("description",
 					userAccount.getDescription() != null ? userAccount.getDescription() : "");
-			String json = customFieldInstanceService.getCFValuesAsJson(userAccount);
-			if (json!=null && json.length() > 0) {
-				userAccountTag.setAttribute("customFields", json);
-			}
+			addCustomFields(userAccount, invoice, doc, userAccountTag);
 
 			if (displayDetail) {
 				userAccountsTag.appendChild(userAccountTag);
 				addNameAndAdress(userAccount, doc, userAccountTag, billingAccountLanguage);
-				addCategories(userAccount, invoice, doc, userAccountTag, invoice.getProvider()
+				addCategories(userAccount, invoice, doc, invoiceTag,userAccountTag, invoice.getProvider()
 						.getInvoiceConfiguration().getDisplayDetail(), enterprise);
 			}
 			
-			addSubscriptions(userAccount, invoice, doc, userAccountTag, invoiceTag, serviceIds, offerIds);
+			addSubscriptions(userAccount, invoice, doc, userAccountTag, invoiceTag);
 		}
 
 	}
 
-	private void addSubscriptions(UserAccount userAccount, Invoice invoice, Document doc, Element userAccountTag, Element invoiceTag, Set<String> serviceIds, Set<String> offerIds) {
+	private void addSubscriptions(UserAccount userAccount, Invoice invoice, Document doc, Element userAccountTag, Element invoiceTag) {
 		if (userAccount.getSubscriptions() != null && userAccount.getSubscriptions().size() > 0) {
 
 			Element subscriptionsTag = null;
@@ -519,52 +508,49 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					OfferTemplate offerTemplate = subscription.getOffer();
 					if (invoice.getProvider().getInvoiceConfiguration() != null
 							&& invoice.getProvider().getInvoiceConfiguration().getDisplayOffers() != null
-							&& invoice.getProvider().getInvoiceConfiguration().getDisplayOffers()) {
-						addOffers(offerTemplate, invoice, doc, invoiceTag, offerIds);
+							&& invoice.getProvider().getInvoiceConfiguration().getDisplayOffers() 
+							&& !offerIds.contains(offerTemplate.getId()) ) {
+						addOffers(offerTemplate, invoice, doc, invoiceTag);
+						offerIds.add(offerTemplate.getId());
 					}
 
 					if (invoice.getProvider().getInvoiceConfiguration() != null
 							&& invoice.getProvider().getInvoiceConfiguration().getDisplayServices() != null
 							&& invoice.getProvider().getInvoiceConfiguration().getDisplayServices()) {
-						addServices(offerTemplate, invoice, doc, invoiceTag, serviceIds);
+						addServices(offerTemplate, invoice, doc, invoiceTag);
 					}
 				}
 			}
 		}
 	}
 
-	private void addOffers(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element invoiceTag, Set<String> offerIds) {
-		
+	private void addOffers(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element invoiceTag) {
 		Element offersTag = getCollectionTag(doc, invoiceTag, "offers");
 		
 		String id = offerTemplate.getId() + "";
 		Element offerTag = null;
-		if (!isExists(offerIds, id)) {
-			offerTag = doc.createElement("offer");
-			offerTag.setAttribute("id", id);
-			offerTag.setAttribute("code", offerTemplate.getCode() != null ? offerTemplate.getCode() : "");
-			offerTag.setAttribute("description",
-					offerTemplate.getDescription() != null ? offerTemplate.getDescription() : "");
-			offersTag.appendChild(offerTag);
-		}
+		offerTag = doc.createElement("offer");
+		offerTag.setAttribute("id", id);
+		offerTag.setAttribute("code", offerTemplate.getCode() != null ? offerTemplate.getCode() : "");
+		offerTag.setAttribute("description",
+				offerTemplate.getDescription() != null ? offerTemplate.getDescription() : "");
+		addCustomFields(offerTemplate, invoice, doc, offerTag);
+		offersTag.appendChild(offerTag);
 	}
 
-	private void addServices(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element invoiceTag, Set<String> serviceIds) {
+	private void addServices(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element invoiceTag) {
 		if (offerTemplate.getOfferServiceTemplates() != null && offerTemplate.getOfferServiceTemplates().size() > 0) {
 
 			Element servicesTag = getCollectionTag(doc, invoiceTag, "services");
 
 			ServiceTemplate serviceTemplate = null;
-			String id = null;
 			Element serviceTag = null;
 			Element calendarTag = null;
 
 			for (OfferServiceTemplate offerServiceTemplate : offerTemplate.getOfferServiceTemplates()) {
 				serviceTemplate = offerServiceTemplate.getServiceTemplate();
-				id = serviceTemplate.getId() + "";
-				if (!isExists(serviceIds, id)) {
+				if (!serviceIds.contains(serviceTemplate.getId())) {
 					serviceTag = doc.createElement("service");
-					serviceTag.setAttribute("id", id);
 					serviceTag.setAttribute("code", serviceTemplate.getCode() != null ? serviceTemplate.getCode() : "");
 					serviceTag.setAttribute("offerCode",
 							offerTemplate.getCode() != null ? offerTemplate.getCode() : "");
@@ -579,13 +565,27 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						calendarText = doc.createTextNode("");
 					}
 					calendarTag.appendChild(calendarText);
-
+					addCustomFields(serviceTemplate, invoice, doc, servicesTag);
 					servicesTag.appendChild(serviceTag);
+					serviceIds.add(serviceTemplate.getId());
 				}
 			}
 		}
 	}
-	
+    private void addPricePlans(PricePlanMatrix pricePlan, Invoice invoice, Document doc, Element invoiceTag) {
+		
+		Element pricePlansTag = getCollectionTag(doc, invoiceTag, "priceplans");
+		
+		Element pricePlanTag = null;
+			pricePlanTag = doc.createElement("priceplan");
+			pricePlanTag.setAttribute("code", pricePlan.getCode() != null ? pricePlan.getCode() : "");
+			pricePlanTag.setAttribute("description",
+					pricePlan.getDescription() != null ? pricePlan.getDescription() : "");
+			addCustomFields(pricePlan, invoice, doc, pricePlanTag);
+			pricePlansTag.appendChild(pricePlanTag);
+		
+	}
+
 	private Element getCollectionTag(Document doc, Element parent, String tagName){
 		NodeList nodeList = doc.getElementsByTagName(tagName);
 		Element collectionTag = null;
@@ -599,40 +599,17 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		return collectionTag;
 	}
 
-	private boolean isExists(Set<String> ids, String id) {
-		boolean exists = false;
-		if(ids.contains(id)){
-			exists = true;
+	private void addCustomFields(ICustomFieldEntity entity, Invoice invoice, Document doc, Element parent) {
+		if(invoice.getProvider().getInvoiceConfiguration() != null
+				&& invoice.getProvider().getInvoiceConfiguration().getDisplayCfAsXML() != null
+				&& invoice.getProvider().getInvoiceConfiguration().getDisplayCfAsXML()){	    
+			Element customFieldsTag = customFieldInstanceService.getCFValuesAsDomElement(entity,doc);
+			parent.appendChild(customFieldsTag);
 		} else {
-			ids.add(id);
-		}
-		return exists;
-	}
-
-	private void addCustomFields(Subscription subscription, Invoice invoice, Document doc, Element parent) {
-		
-	    Map<String, List<CustomFieldInstance>> customFields = customFieldInstanceService.getCustomFieldInstances(subscription);
-	    
-	    if (customFields == null || customFields.isEmpty()) {
-	        return;
-	    }
-	    
-		Element customFieldsTag = doc.createElement("customFields");
-		parent.appendChild(customFieldsTag);
-
-		for (List<CustomFieldInstance> cfis : customFields.values()) {
-            for (CustomFieldInstance cfi : cfis) {
-                if (!StringUtils.isBlank(cfi.getValueAsString()) && cfi.getPeriodStartDate() == null && cfi.getPeriodEndDate() == null) {
-                    Element customFieldTag = doc.createElement("customField");
-                    customFieldTag.setAttribute("id", cfi.getId() + "");
-                    customFieldTag.setAttribute("code", cfi.getCode() != null ? cfi.getCode() : "");
-
-                    Text customFieldText = doc.createTextNode(cfi.getValueAsString());
-                    customFieldTag.appendChild(customFieldText);
-
-                    customFieldsTag.appendChild(customFieldTag);
-                }
-            }
+		String json = customFieldInstanceService.getCFValuesAsJson(entity);
+			if (json!=null && json.length() > 0) {
+				parent.setAttribute("customFields", json);
+			}
 		}
 	}
 
@@ -825,7 +802,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		}
 	}
 
-	public void addCategories(UserAccount userAccount, Invoice invoice, Document doc, Element parent,
+	public void addCategories(UserAccount userAccount, Invoice invoice, Document doc, Element invoiceTag,Element parent,
 			boolean generateSubCat, boolean enterprise) {
 
 		log.debug("add categories");
@@ -961,6 +938,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							pricePlan.setAttribute("description", catMessagesService.getMessageDescription(
 									ratedTransaction.getPriceplan(), languageCode));
 							line.appendChild(pricePlan);
+							if (!priceplanIds.contains(ratedTransaction.getPriceplan().getId())) {
+							    addPricePlans(ratedTransaction.getPriceplan(),invoice,doc,invoiceTag);
+							    priceplanIds.add(ratedTransaction.getPriceplan().getId());
+							}
 						}
 
 						Element lebel = doc.createElement("label");
@@ -1073,7 +1054,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						}
 
 						subCategory.appendChild(line);
-
+						
 					}
 				}
 			}

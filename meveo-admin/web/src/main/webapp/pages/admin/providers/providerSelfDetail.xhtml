@@ -84,14 +84,18 @@
 								field="bankCoordinates" childField="ics" size="45"
 								maxlength="35" />							
 							
+						<p:fieldset legend="#{messages['invoiceConfiguration.title']}">
 							<hftl:formField label="#{messages['invoiceConfiguration.displaySubscriptions']}"
 								field="invoiceConfiguration" childField="displaySubscriptions" id="displaySubscriptions"/>
 								
-							<hftl:formField label="#{messages['invoiceConfiguration.displayServices']}"
-								field="invoiceConfiguration" childField="displayServices" id="displayServices"/>
-								
 							<hftl:formField label="#{messages['invoiceConfiguration.displayOffers']}"
 								field="invoiceConfiguration" childField="displayOffers" id="displayOffers"/>
+
+							<hftl:formField label="#{messages['invoiceConfiguration.displayServices']}"
+								field="invoiceConfiguration" childField="displayServices" id="displayServices"/>								
+								
+							<hftl:formField label="#{messages['invoiceConfiguration.displayPricePlans']}"
+								field="invoiceConfiguration" childField="displayPricePlans" id="displayPricePlans"/>
 								
 							<hftl:formField label="#{messages['invoiceConfiguration.displayEdrs']}"
 								field="invoiceConfiguration" childField="displayEdrs" id="displayEdrs"/>
@@ -103,8 +107,12 @@
 								field="invoiceConfiguration" childField="displayProvider" id="displayProvider"/>
 								
 							<hftl:formField label="#{messages['invoiceConfiguration.displayDetail']}"
-								field="invoiceConfiguration" childField="displayDetail" id="displayDetail"/>				
+								field="invoiceConfiguration" childField="displayDetail" id="displayDetail"/>			
 
+							<hftl:formField label="#{messages['invoiceConfiguration.displayCfAsXML']}"
+								field="invoiceConfiguration" childField="displayCfAsXML" id="displayCfAsXML"/>			
+	
+						</p:fieldset>
                 </p:tab>
 
                 <hftl:customFields backingBean="#{providerBean}" messagesId=":providerFormId:messages" />

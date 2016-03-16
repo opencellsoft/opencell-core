@@ -28,6 +28,9 @@ public class InvoiceConfiguration extends BaseEntity {
 
     @Column(name = "DISPLAY_OFFERS")
     private Boolean displayOffers = false;
+    
+    @Column(name = "DISPLAY_PRICEPLANS")
+    private Boolean displayPricePlans = false;
 
     @Column(name = "DISPLAY_EDRS")
     private Boolean displayEdrs = false;
@@ -37,6 +40,9 @@ public class InvoiceConfiguration extends BaseEntity {
 
     @Column(name = "DISPLAY_DETAIL")
     private Boolean displayDetail = true;
+
+    @Column(name = "DISPLAY_CF_AS_XML")
+    private Boolean displayCfAsXML = false;
 
     public Boolean getDisplaySubscriptions() {
         return displaySubscriptions;
@@ -62,7 +68,15 @@ public class InvoiceConfiguration extends BaseEntity {
         this.displayOffers = displayOffers;
     }
 
-    public Boolean getDisplayEdrs() {
+    public Boolean getDisplayPricePlans() {
+		return displayPricePlans;
+	}
+
+	public void setDisplayPricePlans(Boolean displayPricePlans) {
+		this.displayPricePlans = displayPricePlans;
+	}
+
+	public Boolean getDisplayEdrs() {
         return displayEdrs;
     }
 
@@ -85,5 +99,13 @@ public class InvoiceConfiguration extends BaseEntity {
     public void setDisplayDetail(Boolean displayDetail) {
         this.displayDetail = displayDetail;
     }
+
+	public Boolean getDisplayCfAsXML() {
+		return displayCfAsXML;
+	}
+
+	public void setDisplayCfAsXML(Boolean displayCfAsXML) {
+		this.displayCfAsXML = displayCfAsXML;
+	}
 
 }

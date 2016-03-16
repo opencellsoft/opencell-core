@@ -338,6 +338,26 @@ public class CustomFieldValue implements Serializable {
 
         return result;
     }
+    
+    public String toXmlText(SimpleDateFormat sdf) {
+        String result = "";
+
+        if (stringValue != null) {
+            result += stringValue ;
+        } else if (dateValue != null) {
+            result += sdf.format(dateValue);
+        } else if (longValue != null) {
+            result += longValue;
+        } else if (doubleValue != null) {
+            result += doubleValue;
+        } else if (serializedValue != null) {
+            result += serializedValue;
+        } else {
+            result = "";
+        }
+
+        return result;
+    }
 
     public String getValueAsString(SimpleDateFormat sdf) {
         String result = "";

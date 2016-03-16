@@ -45,6 +45,9 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.util.PersistenceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 @Stateless
 public class CustomFieldInstanceService extends PersistenceService<CustomFieldInstance> {
@@ -348,6 +351,21 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
         return result;
     }
+    
+
+	public Element getCFValuesAsDomElement(ICustomFieldEntity entity, Document doc) {
+		Element customFieldsTag=doc.createElement("customFields");
+		 Map<String, List<CustomFieldInstance>> customFieldsMap = getCustomFieldInstances(entity);
+		 for (List<CustomFieldInstance> cfis : customFieldsMap.values()) {
+            for (CustomFieldInstance cfi : cfis) {
+                Element customFieldTag = cfi.toDomElement(doc);
+                if(customFieldTag!=null){
+                	customFieldsTag.appendChild(customFieldTag);
+                }
+            }
+		}
+		return customFieldsTag;
+	}
 
     /**
      * Set a Custom field value on an entity
@@ -1090,4 +1108,5 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
         return false;
     }
+
 }
