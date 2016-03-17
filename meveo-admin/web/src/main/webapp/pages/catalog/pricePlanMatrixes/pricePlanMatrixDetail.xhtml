@@ -96,7 +96,7 @@
 
 			<hftl:formPanel label="#{messages['pricePlanMatrix.panel']}"
 			    showFormButtons="true" 
-				backingBean="#{pricePlanMatrixBean}" formId="formPricePlan">
+				backingBean="#{pricePlanMatrixBean}" formId="formPricePlan" showBackButton="#{pricePlanMatrixBean.chargeTemplateId eq null or pricePlanMatrixBean.chargeTemplateId eq 0}">
 
 				<p:tabView id="tabView"
 					activeIndex="#{pricePlanMatrixBean.activeTab}">
@@ -205,8 +205,7 @@
 				<ui:param name="buttons" value="true" />
 				<ui:define name="buttons">
 					<p:commandButton id="backButton" value="#{messages['action.back']}"
-						style="left: 35px;"
-						rendered="#{pricePlanMatrixBean.chargeTemplateId!=null}"
+						rendered="#{pricePlanMatrixBean.chargeTemplateId!=null and pricePlanMatrixBean.chargeTemplateId!=0}"
 						action="#{pricePlanMatrixBean.getBackCharge()}" />
 				</ui:define>
 			</hftl:formPanel>
