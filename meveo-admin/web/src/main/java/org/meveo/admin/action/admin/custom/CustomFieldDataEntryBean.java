@@ -528,7 +528,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                     if (cfi.isTransient()) {
                         customFieldInstanceService.create(cfi, (ICustomFieldEntity) entity, currentUser);
                     } else {
-                        customFieldInstanceService.update(cfi, currentUser);
+                        customFieldInstanceService.update(cfi, (ICustomFieldEntity) entity, currentUser);
                     }
                 }
             }

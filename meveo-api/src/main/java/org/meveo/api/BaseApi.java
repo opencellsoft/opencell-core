@@ -168,15 +168,17 @@ public abstract class BaseApi {
                 if (cft.isValueRequired() && isEmpty) {
                     missingParameters.add(cft.getCode());
                     continue;
+                }
 
-                    // Validate that value is valid (min/max, regexp). When
-                    // value is a list or a map, check separately each value
-                } else if (!isEmpty
+                Object valueConverted = cfDto.getValueConverted();
+
+                // Validate that value is valid (min/max, regexp). When
+                // value is a list or a map, check separately each value
+                if (!isEmpty
                         && (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.LONG)) {
 
                     List valuesToCheck = new ArrayList<>();
 
-                    Object valueConverted = cfDto.getValueConverted();
                     if (valueConverted instanceof Map) {
 
                         // Skip Key item if Storage type is Matrix
@@ -186,6 +188,7 @@ public abstract class BaseApi {
                                 if (CustomFieldValue.MAP_KEY.equals(mapEntry.getKey())) {
                                     continue;
                                 }
+                                valuesToCheck.add(mapEntry.getValue());
                             }
 
                         } else {
@@ -255,6 +258,7 @@ public abstract class BaseApi {
                         }
                     }
                 }
+
                 // Validate parameters
                 if (cft.isVersionable()) {
                     if ((cfDto.getValueDate() == null && cft.getCalendar() != null)) {
@@ -268,17 +272,36 @@ public abstract class BaseApi {
 
                 // Set the value
                 try {
+
+                    // Add keys to matrix if not provided in DTO
+
+                    // Skip Key item if Storage type is Matrix
+                    if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+
+                        boolean matrixColumnsPresent = false;
+                        for (Entry<String, Object> mapEntry : ((Map<String, Object>) valueConverted).entrySet()) {
+                            if (CustomFieldValue.MAP_KEY.equals(mapEntry.getKey())) {
+                                matrixColumnsPresent = true;
+                                break;
+                            }
+                        }
+
+                        if (!matrixColumnsPresent) {
+                            ((Map<String, Object>) valueConverted).put(CustomFieldValue.MAP_KEY, cft.getMatrixColumnCodes());
+                        }
+                    }
+
                     if (cft.isVersionable()) {
                         if (cft.getCalendar() != null) {
-                            customFieldInstanceService.setCFValue(entity, cfDto.getCode(), cfDto.getValueConverted(), cfDto.getValueDate(), currentUser);
+                            customFieldInstanceService.setCFValue(entity, cfDto.getCode(), valueConverted, cfDto.getValueDate(), currentUser);
 
                         } else {
-                            customFieldInstanceService.setCFValue(entity, cfDto.getCode(), cfDto.getValueConverted(), cfDto.getValuePeriodStartDate(),
-                                cfDto.getValuePeriodEndDate(), cfDto.getValuePeriodPriority(), currentUser);
+                            customFieldInstanceService.setCFValue(entity, cfDto.getCode(), valueConverted, cfDto.getValuePeriodStartDate(), cfDto.getValuePeriodEndDate(),
+                                cfDto.getValuePeriodPriority(), currentUser);
                         }
 
                     } else {
-                        customFieldInstanceService.setCFValue(entity, cfDto.getCode(), cfDto.getValueConverted(), currentUser);
+                        customFieldInstanceService.setCFValue(entity, cfDto.getCode(), valueConverted, currentUser);
                     }
 
                 } catch (Exception e) {

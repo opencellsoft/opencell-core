@@ -194,6 +194,9 @@ public class CustomFieldTemplate extends BusinessEntity {
         }
     }
 
+    /**
+     * Get a sorted list of matrix columns by its index position
+     */
     public List<CustomFieldMatrixColumn> getMatrixColumnsSorted() {
         if (!matrixColumnsSorted) {
             Collections.sort(matrixColumns);
@@ -213,6 +216,23 @@ public class CustomFieldTemplate extends BusinessEntity {
         }
         getMatrixColumnsSorted();
         return matrixColumns.get(index);
+    }
+
+    /**
+     * Extract codes of matrix columns into a sorted list by column index
+     * 
+     * @return A list of matrix column codes
+     */
+    public List<String> getMatrixColumnCodes() {
+
+        List<String> matrixColumnNames = null;
+        if (storageType == CustomFieldStorageTypeEnum.MATRIX) {
+            matrixColumnNames = new ArrayList<>();
+            for (CustomFieldMatrixColumn column : getMatrixColumnsSorted()) {
+                matrixColumnNames.add(column.getCode());
+            }
+        }
+        return matrixColumnNames;
     }
 
     public void setVersionable(boolean versionable) {
@@ -268,7 +288,7 @@ public class CustomFieldTemplate extends BusinessEntity {
     }
 
     /**
-     * Convert a string value (serialized value in case of list, map, entity, childEntity) into an object according to custom field data type definition
+     * Convert (deserialize) a string value (serialized value in case of list, map, entity, childEntity) into an object according to custom field data type definition
      * 
      * @param valueToConvert Value to convert
      * @return A value corresponding to custom field data type definition
@@ -293,14 +313,7 @@ public class CustomFieldTemplate extends BusinessEntity {
                 }
             } else {
 
-                List<String> matrixColumnNames = null;
-                if (storageType == CustomFieldStorageTypeEnum.MATRIX) {
-                    matrixColumnNames = new ArrayList<>();
-                    for (CustomFieldMatrixColumn column : getMatrixColumnsSorted()) {
-                        matrixColumnNames.add(column.getCode());
-                    }
-                }
-
+                List<String> matrixColumnNames = getMatrixColumnCodes();
                 return CustomFieldValue.deserializeValue(valueToConvert, fieldType, storageType, matrixColumnNames);
 
             }
