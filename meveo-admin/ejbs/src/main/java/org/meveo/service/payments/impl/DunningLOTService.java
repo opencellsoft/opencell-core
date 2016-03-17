@@ -67,13 +67,13 @@ public class DunningLOTService extends PersistenceService<DunningLOT> {
 				dunningLOT.setAuditable(getAuditable(systemUser));
 				dunningLOT.setProvider(provider);
 
-				create(dunningLOT,currentUser,provider);
+				create(dunningLOT,currentUser);
 				log.info("createDunningLOTAndCsvFile persist dunningLOT ok");
 				for (ActionDunning actionDunning : listActionDunning) {
 					if (actionDunning.getTypeAction() == actionType) {
 						actionDunning.setDunningLOT(dunningLOT);
 						actionDunning.setAuditable(getAuditable(systemUser));
-						actionDunningService.create(actionDunning,currentUser,provider);
+						actionDunningService.create(actionDunning,currentUser);
 						dunningLOT.getActions().add(actionDunning);
 						dunningLOT.updateAudit(currentUser);
 						updateNoCheck(dunningLOT);

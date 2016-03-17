@@ -1103,7 +1103,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				if (balance.compareTo(op.getAmountWithTax()) >= 0) {
 					op.setWallet(getEntityManager().find(WalletInstance.class, walletId));
 					log.debug("prepaid walletoperation fit in walletInstance {}", op.getWallet());
-					create(op, creator, provider);
+					create(op, creator);
 					result.add(op);
 					walletCacheContainerProvider.updateBalanceCache(op);
 					break;
@@ -1131,7 +1131,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					newOp.setAmountWithoutTax(newOpAmountWithoutTax);
 					newOp.setQuantity(newOpQuantity);
 					log.debug("prepaid walletoperation partially fit in walletInstance {}, we charge {} and remains ", newOp.getWallet(), newOpAmountTax, opAmountTax);
-					create(newOp, creator, provider);
+					create(newOp, creator);
 					result.add(newOp);
 					walletCacheContainerProvider.updateBalanceCache(newOp);
 
@@ -1165,7 +1165,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			op.setWallet(op.getChargeInstance().getSubscription().getUserAccount().getWallet());
 			log.debug("chargeWalletOperation is postpaid, set wallet to {}", op.getWallet());
 			result.add(op);
-			create(op, creator, provider);
+			create(op, creator);
 			walletCacheContainerProvider.updateBalanceCache(op);
 		} else {
 			log.error("chargeWalletOperation wallet not found for chargeInstance {} ", op.getChargeInstance().getId());

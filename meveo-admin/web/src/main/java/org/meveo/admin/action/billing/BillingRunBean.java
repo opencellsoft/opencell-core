@@ -23,8 +23,6 @@ import java.util.List;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -41,12 +39,10 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
-import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.billing.impl.RatedTransactionService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.SortOrder;
 
@@ -77,9 +73,6 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	@Inject
 	@RequestParam
 	private Instance<Boolean> postReport;
-
-	@Inject
-	private RatedTransactionService ratedTransactionService; 
 
 	private boolean launchInvoicingRejectedBA = false;
 
@@ -189,7 +182,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			entity.setProcessDate(new Date());
 			entity.setProvider(entity.getBillingCycle().getProvider());
 
-			billingRunService.create(entity);
+			billingRunService.create(entity, getCurrentUser());
 			return "billingRuns";
 
 		} catch (Exception e) {
@@ -203,7 +196,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		try {
 			// statusMessages.add("facturation confirmee avec succes");
 			entity.setStatus(BillingRunStatusEnum.PREVALIDATED);
-			billingRunService.update(entity);
+			billingRunService.update(entity, getCurrentUser());
 			return "billingRuns";
 
 		} catch (Exception e) {
@@ -216,9 +209,9 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	public String validateInvoicing() {
 		try {
 			entity.setStatus(BillingRunStatusEnum.POSTVALIDATED);
-			billingRunService.update(entity);
+			billingRunService.update(entity, getCurrentUser());
 			if (launchInvoicingRejectedBA) {
-				boolean isBillable =  billingRunService.launchInvoicingRejectedBA(entity);
+				boolean isBillable =  billingRunService.launchInvoicingRejectedBA(entity, getCurrentUser());
 				if (!isBillable) {
 					messages.error(new BundleKey("messages", "error.invoicing.noTransactions"));
 					return null;
@@ -236,7 +229,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	public String cancelInvoicing() {
 		try {
 			entity.setStatus(BillingRunStatusEnum.CANCELED);
-			billingRunService.update(entity);
+			billingRunService.update(entity, getCurrentUser());
 			return "billingRuns";
 		} catch (Exception e) {
 		    log.error("Failed to cancel invoicing", e);
@@ -249,7 +242,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		try {
 			entity.setStatus(BillingRunStatusEnum.CANCELED);
 			billingRunService.cleanBillingRun(entity);
-			billingRunService.update(entity);
+			billingRunService.update(entity, getCurrentUser());
 			return "billingRuns";
 
 		} catch (Exception e) {
@@ -261,7 +254,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
 	public String rerateConfirmedInvoicing() {
 		try {
-			billingRunService.retateBillingRunTransactions(entity);
+			billingRunService.retateBillingRunTransactions(entity, getCurrentUser());
 			return cancelConfirmedInvoicing();
 
 		} catch (Exception e) {
@@ -273,7 +266,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
 	public String rerateInvoicing() {
 		try {
-			billingRunService.retateBillingRunTransactions(entity);
+			billingRunService.retateBillingRunTransactions(entity, getCurrentUser());
 			return cancelInvoicing();
 
 		} catch (Exception e) {

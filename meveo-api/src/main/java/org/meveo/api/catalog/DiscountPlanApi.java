@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.DiscountPlansDto;
@@ -35,8 +36,9 @@ public class DiscountPlanApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void create(DiscountPlanDto postData, User currentUser) throws MeveoApiException {
+    public void create(DiscountPlanDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -50,7 +52,7 @@ public class DiscountPlanApi extends BaseApi {
         discountPlan.setCode(postData.getCode());
         discountPlan.setDescription(postData.getDescription());
 
-        discountPlanService.create(discountPlan, currentUser, currentUser.getProvider());
+        discountPlanService.create(discountPlan, currentUser);
     }
 
     /**
@@ -59,8 +61,9 @@ public class DiscountPlanApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void update(DiscountPlanDto postData, User currentUser) throws MeveoApiException {
+    public void update(DiscountPlanDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -132,8 +135,9 @@ public class DiscountPlanApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void createOrUpdate(DiscountPlanDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(DiscountPlanDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");

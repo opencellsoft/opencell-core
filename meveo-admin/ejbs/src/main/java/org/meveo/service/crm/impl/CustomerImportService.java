@@ -79,7 +79,7 @@ public class CustomerImportService extends ImportService {
             name.setLastName(cust.getName().getLastName());
             customer.setName(name);
 
-            customerService.create(customer, currentUser, provider);
+            customerService.create(customer, currentUser);
             
             if (cust.getCustomFields() != null) {
                 populateCustomFields(cust.getCustomFields().getCustomField(), customer, currentUser);
@@ -145,7 +145,7 @@ public class CustomerImportService extends ImportService {
         customerAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(custAcc.getTradingLanguageCode(), provider));
         customerAccount.setProvider(provider);
         customerAccount.setCustomer(customer);
-        customerAccountService.create(customerAccount, currentUser, provider);
+        customerAccountService.create(customerAccount, currentUser);
         
         if (custAcc.getCustomFields() != null) {
             populateCustomFields(custAcc.getCustomFields().getCustomField(), customerAccount, currentUser);
@@ -252,8 +252,7 @@ public class CustomerImportService extends ImportService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void createSeller(org.meveo.model.admin.Seller seller, User currentUser, Provider provider) {
-        sellerService.create(seller, currentUser, provider);
+    public void createSeller(org.meveo.model.admin.Seller seller, User currentUser) throws BusinessException {
+        sellerService.create(seller, currentUser);
     }
-
 }

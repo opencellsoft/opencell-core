@@ -26,24 +26,24 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface BusinessOfferModelRs extends IBaseRs {
 
-	@Path("/")
-	@POST
-	ActionStatus create(BusinessOfferModelDto postData);
+    @Path("/")
+    @POST
+    ActionStatus create(BusinessOfferModelDto postData);
 
-	@Path("/")
-	@PUT
-	ActionStatus update(BusinessOfferModelDto postData);
+    @Path("/")
+    @PUT
+    ActionStatus update(BusinessOfferModelDto postData);
 
-	@Path("/")
-	@GET
-	GetBusinessOfferModelResponseDto find(@QueryParam("businessOfferModelCode") String businessOfferModelCode);
+    @Path("/")
+    @GET
+    GetBusinessOfferModelResponseDto find(@QueryParam("businessOfferModelCode") String businessOfferModelCode);
 
-	@Path("/{businessOfferModelCode}")
-	@DELETE
-	ActionStatus remove(@PathParam("businessOfferModelCode") String businessOfferModelCode);
+    @Path("/{businessOfferModelCode}")
+    @DELETE
+    ActionStatus remove(@PathParam("businessOfferModelCode") String businessOfferModelCode);
 
-	@Path("/createOrUpdate")
-	@POST
-	ActionStatus createOrUpdate(BusinessOfferModelDto postData);
+    @Path("/createOrUpdate")
+    @POST
+    ActionStatus createOrUpdate(BusinessOfferModelDto postData);
 
 }

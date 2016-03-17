@@ -12,7 +12,6 @@ import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -41,7 +40,7 @@ public class JobInstanceApi extends BaseApi {
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
-	public void create(JobInstanceDto postData, User currentUser) throws MeveoApiException {
+	public void create(JobInstanceDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		if (StringUtils.isBlank(postData.getJobTemplate()) || StringUtils.isBlank(postData.getCode())) {
 
 			if ( StringUtils.isBlank(postData.getJobTemplate())) {
@@ -88,14 +87,11 @@ public class JobInstanceApi extends BaseApi {
         // Create any missing CFT for a given provider and job
 		Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
 		if (jobCustomFields != null) {
-			customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values(), provider);
+			customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values(), currentUser);
 		}
 		
-		jobInstance.updateAudit(currentUser);
-		jobInstance.setProvider(provider);
-
         try {
-			jobInstanceService.create(jobInstance);
+			jobInstanceService.create(jobInstance, currentUser);
 		} catch (BusinessException e1) {
 			throw new MeveoApiException(e1.getMessage());
 		}
@@ -115,8 +111,9 @@ public class JobInstanceApi extends BaseApi {
 	 * @param jobInstanceDto
 	 * @param currentUser
 	 * @throws MeveoApiException
+	 * @throws BusinessException 
 	 */
-	public void update(JobInstanceDto postData, User currentUser) throws MeveoApiException {
+	public void update(JobInstanceDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		
 		String jobInstanceCode = postData.getCode(); 
 		Provider provider = currentUser.getProvider();
@@ -160,11 +157,10 @@ public class JobInstanceApi extends BaseApi {
             // Create any missing CFT for a given provider and job
 			Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
 			if (jobCustomFields != null) {
-				customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values(), provider);
+				customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values(), currentUser);
 			}
 
-			jobInstance.updateAudit(currentUser);
-			jobInstance = jobInstanceService.update(jobInstance);
+			jobInstance = jobInstanceService.update(jobInstance, currentUser);
             
             // Populate customFields
             try {
@@ -182,8 +178,9 @@ public class JobInstanceApi extends BaseApi {
 	 * @param jobInstanceDto
 	 * @param currentUser
 	 * @throws MeveoApiException
+	 * @throws BusinessException 
 	 */
-	public void createOrUpdate(JobInstanceDto jobInstanceDto, User currentUser) throws MeveoApiException {
+	public void createOrUpdate(JobInstanceDto jobInstanceDto, User currentUser) throws MeveoApiException, BusinessException {
 		if (jobInstanceService.findByCode(jobInstanceDto.getCode(), currentUser.getProvider()) == null) {
 			create(jobInstanceDto, currentUser);
 		} else {

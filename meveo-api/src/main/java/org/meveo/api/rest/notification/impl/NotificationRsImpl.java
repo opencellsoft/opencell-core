@@ -21,161 +21,148 @@ import org.meveo.api.rest.notification.NotificationRs;
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
-
 public class NotificationRsImpl extends BaseRs implements NotificationRs {
 
-	@Inject
-	private NotificationApi notificationApi;
+    @Inject
+    private NotificationApi notificationApi;
 
-	@Override
-	
-	public ActionStatus create(NotificationDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus create(NotificationDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			notificationApi.create(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error occurred while creating notification ", e);
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error generated while creating notification ", e);
-		}
+        try {
+            notificationApi.create(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error occurred while creating notification ", e);
+        } catch (Exception e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error generated while creating notification ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	
-	public ActionStatus update(NotificationDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus update(NotificationDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			notificationApi.update(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error occurred while updating notification ", e);
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error generated while updating notification ", e);
-		}
+        try {
+            notificationApi.update(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error occurred while updating notification ", e);
+        } catch (Exception e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error generated while updating notification ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	
-	public GetNotificationResponseDto find(String notificationCode) {
-		GetNotificationResponseDto result = new GetNotificationResponseDto();
+    @Override
+    public GetNotificationResponseDto find(String notificationCode) {
+        GetNotificationResponseDto result = new GetNotificationResponseDto();
 
-		try {
-			result.setNotificationDto(notificationApi.find(notificationCode, getCurrentUser().getProvider()));
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error occurred while getting notification ", e);
-		} catch (Exception e) {
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error generated while getting notification ", e);
-		}
+        try {
+            result.setNotificationDto(notificationApi.find(notificationCode, getCurrentUser().getProvider()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+            log.error("error occurred while getting notification ", e);
+        } catch (Exception e) {
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+            log.error("error generated while getting notification ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	
-	public ActionStatus remove(String notificationCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus remove(String notificationCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			notificationApi.remove(notificationCode, getCurrentUser().getProvider());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error occurred while removing notification ", e);
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error generated while removing notification ", e);
-		}
+        try {
+            notificationApi.remove(notificationCode, getCurrentUser().getProvider());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error occurred while removing notification ", e);
+        } catch (Exception e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error generated while removing notification ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public NotificationHistoriesResponseDto listNotificationHistory() {
-		NotificationHistoriesResponseDto result = new NotificationHistoriesResponseDto();
+    @Override
+    public NotificationHistoriesResponseDto listNotificationHistory() {
+        NotificationHistoriesResponseDto result = new NotificationHistoriesResponseDto();
 
-		try {
-			result.setNotificationHistories(notificationApi.listNotificationHistory(getCurrentUser().getProvider()));
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error occurred while getting list notification history", e);
-		} catch (Exception e) {
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error generated while getting list notification history ", e);
-		}
+        try {
+            result.setNotificationHistories(notificationApi.listNotificationHistory(getCurrentUser().getProvider()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+            log.error("error occurred while getting list notification history", e);
+        } catch (Exception e) {
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+            log.error("error generated while getting list notification history ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public InboundRequestsResponseDto listInboundRequest() {
-		InboundRequestsResponseDto result = new InboundRequestsResponseDto();
+    @Override
+    public InboundRequestsResponseDto listInboundRequest() {
+        InboundRequestsResponseDto result = new InboundRequestsResponseDto();
 
-		try {
-			result.setInboundRequests(notificationApi.listInboundRequest(getCurrentUser().getProvider()));
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error occured while getting list inbound request response ", e);
-		} catch (Exception e) {
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error generated while getting list inbound request response ", e);
-		}
+        try {
+            result.setInboundRequests(notificationApi.listInboundRequest(getCurrentUser().getProvider()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+            log.error("error occured while getting list inbound request response ", e);
+        } catch (Exception e) {
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+            log.error("error generated while getting list inbound request response ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	
-	public ActionStatus createOrUpdate(NotificationDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createOrUpdate(NotificationDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			notificationApi.createOrUpdate(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error occurred while creating notification ", e);
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error generated while creating notification ", e);
-		}
+        try {
+            notificationApi.createOrUpdate(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error occurred while creating notification ", e);
+        } catch (Exception e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error generated while creating notification ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 }

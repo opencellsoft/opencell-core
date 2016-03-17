@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.notification.Notification;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.CounterInstanceService;
@@ -19,19 +18,19 @@ public abstract class NotificationInstanceService<T extends Notification> extend
     private NotificationCacheContainerProvider notificationCacheContainerProvider;
 
     @Override
-    public void create(T notification, User creator, Provider provider) {
+    public void create(T notification, User creator) throws BusinessException {
         // Instantiate a counter instance if counter template is provided
         try {
             manageCounterInstantiation(notification);
         } catch (BusinessException e) {
             throw new RuntimeException(e);
         }
-        super.create(notification, creator, provider);
+        super.create(notification, creator);
         notificationCacheContainerProvider.addNotificationToCache(notification);
     }
 
     @Override
-    public T update(T notification, User updater) {
+    public T update(T notification, User updater) throws BusinessException {
         // Instantiate a counter instance if counter template is provided
         try {
             manageCounterInstantiation(notification);

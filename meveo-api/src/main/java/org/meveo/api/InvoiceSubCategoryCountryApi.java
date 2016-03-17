@@ -5,6 +5,7 @@ import java.util.Arrays;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.InvoiceSubCategoryCountryDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -39,7 +40,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
     @Inject
     private TaxService taxService;
 
-    public void create(InvoiceSubCategoryCountryDto postData, User currentUser) throws MeveoApiException {
+    public void create(InvoiceSubCategoryCountryDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
             missingParameters.add("invoiceSubCategory");
         }
@@ -79,10 +80,10 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         invoiceSubcategoryCountry.setTax(tax);
         invoiceSubcategoryCountry.setTradingCountry(tradingCountry);
         invoiceSubcategoryCountry.setFilterEL(postData.getFilterEL());
-        invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry, currentUser, provider);
+        invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry, currentUser);
     }
 
-    public void update(InvoiceSubCategoryCountryDto postData, User currentUser) throws MeveoApiException {
+    public void update(InvoiceSubCategoryCountryDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
             missingParameters.add("invoiceSubCategory");
@@ -192,8 +193,9 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void createOrUpdate(InvoiceSubCategoryCountryDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(InvoiceSubCategoryCountryDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         Provider provider = currentUser.getProvider();
 

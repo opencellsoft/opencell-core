@@ -19,6 +19,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.IEntity;
+import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.AndCompositeFilterCondition;
 import org.meveo.model.filter.Filter;
@@ -263,7 +264,7 @@ public class FilterService extends BusinessService<Filter> {
         }
     }
 
-    public void initFilterFromInputXml(Filter filter) throws BusinessException {
+    public void initFilterFromInputXml(Filter filter, User currentUser) throws BusinessException {
         if (filter == null) {
             return;
         }
@@ -287,7 +288,7 @@ public class FilterService extends BusinessService<Filter> {
             }
             for (FilterSelector filterSelector : filter.getSecondarySelectors()) {
                 filterSelector.setProvider(getCurrentProvider());
-                filterSelectorService.create(filterSelector);
+                filterSelectorService.create(filterSelector, currentUser);
                 filter.getSecondarySelectors().add(filterSelector);
             }
         }

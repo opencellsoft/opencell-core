@@ -16,7 +16,6 @@
  */
 package org.meveo.service.admin.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -27,8 +26,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.Auditable;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Country;
 import org.meveo.service.base.PersistenceService;
 
@@ -69,23 +66,23 @@ public class CountryService extends PersistenceService<Country> {
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}
-
-	public void create(Long userId, String countryCode, String name,
-			String currencyCode) {
-		User creator = userService.findById(userId);
-
-		Country c = new Country();
-
-		Auditable auditable = new Auditable();
-		auditable.setCreated(new Date());
-		auditable.setCreator(creator);
-
-		c.setAuditable(auditable);
-		c.setCountryCode(countryCode);
-		c.setDescriptionEn(name);
-		c.setCurrency(currencyService.findByCode(currencyCode));
-
-		create(c, creator);
-	}
+//
+//	public void create(Long userId, String countryCode, String name,
+//			String currencyCode) {
+//		User creator = userService.findById(userId);
+//
+//		Country c = new Country();
+//
+//		Auditable auditable = new Auditable();
+//		auditable.setCreated(new Date());
+//		auditable.setCreator(creator);
+//
+//		c.setAuditable(auditable);
+//		c.setCountryCode(countryCode);
+//		c.setDescriptionEn(name);
+//		c.setCurrency(currencyService.findByCode(currencyCode));
+//
+//		create(c, creator);
+//	}
 
 }

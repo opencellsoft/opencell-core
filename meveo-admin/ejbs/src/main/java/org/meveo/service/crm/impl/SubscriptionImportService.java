@@ -134,7 +134,7 @@ public class SubscriptionImportService extends ImportService{
 				paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
 		subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 		subscription.setUserAccount(checkSubscription.userAccount);
-		subscriptionService.create(subscription, currentUser, provider);
+		subscriptionService.create(subscription, currentUser);
 
        if (jaxbSubscription.getCustomFields() != null) {
             populateCustomFields(jaxbSubscription.getCustomFields().getCustomField(), subscription, currentUser);
@@ -208,7 +208,7 @@ public class SubscriptionImportService extends ImportService{
 //	            populateCustomFields(AccountLevelEnum.ACC, jaxbAccessPoint.getCustomFields().getCustomField(), subscription, "access", currentUser);
 //	        }
 			
-			accessService.create(access, currentUser, provider);
+			accessService.create(access, currentUser);
 			log.info("File:" + fileName + ", typeEntity:access, index:" + i + ", AccessUserId:"
 					+ access.getAccessUserId());
 		}

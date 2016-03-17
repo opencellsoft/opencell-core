@@ -203,7 +203,7 @@ public class ImportSubscriptionsJobBean {
 		subscriptionImportHisto.setNbSubscriptionsIgnored(nbSubscriptionsIgnored);
 		subscriptionImportHisto.setNbSubscriptionsTerminated(nbSubscriptionsTerminated);
 		subscriptionImportHisto.setProvider(provider);
-		subscriptionImportHistoService.create(subscriptionImportHisto, currentUser, provider);
+		subscriptionImportHistoService.create(subscriptionImportHisto, currentUser);
 	}
 
 	private void generateReport(String fileName, Provider provider) throws Exception {

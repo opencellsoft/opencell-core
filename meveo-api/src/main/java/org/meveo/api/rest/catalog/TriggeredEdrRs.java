@@ -26,47 +26,47 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface TriggeredEdrRs extends IBaseRs {
 
-	/**
-	 * Create triggered edr.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@POST
-	ActionStatus create(TriggeredEdrTemplateDto postData);
+    /**
+     * Create triggered edr.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @POST
+    ActionStatus create(TriggeredEdrTemplateDto postData);
 
-	/**
-	 * Update triggered edr.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@PUT
-	ActionStatus update(TriggeredEdrTemplateDto postData);
+    /**
+     * Update triggered edr.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @PUT
+    ActionStatus update(TriggeredEdrTemplateDto postData);
 
-	/**
-	 * Search triggered edr with a given code.
-	 * 
-	 * @param triggeredEdrCode
-	 * @return
-	 */
-	@Path("/")
-	@GET
-	GetTriggeredEdrResponseDto find(@QueryParam("triggeredEdrCode") String triggeredEdrCode);
+    /**
+     * Search triggered edr with a given code.
+     * 
+     * @param triggeredEdrCode
+     * @return
+     */
+    @Path("/")
+    @GET
+    GetTriggeredEdrResponseDto find(@QueryParam("triggeredEdrCode") String triggeredEdrCode);
 
-	/**
-	 * Remove triggered edr with a given code.
-	 * 
-	 * @param triggeredEdrCode
-	 * @return
-	 */
-	@Path("/{triggeredEdrCode}")
-	@DELETE
-	ActionStatus remove(@PathParam("triggeredEdrCode") String triggeredEdrCode);
-	
-	@Path("/createOrUpdate")
-	@POST
-	ActionStatus createOrUpdate(TriggeredEdrTemplateDto postData);
+    /**
+     * Remove triggered edr with a given code.
+     * 
+     * @param triggeredEdrCode
+     * @return
+     */
+    @Path("/{triggeredEdrCode}")
+    @DELETE
+    ActionStatus remove(@PathParam("triggeredEdrCode") String triggeredEdrCode);
+
+    @Path("/createOrUpdate")
+    @POST
+    ActionStatus createOrUpdate(TriggeredEdrTemplateDto postData);
 }

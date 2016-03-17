@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -37,7 +38,7 @@ public class UserApi extends BaseApi {
     @Inject
     private UserService userService;
 
-    public void create(UserDto postData, User currentUser) throws MeveoApiException {
+    public void create(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getUsername())) {
             missingParameters.add("username");
@@ -88,10 +89,10 @@ public class UserApi extends BaseApi {
         roles.add(role);
         user.setRoles(roles);
 
-        userService.create(user, currentUser, provider);
+        userService.create(user, currentUser);
     }
 
-    public void update(UserDto postData, User currentUser) throws MeveoApiException {
+    public void update(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getUsername())) {
             missingParameters.add("username");
@@ -162,7 +163,7 @@ public class UserApi extends BaseApi {
         return result;
     }
 
-    public void createOrUpdate(UserDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
         User user = userService.findByUsername(postData.getUsername());
         if (user == null) {
             create(postData, currentUser);

@@ -330,7 +330,7 @@ public class WalletApi extends BaseApi {
         }
     }
 
-    public void createOperation(WalletOperationDto postData, User currentUser) throws MeveoApiException {
+    public void createOperation(WalletOperationDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -382,7 +382,7 @@ public class WalletApi extends BaseApi {
             walletTemplate.setCode(WalletTemplate.PRINCIPAL);
         }
 
-        WalletInstance walletInstance = walletService.getWalletInstance(userAccount, walletTemplate, currentUser, provider);
+        WalletInstance walletInstance = walletService.getWalletInstance(userAccount, walletTemplate, currentUser);
         if (walletInstance == null) {
             throw new EntityDoesNotExistsException(WalletInstance.class, walletTemplate.getCode());
         }
@@ -436,7 +436,7 @@ public class WalletApi extends BaseApi {
             walletOperation.setInvoicingDate(cal.nextCalendarDate(walletOperation.getOperationDate()));
         }
 
-        walletOperationService.create(walletOperation, currentUser, provider);
+        walletOperationService.create(walletOperation, currentUser);
 
     }
 
@@ -476,7 +476,7 @@ public class WalletApi extends BaseApi {
         return result;
     }
 
-    public void create(WalletTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void create(WalletTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -500,11 +500,11 @@ public class WalletApi extends BaseApi {
         wt.setFastRatingLevel(postData.getFastRatingLevel());
         wt.setLowBalanceLevel(postData.getLowBalanceLevel());
 
-        walletTemplateService.create(wt, currentUser, currentUser.getProvider());
+        walletTemplateService.create(wt, currentUser);
 
     }
 
-    public void update(WalletTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void update(WalletTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -565,8 +565,9 @@ public class WalletApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void createOrUpdate(WalletTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(WalletTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (walletTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             create(postData, currentUser);
         } else {

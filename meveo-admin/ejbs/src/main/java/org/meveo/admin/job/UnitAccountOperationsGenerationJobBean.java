@@ -180,8 +180,7 @@ public class UnitAccountOperationsGenerationJobBean {
 			}
 
 			recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
-			recordedInvoiceService.create(recordedInvoice, currentUser,
-					currentUser.getProvider());
+			recordedInvoiceService.create(recordedInvoice, currentUser);
 			
 			invoice.setRecordedInvoice(recordedInvoice);
 			invoice.updateAudit(currentUser);

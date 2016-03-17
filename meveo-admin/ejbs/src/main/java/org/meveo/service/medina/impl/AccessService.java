@@ -25,6 +25,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
@@ -102,13 +103,13 @@ public class AccessService extends PersistenceService<Access> {
     }
     
     @Override
-    public void create(Access access, User creator, Provider provider) {
-        super.create(access, creator, provider);
+    public void create(Access access, User creator) throws BusinessException {
+        super.create(access, creator);
         cdrEdrProcessingCacheContainerProvider.addAccessToCache(access);
     }
 
     @Override
-    public Access update(Access access, User updater) {
+    public Access update(Access access, User updater) throws BusinessException {
         access = super.update(access, updater);
         cdrEdrProcessingCacheContainerProvider.updateAccessInCache(access);
         return access;

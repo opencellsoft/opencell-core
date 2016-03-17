@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.OfferServiceTemplateDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
@@ -52,7 +53,7 @@ public class OfferTemplateApi extends BaseApi {
 	@Inject
 	private OfferTemplateCategoryService offerTemplateCategoryService;
 
-	public void create(OfferTemplateDto postData, User currentUser) throws MeveoApiException {
+	public void create(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -90,7 +91,7 @@ public class OfferTemplateApi extends BaseApi {
 			offerTemplate.setOfferTemplateCategory(offerTemplateCategory);
 		}
 
-		offerTemplateService.create(offerTemplate, currentUser, provider);
+		offerTemplateService.create(offerTemplate, currentUser);
 
 		// check service templates
 		if (postData.getOfferServiceTemplates() != null && postData.getOfferServiceTemplates().size() > 0) {
@@ -140,7 +141,7 @@ public class OfferTemplateApi extends BaseApi {
 		}
 	}
 
-	public void update(OfferTemplateDto postData, User currentUser) throws MeveoApiException {
+	public void update(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -372,8 +373,9 @@ public class OfferTemplateApi extends BaseApi {
 	 * @param postData
 	 * @param currentUser
 	 * @throws MeveoApiException
+	 * @throws BusinessException 
 	 */
-	public void createOrUpdate(OfferTemplateDto postData, User currentUser) throws MeveoApiException {
+	public void createOrUpdate(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
 
 		if (offerTemplate == null) {

@@ -60,7 +60,7 @@ public class UserService extends PersistenceService<User> {
 
 	@Override
 	@UserCreate
-	public void create(User user) throws UsernameAlreadyExistsException, BusinessException {
+	public void create(User user, User currentUser) throws UsernameAlreadyExistsException, BusinessException {
 
 		if (isUsernameExists(user.getUserName())) {
 			throw new UsernameAlreadyExistsException(user.getUserName());
@@ -72,12 +72,12 @@ public class UserService extends PersistenceService<User> {
 		// Set provider to the first provider from a user related provider list
 //		user.setProvider(user.getProviders().iterator().next());
 
-		super.create(user);
+		super.create(user, currentUser);
 	}
 
 	@Override
 	@UserUpdate
-	public User update(User user) throws UsernameAlreadyExistsException {
+	public User update(User user,User currentUser) throws UsernameAlreadyExistsException, BusinessException {
 		if (isUsernameExists(user.getUserName(), user.getId())) {
 			getEntityManager().refresh(user);
 			throw new UsernameAlreadyExistsException(user.getUserName());
@@ -89,7 +89,7 @@ public class UserService extends PersistenceService<User> {
 			user.setPassword(encryptedPassword);
 		}
 
-		return super.update(user);
+		return super.update(user, currentUser);
 	}
 
 	@Override
@@ -177,11 +177,11 @@ public class UserService extends PersistenceService<User> {
 		}
 	}
 
-	public User changePassword(User user, String newPassword) throws BusinessException {
+	public User changePassword(User user, String newPassword, User currentUser) throws BusinessException {
 		getEntityManager().refresh(user);
 		user.setLastPasswordModification(new Date());
 		user.setPassword(Sha1Encrypt.encodePassword(newPassword));
-		super.update(user);
+		super.update(user, currentUser);
 		return user;
 	}
 

@@ -55,7 +55,6 @@ import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
-import org.meveo.model.crm.Email;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
@@ -333,9 +332,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return amount;
 	}
 
-	public void cancel(BillingRun billingRun) {
+	public void cancel(BillingRun billingRun, User currentUser) throws BusinessException {
 		billingRun.setStatus(BillingRunStatusEnum.CANCELED);
-		update(billingRun);
+		update(billingRun, currentUser);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -387,11 +386,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return billingRuns != null && billingRuns.size() > 0 ? true : false;
 	}
 
-	public void retateBillingRunTransactions(BillingRun billingRun) {
+	public void retateBillingRunTransactions(BillingRun billingRun, User currentUser) throws BusinessException {
 		for (RatedTransaction ratedTransaction : billingRun.getRatedTransactions()) {
 			WalletOperation walletOperation = walletOperationService.findById(ratedTransaction.getWalletOperationId());
 			walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE);
-			walletOperationService.update(walletOperation);
+			walletOperationService.update(walletOperation, currentUser);
 		}
 	}
 
@@ -600,7 +599,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 		billingRun.setInvoiceDate(invoiceDate);
 		billingRun.setLastTransactionDate(lastTransactionDate);
-		create(billingRun, currentUser, currentProvider);
+		create(billingRun, currentUser);
 		commit();
 		return billingRun;
 	}
@@ -683,7 +682,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		updateNoCheck(billingRun);
 	}
 
-	public boolean launchInvoicingRejectedBA(BillingRun br) throws BusinessException {
+	public boolean launchInvoicingRejectedBA(BillingRun br, User currentUser) throws BusinessException {
 		boolean result = false;
 		BillingRun billingRun = new BillingRun();
 		billingRun.setStatus(BillingRunStatusEnum.NEW);
@@ -714,7 +713,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		if (result) {
 			log.debug("selectedBillingAccounts=" + selectedBillingAccounts);
 			billingRun.setSelectedBillingAccounts(selectedBillingAccounts);
-			create(billingRun);
+			create(billingRun, currentUser);
 		}
 		return result;
 	}

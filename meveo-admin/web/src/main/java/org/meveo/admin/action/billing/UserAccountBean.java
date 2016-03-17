@@ -345,7 +345,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		reloadOperation.setType(OperationTypeEnum.CREDIT);
 	}
 
-	public void reload() {
+	public void reload() throws BusinessException {
 		walletOperationService.create(reloadOperation, getCurrentUser());
 		reloadOperation = null;
 	}

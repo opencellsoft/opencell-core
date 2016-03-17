@@ -265,12 +265,12 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 	    }
  
 	 
-	 public void duplicate() {
+	 public void duplicate() throws BusinessException {
 			if (entity != null && entity.getId() != null) {
 				pricePlanMatrixService.detach(entity);
 				entity.setId(null);
 				entity.setCode(entity.getCode() + "_copy");
-				pricePlanMatrixService.create(entity);
+				pricePlanMatrixService.create(entity, getCurrentUser());
 			}
 		}
 	 

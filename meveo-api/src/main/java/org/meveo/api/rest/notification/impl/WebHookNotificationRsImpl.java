@@ -19,119 +19,108 @@ import org.meveo.api.rest.notification.WebHookNotificationRs;
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
-
 public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotificationRs {
 
-	@Inject
-	private WebhookNotificationApi webhookNotificationApi;
+    @Inject
+    private WebhookNotificationApi webhookNotificationApi;
 
-	@Override
-	
-	public ActionStatus create(WebhookNotificationDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus create(WebhookNotificationDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			webhookNotificationApi.create(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error occured while creating webhook notification ", e);
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error generated while creating webhook notification ", e);
-		}
+        try {
+            webhookNotificationApi.create(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error occured while creating webhook notification ", e);
+        } catch (Exception e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error generated while creating webhook notification ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	
-	public ActionStatus update(WebhookNotificationDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus update(WebhookNotificationDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			webhookNotificationApi.update(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error occured while updating webhook notification ", e);
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error generated while updating webhook notification ", e);
-		}
+        try {
+            webhookNotificationApi.update(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error occured while updating webhook notification ", e);
+        } catch (Exception e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error generated while updating webhook notification ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	
-	public GetWebHookNotificationResponseDto find(String notificationCode) {
-		GetWebHookNotificationResponseDto result = new GetWebHookNotificationResponseDto();
+    @Override
+    public GetWebHookNotificationResponseDto find(String notificationCode) {
+        GetWebHookNotificationResponseDto result = new GetWebHookNotificationResponseDto();
 
-		try {
-			result.setWebhookDto(webhookNotificationApi.find(notificationCode, getCurrentUser().getProvider()));
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error occurred while getting webhook notification ", e);
-		} catch (Exception e) {
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error generated while getting webhook notification ", e);
-		}
+        try {
+            result.setWebhookDto(webhookNotificationApi.find(notificationCode, getCurrentUser().getProvider()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+            log.error("error occurred while getting webhook notification ", e);
+        } catch (Exception e) {
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+            log.error("error generated while getting webhook notification ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	
-	public ActionStatus remove(String notificationCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus remove(String notificationCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			webhookNotificationApi.remove(notificationCode, getCurrentUser().getProvider());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error occurred while removing webhook notification ", e);
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error generated while removing webhook notification ", e);
-		}
+        try {
+            webhookNotificationApi.remove(notificationCode, getCurrentUser().getProvider());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error occurred while removing webhook notification ", e);
+        } catch (Exception e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error generated while removing webhook notification ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	
-	public ActionStatus createOrUpdate(WebhookNotificationDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createOrUpdate(WebhookNotificationDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			webhookNotificationApi.createOrUpdate(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error occured while creating webhook notification ", e);
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error generated while creating webhook notification ", e);
-		}
+        try {
+            webhookNotificationApi.createOrUpdate(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error occured while creating webhook notification ", e);
+        } catch (Exception e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error generated while creating webhook notification ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 }

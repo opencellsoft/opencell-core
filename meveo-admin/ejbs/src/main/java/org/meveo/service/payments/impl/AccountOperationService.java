@@ -25,6 +25,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -86,14 +87,15 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
     /**
      * Set the discriminatorValue value, so it would be available in the list of entities right away
+     * @throws BusinessException 
      */	
     @Override
-    public void create(AccountOperation aop, User creator, Provider provider) {
+    public void create(AccountOperation aop, User creator) throws BusinessException {
 
         if (aop.getClass().isAnnotationPresent(DiscriminatorValue.class)) {
             aop.setType(aop.getClass().getAnnotation(DiscriminatorValue.class).value());
         }
 
-        super.create(aop, creator, provider);
+        super.create(aop, creator);
     }
 }

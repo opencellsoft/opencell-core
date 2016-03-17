@@ -18,6 +18,7 @@ import org.meveo.api.rest.security.RSSecured;
 
 /**
  * Web service for managing {@link org.meveo.model.billing.InvoiceSubcategoryCountry}.
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/invoiceSubCategoryCountry")
@@ -26,59 +27,55 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface InvoiceSubCategoryCountryRs extends IBaseRs {
 
-	/**
-	 * Create invoice sub category country.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@POST
-	public ActionStatus create(InvoiceSubCategoryCountryDto postData);
+    /**
+     * Create invoice sub category country.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @POST
+    public ActionStatus create(InvoiceSubCategoryCountryDto postData);
 
-	/**
-	 * Update invoice sub category country.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@PUT
-	public ActionStatus update(InvoiceSubCategoryCountryDto postData);
+    /**
+     * Update invoice sub category country.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @PUT
+    public ActionStatus update(InvoiceSubCategoryCountryDto postData);
 
-	/**
-	 * Search invoice sub category country with a given code and country.
-	 * 
-	 * @param invoiceSubCategoryCode
-	 * @param country
-	 * @return
-	 */
-	@Path("/")
-	@GET
-	public GetInvoiceSubCategoryCountryResponse find(
-			@QueryParam("invoiceSubCategoryCode") String invoiceSubCategoryCode,
-			@QueryParam("country") String country);
+    /**
+     * Search invoice sub category country with a given code and country.
+     * 
+     * @param invoiceSubCategoryCode
+     * @param country
+     * @return
+     */
+    @Path("/")
+    @GET
+    public GetInvoiceSubCategoryCountryResponse find(@QueryParam("invoiceSubCategoryCode") String invoiceSubCategoryCode, @QueryParam("country") String country);
 
-	/**
-	 * Remove invoice sub category country with a given code and country.
-	 * 
-	 * @param invoiceSubCategoryCode
-	 * @param country
-	 * @return
-	 */
-	@Path("/{invoiceSubCategoryCode}/{country}")
-	@DELETE
-	public ActionStatus remove(
-			@PathParam("invoiceSubCategoryCode") String invoiceSubCategoryCode,
-			@PathParam("country") String country);
+    /**
+     * Remove invoice sub category country with a given code and country.
+     * 
+     * @param invoiceSubCategoryCode
+     * @param country
+     * @return
+     */
+    @Path("/{invoiceSubCategoryCode}/{country}")
+    @DELETE
+    public ActionStatus remove(@PathParam("invoiceSubCategoryCode") String invoiceSubCategoryCode, @PathParam("country") String country);
 
-	
-	/**
-	 * Create or update Invoice SubCategory Country based on invoice sub-category and country
-	 * @param postData
-	 * @return
-	 */
-	@Path("/createOrUpdate")
-	@POST
-	public ActionStatus createOrUpdate(InvoiceSubCategoryCountryDto postData);
+    /**
+     * Create or update Invoice SubCategory Country based on invoice sub-category and country
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/createOrUpdate")
+    @POST
+    public ActionStatus createOrUpdate(InvoiceSubCategoryCountryDto postData);
 }

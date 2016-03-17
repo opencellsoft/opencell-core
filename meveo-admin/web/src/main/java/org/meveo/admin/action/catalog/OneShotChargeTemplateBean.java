@@ -213,7 +213,7 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 			entity.setCode(entity.getCode()+"_copy");
 			
             try {
-                oneShotChargeTemplateService.create(entity);
+                oneShotChargeTemplateService.create(entity, getCurrentUser());
                 customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
             } catch (Exception e) {
                 log.error("error when duplicate recurringChargeTemplate#{0}:#{1}", entity.getCode(), e);

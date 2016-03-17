@@ -183,7 +183,7 @@ public class JobTriggerBean extends UpdateMapTypeFieldBean<JobTrigger> {
                     JobInstance jobInstance = jobInstanceService.findByCode(values[JOB_INSTANCE_CODE], getCurrentProvider()); 
                     notif.setJobInstance(jobInstance);
                 }  
-                jobTriggerService.create(notif);
+                jobTriggerService.create(notif, getCurrentUser());
             }
         }
         if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
@@ -191,7 +191,7 @@ public class JobTriggerBean extends UpdateMapTypeFieldBean<JobTrigger> {
         }
     }
 
-    public void checkSelectedStrategy(String[] values, JobTrigger existingEntity, boolean isEntityAlreadyExist) throws RejectedImportException {
+    public void checkSelectedStrategy(String[] values, JobTrigger existingEntity, boolean isEntityAlreadyExist) throws BusinessException {
 		if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
 			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
 			existingEntity.setElFilter(values[EL_FILTER]);
@@ -201,7 +201,7 @@ public class JobTriggerBean extends UpdateMapTypeFieldBean<JobTrigger> {
                 existingEntity.setScriptInstance(scriptInstance);
             } 
 			existingEntity.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
-			jobTriggerService.update(existingEntity);
+			jobTriggerService.update(existingEntity, getCurrentUser());
 		} else if (strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
 			throw new RejectedImportException("jobTrigger.rejectImport");
 		} else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {

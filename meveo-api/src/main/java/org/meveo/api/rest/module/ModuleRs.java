@@ -24,28 +24,28 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface ModuleRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ActionStatus create(ModuleDto moduleDto);
+    @POST
+    @Path("/")
+    ActionStatus create(ModuleDto moduleDto);
 
-	@PUT
-	@Path("/")
-	ActionStatus update(ModuleDto moduleDto);
+    @PUT
+    @Path("/")
+    ActionStatus update(ModuleDto moduleDto);
 
-	@POST
-	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(ModuleDto moduleDto);
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(ModuleDto moduleDto);
 
-	@DELETE
-	@Path("/{code}")
-	ActionStatus delete(@PathParam("code") String code);
+    @DELETE
+    @Path("/{code}")
+    ActionStatus delete(@PathParam("code") String code);
 
-	@GET
-	@Path("/list")
-	MeveoModuleDtosResponse list();
+    @GET
+    @Path("/list")
+    MeveoModuleDtosResponse list();
 
-	@GET
-	@Path("/")
-	MeveoModuleDtoResponse get(@QueryParam("code") String code);
+    @GET
+    @Path("/")
+    MeveoModuleDtoResponse get(@QueryParam("code") String code);
 
 }

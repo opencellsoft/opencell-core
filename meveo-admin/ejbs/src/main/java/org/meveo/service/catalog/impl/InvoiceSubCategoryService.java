@@ -85,7 +85,8 @@ public class InvoiceSubCategoryService extends
 		}
 	
 	
-	public  List<InvoiceSubCategory> findByInvoiceCategory(InvoiceCategory invoiceCategory,Provider provider) { 
+	@SuppressWarnings("unchecked")
+    public  List<InvoiceSubCategory> findByInvoiceCategory(InvoiceCategory invoiceCategory,Provider provider) { 
 		QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc");
 		qb.addCriterionEntity("sc.invoiceCategory", invoiceCategory);
 		qb.addCriterionEntity("sc.provider", provider);

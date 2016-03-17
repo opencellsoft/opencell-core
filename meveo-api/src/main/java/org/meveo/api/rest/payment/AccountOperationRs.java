@@ -26,29 +26,28 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface AccountOperationRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ActionStatus create(AccountOperationDto postData);
+    @POST
+    @Path("/")
+    ActionStatus create(AccountOperationDto postData);
 
-	@GET
-	@Path("/list")
-	AccountOperationsResponseDto list(@QueryParam("customerAccountCode") String customerAccountCode);
-	
-	@POST
-	@Path("/")
-	ActionStatus matchOperations(MatchOperationRequestDto postData);
-	
-	@POST
-	@Path("/")
-	ActionStatus unMatchingOperations(UnMatchingOperationRequestDto postData);
-	
-	@POST
-	@Path("/")
-	ActionStatus addLitigation(LitigationRequestDto postData);
-	
-	@POST
-	@Path("/")
-	ActionStatus cancelLitigation(LitigationRequestDto postData);
+    @GET
+    @Path("/list")
+    AccountOperationsResponseDto list(@QueryParam("customerAccountCode") String customerAccountCode);
 
+    @POST
+    @Path("/")
+    ActionStatus matchOperations(MatchOperationRequestDto postData);
+
+    @POST
+    @Path("/")
+    ActionStatus unMatchingOperations(UnMatchingOperationRequestDto postData);
+
+    @POST
+    @Path("/")
+    ActionStatus addLitigation(LitigationRequestDto postData);
+
+    @POST
+    @Path("/")
+    ActionStatus cancelLitigation(LitigationRequestDto postData);
 
 }

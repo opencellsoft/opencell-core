@@ -10,6 +10,7 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import org.apache.commons.codec.binary.Base64;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -26,26 +27,26 @@ import org.slf4j.LoggerFactory;
  **/
 public abstract class BaseWs {
 
-	protected Logger log = LoggerFactory.getLogger(this.getClass());
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Resource
-	protected WebServiceContext webServiceContext;
+    @Resource
+    protected WebServiceContext webServiceContext;
 
-	@Inject
-	protected UserService userService;
+    @Inject
+    protected UserService userService;
 
-	@WebMethod
-	public ActionStatus index() {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "MEVEO API Rest Web Service V1.0");
-		try {
-			getCurrentUser();
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION);
-			result.setMessage(e.getMessage());
-		}
+    @WebMethod
+    public ActionStatus index() {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "MEVEO API Rest Web Service V1.0");
+        try {
+            getCurrentUser();
+        } catch (Exception e) {
+            result.setErrorCode(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION);
+            result.setMessage(e.getMessage());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
     /**
      * Authenticate a user requiring a particular permission <permissionResource>/<permissionAction> apart of a standard permission required to access WS
@@ -57,12 +58,11 @@ public abstract class BaseWs {
      */
     protected User getCurrentUser(String permissionResource, String permissionAction) throws LoginException {
         User user = getCurrentUser();
-        if (user.hasPermission(permissionResource, permissionAction)){
+        if (user.hasPermission(permissionResource, permissionAction)) {
             return user;
         }
-        throw new LoginException("User does not have permission '" + permissionAction + "' on resource '" + permissionResource+"'");
+        throw new LoginException("User does not have permission '" + permissionAction + "' on resource '" + permissionResource + "'");
     }
-
 
     /**
      * Authenticate a user requiring a standard permission user/apiAccess to access WS
@@ -70,63 +70,64 @@ public abstract class BaseWs {
      * @return Authenticated user
      * @throws LoginException In case a user does not have a required permission
      */
-	@SuppressWarnings("unchecked")
-	protected User getCurrentUser() throws LoginException {
-		MessageContext messageContext = webServiceContext.getMessageContext();
+    @SuppressWarnings("unchecked")
+    protected User getCurrentUser() throws LoginException {
+        MessageContext messageContext = webServiceContext.getMessageContext();
 
-		// get request headers
-		Map<?, ?> requestHeaders = (Map<?, ?>) messageContext.get(MessageContext.HTTP_REQUEST_HEADERS);
+        // get request headers
+        Map<?, ?> requestHeaders = (Map<?, ?>) messageContext.get(MessageContext.HTTP_REQUEST_HEADERS);
 
-		List<Object> authorizationHeader = (List<Object>) requestHeaders.get("Authorization");
-		if (authorizationHeader == null || authorizationHeader.size() == 0) {
-			throw new LoginException("Authentication failed! This WS needs BASIC Authentication!");
-		}
+        List<Object> authorizationHeader = (List<Object>) requestHeaders.get("Authorization");
+        if (authorizationHeader == null || authorizationHeader.size() == 0) {
+            throw new LoginException("Authentication failed! This WS needs BASIC Authentication!");
+        }
 
-		String userpass = (String) authorizationHeader.get(0);
-		userpass = userpass.substring(5);
-		byte[] buf = Base64.decodeBase64(userpass.getBytes());
-		String credentials = new String(buf);
+        String userpass = (String) authorizationHeader.get(0);
+        userpass = userpass.substring(5);
+        byte[] buf = Base64.decodeBase64(userpass.getBytes());
+        String credentials = new String(buf);
 
-		String username = null;
-		String password = null;
-		int p = credentials.indexOf(":");
-		if (p > -1) {
-			username = credentials.substring(0, p);
-			password = credentials.substring(p + 1);
-		} else {
-			throw new RuntimeException("There was an error while decoding the Authentication!");
-		}
+        String username = null;
+        String password = null;
+        int p = credentials.indexOf(":");
+        if (p > -1) {
+            username = credentials.substring(0, p);
+            password = credentials.substring(p + 1);
+        } else {
+            throw new RuntimeException("There was an error while decoding the Authentication!");
+        }
 
-		if (StringUtils.isBlank(username) | StringUtils.isBlank(password)) {
-			throw new LoginException("Username and password are required.");
-		}
+        if (StringUtils.isBlank(username) | StringUtils.isBlank(password)) {
+            throw new LoginException("Username and password are required.");
+        }
 
-		User user = null;
-		try {
-			user = userService.loginChecks(username, password);
-		} catch (org.meveo.admin.exception.LoginException e) {
-			throw new LoginException("Authentication failed!");
-		}
+        User user = null;
+        try {
+            user = userService.loginChecks(username, password);
+        } catch (org.meveo.admin.exception.LoginException e) {
+            throw new LoginException("Authentication failed!");
+        }
 
-		if (user == null) {
-			throw new LoginException("Authentication failed!");
-		}
+        if (user == null) {
+            throw new LoginException("Authentication failed!");
+        }
 
-		// check if has api permission
-		boolean isAllowed = user.hasPermission("user", "apiAccess");
+        // check if has api permission
+        boolean isAllowed = user.hasPermission("user", "apiAccess");
 
-		if (!isAllowed) {
-			throw new LoginException(user.getUserName(), "Authentication failed! Insufficient privilege to access API services!");
-		}
+        if (!isAllowed) {
+            throw new LoginException(user.getUserName(), "Authentication failed! Insufficient privilege to access API services!");
+        }
 
-		return user;
-	}
+        return user;
+    }
 
-	/**
-	 * Process exception and update status of response
-	 * @param e Exception
-	 * @param status Status dto to update
-	 */
+    /**
+     * Process exception and update status of response
+     * 
+     * @param e Exception
+     * @param status Status dto to update
+     */
     protected void processException(Exception e, ActionStatus status) {
 
         if (e instanceof MeveoApiException) {
@@ -134,7 +135,8 @@ public abstract class BaseWs {
             status.setStatus(ActionStatusEnum.FAIL);
             status.setMessage(e.getMessage());
         } else {
-            status.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            status.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             status.setStatus(ActionStatusEnum.FAIL);
             status.setMessage(e.getMessage());
         }

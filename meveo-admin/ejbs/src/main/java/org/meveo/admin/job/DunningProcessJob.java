@@ -104,10 +104,10 @@ public class DunningProcessJob extends Job {
             dunningHistory.setLinesRejected(errorCustomerAccounts);
             dunningHistory.setLinesInserted(updatedCustomerAccounts);
             dunningHistory.setProvider(dunningPlan.getProvider());
-            dunningHistoryService.create(dunningHistory,currentUser,provider);
+            dunningHistoryService.create(dunningHistory,currentUser);
             BayadDunningInputHistory bayadDunningInputHistory = createNewInputHistory(loadedCustomerAccounts, updatedCustomerAccounts, errorCustomerAccounts, new Date(),
                 dunningPlan.getProvider());
-            bayadDunningInputHistoryService.create(bayadDunningInputHistory,currentUser,provider);
+            bayadDunningInputHistoryService.create(bayadDunningInputHistory,currentUser);
             dunningLOTService.createDunningLOTAndCsvFile(listActionDunning, dunningHistory, currentUser);
             result.registerSucces();
         }

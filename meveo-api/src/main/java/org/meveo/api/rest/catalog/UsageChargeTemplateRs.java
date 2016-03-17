@@ -28,55 +28,54 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface UsageChargeTemplateRs extends IBaseRs {
 
-	/**
-	 * Create usage charge template.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@POST
-	@Path("/")
-	public ActionStatus create(UsageChargeTemplateDto postData);
+    /**
+     * Create usage charge template.
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/")
+    public ActionStatus create(UsageChargeTemplateDto postData);
 
-	/**
-	 * Update usage charge template.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@PUT
-	@Path("/")
-	public ActionStatus update(UsageChargeTemplateDto postData);
+    /**
+     * Update usage charge template.
+     * 
+     * @param postData
+     * @return
+     */
+    @PUT
+    @Path("/")
+    public ActionStatus update(UsageChargeTemplateDto postData);
 
-	/**
-	 * Search usage charge template with a given code.
-	 * 
-	 * @param usageChargeTemplateCode
-	 * @return
-	 */
-	@GET
-	@Path("/")
-	public GetUsageChargeTemplateResponseDto find(
-			@QueryParam("usageChargeTemplateCode") String usageChargeTemplateCode);
+    /**
+     * Search usage charge template with a given code.
+     * 
+     * @param usageChargeTemplateCode
+     * @return
+     */
+    @GET
+    @Path("/")
+    public GetUsageChargeTemplateResponseDto find(@QueryParam("usageChargeTemplateCode") String usageChargeTemplateCode);
 
-	/**
-	 * Remove usage charge template with a given code.
-	 * 
-	 * @param usageChargeTemplateCode
-	 * @return
-	 */
-	@DELETE
-	@Path("/{usageChargeTemplateCode}")
-	public ActionStatus remove(
-			@PathParam("usageChargeTemplateCode") String usageChargeTemplateCode);
-	
-	/**
-	 * Create or update charge template with a given code.
-	 * @param postData
-	 * @return
-	 */
-	@POST
-	@Path("/createOrUpdate")
-	public ActionStatus createOrUpdate(UsageChargeTemplateDto postData);
+    /**
+     * Remove usage charge template with a given code.
+     * 
+     * @param usageChargeTemplateCode
+     * @return
+     */
+    @DELETE
+    @Path("/{usageChargeTemplateCode}")
+    public ActionStatus remove(@PathParam("usageChargeTemplateCode") String usageChargeTemplateCode);
+
+    /**
+     * Create or update charge template with a given code.
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/createOrUpdate")
+    public ActionStatus createOrUpdate(UsageChargeTemplateDto postData);
 
 }

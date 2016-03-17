@@ -171,7 +171,7 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
 			entity.setCode(entity.getCode()+"_copy");
 			
             try {
-                usageChargeTemplateService.create(entity);
+                usageChargeTemplateService.create(entity, getCurrentUser());
                 customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
 
             } catch (Exception e) {

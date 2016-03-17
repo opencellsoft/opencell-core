@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -38,7 +39,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
     @Inject
     private CatMessagesService catMessagesService;
 
-    public void create(InvoiceSubCategoryDto postData, User currentUser) throws MeveoApiException {
+    public void create(InvoiceSubCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -88,19 +89,19 @@ public class InvoiceSubCategoryApi extends BaseApi {
             }
         }
 
-        invoiceSubCategoryService.create(invoiceSubCategory, currentUser, provider);
+        invoiceSubCategoryService.create(invoiceSubCategory, currentUser);
 
         // create cat messages
         if (postData.getLanguageDescriptions() != null) {
             for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
                 CatMessages catMsg = new CatMessages(InvoiceSubCategory.class.getSimpleName() + "_" + invoiceSubCategory.getId(), ld.getLanguageCode(), ld.getDescription());
 
-                catMessagesService.create(catMsg, currentUser, provider);
+                catMessagesService.create(catMsg, currentUser);
             }
         }
     }
 
-    public void update(InvoiceSubCategoryDto postData, User currentUser) throws MeveoApiException {
+    public void update(InvoiceSubCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -151,7 +152,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
                     CatMessages catMsg = new CatMessages(InvoiceSubCategory.class.getSimpleName() + "_" + invoiceSubCategory.getId(), ld.getLanguageCode(), ld.getDescription());
 
-                    catMessagesService.create(catMsg, currentUser, provider);
+                    catMessagesService.create(catMsg, currentUser);
                 }
             }
         }
@@ -210,8 +211,9 @@ public class InvoiceSubCategoryApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void createOrUpdate(InvoiceSubCategoryDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(InvoiceSubCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (invoiceSubCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
             update(postData, currentUser);
         } else {

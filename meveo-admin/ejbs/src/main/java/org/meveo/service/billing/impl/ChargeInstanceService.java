@@ -110,7 +110,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 		chargeInstance.setCurrency(serviceInst.getSubscription().getUserAccount().getBillingAccount()
 				.getCustomerAccount().getTradingCurrency());
 
-		recurringChargeInstanceService.create(chargeInstance, creator, recurringChargeTemplate.getProvider());
+		recurringChargeInstanceService.create(chargeInstance, creator); // AKK was with recurringChargeTemplate.getProvider()
 		return chargeInstance;
 	}
 
@@ -153,7 +153,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 		chargeInstance.setCurrency(serviceInst.getSubscription().getUserAccount().getBillingAccount()
 				.getCustomerAccount().getTradingCurrency());
 
-		recurringChargeInstanceService.create(chargeInstance, creator, recurringChargeTemplate.getProvider());
+		recurringChargeInstanceService.create(chargeInstance, creator); // AKK was with recurringChargeTemplate.getProvider()
 	}
 
 	public void recurringChargeDeactivation(long recurringChargeInstanId, Date terminationDate, User updater)
@@ -180,7 +180,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 	}
 
 	public void recurringChargeReactivation(ServiceInstance serviceInst, Subscription subscription,
-			Date subscriptionDate, User creator) throws BusinessException {
+			Date subscriptionDate, User updater) throws BusinessException {
 		if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED
 				|| subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
 			throw new BusinessException("subscription is " + subscription.getStatus());
@@ -198,7 +198,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 			// recurringChargeInstance.setSubscriptionDate(subscriptionDate);
 			recurringChargeInstance.setTerminationDate(null);
 			recurringChargeInstance.setChargeDate(subscriptionDate);
-			recurringChargeInstanceService.update(recurringChargeInstance);
+			recurringChargeInstanceService.update(recurringChargeInstance, updater);
 		}
 	}
 

@@ -29,232 +29,186 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 
 /**
- * Generic interface that defines the methods to implement for every persistence
- * service.
+ * Generic interface that defines the methods to implement for every persistence service.
  * 
- * @param <E>
- *            Class that inherits from {@link BaseEntity}
+ * @param <E> Class that inherits from {@link BaseEntity}
  */
 public interface IPersistenceService<E extends IEntity> {
 
-	/**
-	 * Find an entity by its id.
-	 * 
-	 * @param id
-	 *            Id to find entity by.
-	 * @return Entity found.
-	 */
-	public E findById(Long id);
+    /**
+     * Find an entity by its id.
+     * 
+     * @param id Id to find entity by.
+     * @return Entity found.
+     */
+    public E findById(Long id);
 
-	/**
-	 * Find an entity by its id and fetch required fields.
-	 * 
-	 * @param id
-	 *            Id to find entity by.
-	 * @param fetchFields
-	 *            List of fields to fetch.
-	 * @return Entity found.
-	 */
-	public E findById(Long id, List<String> fetchFields);
+    /**
+     * Find an entity by its id and fetch required fields.
+     * 
+     * @param id Id to find entity by.
+     * @param fetchFields List of fields to fetch.
+     * @return Entity found.
+     */
+    public E findById(Long id, List<String> fetchFields);
 
-	/**
-	 * Find an entity by its id.
-	 * 
-	 * @param id
-	 *            Id to find entity by.
-	 * @param refresh
-	 *            Is entity refresh after load needed.
-	 * @return Entity found.
-	 */
-	public E findById(Long id, boolean refresh);
+    /**
+     * Find an entity by its id.
+     * 
+     * @param id Id to find entity by.
+     * @param refresh Is entity refresh after load needed.
+     * @return Entity found.
+     */
+    public E findById(Long id, boolean refresh);
 
-	/**
-	 * Find an entity by its id and fetch required fields.
-	 * 
-	 * @param id
-	 *            Id to find entity by.
-	 * @param fetchFields
-	 *            List of fields to fetch.
-	 * @param refresh
-	 *            Is entity refresh after load needed.
-	 * @return Entity found.
-	 */
-	public E findById(Long id, List<String> fetchFields, boolean refresh);
+    /**
+     * Find an entity by its id and fetch required fields.
+     * 
+     * @param id Id to find entity by.
+     * @param fetchFields List of fields to fetch.
+     * @param refresh Is entity refresh after load needed.
+     * @return Entity found.
+     */
+    public E findById(Long id, List<String> fetchFields, boolean refresh);
 
-	/**
-	 * Persist an entity
-	 * 
-	 * @param e
-	 *            Entity to persist.
-	 * 
-	 * @throws BusinessException
-	 */
-	public void create(E e) throws BusinessException;
+    /**
+     * Persist an entity.
+     * 
+     * @param e Entity to persist.
+     * @param updater User who performs entity persist.
+     * 
+     * @throws BusinessException
+     */
+    public void create(E e, User creator) throws BusinessException;
 
-	/**
-	 * Persist an entity.
-	 * 
-	 * @param e
-	 *            Entity to persist.
-	 * @param updater
-	 *            User who performs entity persist.
-	 * 
-	 * @throws BusinessException
-	 */
-	public void create(E e, User creator);
+    /**
+     * Update an entity.
+     * 
+     * @param e Entity to update.
+     * @param updater User who performs entity update.
+     * 
+     * @throws BusinessException
+     */
+    public E update(E e, User updater) throws BusinessException;
 
-	void create(E e, User creator, Provider provider);
+    /**
+     * Delete an entity.
+     * 
+     * @param id Entity id which has to be deleted.
+     * 
+     * @throws BusinessException
+     */
+    public void remove(Long id);
 
-	/**
-	 * Update an entity.
-	 * 
-	 * @param e
-	 *            Entity to update.
-	 * 
-	 * @throws BusinessException
-	 */
-	public E update(E e);
-
-	/**
-	 * Update an entity.
-	 * 
-	 * @param e
-	 *            Entity to update.
-	 * @param updater
-	 *            User who performs entity update.
-	 * 
-	 * @throws BusinessException
-	 */
-	public E update(E e, User updater);
-
-	/**
-	 * Delete an entity.
-	 * 
-	 * @param id
-	 *            Entity id which has to be deleted.
-	 * 
-	 * @throws BusinessException
-	 */
-	public void remove(Long id);
-
-	/**
-	 * Disable an entity.
-	 * 
-	 * @param id
-	 *            Entity id which has to be disabled.
-	 * 
-	 * @throws BusinessException
-	 */
-	public void disable(Long id);
-
-   /**
+    /**
      * Disable an entity.
      * 
-     * @param id
-     *            Entity to be disabled.
+     * @param id Entity id which has to be disabled.
+     * 
+     * @throws BusinessException
+     */
+    public void disable(Long id);
+
+    /**
+     * Disable an entity.
+     * 
+     * @param id Entity to be disabled.
      * 
      * @throws BusinessException
      */
     public E disable(E e);
-    
+
     /**
      * Enable an entity.
      * 
-     * @param id
-     *            Entity id which has to be enabled.
+     * @param id Entity id which has to be enabled.
      * 
      * @throws BusinessException
      */
     public void enable(Long id);
 
-   /**
+    /**
      * Enable an entity.
      * 
-     * @param id
-     *            Entity to be enabled.
+     * @param id Entity to be enabled.
      * 
      * @throws BusinessException
      */
     public E enable(E e);
-    
-	/**
-	 * Delete an entity.
-	 * 
-	 * @param e
-	 *            Entity to delete.
-	 * 
-	 * @throws BusinessException
-	 */
-	public void remove(E e);
 
-	/**
-	 * Delete list of entities by provided ids.
-	 * 
-	 * @param ids
-	 *            Entities ids to delete.
-	 * 
-	 * @throws BusinessException
-	 */
-	public void remove(Set<Long> ids);
+    /**
+     * Delete an entity.
+     * 
+     * @param e Entity to delete.
+     * 
+     * @throws BusinessException
+     */
+    public void remove(E e);
 
-	/**
-	 * The entity class which the persistence is managed by the persistence
-	 * service.
-	 * 
-	 * @return Entity class.
-	 */
-	public Class<E> getEntityClass();
+    /**
+     * Delete list of entities by provided ids.
+     * 
+     * @param ids Entities ids to delete.
+     * 
+     * @throws BusinessException
+     */
+    public void remove(Set<Long> ids);
 
-	/**
-	 * Load and return the complete list of the entities from database.
-	 * 
-	 * @return List of entities.
-	 */
-	public List<E> list();// ? extends E
+    /**
+     * The entity class which the persistence is managed by the persistence service.
+     * 
+     * @return Entity class.
+     */
+    public Class<E> getEntityClass();
+
+    /**
+     * Load and return the complete list of the entities from database.
+     * 
+     * @return List of entities.
+     */
+    public List<E> list();// ? extends E
 
     /**
      * Load and return the complete list of active entities from database.
      * 
      * @return List of entities.
-     */	
-	public List<E> listActive();
-	
-	/**
-	 * Load and return the list of the entities from database according to
-	 * sorting and paging information in {@link PaginationConfiguration} object.
-	 * 
-	 * @return List of entities.
-	 */
-	public List<E> list(PaginationConfiguration config); // ? extends E
+     */
+    public List<E> listActive();
 
-	/**
-	 * Count number of entities in database.
-	 * 
-	 * @return Number of entities.
-	 */
-	public long count();
+    /**
+     * Load and return the list of the entities from database according to sorting and paging information in {@link PaginationConfiguration} object.
+     * 
+     * @return List of entities.
+     */
+    public List<E> list(PaginationConfiguration config); // ? extends E
 
-	/**
-	 * Count number of filtered entities in database.
-	 * 
-	 * @return Number of filtered entities.
-	 */
-	public long count(PaginationConfiguration config);
+    /**
+     * Count number of entities in database.
+     * 
+     * @return Number of entities.
+     */
+    public long count();
 
-	/**
-	 * Detach an entity.
-	 * 
-	 * @param entity
-	 *            Entity which has to be detached.
-	 */
-	public void detach(E entity);
+    /**
+     * Count number of filtered entities in database.
+     * 
+     * @return Number of filtered entities.
+     */
+    public long count(PaginationConfiguration config);
 
-	public E attach(E e);
+    /**
+     * Detach an entity.
+     * 
+     * @param entity Entity which has to be detached.
+     */
+    public void detach(E entity);
 
-	/**
-	 * Refresh entity with state from database.
-	 */
-	public void refresh(E entity);
+    public E attach(E e);
+
+    /**
+     * Refresh entity with state from database.
+     */
+    public void refresh(E entity);
 
     /**
      * Refresh entity with state from database, or if it is not managed - retrieve it freshly from DB.
@@ -262,25 +216,25 @@ public interface IPersistenceService<E extends IEntity> {
      * @param entity Entity to refresh
      */
     public E refreshOrRetrieve(E entity);
-	
+
     /**
      * Refresh entity with state from database, or if it is not managed - retrieve it freshly from DB.
      * 
      * @param entities A list of entities to refresh
      */
     public List<E> refreshOrRetrieve(List<E> entities);
-    
-	public void commit();
 
-	public EntityManager getEntityManager();
+    public void commit();
 
-	E findByIdNoCheck(Long id);
+    public EntityManager getEntityManager();
 
-	E findByIdNoCheck(Long id, boolean refresh);
+    public E findByIdNoCheck(Long id);
 
-	E findByIdNoCheck(EntityManager em, Long id, boolean refresh);
+    public E findByIdNoCheck(Long id, boolean refresh);
 
-	E findById(Long id, Provider provider, boolean refresh);
+    public E findByIdNoCheck(EntityManager em, Long id, boolean refresh);
 
-	E findById(Long id, Provider provider);
+    public E findById(Long id, Provider provider, boolean refresh);
+
+    public E findById(Long id, Provider provider);
 }

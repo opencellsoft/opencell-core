@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.model.catalog.BusinessServiceModel;
 
 @XmlRootElement(name = "BusinessServiceModel")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -80,6 +81,27 @@ public class BusinessServiceModelDto extends BaseDto {
 		this.duplicatePricePlan = duplicatePricePlan;
 	}
 
+    /**
+     * Convert BusinessServiceModelDto to a BusinessServiceModel instance.
+     * 
+     * @param dto BusinessServiceModelDto object to convert
+     * @param bsmToUpdate BusinessServiceModel to update with values from dto, or if null create a new one
+     * @return A new or updated BusinessServiceModel instance
+     */
+    public static BusinessServiceModel fromDTO(BusinessServiceModelDto dto, BusinessServiceModel bsmToUpdate) {
+        BusinessServiceModel bsm = new BusinessServiceModel();
+        if (bsmToUpdate != null) {
+            bsm = bsmToUpdate;
+        }
+        bsm.setCode(dto.getCode());
+        bsm.setDescription(dto.getDescription());
+        bsm.setDuplicatePricePlan(dto.isDuplicatePricePlan());
+        bsm.setDuplicateService(dto.isDuplicateService());
+
+        return bsm;
+    }
+	
+	
 	@Override
 	public String toString() {
 		return "BusinessServiceModelDto [code=" + code + ", description=" + description + ", serviceTemplateCode=" + serviceTemplateCode + ", scriptCode=" + scriptCode

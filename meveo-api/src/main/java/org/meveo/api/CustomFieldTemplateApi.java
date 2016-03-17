@@ -6,6 +6,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomFieldMatrixColumnDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -35,7 +36,7 @@ public class CustomFieldTemplateApi extends BaseApi {
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
-    public void create(CustomFieldTemplateDto postData, String appliesTo, User currentUser) throws MeveoApiException {
+    public void create(CustomFieldTemplateDto postData, String appliesTo, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -76,11 +77,11 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         CustomFieldTemplate cft = fromDTO(postData, currentUser, appliesTo, null);
-        customFieldTemplateService.create(cft, currentUser, currentUser.getProvider());
+        customFieldTemplateService.create(cft, currentUser);
 
     }
 
-    public void update(CustomFieldTemplateDto postData, String appliesTo, User currentUser) throws MeveoApiException {
+    public void update(CustomFieldTemplateDto postData, String appliesTo, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -162,7 +163,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         return new CustomFieldTemplateDto(cft);
     }
 
-    public void createOrUpdate(CustomFieldTemplateDto postData, String appliesTo, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(CustomFieldTemplateDto postData, String appliesTo, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }

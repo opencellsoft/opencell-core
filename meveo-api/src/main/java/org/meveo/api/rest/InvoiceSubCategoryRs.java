@@ -27,56 +27,54 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface InvoiceSubCategoryRs extends IBaseRs {
 
-	/**
-	 * Create invoice sub category.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@POST
-	public ActionStatus create(InvoiceSubCategoryDto postData);
+    /**
+     * Create invoice sub category.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @POST
+    public ActionStatus create(InvoiceSubCategoryDto postData);
 
-	/**
-	 * Update invoice sub category.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@PUT
-	public ActionStatus update(InvoiceSubCategoryDto postData);
+    /**
+     * Update invoice sub category.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @PUT
+    public ActionStatus update(InvoiceSubCategoryDto postData);
 
-	/**
-	 * Create or update invoice sub category.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@POST
-	public ActionStatus createOrUpdate(InvoiceSubCategoryDto postData);
-	
-	/**
-	 * Search for invoice sub category with a given code.
-	 * 
-	 * @param invoiceSubCategoryCode
-	 * @return
-	 */
-	@Path("/")
-	@GET
-	public GetInvoiceSubCategoryResponse find(
-			@QueryParam("invoiceSubCategoryCode") String invoiceSubCategoryCode);
+    /**
+     * Create or update invoice sub category.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @POST
+    public ActionStatus createOrUpdate(InvoiceSubCategoryDto postData);
 
-	/**
-	 * Remove invoice sub category with a given code.
-	 * 
-	 * @param invoiceSubCategoryCode
-	 * @return
-	 */
-	@Path("/{invoiceSubCategoryCode}")
-	@DELETE
-	public ActionStatus remove(
-			@PathParam("invoiceSubCategoryCode") String invoiceSubCategoryCode);
+    /**
+     * Search for invoice sub category with a given code.
+     * 
+     * @param invoiceSubCategoryCode
+     * @return
+     */
+    @Path("/")
+    @GET
+    public GetInvoiceSubCategoryResponse find(@QueryParam("invoiceSubCategoryCode") String invoiceSubCategoryCode);
+
+    /**
+     * Remove invoice sub category with a given code.
+     * 
+     * @param invoiceSubCategoryCode
+     * @return
+     */
+    @Path("/{invoiceSubCategoryCode}")
+    @DELETE
+    public ActionStatus remove(@PathParam("invoiceSubCategoryCode") String invoiceSubCategoryCode);
 
 }

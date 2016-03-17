@@ -3,6 +3,7 @@ package org.meveo.api.notification;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.notification.EmailNotificationDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -35,7 +36,7 @@ public class EmailNotificationApi extends BaseApi {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    public void create(EmailNotificationDto postData, User currentUser) throws MeveoApiException {
+    public void create(EmailNotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -93,7 +94,7 @@ public class EmailNotificationApi extends BaseApi {
         notif.setBody(postData.getBody());
         notif.setHtmlBody(postData.getHtmlBody());
 
-        emailNotificationService.create(notif, currentUser, currentUser.getProvider());
+        emailNotificationService.create(notif, currentUser);
     }
 
     public EmailNotificationDto find(String notificationCode, Provider provider) throws MeveoApiException {
@@ -116,7 +117,7 @@ public class EmailNotificationApi extends BaseApi {
         return result;
     }
 
-    public void update(EmailNotificationDto postData, User currentUser) throws MeveoApiException {
+    public void update(EmailNotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -191,7 +192,7 @@ public class EmailNotificationApi extends BaseApi {
         }
     }
 
-    public void createOrUpdate(EmailNotificationDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(EmailNotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (emailNotificationService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             create(postData, currentUser);
         } else {

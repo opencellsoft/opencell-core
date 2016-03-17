@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -101,8 +102,9 @@ public class EdrService extends PersistenceService<EDR> {
         return result;
     }
 
-	public void create(EDR edr, User user, Provider provider) {
-		super.create(edr, user, provider);
+    @Override
+	public void create(EDR edr, User user) throws BusinessException {
+		super.create(edr, user);
 		if (useInMemoryDeduplication) {
 		    cdrEdrProcessingCacheContainerProvider.addEdrToCache(edr);
 		}

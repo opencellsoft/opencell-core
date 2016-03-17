@@ -31,7 +31,7 @@ public class ServiceModelScriptService extends CustomScriptService<ServiceModelS
 	private ResourceBundle resourceMessages;
 
 	@Override
-	public void create(ServiceModelScript serviceModelScript, User creator, Provider provider) {
+	public void create(ServiceModelScript serviceModelScript, User creator) throws BusinessException {
 		String packageName = getPackageName(serviceModelScript.getScript());
 		String className = getClassName(serviceModelScript.getScript());
 		if (packageName == null || className == null) {
@@ -39,11 +39,11 @@ public class ServiceModelScriptService extends CustomScriptService<ServiceModelS
 		}
 		serviceModelScript.setCode(packageName + "." + className);
 
-		super.create(serviceModelScript, creator, provider);
+		super.create(serviceModelScript, creator);
 	}
 
 	@Override
-	public ServiceModelScript update(ServiceModelScript serviceModelScript, User updater) {
+	public ServiceModelScript update(ServiceModelScript serviceModelScript, User updater) throws BusinessException {
 
 		String packageName = getPackageName(serviceModelScript.getScript());
 		String className = getClassName(serviceModelScript.getScript());
@@ -100,10 +100,10 @@ public class ServiceModelScriptService extends CustomScriptService<ServiceModelS
 	 *             Any execution exception
 	 */
 	@Override
-	public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser,
-			Provider currentProvider) throws ElementNotFoundException, InvalidScriptException,
+	public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser
+			) throws ElementNotFoundException, InvalidScriptException,
 			InvalidPermissionException, BusinessException {
-		return super.execute(scriptCode, context, currentUser, currentProvider);
+		return super.execute(scriptCode, context, currentUser);
 	}
 	
 	public String getDerivedCode(String script) {

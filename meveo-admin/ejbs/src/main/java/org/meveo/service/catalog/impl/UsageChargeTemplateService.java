@@ -22,6 +22,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
@@ -41,12 +42,14 @@ public class UsageChargeTemplateService extends
     @Inject
     private RatingCacheContainerProvider ratingCacheContainerProvider;
 
-	public void create(UsageChargeTemplate e, User creator, Provider provider) {
-		super.create(e, creator, provider);
+    @Override
+	public void create(UsageChargeTemplate e, User creator) throws BusinessException {
+		super.create(e, creator);
 		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(e);
 	}
 
-	public UsageChargeTemplate update(UsageChargeTemplate e, User updater) {
+    @Override
+	public UsageChargeTemplate update(UsageChargeTemplate e, User updater) throws BusinessException {
 		e = super.update(e, updater);
 		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(e);
 		return e;

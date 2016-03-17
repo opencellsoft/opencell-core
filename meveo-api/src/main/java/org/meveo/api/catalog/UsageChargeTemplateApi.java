@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.LanguageDescriptionDto;
@@ -47,7 +48,7 @@ public class UsageChargeTemplateApi extends BaseApi {
     @Inject
     private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
-    public void create(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void create(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         validate(postData);
 
@@ -133,7 +134,7 @@ public class UsageChargeTemplateApi extends BaseApi {
             chargeTemplate.setEdrTemplates(edrTemplates);
         }
 
-        usageChargeTemplateService.create(chargeTemplate, currentUser, provider);
+        usageChargeTemplateService.create(chargeTemplate, currentUser);
 
         // populate customFields
         try {
@@ -148,12 +149,12 @@ public class UsageChargeTemplateApi extends BaseApi {
             for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
                 CatMessages catMessages = new CatMessages(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(), ld.getDescription());
 
-                catMessagesService.create(catMessages, currentUser, provider);
+                catMessagesService.create(catMessages, currentUser);
             }
         }
     }
 
-    public void update(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void update(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         validate(postData);
 
@@ -250,7 +251,7 @@ public class UsageChargeTemplateApi extends BaseApi {
                     } else {
                         CatMessages catMessages = new CatMessages(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(),
                             ld.getDescription());
-                        catMessagesService.create(catMessages, currentUser, provider);
+                        catMessagesService.create(catMessages, currentUser);
                     }
                 }
             }
@@ -328,7 +329,7 @@ public class UsageChargeTemplateApi extends BaseApi {
         usageChargeTemplateService.remove(chargeTemplate);
     }
 
-    public void createOrUpdate(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (usageChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             create(postData, currentUser);

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.dwh.BarChartDto;
 import org.meveo.api.dto.dwh.ChartDto;
@@ -49,7 +50,7 @@ public class ChartApi extends BaseApi {
     @Inject
     private ChartService<Chart> chartService;
 
-    public void create(ChartDto postData, User currentUser) throws MeveoApiException {
+    public void create(ChartDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -75,24 +76,24 @@ public class ChartApi extends BaseApi {
         if (postData instanceof PieChartDto) {
             PieChart pieChart = fromDTO((PieChartDto) postData, currentUser, null);
             pieChart.setMeasurableQuantity(measurableQuantity);
-            pieChartService.create(pieChart, currentUser, currentUser.getProvider());
+            pieChartService.create(pieChart, currentUser);
 
         } else if (postData instanceof LineChartDto) {
             LineChart lineChart = fromDTO((LineChartDto) postData, currentUser, null);
             lineChart.setMeasurableQuantity(measurableQuantity);
-            lineChartService.create(lineChart, currentUser, currentUser.getProvider());
+            lineChartService.create(lineChart, currentUser);
 
         } else if (postData instanceof BarChartDto) {
             BarChart barChart = fromDTO((BarChartDto) postData, currentUser, null);
             barChart.setMeasurableQuantity(measurableQuantity);
-            barChartService.create(barChart, currentUser, currentUser.getProvider());
+            barChartService.create(barChart, currentUser);
             
         } else {
         	throw new InvalidParameterException();
         }
     }
 
-    public void update(ChartDto postData, User currentUser) throws MeveoApiException {
+    public void update(ChartDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -167,7 +168,7 @@ public class ChartApi extends BaseApi {
         chartService.remove(chart);
     }
 
-    public void createOrUpdate(ChartDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(ChartDto postData, User currentUser) throws MeveoApiException, BusinessException {
         Chart chart = chartService.findByCode(postData.getCode(), currentUser.getProvider());
         if (chart == null) {
             // create
@@ -202,7 +203,7 @@ public class ChartApi extends BaseApi {
         return chartDtos;
     }
 
-    private PieChart fromDTO(PieChartDto dto, User currentUser, PieChart chartToUpdate) throws MeveoApiException {
+    private PieChart fromDTO(PieChartDto dto, User currentUser, PieChart chartToUpdate) throws MeveoApiException, BusinessException {
 
         PieChart chart = new PieChart();
         if (chartToUpdate != null) {
@@ -223,7 +224,7 @@ public class ChartApi extends BaseApi {
         return chart;
     }
 
-    private LineChart fromDTO(LineChartDto dto, User currentUser, LineChart chartToUpdate) throws MeveoApiException {
+    private LineChart fromDTO(LineChartDto dto, User currentUser, LineChart chartToUpdate) throws MeveoApiException, BusinessException {
 
         LineChart chart = new LineChart();
         if (chartToUpdate != null) {
@@ -255,7 +256,7 @@ public class ChartApi extends BaseApi {
         return chart;
     }
 
-    private BarChart fromDTO(BarChartDto dto, User currentUser, BarChart chartToUpdate) throws MeveoApiException {
+    private BarChart fromDTO(BarChartDto dto, User currentUser, BarChart chartToUpdate) throws MeveoApiException, BusinessException {
 
         BarChart chart = new BarChart();
         if (chartToUpdate != null) {
@@ -285,7 +286,7 @@ public class ChartApi extends BaseApi {
         return chart;
     }
 
-    private void populateChartFromDto(ChartDto dto, User currentUser, Chart chartToUpdate) throws MeveoApiException {
+    private void populateChartFromDto(ChartDto dto, User currentUser, Chart chartToUpdate) throws MeveoApiException, BusinessException {
 
         chartToUpdate.setCode(dto.getCode());
         chartToUpdate.setDescription(dto.getDescription());

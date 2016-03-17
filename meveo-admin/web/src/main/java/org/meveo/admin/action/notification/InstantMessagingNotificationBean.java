@@ -39,126 +39,118 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
 /**
- * Standard backing bean for {@link InstantMessagingNotification} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link InstantMessagingNotification} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in
+ * datatable, their create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
-public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingNotification>{
+public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingNotification> {
 
-
-	private static final long serialVersionUID = 6473465285480945644L;
-
-	@Inject
-	InstantMessagingNotificationService imNotificationService;
-	
-	@Inject
-	UserService userService;
-	
-	@Inject
-	ScriptInstanceService scriptInstanceService;	
-	
-	private StrategyImportTypeEnum strategyImportType;
+    private static final long serialVersionUID = 6473465285480945644L;
 
     @Inject
-    CounterTemplateService counterTemplateService;
-    
-    ParamBean paramBean=ParamBean.getInstance();
+    InstantMessagingNotificationService imNotificationService;
+
+    @Inject
+    UserService userService;
+
+    @Inject
+    ScriptInstanceService scriptInstanceService;
+
+    private StrategyImportTypeEnum strategyImportType;
+
+    @Inject
+    CounterTemplateService<? extends CounterTemplate> counterTemplateService;
+
+    ParamBean paramBean = ParamBean.getInstance();
     CsvBuilder csv = null;
-	private String providerDir=paramBean.getProperty("providers.rootDir","/tmp/meveo_integr");
-	private String existingEntitiesCsvFile=null;
-    
-	CsvReader csvReader = null;
-    private UploadedFile file; 
-    
-    private static final int CODE= 0;
-    private static final int CLASS_NAME_FILTER= 1;
-    private static final int EVENT_TYPE_FILTER= 2; 
-    private static final int EL_FILTER= 3;
-    private static final int SCRIPT_INSTANCE_CODE= 5;
-    private static final int ACTIVE= 4; 
-    private static final int IM_PROVIDER= 6;
-    private static final int IM_IDENTIFIER_EL= 7;
-    private static final int IM_IDENTIFIER_LIST= 8;
-    private static final int USERS_LIST= 9;
-    private static final int MESSAGE= 10;
-    private static final int COUNTER_TEMPLATE= 11;
+    private String providerDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo_integr");
+    private String existingEntitiesCsvFile = null;
 
+    CsvReader csvReader = null;
+    private UploadedFile file;
 
-	
+    private static final int CODE = 0;
+    private static final int CLASS_NAME_FILTER = 1;
+    private static final int EVENT_TYPE_FILTER = 2;
+    private static final int EL_FILTER = 3;
+    private static final int SCRIPT_INSTANCE_CODE = 5;
+    private static final int ACTIVE = 4;
+    private static final int IM_PROVIDER = 6;
+    private static final int IM_IDENTIFIER_EL = 7;
+    private static final int IM_IDENTIFIER_LIST = 8;
+    private static final int USERS_LIST = 9;
+    private static final int MESSAGE = 10;
+    private static final int COUNTER_TEMPLATE = 11;
 
-	public InstantMessagingNotificationBean(){
-		super(InstantMessagingNotification.class);
-	}
-	
-	@Override
-	protected IPersistenceService<InstantMessagingNotification> getPersistenceService() {
-		return imNotificationService;
-	}
+    public InstantMessagingNotificationBean() {
+        super(InstantMessagingNotification.class);
+    }
 
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
+    @Override
+    protected IPersistenceService<InstantMessagingNotification> getPersistenceService() {
+        return imNotificationService;
+    }
 
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-	
+    @Override
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("provider");
+    }
 
-	public void exportToFile() throws Exception {
-		CsvBuilder csv = new CsvBuilder();
-		csv.appendValue("Code");
-		csv.appendValue("Classename filter");
-		csv.appendValue("Event type filter");
-		csv.appendValue("El filter");
-		csv.appendValue("Script instance code");
-		csv.appendValue("Active");
-		csv.appendValue("IM provider");
-		csv.appendValue("IM identifier EL");
-		csv.appendValue("IM identifiers list");
-		csv.appendValue("Users list");
-		csv.appendValue("Message");
-		csv.appendValue("Counter template");
-		csv.startNewLine();
-		for (InstantMessagingNotification imNotification : imNotificationService.list()) {
-			csv.appendValue(imNotification.getCode());
-			csv.appendValue(imNotification.getClassNameFilter());
-			csv.appendValue(imNotification.getEventTypeFilter() + "");
-			csv.appendValue(imNotification.getElFilter());
-			csv.appendValue((imNotification.getScriptInstance()==null?"":imNotification.getScriptInstance().getCode()));
-			csv.appendValue(imNotification.isDisabled() + "");
-			csv.appendValue(imNotification.getImProvider() + "");
-			csv.appendValue(imNotification.getIdEl());
+    @Override
+    protected List<String> getListFieldsToFetch() {
+        return Arrays.asList("provider");
+    }
 
-			String sep = "";
-			StringBuffer ids = new StringBuffer();
-			for (String id : imNotification.getIds()) {
-				ids.append(sep).append(id);
-				sep = ",";
-			}
+    public void exportToFile() throws Exception {
+        CsvBuilder csv = new CsvBuilder();
+        csv.appendValue("Code");
+        csv.appendValue("Classename filter");
+        csv.appendValue("Event type filter");
+        csv.appendValue("El filter");
+        csv.appendValue("Script instance code");
+        csv.appendValue("Active");
+        csv.appendValue("IM provider");
+        csv.appendValue("IM identifier EL");
+        csv.appendValue("IM identifiers list");
+        csv.appendValue("Users list");
+        csv.appendValue("Message");
+        csv.appendValue("Counter template");
+        csv.startNewLine();
+        for (InstantMessagingNotification imNotification : imNotificationService.list()) {
+            csv.appendValue(imNotification.getCode());
+            csv.appendValue(imNotification.getClassNameFilter());
+            csv.appendValue(imNotification.getEventTypeFilter() + "");
+            csv.appendValue(imNotification.getElFilter());
+            csv.appendValue((imNotification.getScriptInstance() == null ? "" : imNotification.getScriptInstance().getCode()));
+            csv.appendValue(imNotification.isDisabled() + "");
+            csv.appendValue(imNotification.getImProvider() + "");
+            csv.appendValue(imNotification.getIdEl());
 
-			csv.appendValue(ids.toString());
+            String sep = "";
+            StringBuffer ids = new StringBuffer();
+            for (String id : imNotification.getIds()) {
+                ids.append(sep).append(id);
+                sep = ",";
+            }
 
-			String sepUser = "";
-			StringBuffer users = new StringBuffer();
-			for (User user : imNotification.getUsers()) {
-				users.append(sepUser).append(user.getId());
-				sepUser = ",";
-			}
-			csv.appendValue(users.toString());
-			csv.appendValue(imNotification.getMessage());
-			csv.appendValue(imNotification.getCounterTemplate()!=null?  imNotification.getCounterTemplate().getCode(): null);
-			csv.startNewLine();
-		}
-		
-		InputStream inputStream = new ByteArrayInputStream(csv.toString()
-				.getBytes());
-		csv.download(inputStream, "InstantMessagingNotification.csv");
-	}
+            csv.appendValue(ids.toString());
+
+            String sepUser = "";
+            StringBuffer users = new StringBuffer();
+            for (User user : imNotification.getUsers()) {
+                users.append(sepUser).append(user.getId());
+                sepUser = ",";
+            }
+            csv.appendValue(users.toString());
+            csv.appendValue(imNotification.getMessage());
+            csv.appendValue(imNotification.getCounterTemplate() != null ? imNotification.getCounterTemplate().getCode() : null);
+            csv.startNewLine();
+        }
+
+        InputStream inputStream = new ByteArrayInputStream(csv.toString().getBytes());
+        csv.download(inputStream, "InstantMessagingNotification.csv");
+    }
 
     public void handleFileUpload(FileUploadEvent event) throws Exception {
         try {
@@ -198,9 +190,9 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
                 instMessNotif.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
                 instMessNotif.setElFilter(values[EL_FILTER]);
                 if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
-                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider()); 
+                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider());
                     instMessNotif.setScriptInstance(scriptInstance);
-                } 
+                }
                 instMessNotif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
                 instMessNotif.setImProvider(InstantMessagingProviderEnum.valueOf(values[IM_PROVIDER]));
                 instMessNotif.setIdEl(values[IM_IDENTIFIER_EL]);
@@ -236,7 +228,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
                     CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
                     instMessNotif.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
                 }
-                imNotificationService.create(instMessNotif);
+                imNotificationService.create(instMessNotif, getCurrentUser());
             }
         }
         if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
@@ -244,98 +236,89 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
         }
     }
 
-	public void checkSelectedStrategy(String[] values,
-			InstantMessagingNotification existingEntity,boolean isEntityAlreadyExist)
-			throws RejectedImportException {
-		if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
-			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
-			existingEntity.setEventTypeFilter(NotificationEventTypeEnum
-					.valueOf(values[EVENT_TYPE_FILTER]));
-			existingEntity.setElFilter(values[EL_FILTER]);
+    public void checkSelectedStrategy(String[] values, InstantMessagingNotification existingEntity, boolean isEntityAlreadyExist) throws BusinessException {
+        if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
+            existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
+            existingEntity.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
+            existingEntity.setElFilter(values[EL_FILTER]);
             if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
-                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider()); 
+                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider());
                 existingEntity.setScriptInstance(scriptInstance);
-            } 
-			existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
-			existingEntity.setImProvider(InstantMessagingProviderEnum
-					.valueOf(values[IM_PROVIDER]));
-			existingEntity.setIdEl(values[IM_IDENTIFIER_EL]);
-			String identifiers = values[IM_IDENTIFIER_LIST];
-			if (!StringUtils.isBlank(identifiers)) {
-				String[] ids = identifiers.split(",");
-				List<String> idList = Arrays.asList(ids);
-				for (String id : idList) {
-					if (existingEntity.getIds() == null) {
-						existingEntity.setIds(new HashSet<String>());
-					}
-					existingEntity.getIds().add(id);
-				}
-			}
-			String users = values[USERS_LIST];
-			if (!StringUtils.isBlank(users)) {
-				String[] userIds = users.split(",");
-				List<String> userIdList = Arrays.asList(userIds);
-				User user = null;
-				for (String id : userIdList) {
-					user = userService.findById(Long.valueOf(id));
-					if (user != null) {
-						if (existingEntity.getUsers() == null) {
-							existingEntity.setUsers(new HashSet<User>());
-						}
-						existingEntity.getUsers().add(user);
-					}}}
-			existingEntity.setMessage(values[MESSAGE]);
-			if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
-				CounterTemplate counterTemplate = counterTemplateService
-						.findByCode(values[COUNTER_TEMPLATE],
-								getCurrentProvider());
-				existingEntity
-						.setCounterTemplate(counterTemplate != null ? counterTemplate
-								: null);
-			}
-			imNotificationService.update(existingEntity);
-		}
-		else if (strategyImportType
-				.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
-			throw new RejectedImportException("notification.rejectImport");
-			}
-		else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
-			if(!isEntityAlreadyExist){		
-				csv.appendValue("Code");
-				csv.appendValue("Classename filter");
-				csv.appendValue("Event type filter");
-				csv.appendValue("El filter");
-				csv.appendValue("Script instance code");
-				csv.appendValue("Active");
-				csv.appendValue("IM provider");
-				csv.appendValue("IM identifier EL");
-				csv.appendValue("IM identifiers list");
-				csv.appendValue("Users list");
-				csv.appendValue("Message");
-				csv.appendValue("Counter template");	
-			}
-			csv.startNewLine();
-		    csv.appendValue(values[CODE]);
-		    csv.appendValue(values[CLASS_NAME_FILTER]);
-		    csv.appendValue(values[EVENT_TYPE_FILTER]);
-		    csv.appendValue(values[EL_FILTER]);
-		    csv.appendValue(values[SCRIPT_INSTANCE_CODE]);
-		    csv.appendValue(values[ACTIVE]);
-		    csv.appendValue(values[IM_PROVIDER]);
-		    csv.appendValue(values[IM_IDENTIFIER_EL]);
-		    csv.appendValue(values[IM_IDENTIFIER_LIST]);
-		    csv.appendValue(values[USERS_LIST]);
-		    csv.appendValue(values[MESSAGE]);
-		    csv.appendValue(values[COUNTER_TEMPLATE]);
-		}
+            }
+            existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
+            existingEntity.setImProvider(InstantMessagingProviderEnum.valueOf(values[IM_PROVIDER]));
+            existingEntity.setIdEl(values[IM_IDENTIFIER_EL]);
+            String identifiers = values[IM_IDENTIFIER_LIST];
+            if (!StringUtils.isBlank(identifiers)) {
+                String[] ids = identifiers.split(",");
+                List<String> idList = Arrays.asList(ids);
+                for (String id : idList) {
+                    if (existingEntity.getIds() == null) {
+                        existingEntity.setIds(new HashSet<String>());
+                    }
+                    existingEntity.getIds().add(id);
+                }
+            }
+            String users = values[USERS_LIST];
+            if (!StringUtils.isBlank(users)) {
+                String[] userIds = users.split(",");
+                List<String> userIdList = Arrays.asList(userIds);
+                User user = null;
+                for (String id : userIdList) {
+                    user = userService.findById(Long.valueOf(id));
+                    if (user != null) {
+                        if (existingEntity.getUsers() == null) {
+                            existingEntity.setUsers(new HashSet<User>());
+                        }
+                        existingEntity.getUsers().add(user);
+                    }
+                }
+            }
+            existingEntity.setMessage(values[MESSAGE]);
+            if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
+                CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
+                existingEntity.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
+            }
+            imNotificationService.update(existingEntity, getCurrentUser());
+        } else if (strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
+            throw new RejectedImportException("notification.rejectImport");
+        } else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
+            if (!isEntityAlreadyExist) {
+                csv.appendValue("Code");
+                csv.appendValue("Classename filter");
+                csv.appendValue("Event type filter");
+                csv.appendValue("El filter");
+                csv.appendValue("Script instance code");
+                csv.appendValue("Active");
+                csv.appendValue("IM provider");
+                csv.appendValue("IM identifier EL");
+                csv.appendValue("IM identifiers list");
+                csv.appendValue("Users list");
+                csv.appendValue("Message");
+                csv.appendValue("Counter template");
+            }
+            csv.startNewLine();
+            csv.appendValue(values[CODE]);
+            csv.appendValue(values[CLASS_NAME_FILTER]);
+            csv.appendValue(values[EVENT_TYPE_FILTER]);
+            csv.appendValue(values[EL_FILTER]);
+            csv.appendValue(values[SCRIPT_INSTANCE_CODE]);
+            csv.appendValue(values[ACTIVE]);
+            csv.appendValue(values[IM_PROVIDER]);
+            csv.appendValue(values[IM_IDENTIFIER_EL]);
+            csv.appendValue(values[IM_IDENTIFIER_LIST]);
+            csv.appendValue(values[USERS_LIST]);
+            csv.appendValue(values[MESSAGE]);
+            csv.appendValue(values[COUNTER_TEMPLATE]);
+        }
 
-	}
+    }
 
-	public StrategyImportTypeEnum getStrategyImportType() {
-		return strategyImportType;
-	}
+    public StrategyImportTypeEnum getStrategyImportType() {
+        return strategyImportType;
+    }
 
-	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
-		this.strategyImportType = strategyImportType;
-	}
+    public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
+        this.strategyImportType = strategyImportType;
+    }
 }

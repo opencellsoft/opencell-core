@@ -20,29 +20,29 @@ import org.meveo.api.rest.security.RSSecured;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured
 public interface TerminationReasonRs extends IBaseRs {
-	
-	@Path("/")
-	@POST
-	ActionStatus create(TerminationReasonDto postData);
-	
-	@Path("/")
-	@PUT
-	ActionStatus update(TerminationReasonDto postData);
-	
-	@Path("/createOrUpdate")
-	@POST
-	ActionStatus createOrUpdate(TerminationReasonDto postData);
-	
-	@Path("/")
-	@DELETE
-	ActionStatus remove(@QueryParam("terminationReasonCode") String code);
-	
-	@Path("/")
-	@GET
-	GetTerminationReasonResponse find(@QueryParam("terminationReasonCode") String code);
-	
-	@Path("/list")
-	@GET
-	GetTerminationReasonResponse list();
-	
+
+    @Path("/")
+    @POST
+    ActionStatus create(TerminationReasonDto postData);
+
+    @Path("/")
+    @PUT
+    ActionStatus update(TerminationReasonDto postData);
+
+    @Path("/createOrUpdate")
+    @POST
+    ActionStatus createOrUpdate(TerminationReasonDto postData);
+
+    @Path("/")
+    @DELETE
+    ActionStatus remove(@QueryParam("terminationReasonCode") String code);
+
+    @Path("/")
+    @GET
+    GetTerminationReasonResponse find(@QueryParam("terminationReasonCode") String code);
+
+    @Path("/list")
+    @GET
+    GetTerminationReasonResponse list();
+
 }

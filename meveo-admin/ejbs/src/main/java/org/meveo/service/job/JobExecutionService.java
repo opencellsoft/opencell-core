@@ -72,7 +72,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 			}
 			if (persistResult) {
 				if (entity.isTransient()) {
-					create(entity, currentUser, currentUser.getProvider());
+					create(entity, currentUser);
 				} else {
 					// search for job execution result
 					JobExecutionResultImpl updateEntity = findById(result.getId());

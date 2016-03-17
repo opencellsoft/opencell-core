@@ -6,10 +6,12 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.EntityActionScriptDto;
 import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.ScriptInstanceDto;
 import org.meveo.api.dto.ScriptInstanceErrorDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -53,9 +55,9 @@ public class ScriptInstanceApi extends BaseApi {
         ScriptInstance scriptInstance = scriptInstanceFromDTO(scriptInstanceDto, null, currentUser);
 
         try {
-            scriptInstanceService.create(scriptInstance, currentUser, currentUser.getProvider());
-        } catch (Exception e) {
-            throw new MeveoApiException(e.getMessage());
+            scriptInstanceService.create(scriptInstance, currentUser);
+        } catch (BusinessException e) {
+            throw new BusinessApiException(e.getMessage());
         }
 
         if (scriptInstance != null && scriptInstance.isError() != null && scriptInstance.isError().booleanValue()) {
@@ -79,9 +81,9 @@ public class ScriptInstanceApi extends BaseApi {
         EntityActionScript scriptInstance = entityActionScriptFromDTO(scriptDto, null, currentUser);
 
         try {
-            entityActionScriptService.create(scriptInstance, currentUser, currentUser.getProvider());
-        } catch (Exception e) {
-            throw new MeveoApiException(e.getMessage());
+            entityActionScriptService.create(scriptInstance, currentUser);
+        } catch (BusinessException e) {
+            throw new BusinessApiException(e.getMessage());
         }
 
         if (scriptInstance != null && scriptInstance.isError() != null && scriptInstance.isError().booleanValue()) {
@@ -220,8 +222,7 @@ public class ScriptInstanceApi extends BaseApi {
         entityActionScriptService.remove(scriptInstance);
     }
 
-    public List<ScriptInstanceErrorDto> createOrUpdate(ScriptInstanceDto postData, User currentUser) throws MissingParameterException, EntityAlreadyExistsException,
-            EntityDoesNotExistsException, MeveoApiException {
+    public List<ScriptInstanceErrorDto> createOrUpdate(ScriptInstanceDto postData, User currentUser) throws MeveoApiException {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         checkDtoAndUpdateCode(postData);
@@ -255,7 +256,7 @@ public class ScriptInstanceApi extends BaseApi {
         return result;
     }
 
-    private void checkDtoAndUpdateCode(ScriptInstanceDto dto) throws MeveoApiException {
+    private void checkDtoAndUpdateCode(ScriptInstanceDto dto) throws BusinessApiException, MissingParameterException {
         if (dto == null) {
             missingParameters.add("scriptInstanceDto");
             handleMissingParameters();
@@ -270,12 +271,12 @@ public class ScriptInstanceApi extends BaseApi {
         String className = scriptInstanceService.getClassName(dto.getScript());
         String scriptCode = packageName + "." + className;
         if (!StringUtils.isBlank(dto.getCode()) && !dto.getCode().equals(scriptCode)) {
-            throw new MeveoApiException("The code and the canonical script class name must be identical");
+            throw new BusinessApiException("The code and the canonical script class name must be identical");
         }
         dto.setCode(scriptCode);
     }
 
-    private void checkDtoAndSetAppliesTo(EntityActionScriptDto dto, String appliesTo) throws MeveoApiException {
+    private void checkDtoAndSetAppliesTo(EntityActionScriptDto dto, String appliesTo) throws MissingParameterException  {
         if (dto == null) {
             missingParameters.add("entityActionScriptDto");
             handleMissingParameters();

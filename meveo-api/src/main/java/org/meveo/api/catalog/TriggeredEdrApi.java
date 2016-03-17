@@ -3,6 +3,7 @@ package org.meveo.api.catalog;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -23,7 +24,7 @@ public class TriggeredEdrApi extends BaseApi {
     @Inject
     private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
-    public void create(TriggeredEdrTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void create(TriggeredEdrTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getQuantityEl())) {
             if (triggeredEDRTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
                 throw new EntityAlreadyExistsException(TriggeredEDRTemplate.class, postData.getCode());
@@ -40,7 +41,7 @@ public class TriggeredEdrApi extends BaseApi {
             edrTemplate.setParam3El(postData.getParam3El());
             edrTemplate.setParam4El(postData.getParam4El());
 
-            triggeredEDRTemplateService.create(edrTemplate, currentUser, currentUser.getProvider());
+            triggeredEDRTemplateService.create(edrTemplate, currentUser);
         } else {
             if (StringUtils.isBlank(postData.getCode())) {
                 missingParameters.add("code");
@@ -53,7 +54,7 @@ public class TriggeredEdrApi extends BaseApi {
         }
     }
 
-    public void update(TriggeredEdrTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void update(TriggeredEdrTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getQuantityEl())) {
             TriggeredEDRTemplate edrTemplate = triggeredEDRTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
             if (edrTemplate == null) {
@@ -112,7 +113,7 @@ public class TriggeredEdrApi extends BaseApi {
         return edrTemplateDto;
     }
 
-    public void createOrUpdate(TriggeredEdrTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(TriggeredEdrTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (triggeredEDRTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             create(postData, currentUser);
         } else {

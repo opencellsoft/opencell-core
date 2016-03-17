@@ -26,58 +26,57 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface CalendarRs extends IBaseRs {
 
-	/**
-	 * Create calendar.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@POST
-	public ActionStatus create(CalendarDto postData);
+    /**
+     * Create calendar.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @POST
+    public ActionStatus create(CalendarDto postData);
 
-	/**
-	 * Update calendar.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@PUT
-	public ActionStatus update(CalendarDto postData);
+    /**
+     * Update calendar.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @PUT
+    public ActionStatus update(CalendarDto postData);
 
-	/**
-	 * Search for calendar with a given code.
-	 * 
-	 * @param calendarCode
-	 * @return
-	 */
-	@Path("/")
-	@GET
-	public GetCalendarResponse find(@QueryParam("calendarCode") String calendarCode);
+    /**
+     * Search for calendar with a given code.
+     * 
+     * @param calendarCode
+     * @return
+     */
+    @Path("/")
+    @GET
+    public GetCalendarResponse find(@QueryParam("calendarCode") String calendarCode);
 
-	/**
-	 * Retrieve a list of all calendars.
-	 * 
-	 * @return 
-	 */
-	@Path("/list")
-	@GET
-	public ListCalendarResponse list();
-	
-	/**
-	 * Remove calendar with a given code.
-	 * 
-	 * @param calendarCode
-	 * @return
-	 */
-	@Path("/{calendarCode}")
-	@DELETE
-	public ActionStatus remove(@PathParam("calendarCode") String calendarCode);
-	
-	
-	@Path("/createOrUpdate")
-	@POST
-	public ActionStatus createOrUpdate(CalendarDto postData);
+    /**
+     * Retrieve a list of all calendars.
+     * 
+     * @return
+     */
+    @Path("/list")
+    @GET
+    public ListCalendarResponse list();
+
+    /**
+     * Remove calendar with a given code.
+     * 
+     * @param calendarCode
+     * @return
+     */
+    @Path("/{calendarCode}")
+    @DELETE
+    public ActionStatus remove(@PathParam("calendarCode") String calendarCode);
+
+    @Path("/createOrUpdate")
+    @POST
+    public ActionStatus createOrUpdate(CalendarDto postData);
 
 }

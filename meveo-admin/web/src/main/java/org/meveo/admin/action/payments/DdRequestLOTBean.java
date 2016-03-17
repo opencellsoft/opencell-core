@@ -94,8 +94,7 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.FILE);
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setDdrequestLOT(entity);
-			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser(),
-					getCurrentProvider());
+			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser());
 			messages.info(new BundleKey("messages",
 					"ddrequestLot.generateFileSuccessful"));
 		} catch (Exception e) {
@@ -118,8 +117,7 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.PAYMENT);
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setDdrequestLOT(entity);
-			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser(),
-					getCurrentProvider());
+			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser());
 			messages.info(new BundleKey("messages",
 					"ddrequestLot.doPaymentsSuccessful"));
 		} catch (Exception e) {
@@ -143,8 +141,7 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setToDueDate(getEndDueDate());
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.CREATE);
-			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser(),
-					getCurrentProvider());
+			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser());
 			messages.info(new BundleKey("messages",
 					"ddrequestLot.launchProcessSuccessful"));
 		} catch (Exception e) {

@@ -7,16 +7,20 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
  **/
 public class BusinessApiException extends MeveoApiException {
 
-	private static final long serialVersionUID = -5546608621039046117L;
+    private static final long serialVersionUID = -5546608621039046117L;
 
-	public BusinessApiException() {
-		super("Business exception");
-		setErrorCode(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION);
-	}
-	
-	public BusinessApiException(String message) {
-		super(message);
-		setErrorCode(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION);
-	}
+    public BusinessApiException() {
+        super("Business exception");
+        setErrorCode(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION);
+    }
 
+    public BusinessApiException(String message) {
+        super(message);
+        setErrorCode(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION);
+    }
+
+    public BusinessApiException(Throwable e) {
+        super(e);
+        setErrorCode(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION);
+    }
 }

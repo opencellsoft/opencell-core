@@ -22,13 +22,12 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface FilteredListRs extends IBaseRs {
 
-	@Path("/")
-	@GET
-	Response list(@QueryParam("filter") String filter, @QueryParam("firstRow") Integer firstRow,
-			@QueryParam("numberOfRows") Integer numberOfRows);
+    @Path("/")
+    @GET
+    Response list(@QueryParam("filter") String filter, @QueryParam("firstRow") Integer firstRow, @QueryParam("numberOfRows") Integer numberOfRows);
 
-	@Path("/xmlInput")
-	@POST
-	Response listByXmlInput(FilteredListDto postData);
+    @Path("/xmlInput")
+    @POST
+    Response listByXmlInput(FilteredListDto postData);
 
 }

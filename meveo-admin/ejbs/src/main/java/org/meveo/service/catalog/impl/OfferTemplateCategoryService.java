@@ -5,10 +5,10 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.OfferTemplateCategory;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -18,12 +18,12 @@ import org.meveo.service.base.BusinessService;
 public class OfferTemplateCategoryService extends BusinessService<OfferTemplateCategory> {
 
 	@Override
-	public void create(OfferTemplateCategory e, User creator, Provider provider) {
+	public void create(OfferTemplateCategory e, User creator) throws BusinessException {
 		if (e.getOfferTemplateCategory() != null) {
 			e.setLevel(e.getOfferTemplateCategory().getLevel() + 1);
 		}
 
-		super.create(e, creator, provider);
+		super.create(e, creator);
 	}
 
 	@SuppressWarnings("unchecked")

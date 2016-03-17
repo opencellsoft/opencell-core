@@ -39,8 +39,7 @@ public interface CustomEntityInstanceRs extends IBaseRs {
 
     @GET
     @Path("/{customEntityTemplateCode}/{code}")
-    CustomEntityInstanceResponseDto find(@PathParam("customEntityTemplateCode") String customEntityTemplateCode,
-            @PathParam("code") String code);
+    CustomEntityInstanceResponseDto find(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, @PathParam("code") String code);
 
     @POST
     @Path("/{customEntityTemplateCode}/createOrUpdate")

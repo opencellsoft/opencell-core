@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.PricePlanDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -56,7 +57,7 @@ public class PricePlanApi extends BaseApi {
     @Inject
     private CalendarService calendarService;
 
-    public void create(PricePlanDto postData, User currentUser) throws MeveoApiException {
+    public void create(PricePlanDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getEventCode())) {
             missingParameters.add("eventCode");
@@ -148,10 +149,10 @@ public class PricePlanApi extends BaseApi {
 			log.error("Failed to associate custom field instance to a priceplan entity {}", postData.getCode(), e);
 			throw new MeveoApiException("Failed to associate custom field instance to a priceplan entity " + postData.getCode());
 		}
-        pricePlanMatrixService.create(pricePlanMatrix, currentUser, provider);
+        pricePlanMatrixService.create(pricePlanMatrix, currentUser);
     }
 
-    public void update(PricePlanDto postData, User currentUser) throws MeveoApiException {
+    public void update(PricePlanDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getEventCode())) {
             missingParameters.add("eventCode");
@@ -295,7 +296,7 @@ public class PricePlanApi extends BaseApi {
         return pricePlanDtos;
     }
 
-    public void createOrUpdate(PricePlanDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(PricePlanDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (pricePlanMatrixService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             create(postData, currentUser);
         } else {

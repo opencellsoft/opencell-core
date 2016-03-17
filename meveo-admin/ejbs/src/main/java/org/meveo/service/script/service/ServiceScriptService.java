@@ -94,10 +94,10 @@ public class ServiceScriptService extends CustomScriptService<ServiceModelScript
 	 *             Any execution exception
 	 */
 	@Override
-	public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser,
-			Provider currentProvider) throws ElementNotFoundException, InvalidScriptException,
+	public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser
+			) throws ElementNotFoundException, InvalidScriptException,
 			InvalidPermissionException, BusinessException {
-		return super.execute(scriptCode, context, currentUser, currentProvider);
+		return super.execute(scriptCode, context, currentUser);
 	}
 
 }

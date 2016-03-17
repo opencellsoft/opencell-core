@@ -1,10 +1,8 @@
 package org.meveo.admin.action.notification;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 
@@ -159,7 +157,7 @@ public class InboundServlet extends HttpServlet {
 		}
 
 		try {
-			inboundRequestService.create(inReq);
+			inboundRequestService.create(inReq, null); //TODO need to determine a current user
 		} catch (BusinessException e1) {
 			log.error("Failed to create InboundRequest ",e1);
 		}

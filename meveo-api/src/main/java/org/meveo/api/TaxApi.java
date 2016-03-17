@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.TaxDto;
@@ -34,7 +35,7 @@ public class TaxApi extends BaseApi {
     @Inject
     private CatMessagesService catMessagesService;
 
-    public ActionStatus create(TaxDto postData, User currentUser) throws MeveoApiException {
+    public ActionStatus create(TaxDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -81,21 +82,21 @@ public class TaxApi extends BaseApi {
             }
         }
 
-        taxService.create(tax, currentUser, provider);
+        taxService.create(tax, currentUser);
 
         // create cat messages
         if (postData.getLanguageDescriptions() != null) {
             for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
                 CatMessages catMsg = new CatMessages(Tax.class.getSimpleName() + "_" + tax.getId(), ld.getLanguageCode(), ld.getDescription());
 
-                catMessagesService.create(catMsg, currentUser, provider);
+                catMessagesService.create(catMsg, currentUser);
             }
         }
 
         return result;
     }
 
-    public ActionStatus update(TaxDto postData, User currentUser) throws MeveoApiException {
+    public ActionStatus update(TaxDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -148,7 +149,7 @@ public class TaxApi extends BaseApi {
                         catMessagesService.update(catMsg, currentUser);
                     } else {
                         CatMessages catMessages = new CatMessages(Tax.class.getSimpleName() + "_" + tax.getId(), ld.getLanguageCode(), ld.getDescription());
-                        catMessagesService.create(catMessages, currentUser, provider);
+                        catMessagesService.create(catMessages, currentUser);
                     }
                 }
             }
@@ -206,7 +207,7 @@ public class TaxApi extends BaseApi {
         return result;
     }
 
-    public void createOrUpdate(TaxDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(TaxDto postData, User currentUser) throws MeveoApiException, BusinessException {
         Tax tax = taxService.findByCode(postData.getCode(), currentUser.getProvider());
 
         if (tax == null) {

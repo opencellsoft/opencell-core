@@ -15,7 +15,7 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface PermissionRs extends IBaseRs {
 
-	@Path("/list")
-	@GET
-	PermissionResponseDto list();
+    @Path("/list")
+    @GET
+    PermissionResponseDto list();
 }

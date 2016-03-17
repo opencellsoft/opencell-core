@@ -89,7 +89,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 				result = new CounterInstance();
 				result.setCounterTemplate(counterTemplate);
 				result.setBillingAccount(billingAccount);
-				create(result, creator, billingAccount.getProvider());
+				create(result, creator); // AKK was with billingAccount.getProvider()
 
 				billingAccount.getCounters().put(counterTemplate.getCode(), result);
 				billingAccountService.update(billingAccount, creator);
@@ -101,7 +101,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 				result = new CounterInstance();
 				result.setCounterTemplate(counterTemplate);
 				result.setUserAccount(userAccount);
-				create(result, creator, userAccount.getProvider());
+				create(result, creator); // AKK was with userAccount.getProvider()
 
 				userAccount.getCounters().put(counterTemplate.getCode(), result);
 				userAccountService.update(userAccount, creator);
@@ -147,7 +147,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		if (notification.getCounterInstance() == null) {
 			counterInstance = new CounterInstance();
 			counterInstance.setCounterTemplate(counterTemplate);
-			create(counterInstance, creator, notification.getProvider());
+			create(counterInstance, creator); // AKK was with notification.getProvider()
 
 			notification.setCounterTemplate(counterTemplate);
 			notification.setCounterInstance(counterInstance);
@@ -189,8 +189,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		auditable.setCreated(new Date());
 		auditable.setCreator(counterInstance.getAuditable().getCreator());
 		counterPeriod.setAuditable(auditable);
-		counterPeriodService.create(counterPeriod, counterInstance.getAuditable().getCreator(),
-				counterInstance.getProvider());
+		counterPeriodService.create(counterPeriod, counterInstance.getAuditable().getCreator()); // AKK was with counterInstance.getProvider()
 
 		counterInstance.getCounterPeriods().add(counterPeriod);
 		counterInstance.updateAudit(currentUser);

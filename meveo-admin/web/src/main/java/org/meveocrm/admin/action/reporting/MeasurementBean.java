@@ -389,10 +389,10 @@ public class MeasurementBean extends BaseBean<MeasuredValue> {
 	public String saveMV() throws BusinessException, ParseException {
 		if (selectedMV.getValue() != null) {
 			if (selectedMV.isTransient() && selectedMV != null) {
-				getPersistenceService().create(selectedMV);
+				getPersistenceService().create(selectedMV, getCurrentUser());
 				Messages.addGlobalInfo("save.successful", new Object[] {});
 			} else if (!selectedMV.isTransient() && selectedMV != null) {
-				getPersistenceService().update(selectedMV);
+				getPersistenceService().update(selectedMV, getCurrentUser());
 				Messages.addGlobalInfo("update.successful", new Object[] {});
 			}
 		}

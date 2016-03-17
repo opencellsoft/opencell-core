@@ -300,7 +300,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 						if (chargeInstance.getAuditable() == null) {
 							log.info("trigger EDR from code " + triggeredEDRTemplate.getCode());
 						} else {
-							edrService.create(newEdr, chargeInstance.getAuditable().getCreator(),chargeInstance.getProvider());
+							edrService.create(newEdr, chargeInstance.getAuditable().getCreator());
 						}
 					}
 				}
@@ -567,7 +567,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void reRate(Long operationToRerateId,
 			boolean useSamePricePlan,User currentUser) throws BusinessException {
-		Provider currentProvider=currentUser.getProvider();
+
 		WalletOperation operationToRerate=getEntityManager().find(WalletOperation.class,operationToRerateId);
 		try {
 			ratedTransactionService
@@ -639,7 +639,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 									.getTradingCurrency(),
 							operation.getProvider());
 			}
-			create(operation,currentUser,currentProvider);
+			create(operation,currentUser);
 			operationToRerate.updateAudit(currentUser);
 			updateNoCheck(operationToRerate);
 			log.debug("updated wallet operation");

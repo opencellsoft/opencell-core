@@ -110,7 +110,7 @@ public class PaymentApi extends BaseApi {
 		automatedPayment.setDueDate(paymentDto.getDueDate());
 		automatedPayment.setTransactionDate(paymentDto.getTransactionDate());
 		automatedPayment.setMatchingStatus(MatchingStatusEnum.O);
-		automatedPaymentService.create(automatedPayment, currentUser, provider);
+		automatedPaymentService.create(automatedPayment, currentUser);
 		int nbOccMatched = 0;
 
 		if (paymentDto.isToMatching()) {
@@ -142,7 +142,7 @@ public class PaymentApi extends BaseApi {
 			matchingCode.setMatchingDate(new Date());
 			matchingCode.setMatchingType(MatchingTypeEnum.A);
 			matchingCode.setProvider(provider);
-			matchingCodeService.create(matchingCode, currentUser, provider);
+			matchingCodeService.create(matchingCode, currentUser);
 			log.info("matching created  for 1 automatedPayment and " + (nbOccMatched - 1) + " occ");
 		} else {
 			log.info("no matching created ");

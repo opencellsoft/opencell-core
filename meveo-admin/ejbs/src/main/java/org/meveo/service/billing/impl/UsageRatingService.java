@@ -358,7 +358,7 @@ public class UsageRatingService {
 						}
 						newEdr.setSubscription(sub);
 						log.info("trigger EDR from code " + triggeredEDRCache.getCode());
-						edrService.create(newEdr, currentUser, provider);
+						edrService.create(newEdr, currentUser);
 					}
 				}
 			}

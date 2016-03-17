@@ -25,48 +25,48 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface BillingCycleRs extends IBaseRs {
 
-	/**
-	 * Create billingCycle.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@POST
-	public ActionStatus create(BillingCycleDto postData);
+    /**
+     * Create billingCycle.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @POST
+    public ActionStatus create(BillingCycleDto postData);
 
-	/**
-	 * Update billingCycle.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@PUT
-	public ActionStatus update(BillingCycleDto postData);
+    /**
+     * Update billingCycle.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @PUT
+    public ActionStatus update(BillingCycleDto postData);
 
-	/**
-	 * Search for billingCycle with a given code.
-	 * 
-	 * @param billingCycleCode
-	 * @return
-	 */
-	@Path("/")
-	@GET
-	public GetBillingCycleResponse find(@QueryParam("billingCycleCode") String billingCycleCode);
+    /**
+     * Search for billingCycle with a given code.
+     * 
+     * @param billingCycleCode
+     * @return
+     */
+    @Path("/")
+    @GET
+    public GetBillingCycleResponse find(@QueryParam("billingCycleCode") String billingCycleCode);
 
-	/**
-	 * Remove billingCycle with a given code.
-	 * 
-	 * @param billingCycleCode
-	 * @return
-	 */
-	@Path("/{billingCycleCode}")
-	@DELETE
-	public ActionStatus remove(@PathParam("billingCycleCode") String billingCycleCode);
-	
-	@POST
-	@Path("/createOrUpdate")
-	public ActionStatus createOrUpdate(BillingCycleDto postData);
+    /**
+     * Remove billingCycle with a given code.
+     * 
+     * @param billingCycleCode
+     * @return
+     */
+    @Path("/{billingCycleCode}")
+    @DELETE
+    public ActionStatus remove(@PathParam("billingCycleCode") String billingCycleCode);
+
+    @POST
+    @Path("/createOrUpdate")
+    public ActionStatus createOrUpdate(BillingCycleDto postData);
 
 }

@@ -21,47 +21,44 @@ import org.meveo.api.rest.payment.PaymentRs;
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
-
 public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
-	@Inject
-	private PaymentApi paymentApi;
+    @Inject
+    private PaymentApi paymentApi;
 
-	@Override
-	public ActionStatus create(PaymentDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus create(PaymentDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			paymentApi.createPayment(postData, getCurrentUser());
-		} catch (BusinessException e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error occurred while creating payment ", e);
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error generated while creating payment ", e);
-		}
+        try {
+            paymentApi.createPayment(postData, getCurrentUser());
+        } catch (BusinessException e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error occurred while creating payment ", e);
+        } catch (Exception e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error generated while creating payment ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode) {
-		CustomerPaymentsResponse result = new CustomerPaymentsResponse();
-		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+    @Override
+    public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode) {
+        CustomerPaymentsResponse result = new CustomerPaymentsResponse();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
-		try {
-			result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode, getCurrentUser()));
-			result.setBalance(paymentApi.getBalance(customerAccountCode, getCurrentUser()));
-		} catch (Exception e) {
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		}
+        try {
+            result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode, getCurrentUser()));
+            result.setBalance(paymentApi.getBalance(customerAccountCode, getCurrentUser()));
+        } catch (Exception e) {
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
 }

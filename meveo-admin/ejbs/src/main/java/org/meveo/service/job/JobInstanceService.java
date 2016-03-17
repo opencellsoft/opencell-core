@@ -165,13 +165,13 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
         return jobs;
     }
 
-	public void create(JobInstance jobInstance) throws BusinessException {
+	public void create(JobInstance jobInstance, User currentUser) throws BusinessException {
 		InitialContext ic;
 		try {
 			ic = new InitialContext();
 			if (jobEntries.containsKey(jobInstance.getJobCategoryEnum())) {
 
-				super.create(jobInstance);
+				super.create(jobInstance, currentUser);
 				HashMap<String, String> jobs = jobEntries.get(jobInstance.getJobCategoryEnum());
 				if (jobs.containsKey(jobInstance.getJobTemplate()) && jobInstance.isActive()) {
 					log.debug("job created active, we schedule it and store it with id {}",jobInstance.getId());
@@ -186,7 +186,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 		}
 	}
 
-	public JobInstance update(JobInstance entity) {
+	public JobInstance update(JobInstance entity, User currentUser) throws BusinessException {
 		log.info("update timer {} , id=", entity.getJobTemplate(),entity.getId());
 		InitialContext ic;
 		try {
@@ -209,7 +209,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 					if(entity.getTimerEntity() == null){
 						entity.setActive(false);
 					}
-					super.update(entity);
+					super.update(entity, currentUser);
 					if(entity.isActive()){
 						Job job = (Job) ic.lookup(jobs.get(entity.getJobTemplate()));
 						log.info("Scheduling job {} : timer {}",job,entity.getId());
@@ -330,7 +330,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 				HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
 				if (jobs.containsKey(entity.getJobTemplate())) {
 					Job job = (Job) ic.lookup(jobs.get(entity.getJobTemplate()));
-					jobExecutionService.create(result, currentUser, currentUser.getProvider());
+					jobExecutionService.create(result, currentUser);
 					job.execute(entity, result, currentUser);
 				}
 			} else {

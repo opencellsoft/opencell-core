@@ -52,7 +52,7 @@ public class EmailNotificationBean extends UpdateMapTypeFieldBean<EmailNotificat
 	ParamBean paramBean = ParamBean.getInstance();
 	
     @Inject
-    CounterTemplateService counterTemplateService;
+    CounterTemplateService<? extends CounterTemplate> counterTemplateService;
     
     @Inject
     ScriptInstanceService scriptInstanceService;
@@ -163,7 +163,7 @@ public class EmailNotificationBean extends UpdateMapTypeFieldBean<EmailNotificat
                     emailNotif.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
                 }
 
-                emailNotificationService.create(emailNotif);
+                emailNotificationService.create(emailNotif, getCurrentUser());
             }
         }
         if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
@@ -171,7 +171,7 @@ public class EmailNotificationBean extends UpdateMapTypeFieldBean<EmailNotificat
         }
     }
 
-	public void checkSelectedStrategy(String[] values,EmailNotification existingEntity,boolean isEntityAlreadyExist) throws RejectedImportException, IOException{
+	public void checkSelectedStrategy(String[] values,EmailNotification existingEntity,boolean isEntityAlreadyExist) throws IOException, BusinessException{
 		if(strategyImportType.equals(StrategyImportTypeEnum.UPDATED)){
 			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
 			existingEntity.setEventTypeFilter(NotificationEventTypeEnum
@@ -204,7 +204,7 @@ public class EmailNotificationBean extends UpdateMapTypeFieldBean<EmailNotificat
 				CounterTemplate counterTemplate=counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
 				existingEntity.setCounterTemplate(counterTemplate!=null ?counterTemplate: null);
 			}
-			emailNotificationService.update(existingEntity);
+			emailNotificationService.update(existingEntity, getCurrentUser());
 		          }
 		else if(strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)){
 			  throw new RejectedImportException("notification.rejectImport");
@@ -251,5 +251,3 @@ public class EmailNotificationBean extends UpdateMapTypeFieldBean<EmailNotificat
 		this.strategyImportType = strategyImportType;
 	}
 }
-
-

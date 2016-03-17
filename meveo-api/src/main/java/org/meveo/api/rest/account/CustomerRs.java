@@ -29,66 +29,66 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface CustomerRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ActionStatus create(CustomerDto postData);
+    @POST
+    @Path("/")
+    ActionStatus create(CustomerDto postData);
 
-	@PUT
-	@Path("/")
-	ActionStatus update(CustomerDto postData);
+    @PUT
+    @Path("/")
+    ActionStatus update(CustomerDto postData);
 
-	@GET
-	@Path("/")
-	GetCustomerResponseDto find(@QueryParam("customerCode") String customerCode);
+    @GET
+    @Path("/")
+    GetCustomerResponseDto find(@QueryParam("customerCode") String customerCode);
 
-	@DELETE
-	@Path("/{customerCode}")
-	ActionStatus remove(@PathParam("customerCode") String customerCode);
+    @DELETE
+    @Path("/{customerCode}")
+    ActionStatus remove(@PathParam("customerCode") String customerCode);
 
-	/**
-	 * Filters are: category, seller, brand and provider
-	 * 
-	 * @param customerCode
-	 * @return
-	 */
-	@POST
-	@Path("/list")
-	CustomersResponseDto list(CustomerDto postData);
-	
-	@POST
-	@Path("/createBrand")
-	ActionStatus createBrand(CustomerBrandDto postData);
-	
-	@PUT
-	@Path("/updateBrand")
-	ActionStatus updateBrand(CustomerBrandDto postData);
-	
-	@POST
-	@Path("/createOrUpdateBrand")
-	ActionStatus createOrUpdateBrand(CustomerBrandDto postData);
+    /**
+     * Filters are: category, seller, brand and provider
+     * 
+     * @param customerCode
+     * @return
+     */
+    @POST
+    @Path("/list")
+    CustomersResponseDto list(CustomerDto postData);
 
-	@POST
-	@Path("/createCategory")
-	ActionStatus createCategory(CustomerCategoryDto postData);
+    @POST
+    @Path("/createBrand")
+    ActionStatus createBrand(CustomerBrandDto postData);
 
-	@PUT
-	@Path("/updateCategory")
-	ActionStatus updateCategory(CustomerCategoryDto postData);
-	
-	@POST
-	@Path("/createOrUpdateCategory")
-	ActionStatus createOrUpdateCategory(CustomerCategoryDto postData);
-	
-	@DELETE
-	@Path("/removeBrand/{brandCode}")
-	ActionStatus removeBrand(@PathParam("brandCode") String brandCode);
+    @PUT
+    @Path("/updateBrand")
+    ActionStatus updateBrand(CustomerBrandDto postData);
 
-	@DELETE
-	@Path("/removeCategory/{categoryCode}")
-	ActionStatus removeCategory(@PathParam("categoryCode") String categoryCode);
-	
-	@POST
-	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(CustomerDto postData);
-	
+    @POST
+    @Path("/createOrUpdateBrand")
+    ActionStatus createOrUpdateBrand(CustomerBrandDto postData);
+
+    @POST
+    @Path("/createCategory")
+    ActionStatus createCategory(CustomerCategoryDto postData);
+
+    @PUT
+    @Path("/updateCategory")
+    ActionStatus updateCategory(CustomerCategoryDto postData);
+
+    @POST
+    @Path("/createOrUpdateCategory")
+    ActionStatus createOrUpdateCategory(CustomerCategoryDto postData);
+
+    @DELETE
+    @Path("/removeBrand/{brandCode}")
+    ActionStatus removeBrand(@PathParam("brandCode") String brandCode);
+
+    @DELETE
+    @Path("/removeCategory/{categoryCode}")
+    ActionStatus removeCategory(@PathParam("categoryCode") String categoryCode);
+
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(CustomerDto postData);
+
 }

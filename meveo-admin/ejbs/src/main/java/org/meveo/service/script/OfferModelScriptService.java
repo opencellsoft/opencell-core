@@ -27,87 +27,76 @@ import org.meveo.service.script.offer.OfferScriptInterface;
 @Startup
 public class OfferModelScriptService extends CustomScriptService<OfferModelScript, OfferScriptInterface> {
 
-	@Inject
-	private ResourceBundle resourceMessages;
+    @Inject
+    private ResourceBundle resourceMessages;
 
-	@Override
-	public void create(OfferModelScript offerModelScript, User creator, Provider provider) {
-		String packageName = getPackageName(offerModelScript.getScript());
-		String className = getClassName(offerModelScript.getScript());
-		if (packageName == null || className == null) {
-			throw new RuntimeException(resourceMessages.getString("message.OfferModelScript.sourceInvalid"));
-		}
-		offerModelScript.setCode(packageName + "." + className);
+    @Override
+    public void create(OfferModelScript offerModelScript, User creator) throws BusinessException {
+        String packageName = getPackageName(offerModelScript.getScript());
+        String className = getClassName(offerModelScript.getScript());
+        if (packageName == null || className == null) {
+            throw new RuntimeException(resourceMessages.getString("message.OfferModelScript.sourceInvalid"));
+        }
+        offerModelScript.setCode(packageName + "." + className);
 
-		super.create(offerModelScript, creator, provider);
-	}
+        super.create(offerModelScript, creator);
+    }
 
-	@Override
-	public OfferModelScript update(OfferModelScript offerModelScript, User updater) {
+    @Override
+    public OfferModelScript update(OfferModelScript offerModelScript, User updater) throws BusinessException {
 
-		String packageName = getPackageName(offerModelScript.getScript());
-		String className = getClassName(offerModelScript.getScript());
-		if (packageName == null || className == null) {
-			throw new RuntimeException(resourceMessages.getString("message.OfferModelScript.sourceInvalid"));
-		}
-		offerModelScript.setCode(packageName + "." + className);
+        String packageName = getPackageName(offerModelScript.getScript());
+        String className = getClassName(offerModelScript.getScript());
+        if (packageName == null || className == null) {
+            throw new RuntimeException(resourceMessages.getString("message.OfferModelScript.sourceInvalid"));
+        }
+        offerModelScript.setCode(packageName + "." + className);
 
-		offerModelScript = super.update(offerModelScript, updater);
+        offerModelScript = super.update(offerModelScript, updater);
 
-		return offerModelScript;
-	}
+        return offerModelScript;
+    }
 
-	/**
-	 * Get all OfferModelScripts with error for a provider
-	 * 
-	 * @param provider
-	 * @return
-	 */
-	public List<CustomScript> getOfferModelScriptsWithError(Provider provider) {
-		return ((List<CustomScript>) getEntityManager()
-				.createNamedQuery("CustomScript.getOfferModelScriptOnError", CustomScript.class)
-				.setParameter("isError", Boolean.TRUE).setParameter("provider", provider).getResultList());
-	}
+    /**
+     * Get all OfferModelScripts with error for a provider
+     * 
+     * @param provider
+     * @return
+     */
+    public List<CustomScript> getOfferModelScriptsWithError(Provider provider) {
+        return ((List<CustomScript>) getEntityManager().createNamedQuery("CustomScript.getOfferModelScriptOnError", CustomScript.class).setParameter("isError", Boolean.TRUE)
+            .setParameter("provider", provider).getResultList());
+    }
 
-	/**
-	 * Compile all OfferModelScripts
-	 */
-	@PostConstruct
-	void compileAll() {
-		List<OfferModelScript> offerModelScripts = findByType(ScriptSourceTypeEnum.JAVA);
-		compile(offerModelScripts);
-	}
+    /**
+     * Compile all OfferModelScripts
+     */
+    @PostConstruct
+    void compileAll() {
+        List<OfferModelScript> offerModelScripts = findByType(ScriptSourceTypeEnum.JAVA);
+        compile(offerModelScripts);
+    }
 
-	/**
-	 * Execute the script identified by a script code. No init nor finalize
-	 * methods are called.
-	 * 
-	 * @param scriptCode
-	 *            OfferModelScriptCode
-	 * @param context
-	 *            Context parameters (optional)
-	 * @param currentUser
-	 *            User executor
-	 * @param currentProvider
-	 *            Provider
-	 * @return Context parameters. Will not be null even if "context" parameter
-	 *         is null.
-	 * @throws InvalidPermissionException
-	 *             Insufficient access to run the script
-	 * @throws ElementNotFoundException
-	 *             Script not found
-	 * @throws BusinessException
-	 *             Any execution exception
-	 */
-	@Override
-	public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser,
-			Provider currentProvider) throws ElementNotFoundException, InvalidScriptException,
-			InvalidPermissionException, BusinessException {
-		return super.execute(scriptCode, context, currentUser, currentProvider);
-	}
+    /**
+     * Execute the script identified by a script code. No init nor finalize methods are called.
+     * 
+     * @param scriptCode OfferModelScriptCode
+     * @param context Context parameters (optional)
+     * @param currentUser User executor
+     * @param currentProvider Provider
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws InvalidPermissionException Insufficient access to run the script
+     * @throws ElementNotFoundException Script not found
+     * @throws BusinessException Any execution exception
+     */
+    @Override
+    public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser) throws ElementNotFoundException, InvalidScriptException,
+            InvalidPermissionException, BusinessException {
+        return super.execute(scriptCode, context, currentUser);
+    }
 
-	public String getDerivedCode(String script) {
-		return getPackageName(script) + "." + getClassName(script);
-	}
+    public String getDerivedCode(String script) {
+        return getPackageName(script) + "." + getClassName(script);
+    }
 
 }

@@ -26,24 +26,24 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface ServiceModelScriptRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ActionStatus create(ServiceModelScriptDto postData);
+    @POST
+    @Path("/")
+    ActionStatus create(ServiceModelScriptDto postData);
 
-	@PUT
-	@Path("/")
-	ActionStatus update(ServiceModelScriptDto postData);
+    @PUT
+    @Path("/")
+    ActionStatus update(ServiceModelScriptDto postData);
 
-	@POST
-	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(ServiceModelScriptDto postData);
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(ServiceModelScriptDto postData);
 
-	@DELETE
-	@Path("/{code}")
-	ActionStatus delete(@PathParam("code") String code);
+    @DELETE
+    @Path("/{code}")
+    ActionStatus delete(@PathParam("code") String code);
 
-	@GET
-	@Path("/")
-	ServiceModelScriptResponseDto get(@QueryParam("code") String code);
+    @GET
+    @Path("/")
+    ServiceModelScriptResponseDto get(@QueryParam("code") String code);
 
 }

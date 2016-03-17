@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
@@ -45,8 +46,8 @@ public class WalletService extends PersistenceService<WalletInstance> {
 	private WalletCacheContainerProvider walletCacheContainerProvider;
 
 	@Override
-	public void create(WalletInstance walletInstance, User creator, Provider provider) {
-		super.create(walletInstance, creator, provider);
+	public void create(WalletInstance walletInstance, User creator) throws BusinessException {
+		super.create(walletInstance, creator);
 		walletCacheContainerProvider.updateBalanceCache(walletInstance);
 	}
 
@@ -79,7 +80,7 @@ public class WalletService extends PersistenceService<WalletInstance> {
 		}
 	}
 
-	public WalletInstance getWalletInstance(UserAccount userAccount, WalletTemplate walletTemplate, User creator, Provider provider) {
+	public WalletInstance getWalletInstance(UserAccount userAccount, WalletTemplate walletTemplate, User creator) throws BusinessException {
 		String walletCode = walletTemplate.getCode();
 		log.debug("get wallet instance for userAccount {} and wallet template {}", userAccount.getCode(), walletCode);
 		if (!WalletTemplate.PRINCIPAL.equals(walletCode)) {
@@ -88,7 +89,7 @@ public class WalletService extends PersistenceService<WalletInstance> {
 				wallet.setCode(walletCode);
 				wallet.setWalletTemplate(walletTemplate);
 				wallet.setUserAccount(userAccount);
-				create(wallet, creator, provider);
+				create(wallet, creator);
 				log.debug("add prepaid wallet {} to useraccount {}", walletCode, userAccount.getCode());
 				userAccount.getPrepaidWallets().put(walletCode, wallet);
 				getEntityManager().merge(userAccount);

@@ -188,7 +188,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				}
 				
 				WalletInstance walletInstance = walletService.getWalletInstance(serviceInst.getSubscription().getUserAccount(), walletTemplate,
-						serviceInst.getAuditable().getCreator(), serviceInst.getProvider());
+						serviceInst.getAuditable().getCreator());
 				log.debug("add the wallet instance {} to the chargeInstance {}",walletInstance.getId(),chargeInstance.getId());
 				chargeInstance.getWalletInstances().add(walletInstance);
 			}
@@ -198,7 +198,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 			chargeInstance.getWalletInstances().add(serviceInst.getSubscription().getUserAccount().getWallet());
 		}
 
-		create(chargeInstance, creator, recurringChargeTemplate.getProvider());
+		create(chargeInstance, creator); // AKK was with recurringChargeTemplate.getProvider()
 		return chargeInstance;
 	}
 
@@ -225,7 +225,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 	}
 
 	public void recurringChargeReactivation(ServiceInstance serviceInst, Subscription subscription,
-			Date subscriptionDate, User creator) throws BusinessException {
+			Date subscriptionDate, User updater) throws BusinessException {
 		if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED
 				|| subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
 			throw new BusinessException("subscription is " + subscription.getStatus());
@@ -241,7 +241,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 			// recurringChargeInstance.setSubscriptionDate(subscriptionDate);
 			recurringChargeInstance.setTerminationDate(null);
 			recurringChargeInstance.setChargeDate(subscriptionDate);
-			update(recurringChargeInstance);
+			update(recurringChargeInstance, updater);
 		}
 
 	}

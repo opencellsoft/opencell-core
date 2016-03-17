@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
@@ -61,9 +62,9 @@ public class BusinessOfferApi extends BaseApi {
 
 			if (businessOfferModel.getScript() != null) {
 				try {
-					offerScriptService.create(newOfferTemplate, businessOfferModel.getScript().getCode(), currentUser, currentUser.getProvider());
+                    offerScriptService.create(newOfferTemplate, businessOfferModel.getScript().getCode(), currentUser);
 				} catch (BusinessException e) {
-					throw new MeveoApiException(e.getMessage());
+                    throw new BusinessApiException(e.getMessage());
 				}
 			}
 		} else {

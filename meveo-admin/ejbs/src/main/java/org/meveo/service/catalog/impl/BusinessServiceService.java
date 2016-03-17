@@ -15,24 +15,24 @@ import org.meveo.service.base.BusinessService;
  **/
 @Stateless
 public class BusinessServiceService extends BusinessService<BusinessServiceModel> {
-
-	public void create(BusinessServiceModelDto postData, User currentUser) throws BusinessException {
-		BusinessServiceModel bsm = new BusinessServiceModel();
-		bsm.setCode(postData.getCode());
-		bsm.setDescription(postData.getDescription());
-		bsm.setDuplicatePricePlan(postData.isDuplicatePricePlan());
-		bsm.setDuplicateService(postData.isDuplicateService());
-
-		create(bsm, currentUser, currentUser.getProvider());
-	}
-
-	public void update(BusinessServiceModel bsm, BusinessServiceModelDto postData, User currentUser) {
-		bsm.setDescription(postData.getDescription());
-		bsm.setDuplicatePricePlan(postData.isDuplicatePricePlan());
-		bsm.setDuplicateService(postData.isDuplicateService());
-
-		update(bsm, currentUser);
-	}
+//
+//	public void create(BusinessServiceModelDto postData, User currentUser) throws BusinessException {
+//		BusinessServiceModel bsm = new BusinessServiceModel();
+//		bsm.setCode(postData.getCode());
+//		bsm.setDescription(postData.getDescription());
+//		bsm.setDuplicatePricePlan(postData.isDuplicatePricePlan());
+//		bsm.setDuplicateService(postData.isDuplicateService());
+//
+//		create(bsm, currentUser);
+//	}
+//
+//	public void update(BusinessServiceModel bsm, BusinessServiceModelDto postData, User currentUser) throws BusinessException {
+//		bsm.setDescription(postData.getDescription());
+//		bsm.setDuplicatePricePlan(postData.isDuplicatePricePlan());
+//		bsm.setDuplicateService(postData.isDuplicateService());
+//
+//		update(bsm, currentUser);
+//	}
 
 	public BusinessServiceModel findByBSMAndServiceTemplate(String bsm, String st) {
 		QueryBuilder qb = new QueryBuilder(BusinessServiceModel.class, "b");

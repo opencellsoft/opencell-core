@@ -18,7 +18,6 @@ import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.script.EntityActionScriptService;
 import org.meveo.service.script.Script;
@@ -79,7 +78,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getCFValueByMatrixForDate5Keys", MeveoFunctionMapper.class.getMethod("getCFValueByMatrixForDate5Keys", ICustomFieldEntity.class, String.class,
                 Date.class, Object.class, Object.class, Object.class, Object.class, Object.class));
 
-            addFunction("mv", "executeScript", MeveoFunctionMapper.class.getMethod("executeScript", IEntity.class, String.class, String.class, User.class, Provider.class));
+            addFunction("mv", "executeScript", MeveoFunctionMapper.class.getMethod("executeScript", IEntity.class, String.class, String.class, User.class));
 
         } catch (NoSuchMethodException | SecurityException e) {
             Logger log = LoggerFactory.getLogger(this.getClass());
@@ -420,20 +419,19 @@ public class MeveoFunctionMapper extends FunctionMapper {
      * @param scriptCode Script to execute, identified by a code
      * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
      * @param currentUser Current user
-     * @param currentProvider Current provider
      * @return A script execution result value
      */
-    public static Object executeScript(IEntity entity, String scriptCode, String encodedParameters, User currentUser, Provider currentProvider) {
+    public static Object executeScript(IEntity entity, String scriptCode, String encodedParameters, User currentUser) {
 
         Map<String, Object> result = null;
 
         try {
             try {
-                result = getScriptInstanceService().execute(entity, scriptCode, encodedParameters, currentUser, currentProvider);
+                result = getScriptInstanceService().execute(entity, scriptCode, encodedParameters, currentUser);
             } catch (ElementNotFoundException enf) {
 
                 try {
-                    result = getEntityActionScriptService().execute(entity, scriptCode, encodedParameters, currentUser, currentProvider);
+                    result = getEntityActionScriptService().execute(entity, scriptCode, encodedParameters, currentUser);
                 } catch (ElementNotFoundException enf2) {
                     result = null;
                 }

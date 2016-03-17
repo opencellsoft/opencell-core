@@ -29,7 +29,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.ActionDunning;
 import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.model.payments.CustomerAccount;
@@ -222,7 +221,7 @@ public class UpgradeDunningLevel {
 
 	private OtherCreditAndCharge addOCC(CustomerAccount customerAccount,
 			BigDecimal chargeAmount,User currentUser) throws Exception {
-		Provider provider=currentUser.getProvider();
+
 		OCCTemplate dunningOccTemplate = oCCTemplateService.getDunningOCCTemplate(customerAccount.getProvider());
 		OtherCreditAndCharge occ = new OtherCreditAndCharge();
 		occ.setAccountCode(dunningOccTemplate.getAccountCode());
@@ -240,7 +239,7 @@ public class UpgradeDunningLevel {
 		occ.setDueDate(new Date());
 		occ.setProvider(customerAccount.getProvider());
 		occ.setAuditable(DunningUtils.getAuditable(userService.getSystemUser()));
-		otherCreditAndChargeService.create(occ,currentUser,provider);
+		otherCreditAndChargeService.create(occ,currentUser);
 		return occ;
 
 	}

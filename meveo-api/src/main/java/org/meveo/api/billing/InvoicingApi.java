@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.account.AccountHierarchyApi;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.billing.BillingRunDto;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
@@ -27,7 +28,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.crm.impl.AccountHierarchyApiService;
 import org.meveo.util.MeveoParamBean;
 
 @Stateless
@@ -40,13 +40,13 @@ public class InvoicingApi extends BaseApi {
     BillingCycleService billingCycleService;
 
     @Inject
-    private AccountHierarchyApiService accountHierarchyApiService;
+    private AccountHierarchyApi accountHierarchyApi;
 
     @Inject
     @MeveoParamBean
     private ParamBean paramBean;
 
-    public long createBillingRun(CreateBillingRunDto createBillingRunDto, User currentUser) throws BusinessApiException, MissingParameterException, EntityDoesNotExistsException {
+    public long createBillingRun(CreateBillingRunDto createBillingRunDto, User currentUser) throws BusinessApiException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
 
         String allowManyInvoicing = paramBean.getProperty("billingRun.allowManyInvoicing", "true");
         boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
@@ -92,7 +92,7 @@ public class InvoicingApi extends BaseApi {
         }
         billingRunEntity.setStatus(BillingRunStatusEnum.NEW);
         billingRunEntity.setProvider(provider);
-        billingRunService.create(billingRunEntity, currentUser, provider);
+        billingRunService.create(billingRunEntity, currentUser);
         return billingRunEntity.getId();
     }
 
@@ -110,7 +110,7 @@ public class InvoicingApi extends BaseApi {
         List<BillingAccount> baEntities = billingRunEntity.getBillableBillingAccounts();
         if (baEntities != null && !baEntities.isEmpty()) {
             for (BillingAccount baEntity : baEntities) {
-                billingAccountsDtoResult.getBillingAccount().add(accountHierarchyApiService.billingAccountToDto(baEntity));
+                billingAccountsDtoResult.getBillingAccount().add(accountHierarchyApi.billingAccountToDto(baEntity));
             }
         }
         return billingAccountsDtoResult;
@@ -168,7 +168,7 @@ public class InvoicingApi extends BaseApi {
         }
     }
 
-    public void cancelBillingRun(Long billingRunId, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException {
+    public void cancelBillingRun(Long billingRunId, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException, BusinessException {
         BillingRun billingRun = getBillingRun(billingRunId, currentUser);
         if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
             throw new BusinessApiException("Cannot cancel a confirmed billingRun");
@@ -176,7 +176,7 @@ public class InvoicingApi extends BaseApi {
         if (BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus())) {
             throw new BusinessApiException("Cannot cancel a validated billingRun");
         }
-        billingRunService.cancel(billingRun);
+        billingRunService.cancel(billingRun, currentUser);
         billingRunService.cleanBillingRun(billingRun);
     }
 

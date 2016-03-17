@@ -162,7 +162,7 @@ public class AccountImportService extends ImportService{
 
 		billingAccount.setProvider(provider);
 
-		billingAccountService.create(billingAccount, userJob, provider);
+		billingAccountService.create(billingAccount, userJob);
         
         if (billAccount.getCustomFields() != null){
             populateCustomFields(billAccount.getCustomFields().getCustomField(), billingAccount, userJob);
@@ -317,7 +317,7 @@ public class AccountImportService extends ImportService{
 		userAccount.setStatusDate(new Date());
 		userAccount.setProvider(provider);
 
-		userAccountService.create(userAccount, userJob, provider);
+		userAccountService.create(userAccount, userJob);
 
         if (uAccount.getCustomFields() != null){
             populateCustomFields(uAccount.getCustomFields().getCustomField(), userAccount, userJob);
@@ -327,7 +327,7 @@ public class AccountImportService extends ImportService{
 		WalletInstance wallet = new WalletInstance();
 		wallet.setCode(WalletTemplate.PRINCIPAL);
 		wallet.setUserAccount(userAccount);
-		walletService.create(wallet, userJob, provider);
+		walletService.create(wallet, userJob);
 
 		userAccount.setWallet(wallet);
 		userAccount.setBillingAccount(billingAccount);

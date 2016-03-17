@@ -37,7 +37,6 @@ public class CommunicationRsImpl extends BaseRs implements CommunicationRs {
             log.error("error generated while updating notification ", e);
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 }

@@ -190,7 +190,7 @@ public class InvoiceApi extends BaseApi {
             invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));
         }
 
-        invoiceService.create(invoice, currentUser, provider);
+        invoiceService.create(invoice, currentUser);
 
         if (invoice.getInvoiceTypeEnum() == InvoiceTypeEnum.CREDIT_NOTE_ADJUST) {
             invoiceService.updateInvoiceAdjustmentCurrentNb(invoice, currentUser);
@@ -200,7 +200,7 @@ public class InvoiceApi extends BaseApi {
 
         for (SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDTO : invoiceDTO.getSubCategoryInvoiceAgregates()) {
             String invoiceSubCategoryCode = subCategoryInvoiceAgregateDTO.getInvoiceSubCategoryCode();
-            InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode);
+            InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode, provider);
             if (invoiceSubCategory == null) {
                 throw new EntityDoesNotExistsException(InvoiceSubCategory.class, invoiceSubCategoryCode);
             }
@@ -258,7 +258,7 @@ public class InvoiceApi extends BaseApi {
                 taxInvoiceAgregate.setUserAccount(billingAccountUserAccount);
                 taxInvoiceAgregate.setItemNumber(subCategoryInvoiceAgregateDTO.getItemNumber());
                 taxInvoiceAgregate.setTax(tax);
-                invoiceAgregateService.create(taxInvoiceAgregate, currentUser, provider);
+                invoiceAgregateService.create(taxInvoiceAgregate, currentUser);
                 subCategoryInvoiceAgregate.addSubCategoryTax(tax);
             }
 
@@ -282,10 +282,10 @@ public class InvoiceApi extends BaseApi {
             categoryInvoiceAgregate.setItemNumber(subCategoryInvoiceAgregateDTO.getItemNumber());
             categoryInvoiceAgregate.setUserAccount(billingAccountUserAccount);
             categoryInvoiceAgregate.setInvoiceCategory(invoiceSubCategory.getInvoiceCategory());
-            invoiceAgregateService.create(categoryInvoiceAgregate, currentUser, provider);
+            invoiceAgregateService.create(categoryInvoiceAgregate, currentUser);
 
             subCategoryInvoiceAgregate.setCategoryInvoiceAgregate(categoryInvoiceAgregate);
-            invoiceAgregateService.create(subCategoryInvoiceAgregate, currentUser, provider);
+            invoiceAgregateService.create(subCategoryInvoiceAgregate, currentUser);
 
             for (RatedTransactionDto ratedTransaction : subCategoryInvoiceAgregateDTO.getRatedTransactions()) {
                 RatedTransaction meveoRatedTransaction = new RatedTransaction(null, ratedTransaction.getUsageDate(), ratedTransaction.getUnitAmountWithoutTax(),
@@ -297,7 +297,7 @@ public class InvoiceApi extends BaseApi {
                 meveoRatedTransaction.setUnityDescription(ratedTransaction.getUnityDescription());
                 meveoRatedTransaction.setInvoice(invoice);
                 meveoRatedTransaction.setWallet(billingAccountUserAccount.getWallet());
-                ratedTransactionService.create(meveoRatedTransaction, currentUser, provider);
+                ratedTransactionService.create(meveoRatedTransaction, currentUser);
 
             }
 
@@ -386,7 +386,7 @@ public class InvoiceApi extends BaseApi {
         ratedTransactionService.createRatedTransaction(billingAccountId, currentUser, invoicingDate);
     }
 
-    public BillingRun updateBR(BillingRun billingRun, BillingRunStatusEnum status, Integer billingAccountNumber, Integer billableBillingAcountNumber) {
+    public BillingRun updateBR(BillingRun billingRun, BillingRunStatusEnum status, Integer billingAccountNumber, Integer billableBillingAcountNumber, User currentUser) throws BusinessException {
         billingRun.setStatus(status);
         if (billingAccountNumber != null) {
             billingRun.setBillingAccountNumber(billingAccountNumber);
@@ -394,7 +394,7 @@ public class InvoiceApi extends BaseApi {
         if (billableBillingAcountNumber != null) {
             billingRun.setBillableBillingAcountNumber(billableBillingAcountNumber);
         }
-        return billingRunService.update(billingRun);
+        return billingRunService.update(billingRun, currentUser);
     }
 
     public void validateBR(BillingRun billingRun, User user) throws BusinessException {
@@ -457,13 +457,13 @@ public class InvoiceApi extends BaseApi {
         updateBAtotalAmount(billingAccount, billingRun, currentUser);
         log.info("updateBillingAccountTotalAmounts ok");
 
-        billingRun = updateBR(billingRun, BillingRunStatusEnum.PREVALIDATED, 1, 1);
+        billingRun = updateBR(billingRun, BillingRunStatusEnum.PREVALIDATED, 1, 1, currentUser);
         log.info("update billingRun ON_GOING");
 
         createAgregatesAndInvoice(billingRun.getId(), billingRun.getLastTransactionDate(), currentUser);
         log.info("createAgregatesAndInvoice ok");
 
-        billingRun = updateBR(billingRun, BillingRunStatusEnum.POSTINVOICED, null, null);
+        billingRun = updateBR(billingRun, BillingRunStatusEnum.POSTINVOICED, null, null, currentUser);
         log.info("update billingRun TERMINATED");
 
         validateBR(billingRun, currentUser);

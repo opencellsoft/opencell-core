@@ -27,40 +27,40 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface UserAccountRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ActionStatus create(UserAccountDto postData);
+    @POST
+    @Path("/")
+    ActionStatus create(UserAccountDto postData);
 
-	@PUT
-	@Path("/")
-	ActionStatus update(UserAccountDto postData);
+    @PUT
+    @Path("/")
+    ActionStatus update(UserAccountDto postData);
 
-	/**
-	 * Search for a user account with a given code.
-	 * 
-	 * @param userAccountCode
-	 * @return
-	 */
-	@GET
-	@Path("/")
-	GetUserAccountResponseDto find(@QueryParam("userAccountCode") String userAccountCode);
+    /**
+     * Search for a user account with a given code.
+     * 
+     * @param userAccountCode
+     * @return
+     */
+    @GET
+    @Path("/")
+    GetUserAccountResponseDto find(@QueryParam("userAccountCode") String userAccountCode);
 
-	@DELETE
-	@Path("/{userAccountCode}")
-	ActionStatus remove(@PathParam("userAccountCode") String userAccountCode);
+    @DELETE
+    @Path("/{userAccountCode}")
+    ActionStatus remove(@PathParam("userAccountCode") String userAccountCode);
 
-	/**
-	 * List UserAccount filter by billingAccountCode.
-	 * 
-	 * @param billingAccountCode
-	 * @return
-	 */
-	@GET
-	@Path("/list")
-	UserAccountsResponseDto listByBillingAccount(@QueryParam("billingAccountCode") String billingAccountCode);
-	
-	@POST
-	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(UserAccountDto postData);
-	
+    /**
+     * List UserAccount filter by billingAccountCode.
+     * 
+     * @param billingAccountCode
+     * @return
+     */
+    @GET
+    @Path("/list")
+    UserAccountsResponseDto listByBillingAccount(@QueryParam("billingAccountCode") String billingAccountCode);
+
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(UserAccountDto postData);
+
 }

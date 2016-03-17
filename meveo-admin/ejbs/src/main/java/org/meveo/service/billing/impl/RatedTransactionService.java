@@ -370,7 +370,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 						invoiceAgregateTax.setProvider(billingAccount.getProvider());
 
 						if (invoiceAgregateTax.getId() == null) {
-							invoiceAgregateService.create(invoiceAgregateTax, currentUser, currentUser.getProvider());
+							invoiceAgregateService.create(invoiceAgregateTax, currentUser);
 						}
 						
 						invoiceAgregateSubcat.addSubCategoryTax(tax);
@@ -396,7 +396,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 					fillAgregates(invoiceAgregateCat, wallet);
 					if (invoiceAgregateCat.getId() == null) {
-						invoiceAgregateService.create(invoiceAgregateCat, currentUser, currentUser.getProvider());
+						invoiceAgregateService.create(invoiceAgregateCat, currentUser);
 					}
 
 					invoiceAgregateCat.setInvoiceCategory(invoiceSubCategory.getInvoiceCategory());
@@ -436,7 +436,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 						biggestSubCat = invoiceAgregateSubcat;
 					}
 
-					invoiceAgregateService.create(invoiceAgregateSubcat, currentUser, currentUser.getProvider());
+					invoiceAgregateService.create(invoiceAgregateSubcat, currentUser);
 
 				}
 
@@ -798,7 +798,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				walletOperation.getParameter2(), walletOperation.getParameter3(),
 				walletOperation.getRatingUnitDescription(), walletOperation.getPriceplan(),
 				walletOperation.getOfferCode(),walletOperation.getEdr());
-		create(ratedTransaction, currentUser, currentUser.getProvider());
+		create(ratedTransaction, currentUser);
 
 		walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
 		walletOperation.updateAudit(currentUser);

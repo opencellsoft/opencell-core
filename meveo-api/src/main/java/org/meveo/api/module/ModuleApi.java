@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.api.BaseApi;
 import org.meveo.api.CustomEntityApi;
@@ -113,7 +114,7 @@ public class ModuleApi extends BaseApi {
     @Inject
     private ChartApi chartApi;
 
-    public void create(ModuleDto moduleDto, User currentUser) throws MeveoApiException {
+    public void create(ModuleDto moduleDto, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(moduleDto.getCode())) {
             missingParameters.add("code");
@@ -136,10 +137,10 @@ public class ModuleApi extends BaseApi {
         meveoModule.setCode(moduleDto.getCode());
         meveoModule = parseModuleFromDto(meveoModule, moduleDto, currentUser);
 
-        meveoModuleService.create(meveoModule, currentUser, provider);
+        meveoModuleService.create(meveoModule, currentUser);
     }
 
-    public void update(ModuleDto moduleDto, User currentUser) throws MeveoApiException {
+    public void update(ModuleDto moduleDto, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(moduleDto.getCode())) {
             missingParameters.add("module code is null");
@@ -205,7 +206,7 @@ public class ModuleApi extends BaseApi {
         return moduleDto;
     }
 
-    public void createOrUpdate(ModuleDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(ModuleDto postData, User currentUser) throws MeveoApiException, BusinessException {
         MeveoModule meveoModule = meveoModuleService.findByCode(postData.getCode(), currentUser.getProvider());
         if (meveoModule == null) {
             // create
@@ -217,7 +218,7 @@ public class ModuleApi extends BaseApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private MeveoModule parseModuleFromDto(MeveoModule meveoModule, ModuleDto moduleDto, User currentUser) throws MeveoApiException {
+    private MeveoModule parseModuleFromDto(MeveoModule meveoModule, ModuleDto moduleDto, User currentUser) throws MeveoApiException, BusinessException {
         meveoModule.setCode(moduleDto.getCode());
         meveoModule.setDescription(moduleDto.getDescription());
         meveoModule.setLicense(moduleDto.getLicense());

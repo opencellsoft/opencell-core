@@ -142,7 +142,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			entity.setCode(entity.getCode() + "_copy");
 
 			try {
-				offerTemplateService.create(entity);
+				offerTemplateService.create(entity, getCurrentUser());
 				customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
 
 			} catch (BusinessException e) {
@@ -166,7 +166,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		if (getEntity().getBusinessOfferModel() != null) {
 			if (getEntity().getBusinessOfferModel().getScript() != null) {
 				offerScriptService.create(getEntity(), getEntity().getBusinessOfferModel().getScript().getCode(),
-						currentUser, currentUser.getProvider());
+						currentUser);
 			}
 		}
 
@@ -187,15 +187,15 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices
 					.getTarget()));
 			if (offerServiceTemplate.getId() != null) {
-				offerServiceTemplate = offerServiceTemplateService.update(offerServiceTemplate);
+				offerServiceTemplate = offerServiceTemplateService.update(offerServiceTemplate, getCurrentUser());
 				entity = getPersistenceService().refreshOrRetrieve(entity);
 				messages.info(new BundleKey("messages", "update.successful"));
 
 			} else {
 				offerServiceTemplate.setOfferTemplate(entity);
-				offerServiceTemplateService.create(offerServiceTemplate);
+				offerServiceTemplateService.create(offerServiceTemplate, getCurrentUser());
 				entity.addOfferServiceTemplate(offerServiceTemplate);
-				entity = getPersistenceService().update(entity);
+				entity = getPersistenceService().update(entity, getCurrentUser());
 				messages.info(new BundleKey("messages", "save.successful"));
 			}
 
@@ -213,7 +213,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	public void deleteOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) throws BusinessException {
 		entity.getOfferServiceTemplates().remove(offerServiceTemplate);
-		entity = getPersistenceService().update(entity);
+		entity = getPersistenceService().update(entity, getCurrentUser());
 		offerServiceTemplateService.remove(offerServiceTemplate.getId());
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}

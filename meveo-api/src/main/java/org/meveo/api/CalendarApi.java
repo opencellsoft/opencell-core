@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CalendarDateIntervalDto;
 import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.CalendarTypeEnum;
@@ -48,7 +49,7 @@ public class CalendarApi extends BaseApi {
     @Inject
     private HourInDayService hourInDayService;
 
-    public void create(CalendarDto postData, User currentUser) throws MeveoApiException {
+    public void create(CalendarDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -83,7 +84,7 @@ public class CalendarApi extends BaseApi {
                 calendar.setDays(days);
             }
 
-            calendarService.create(calendar, currentUser, provider);
+            calendarService.create(calendar, currentUser);
 
         } else if (postData.getCalendarType() == CalendarTypeEnum.DAILY) {
 
@@ -104,7 +105,7 @@ public class CalendarApi extends BaseApi {
                 calendar.setHours(hours);
             }
 
-            calendarService.create(calendar, currentUser, provider);
+            calendarService.create(calendar, currentUser);
 
         } else if (postData.getCalendarType() == CalendarTypeEnum.PERIOD) {
 
@@ -120,7 +121,7 @@ public class CalendarApi extends BaseApi {
             calendar.setNbPeriods(postData.getNbPeriods());
             calendar.setPeriodUnit(postData.getPeriodUnit().getUnitValue());
 
-            calendarService.create(calendar, currentUser, provider);
+            calendarService.create(calendar, currentUser);
 
         } else if (postData.getCalendarType() == CalendarTypeEnum.INTERVAL) {
 
@@ -138,7 +139,7 @@ public class CalendarApi extends BaseApi {
                 calendar.setIntervals(intervals);
             }
 
-            calendarService.create(calendar, currentUser, provider);
+            calendarService.create(calendar, currentUser);
 
         } else if (postData.getCalendarType().isJoin()) {
 
@@ -169,14 +170,14 @@ public class CalendarApi extends BaseApi {
             calendar.setJoinCalendar1(cal1);
             calendar.setJoinCalendar2(cal2);
 
-            calendarService.create(calendar, currentUser, provider);
+            calendarService.create(calendar, currentUser);
         } else {
             throw new BusinessApiException("invalid calendar type, possible values YEARLY, DAILY, PERIOD, INTERVAL, JOIN");
         }
 
     }
 
-    public void update(CalendarDto postData, User currentUser) throws MeveoApiException {
+    public void update(CalendarDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -321,7 +322,7 @@ public class CalendarApi extends BaseApi {
         }
     }
 
-    public void createOrUpdate(CalendarDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(CalendarDto postData, User currentUser) throws MeveoApiException, BusinessException {
         Calendar calendar = calendarService.findByCode(postData.getCode(), currentUser.getProvider());
         if (calendar == null) {
             // create

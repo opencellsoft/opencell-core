@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -31,7 +32,7 @@ public class LanguageApi extends BaseApi {
     @Inject
     private TradingLanguageService tradingLanguageService;
 
-    public void create(LanguageDto postData, User currentUser) throws MissingParameterException, EntityAlreadyExistsException, EntityDoesNotExistsException {
+    public void create(LanguageDto postData, User currentUser) throws MissingParameterException, EntityAlreadyExistsException, EntityDoesNotExistsException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -66,7 +67,7 @@ public class LanguageApi extends BaseApi {
         tradingLanguage.setPrDescription(postData.getDescription());
         tradingLanguage.setProvider(provider);
         tradingLanguage.setActive(true);
-        tradingLanguageService.create(tradingLanguage, currentUser, provider);
+        tradingLanguageService.create(tradingLanguage, currentUser);
     }
 
     public void remove(String code, Provider provider) throws MissingParameterException, EntityDoesNotExistsException {
@@ -138,8 +139,9 @@ public class LanguageApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void createOrUpdate(LanguageDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(LanguageDto postData, User currentUser) throws MeveoApiException, BusinessException {
         Provider provider = currentUser.getProvider();
         TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getCode(), provider);
 

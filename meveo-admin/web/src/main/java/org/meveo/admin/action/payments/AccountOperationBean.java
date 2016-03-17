@@ -211,51 +211,48 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	 * 
 	 * @return the URL of the matching code page containing the selected
 	 *         operation
+	 * @throws BusinessException 
 	 */
 
-	private void dunningInclusionExclusionPartial(AccountOperation accountOperation,Boolean exclude){
-		for(MatchingAmount  matchingAmount : accountOperation.getMatchingAmounts()){
-			   MatchingCode matchingCode = matchingAmount.getMatchingCode();
-				   for(MatchingAmount  ma : matchingCode.getMatchingAmounts()){
-			           AccountOperation accountop=ma.getAccountOperation();
-			           accountop.setExcludedFromDunning(exclude);
-			           accountOperationService.update(accountop); }   
-			   }
-	}
-	public String dunningInclusionExclusion(long customerAccountId, boolean exclude) {
-		try {
-			if (getSelectedEntities() == null
-					|| getSelectedEntities().isEmpty()) {
-				throw new BusinessEntityException("consultMatching.noOperationSelected");
-			} 
-			else{
-				log.info(" excludedFromDunning operationIds "
-						+ getSelectedEntities().size());
-				for (IEntity operation : getSelectedEntities()) {
-					   AccountOperation accountOperation = (AccountOperation) operation;
-					   if(!accountOperation.getExcludedFromDunning()==exclude){
-					   if (accountOperation instanceof RecordedInvoice) { 
-						 accountOperation.setExcludedFromDunning(exclude);
-					    accountOperationService.update(accountOperation);
-					      }
-					   else {
-						throw new BusinessEntityException("excludedFromDunning.selectOperations.notInvoice");
-						}
-					   if(accountOperation.getMatchingStatus()==MatchingStatusEnum.P){
-						     dunningInclusionExclusionPartial(accountOperation,exclude) ;
-						     }}
-			         }
-			}
-			messages.info(new BundleKey("messages",
-					exclude ? "accountOperation.excludFromDunning"
-							: "accountOperation.includFromDunning"));
-		} catch (BusinessEntityException e) {
-			messages.error(new BundleKey("messages", e.getMessage()));
-		}
+    private void dunningInclusionExclusionPartial(AccountOperation accountOperation, Boolean exclude) throws BusinessException {
+        for (MatchingAmount matchingAmount : accountOperation.getMatchingAmounts()) {
+            MatchingCode matchingCode = matchingAmount.getMatchingCode();
+            for (MatchingAmount ma : matchingCode.getMatchingAmounts()) {
+                AccountOperation accountop = ma.getAccountOperation();
+                accountop.setExcludedFromDunning(exclude);
+                accountOperationService.update(accountop, getCurrentUser());
+            }
+        }
+    }
 
-		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-				+ customerAccountId + "&edit=true&mainTab=1&faces-redirect=true";
-	}
+    public String dunningInclusionExclusion(long customerAccountId, boolean exclude) {
+        try {
+            if (getSelectedEntities() == null || getSelectedEntities().isEmpty()) {
+                throw new BusinessEntityException("consultMatching.noOperationSelected");
+            } else {
+                log.info(" excludedFromDunning operationIds " + getSelectedEntities().size());
+                for (IEntity operation : getSelectedEntities()) {
+                    AccountOperation accountOperation = (AccountOperation) operation;
+                    if (!accountOperation.getExcludedFromDunning() == exclude) {
+                        if (accountOperation instanceof RecordedInvoice) {
+                            accountOperation.setExcludedFromDunning(exclude);
+                            accountOperationService.update(accountOperation, getCurrentUser());
+                        } else {
+                            throw new BusinessEntityException("excludedFromDunning.selectOperations.notInvoice");
+                        }
+                        if (accountOperation.getMatchingStatus() == MatchingStatusEnum.P) {
+                            dunningInclusionExclusionPartial(accountOperation, exclude);
+                        }
+                    }
+                }
+            }
+            messages.info(new BundleKey("messages", exclude ? "accountOperation.excludFromDunning" : "accountOperation.includFromDunning"));
+        } catch (BusinessException e) {
+            messages.error(new BundleKey("messages", e.getMessage()));
+        }
+
+        return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId=" + customerAccountId + "&edit=true&mainTab=1&faces-redirect=true";
+    }
 	
 	public boolean isSelectedOperationIncluded(){
 		boolean included=true;

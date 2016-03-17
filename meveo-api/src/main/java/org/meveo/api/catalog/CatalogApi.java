@@ -28,156 +28,144 @@ import org.tmf.dsmapi.catalog.resource.product.ProductSpecification;
 @Stateless
 public class CatalogApi extends BaseApi {
 
-	@Inject
-	private OfferTemplateService offerTemplateService;
+    @Inject
+    private OfferTemplateService offerTemplateService;
 
-	@Inject
-	private PricePlanMatrixService pricePlanMatrixService;
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
 
-	public ProductOffering findProductOffering(String code, User currentUser, UriInfo uriInfo, Category category)
-			throws EntityDoesNotExistsException {
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(code, currentUser.getProvider());
-		if (offerTemplate == null) {
-			throw new EntityDoesNotExistsException(OfferTemplate.class, code);
-		}
-		Map<String, Price> servicePrices = getOfferPrices(offerTemplate, currentUser);
-		return offerTemplate == null ? null : ProductOffering.parseFromOfferTemplate(offerTemplate, uriInfo, category,
-				servicePrices);
-	}
+    public ProductOffering findProductOffering(String code, User currentUser, UriInfo uriInfo, Category category) throws EntityDoesNotExistsException {
+        OfferTemplate offerTemplate = offerTemplateService.findByCode(code, currentUser.getProvider());
+        if (offerTemplate == null) {
+            throw new EntityDoesNotExistsException(OfferTemplate.class, code);
+        }
+        Map<String, Price> servicePrices = getOfferPrices(offerTemplate, currentUser);
+        return offerTemplate == null ? null : ProductOffering.parseFromOfferTemplate(offerTemplate, uriInfo, category, servicePrices);
+    }
 
-	public List<ProductOffering> findProductOfferings(UriInfo uriInfo, Category category, User currentUser) {
-		List<OfferTemplate> offerTemplates = offerTemplateService.list(currentUser.getProvider());
-		Map<String, Map<String, Price>> offerPrices = new HashMap<>();
+    public List<ProductOffering> findProductOfferings(UriInfo uriInfo, Category category, User currentUser) {
+        List<OfferTemplate> offerTemplates = offerTemplateService.list(currentUser.getProvider());
+        Map<String, Map<String, Price>> offerPrices = new HashMap<>();
 
-		for (OfferTemplate offerTemplate : offerTemplates) {
-			Map<String, Price> servicePrices = getOfferPrices(offerTemplate, currentUser);
-			offerPrices.put(offerTemplate.getCode(), servicePrices);
-		}
+        for (OfferTemplate offerTemplate : offerTemplates) {
+            Map<String, Price> servicePrices = getOfferPrices(offerTemplate, currentUser);
+            offerPrices.put(offerTemplate.getCode(), servicePrices);
+        }
 
-		return ProductOffering.parseFromOfferTemplates(offerTemplates, uriInfo, category, offerPrices);
-	}
+        return ProductOffering.parseFromOfferTemplates(offerTemplates, uriInfo, category, offerPrices);
+    }
 
-	private Map<String, Price> getOfferPrices(OfferTemplate offerTemplate, User currentUser) {
-		Map<String, Price> servicePrices = new HashMap<>();
+    private Map<String, Price> getOfferPrices(OfferTemplate offerTemplate, User currentUser) {
+        Map<String, Price> servicePrices = new HashMap<>();
 
-		for (OfferServiceTemplate ost : offerTemplate.getOfferServiceTemplates()) {
-			ServiceTemplate st = ost.getServiceTemplate();
-			if (st.getServiceSubscriptionCharges() != null) {
-				Price price = new Price();
-				price.setDutyFreeAmount(new BigDecimal(0));
-				price.setTaxIncludedAmount(new BigDecimal(0));
+        for (OfferServiceTemplate ost : offerTemplate.getOfferServiceTemplates()) {
+            ServiceTemplate st = ost.getServiceTemplate();
+            if (st.getServiceSubscriptionCharges() != null) {
+                Price price = new Price();
+                price.setDutyFreeAmount(new BigDecimal(0));
+                price.setTaxIncludedAmount(new BigDecimal(0));
 
-				for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : st
-						.getServiceSubscriptionCharges()) {
-					List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(
-							offerTemplate, serviceChargeTemplateSubscription.getChargeTemplate().getCode());
-					if (serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory()
-							.getInvoiceSubcategoryCountries() != null
-							&& serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory()
-									.getInvoiceSubcategoryCountries().get(0).getTax() != null) {
-						price.setTaxRate(serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory()
-								.getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
-					}
+                for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : st.getServiceSubscriptionCharges()) {
+                    List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate, serviceChargeTemplateSubscription
+                        .getChargeTemplate().getCode());
+                    if (serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
+                            && serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
+                        price.setTaxRate(serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax()
+                            .getPercent());
+                    }
 
-					if (offerPricePlans != null && offerPricePlans.size() > 0) {
-						price.setDutyFreeAmount(price.getDutyFreeAmount().add(
-								offerPricePlans.get(0).getAmountWithoutTax()));
-						if (!currentUser.getProvider().isEntreprise()) {
-							price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(
-									offerPricePlans.get(0).getAmountWithTax()));
-						}
-					} else {
-						List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null,
-								serviceChargeTemplateSubscription.getChargeTemplate().getCode());
-						if (pricePlans != null && pricePlans.size() > 0) {
-							price.setDutyFreeAmount(price.getDutyFreeAmount().add(
-									pricePlans.get(0).getAmountWithoutTax()));
-							if (!currentUser.getProvider().isEntreprise()) {
-								price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(
-										pricePlans.get(0).getAmountWithTax()));
-							}
-						}
-					}
-				}
+                    if (offerPricePlans != null && offerPricePlans.size() > 0) {
+                        price.setDutyFreeAmount(price.getDutyFreeAmount().add(offerPricePlans.get(0).getAmountWithoutTax()));
+                        if (!currentUser.getProvider().isEntreprise()) {
+                            price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(offerPricePlans.get(0).getAmountWithTax()));
+                        }
+                    } else {
+                        List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, serviceChargeTemplateSubscription.getChargeTemplate()
+                            .getCode());
+                        if (pricePlans != null && pricePlans.size() > 0) {
+                            price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
+                            if (!currentUser.getProvider().isEntreprise()) {
+                                price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax()));
+                            }
+                        }
+                    }
+                }
 
-				if (currentUser.getProvider().isEntreprise()) {
-					if (price.getDutyFreeAmount() != null && price.getTaxRate() != null) {
-						BigDecimal taxRate = price.getTaxRate().divide(new BigDecimal(100)).add(new BigDecimal(1));
-						price.setTaxIncludedAmount(price.getDutyFreeAmount().multiply(taxRate));
-					} else if (price.getDutyFreeAmount() != null && price.getTaxRate() == null) {
-						price.setTaxIncludedAmount(price.getDutyFreeAmount());
-					} else {
-						price.setTaxIncludedAmount(new BigDecimal(0));
-					}
-				}
-				servicePrices.put(st.getCode() + "_SUB", price);
-			}
+                if (currentUser.getProvider().isEntreprise()) {
+                    if (price.getDutyFreeAmount() != null && price.getTaxRate() != null) {
+                        BigDecimal taxRate = price.getTaxRate().divide(new BigDecimal(100)).add(new BigDecimal(1));
+                        price.setTaxIncludedAmount(price.getDutyFreeAmount().multiply(taxRate));
+                    } else if (price.getDutyFreeAmount() != null && price.getTaxRate() == null) {
+                        price.setTaxIncludedAmount(price.getDutyFreeAmount());
+                    } else {
+                        price.setTaxIncludedAmount(new BigDecimal(0));
+                    }
+                }
+                servicePrices.put(st.getCode() + "_SUB", price);
+            }
 
-			if (st.getServiceRecurringCharges() != null) {
-				Price price = new Price();
-				price.setDutyFreeAmount(new BigDecimal(0));
-				price.setTaxIncludedAmount(new BigDecimal(0));
+            if (st.getServiceRecurringCharges() != null) {
+                Price price = new Price();
+                price.setDutyFreeAmount(new BigDecimal(0));
+                price.setTaxIncludedAmount(new BigDecimal(0));
 
-				for (ServiceChargeTemplateRecurring serviceChargeTemplateRecurring : st.getServiceRecurringCharges()) {
-					List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(
-							offerTemplate, serviceChargeTemplateRecurring.getChargeTemplate().getCode());
-					if (serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory()
-							.getInvoiceSubcategoryCountries() != null
-							&& serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory()
-									.getInvoiceSubcategoryCountries().get(0).getTax() != null) {
-						price.setTaxRate(serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory()
-								.getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
-					}
+                for (ServiceChargeTemplateRecurring serviceChargeTemplateRecurring : st.getServiceRecurringCharges()) {
+                    List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate, serviceChargeTemplateRecurring
+                        .getChargeTemplate().getCode());
+                    if (serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
+                            && serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
+                        price.setTaxRate(serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
+                    }
 
-					if (offerPricePlans != null && offerPricePlans.size() > 0) {
-						price.setDutyFreeAmount(price.getDutyFreeAmount().add(
-								offerPricePlans.get(0).getAmountWithoutTax()));
-						if (!currentUser.getProvider().isEntreprise()) {
-							price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(
-									offerPricePlans.get(0).getAmountWithTax()));
-						}
-					} else {
-						List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null,
-								serviceChargeTemplateRecurring.getChargeTemplate().getCode());
-						if (pricePlans != null && pricePlans.size() > 0) {
-							price.setDutyFreeAmount(price.getDutyFreeAmount().add(
-									pricePlans.get(0).getAmountWithoutTax()));
-							if (!currentUser.getProvider().isEntreprise()) {
-								if(price.getTaxIncludedAmount()!=null){
-								price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(
-										pricePlans.get(0).getAmountWithTax()!=null ? pricePlans.get(0).getAmountWithTax() : BigDecimal.ZERO));
-								}
-							}
-						}
-					}
-				}
+                    if (offerPricePlans != null && offerPricePlans.size() > 0) {
+                        price.setDutyFreeAmount(price.getDutyFreeAmount().add(offerPricePlans.get(0).getAmountWithoutTax()));
+                        if (!currentUser.getProvider().isEntreprise()) {
+                            price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(offerPricePlans.get(0).getAmountWithTax()));
+                        }
+                    } else {
+                        List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, serviceChargeTemplateRecurring.getChargeTemplate()
+                            .getCode());
+                        if (pricePlans != null && pricePlans.size() > 0) {
+                            price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
+                            if (!currentUser.getProvider().isEntreprise()) {
+                                if (price.getTaxIncludedAmount() != null) {
+                                    price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(
+                                        pricePlans.get(0).getAmountWithTax() != null ? pricePlans.get(0).getAmountWithTax() : BigDecimal.ZERO));
+                                }
+                            }
+                        }
+                    }
+                }
 
-				if (currentUser.getProvider().isEntreprise()) {
-					if (price.getDutyFreeAmount() != null && price.getTaxRate() != null) {
-						BigDecimal taxRate = price.getTaxRate().divide(new BigDecimal(100)).add(new BigDecimal(1));
-						price.setTaxIncludedAmount(price.getDutyFreeAmount().multiply(taxRate));
-					} else if (price.getDutyFreeAmount() != null && price.getTaxRate() == null) {
-						price.setTaxIncludedAmount(price.getDutyFreeAmount());
-					} else {
-						price.setTaxIncludedAmount(new BigDecimal(0));
-					}
-				}
-				servicePrices.put(st.getCode() + "_REC"
-						+ (st.getInvoicingCalendar() == null ? "" : "_" + st.getInvoicingCalendar().getCode()), price);
-			}
-		}
+                if (currentUser.getProvider().isEntreprise()) {
+                    if (price.getDutyFreeAmount() != null && price.getTaxRate() != null) {
+                        BigDecimal taxRate = price.getTaxRate().divide(new BigDecimal(100)).add(new BigDecimal(1));
+                        price.setTaxIncludedAmount(price.getDutyFreeAmount().multiply(taxRate));
+                    } else if (price.getDutyFreeAmount() != null && price.getTaxRate() == null) {
+                        price.setTaxIncludedAmount(price.getDutyFreeAmount());
+                    } else {
+                        price.setTaxIncludedAmount(new BigDecimal(0));
+                    }
+                }
+                servicePrices.put(st.getCode() + "_REC" + (st.getInvoicingCalendar() == null ? "" : "_" + st.getInvoicingCalendar().getCode()), price);
+            }
+        }
 
-		return servicePrices;
-	}
+        return servicePrices;
+    }
 
-	public ProductSpecification findProductSpecification(String code, User currentUser, UriInfo uriInfo) {
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(code, currentUser.getProvider());
-		return offerTemplate == null ? null : ProductSpecification.parseFromOfferTemplate(offerTemplate, uriInfo);
-	}
+    public ProductSpecification findProductSpecification(String code, User currentUser, UriInfo uriInfo) throws EntityDoesNotExistsException {
+        OfferTemplate offerTemplate = offerTemplateService.findByCode(code, currentUser.getProvider());
+        if (offerTemplate != null) {
+            return ProductSpecification.parseFromOfferTemplate(offerTemplate, uriInfo);
+        } else {
+            throw new EntityDoesNotExistsException(OfferTemplate.class, code);
+        }
+    }
 
-	public List<ProductSpecification> findProductSpecifications(User currentUser, UriInfo uriInfo) {
-		List<OfferTemplate> offerTemplates = offerTemplateService.list(currentUser.getProvider());
-		return ProductSpecification.parseFromOfferTemplates(offerTemplates, uriInfo);
-	}
+    public List<ProductSpecification> findProductSpecifications(User currentUser, UriInfo uriInfo) {
+        List<OfferTemplate> offerTemplates = offerTemplateService.list(currentUser.getProvider());
+        return ProductSpecification.parseFromOfferTemplates(offerTemplates, uriInfo);
+    }
 
 }

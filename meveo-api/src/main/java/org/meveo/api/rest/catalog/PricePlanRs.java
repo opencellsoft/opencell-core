@@ -29,51 +29,51 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface PricePlanRs extends IBaseRs {
 
-	/**
-	 * Create price plan.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@POST
-	ActionStatus create(PricePlanDto postData);
+    /**
+     * Create price plan.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @POST
+    ActionStatus create(PricePlanDto postData);
 
-	/**
-	 * Update price plan.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@PUT
-	ActionStatus update(PricePlanDto postData);
+    /**
+     * Update price plan.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @PUT
+    ActionStatus update(PricePlanDto postData);
 
-	/**
-	 * Search price plan with a given id.
-	 * 
-	 * @param id
-	 * @return
-	 */
-	@Path("/")
-	@GET
-	GetPricePlanResponseDto find(@QueryParam("pricePlanCode") String pricePlanCode);
+    /**
+     * Search price plan with a given id.
+     * 
+     * @param id
+     * @return
+     */
+    @Path("/")
+    @GET
+    GetPricePlanResponseDto find(@QueryParam("pricePlanCode") String pricePlanCode);
 
-	/**
-	 * Remove price plan with a given id.
-	 * 
-	 * @param id
-	 * @return
-	 */
-	@Path("/{pricePlanCode}")
-	@DELETE
-	ActionStatus remove(@PathParam("pricePlanCode") String pricePlanCode);
-	
-	@Path("/")
-	@GET
-	PricePlanMatrixesResponseDto listPricePlanByEventCode(@QueryParam("eventCode") String eventCode);
-	
-	@Path("/createOrUpdate")
-	@POST
-	ActionStatus createOrUpdate(PricePlanDto postData);
+    /**
+     * Remove price plan with a given id.
+     * 
+     * @param id
+     * @return
+     */
+    @Path("/{pricePlanCode}")
+    @DELETE
+    ActionStatus remove(@PathParam("pricePlanCode") String pricePlanCode);
+
+    @Path("/")
+    @GET
+    PricePlanMatrixesResponseDto listPricePlanByEventCode(@QueryParam("eventCode") String eventCode);
+
+    @Path("/createOrUpdate")
+    @POST
+    ActionStatus createOrUpdate(PricePlanDto postData);
 }

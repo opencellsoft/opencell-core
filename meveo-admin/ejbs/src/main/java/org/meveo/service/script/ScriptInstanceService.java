@@ -45,7 +45,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
     private ResourceBundle resourceMessages;
 
     @Override
-    public void create(ScriptInstance scriptInstance, User creator, Provider provider) {
+    public void create(ScriptInstance scriptInstance, User creator) throws BusinessException {
         String packageName = getPackageName(scriptInstance.getScript());
         String className = getClassName(scriptInstance.getScript());
         if (packageName == null || className == null) {
@@ -53,12 +53,12 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
         }
         scriptInstance.setCode(packageName + "." + className);
 
-        super.create(scriptInstance, creator, provider);
+        super.create(scriptInstance, creator);
 
     }
 
     @Override
-    public ScriptInstance update(ScriptInstance scriptInstance, User updater) {
+    public ScriptInstance update(ScriptInstance scriptInstance, User updater) throws BusinessException {
 
         String packageName = getPackageName(scriptInstance.getScript());
         String className = getClassName(scriptInstance.getScript());
@@ -117,13 +117,13 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      * @throws BusinessException Any execution exception
      */
     @Override
-    public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser, Provider currentProvider) throws ElementNotFoundException,
-            InvalidScriptException, InvalidPermissionException, BusinessException {
-        
-        ScriptInstance scriptInstance = findByCode(scriptCode, currentProvider);
+    public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser) throws ElementNotFoundException, InvalidScriptException,
+            InvalidPermissionException, BusinessException {
+
+        ScriptInstance scriptInstance = findByCode(scriptCode, currentUser.getProvider());
         // Check access to the script
         isUserHasExecutionRole(scriptInstance, currentUser);
-        return super.execute(scriptCode, context, currentUser, currentProvider);
+        return super.execute(scriptCode, context, currentUser);
     }
 
     /**
@@ -133,16 +133,16 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      * @param scriptCode
      * @param context
      */
-    public void test(String scriptCode, Map<String, Object> context, User currentUser, Provider currentProvider) {
+    public void test(String scriptCode, Map<String, Object> context, User currentUser) {
         try {
-            clearLogs(currentProvider.getCode(), scriptCode);
-            ScriptInstance scriptInstance = findByCode(scriptCode, currentProvider);
+            clearLogs(currentUser.getProvider().getCode(), scriptCode);
+            ScriptInstance scriptInstance = findByCode(scriptCode, currentUser.getProvider());
             isUserHasExecutionRole(scriptInstance, currentUser);
             String javaSrc = scriptInstance.getScript();
-            javaSrc = javaSrc.replaceAll("LoggerFactory.getLogger", "new org.meveo.service.script.RunTimeLogger(" + getClassName(javaSrc) + ".class,\"" + currentProvider.getCode()
-                    + "\",\"" + scriptCode + "\",\"ScriptInstanceService\");//");
+            javaSrc = javaSrc.replaceAll("LoggerFactory.getLogger", "new org.meveo.service.script.RunTimeLogger(" + getClassName(javaSrc) + ".class,\""
+                    + currentUser.getProvider().getCode() + "\",\"" + scriptCode + "\",\"ScriptInstanceService\");//");
             Class<ScriptInterface> compiledScript = compileJavaSource(javaSrc, getPackageName(scriptInstance.getScript()) + "." + getClassName(scriptInstance.getScript()));
-            execute(compiledScript.newInstance(), context, currentUser, currentProvider);
+            execute(compiledScript.newInstance(), context, currentUser);
 
         } catch (Exception e) {
             log.error("Script test failed", e);
@@ -163,7 +163,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
             execRoles.retainAll(user.getRoles());
             if (execRoles.isEmpty()) {
                 throw new InvalidPermissionException();
-            }            
+            }
         }
     }
 

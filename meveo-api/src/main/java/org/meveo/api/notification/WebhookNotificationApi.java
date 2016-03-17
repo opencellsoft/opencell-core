@@ -3,6 +3,7 @@ package org.meveo.api.notification;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.notification.WebhookNotificationDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -35,7 +36,7 @@ public class WebhookNotificationApi extends BaseApi {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    public void create(WebhookNotificationDto postData, User currentUser) throws MeveoApiException {
+    public void create(WebhookNotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -103,7 +104,7 @@ public class WebhookNotificationApi extends BaseApi {
             webHook.getWebhookParams().putAll(postData.getParams());
         }
 
-        webHookService.create(webHook, currentUser, currentUser.getProvider());
+        webHookService.create(webHook, currentUser);
     }
 
     public WebhookNotificationDto find(String notificationCode, Provider provider) throws MeveoApiException {
@@ -126,7 +127,7 @@ public class WebhookNotificationApi extends BaseApi {
         return result;
     }
 
-    public void update(WebhookNotificationDto postData, User currentUser) throws MeveoApiException {
+    public void update(WebhookNotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -213,7 +214,7 @@ public class WebhookNotificationApi extends BaseApi {
         }
     }
 
-    public void createOrUpdate(WebhookNotificationDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(WebhookNotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (webHookService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             create(postData, currentUser);
         } else {

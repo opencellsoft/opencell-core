@@ -10,6 +10,7 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.ICustomFieldEntity;
@@ -109,17 +110,17 @@ public class EntityActionScriptService extends CustomScriptService<EntityActionS
     }
 
     @Override
-    public void create(EntityActionScript script, User creator, Provider provider) {
+    public void create(EntityActionScript script, User creator) throws BusinessException {
         String className = getClassName(script.getScript());
         if (className == null) {
             throw new RuntimeException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
         }
 
-        super.create(script, creator, provider);
+        super.create(script, creator);
     }
 
     @Override
-    public EntityActionScript update(EntityActionScript script, User updater) {
+    public EntityActionScript update(EntityActionScript script, User updater) throws BusinessException {
 
         String className = getClassName(script.getScript());
         if (className == null) {

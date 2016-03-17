@@ -467,7 +467,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     public String executeCustomAction(ICustomFieldEntity entity, EntityActionScript action, String encodedParameters) {
 
         try {
-            Map<String, Object> result = entityActionScriptService.execute((IEntity) entity, action.getCode(), encodedParameters, currentUser, currentProvider);
+            Map<String, Object> result = entityActionScriptService.execute((IEntity) entity, action.getCode(), encodedParameters, currentUser);
 
             // Display a message accordingly on what is set in result
             if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
@@ -526,7 +526,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                 } else {
                     cfi.getCfValue().serializeForGUI(cft);
                     if (cfi.isTransient()) {
-                        customFieldInstanceService.create(cfi, (ICustomFieldEntity) entity, currentUser, currentProvider);
+                        customFieldInstanceService.create(cfi, (ICustomFieldEntity) entity, currentUser);
                     } else {
                         customFieldInstanceService.update(cfi, currentUser);
                     }

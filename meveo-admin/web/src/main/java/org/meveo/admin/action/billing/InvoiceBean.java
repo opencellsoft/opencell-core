@@ -355,7 +355,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	public void deleteInvoicePdf() {
 		try {
 			entity.setPdf(null);
-			invoiceService.update(entity);
+			invoiceService.update(entity, getCurrentUser());
 			messages.info(new BundleKey("messages", "delete.successful"));
 		} catch (Exception e) {
 			log.error("failed to generate PDF ", e);
@@ -673,7 +673,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 					ratedTransactionService.create(rt, getCurrentUser());
 				}
 			}
-			invoiceService.updateCreditNoteNb(entity, Long.parseLong(entity.getAlias()));
+			invoiceService.updateCreditNoteNb(entity, Long.parseLong(entity.getAlias()), getCurrentUser());
 		}
 
 		super.saveOrUpdate(false);

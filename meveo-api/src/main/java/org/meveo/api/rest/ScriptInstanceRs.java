@@ -26,23 +26,23 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface ScriptInstanceRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ScriptInstanceReponseDto create(ScriptInstanceDto postData);
+    @POST
+    @Path("/")
+    ScriptInstanceReponseDto create(ScriptInstanceDto postData);
 
-	@PUT
-	@Path("/")
-	ScriptInstanceReponseDto update(ScriptInstanceDto postData);
+    @PUT
+    @Path("/")
+    ScriptInstanceReponseDto update(ScriptInstanceDto postData);
 
-	@DELETE
-	@Path("/{scriptInstanceCode}")
-	ActionStatus remove(@PathParam("scriptInstanceCode") String scriptInstanceCode);
+    @DELETE
+    @Path("/{scriptInstanceCode}")
+    ActionStatus remove(@PathParam("scriptInstanceCode") String scriptInstanceCode);
 
-	@GET
-	@Path("/")
-	GetScriptInstanceResponseDto find(@QueryParam("scriptInstanceCode") String scriptInstanceCode);
-	
-	@POST
-	@Path("/createOrUpdate")
-	ScriptInstanceReponseDto createOrUpdate(ScriptInstanceDto postData);
+    @GET
+    @Path("/")
+    GetScriptInstanceResponseDto find(@QueryParam("scriptInstanceCode") String scriptInstanceCode);
+
+    @POST
+    @Path("/createOrUpdate")
+    ScriptInstanceReponseDto createOrUpdate(ScriptInstanceDto postData);
 }

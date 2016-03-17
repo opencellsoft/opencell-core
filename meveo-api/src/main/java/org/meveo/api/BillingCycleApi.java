@@ -3,6 +3,7 @@ package org.meveo.api;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -27,7 +28,7 @@ public class BillingCycleApi extends BaseApi {
     @Inject
     private CalendarService calendarService;
 
-    public void create(BillingCycleDto postData, User currentUser) throws MeveoApiException {
+    public void create(BillingCycleDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -70,11 +71,11 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
         billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
 
-        billingCycleService.create(billingCycle, currentUser, currentUser.getProvider());
+        billingCycleService.create(billingCycle, currentUser);
 
     }
 
-    public void update(BillingCycleDto postData, User currentUser) throws MeveoApiException {
+    public void update(BillingCycleDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -153,13 +154,12 @@ public class BillingCycleApi extends BaseApi {
         billingCycleService.remove(billingCycle);
     }
 
-    public void createOrUpdate(BillingCycleDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(BillingCycleDto postData, User currentUser) throws MeveoApiException, BusinessException {
+       
         BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(postData.getCode(), currentUser.getProvider());
         if (billingCycle == null) {
-            // create
             create(postData, currentUser);
         } else {
-            // update
             update(postData, currentUser);
         }
     }

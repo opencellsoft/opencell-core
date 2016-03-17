@@ -28,31 +28,31 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface NotificationRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ActionStatus create(NotificationDto postData);
+    @POST
+    @Path("/")
+    ActionStatus create(NotificationDto postData);
 
-	@PUT
-	@Path("/")
-	ActionStatus update(NotificationDto postData);
+    @PUT
+    @Path("/")
+    ActionStatus update(NotificationDto postData);
 
-	@GET
-	@Path("/")
-	GetNotificationResponseDto find(@QueryParam("notificationCode") String notificationCode);
+    @GET
+    @Path("/")
+    GetNotificationResponseDto find(@QueryParam("notificationCode") String notificationCode);
 
-	@DELETE
-	@Path("/{notificationCode}")
-	ActionStatus remove(@PathParam("notificationCode") String notificationCode);
+    @DELETE
+    @Path("/{notificationCode}")
+    ActionStatus remove(@PathParam("notificationCode") String notificationCode);
 
-	@GET
-	@Path("/listNotificationHistory")
-	NotificationHistoriesResponseDto listNotificationHistory();
+    @GET
+    @Path("/listNotificationHistory")
+    NotificationHistoriesResponseDto listNotificationHistory();
 
-	@GET
-	@Path("/listInboundRequest")
-	InboundRequestsResponseDto listInboundRequest();
-	
-	@POST
-	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(NotificationDto postData);
+    @GET
+    @Path("/listInboundRequest")
+    InboundRequestsResponseDto listInboundRequest();
+
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(NotificationDto postData);
 }

@@ -128,14 +128,14 @@ public class ProviderBean extends CustomFieldBean<Provider> {
             role.getPermissions().addAll(adminRole.getPermissions());
 
             role.setProvider(entity);
-            roleService.create(role);
+            roleService.create(role, getCurrentUser());
 
             User user = new User();
             user.setProvider(entity);
             user.setPassword(entity.getCode() + ".password");
             user.setUserName(entity.getCode() + ".ADMIN");
             user.getRoles().add(role);
-            userService.create(user);
+            userService.create(user, getCurrentUser());
             log.info("created default user id={} for provider {}", user.getId(), entity.getCode());
 
             messages.info(new BundleKey("messages", "provider.createdWithDefaultUser"), entity.getCode() + ".ADMIN", entity.getCode() + ".password");
