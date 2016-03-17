@@ -2,6 +2,7 @@ package org.meveo.admin.web.interceptor;
 
 import java.io.Serializable;
 
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
@@ -60,13 +61,15 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
             messages.getAll();
             messages.clear();
             messages.error(new BundleKey("messages", "error.action.failed"), builder.toString());
-
+            FacesContext.getCurrentInstance().validationFailed();
+            
         } catch (Exception e) {
             log.error("Failed to execute {}.{} method due to errors ", invocationContext.getMethod().getDeclaringClass().getName(), invocationContext.getMethod().getName(), e);
 
             messages.getAll();
             messages.clear();
             messages.error(new BundleKey("messages", "error.action.failed"), e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
+            FacesContext.getCurrentInstance().validationFailed();
         }
 
         return null;
