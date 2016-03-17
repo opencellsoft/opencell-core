@@ -30,60 +30,60 @@ import org.meveo.api.rest.security.RSSecured;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured
 public interface WalletRs extends IBaseRs {
-	
-	@POST
-	@Path("/template")	
-	ActionStatus createWalletTemplate(WalletTemplateDto postData);
-	
-	@PUT
-	@Path("/template")	
-	ActionStatus updateWalletTemplate(WalletTemplateDto postData);
-	
-	@DELETE
-	@Path("/template/{walletTemplateCode}")	
-	ActionStatus removeWalletTemplate(@PathParam("walletTemplateCode") String walletTemplateCode);
-	
-	@GET
-	@Path("/template")	
-	GetWalletTemplateResponseDto findWalletTemplate(@QueryParam("walletTemplateCode") String walletTemplateCode);
 
-	@POST
-	@Path("/balance/current")
-	ActionStatus currentBalance(WalletBalanceDto postData);
+    @POST
+    @Path("/template")
+    ActionStatus createWalletTemplate(WalletTemplateDto postData);
 
-	@POST
-	@Path("/balance/reserved")
-	ActionStatus reservedBalance(WalletBalanceDto postData);
+    @PUT
+    @Path("/template")
+    ActionStatus updateWalletTemplate(WalletTemplateDto postData);
 
-	@POST
-	@Path("/balance/open")
-	ActionStatus openBalance(WalletBalanceDto postData);
+    @DELETE
+    @Path("/template/{walletTemplateCode}")
+    ActionStatus removeWalletTemplate(@PathParam("walletTemplateCode") String walletTemplateCode);
 
-	@POST
-	@Path("/reservation")
-	ActionStatus createReservation(WalletReservationDto postData);
+    @GET
+    @Path("/template")
+    GetWalletTemplateResponseDto findWalletTemplate(@QueryParam("walletTemplateCode") String walletTemplateCode);
 
-	@PUT
-	@Path("/reservation")
-	ActionStatus updateReservation(WalletReservationDto postData);
+    @POST
+    @Path("/balance/current")
+    ActionStatus currentBalance(WalletBalanceDto postData);
 
-	@DELETE
-	@Path("/reservation/{reservationId:[0-9]+}")
-	ActionStatus cancelReservation(@PathParam("reservationId") Long reservationId);
+    @POST
+    @Path("/balance/reserved")
+    ActionStatus reservedBalance(WalletBalanceDto postData);
 
-	@POST
-	@Path("/reservation/confirm")
-	ActionStatus confirmReservation(WalletReservationDto postData);
+    @POST
+    @Path("/balance/open")
+    ActionStatus openBalance(WalletBalanceDto postData);
 
-	@POST
-	@Path("/operation")
-	ActionStatus createOperation(WalletOperationDto postData);
+    @POST
+    @Path("/reservation")
+    ActionStatus createReservation(WalletReservationDto postData);
 
-	@POST
-	@Path("/operation/find")
-	FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData);
-	
-	@POST
-	@Path("/template/createOrUpdate")	
-	ActionStatus createOrUpdateWalletTemplate(WalletTemplateDto postData);
+    @PUT
+    @Path("/reservation")
+    ActionStatus updateReservation(WalletReservationDto postData);
+
+    @DELETE
+    @Path("/reservation/{reservationId:[0-9]+}")
+    ActionStatus cancelReservation(@PathParam("reservationId") Long reservationId);
+
+    @POST
+    @Path("/reservation/confirm")
+    ActionStatus confirmReservation(WalletReservationDto postData);
+
+    @POST
+    @Path("/operation")
+    ActionStatus createOperation(WalletOperationDto postData);
+
+    @POST
+    @Path("/operation/find")
+    FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData);
+
+    @POST
+    @Path("/template/createOrUpdate")
+    ActionStatus createOrUpdateWalletTemplate(WalletTemplateDto postData);
 }

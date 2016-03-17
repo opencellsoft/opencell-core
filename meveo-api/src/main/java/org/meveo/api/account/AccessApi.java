@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.AccessDto;
@@ -31,7 +32,7 @@ public class AccessApi extends BaseApi {
     @Inject
     private SubscriptionService subscriptionService;
 
-    public void create(AccessDto postData, User currentUser) throws MeveoApiException {
+    public void create(AccessDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getSubscription())) {
             Provider provider = currentUser.getProvider();
 
@@ -50,7 +51,7 @@ public class AccessApi extends BaseApi {
                 throw new MeveoApiException(MeveoApiErrorCodeEnum.DUPLICATE_ACCESS, "Duplicate subscription / access point pair.");
             }
 
-            accessService.create(access, currentUser, provider);
+            accessService.create(access, currentUser);
 
             // populate customFields
             try {
@@ -72,7 +73,7 @@ public class AccessApi extends BaseApi {
         }
     }
 
-    public void update(AccessDto postData, User currentUser) throws MeveoApiException {
+    public void update(AccessDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (postData.getCode() != null && !StringUtils.isBlank(postData.getSubscription())) {
             Provider provider = currentUser.getProvider();
 
@@ -188,8 +189,9 @@ public class AccessApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void createOrUpdate(AccessDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(AccessDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), currentUser.getProvider());
         if (subscription == null) {

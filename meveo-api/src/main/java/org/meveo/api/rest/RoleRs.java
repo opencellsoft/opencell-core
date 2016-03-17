@@ -22,53 +22,53 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface RoleRs extends IBaseRs {
 
-	/**
-	 * Create role.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@POST
-	@Path("/")
-	public ActionStatus create(RoleDto postData);
+    /**
+     * Create role.
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/")
+    public ActionStatus create(RoleDto postData);
 
-	/**
-	 * Update role.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@PUT
-	@Path("/")
-	public ActionStatus update(RoleDto postData);
+    /**
+     * Update role.
+     * 
+     * @param postData
+     * @return
+     */
+    @PUT
+    @Path("/")
+    public ActionStatus update(RoleDto postData);
 
-	/**
-	 * Remove role.
-	 * 
-	 * @param rolename
-	 * @return
-	 */
-	@DELETE
-	@Path("/{roleName}")
-	public ActionStatus remove(@PathParam("roleName") String roleName);
+    /**
+     * Remove role.
+     * 
+     * @param rolename
+     * @return
+     */
+    @DELETE
+    @Path("/{roleName}")
+    public ActionStatus remove(@PathParam("roleName") String roleName);
 
-	/**
-	 * Search role.
-	 * 
-	 * @param rolename
-	 * @return
-	 */
-	@GET
-	@Path("/")
-	public GetRoleResponse find(@QueryParam("roleName") String roleName);
+    /**
+     * Search role.
+     * 
+     * @param rolename
+     * @return
+     */
+    @GET
+    @Path("/")
+    public GetRoleResponse find(@QueryParam("roleName") String roleName);
 
-	/**
-	 * Create or update role
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@POST
-	@Path("/createOrUpdate")
-	public ActionStatus createOrUpdate(RoleDto postData);
+    /**
+     * Create or update role
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/createOrUpdate")
+    public ActionStatus createOrUpdate(RoleDto postData);
 }

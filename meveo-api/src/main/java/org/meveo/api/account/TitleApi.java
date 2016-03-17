@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.dto.response.TitlesDto;
@@ -26,8 +27,9 @@ public class TitleApi extends BaseApi {
      * 
      * @param postData
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void create(TitleDto postData, User currentUser) throws MeveoApiException {
+    public void create(TitleDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         String titleCode = postData.getCode();
 
@@ -43,7 +45,7 @@ public class TitleApi extends BaseApi {
             newTitle.setDescription(postData.getDescription());
             newTitle.setIsCompany(postData.getIsCompany());
 
-            titleService.create(newTitle, currentUser, currentUser.getProvider());
+            titleService.create(newTitle, currentUser);
         } else {
             missingParameters.add("titleCode");
             handleMissingParameters();
@@ -81,8 +83,9 @@ public class TitleApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void update(TitleDto postData, User currentUser) throws MeveoApiException {
+    public void update(TitleDto postData, User currentUser) throws MeveoApiException, BusinessException {
         String titleCode = postData.getCode();
         if (StringUtils.isBlank(titleCode)) {
             missingParameters.add("titleCode");
@@ -122,7 +125,7 @@ public class TitleApi extends BaseApi {
         }
     }
 
-    public void createOrUpdate(TitleDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(TitleDto postData, User currentUser) throws MeveoApiException, BusinessException {
         Title title = titleService.findByCode(currentUser.getProvider(), postData.getCode());
 
         if (title == null) {

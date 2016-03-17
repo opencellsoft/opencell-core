@@ -27,56 +27,54 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface InvoiceCategoryRs extends IBaseRs {
 
-	/**
-	 * Create invoice category. Description per language can be defined
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@POST
-	public ActionStatus create(InvoiceCategoryDto postData);
+    /**
+     * Create invoice category. Description per language can be defined
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @POST
+    public ActionStatus create(InvoiceCategoryDto postData);
 
-	/**
-	 * Update invoice category.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@PUT
-	public ActionStatus update(InvoiceCategoryDto postData);
+    /**
+     * Update invoice category.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @PUT
+    public ActionStatus update(InvoiceCategoryDto postData);
 
-	/**
-	 * Search invoice with a given code.
-	 * 
-	 * @param invoiceCategoryCode
-	 * @return
-	 */
-	@Path("/")
-	@GET
-	public GetInvoiceCategoryResponse find(
-			@QueryParam("invoiceCategoryCode") String invoiceCategoryCode);
+    /**
+     * Search invoice with a given code.
+     * 
+     * @param invoiceCategoryCode
+     * @return
+     */
+    @Path("/")
+    @GET
+    public GetInvoiceCategoryResponse find(@QueryParam("invoiceCategoryCode") String invoiceCategoryCode);
 
-	/**
-	 * Remove invoice with a given code.
-	 * 
-	 * @param invoiceCategoryCode
-	 * @return
-	 */
-	@Path("/{invoiceCategoryCode}")
-	@DELETE
-	public ActionStatus remove(
-			@PathParam("invoiceCategoryCode") String invoiceCategoryCode);
-	
-	
-	/**
-	 * Create or update invoice with a given code.
-	 * @param postData
-	 * @return
-	 */
-	@Path("/createOrUpdate")
-	@POST
-	public ActionStatus createOrUpdate(InvoiceCategoryDto postData);
-	
+    /**
+     * Remove invoice with a given code.
+     * 
+     * @param invoiceCategoryCode
+     * @return
+     */
+    @Path("/{invoiceCategoryCode}")
+    @DELETE
+    public ActionStatus remove(@PathParam("invoiceCategoryCode") String invoiceCategoryCode);
+
+    /**
+     * Create or update invoice with a given code.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/createOrUpdate")
+    @POST
+    public ActionStatus createOrUpdate(InvoiceCategoryDto postData);
+
 }

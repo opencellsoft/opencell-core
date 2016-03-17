@@ -146,8 +146,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
 				}
 				WalletInstance walletInstance=walletService.getWalletInstance(serviceInstance.getSubscription().getUserAccount(),
-						walletTemplate, serviceInstance.getAuditable().getCreator(),
-						serviceInstance.getProvider());
+						walletTemplate, serviceInstance.getAuditable().getCreator());
 				log.debug("add the wallet instance {} to the chargeInstance {}",walletInstance.getId(),oneShotChargeInstance.getId());
 				oneShotChargeInstance.getWalletInstances().add(walletInstance);
 			}
@@ -156,7 +155,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 			oneShotChargeInstance.getWalletInstances().add(
 					serviceInstance.getSubscription().getUserAccount().getWallet());
 		}
-		create(oneShotChargeInstance, creator, chargeTemplate.getProvider());
+		create(oneShotChargeInstance, creator); // AKK was with chargeTemplate.getProvider()
 
 		return oneShotChargeInstance;
 	}
@@ -202,7 +201,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 			}
 		}
 
-		create(oneShotChargeInstance, creator, chargetemplate.getProvider());
+		create(oneShotChargeInstance, creator); // AKK was with chargetemplate.getProvider()
 
 		if(applyCharge){
 			walletOperationService.oneShotWalletOperation(subscription, oneShotChargeInstance, inputQuantity, quantity, effetDate, creator);

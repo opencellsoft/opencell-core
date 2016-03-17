@@ -3,6 +3,7 @@ package org.meveo.api.script;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.script.ServiceModelScriptDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -24,7 +25,7 @@ public class ServiceModelScriptApi extends BaseApi {
     @Inject
     private ServiceModelScriptService serviceModelScriptService;
 
-    public void create(ServiceModelScriptDto postData, User currentUser) throws MeveoApiException {
+    public void create(ServiceModelScriptDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -51,10 +52,10 @@ public class ServiceModelScriptApi extends BaseApi {
         }
         serviceModelScript.setScript(postData.getScript());
 
-        serviceModelScriptService.create(serviceModelScript, currentUser, currentUser.getProvider());
+        serviceModelScriptService.create(serviceModelScript, currentUser);
     }
 
-    public void update(ServiceModelScriptDto postData, User currentUser) throws MeveoApiException {
+    public void update(ServiceModelScriptDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -82,14 +83,12 @@ public class ServiceModelScriptApi extends BaseApi {
         serviceModelScriptService.update(serviceModelScript, currentUser);
     }
 
-    public void createOrUpdate(ServiceModelScriptDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(ServiceModelScriptDto postData, User currentUser) throws MeveoApiException, BusinessException {
         String derivedCode = serviceModelScriptService.getDerivedCode(postData.getScript());
         ServiceModelScript ServiceModelScript = serviceModelScriptService.findByCode(derivedCode, currentUser.getProvider());
         if (ServiceModelScript == null) {
-            // create
             create(postData, currentUser);
         } else {
-            // update
             update(postData, currentUser);
         }
     }

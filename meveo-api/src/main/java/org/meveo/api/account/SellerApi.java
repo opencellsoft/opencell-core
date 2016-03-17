@@ -1,4 +1,4 @@
-package org.meveo.service.crm.impl;
+package org.meveo.api.account;
 
 import java.util.Arrays;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.SellerDto;
@@ -15,7 +16,6 @@ import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -32,7 +32,7 @@ import org.meveo.service.billing.impl.TradingLanguageService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class SellerApiService extends BaseApi {
+public class SellerApi extends BaseApi {
 
     @Inject
     private SellerService sellerService;
@@ -46,11 +46,11 @@ public class SellerApiService extends BaseApi {
     @Inject
     private TradingLanguageService tradingLanguageService;
 
-    public void create(SellerDto postData, User currentUser) throws MeveoApiException {
+    public void create(SellerDto postData, User currentUser) throws MeveoApiException, BusinessException {
         create(postData, currentUser, true);
     }
 
-    public void create(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException {
+    public void create(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -112,7 +112,7 @@ public class SellerApiService extends BaseApi {
             seller.setSeller(parentSeller);
         }
 
-        sellerService.create(seller, currentUser, provider);
+        sellerService.create(seller, currentUser);
 
         // populate customFields
         try {
@@ -124,11 +124,11 @@ public class SellerApiService extends BaseApi {
         }
     }
 
-    public void update(SellerDto postData, User currentUser) throws MeveoApiException {
+    public void update(SellerDto postData, User currentUser) throws MeveoApiException, BusinessException {
         update(postData, currentUser, true);
     }
 
-    public void update(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException {
+    public void update(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -283,8 +283,9 @@ public class SellerApiService extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void createOrUpdate(SellerDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(SellerDto postData, User currentUser) throws MeveoApiException, BusinessException {
         Seller seller = sellerService.findByCode(postData.getCode(), currentUser.getProvider());
         if (seller == null) {
             create(postData, currentUser);

@@ -492,7 +492,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			log.error("Error for BA=" + billingAccount.getCode() + " : ", e);
 
 			RejectedBillingAccount rejectedBA = new RejectedBillingAccount(billingAccount, billingRun, e.getMessage());
-			rejectedBillingAccountService.create(rejectedBA, currentUser, currentUser.getProvider());
+			rejectedBillingAccountService.create(rejectedBA, currentUser);
 		}
 	}
 
@@ -862,18 +862,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return result;
 	}
 
-	public void updateCreditNoteNb(Invoice invoiceAdjustment, Long invoiceAdjustmentNo) {
+	public void updateCreditNoteNb(Invoice invoiceAdjustment, Long invoiceAdjustmentNo, User currentUser) throws BusinessException {
 		Seller seller = invoiceAdjustment.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
 		if (seller != null && seller.getCurrentInvoiceAdjustmentNb() != null
 				&& (invoiceAdjustmentNo - 1 == seller.getCurrentInvoiceAdjustmentNb())) {
 			seller.setCurrentInvoiceAdjustmentNb(invoiceAdjustmentNo);
 
-			sellerService.update(seller, getCurrentUser());
+			sellerService.update(seller, currentUser);
 		} else {
 			Provider provider = seller.getProvider();
 			provider.setCurrentInvoiceAdjustmentNb(invoiceAdjustmentNo);
 
-			providerService.update(provider, getCurrentUser());
+			providerService.update(provider, currentUser);
 		}
 	}
 
@@ -1068,7 +1068,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		invoice.setNetToPay(netToPay);
 	}
 
-	public void updateInvoiceAdjustmentCurrentNb(Invoice invoice, User currentUser) {
+	public void updateInvoiceAdjustmentCurrentNb(Invoice invoice, User currentUser) throws BusinessException {
 		// update seller or provider current invoice sequence value
 		if (invoice.getInvoiceAdjustmentCurrentSellerNb() != null) {
 			Seller seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
@@ -1077,7 +1077,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             } catch (BusinessException e) {
                 log.error("Failed to set custom field " + INVOICE_ADJUSTMENT_SEQUENCE + " value on seller {}",seller, e);
             }			
-			sellerService.update(seller, getCurrentUser());
+			sellerService.update(seller, currentUser);
 		} else if (invoice.getInvoiceAdjustmentCurrentProviderNb() != null) {
 			Provider provider = invoice.getProvider();
 			try {
@@ -1085,7 +1085,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             } catch (BusinessException e) {
                 log.error("Failed to set custom field " + INVOICE_ADJUSTMENT_SEQUENCE + " value on provider {}",provider, e);
             }   
-			providerService.update(provider, getCurrentUser());
+			providerService.update(provider, currentUser);
 		}
 	}
 

@@ -31,56 +31,57 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface CustomerAccountRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ActionStatus create(CustomerAccountDto postData);
+    @POST
+    @Path("/")
+    ActionStatus create(CustomerAccountDto postData);
 
-	@PUT
-	@Path("/")
-	ActionStatus update(CustomerAccountDto postData);
+    @PUT
+    @Path("/")
+    ActionStatus update(CustomerAccountDto postData);
 
-	/**
-	 * Search for a customer account with a given code.
-	 * 
-	 * @param customerAccountCode
-	 * @return
-	 */
-	@GET
-	@Path("/")
-	GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode);
+    /**
+     * Search for a customer account with a given code.
+     * 
+     * @param customerAccountCode
+     * @return
+     */
+    @GET
+    @Path("/")
+    GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode);
 
-	@DELETE
-	@Path("/{customerAccountCode}")
-	ActionStatus remove(@PathParam("customerAccountCode") String customerAccountCode);
+    @DELETE
+    @Path("/{customerAccountCode}")
+    ActionStatus remove(@PathParam("customerAccountCode") String customerAccountCode);
 
-	/**
-	 * List CustomerAccount filter by customerCode.
-	 * 
-	 * @param customerCode
-	 * @return
-	 */
-	@GET
-	@Path("/list")
-	CustomerAccountsResponseDto listByCustomer(@QueryParam("customerCode") String customerCode);
+    /**
+     * List CustomerAccount filter by customerCode.
+     * 
+     * @param customerCode
+     * @return
+     */
+    @GET
+    @Path("/list")
+    CustomerAccountsResponseDto listByCustomer(@QueryParam("customerCode") String customerCode);
 
-	/**
-	 * Performs dunning exclusion to customer account
-	 * @param DunningInclusionExclusionDto
-	 * @return
-	 */
-	@PUT
-	@Path("/dunningInclusionExclusion")
-	ActionStatus dunningInclusionExclusion(DunningInclusionExclusionDto DunningInclusionExclusionDto);
+    /**
+     * Performs dunning exclusion to customer account
+     * 
+     * @param DunningInclusionExclusionDto
+     * @return
+     */
+    @PUT
+    @Path("/dunningInclusionExclusion")
+    ActionStatus dunningInclusionExclusion(DunningInclusionExclusionDto DunningInclusionExclusionDto);
 
-	@POST
-	@Path("/creditCategory")
-	ActionStatus createCreditCategory(CreditCategoryDto postData);
+    @POST
+    @Path("/creditCategory")
+    ActionStatus createCreditCategory(CreditCategoryDto postData);
 
-	@DELETE
-	@Path("/creditCategory")
-	ActionStatus removeCreditCategory(@PathParam("creditCategoryCode") String creditCategoryCode);
-	
-	@POST
-	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(CustomerAccountDto postData);
+    @DELETE
+    @Path("/creditCategory")
+    ActionStatus removeCreditCategory(@PathParam("creditCategoryCode") String creditCategoryCode);
+
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(CustomerAccountDto postData);
 }

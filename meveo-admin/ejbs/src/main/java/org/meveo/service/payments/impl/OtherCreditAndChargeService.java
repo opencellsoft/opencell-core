@@ -25,7 +25,6 @@ import javax.persistence.DiscriminatorValue;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -106,7 +105,7 @@ public class OtherCreditAndChargeService extends
 		otherCreditAndCharge.setUnMatchingAmount(amount);
 		otherCreditAndCharge.setMatchingStatus(MatchingStatusEnum.O);
 		customerAccount.getAccountOperations().add(otherCreditAndCharge);
-		create(otherCreditAndCharge, user, customerAccount.getProvider());
+		create(otherCreditAndCharge, user); // AKK was with customerAccount.getProvider()
 
 		log.info(
 				"addOCC  codeOCCTemplate:{}  customerAccount:{} amount:{} dueDate:{} Successful",
@@ -116,12 +115,13 @@ public class OtherCreditAndChargeService extends
 
     /**
      * Set the discriminatorValue value, so it would be available in the list of entities right away
+     * @throws BusinessException 
      */
     @Override
-    public void create(OtherCreditAndCharge occ, User creator, Provider provider) {
+    public void create(OtherCreditAndCharge occ, User creator) throws BusinessException {
 
         occ.setType(OtherCreditAndCharge.class.getAnnotation(DiscriminatorValue.class).value());
-        super.create(occ, creator, provider);
+        super.create(occ, creator);
     }
 	
 	// public void addOCCk(String codeOCCTemplate, Long customerAccountId,

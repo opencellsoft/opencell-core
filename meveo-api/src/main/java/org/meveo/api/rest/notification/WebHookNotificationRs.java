@@ -26,23 +26,23 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface WebHookNotificationRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ActionStatus create(WebhookNotificationDto postData);
+    @POST
+    @Path("/")
+    ActionStatus create(WebhookNotificationDto postData);
 
-	@PUT
-	@Path("/")
-	ActionStatus update(WebhookNotificationDto postData);
+    @PUT
+    @Path("/")
+    ActionStatus update(WebhookNotificationDto postData);
 
-	@GET
-	@Path("/")
-	GetWebHookNotificationResponseDto find(@QueryParam("notificationCode") String notificationCode);
+    @GET
+    @Path("/")
+    GetWebHookNotificationResponseDto find(@QueryParam("notificationCode") String notificationCode);
 
-	@DELETE
-	@Path("/{notificationCode}")
-	ActionStatus remove(@PathParam("notificationCode") String notificationCode);
-	
-	@POST
-	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(WebhookNotificationDto postData);
+    @DELETE
+    @Path("/{notificationCode}")
+    ActionStatus remove(@PathParam("notificationCode") String notificationCode);
+
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(WebhookNotificationDto postData);
 }

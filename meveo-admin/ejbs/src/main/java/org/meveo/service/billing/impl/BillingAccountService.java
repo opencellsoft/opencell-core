@@ -27,13 +27,11 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
-import org.meveo.admin.exception.UnknownAccountException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
@@ -72,12 +70,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		}
 	}
 
-	public void createBillingAccount(BillingAccount billingAccount, User creator, Provider provider) {
-		createBillingAccount(getEntityManager(), billingAccount, creator, provider);
-	}
+	public void createBillingAccount(BillingAccount billingAccount, User creator) throws BusinessException {
 
-	public void createBillingAccount(EntityManager em, BillingAccount billingAccount, User creator, Provider provider) {
-		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
+	    billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 		if (billingAccount.getSubscriptionDate() == null) {
 			billingAccount.setSubscriptionDate(new Date());
 		}
@@ -90,7 +85,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			billingAccount.setProvider(billingAccount.getCustomerAccount().getProvider());
 		}
 
-		create(billingAccount, creator, provider);
+		create(billingAccount, creator);
 	}
 
 	public BillingAccount updateElectronicBilling(BillingAccount billingAccount, Boolean electronicBilling, User updater,
@@ -150,8 +145,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		return update(billingAccount, updater);
 	}
 
-	public BillingAccount closeBillingAccount(BillingAccount billingAccount, User updater) throws UnknownAccountException,
-			ElementNotResiliatedOrCanceledException {
+	public BillingAccount closeBillingAccount(BillingAccount billingAccount, User updater) throws BusinessException {
 
 		/**
 		 * *

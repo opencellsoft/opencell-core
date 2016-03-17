@@ -7,21 +7,24 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.response.BaseResponse;
+
 /**
  * @author Edward P. Legaspi
  **/
 @XmlRootElement(name = "OneShotChargeTemplateList")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OneShotChargeTemplateWithPriceListDto {
-	
-	private List<OneShotChargeTemplateWithPriceDto> oneShotChargeTemplateDtos = new ArrayList<OneShotChargeTemplateWithPriceDto>();
+public class OneShotChargeTemplateWithPriceListDto extends BaseResponse {
 
-	public List<OneShotChargeTemplateWithPriceDto> getOneShotChargeTemplateDtos() {
-		return oneShotChargeTemplateDtos;
-	}
+    private static final long serialVersionUID = -8879818156156191005L;
 
-	public void setOneShotChargeTemplateDtos(
-			List<OneShotChargeTemplateWithPriceDto> oneShotChargeTemplateDtos) {
-		this.oneShotChargeTemplateDtos = oneShotChargeTemplateDtos;
-	}
+    private List<OneShotChargeTemplateWithPriceDto> oneShotChargeTemplateDtos = new ArrayList<OneShotChargeTemplateWithPriceDto>();
+
+    public List<OneShotChargeTemplateWithPriceDto> getOneShotChargeTemplateDtos() {
+        return oneShotChargeTemplateDtos;
+    }
+
+    public void setOneShotChargeTemplateDtos(List<OneShotChargeTemplateWithPriceDto> oneShotChargeTemplateDtos) {
+        this.oneShotChargeTemplateDtos = oneShotChargeTemplateDtos;
+    }
 }

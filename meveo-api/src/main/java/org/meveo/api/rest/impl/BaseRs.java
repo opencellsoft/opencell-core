@@ -57,6 +57,7 @@ public abstract class BaseRs implements IBaseRs {
 
     /**
      * Returns teh authenticated user
+     * 
      * @return
      */
     @GET
@@ -73,7 +74,7 @@ public abstract class BaseRs implements IBaseRs {
         return result;
     }
 
-    public User getCurrentUser() throws MeveoApiException {
+    public User getCurrentUser() throws LoginException {
 
         if (currentUserInstance.isUnsatisfied() || currentUserInstance.get() == null) {
             throw new LoginException("Authentication failed! User does not exists!");

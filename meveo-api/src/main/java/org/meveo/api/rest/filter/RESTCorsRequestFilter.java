@@ -16,18 +16,17 @@ import org.slf4j.LoggerFactory;
 @Provider
 public class RESTCorsRequestFilter implements ContainerRequestFilter {
 
-	private final static Logger log = LoggerFactory
-			.getLogger(RESTCorsRequestFilter.class.getName());
+    private final static Logger log = LoggerFactory.getLogger(RESTCorsRequestFilter.class.getName());
 
-	@Override
-	public void filter(ContainerRequestContext requestCtx) throws IOException {
-		// When HttpMethod comes as OPTIONS, just acknowledge that it accepts...
-		if (requestCtx.getRequest().getMethod().equals("OPTIONS")) {
-			log.debug("HTTP Method (OPTIONS) - Detected!");
+    @Override
+    public void filter(ContainerRequestContext requestCtx) throws IOException {
+        // When HttpMethod comes as OPTIONS, just acknowledge that it accepts...
+        if (requestCtx.getRequest().getMethod().equals("OPTIONS")) {
+            log.debug("HTTP Method (OPTIONS) - Detected!");
 
-			// Just send a OK signal back to the browser
-			requestCtx.abortWith(Response.status(Response.Status.OK).build());
-		}
-	}
+            // Just send a OK signal back to the browser
+            requestCtx.abortWith(Response.status(Response.Status.OK).build());
+        }
+    }
 
 }

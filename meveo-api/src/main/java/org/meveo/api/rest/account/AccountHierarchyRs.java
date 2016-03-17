@@ -7,6 +7,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.account.CRMAccountHierarchyDto;
@@ -42,6 +43,7 @@ public interface AccountHierarchyRs extends IBaseRs {
      * 
      * @param accountHierarchyDto
      * @return
+     * @throws BusinessException
      */
     @POST
     @Path("/")
@@ -52,6 +54,7 @@ public interface AccountHierarchyRs extends IBaseRs {
      * 
      * @param accountHierarchyDto
      * @return
+     * @throws BusinessException
      */
     @PUT
     @Path("/")
@@ -64,6 +67,7 @@ public interface AccountHierarchyRs extends IBaseRs {
      * 
      * @param postData
      * @return
+     * @throws BusinessException
      */
     @POST
     @Path("/customerHierarchyUpdate")

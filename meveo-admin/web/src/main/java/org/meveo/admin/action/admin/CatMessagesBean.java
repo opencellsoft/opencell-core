@@ -16,9 +16,7 @@
  */
 package org.meveo.admin.action.admin;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +27,6 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.CatMessages;
@@ -209,13 +206,13 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
                 CatMessages existingEntity = catMessagesService.findByCodeAndLanguage(messageCode, values[LANGUAGE_CODE], getCurrentProvider());
                 if (existingEntity != null) {
                     existingEntity.setDescription(values[DESCRIPTION_TRANSLATION]);
-                    catMessagesService.update(existingEntity);
+                    catMessagesService.update(existingEntity, getCurrentUser());
                 } else {
                     CatMessages catMessages = new CatMessages();
                     catMessages.setMessageCode(messageCode);
                     catMessages.setLanguageCode(values[LANGUAGE_CODE]);
                     catMessages.setDescription(values[DESCRIPTION_TRANSLATION]);
-                    catMessagesService.create(catMessages);
+                    catMessagesService.create(catMessages, getCurrentUser());
                 }
             }
         }

@@ -28,50 +28,51 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface TaxRs extends IBaseRs {
 
-	/**
-	 * Create tax. Description per language can be defined
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@POST
-	public ActionStatus create(TaxDto postData);
+    /**
+     * Create tax. Description per language can be defined
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @POST
+    public ActionStatus create(TaxDto postData);
 
-	/**
-	 * Update tax. Description per language can be defined
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@PUT
-	public ActionStatus update(TaxDto postData);
+    /**
+     * Update tax. Description per language can be defined
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @PUT
+    public ActionStatus update(TaxDto postData);
 
-	/**
-	 * Search tax with a given code.
-	 * @param taxCode
-	 * @return
-	 */
-	@Path("/")
-	@GET
-	public GetTaxResponse find(@QueryParam("taxCode") String taxCode);
+    /**
+     * Search tax with a given code.
+     * 
+     * @param taxCode
+     * @return
+     */
+    @Path("/")
+    @GET
+    public GetTaxResponse find(@QueryParam("taxCode") String taxCode);
 
-	/**
-	 * Remove tax with a given code.
-	 * 
-	 * @param taxCode
-	 * @return
-	 */
-	@Path("/{taxCode}")
-	@DELETE
-	public ActionStatus remove(@PathParam("taxCode") String taxCode);
-	
-	
-	@Path("/createOrUpdate")
-	@POST
-	public ActionStatus createOrUpdate(TaxDto postData);
-	
-	@Path("/list")
-	@GET
-	public GetTaxesResponse list();
+    /**
+     * Remove tax with a given code.
+     * 
+     * @param taxCode
+     * @return
+     */
+    @Path("/{taxCode}")
+    @DELETE
+    public ActionStatus remove(@PathParam("taxCode") String taxCode);
+
+    @Path("/createOrUpdate")
+    @POST
+    public ActionStatus createOrUpdate(TaxDto postData);
+
+    @Path("/list")
+    @GET
+    public GetTaxesResponse list();
 }

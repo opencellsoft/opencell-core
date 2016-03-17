@@ -261,7 +261,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         		selectedWalletTemplate.setCode(WalletTemplate.PRINCIPAL);
         	}
             if (oneShotChargeInstance != null && oneShotChargeInstance.getId() != null) {
-                oneShotChargeInstanceService.update(oneShotChargeInstance);
+                oneShotChargeInstanceService.update(oneShotChargeInstance, getCurrentUser());
             } else {
 
                 entity = subscriptionService.attach(entity);
@@ -311,7 +311,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         try {
             if ((recurringChargeInstance != null) && (recurringChargeInstance.getId() != null)) {
                 log.debug("update RecurringChargeIns {}, id={}", recurringChargeInstance, recurringChargeInstance.getId());
-                recurringChargeInstanceService.update(recurringChargeInstance);
+                recurringChargeInstanceService.update(recurringChargeInstance, getCurrentUser());
 
                 recurringChargeInstance = null;
                 recurringChargeInstances = null;
@@ -671,7 +671,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         try {
             if (usageChargeInstance != null && usageChargeInstance.getId() != null) {
                 log.debug("update usageChargeIns {}, id={}", usageChargeInstance, usageChargeInstance.getId());
-                usageChargeInstanceService.update(usageChargeInstance);
+                usageChargeInstanceService.update(usageChargeInstance, getCurrentUser());
                 
                 usageChargeInstance = null;
                 usageChargeInstances = null;

@@ -39,52 +39,48 @@ import org.meveo.util.PersistenceUtils;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
- * Standard backing bean for {@link DunningPlan} (extends {@link BaseBean} that
- * provides almost all common methods to handle entities filtering/sorting in
- * datatable, their create, edit, view, delete operations). It works with Manaty
- * custom JSF components.
+ * Standard backing bean for {@link DunningPlan} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
+ * edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
 public class DunningPlanBean extends BaseBean<DunningPlan> {
 
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * Injected @{link DunningPlan} service. Extends {@link PersistenceService}.
-	 */
-	@Inject
-	private DunningPlanService dunningPlanService;
-
-	@Inject
-	private DunningPlanTransitionService dunningPlanTransitionService;
-
-	@Inject
-	private ActionPlanItemService actionPlanItemService;
-
-	// @Produces
-	// @Named
-	private transient DunningPlanTransition dunningPlanTransition = new DunningPlanTransition();
-
-	// @Produces
-	// @Named
-	private transient ActionPlanItem actionPlanItem = new ActionPlanItem();
-
+    private static final long serialVersionUID = 1L;
 
     /**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public DunningPlanBean() {
-		super(DunningPlan.class);
-	}	
-	
-	@Override
-	public DunningPlan initEntity() {
-	    super.initEntity();
-	    PersistenceUtils.initializeAndUnproxy(entity.getActions());
-	    return entity;
-	}
+     * Injected @{link DunningPlan} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private DunningPlanService dunningPlanService;
+
+    @Inject
+    private DunningPlanTransitionService dunningPlanTransitionService;
+
+    @Inject
+    private ActionPlanItemService actionPlanItemService;
+
+    // @Produces
+    // @Named
+    private transient DunningPlanTransition dunningPlanTransition = new DunningPlanTransition();
+
+    // @Produces
+    // @Named
+    private transient ActionPlanItem actionPlanItem = new ActionPlanItem();
+
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public DunningPlanBean() {
+        super(DunningPlan.class);
+    }
+
+    @Override
+    public DunningPlan initEntity() {
+        super.initEntity();
+        PersistenceUtils.initializeAndUnproxy(entity.getActions());
+        return entity;
+    }
 
     public DunningPlanTransition getDunningPlanTransition() {
         return dunningPlanTransition;
@@ -102,114 +98,108 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
         this.actionPlanItem = actionPlanItem;
     }
 
-	public void newDunningPlanTransitionInstance() {
-		this.dunningPlanTransition = new DunningPlanTransition();
-	}
+    public void newDunningPlanTransitionInstance() {
+        this.dunningPlanTransition = new DunningPlanTransition();
+    }
 
-	public void newActionPlanItemInstance() {
-		this.actionPlanItem = new ActionPlanItem();
-	}
+    public void newActionPlanItemInstance() {
+        this.actionPlanItem = new ActionPlanItem();
+    }
 
-	@Override
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		super.saveOrUpdate(killConversation);
-		return "/pages/payments/dunning/dunningPlanDetail?dunningPlanId=" + entity.getId()
-				+ "&faces-redirect=true&includeViewParams=true";
-	}
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        super.saveOrUpdate(killConversation);
+        return "/pages/payments/dunning/dunningPlanDetail?dunningPlanId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
+    }
 
-	public void saveDunningPlanTransition() {
+    public void saveDunningPlanTransition() {
 
-		if (dunningPlanTransition.getId() != null) {
-			dunningPlanTransitionService.update(dunningPlanTransition);
-			messages.info(new BundleKey("messages", "update.successful"));
-		} else {
-			try {
-				for (DunningPlanTransition transition : entity.getTransitions()) {
+        try {
+            if (dunningPlanTransition.getId() != null) {
+                dunningPlanTransitionService.update(dunningPlanTransition, getCurrentUser());
+                messages.info(new BundleKey("messages", "update.successful"));
+            } else {
 
-					if ((transition.getDunningLevelFrom()
-							.equals(dunningPlanTransition.getDunningLevelFrom()))
-							&& (transition.getDunningLevelTo()
-									.equals(dunningPlanTransition
-											.getDunningLevelTo()))) {
-						throw new BusinessEntityException();
-					}
-				}
-				dunningPlanTransition.setDunningPlan(entity);
-				dunningPlanTransitionService.create(dunningPlanTransition);
-				entity.getTransitions().add(dunningPlanTransition);
-				messages.info(new BundleKey("messages", "save.successful"));
-			} catch (BusinessEntityException e) {
-				messages.error(new BundleKey("messages",
-						"dunningPlanTransition.uniqueField"));
-			} catch (Exception e) {
-				log.error("failed to save dunning plan transition",e);
+                for (DunningPlanTransition transition : entity.getTransitions()) {
 
-				messages.error(new BundleKey("messages",
-						"dunningPlanTransition.uniqueField"));
-			}
-		}
+                    if ((transition.getDunningLevelFrom().equals(dunningPlanTransition.getDunningLevelFrom()))
+                            && (transition.getDunningLevelTo().equals(dunningPlanTransition.getDunningLevelTo()))) {
+                        throw new BusinessEntityException();
+                    }
+                }
+                dunningPlanTransition.setDunningPlan(entity);
+                dunningPlanTransitionService.create(dunningPlanTransition, getCurrentUser());
+                entity.getTransitions().add(dunningPlanTransition);
+                messages.info(new BundleKey("messages", "save.successful"));
+            }
+        } catch (BusinessEntityException e) {
+            messages.error(new BundleKey("messages", "dunningPlanTransition.uniqueField"));
 
-		dunningPlanTransition = new DunningPlanTransition();
-	}
+        } catch (Exception e) {
+            log.error("failed to save dunning plan transition", e);
 
-	public void saveActionPlanItem() throws BusinessException {
+            messages.error(new BundleKey("messages", "dunningPlanTransition.uniqueField"));
+        }
 
-		if (actionPlanItem.getId() != null) {
-			actionPlanItemService.update(actionPlanItem);
-			messages.info(new BundleKey("messages", "update.successful"));
-		} else {
-			actionPlanItem.setDunningPlan(entity);
-			actionPlanItemService.create(actionPlanItem);
-			entity.getActions().add(actionPlanItem);
-			messages.info(new BundleKey("messages", "save.successful"));
+        dunningPlanTransition = new DunningPlanTransition();
+    }
 
-		}
-		actionPlanItem = new ActionPlanItem();
-	}
+    public void saveActionPlanItem() throws BusinessException {
 
-	public void deleteDunningPlanTransition(
-			DunningPlanTransition dunningPlanTransition) {
-		dunningPlanTransitionService.remove(dunningPlanTransition);
-		entity.getTransitions().remove(dunningPlanTransition);
-		messages.info(new BundleKey("messages", "delete.successful"));
-	}
+        if (actionPlanItem.getId() != null) {
+            actionPlanItemService.update(actionPlanItem, getCurrentUser());
+            messages.info(new BundleKey("messages", "update.successful"));
+        } else {
+            actionPlanItem.setDunningPlan(entity);
+            actionPlanItemService.create(actionPlanItem, getCurrentUser());
+            entity.getActions().add(actionPlanItem);
+            messages.info(new BundleKey("messages", "save.successful"));
 
-	public void deleteActionPlanItem(ActionPlanItem actionPlanItem) {
-		actionPlanItemService.remove(actionPlanItem);
-		entity.getActions().remove(actionPlanItem);
-		messages.info(new BundleKey("messages", "delete.successful"));
-	}
+        }
+        actionPlanItem = new ActionPlanItem();
+    }
 
-	public void editDunningPlanTransition(
-			DunningPlanTransition dunningPlanTransition) {
-		this.dunningPlanTransition = dunningPlanTransition;
-	}
+    public void deleteDunningPlanTransition(DunningPlanTransition dunningPlanTransition) {
+        dunningPlanTransitionService.remove(dunningPlanTransition);
+        entity.getTransitions().remove(dunningPlanTransition);
+        messages.info(new BundleKey("messages", "delete.successful"));
+    }
 
-	public void editActionPlanItem(ActionPlanItem actionPlanItem) {
-		this.actionPlanItem = actionPlanItem;
-	}
+    public void deleteActionPlanItem(ActionPlanItem actionPlanItem) {
+        actionPlanItemService.remove(actionPlanItem);
+        entity.getActions().remove(actionPlanItem);
+        messages.info(new BundleKey("messages", "delete.successful"));
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<DunningPlan> getPersistenceService() {
-		return dunningPlanService;
-	}
+    public void editDunningPlanTransition(DunningPlanTransition dunningPlanTransition) {
+        this.dunningPlanTransition = dunningPlanTransition;
+    }
 
-	@Produces
-	public DunningPlan getDunningPlan() {
-		return entity;
-	}
+    public void editActionPlanItem(ActionPlanItem actionPlanItem) {
+        this.actionPlanItem = actionPlanItem;
+    }
 
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider","transitions");
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<DunningPlan> getPersistenceService() {
+        return dunningPlanService;
+    }
 
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
+    @Produces
+    public DunningPlan getDunningPlan() {
+        return entity;
+    }
+
+    @Override
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("provider", "transitions");
+    }
+
+    @Override
+    protected List<String> getListFieldsToFetch() {
+        return Arrays.asList("provider");
+    }
 
 }

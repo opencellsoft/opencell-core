@@ -50,7 +50,6 @@ import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
@@ -355,10 +354,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                     CatMessages catMsg = catMessagesService.getCatMessages(entity, msgKey);
                     if (catMsg != null) {
                         catMsg.setDescription(description);
-                        catMessagesService.update(catMsg);
+                        catMessagesService.update(catMsg, getCurrentUser());
                     } else {
                         CatMessages catMessages = new CatMessages(entity, msgKey, description);
-                        catMessagesService.create(catMessages);
+                        catMessagesService.create(catMessages, getCurrentUser());
                     }
                 }
 
@@ -370,7 +369,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 for (String msgKey : languageMessagesMap.keySet()) {
                     String description = languageMessagesMap.get(msgKey);
                     CatMessages catMessages = new CatMessages(entity, msgKey, description);
-                    catMessagesService.create(catMessages);
+                    catMessagesService.create(catMessages, getCurrentUser());
                 }
             }
         }
@@ -403,10 +402,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     protected T saveOrUpdate(T entity) throws BusinessException {
         if (entity.isTransient()) {
-            getPersistenceService().create(entity);
+            getPersistenceService().create(entity, getCurrentUser());
 
         } else {
-            entity = getPersistenceService().update(entity);
+            entity = getPersistenceService().update(entity, getCurrentUser());
         }
 
         objectIdFromSet = (Long) entity.getId();

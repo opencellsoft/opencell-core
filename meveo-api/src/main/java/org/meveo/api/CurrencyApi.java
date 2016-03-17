@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -31,7 +32,7 @@ public class CurrencyApi extends BaseApi {
     @Inject
     private TradingCurrencyService tradingCurrencyService;
 
-    public void create(CurrencyDto postData, User currentUser) throws MeveoApiException {
+    public void create(CurrencyDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -128,15 +129,12 @@ public class CurrencyApi extends BaseApi {
         }
     }
 
-    public void createOrUpdate(CurrencyDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(CurrencyDto postData, User currentUser) throws MeveoApiException, BusinessException {
         TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCode(), currentUser.getProvider());
         if (tradingCurrency == null) {
-            // create
             create(postData, currentUser);
         } else {
-            // update
             update(postData, currentUser);
         }
     }
-
 }

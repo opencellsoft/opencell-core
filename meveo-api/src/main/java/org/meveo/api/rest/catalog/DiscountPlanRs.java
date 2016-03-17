@@ -22,28 +22,28 @@ import org.meveo.api.rest.security.RSSecured;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured
 public interface DiscountPlanRs extends IBaseRs {
-	
-	@Path("/")
-	@POST
-	ActionStatus create(DiscountPlanDto postData);
-	
-	@Path("/")
-	@PUT
-	ActionStatus update(DiscountPlanDto postData);
-	
-	@Path("/")
-	@GET
-	GetDiscountPlanResponseDto find(@QueryParam("discountPlanCode") String discountPlanCode);
-	
-	@Path("/")
-	@DELETE
-	ActionStatus remove(@QueryParam("discountPlanCode") String discountPlanCode);
-	
-	@Path("/createOrUpdate")
-	@POST
-	ActionStatus createOrUpdate(DiscountPlanDto postData);
-	
-	@Path("/list")
-	@GET
-	GetDiscountPlansResponseDto list();
+
+    @Path("/")
+    @POST
+    ActionStatus create(DiscountPlanDto postData);
+
+    @Path("/")
+    @PUT
+    ActionStatus update(DiscountPlanDto postData);
+
+    @Path("/")
+    @GET
+    GetDiscountPlanResponseDto find(@QueryParam("discountPlanCode") String discountPlanCode);
+
+    @Path("/")
+    @DELETE
+    ActionStatus remove(@QueryParam("discountPlanCode") String discountPlanCode);
+
+    @Path("/createOrUpdate")
+    @POST
+    ActionStatus createOrUpdate(DiscountPlanDto postData);
+
+    @Path("/list")
+    @GET
+    GetDiscountPlansResponseDto list();
 }

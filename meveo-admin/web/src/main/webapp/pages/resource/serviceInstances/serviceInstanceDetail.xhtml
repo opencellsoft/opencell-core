@@ -35,7 +35,8 @@
             selection="#{serviceInstanceBean.entity.subscription}" updateField=":formId:subscriptionSelectedId">
         </hftl:entityPopup>
 
-        <hftl:formPanel label="#{messages['serviceInstance.panel']}" backingBean="#{serviceInstanceBean}" showFormButtons="false">
+        <hftl:formPanel label="#{messages['serviceInstance.panel']}" backingBean="#{serviceInstanceBean}" ajaxSubmit="true" submitPartialProcess=":formId:tabView"
+                objectIdParamName="serviceInstanceId" showDeleteButton="#{serviceInstanceBean.entity.status eq 'INACTIVE'}">
 
             <p:tabView id="tabView" activeIndex="#{serviceInstanceBean.activeTab}">
                 <p:tab title="#{messages['commons.tab.information']}">
@@ -61,8 +62,6 @@
                 <hftl:customFields backingBean="#{serviceInstanceBean}" messagesId=":formId:messages" />
             </p:tabView>
 
-            <hf:formButtons backingBean="#{serviceInstanceBean}" edit="#{serviceInstanceBean.edit}" ajaxSubmit="true" submitPartialProcess=":formId:tabView"
-                objectIdParamName="serviceInstanceId" showDeleteButton="#{serviceInstanceBean.entity.status eq 'INACTIVE'}" />
         </hftl:formPanel>
 
         <h:form id="operationsForm" rendered="#{not empty serviceInstanceBean.entity.id}">

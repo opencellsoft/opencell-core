@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
 import org.tmf.dsmapi.catalog.resource.category.Category;
-import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
 import org.tmf.dsmapi.catalog.resource.product.ProductSpecification;
 
@@ -228,15 +227,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         Response.ResponseBuilder responseBuilder = null;
         try {
-            ProductSpecification productSpecification = catalogApi.findProductSpecification(id, getCurrentUser(), uriInfo);
-//            ProductSpecification productSpecification2 = catalogApi.findProductSpecification("TM_2_OFFER2", getCurrentUser(), uriInfo);
-            
-//            productSpecification.setBundledProductSpecification(new ArrayList<BundledProductReference>());
-//            BundledProductReference bpr = new BundledProductReference();
-//            productSpecification.getBundledProductSpecification().add(bpr);
-//            bpr.setReferencedId("TM_2_OFFER2");
-//            bpr.setEntity(productSpecification2);
-            
+            ProductSpecification productSpecification = catalogApi.findProductSpecification(id, getCurrentUser(), uriInfo);           
             responseBuilder = Response.ok().entity(productSpecification);
 
         } catch (EntityDoesNotExistsException e) {

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateRecurringDto;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateSubscriptionDto;
@@ -86,7 +87,7 @@ public class ServiceTemplateApi extends BaseApi {
     @Inject
     private BusinessServiceService businessServiceService;
 
-    private void createServiceChargeTemplateRecurring(ServiceTemplateDto postData, User currentUser, ServiceTemplate serviceTemplate) throws MeveoApiException {
+    private void createServiceChargeTemplateRecurring(ServiceTemplateDto postData, User currentUser, ServiceTemplate serviceTemplate) throws MeveoApiException, BusinessException {
         Provider provider = currentUser.getProvider();
 
         if (postData.getServiceChargeTemplateRecurrings() != null) {
@@ -113,12 +114,12 @@ public class ServiceTemplateApi extends BaseApi {
                 serviceChargeTemplate.setWalletTemplates(wallets);
                 serviceChargeTemplate.setServiceTemplate(serviceTemplate);
                 serviceChargeTemplate.setProvider(provider);
-                serviceChargeTemplateRecurringService.create(serviceChargeTemplate, currentUser, provider);
+                serviceChargeTemplateRecurringService.create(serviceChargeTemplate, currentUser);
             }
         }
     }
 
-    private void createServiceChargeTemplateSubscription(ServiceTemplateDto postData, User currentUser, ServiceTemplate serviceTemplate) throws MeveoApiException {
+    private void createServiceChargeTemplateSubscription(ServiceTemplateDto postData, User currentUser, ServiceTemplate serviceTemplate) throws MeveoApiException, BusinessException {
         Provider provider = currentUser.getProvider();
 
         if (postData.getServiceChargeTemplateSubscriptions() != null) {
@@ -145,12 +146,12 @@ public class ServiceTemplateApi extends BaseApi {
                 serviceChargeTemplate.setWalletTemplates(wallets);
                 serviceChargeTemplate.setServiceTemplate(serviceTemplate);
                 serviceChargeTemplate.setProvider(provider);
-                serviceChargeTemplateSubscriptionService.create(serviceChargeTemplate, currentUser, provider);
+                serviceChargeTemplateSubscriptionService.create(serviceChargeTemplate, currentUser);
             }
         }
     }
 
-    private void createServiceChargeTemplateTermination(ServiceTemplateDto postData, User currentUser, ServiceTemplate serviceTemplate) throws MeveoApiException {
+    private void createServiceChargeTemplateTermination(ServiceTemplateDto postData, User currentUser, ServiceTemplate serviceTemplate) throws MeveoApiException, BusinessException {
         Provider provider = currentUser.getProvider();
 
         if (postData.getServiceChargeTemplateTerminations() != null) {
@@ -177,12 +178,12 @@ public class ServiceTemplateApi extends BaseApi {
                 serviceChargeTemplate.setWalletTemplates(wallets);
                 serviceChargeTemplate.setServiceTemplate(serviceTemplate);
                 serviceChargeTemplate.setProvider(provider);
-                serviceChargeTemplateTerminationService.create(serviceChargeTemplate, currentUser, provider);
+                serviceChargeTemplateTerminationService.create(serviceChargeTemplate, currentUser);
             }
         }
     }
 
-    private void createServiceChargeTemplateUsage(ServiceTemplateDto postData, User currentUser, ServiceTemplate serviceTemplate) throws MeveoApiException {
+    private void createServiceChargeTemplateUsage(ServiceTemplateDto postData, User currentUser, ServiceTemplate serviceTemplate) throws MeveoApiException, BusinessException {
         Provider provider = currentUser.getProvider();
 
         if (postData.getServiceChargeTemplateUsages() != null) {
@@ -220,12 +221,12 @@ public class ServiceTemplateApi extends BaseApi {
                 serviceChargeTemplate.setWalletTemplates(wallets);
                 serviceChargeTemplate.setServiceTemplate(serviceTemplate);
                 serviceChargeTemplate.setProvider(provider);
-                serviceUsageChargeTemplateService.create(serviceChargeTemplate, currentUser, provider);
+                serviceUsageChargeTemplateService.create(serviceChargeTemplate, currentUser);
             }
         }
     }
 
-    public void create(ServiceTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void create(ServiceTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -262,7 +263,7 @@ public class ServiceTemplateApi extends BaseApi {
         serviceTemplate.setInvoicingCalendar(invoicingCalendar);
         serviceTemplate.setProvider(provider);
 
-        serviceTemplateService.create(serviceTemplate, currentUser, provider);
+        serviceTemplateService.create(serviceTemplate, currentUser);
 
         // populate customFields
         try {
@@ -285,7 +286,7 @@ public class ServiceTemplateApi extends BaseApi {
         createServiceChargeTemplateUsage(postData, currentUser, serviceTemplate);
     }
 
-    public void update(ServiceTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void update(ServiceTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -423,7 +424,7 @@ public class ServiceTemplateApi extends BaseApi {
 
     }
 
-    public void createOrUpdate(ServiceTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(ServiceTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (serviceTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             create(postData, currentUser);
         } else {

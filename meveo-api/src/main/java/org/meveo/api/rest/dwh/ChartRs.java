@@ -24,49 +24,49 @@ import org.meveo.api.rest.security.RSSecured;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured
 public interface ChartRs extends IBaseRs {
-	
-	@POST
-	@Path("/")
-	ActionStatus create(ChartDto postData);
-	
-	@POST
-	@Path("/bar")
-	ActionStatus createBarChart(BarChartDto postData);
-	
-	@PUT
-	@Path("/bar")
-	ActionStatus updateBarChart(BarChartDto postData);
-	
-	@POST
-	@Path("/pie")
-	ActionStatus createPieChart(PieChartDto postData);
-	
-	@PUT
-	@Path("/pie")
-	ActionStatus updatePieChart(PieChartDto postData);
-	
-	@POST
-	@Path("/line")
-	ActionStatus createLineChart(LineChartDto postData);
-	
-	@PUT
-	@Path("/line")
-	ActionStatus updateLineChart(LineChartDto postData);
-	
-	@PUT
-	@Path("/")
-	ActionStatus update(ChartDto postData);
-	
-	@DELETE
-	@Path("/")
-	ActionStatus remove(@QueryParam("chartCode") String chartCode);
-	
-	@GET
-	@Path("/")
-	GetChartResponse find(@QueryParam("chartCode") String chartCode);
-	
-	@POST
-	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(ChartDto postData);
-	
+
+    @POST
+    @Path("/")
+    ActionStatus create(ChartDto postData);
+
+    @POST
+    @Path("/bar")
+    ActionStatus createBarChart(BarChartDto postData);
+
+    @PUT
+    @Path("/bar")
+    ActionStatus updateBarChart(BarChartDto postData);
+
+    @POST
+    @Path("/pie")
+    ActionStatus createPieChart(PieChartDto postData);
+
+    @PUT
+    @Path("/pie")
+    ActionStatus updatePieChart(PieChartDto postData);
+
+    @POST
+    @Path("/line")
+    ActionStatus createLineChart(LineChartDto postData);
+
+    @PUT
+    @Path("/line")
+    ActionStatus updateLineChart(LineChartDto postData);
+
+    @PUT
+    @Path("/")
+    ActionStatus update(ChartDto postData);
+
+    @DELETE
+    @Path("/")
+    ActionStatus remove(@QueryParam("chartCode") String chartCode);
+
+    @GET
+    @Path("/")
+    GetChartResponse find(@QueryParam("chartCode") String chartCode);
+
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(ChartDto postData);
+
 }

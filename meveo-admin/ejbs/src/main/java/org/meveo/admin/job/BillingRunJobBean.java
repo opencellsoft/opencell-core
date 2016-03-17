@@ -80,7 +80,7 @@ public class BillingRunJobBean {
 		            }
 					billingRun.setProcessType(BillingProcessTypesEnum.AUTOMATIC);
 					billingRun.setStatus(BillingRunStatusEnum.NEW);
-					billingRunService.create(billingRun, currentUser, provider);
+					billingRunService.create(billingRun, currentUser);
 					result.registerSucces();
 				} else {
 					result.registerError("Cannot find billingCycle with code '" + parameter

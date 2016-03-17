@@ -177,7 +177,7 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
                 }
                 measurableQuantity.setLastMeasureDate(DateUtils.parseDateWithPattern((values[LAST_MEASURE_DATE]), "dd/MM/yyyy"));
                 measurableQuantity.setEditable(Boolean.parseBoolean(values[EDITABLE]));
-                measurableQuantityService.create(measurableQuantity);
+                measurableQuantityService.create(measurableQuantity, getCurrentUser());
             }
         }
         if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
@@ -186,7 +186,7 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
     }
 
 	public void checkSelectedStrategy(String[] values,
-			MeasurableQuantity existingEntity,boolean isEntityAlreadyExist) throws RejectedImportException  {
+			MeasurableQuantity existingEntity,boolean isEntityAlreadyExist) throws BusinessException  {
 		if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
 			
 			existingEntity.setDimension1(values[DIMENSION_1]);
@@ -199,7 +199,7 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 			}
 			existingEntity.setLastMeasureDate(DateUtils.parseDateWithPattern((values[LAST_MEASURE_DATE]),"dd/MM/yyyy"));
 			existingEntity.setEditable(Boolean.parseBoolean(values[EDITABLE]));
-			measurableQuantityService.update(existingEntity);
+			measurableQuantityService.update(existingEntity, getCurrentUser());
 		}else if (strategyImportType
 				.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
 			throw new RejectedImportException("notification.rejectImport");

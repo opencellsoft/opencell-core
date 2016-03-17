@@ -110,7 +110,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
         try {
 
-            productOrder = orderApi.updatePartiallyProductOrder(productOrder, getCurrentUser());
+            productOrder = orderApi.updatePartiallyProductOrder(orderId, productOrder, getCurrentUser());
             responseBuilder = Response.ok().entity(productOrder);
 
         } catch (EntityDoesNotExistsException e) {

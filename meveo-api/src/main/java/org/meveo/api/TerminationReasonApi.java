@@ -6,11 +6,11 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.TerminationReasonDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.SubscriptionTerminationReason;
@@ -29,8 +29,9 @@ public class TerminationReasonApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void create(TerminationReasonDto postData, User currentUser) throws MeveoApiException {
+    public void create(TerminationReasonDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -49,7 +50,7 @@ public class TerminationReasonApi extends BaseApi {
         subscriptionTerminationReason.setApplyReimbursment(postData.isApplyReimbursment());
         subscriptionTerminationReason.setApplyTerminationCharges(postData.isApplyTerminationCharges());
 
-        terminationReasonService.create(subscriptionTerminationReason, currentUser, currentUser.getProvider());
+        terminationReasonService.create(subscriptionTerminationReason, currentUser);
     }
 
     /**
@@ -58,8 +59,9 @@ public class TerminationReasonApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void update(TerminationReasonDto postData, User currentUser) throws MeveoApiException {
+    public void update(TerminationReasonDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -108,8 +110,9 @@ public class TerminationReasonApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void createOrUpdate(TerminationReasonDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(TerminationReasonDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");

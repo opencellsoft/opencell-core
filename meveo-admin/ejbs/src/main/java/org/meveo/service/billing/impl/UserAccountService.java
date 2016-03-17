@@ -47,7 +47,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 	private WalletService walletService;
 
 	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount, User creator)
-			throws AccountAlreadyExistsException {
+			throws BusinessException {
 
 		log.debug("creating userAccount with details {}, creator={}, provider={}", new Object[] { userAccount, creator,
 				billingAccount.getProvider() });
@@ -58,11 +58,11 @@ public class UserAccountService extends AccountService<UserAccount> {
 		}
 
 		userAccount.setBillingAccount(billingAccount);
-		create(userAccount, creator, billingAccount.getProvider());
+		create(userAccount, creator); // AKK was with billingAccount.getProvider()
 		WalletInstance wallet = new WalletInstance();
 		wallet.setCode(WalletTemplate.PRINCIPAL);
 		wallet.setUserAccount(userAccount);
-		walletService.create(wallet, creator, billingAccount.getProvider());
+		walletService.create(wallet, creator); // AKK was with billingAccount.getProvider()
 
 		userAccount.setWallet(wallet);
 	}

@@ -14,6 +14,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -46,7 +47,11 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     @Override
     public JobInstance initEntity() {
         super.initEntity();
-        createMissingCustomFieldTemplates();
+        try{
+            createMissingCustomFieldTemplates();
+        } catch (BusinessException e){
+            log.error("Failed to create missing custom field templates", e);
+        }
         return entity;
     }
 
@@ -108,8 +113,9 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
      * Get a list of templates matching job template name. Create new ones if job template defines new ones in code.
      * 
      * @return A map of custom field templates with template code as a key
+     * @throws BusinessException 
      */
-    private void createMissingCustomFieldTemplates() {
+    private void createMissingCustomFieldTemplates() throws BusinessException {
 
         if (entity.getJobTemplate() == null) {
             return;
@@ -126,7 +132,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         } else {
             jobTemplatesFromJob = jobCustomFields.values();
         }
-        customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, jobTemplatesFromJob, getCurrentProvider());
+        customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, jobTemplatesFromJob, getCurrentUser());
     }
 
     /**
@@ -141,8 +147,9 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     /**
      * Explicitly refresh custom fields and action definitions. Should be used when job template change, as on it depends what fields and actions apply
+     * @throws BusinessException 
      */
-    public void refreshCustomFieldsAndActions() {
+    public void refreshCustomFieldsAndActions() throws BusinessException {
 
         createMissingCustomFieldTemplates();
         customFieldDataEntryBean.refreshFieldsAndActions(entity);

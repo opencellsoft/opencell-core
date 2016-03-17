@@ -19,7 +19,6 @@ import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Reservation;
@@ -52,7 +51,7 @@ public class MediationApi extends BaseApi {
 
 	Map<Long, Timer> timers = new HashMap<Long, Timer>();
 
-	public void registerCdrList(CdrListDto postData, User currentUser) throws MeveoApiException {
+	public void registerCdrList(CdrListDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCdr() != null && postData.getCdr().size() > 0) {
 			try {
@@ -67,7 +66,7 @@ public class MediationApi extends BaseApi {
 					List<EDR> edrs = cdrParsingService.getEDRList(line, currentUser.getProvider());
 					for (EDR edr : edrs) {
 						log.debug("edr={}", edr);
-						edrService.create(edr, currentUser, currentUser.getProvider());
+						edrService.create(edr, currentUser);
 					}
 				}
 			} catch (CDRParsingException e) {
@@ -83,7 +82,7 @@ public class MediationApi extends BaseApi {
 		}
 	}
 
-	public void chargeCdr(String cdr, User user, String ip) throws MeveoApiException {
+	public void chargeCdr(String cdr, User user, String ip) throws MeveoApiException, BusinessException {
 		if (!StringUtils.isBlank(cdr)) {
 			try {
 				cdrParsingService.initByApi(user.getUserName(), ip);
@@ -96,7 +95,7 @@ public class MediationApi extends BaseApi {
 				edrs = cdrParsingService.getEDRList(cdr, user.getProvider());
 				for (EDR edr : edrs) {
 					log.debug("edr={}", edr);
-					edrService.create(edr, user, user.getProvider());
+					edrService.create(edr, user);
 					try {
 						usageRatingService.rateUsageWithinTransaction(edr, user);
 						if (edr.getStatus() == EDRStatusEnum.REJECTED) {
@@ -136,7 +135,7 @@ public class MediationApi extends BaseApi {
 
 	// if the reservation succeed then returns -1, else returns the available
 	// quantity for this cdr
-	public CdrReservationResponseDto reserveCdr(String cdr, User user, String ip) throws MeveoApiException {
+	public CdrReservationResponseDto reserveCdr(String cdr, User user, String ip) throws MeveoApiException, BusinessException {
 		CdrReservationResponseDto result = new CdrReservationResponseDto();
 		// TODO: if insufficient balance retry with lower quantity
 		result.setAvailableQuantity(-1);
@@ -152,7 +151,7 @@ public class MediationApi extends BaseApi {
 				edrs = cdrParsingService.getEDRList(cdr, user.getProvider());
 				for (EDR edr : edrs) {
 					log.debug("edr={}", edr);
-					edrService.create(edr, user, user.getProvider());
+					edrService.create(edr, user);
 					try {
 						Reservation reservation = usageRatingService.reserveUsageWithinTransaction(edr, user);
 						if (edr.getStatus() == EDRStatusEnum.REJECTED) {

@@ -75,7 +75,7 @@ public class PermissionService extends PersistenceService<Permission> {
             permissionEntity.setName(resource + "-" + permission);
             permissionEntity.setPermission(permission);
             permissionEntity.setResource(resource);
-            this.create(permissionEntity);
+            this.create(permissionEntity, currentUser);
         }
 
         // Add to a role, creating role first if does not exist yet
@@ -90,7 +90,7 @@ public class PermissionService extends PersistenceService<Permission> {
 
             if (!role.getPermissions().contains(permissionEntity)) {
                 role.getPermissions().add(permissionEntity);
-                roleService.update(role);
+                roleService.update(role, currentUser);
             }
         }
 

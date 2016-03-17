@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -153,13 +154,13 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     @Override
-    public void create(CustomFieldTemplate cft, User creator, Provider provider) {
-        super.create(cft, creator, provider);
+    public void create(CustomFieldTemplate cft, User creator) throws BusinessException {
+        super.create(cft, creator);
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
     }
 
     @Override
-    public CustomFieldTemplate update(CustomFieldTemplate cft, User updater) {
+    public CustomFieldTemplate update(CustomFieldTemplate cft, User updater) throws BusinessException {
 
         CustomFieldTemplate cftUpdated = super.update(cft, updater);
         customFieldsCache.addUpdateCustomFieldTemplate(cftUpdated);
@@ -221,13 +222,14 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @param templates A list of templates to check
      * @param provider Provider
      * @return A complete list of templates for a given entity and provider. Mapped by a custom field template key.
+     * @throws BusinessException 
      */
-    public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates, Provider provider) {
+    public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates, User currentUser) throws BusinessException {
         try {
-            return createMissingTemplates(calculateAppliesToValue(entity), templates, provider);
+            return createMissingTemplates(calculateAppliesToValue(entity), templates, currentUser);
 
         } catch (CustomFieldException e) {
-            // Its ok, handles cases when value that is part of CFT.AppliesTo calculation is not set yet on entity
+            // Its OK, handles cases when value that is part of CFT.AppliesTo calculation is not set yet on entity
             return new HashMap<String, CustomFieldTemplate>();
         }
     }
@@ -239,17 +241,18 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @param templates A list of templates to check
      * @param provider Provider
      * @return A complete list of templates for a given entity and provider. Mapped by a custom field template key.
+     * @throws BusinessException 
      */
-    public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates, Provider provider) {
+    public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates, User currentUser) throws BusinessException {
 
         // Get templates corresponding to an entity type
-        Map<String, CustomFieldTemplate> allTemplates = findByAppliesTo(appliesTo, provider);
+        Map<String, CustomFieldTemplate> allTemplates = findByAppliesTo(appliesTo, currentUser.getProvider());
 
         if (templates != null) {
             for (CustomFieldTemplate cft : templates) {
                 if (!allTemplates.containsKey(cft.getCode())) {
                     log.debug("Create a missing CFT {} for {} entity", cft.getCode(), appliesTo);
-                    create(cft, getCurrentUser(), provider);
+                    create(cft, currentUser);
                     allTemplates.put(cft.getCode(), cft);
                 }
             }

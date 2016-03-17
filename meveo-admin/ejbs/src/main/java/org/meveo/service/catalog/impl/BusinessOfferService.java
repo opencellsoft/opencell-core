@@ -150,7 +150,7 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 									newPriceplanmaMatrix.setVersion(0);
 									newPriceplanmaMatrix.setOfferTemplate(null);
 
-									pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser, currentUser.getProvider());
+									pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
 								}
 							}
 						}
@@ -172,7 +172,7 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 									newPriceplanmaMatrix.setVersion(0);
 									newPriceplanmaMatrix.setOfferTemplate(null);
 
-									pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser, currentUser.getProvider());
+									pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
 								}
 							}
 						}
@@ -194,7 +194,7 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 									newPriceplanmaMatrix.setVersion(0);
 									newPriceplanmaMatrix.setOfferTemplate(null);
 
-									pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser, currentUser.getProvider());
+									pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
 								}
 							}
 						}
@@ -215,7 +215,7 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 									newPriceplanmaMatrix.setVersion(0);
 									newPriceplanmaMatrix.setOfferTemplate(null);
 
-									pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser, currentUser.getProvider());
+									pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
 								}
 							}
 						}
@@ -235,12 +235,12 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 							newChargeTemplate.setVersion(0);
 							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
 							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
-							recurringChargeTemplateService.create(newChargeTemplate, currentUser, currentUser.getProvider());
+							recurringChargeTemplateService.create(newChargeTemplate, currentUser);
 
 							ServiceChargeTemplateRecurring serviceChargeTemplate = new ServiceChargeTemplateRecurring();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
 							serviceChargeTemplate.setServiceTemplate(newServiceTemplate);
-							serviceChargeTemplateRecurringService.create(serviceChargeTemplate, currentUser, currentUser.getProvider());
+							serviceChargeTemplateRecurringService.create(serviceChargeTemplate, currentUser);
 
 							newServiceTemplate.getServiceRecurringCharges().add(serviceChargeTemplate);
 						}
@@ -259,12 +259,12 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 							newChargeTemplate.setVersion(0);
 							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
 							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
-							oneShotChargeTemplateService.create(newChargeTemplate, currentUser, currentUser.getProvider());
+							oneShotChargeTemplateService.create(newChargeTemplate, currentUser);
 
 							ServiceChargeTemplateSubscription serviceChargeTemplate = new ServiceChargeTemplateSubscription();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
 							serviceChargeTemplate.setServiceTemplate(newServiceTemplate);
-							serviceChargeTemplateSubscriptionService.create(serviceChargeTemplate, currentUser, currentUser.getProvider());
+							serviceChargeTemplateSubscriptionService.create(serviceChargeTemplate, currentUser);
 
 							newServiceTemplate.getServiceSubscriptionCharges().add(serviceChargeTemplate);
 						}
@@ -283,12 +283,12 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 							newChargeTemplate.setVersion(0);
 							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
 							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
-							oneShotChargeTemplateService.create(newChargeTemplate, currentUser, currentUser.getProvider());
+							oneShotChargeTemplateService.create(newChargeTemplate, currentUser);
 
 							ServiceChargeTemplateTermination serviceChargeTemplate = new ServiceChargeTemplateTermination();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
 							serviceChargeTemplate.setServiceTemplate(newServiceTemplate);
-							serviceChargeTemplateTerminationService.create(serviceChargeTemplate, currentUser, currentUser.getProvider());
+							serviceChargeTemplateTerminationService.create(serviceChargeTemplate, currentUser);
 
 							newServiceTemplate.getServiceTerminationCharges().add(serviceChargeTemplate);
 						}
@@ -307,12 +307,12 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 							newChargeTemplate.setVersion(0);
 							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
 							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
-							usageChargeTemplateService.create(newChargeTemplate, currentUser, currentUser.getProvider());
+                            usageChargeTemplateService.create(newChargeTemplate, currentUser);
 
 							ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
 							serviceChargeTemplate.setServiceTemplate(newServiceTemplate);
-							serviceChargeTemplateUsageService.create(serviceChargeTemplate, currentUser, currentUser.getProvider());
+							serviceChargeTemplateUsageService.create(serviceChargeTemplate, currentUser);
 
 							if (serviceCharge.getCounterTemplate() != null) {
 								CounterTemplate newCounterTemplate = new CounterTemplate();
@@ -321,7 +321,7 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 								newCounterTemplate.setId(null);
 								newCounterTemplate.setCode(prefix + serviceCharge.getCounterTemplate().getCode());
 
-								counterTemplateService.create(newCounterTemplate, currentUser, currentUser.getProvider());
+								counterTemplateService.create(newCounterTemplate, currentUser);
 
 								serviceChargeTemplate.setCounterTemplate(newCounterTemplate);
 							}
@@ -330,7 +330,7 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 						}
 					}
 
-					serviceTemplateService.create(newServiceTemplate, currentUser, currentUser.getProvider());
+					serviceTemplateService.create(newServiceTemplate, currentUser);
 					newServiceTemplates.add(newServiceTemplate);
 				} catch (IllegalAccessException | InvocationTargetException e) {
 					throw new BusinessException(e.getMessage());
@@ -338,14 +338,14 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 			}
 		}
 
-		offerTemplateService.create(newOfferTemplate, currentUser, currentUser.getProvider());
+		offerTemplateService.create(newOfferTemplate, currentUser);
 
 		// add to offer
 		for (ServiceTemplate newServiceTemplate : newServiceTemplates) {
 			OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
 			offerServiceTemplate.setServiceTemplate(newServiceTemplate);
 			offerServiceTemplate.setOfferTemplate(newOfferTemplate);
-			offerServiceTemplateService.create(offerServiceTemplate, currentUser, currentUser.getProvider());
+			offerServiceTemplateService.create(offerServiceTemplate, currentUser);
 
 			newOfferTemplate.addOfferServiceTemplate(offerServiceTemplate);
 		}

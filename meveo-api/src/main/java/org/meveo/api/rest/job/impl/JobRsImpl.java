@@ -4,6 +4,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -37,7 +38,6 @@ public class JobRsImpl extends BaseRs implements JobRs {
     private TimerEntityApi timerEntityApi;
 
     @Override
-    
     public ActionStatus execute(JobInstanceInfoDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
@@ -53,12 +53,10 @@ public class JobRsImpl extends BaseRs implements JobRs {
             log.error("error generated while executing job ", e);
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
     @Override
-    
     public ActionStatus create(JobInstanceDto jobInstanceDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
@@ -68,17 +66,16 @@ public class JobRsImpl extends BaseRs implements JobRs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
     @Override
-    
     public ActionStatus createTimer(TimerEntityDto timerEntityDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
@@ -88,17 +85,16 @@ public class JobRsImpl extends BaseRs implements JobRs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
     @Override
-    
     public ActionStatus update(JobInstanceDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
@@ -108,17 +104,16 @@ public class JobRsImpl extends BaseRs implements JobRs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
     @Override
-    
     public ActionStatus createOrUpdate(JobInstanceDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
@@ -128,17 +123,16 @@ public class JobRsImpl extends BaseRs implements JobRs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
     @Override
-    
     public JobInstanceResponseDto find(String jobInstanceCode) {
         JobInstanceResponseDto result = new JobInstanceResponseDto();
 
@@ -149,17 +143,16 @@ public class JobRsImpl extends BaseRs implements JobRs {
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
     @Override
-    
     public ActionStatus remove(String jobInstanceCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -170,17 +163,16 @@ public class JobRsImpl extends BaseRs implements JobRs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
     @Override
-    
     public ActionStatus updateTimer(TimerEntityDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -191,17 +183,16 @@ public class JobRsImpl extends BaseRs implements JobRs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
     @Override
-    
     public ActionStatus createOrUpdateTimer(TimerEntityDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -212,17 +203,16 @@ public class JobRsImpl extends BaseRs implements JobRs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
     @Override
-    
     public TimerEntityResponseDto findTimer(String timerCode) {
         TimerEntityResponseDto result = new TimerEntityResponseDto();
 
@@ -234,17 +224,16 @@ public class JobRsImpl extends BaseRs implements JobRs {
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
     @Override
-    
     public ActionStatus removeTimer(String timerCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -257,13 +246,13 @@ public class JobRsImpl extends BaseRs implements JobRs {
             result.setMessage(e.getMessage());
             log.error("Failed to remove a timer {}", timerCode, e);
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
             log.error("Failed to remove a timer {}", timerCode, e);
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 }

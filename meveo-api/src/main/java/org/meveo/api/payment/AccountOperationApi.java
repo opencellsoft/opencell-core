@@ -58,7 +58,7 @@ public class AccountOperationApi extends BaseApi {
     @Inject
     private RecordedInvoiceService recordedInvoiceService;
 
-    public void create(AccountOperationDto postData, User currentUser) throws MeveoApiException {
+    public void create(AccountOperationDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getType())) {
             missingParameters.add("Type");
@@ -116,7 +116,7 @@ public class AccountOperationApi extends BaseApi {
             accountOperation.setExcludedFromDunning(false);
         }
 
-        accountOperationService.create(accountOperation, currentUser, currentUser.getProvider());
+        accountOperationService.create(accountOperation, currentUser);
 
         if (postData.getMatchingAmounts() != null) {
             for (MatchingAmountDto matchingAmountDto : postData.getMatchingAmounts().getMatchingAmount()) {
@@ -138,7 +138,7 @@ public class AccountOperationApi extends BaseApi {
                         matchingCode.setMatchingAmountDebit(matchingCodeDto.getMatchingAmountDebit());
 
                         if (matchingCode.isTransient()) {
-                            matchingCodeService.create(matchingCode, currentUser, currentUser.getProvider());
+                            matchingCodeService.create(matchingCode, currentUser);
                         } else {
                             matchingCodeService.update(matchingCode, currentUser);
                         }
@@ -148,7 +148,7 @@ public class AccountOperationApi extends BaseApi {
                 }
 
                 if (matchingAmount.isTransient()) {
-                    matchingAmountService.create(matchingAmount, currentUser, currentUser.getProvider());
+                    matchingAmountService.create(matchingAmount, currentUser);
                 } else {
                     matchingAmountService.update(matchingAmount, currentUser);
                 }

@@ -3,6 +3,7 @@ package org.meveo.api.notification;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.notification.JobTriggerDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -40,7 +41,7 @@ public class JobTriggerApi extends BaseApi {
     @Inject
     private JobInstanceService jobInstanceService;
 
-    public void create(JobTriggerDto postData, User currentUser) throws MeveoApiException {
+    public void create(JobTriggerDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -90,7 +91,7 @@ public class JobTriggerApi extends BaseApi {
         notif.setCounterTemplate(counterTemplate);
         notif.setJobInstance(jobInstance);
         notif.setJobParams(postData.getJobParams());
-        jobTriggerService.create(notif, currentUser, currentUser.getProvider());
+        jobTriggerService.create(notif, currentUser);
     }
 
     public JobTriggerDto find(String notificationCode, Provider provider) throws MeveoApiException {
@@ -113,7 +114,7 @@ public class JobTriggerApi extends BaseApi {
         return result;
     }
 
-    public void update(JobTriggerDto postData, User currentUser) throws MeveoApiException {
+    public void update(JobTriggerDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -183,7 +184,7 @@ public class JobTriggerApi extends BaseApi {
         }
     }
 
-    public void createOrUpdate(JobTriggerDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(JobTriggerDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (jobTriggerService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             create(postData, currentUser);
         } else {

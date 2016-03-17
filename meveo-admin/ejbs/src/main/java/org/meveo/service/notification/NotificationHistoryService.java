@@ -32,7 +32,7 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
         history.setResult(result);
         history.setStatus(status);
         history.setProvider(notification.getProvider());
-        super.create(history,getCurrentUser(),history.getProvider());
+        super.create(history,getCurrentUser()); // AKK was with history.getProvider()
 
         return history;
 
@@ -53,7 +53,7 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
         history.setResult(result);
         history.setStatus(status);
         history.setProvider(notification.getProvider());
-        super.create(history,auditable.getCreator(),history.getProvider());
+        super.create(history,auditable.getCreator()); // AKK was with history.getProvider()
 
         return history;
 

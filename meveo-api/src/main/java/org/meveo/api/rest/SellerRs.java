@@ -29,62 +29,62 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface SellerRs extends IBaseRs {
 
-	/**
-	 * Create seller.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@POST
-	ActionStatus create(SellerDto postData);
+    /**
+     * Create seller.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @POST
+    ActionStatus create(SellerDto postData);
 
-	/**
-	 * Update seller.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@PUT
-	ActionStatus update(SellerDto postData);
+    /**
+     * Update seller.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @PUT
+    ActionStatus update(SellerDto postData);
 
-	/**
-	 * Search for seller with a given code.
-	 * 
-	 * @param sellerCode
-	 * @return
-	 */
-	@Path("/")
-	@GET
-	GetSellerResponse find(@QueryParam("sellerCode") String sellerCode);
+    /**
+     * Search for seller with a given code.
+     * 
+     * @param sellerCode
+     * @return
+     */
+    @Path("/")
+    @GET
+    GetSellerResponse find(@QueryParam("sellerCode") String sellerCode);
 
-	/**
-	 * Remove seller with a given code.
-	 * 
-	 * @param sellerCode
-	 * @return
-	 */
-	@Path("/{sellerCode}")
-	@DELETE
-	ActionStatus remove(@PathParam("sellerCode") String sellerCode);
+    /**
+     * Remove seller with a given code.
+     * 
+     * @param sellerCode
+     * @return
+     */
+    @Path("/{sellerCode}")
+    @DELETE
+    ActionStatus remove(@PathParam("sellerCode") String sellerCode);
 
-	/**
-	 * Search for seller with a given code.
-	 * 
-	 * @param sellerCode
-	 * @return
-	 */
-	@Path("/list")
-	@GET
-	SellerResponseDto list();
+    /**
+     * Search for seller with a given code.
+     * 
+     * @param sellerCode
+     * @return
+     */
+    @Path("/list")
+    @GET
+    SellerResponseDto list();
 
-	@Path("/listSellerCodes")
-	@GET
-	SellerCodesResponseDto listSellerCodes();
-	
-	@Path("/createOrUpdate")
-	@POST
-	ActionStatus createOrUpdate(SellerDto postData);
+    @Path("/listSellerCodes")
+    @GET
+    SellerCodesResponseDto listSellerCodes();
+
+    @Path("/createOrUpdate")
+    @POST
+    ActionStatus createOrUpdate(SellerDto postData);
 
 }

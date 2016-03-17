@@ -36,7 +36,7 @@ public class MeasurableQuantityAggregationJob extends Job {
     private MeasuredValueService mvService;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, MeasurableQuantity mq,User currentUser) {
+    private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, MeasurableQuantity mq,User currentUser) throws BusinessException {
         if (report.length() == 0) {
             report.append("Generate Measured Value for : " + mq.getCode());
         } else {
@@ -52,7 +52,7 @@ public class MeasurableQuantityAggregationJob extends Job {
                 mv.setMeasurementPeriod(mq.getMeasurementPeriod());
                 mv.setDate(sdf.parse(mvObject[0] + ""));
                 mv.setValue(new BigDecimal(mvObject[1] + ""));
-                mvService.create(mv,currentUser,currentUser.getProvider());
+                mvService.create(mv,currentUser);
             }
         } catch (IllegalArgumentException e) {
             log.error("Illegal argument exception in create measured values",e);
@@ -64,7 +64,7 @@ public class MeasurableQuantityAggregationJob extends Job {
     }
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, List<MeasurableQuantity> mq,User currentUser) {
+    private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, List<MeasurableQuantity> mq,User currentUser) throws BusinessException {
         for (MeasurableQuantity measurableQuantity : mq) {
             aggregateMeasuredValues(result, report, measurableQuantity,currentUser);
         }

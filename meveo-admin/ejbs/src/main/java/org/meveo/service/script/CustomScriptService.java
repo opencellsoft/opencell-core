@@ -101,14 +101,14 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     @Override
-    public void create(T script, User creator, Provider provider) {
+    public void create(T script, User creator) throws BusinessException {
 
-        super.create(script, creator, provider);
+        super.create(script, creator);
         compileScript(script, false);
     }
 
     @Override
-    public T update(T script, User updater) {
+    public T update(T script, User updater) throws BusinessException {
 
         script = super.update(script, updater);
         compileScript(script, false);
@@ -395,14 +395,13 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param scriptCode Script to execute, identified by a code
      * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
      * @param currentUser Current user
-     * @param currentProvider Current provider
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws ElementNotFoundException Script not found
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(IEntity entity, String scriptCode, String encodedParameters, User currentUser, Provider currentProvider) throws InvalidPermissionException,
-            ElementNotFoundException, BusinessException {
+    public Map<String, Object> execute(IEntity entity, String scriptCode, String encodedParameters, User currentUser) throws InvalidPermissionException, ElementNotFoundException,
+            BusinessException {
 
         Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -419,7 +418,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             }
 
         }
-        return execute(entity, scriptCode, parameters, currentUser, currentProvider);
+        return execute(entity, scriptCode, parameters, currentUser);
     }
 
     /**
@@ -429,22 +428,21 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param scriptCode Script to execute, identified by a code
      * @param parameters Additional parameters
      * @param currentUser Current user
-     * @param currentProvider Current provider
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(IEntity entity, String scriptCode, Map<String, Object> context, User currentUser, Provider currentProvider) throws InvalidScriptException,
-            ElementNotFoundException, InvalidPermissionException, BusinessException {
+    public Map<String, Object> execute(IEntity entity, String scriptCode, Map<String, Object> context, User currentUser) throws InvalidScriptException, ElementNotFoundException,
+            InvalidPermissionException, BusinessException {
 
         if (context == null) {
             context = new HashMap<String, Object>();
         }
         context.put(Script.CONTEXT_ENTITY, entity);
 
-        Map<String, Object> result = execute(scriptCode, context, currentUser, currentProvider);
+        Map<String, Object> result = execute(scriptCode, context, currentUser);
         return result;
     }
 
@@ -455,21 +453,20 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param scriptCode Script to execute, identified by a code
      * @param context Method context
      * @param currentUser Current user
-     * @param currentProvider Current provider
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser, Provider currentProvider) throws ElementNotFoundException,
-            InvalidScriptException, InvalidPermissionException, BusinessException {
-        
+    public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser) throws ElementNotFoundException, InvalidScriptException,
+            InvalidPermissionException, BusinessException {
+
         log.trace("Script {} to be executed with parameters {}", scriptCode, context);
-        
-        SI classInstance = getScriptInstance(currentProvider, scriptCode);
-        classInstance.execute(context, currentProvider, currentUser);
-        
+
+        SI classInstance = getScriptInstance(currentUser.getProvider(), scriptCode);
+        classInstance.execute(context, currentUser.getProvider(), currentUser);
+
         log.trace("Script {} executed with parameters {}", scriptCode, context);
         return context;
     }
@@ -480,16 +477,15 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param compiledScript Compiled script class
      * @param context Method context
      * @param currentUser Current user
-     * @param currentProvider Current provider
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws BusinessException Any execution exception
      */
-    protected Map<String, Object> execute(SI compiledScript, Map<String, Object> context, User currentUser, Provider currentProvider) throws BusinessException {
+    protected Map<String, Object> execute(SI compiledScript, Map<String, Object> context, User currentUser) throws BusinessException {
         if (context == null) {
             context = new HashMap<String, Object>();
         }
 
-        compiledScript.execute(context, currentProvider, currentUser);
+        compiledScript.execute(context, currentUser.getProvider(), currentUser);
         return context;
     }
 }

@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
@@ -49,8 +50,8 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     private ParamBean paramBean = ParamBean.getInstance();
 
     @Override
-    public void create(CustomEntityTemplate cet, User creator, Provider provider) {
-        super.create(cet, creator, provider);
+    public void create(CustomEntityTemplate cet, User creator) throws BusinessException {
+        super.create(cet, creator);
         customFieldsCache.addUpdateCustomEntityTemplate(cet);
 
         try {
@@ -63,7 +64,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     }
 
     @Override
-    public CustomEntityTemplate update(CustomEntityTemplate cet, User updater) {
+    public CustomEntityTemplate update(CustomEntityTemplate cet, User updater) throws BusinessException {
         CustomEntityTemplate cetUpdated = super.update(cet, updater);
         customFieldsCache.addUpdateCustomEntityTemplate(cet);
 

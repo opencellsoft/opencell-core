@@ -170,7 +170,7 @@ public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification>
                     notif.setScriptInstance(scriptInstance);
                 }  
                 notif.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
-                notificationService.create(notif);
+                notificationService.create(notif, getCurrentUser());
             }
         }
         if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
@@ -178,7 +178,7 @@ public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification>
         }
     }
 
-    public void checkSelectedStrategy(String[] values, ScriptNotification existingEntity, boolean isEntityAlreadyExist) throws RejectedImportException {
+    public void checkSelectedStrategy(String[] values, ScriptNotification existingEntity, boolean isEntityAlreadyExist) throws BusinessException {
 		if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
 			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
 			existingEntity.setElFilter(values[EL_FILTER]);
@@ -188,7 +188,7 @@ public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification>
                 existingEntity.setScriptInstance(scriptInstance);
             } 
 			existingEntity.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
-			notificationService.update(existingEntity);
+			notificationService.update(existingEntity, getCurrentUser());
 		} else if (strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
 			throw new RejectedImportException("notification.rejectImport");
 		} else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {

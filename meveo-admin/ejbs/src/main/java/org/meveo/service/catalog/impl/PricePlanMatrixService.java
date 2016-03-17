@@ -26,7 +26,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -62,18 +61,12 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 
     SimpleDateFormat sdf = new SimpleDateFormat(param.getProperty("excelImport.dateFormat", "dd/MM/yyyy"));
 
-    public void create(PricePlanMatrix pricePlan, User creator, Provider provider) {
-        super.create(pricePlan, creator, provider);
+    @Override
+    public void create(PricePlanMatrix pricePlan, User creator) throws BusinessException {
+        super.create(pricePlan, creator);
         ratingCacheContainerProvider.addPricePlanToCache(pricePlan);
     }
 
-    public void create(PricePlanMatrix pricePlan, User creator) {
-        create(pricePlan, creator, creator.getProvider());
-    }
-
-    public void create(PricePlanMatrix pricePlan) {
-        create(pricePlan, getCurrentUser(), getCurrentProvider());
-    }
 
     @Override
     public PricePlanMatrix disable(PricePlanMatrix pricePlan) {
@@ -96,14 +89,10 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
     }
 
     @Override
-    public PricePlanMatrix update(PricePlanMatrix pricePlan, User updater) {
+    public PricePlanMatrix update(PricePlanMatrix pricePlan, User updater) throws BusinessException {
         pricePlan = super.update(pricePlan, updater);
         ratingCacheContainerProvider.updatePricePlanInCache(pricePlan);
         return pricePlan;
-    }
-
-    public PricePlanMatrix update(PricePlanMatrix pricePlan) {
-        return update(pricePlan, getCurrentUser());
     }
 
     @SuppressWarnings("unchecked")
@@ -502,7 +491,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
         }
 
         if (pricePlan.getId() == null) {
-            create(pricePlan, user, provider);
+            create(pricePlan, user);
         } else {
         	pricePlan.updateAudit(user);
             updateNoCheck(pricePlan);
@@ -585,19 +574,19 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 		}
 	}
 	 
-	public boolean updateCellEdit(PricePlanMatrix entity) throws EntityExistsException{
-		boolean result=false;
-		PricePlanMatrix pricePlanMatrix=findById(entity.getId());
-		if(pricePlanMatrix!=null){
-			if(!equal(entity.getCode(),pricePlanMatrix.getCode())){
-				PricePlanMatrix existed=findByCode(entity.getCode(), getCurrentProvider());
-				if(existed!=null){
-					throw new EntityExistsException("Price plan "+entity.getCode()+" is existed!");
-				}else{
-					pricePlanMatrix.setCode(entity.getCode());
-					result=true;
-				}
-			}
+	public boolean updateCellEdit(PricePlanMatrix entity, User currentUser) throws BusinessException{
+        boolean result = false;
+        PricePlanMatrix pricePlanMatrix = findById(entity.getId());
+        if (pricePlanMatrix != null) {
+            if (!equal(entity.getCode(), pricePlanMatrix.getCode())) {
+                PricePlanMatrix existed = findByCode(entity.getCode(), getCurrentProvider());
+                if (existed != null) {
+                    throw new BusinessException("Price plan " + entity.getCode() + " is existed!");
+                } else {
+                    pricePlanMatrix.setCode(entity.getCode());
+                    result = true;
+                }
+            }
 			if(!equal(entity.getDescription(),pricePlanMatrix.getDescription())){
 				pricePlanMatrix.setDescription(entity.getDescription());
 				result=true;
@@ -694,10 +683,10 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 				pricePlanMatrix.setValidityCalendar(entity.getValidityCalendar());
 				result=true;
 			}
-			if(result){
-				update(pricePlanMatrix);
-				this.ratingCacheContainerProvider.updatePricePlanInCache(pricePlanMatrix);
-			}
+            if (result) {
+                update(pricePlanMatrix, currentUser);
+                this.ratingCacheContainerProvider.updatePricePlanInCache(pricePlanMatrix);
+            }
 		}
 		return result;
 	}

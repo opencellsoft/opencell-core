@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.LanguageDescriptionDto;
@@ -53,7 +54,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
     @Inject
     private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
-    public void create(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void create(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -140,7 +141,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
             chargeTemplate.setEdrTemplates(edrTemplates);
         }
 
-        recurringChargeTemplateService.create(chargeTemplate, currentUser, provider);
+        recurringChargeTemplateService.create(chargeTemplate, currentUser);
 
         // populate customFields
         try {
@@ -155,13 +156,13 @@ public class RecurringChargeTemplateApi extends BaseApi {
             for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
                 CatMessages catMsg = new CatMessages(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(), ld.getDescription());
 
-                catMessagesService.create(catMsg, currentUser, provider);
+                catMessagesService.create(catMsg, currentUser);
             }
         }
 
     }
 
-    public void update(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void update(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -240,7 +241,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
                     } else {
                         CatMessages catMessages = new CatMessages(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(),
                             ld.getDescription());
-                        catMessagesService.create(catMessages, currentUser, provider);
+                        catMessagesService.create(catMessages, currentUser);
                     }
                 }
             }
@@ -317,7 +318,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
         recurringChargeTemplateService.remove(chargeTemplate);
     }
 
-    public void createOrUpdate(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (recurringChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             create(postData, currentUser);

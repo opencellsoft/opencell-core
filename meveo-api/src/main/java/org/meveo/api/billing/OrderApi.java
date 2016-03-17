@@ -19,6 +19,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
+import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -128,7 +129,7 @@ public class OrderApi extends BaseApi {
                 subscription.setSubscriptionDate((Date) getProductCharacteristic(orderItem.getProduct(), CHARACTERISTIC_SUBSCRIPTION_DATE, Date.class,
                     DateUtils.setTimeToZero(productOrder.getOrderDate())));
 
-                subscriptionService.create(subscription, currentUser, provider);
+                subscriptionService.create(subscription, currentUser);
 
                 // Validate and populate customFields
                 CustomFieldsDto customFields = extractCustomFields(orderItem.getProduct(), Subscription.class, provider);
@@ -300,23 +301,23 @@ public class OrderApi extends BaseApi {
         }
     }
 
-    public ProductOrder getProductOrder(String orderId, User currentUser) {
-        // TODO Auto-generated method stub
-        return null;
+    public ProductOrder getProductOrder(String orderId, User currentUser) throws EntityDoesNotExistsException {
+
+        throw new EntityDoesNotExistsException(ProductOrder.class, orderId);
     }
 
     public List<ProductOrder> findProductOrders(Map<String, List<String>> filterCriteria, User currentUser) {
-        // TODO Auto-generated method stub
+        // Need to implement
         return null;
     }
 
-    public ProductOrder updatePartiallyProductOrder(ProductOrder productOrder, User currentUser) {
-        // TODO Auto-generated method stub
-        return null;
+    public ProductOrder updatePartiallyProductOrder(String orderId, ProductOrder productOrder, User currentUser) throws EntityDoesNotExistsException {
+        // Need to implement
+        throw new EntityDoesNotExistsException(ProductOrder.class, orderId);
     }
 
-    public void deleteProductOrder(String orderId, User currentUser) {
-        // TODO Auto-generated method stub
+    public void deleteProductOrder(String orderId, User currentUser) throws EntityDoesNotExistsException, ActionForbiddenException {
+        // Need to implement
 
     }
 }

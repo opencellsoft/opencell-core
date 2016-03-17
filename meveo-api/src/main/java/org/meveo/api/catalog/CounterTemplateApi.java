@@ -3,6 +3,7 @@ package org.meveo.api.catalog;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -28,7 +29,7 @@ public class CounterTemplateApi extends BaseApi {
     @Inject
     private CalendarService calendarService;
 
-    public void create(CounterTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void create(CounterTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -65,10 +66,10 @@ public class CounterTemplateApi extends BaseApi {
         }
         counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
 
-        counterTemplateService.create(counterTemplate, currentUser, provider);
+        counterTemplateService.create(counterTemplate, currentUser);
     }
 
-    public void update(CounterTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void update(CounterTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -132,7 +133,7 @@ public class CounterTemplateApi extends BaseApi {
         counterTemplateService.remove(counterTemplate);
     }
 
-    public void createOrUpdate(CounterTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(CounterTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (counterTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             create(postData, currentUser);
         } else {

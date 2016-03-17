@@ -69,25 +69,25 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     private ParamBean paramBean = ParamBean.getInstance();
 
     @Override
-    public void create(CustomFieldInstance cfi) throws BusinessException {
+    public void create(CustomFieldInstance cfi, User creator) throws BusinessException {
         throw new RuntimeException(
-            "CustomFieldInstanceService.create(CustomFieldInstance cfi) method not supported. Should use CustomFieldInstanceService.create(CustomFieldInstance cfi, ICustomFieldEntity entity) method instead");
+            "CustomFieldInstanceService.create(CustomFieldInstance cfi, User creator) method not supported. Should use CustomFieldInstanceService.create(CustomFieldInstance cfi, ICustomFieldEntity entity, User creator) method instead");
     }
 
-    public void create(CustomFieldInstance cfi, ICustomFieldEntity entity, User creator, Provider provider) throws BusinessException {
-        super.create(cfi, creator, provider);
+    public void create(CustomFieldInstance cfi, ICustomFieldEntity entity, User creator) throws BusinessException {
+        super.create(cfi, creator);
         customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
 
         triggerEndPeriodEvent(cfi);
     }
 
     @Override
-    public CustomFieldInstance update(CustomFieldInstance e) {
+    public CustomFieldInstance update(CustomFieldInstance e, User updater) throws BusinessException {
         throw new RuntimeException(
-            "CustomFieldInstanceService.update(CustomFieldInstance cfi) method not supported. Should use CustomFieldInstanceService.update(CustomFieldInstance cfi, ICustomFieldEntity entity) method instead");
+            "CustomFieldInstanceService.update(CustomFieldInstance cfi, User updater) method not supported. Should use CustomFieldInstanceService.update(CustomFieldInstance cfi, ICustomFieldEntity entity, User updater) method instead");
     }
 
-    public CustomFieldInstance update(CustomFieldInstance cfi, ICustomFieldEntity entity, User updater) {
+    public CustomFieldInstance update(CustomFieldInstance cfi, ICustomFieldEntity entity, User updater) throws BusinessException {
         cfi = super.update(cfi, updater);
         customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
 
@@ -202,13 +202,13 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 cft.setFieldType(CustomFieldTypeEnum.STRING);
                 cft.setDefaultValue(value.toString());
                 cft.setValueRequired(false);
-                cfTemplateService.create(cft, currentUser, currentUser.getProvider());
+                cfTemplateService.create(cft, currentUser);
             }
 
             CustomFieldInstance cfi = CustomFieldInstance.fromTemplate(cft, entity);
 
             if (saveInCFIfNotExist) {
-                create(cfi, entity, currentUser, currentUser.getProvider());
+                create(cfi, entity, currentUser);
             }
         } catch (CustomFieldException e) {
             log.error("Can not determine applicable CFT type for entity of {} class. Value from propeties file will NOT be saved as customfield", entity.getClass().getSimpleName());
@@ -398,7 +398,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             }
             cfi = CustomFieldInstance.fromTemplate(cft, entity);
             cfi.setValue(value);
-            create(cfi, entity, currentUser, currentUser.getProvider());
+            create(cfi, entity, currentUser);
 
         } else {
             cfi = cfis.get(0);
@@ -438,7 +438,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             }
             cfi = CustomFieldInstance.fromTemplate(cft, entity, valueDate);
             cfi.setValue(value);
-            create(cfi, entity, currentUser, currentUser.getProvider());
+            create(cfi, entity, currentUser);
 
         } else {
             cfi = cfis.get(0);
@@ -480,7 +480,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             }
             cfi = CustomFieldInstance.fromTemplate(cft, entity, valueDateFrom, valueDateTo, valuePriority);
             cfi.setValue(value);
-            create(cfi, entity, currentUser, currentUser.getProvider());
+            create(cfi, entity, currentUser);
 
         } else {
             cfi = cfis.get(0);
@@ -709,7 +709,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             cfi.setVersion(0);
             cfi.setAppliesToEntity(entity.getUuid());
             cfi.setAuditable(null);
-            create(cfi, entity, currentUser, currentUser.getProvider());
+            create(cfi, entity, currentUser);
         }
     }
 

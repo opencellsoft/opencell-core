@@ -22,55 +22,54 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface OccTemplateRs extends IBaseRs {
 
-	/**
-	 * Create  OccTemplate.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@POST
-	ActionStatus create(OccTemplateDto postData);
+    /**
+     * Create OccTemplate.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @POST
+    ActionStatus create(OccTemplateDto postData);
 
-	/**
-	 * Update OccTemplate.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@PUT
-	ActionStatus update(OccTemplateDto postData);
+    /**
+     * Update OccTemplate.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @PUT
+    ActionStatus update(OccTemplateDto postData);
 
-	/**
-	 * Search OccTemplate with a given code.
-	 * @param OccTemplateCode
-	 * @return
-	 */
-	@Path("/")
-	@GET
-	GetOccTemplateResponseDto find(
-			@QueryParam("occTemplateCode") String OcctemplateCode);
+    /**
+     * Search OccTemplate with a given code.
+     * 
+     * @param OccTemplateCode
+     * @return
+     */
+    @Path("/")
+    @GET
+    GetOccTemplateResponseDto find(@QueryParam("occTemplateCode") String OcctemplateCode);
 
-	/**
-	 * Remove OccTemplate with a given code.
-	 * 
-	 * @param OccTemplateCode
-	 * @return
-	 */
-	@Path("/{occTemplateCode}")
-	@DELETE
-	ActionStatus remove(
-			@PathParam("occTemplateCode") String occTemplateCode);
-	
-	
-	/**
-	 * Create or update OccTemplate
-	 * @param postData
-	 * @return
-	 */
-	@Path("/createOrUpdate")
-	@POST
-	ActionStatus createOrUpdate(OccTemplateDto postData);
+    /**
+     * Remove OccTemplate with a given code.
+     * 
+     * @param OccTemplateCode
+     * @return
+     */
+    @Path("/{occTemplateCode}")
+    @DELETE
+    ActionStatus remove(@PathParam("occTemplateCode") String occTemplateCode);
+
+    /**
+     * Create or update OccTemplate
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/createOrUpdate")
+    @POST
+    ActionStatus createOrUpdate(OccTemplateDto postData);
 
 }

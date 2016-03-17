@@ -76,7 +76,7 @@ public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
 	public ActionPlanItem initEntity() {
 		if (dunningPlan != null && dunningPlan.getId() == null) {
 			try {
-				dunningPlanService.create(dunningPlan);
+				dunningPlanService.create(dunningPlan, getCurrentUser());
 			} catch (BusinessException e) {
 				messages.info(new BundleKey("messages",
 						"message.exception.business"));

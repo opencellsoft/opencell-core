@@ -4,6 +4,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.TaxApi;
 import org.meveo.api.dto.ActionStatus;
@@ -36,12 +37,12 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -56,12 +57,12 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -76,12 +77,12 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -96,12 +97,12 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -116,30 +117,31 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
-	@Override
-	public GetTaxesResponse list() {
-		GetTaxesResponse result = new GetTaxesResponse();
-		
-		try{
-			result.setTaxesDto(taxApi.list(getCurrentUser().getProvider()));
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
+    @Override
+    public GetTaxesResponse list() {
+        GetTaxesResponse result = new GetTaxesResponse();
+
+        try {
+            result.setTaxesDto(taxApi.list(getCurrentUser().getProvider()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
-		}
-		return result;
-	}
+        }
+        return result;
+    }
 }

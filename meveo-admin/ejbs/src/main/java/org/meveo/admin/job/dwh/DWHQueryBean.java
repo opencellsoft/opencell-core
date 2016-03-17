@@ -174,7 +174,7 @@ public class DWHQueryBean {
 						mv.setDimension3(dimension3);
 						mv.setDimension4(dimension4);
 						if (mv.getId() == null) {
-							mvService.create(mv, currentUser, provider);
+							mvService.create(mv, currentUser);
 						}
 					}
 					mq.increaseMeasureDate();

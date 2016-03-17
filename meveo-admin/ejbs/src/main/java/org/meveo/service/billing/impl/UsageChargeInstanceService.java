@@ -22,7 +22,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.RatingCacheContainerProvider;
@@ -59,13 +58,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 	public UsageChargeInstance usageChargeInstanciation(Subscription subscription, ServiceInstance serviceInstance,
 			ServiceChargeTemplateUsage serviceUsageChargeTemplate, Date startDate, Seller seller, User creator)
 			throws BusinessException {
-		return usageChargeInstanciation(getEntityManager(), subscription, serviceInstance, serviceUsageChargeTemplate,
-				startDate, seller, creator);
-	}
 
-	public UsageChargeInstance usageChargeInstanciation(EntityManager em, Subscription subscription,
-			ServiceInstance serviceInstance, ServiceChargeTemplateUsage serviceUsageChargeTemplate, Date startDate,
-			Seller seller, User creator) throws BusinessException {
 		log.debug("instanciate usageCharge for code {} and subscription {}",
 				serviceUsageChargeTemplate.getChargeTemplate().getCode(),subscription.getCode());
 		UsageChargeInstance usageChargeInstance = new UsageChargeInstance();
@@ -94,8 +87,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 					usageChargeInstance.setPrepaid(true);
 				}
 				WalletInstance walletInstance =walletService.getWalletInstance(serviceInstance.getSubscription().getUserAccount(),
-						walletTemplate, serviceInstance.getAuditable().getCreator(),
-						serviceInstance.getProvider());
+						walletTemplate, serviceInstance.getAuditable().getCreator());
 				log.debug("we add the waleltInstance {} to the charge instance {}",walletInstance.getId(),
 						usageChargeInstance.getId());
 				usageChargeInstance.getWalletInstances().add(walletInstance);
@@ -105,7 +97,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 			usageChargeInstance.getWalletInstances()
 					.add(serviceInstance.getSubscription().getUserAccount().getWallet());
 		}
-		create(usageChargeInstance, creator, serviceInstance.getProvider());
+		create(usageChargeInstance, creator); // AKK was with serviceInstance.getProvider()
 
 		if(usageChargeInstance.getPrepaid()){
 		    walletCacheContainerProvider.updateCache(usageChargeInstance);
@@ -121,42 +113,33 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		return usageChargeInstance;
 	}
 
-	public void activateUsageChargeInstance(UsageChargeInstance usageChargeInstance, User currentUser) {
+	public void activateUsageChargeInstance(UsageChargeInstance usageChargeInstance, User currentUser) throws BusinessException {
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 		update(usageChargeInstance, currentUser);
 		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
 	}
 
-	public void terminateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date terminationDate) {
-		terminateUsageChargeInstance(usageChargeInstance, terminationDate, getCurrentUser());
-	}
-
 	public void terminateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date terminationDate,
-			User currentUser) {
-		terminateUsageChargeInstance(getEntityManager(), usageChargeInstance, terminationDate, currentUser);
-	}
-
-	public void terminateUsageChargeInstance(EntityManager em, UsageChargeInstance usageChargeInstance,
-			Date terminationDate, User currentUser) {
+			User currentUser) throws BusinessException {
 		usageChargeInstance.setTerminationDate(terminationDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
 		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
 		update(usageChargeInstance, currentUser);
 	}
 
-	public void suspendUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date suspensionDate) {
+	public void suspendUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date suspensionDate, User currentUser) throws BusinessException {
 		usageChargeInstance.setTerminationDate(suspensionDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.SUSPENDED);
 		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
-		update(usageChargeInstance);
+		update(usageChargeInstance, currentUser);
 	}
 
-	public void reactivateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date reactivationDate) {
+	public void reactivateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date reactivationDate, User currentUser) throws BusinessException {
 		usageChargeInstance.setChargeDate(reactivationDate);
 		usageChargeInstance.setTerminationDate(null);
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
-		update(usageChargeInstance);
+		update(usageChargeInstance, currentUser);
 	}
 
 	@SuppressWarnings("unchecked")

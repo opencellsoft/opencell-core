@@ -19,7 +19,7 @@ import org.meveo.api.rest.security.RSSecured;
 /**
  * 
  * @author Manu Liwanag
- *
+ * 
  */
 @Path("/jobInstance")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -27,24 +27,24 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface JobInstanceRs extends IBaseRs {
 
-	@Path("/create")
-	@POST
-	ActionStatus create(JobInstanceDto postData);
+    @Path("/create")
+    @POST
+    ActionStatus create(JobInstanceDto postData);
 
-	@Path("/update")
-	@POST
-	ActionStatus update(JobInstanceDto postData);
+    @Path("/update")
+    @POST
+    ActionStatus update(JobInstanceDto postData);
 
-	@Path("/createOrUpdate")
-	@POST
-	ActionStatus createOrUpdate(JobInstanceDto postData);
+    @Path("/createOrUpdate")
+    @POST
+    ActionStatus createOrUpdate(JobInstanceDto postData);
 
-	@Path("/")
-	@GET
-	JobInstanceResponseDto find(@QueryParam("jobInstanceCode") String jobInstanceCode);
+    @Path("/")
+    @GET
+    JobInstanceResponseDto find(@QueryParam("jobInstanceCode") String jobInstanceCode);
 
-	@Path("/{jobInstanceCode}")
-	@DELETE
-	ActionStatus remove(@PathParam("jobInstanceCode") String jobInstanceCode);
-	
+    @Path("/{jobInstanceCode}")
+    @DELETE
+    ActionStatus remove(@PathParam("jobInstanceCode") String jobInstanceCode);
+
 }

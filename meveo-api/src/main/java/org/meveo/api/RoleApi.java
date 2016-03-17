@@ -8,6 +8,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.PermissionDto;
 import org.meveo.api.dto.RoleDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -34,8 +35,9 @@ public class RoleApi extends BaseApi {
      * @param currentUser
      * @return Role entity
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public Role create(RoleDto postData, User currentUser) throws MeveoApiException {
+    public Role create(RoleDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         String name = postData.getName();
         if (StringUtils.isBlank(name)) {
@@ -90,7 +92,7 @@ public class RoleApi extends BaseApi {
             }
         }
 
-        roleService.create(role, currentUser, currentUser.getProvider());
+        roleService.create(role, currentUser);
 
         return role;
     }
@@ -102,8 +104,9 @@ public class RoleApi extends BaseApi {
      * @param currentUser Current user
      * @return Updated Role entity
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public Role update(RoleDto postData, User currentUser) throws MeveoApiException {
+    public Role update(RoleDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         String name = postData.getName();
         if (StringUtils.isBlank(name)) {
@@ -185,7 +188,7 @@ public class RoleApi extends BaseApi {
         }
     }
 
-    public Role createOrUpdate(RoleDto postData, User currentUser) throws MeveoApiException {
+    public Role createOrUpdate(RoleDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         String name = postData.getName();
         if (name == null) {

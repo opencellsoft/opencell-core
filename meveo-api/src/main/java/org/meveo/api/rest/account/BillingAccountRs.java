@@ -27,44 +27,45 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface BillingAccountRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ActionStatus create(BillingAccountDto postData);
+    @POST
+    @Path("/")
+    ActionStatus create(BillingAccountDto postData);
 
-	@PUT
-	@Path("/")
-	ActionStatus update(BillingAccountDto postData);
+    @PUT
+    @Path("/")
+    ActionStatus update(BillingAccountDto postData);
 
-	/**
-	 * Search for a billing account with a given code.
-	 * 
-	 * @param billingAccountCode
-	 * @return
-	 */
-	@GET
-	@Path("/")
-	GetBillingAccountResponseDto find(@QueryParam("billingAccountCode") String billingAccountCode);
+    /**
+     * Search for a billing account with a given code.
+     * 
+     * @param billingAccountCode
+     * @return
+     */
+    @GET
+    @Path("/")
+    GetBillingAccountResponseDto find(@QueryParam("billingAccountCode") String billingAccountCode);
 
-	@DELETE
-	@Path("/{billingAccountCode}")
-	ActionStatus remove(@PathParam("billingAccountCode") String billingAccountCode);
+    @DELETE
+    @Path("/{billingAccountCode}")
+    ActionStatus remove(@PathParam("billingAccountCode") String billingAccountCode);
 
-	/**
-	 * List BillingAccount filter by customerAccountCode.
-	 * 
-	 * @param customerAccountCode
-	 * @return
-	 */
-	@GET
-	@Path("/list")
-	BillingAccountsResponseDto listByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode);
-	
-	/**
-	 * Create or update Billing Account based on code.
-	 * @param postData
-	 * @return
-	 */
-	@POST
-	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(BillingAccountDto postData);
+    /**
+     * List BillingAccount filter by customerAccountCode.
+     * 
+     * @param customerAccountCode
+     * @return
+     */
+    @GET
+    @Path("/list")
+    BillingAccountsResponseDto listByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode);
+
+    /**
+     * Create or update Billing Account based on code.
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(BillingAccountDto postData);
 }

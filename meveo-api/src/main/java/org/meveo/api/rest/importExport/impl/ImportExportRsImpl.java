@@ -137,8 +137,8 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
                 return exportImportStatisticsToDto(executionId, future.get());
 
             } catch (InterruptedException | ExecutionException e) {
-                return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Failed while executing import " + e.getClass().getName() + " "
-                        + e.getMessage());
+                return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Failed while executing import " + e.getClass().getName()
+                        + " " + e.getMessage());
             }
         } else {
             log.info("Remote import execution {} status is still in progress", executionId);

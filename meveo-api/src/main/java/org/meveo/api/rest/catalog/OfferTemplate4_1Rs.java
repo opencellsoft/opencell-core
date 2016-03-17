@@ -28,54 +28,54 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface OfferTemplate4_1Rs extends IBaseRs {
 
-	/**
-	 * Create offer template.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@POST
-	ActionStatus create(OfferTemplate4_1Dto postData);
+    /**
+     * Create offer template.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @POST
+    ActionStatus create(OfferTemplate4_1Dto postData);
 
-	/**
-	 * Update offer template.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@PUT
-	ActionStatus update(OfferTemplate4_1Dto postData);
+    /**
+     * Update offer template.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @PUT
+    ActionStatus update(OfferTemplate4_1Dto postData);
 
-	/**
-	 * Search offer template with a given code.
-	 * 
-	 * @param offerTemplateCode
-	 * @return
-	 */
-	@Path("/")
-	@GET
-	GetOfferTemplateResponseDto find(@QueryParam("offerTemplateCode") String offerTemplateCode);
+    /**
+     * Search offer template with a given code.
+     * 
+     * @param offerTemplateCode
+     * @return
+     */
+    @Path("/")
+    @GET
+    GetOfferTemplateResponseDto find(@QueryParam("offerTemplateCode") String offerTemplateCode);
 
-	/**
-	 * Remove offer template with a given code.
-	 * 
-	 * @param offerTemplateCode
-	 * @return
-	 */
-	@Path("/{offerTemplateCode}")
-	@DELETE
-	ActionStatus remove(@PathParam("offerTemplateCode") String offerTemplateCode);
+    /**
+     * Remove offer template with a given code.
+     * 
+     * @param offerTemplateCode
+     * @return
+     */
+    @Path("/{offerTemplateCode}")
+    @DELETE
+    ActionStatus remove(@PathParam("offerTemplateCode") String offerTemplateCode);
 
-	/**
-	 * Create or update offer template based on a given code.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/createOrUpdate")
-	@POST
-	ActionStatus createOrUpdate(OfferTemplate4_1Dto postData);
+    /**
+     * Create or update offer template based on a given code.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/createOrUpdate")
+    @POST
+    ActionStatus createOrUpdate(OfferTemplate4_1Dto postData);
 
 }

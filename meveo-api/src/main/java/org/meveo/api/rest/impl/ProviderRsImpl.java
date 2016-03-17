@@ -4,6 +4,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.ProviderApi;
 import org.meveo.api.dto.ActionStatus;
@@ -39,12 +40,12 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -60,12 +61,12 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -75,18 +76,18 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 
         try {
             providerApi.update(postData, getCurrentUser());
-            
+
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -102,12 +103,12 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -123,12 +124,12 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -144,12 +145,12 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -165,12 +166,12 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -180,18 +181,18 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 
         try {
             providerApi.createOrUpdate(postData, getCurrentUser());
-            
+
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 }

@@ -164,7 +164,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceInstance.setStatusDate(new Date());
 		serviceInstance.setCode(serviceCode);
 		serviceInstance.setInvoicingCalendar(serviceInstance.getServiceTemplate().getInvoicingCalendar());
-		create(serviceInstance, creator, subscription.getProvider());
+		create(serviceInstance, creator); // AKK was with subscription.getProvider()
 		subscription.getServiceInstances().add(serviceInstance);
 		ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
 
@@ -398,7 +398,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			}
 			recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
 			recurringChargeInstance.setStatusDate(new Date());
-			recurringChargeInstanceService.update(recurringChargeInstance);
+			recurringChargeInstanceService.update(recurringChargeInstance, user);
 		}
 
 		if (applyTerminationCharges) {
@@ -416,7 +416,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		}
 
 		for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
-			usageChargeInstanceService.terminateUsageChargeInstance(usageChargeInstance, terminationDate);
+			usageChargeInstanceService.terminateUsageChargeInstance(usageChargeInstance, terminationDate, user);
 		}
 
 		serviceInstance.setTerminationDate(terminationDate);
@@ -479,7 +479,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		}
 
 		for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
-			usageChargeInstanceService.suspendUsageChargeInstance(usageChargeInstance, suspensionDate);
+			usageChargeInstanceService.suspendUsageChargeInstance(usageChargeInstance, suspensionDate, updater);
 		}
 
 		serviceInstance.setStatus(InstanceStatusEnum.SUSPENDED);
@@ -520,7 +520,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
 			if (usageChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
-				usageChargeInstanceService.reactivateUsageChargeInstance(usageChargeInstance, subscriptionDate);
+				usageChargeInstanceService.reactivateUsageChargeInstance(usageChargeInstance, subscriptionDate, updater);
 			}
 		}
 		update(serviceInstance, updater);

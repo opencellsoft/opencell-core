@@ -19,6 +19,7 @@ import org.meveo.api.rest.security.RSSecured;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.CounterTemplate}.
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/counterTemplate")
@@ -27,49 +28,48 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface CounterTemplateRs extends IBaseRs {
 
-	/**
-	 * Create counter template.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@POST
-	ActionStatus create(CounterTemplateDto postData);
+    /**
+     * Create counter template.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @POST
+    ActionStatus create(CounterTemplateDto postData);
 
-	/**
-	 * Update counter template.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@Path("/")
-	@PUT
-	ActionStatus update(CounterTemplateDto postData);
+    /**
+     * Update counter template.
+     * 
+     * @param postData
+     * @return
+     */
+    @Path("/")
+    @PUT
+    ActionStatus update(CounterTemplateDto postData);
 
-	/**
-	 * Search counter template with a given code.
-	 * @param counterTemplateCode
-	 * @return
-	 */
-	@Path("/")
-	@GET
-	GetCounterTemplateResponseDto find(
-			@QueryParam("counterTemplateCode") String counterTemplateCode);
+    /**
+     * Search counter template with a given code.
+     * 
+     * @param counterTemplateCode
+     * @return
+     */
+    @Path("/")
+    @GET
+    GetCounterTemplateResponseDto find(@QueryParam("counterTemplateCode") String counterTemplateCode);
 
-	/**
-	 * Remove counter template with a given code.
-	 * 
-	 * @param counterTemplateCode
-	 * @return
-	 */
-	@Path("/{counterTemplateCode}")
-	@DELETE
-	ActionStatus remove(
-			@PathParam("counterTemplateCode") String counterTemplateCode);
-	
-	@Path("/createOrUpdate")
-	@POST
-	ActionStatus createOrUpdate(CounterTemplateDto postData);
-	
+    /**
+     * Remove counter template with a given code.
+     * 
+     * @param counterTemplateCode
+     * @return
+     */
+    @Path("/{counterTemplateCode}")
+    @DELETE
+    ActionStatus remove(@PathParam("counterTemplateCode") String counterTemplateCode);
+
+    @Path("/createOrUpdate")
+    @POST
+    ActionStatus createOrUpdate(CounterTemplateDto postData);
+
 }

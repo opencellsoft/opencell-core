@@ -271,12 +271,12 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             serviceChargeTemplateSubscription.getWalletTemplates().addAll(walletTemplateService.refreshOrRetrieve(subscriptionWallets.getTarget()));
             
             if (serviceChargeTemplateSubscription.getId() != null) {
-                serviceChargeTemplateSubscriptionService.update(serviceChargeTemplateSubscription);
+                serviceChargeTemplateSubscriptionService.update(serviceChargeTemplateSubscription, getCurrentUser());
                 entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be saved
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
                 serviceChargeTemplateSubscription.setServiceTemplate(entity);
-                serviceChargeTemplateSubscriptionService.create(serviceChargeTemplateSubscription);
+                serviceChargeTemplateSubscriptionService.create(serviceChargeTemplateSubscription, getCurrentUser());
                 entity.getServiceSubscriptionCharges().add(serviceChargeTemplateSubscription);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
@@ -322,12 +322,12 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             serviceChargeTemplateTermination.getWalletTemplates().addAll(walletTemplateService.refreshOrRetrieve(terminationWallets.getTarget()));
 
             if (serviceChargeTemplateTermination.getId() != null) {
-                serviceChargeTemplateTerminationService.update(serviceChargeTemplateTermination);
+                serviceChargeTemplateTerminationService.update(serviceChargeTemplateTermination, getCurrentUser());
                 entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be saved
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
                 serviceChargeTemplateTermination.setServiceTemplate(entity);
-                serviceChargeTemplateTerminationService.create(serviceChargeTemplateTermination);
+                serviceChargeTemplateTerminationService.create(serviceChargeTemplateTermination, getCurrentUser());
                 entity.getServiceTerminationCharges().add(serviceChargeTemplateTermination);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
@@ -371,12 +371,12 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             serviceChargeTemplateRecurring.getWalletTemplates().addAll(walletTemplateService.refreshOrRetrieve(recurringWallets.getTarget()));
             
             if (serviceChargeTemplateRecurring.getId() != null) {
-                serviceChargeTemplateRecurringService.update(serviceChargeTemplateRecurring);
+                serviceChargeTemplateRecurringService.update(serviceChargeTemplateRecurring, getCurrentUser());
                 entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be saved
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
                 serviceChargeTemplateRecurring.setServiceTemplate(entity);
-                serviceChargeTemplateRecurringService.create(serviceChargeTemplateRecurring);
+                serviceChargeTemplateRecurringService.create(serviceChargeTemplateRecurring, getCurrentUser());
                 entity.getServiceRecurringCharges().add(serviceChargeTemplateRecurring);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
@@ -424,12 +424,12 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             serviceChargeTemplateUsage.getWalletTemplates().addAll(walletTemplateService.refreshOrRetrieve(usageWallets.getTarget()));
 
             if (serviceChargeTemplateUsage.getId() != null) {
-                serviceChargeTemplateUsageService.update(serviceChargeTemplateUsage);
+                serviceChargeTemplateUsageService.update(serviceChargeTemplateUsage, getCurrentUser());
                 entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be saved
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
                 serviceChargeTemplateUsage.setServiceTemplate(entity);
-                serviceChargeTemplateUsageService.create(serviceChargeTemplateUsage);
+                serviceChargeTemplateUsageService.create(serviceChargeTemplateUsage, getCurrentUser());
                 entity.getServiceUsageCharges().add(serviceChargeTemplateUsage);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
@@ -533,7 +533,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 			entity.setCode(entity.getCode()+"_copy");
 			
 			try {
-				serviceTemplateService.create(entity);
+				serviceTemplateService.create(entity, getCurrentUser());
                 customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
 			} catch (BusinessException e) {
 				log.error("error when duplicate service#{0}:#{1}",entity.getCode(),e);

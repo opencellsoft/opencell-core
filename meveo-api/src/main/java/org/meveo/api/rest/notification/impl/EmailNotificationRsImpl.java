@@ -21,116 +21,106 @@ import org.meveo.api.rest.notification.EmailNotificationRs;
 @Interceptors({ WsRestApiInterceptor.class })
 public class EmailNotificationRsImpl extends BaseRs implements EmailNotificationRs {
 
-	@Inject
-	private EmailNotificationApi emailNotificationApi;
+    @Inject
+    private EmailNotificationApi emailNotificationApi;
 
-	@Override
-	
-	public ActionStatus create(EmailNotificationDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus create(EmailNotificationDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			emailNotificationApi.create(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error occurred while creating email notification ", e);
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error generated while creating  email notification ", e);
-		}
+        try {
+            emailNotificationApi.create(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error occurred while creating email notification ", e);
+        } catch (Exception e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error generated while creating  email notification ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	
-	public ActionStatus update(EmailNotificationDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus update(EmailNotificationDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			emailNotificationApi.update(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error occurred while updating email notification ", e);
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error generated while updating email notification ", e);
-		}
+        try {
+            emailNotificationApi.update(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error occurred while updating email notification ", e);
+        } catch (Exception e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error generated while updating email notification ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	
-	public GetEmailNotificationResponseDto find(String notificationCode) {
-		GetEmailNotificationResponseDto result = new GetEmailNotificationResponseDto();
+    @Override
+    public GetEmailNotificationResponseDto find(String notificationCode) {
+        GetEmailNotificationResponseDto result = new GetEmailNotificationResponseDto();
 
-		try {
-			result.setEmailNotificationDto(emailNotificationApi.find(notificationCode, getCurrentUser().getProvider()));
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error occurred while getting email notification ", e);
-		} catch (Exception e) {
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error generated while getting email notification ", e);
-		}
+        try {
+            result.setEmailNotificationDto(emailNotificationApi.find(notificationCode, getCurrentUser().getProvider()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+            log.error("error occurred while getting email notification ", e);
+        } catch (Exception e) {
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+            log.error("error generated while getting email notification ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	
-	public ActionStatus remove(String notificationCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus remove(String notificationCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			emailNotificationApi.remove(notificationCode, getCurrentUser().getProvider());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error occurred while removing email notification ", e);
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error generated while removing email notification ", e);
-		}
+        try {
+            emailNotificationApi.remove(notificationCode, getCurrentUser().getProvider());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error occurred while removing email notification ", e);
+        } catch (Exception e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error generated while removing email notification ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	
-	public ActionStatus createOrUpdate(EmailNotificationDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createOrUpdate(EmailNotificationDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			emailNotificationApi.createOrUpdate(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error occurred while creating email notification ", e);
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error generated while creating  email notification ", e);
-		}
+        try {
+            emailNotificationApi.createOrUpdate(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error occurred while creating email notification ", e);
+        } catch (Exception e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error generated while creating  email notification ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 }

@@ -96,7 +96,7 @@ public class InvoiceSubCategoryBean extends
 
 				if (invoiceSubcategoryCountry.getId() != null) {
 					invoiceSubCategoryCountryService
-							.update(invoiceSubcategoryCountry);
+							.update(invoiceSubcategoryCountry, getCurrentUser());
 					messages.info(new BundleKey("messages", "update.successful"));
 				} else {
 					
@@ -116,7 +116,7 @@ public class InvoiceSubCategoryBean extends
 						if (!found) {
 							invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
 							invoiceSubCategoryCountryService
-									.create(invoiceSubcategoryCountry);
+									.create(invoiceSubcategoryCountry, getCurrentUser());
 							entity.getInvoiceSubcategoryCountries().add(
 									invoiceSubcategoryCountry);
 							messages.info(new BundleKey("messages", "save.successful"));
@@ -126,7 +126,7 @@ public class InvoiceSubCategoryBean extends
 					} else {
 						invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
 						invoiceSubCategoryCountryService
-								.create(invoiceSubcategoryCountry);
+								.create(invoiceSubcategoryCountry, getCurrentUser());
 						entity.getInvoiceSubcategoryCountries().add(
 								invoiceSubcategoryCountry);
 						messages.info(new BundleKey("messages", "save.successful"));

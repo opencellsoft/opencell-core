@@ -191,7 +191,7 @@ public class RecurringChargeTemplateBean extends
 			entity.setCode(entity.getCode()+"_copy");
 			
             try {
-                recurringChargeTemplateService.create(entity);
+                recurringChargeTemplateService.create(entity, getCurrentUser());
                 customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
                 
             } catch (Exception e) {

@@ -89,11 +89,9 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 	@EJB
 	private SepaService sepaService;
 
-	public void createDDRquestLot(Date fromDueDate, Date toDueDate, User user, Provider provider) throws BusinessEntityException, Exception {
+	public void createDDRquestLot(Date fromDueDate, Date toDueDate, User user) throws BusinessEntityException, Exception {
 		logger.info("createDDRquestLot fromDueDate:" + fromDueDate + "  toDueDate:" + toDueDate + "  user:" + (user == null ? "null" : user.getUserName()));
-		if (provider == null) {
-			throw new BusinessEntityException("provider is empty");
-		}
+
 		if (fromDueDate == null) {
 			throw new BusinessEntityException("fromDuDate is empty");
 		}
@@ -106,11 +104,11 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 		if (user == null) {
 			throw new BusinessEntityException("user is null");
 		}
-		List<RecordedInvoice> invoices = recordedInvoiceService.getInvoices(fromDueDate, toDueDate, provider.getCode());
+		List<RecordedInvoice> invoices = recordedInvoiceService.getInvoices(fromDueDate, toDueDate, user.getProvider().getCode());
 		if ((invoices == null) || (invoices.isEmpty())) {
 			throw new BusinessEntityException("no invoices!");
 		}
-		OCCTemplate directDebitTemplate = oCCTemplateService.getDirectDebitOCCTemplate(provider);
+		OCCTemplate directDebitTemplate = oCCTemplateService.getDirectDebitOCCTemplate(user.getProvider());
 		if (directDebitTemplate == null) {
 			throw new BusinessException("OCC doesn't exist. codeParam=bayad.ddrequest.occCode");
 		}
@@ -119,9 +117,9 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 		BigDecimal totalAmount = BigDecimal.ZERO;
 
 		DDRequestLOT ddRequestLOT = new DDRequestLOT();
-		ddRequestLOT.setProvider(provider);
+		ddRequestLOT.setProvider(user.getProvider());
 		ddRequestLOT.setInvoicesNumber(Integer.valueOf(invoices.size()));
-		dDRequestLOTService.create(ddRequestLOT, user, provider);
+		dDRequestLOTService.create(ddRequestLOT, user);
 		List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();
 		Map<CustomerAccount, List<RecordedInvoice>> customerAccountInvoices = new HashMap<CustomerAccount, List<RecordedInvoice>>();
 		int notProcessedInvoice = 0;
@@ -182,7 +180,7 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 				}
 				ddrequestItem.setAmountInvoices(totalInvoices);
 				ddrequestItems.add(ddrequestItem);
-				sepaService.create(ddrequestItem, user, provider);
+				sepaService.create(ddrequestItem, user);
 				totalAmount = totalAmount.add(ddrequestItem.getAmountInvoices());
 			}
 			if (!ddrequestItems.isEmpty()) {
@@ -193,13 +191,13 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 				ddRequestLOT.setFileName(ddFileName);
 				createPaymentsForDDRequestLot(ddRequestLOT, directDebitTemplate, user);
 
-				exportDDRequestLot(ddRequestLOT, ddrequestItems, totalAmount, provider, ddFileName);
+				exportDDRequestLot(ddRequestLOT, ddrequestItems, totalAmount, ddFileName);
 				ddRequestLOT.setSendDate(new Date());
 				dDRequestLOTService.updateAudit(ddRequestLOT, user);
 				dDRequestLOTService.updateNoCheck(ddRequestLOT);
 
 				logger.info("ddRequestLOT created , totalAmount:" + ddRequestLOT.getInvoicesAmount());
-				logger.info("Successful createDDRquestLot fromDueDate:" + fromDueDate + "  toDueDate:" + toDueDate + " provider:" + provider.getCode());
+				logger.info("Successful createDDRquestLot fromDueDate:" + fromDueDate + "  toDueDate:" + toDueDate + " provider:" + user.getProvider().getCode());
 
 			} else {
 				throw new BusinessEntityException("No ddRequestItems!");
@@ -234,13 +232,13 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 		if (ddRequestLOT == null) {
 			throw new Exception("ddRequestLotId doesn't exist");
 		}
-		String fileName = exportDDRequestLot(ddRequestLOT, ddRequestLOT.getDdrequestItems(), ddRequestLOT.getInvoicesAmount(), ddRequestLOT.getProvider(), getDDFileName(ddRequestLOT));
+		String fileName = exportDDRequestLot(ddRequestLOT, ddRequestLOT.getDdrequestItems(), ddRequestLOT.getInvoicesAmount(), getDDFileName(ddRequestLOT));
 
 		logger.info("Successful exportDDRequestLot ddRequestLotId:" + ddRequestLOT.getId() + " , fileName:" + fileName);
 		return fileName;
 	}
 
-	private String exportDDRequestLot(DDRequestLOT ddRequestLot, List<DDRequestItem> ddrequestItems, BigDecimal totalAmount, Provider provider, String fileName) throws Exception {
+	private String exportDDRequestLot(DDRequestLOT ddRequestLot, List<DDRequestItem> ddrequestItems, BigDecimal totalAmount, String fileName) throws Exception {
 		Pain008 document = new Pain008();
 		CstmrDrctDbtInitn Message = new CstmrDrctDbtInitn();
 		document.setCstmrDrctDbtInitn(Message);

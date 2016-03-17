@@ -3,7 +3,6 @@ package org.meveo.admin.action.medina;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.context.ConversationScoped;
@@ -12,6 +11,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.local.IPersistenceService;
@@ -35,10 +35,10 @@ public class EdrBean extends BaseBean<EDR> {
 		return "edrDetail";
 	}
 
-	public void updateStatus(EDR selectedEdr) {
+	public void updateStatus(EDR selectedEdr) throws BusinessException {
 		selectedEdr.setStatus(EDRStatusEnum.OPEN);
 
-		getPersistenceService().update(selectedEdr);
+		getPersistenceService().update(selectedEdr, getCurrentUser());
 	}
 
 	public void massUpdate() {

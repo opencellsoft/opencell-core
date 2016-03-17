@@ -16,20 +16,20 @@ import org.slf4j.LoggerFactory;
  **/
 @Provider
 public class RESTCorsResponseFilter implements ContainerResponseFilter {
-	private final static Logger log = LoggerFactory.getLogger(RESTCorsResponseFilter.class.getName());
+    private final static Logger log = LoggerFactory.getLogger(RESTCorsResponseFilter.class.getName());
 
-	@Override
-	public void filter(ContainerRequestContext requestCtx, ContainerResponseContext responseCtx) throws IOException {
+    @Override
+    public void filter(ContainerRequestContext requestCtx, ContainerResponseContext responseCtx) throws IOException {
 
-		MultivaluedMap<String, Object> headers = responseCtx.getHeaders();
-		if (!headers.containsKey("Access-Control-Allow-Headers")) {
-			log.debug("Adding CORS to the response.");
-			responseCtx.getHeaders().add("Access-Control-Allow-Origin", "*");
-			responseCtx.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
-			responseCtx.getHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
-			responseCtx.getHeaders().add("Access-Control-Allow-Credentials", true);
-		}
+        MultivaluedMap<String, Object> headers = responseCtx.getHeaders();
+        if (!headers.containsKey("Access-Control-Allow-Headers")) {
+            log.debug("Adding CORS to the response.");
+            responseCtx.getHeaders().add("Access-Control-Allow-Origin", "*");
+            responseCtx.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+            responseCtx.getHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+            responseCtx.getHeaders().add("Access-Control-Allow-Credentials", true);
+        }
 
-	}
+    }
 
 }

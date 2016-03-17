@@ -100,7 +100,7 @@ public class InternalNotificationJobBean {
                         for (Map.Entry entry : notification.getParams().entrySet()) {
                             paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), userMap, String.class));
                         }
-                        scriptInstanceService.execute(notification.getScriptInstance().getCode(), paramsEvaluated, currentUser, provider);
+                        scriptInstanceService.execute(notification.getScriptInstance().getCode(), paramsEvaluated, currentUser);
 						result.registerSucces();
 					} else {
 						log.debug("No script instance on this Notification");

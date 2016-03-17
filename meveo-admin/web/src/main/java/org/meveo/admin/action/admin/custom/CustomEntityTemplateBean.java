@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.CurrentProviderBean;
 import org.meveo.admin.exception.BusinessException;
@@ -118,7 +119,13 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                 Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
 
                 // Create missing custom field templates if needed
-                customFieldTemplateService.createMissingTemplates(cetPrefix, jobCustomFields.values(), getCurrentProvider());
+                try {
+                    customFieldTemplateService.createMissingTemplates(cetPrefix, jobCustomFields.values(), getCurrentUser());
+
+                } catch (BusinessException e) {
+                    log.error("Failed to construct customized entity", e);
+                    messages.error(new BundleKey("messages", "error.unexpected"));
+                }
             }
         }
 
@@ -240,7 +247,13 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     public void saveUpdateFieldGrouping() {
 
-        updateFieldGuiPositionValue((SortedTreeNode) selectedFieldGrouping);
+        try {
+            updateFieldGuiPositionValue((SortedTreeNode) selectedFieldGrouping);
+
+        } catch (BusinessException e) {
+            log.error("Failed to update field grouping {}", selectedFieldGrouping, e);
+            messages.error(new BundleKey("messages", "error.unexpected"));
+        }
     }
 
     public void cancelFieldGrouping() {
@@ -282,8 +295,13 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
             parentSibling.getChildren().add(node);
         }
 
-        updateFieldGuiPositionValue((SortedTreeNode) node.getParent());
+        try {
+            updateFieldGuiPositionValue((SortedTreeNode) node.getParent());
 
+        } catch (BusinessException e) {
+            log.error("Failed to move up {}", node, e);
+            messages.error(new BundleKey("messages", "error.unexpected"));
+        }
     }
 
     public void moveDown(SortedTreeNode node) {
@@ -319,10 +337,16 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
             }
         }
 
-        updateFieldGuiPositionValue((SortedTreeNode) node.getParent());
+        try {
+            updateFieldGuiPositionValue((SortedTreeNode) node.getParent());
+
+        } catch (BusinessException e) {
+            log.error("Failed to move down {}", node, e);
+            messages.error(new BundleKey("messages", "error.unexpected"));
+        }
     }
 
-    private void updateFieldGuiPositionValue(SortedTreeNode nodeToUpdate) {
+    private void updateFieldGuiPositionValue(SortedTreeNode nodeToUpdate) throws BusinessException {
 
         // Re-position current and child nodes
         List<TreeNode> nodes = nodeToUpdate.getChildren();
@@ -354,7 +378,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                     cft = customFieldTemplateService.refreshOrRetrieve(cft);
                     if (!guiPosition.equals(cft.getGuiPosition())) {
                         cft.setGuiPosition(guiPosition);
-                        cft = customFieldTemplateService.update(cft);
+                        cft = customFieldTemplateService.update(cft, getCurrentUser());
                         sortedChildNode.setData(cft);
                     }
 
@@ -368,7 +392,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                         cft = customFieldTemplateService.refreshOrRetrieve(cft);
                         if (!guiPosition.equals(cft.getGuiPosition())) {
                             cft.setGuiPosition(guiPosition);
-                            cft = customFieldTemplateService.update(cft);
+                            cft = customFieldTemplateService.update(cft, getCurrentUser());
                             sortedChildChildNode.setData(cft);
                         }
                     }

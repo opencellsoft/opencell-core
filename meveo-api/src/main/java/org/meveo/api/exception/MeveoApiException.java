@@ -15,6 +15,11 @@ public class MeveoApiException extends Exception {
         errorCode = MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
     }
 
+    public MeveoApiException(Throwable e) {
+        super(e);
+        errorCode = MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
+    }
+    
     public MeveoApiException(MeveoApiErrorCodeEnum errorCode, String message) {
         super(message);
         this.errorCode = errorCode;

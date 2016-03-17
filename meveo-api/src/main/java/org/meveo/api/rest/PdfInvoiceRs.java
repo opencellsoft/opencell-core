@@ -19,8 +19,7 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface PdfInvoiceRs extends IBaseRs {
 
-	@GET
-	@Path("/")
-	public PdfInvoiceResponse getPDFInvoice(@QueryParam("invoiceNumber") String invoiceNumber,
-			@QueryParam("customerAccountCode") String customerAccountCode) throws Exception;
+    @GET
+    @Path("/")
+    public PdfInvoiceResponse getPDFInvoice(@QueryParam("invoiceNumber") String invoiceNumber, @QueryParam("customerAccountCode") String customerAccountCode);
 }

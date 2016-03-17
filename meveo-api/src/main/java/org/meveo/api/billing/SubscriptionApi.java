@@ -87,7 +87,7 @@ public class SubscriptionApi extends BaseApi {
     @Inject
     private ChargeInstanceService chargeInstanceService;
 
-    public void create(SubscriptionDto postData, User currentUser) throws MeveoApiException {
+    public void create(SubscriptionDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getUserAccount())) {
             missingParameters.add("userAccount");
@@ -131,7 +131,7 @@ public class SubscriptionApi extends BaseApi {
         subscription.setTerminationDate(postData.getTerminationDate());
         subscription.setEndAgreementDate(postData.getEndAgreementDate());
 
-        subscriptionService.create(subscription, currentUser, provider);
+        subscriptionService.create(subscription, currentUser);
 
         // populate customFields
         try {
@@ -143,7 +143,7 @@ public class SubscriptionApi extends BaseApi {
 
     }
 
-    public void update(SubscriptionDto postData, User currentUser) throws MeveoApiException {
+    public void update(SubscriptionDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getUserAccount())) {
             missingParameters.add("userAccount");
@@ -646,8 +646,9 @@ public class SubscriptionApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void createOrUpdate(SubscriptionDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(SubscriptionDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (subscriptionService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             create(postData, currentUser);
         } else {

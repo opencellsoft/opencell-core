@@ -5,6 +5,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.FilterDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -32,24 +33,24 @@ public class FilterApi extends BaseApi {
         if (StringUtils.isBlank(dto.getInputXml())) {
             missingParameters.add("inputXml");
         }
-        
+
         handleMissingParameters();
-        
 
         Filter filter = filterService.parse(dto.getInputXml());
 
         try {
-            filterService.initFilterFromInputXml(filter);
+            filterService.initFilterFromInputXml(filter, currentUser);
+
+            filter.setCode(dto.getCode());
+            filter.setDescription(dto.getDescription());
+            filter.setInputXml(dto.getInputXml());
+            filter.setShared(dto.getShared());
+
+            filterService.create(filter, currentUser);
+
         } catch (BusinessException e) {
-            throw new MeveoApiException(e.getMessage());
+            throw new BusinessApiException(e);
         }
-
-        filter.setCode(dto.getCode());
-        filter.setDescription(dto.getDescription());
-        filter.setInputXml(dto.getInputXml());
-        filter.setShared(dto.getShared());
-
-        filterService.create(filter, currentUser, provider);
     }
 
     public void update(FilterDto dto, User currentUser) throws MeveoApiException {
@@ -60,20 +61,24 @@ public class FilterApi extends BaseApi {
         if (StringUtils.isBlank(dto.getInputXml())) {
             missingParameters.add("inputXml");
         }
-        
+
         handleMissingParameters();
-        
 
-        Provider provider = currentUser.getProvider();
-        Filter filter = filterService.findByCode(dto.getCode(), provider);
-        if (filter == null) {
-            throw new EntityDoesNotExistsException(Filter.class, dto.getCode());
+        try {
+            Provider provider = currentUser.getProvider();
+            Filter filter = filterService.findByCode(dto.getCode(), provider);
+            if (filter == null) {
+                throw new EntityDoesNotExistsException(Filter.class, dto.getCode());
+            }
+
+            filter.setDescription(dto.getDescription());
+            filter.setInputXml(dto.getInputXml());
+            filter.setShared(dto.getShared());
+            filterService.update(filter, currentUser);
+
+        } catch (BusinessException e) {
+            throw new BusinessApiException(e);
         }
-
-        filter.setDescription(dto.getDescription());
-        filter.setInputXml(dto.getInputXml());
-        filter.setShared(dto.getShared());
-        filterService.update(filter, currentUser);
     }
 
     public void createOrUpdate(FilterDto dto, User currentUser) throws MeveoApiException {

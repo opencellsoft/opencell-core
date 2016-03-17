@@ -3,6 +3,7 @@ package org.meveo.api.catalog;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -36,7 +37,7 @@ public class BusinessOfferModelApi extends BaseApi {
 	@Inject
 	private BusinessServiceService businessServiceService;
 
-	public void create(BusinessOfferModelDto postData, User currentUser) throws MeveoApiException {
+	public void create(BusinessOfferModelDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getOfferTemplateCode())) {
 			if (businessOfferService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
 				throw new EntityAlreadyExistsException(BusinessOfferModel.class, postData.getCode());
@@ -67,7 +68,7 @@ public class BusinessOfferModelApi extends BaseApi {
 				}
 			}
 
-			businessOfferService.create(businessOfferModel, currentUser, currentUser.getProvider());
+			businessOfferService.create(businessOfferModel, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("bomCode");
@@ -80,7 +81,7 @@ public class BusinessOfferModelApi extends BaseApi {
 		}
 	}
 
-	public void update(BusinessOfferModelDto postData, User currentUser) throws MeveoApiException {
+	public void update(BusinessOfferModelDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getOfferTemplateCode())) {
 			BusinessOfferModel businessOfferModel = businessOfferService.findByCode(postData.getCode(), currentUser.getProvider());
 			if (businessOfferModel == null) {
@@ -150,7 +151,7 @@ public class BusinessOfferModelApi extends BaseApi {
 		businessOfferService.remove(businessOfferModel);
 	}
 
-	public void createOrUpdate(BusinessOfferModelDto postData, User currentUser) throws MeveoApiException {
+	public void createOrUpdate(BusinessOfferModelDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		BusinessOfferModel businessOfferModel = businessOfferService.findByCode(postData.getCode(), currentUser.getProvider());
 		if (businessOfferModel == null) {
 			// create

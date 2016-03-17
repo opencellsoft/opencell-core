@@ -26,23 +26,23 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface JobTriggerRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ActionStatus create(JobTriggerDto postData);
+    @POST
+    @Path("/")
+    ActionStatus create(JobTriggerDto postData);
 
-	@PUT
-	@Path("/")
-	ActionStatus update(JobTriggerDto postData);
+    @PUT
+    @Path("/")
+    ActionStatus update(JobTriggerDto postData);
 
-	@GET
-	@Path("/")
-	GetJobTriggerResponseDto find(@QueryParam("notificationCode") String notificationCode);
+    @GET
+    @Path("/")
+    GetJobTriggerResponseDto find(@QueryParam("notificationCode") String notificationCode);
 
-	@DELETE
-	@Path("/{notificationCode}")
-	ActionStatus remove(@PathParam("notificationCode") String notificationCode);
+    @DELETE
+    @Path("/{notificationCode}")
+    ActionStatus remove(@PathParam("notificationCode") String notificationCode);
 
-	@POST
-	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(JobTriggerDto postData);
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(JobTriggerDto postData);
 }

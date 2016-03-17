@@ -6,6 +6,7 @@ import javax.interceptor.Interceptors;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.UserApi;
 import org.meveo.api.dto.ActionStatus;
@@ -21,109 +22,108 @@ import org.meveo.api.rest.UserRs;
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
-
 public class UserRsImpl extends BaseRs implements UserRs {
 
-	@Inject
-	private UserApi userApi;
+    @Inject
+    private UserApi userApi;
 
-	@Override
-	public ActionStatus create(UserDto postData) {
-		ActionStatus result = new ActionStatus();
+    @Override
+    public ActionStatus create(UserDto postData) {
+        ActionStatus result = new ActionStatus();
 
-		try {
-			userApi.create(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            userApi.create(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus update(UserDto postData) {
-		ActionStatus result = new ActionStatus();
+    @Override
+    public ActionStatus update(UserDto postData) {
+        ActionStatus result = new ActionStatus();
 
-		try {
-			userApi.update(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            userApi.update(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus remove( @PathParam("username") String username) {
-		ActionStatus result = new ActionStatus();
+    @Override
+    public ActionStatus remove(@PathParam("username") String username) {
+        ActionStatus result = new ActionStatus();
 
-		try {
-			userApi.remove(username);
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            userApi.remove(username);
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public GetUserResponse find(@QueryParam("username") String username) {
-		GetUserResponse result = new GetUserResponse();
+    @Override
+    public GetUserResponse find(@QueryParam("username") String username) {
+        GetUserResponse result = new GetUserResponse();
 
-		try {
-			result.setUser(userApi.find(username));
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		}
+        try {
+            result.setUser(userApi.find(username));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus createOrUpdate(UserDto postData) {
-		ActionStatus result = new ActionStatus();
+    @Override
+    public ActionStatus createOrUpdate(UserDto postData) {
+        ActionStatus result = new ActionStatus();
 
-		try {
-			userApi.createOrUpdate(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            userApi.createOrUpdate(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 }

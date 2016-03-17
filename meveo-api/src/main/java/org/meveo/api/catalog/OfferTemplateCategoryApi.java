@@ -11,6 +11,7 @@ import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
 import javax.ws.rs.core.UriInfo;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -35,8 +36,9 @@ public class OfferTemplateCategoryApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void create(OfferTemplateCategoryDto postData, User currentUser) throws MeveoApiException {
+    public void create(OfferTemplateCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -83,7 +85,7 @@ public class OfferTemplateCategoryApi extends BaseApi {
                 }
             }
 
-            offerTemplateCategoryService.create(offerTemplateCategory, currentUser, provider);
+            offerTemplateCategoryService.create(offerTemplateCategory, currentUser);
 
         }
     }
@@ -93,8 +95,9 @@ public class OfferTemplateCategoryApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void update(OfferTemplateCategoryDto postData, User currentUser) throws MeveoApiException {
+    public void update(OfferTemplateCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -228,8 +231,9 @@ public class OfferTemplateCategoryApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void createOrUpdate(OfferTemplateCategoryDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(OfferTemplateCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         String code = postData.getCode();
 

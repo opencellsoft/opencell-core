@@ -53,7 +53,7 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
     WebHookService webHookService;
     
     @Inject
-    CounterTemplateService counterTemplateService;
+    CounterTemplateService<? extends CounterTemplate> counterTemplateService;
     
     @Inject
     ScriptInstanceService scriptInstanceService;
@@ -252,7 +252,7 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
                     CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
                     webHook.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
                 }
-                webHookService.create(webHook);
+                webHookService.create(webHook, getCurrentUser());
             }
         }
         if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
@@ -260,7 +260,7 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
         }
     }
 
-    public void checkSelectedStrategy(String[] values, WebHook existingEntity, boolean isEntityAlreadyExist) throws RejectedImportException {
+    public void checkSelectedStrategy(String[] values, WebHook existingEntity, boolean isEntityAlreadyExist) throws BusinessException {
 		if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
 			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
 			existingEntity.setEventTypeFilter(NotificationEventTypeEnum
@@ -311,7 +311,7 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
 						.setCounterTemplate(counterTemplate != null ? counterTemplate
 								: null);
 			}
-			webHookService.update(existingEntity);
+			webHookService.update(existingEntity, getCurrentUser());
 			
 		}else if (strategyImportType
 					.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {

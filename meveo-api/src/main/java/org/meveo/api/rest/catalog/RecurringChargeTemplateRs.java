@@ -18,8 +18,7 @@ import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
- * Web service for managing
- * {@link org.meveo.model.catalog.RecurringChargeTemplate}.
+ * Web service for managing {@link org.meveo.model.catalog.RecurringChargeTemplate}.
  * 
  * @author Edward P. Legaspi
  **/
@@ -29,48 +28,47 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface RecurringChargeTemplateRs extends IBaseRs {
 
-	/**
-	 * Create recurring charge template.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@POST
-	@Path("/")
-	public ActionStatus create(RecurringChargeTemplateDto postData);
+    /**
+     * Create recurring charge template.
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/")
+    public ActionStatus create(RecurringChargeTemplateDto postData);
 
-	/**
-	 * Search recurring charge template with a given code.
-	 * 
-	 * @param recurringChargeTemplateCode
-	 * @return
-	 */
-	@GET
-	@Path("/")
-	public GetRecurringChargeTemplateResponseDto find(
-			@QueryParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
+    /**
+     * Search recurring charge template with a given code.
+     * 
+     * @param recurringChargeTemplateCode
+     * @return
+     */
+    @GET
+    @Path("/")
+    public GetRecurringChargeTemplateResponseDto find(@QueryParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
-	/**
-	 * Update recurring charge template.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@PUT
-	@Path("/")
-	public ActionStatus update(RecurringChargeTemplateDto postData);
+    /**
+     * Update recurring charge template.
+     * 
+     * @param postData
+     * @return
+     */
+    @PUT
+    @Path("/")
+    public ActionStatus update(RecurringChargeTemplateDto postData);
 
-	/**
-	 * Remove recurring charge template with a given code.
-	 * 
-	 * @param recurringChargeTemplateCode
-	 * @return
-	 */
-	@DELETE
-	@Path("/{recurringChargeTemplateCode}")
-	public ActionStatus remove(@PathParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
+    /**
+     * Remove recurring charge template with a given code.
+     * 
+     * @param recurringChargeTemplateCode
+     * @return
+     */
+    @DELETE
+    @Path("/{recurringChargeTemplateCode}")
+    public ActionStatus remove(@PathParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
-	@POST
-	@Path("/createOrUpdate")
-	public ActionStatus createOrUpdate(RecurringChargeTemplateDto postData);
+    @POST
+    @Path("/createOrUpdate")
+    public ActionStatus createOrUpdate(RecurringChargeTemplateDto postData);
 }

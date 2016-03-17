@@ -177,7 +177,7 @@ public class CatMessagesApi extends BaseApi {
                 catMessages.setMessageCode(messageCode);
                 catMessages.setLanguageCode(languageCode);
                 catMessages.setDescription(descriptionTranslation);
-                catMessagesService.create(catMessages, currentUser, currentUser.getProvider());
+                catMessagesService.create(catMessages, currentUser);
             }
         }
     }
@@ -223,7 +223,7 @@ public class CatMessagesApi extends BaseApi {
         return catMessagesDto;
     }
 
-    public void update(CatMessagesDto postData, User currentUser) throws MeveoApiException {
+    public void update(CatMessagesDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getObjectType())) {
             missingParameters.add("objectType");
@@ -249,7 +249,7 @@ public class CatMessagesApi extends BaseApi {
 
         catMessages.setDescription(postData.getDescriptionTranslation());
 
-        catMessagesService.update(catMessages);
+        catMessagesService.update(catMessages, currentUser);
     }
 
     public void remove(String catMessagesCode, String languageCode, Provider provider) throws MeveoApiException {

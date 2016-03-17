@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -40,16 +41,16 @@ public class JobWsImpl extends BaseWs implements JobWs {
             Long resultId = jobApi.executeJob(jobInstanceInfoDto, getCurrentUser());
             result.setMessage(resultId == null ? "NOTHING_TO_DO" : String.valueOf(resultId));
         } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
-            log.error("error occured while executing timer ", e);
         } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
-            log.error("error generated while executing timer ", e);
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -63,12 +64,12 @@ public class JobWsImpl extends BaseWs implements JobWs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -83,12 +84,12 @@ public class JobWsImpl extends BaseWs implements JobWs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -102,12 +103,12 @@ public class JobWsImpl extends BaseWs implements JobWs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -121,12 +122,12 @@ public class JobWsImpl extends BaseWs implements JobWs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -141,12 +142,12 @@ public class JobWsImpl extends BaseWs implements JobWs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -161,12 +162,12 @@ public class JobWsImpl extends BaseWs implements JobWs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -181,11 +182,12 @@ public class JobWsImpl extends BaseWs implements JobWs {
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -200,12 +202,12 @@ public class JobWsImpl extends BaseWs implements JobWs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -221,11 +223,12 @@ public class JobWsImpl extends BaseWs implements JobWs {
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 
@@ -241,12 +244,12 @@ public class JobWsImpl extends BaseWs implements JobWs {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
 
-        log.debug("RESPONSE={}", result);
         return result;
     }
 }

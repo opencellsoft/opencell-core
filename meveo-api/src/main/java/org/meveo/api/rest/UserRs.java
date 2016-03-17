@@ -17,8 +17,7 @@ import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
- * Web service for managing {@link org.meveo.model.admin.User}. User has a
- * unique username that is use for update, search and remove operation.
+ * Web service for managing {@link org.meveo.model.admin.User}. User has a unique username that is use for update, search and remove operation.
  * 
  * @author Edward P. Legaspi
  **/
@@ -28,53 +27,54 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface UserRs extends IBaseRs {
 
-	/**
-	 * Create user.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@POST
-	@Path("/")
-	public ActionStatus create(UserDto postData);
+    /**
+     * Create user.
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/")
+    public ActionStatus create(UserDto postData);
 
-	/**
-	 * Update user.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@PUT
-	@Path("/")
-	public ActionStatus update(UserDto postData);
+    /**
+     * Update user.
+     * 
+     * @param postData
+     * @return
+     */
+    @PUT
+    @Path("/")
+    public ActionStatus update(UserDto postData);
 
-	/**
-	 * Remove user with a given username.
-	 * 
-	 * @param username
-	 * @return
-	 */
-	@DELETE
-	@Path("/{username}")
-	public ActionStatus remove(@PathParam("username") String username);
+    /**
+     * Remove user with a given username.
+     * 
+     * @param username
+     * @return
+     */
+    @DELETE
+    @Path("/{username}")
+    public ActionStatus remove(@PathParam("username") String username);
 
-	/**
-	 * Search user with a given username.
-	 * 
-	 * @param username
-	 * @return
-	 */
-	@GET
-	@Path("/")
-	public GetUserResponse find(@QueryParam("username") String username);
-	
-	/**
-	 * Create or update user based on the username
-	 * @param postData
-	 * @return
-	 */
-	@POST
-	@Path("/createOrUpdate")
-	public ActionStatus createOrUpdate(UserDto postData);
+    /**
+     * Search user with a given username.
+     * 
+     * @param username
+     * @return
+     */
+    @GET
+    @Path("/")
+    public GetUserResponse find(@QueryParam("username") String username);
+
+    /**
+     * Create or update user based on the username
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/createOrUpdate")
+    public ActionStatus createOrUpdate(UserDto postData);
 
 }

@@ -6,12 +6,12 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.dwh.MeasurableQuantityDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveocrm.model.dwh.MeasurableQuantity;
@@ -26,7 +26,7 @@ public class MeasurableQuantityApi extends BaseApi {
     @Inject
     private MeasurableQuantityService measurableQuantityService;
 
-    public void create(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException {
+    public void create(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -38,11 +38,11 @@ public class MeasurableQuantityApi extends BaseApi {
         }
 
         MeasurableQuantity measurableQuantity = fromDTO(postData, currentUser, null);
-        measurableQuantityService.create(measurableQuantity, currentUser, currentUser.getProvider());
+        measurableQuantityService.create(measurableQuantity, currentUser);
 
     }
 
-    private void update(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException {
+    private void update(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("measurableQuantityCode");
             handleMissingParameters();
@@ -90,7 +90,7 @@ public class MeasurableQuantityApi extends BaseApi {
         measurableQuantityService.remove(measurableQuantity);
     }
 
-    public void createOrUpdate(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException, BusinessException {
         MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(postData.getCode(), currentUser.getProvider());
         if (measurableQuantity == null) {
             // create

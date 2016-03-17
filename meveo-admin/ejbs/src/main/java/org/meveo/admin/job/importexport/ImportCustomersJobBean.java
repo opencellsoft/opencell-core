@@ -265,7 +265,7 @@ public class ImportCustomersJobBean {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	private org.meveo.model.admin.Seller createSeller(Seller sell, String fileName, int i, User currentUser, Provider provider) {
+	private org.meveo.model.admin.Seller createSeller(Seller sell, String fileName, int i, User currentUser, Provider provider) throws BusinessException {
 		org.meveo.model.admin.Seller seller = null;
 		try {
 			seller = sellerService.findByCode(sell.getCode(), provider);
@@ -311,7 +311,7 @@ public class ImportCustomersJobBean {
                 seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode(), provider));
             }
 			seller.setProvider(provider);
-			customerImportService.createSeller(seller, currentUser, provider);
+			customerImportService.createSeller(seller, currentUser);
 		}
 
 		return seller;
@@ -423,7 +423,7 @@ public class ImportCustomersJobBean {
 		customerImportHisto.setNbSellersIgnored(nbSellersIgnored);
 		customerImportHisto.setNbSellersWarning(nbSellersWarning);
 		customerImportHisto.setProvider(provider);
-		customerImportHistoService.create(customerImportHisto, currentUser, provider);
+		customerImportHistoService.create(customerImportHisto, currentUser);
 	}
 
 	private void generateReport(String fileName, Provider provider) throws Exception {

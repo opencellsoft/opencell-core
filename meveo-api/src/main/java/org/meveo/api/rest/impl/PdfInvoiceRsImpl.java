@@ -13,31 +13,29 @@ import org.meveo.api.rest.PdfInvoiceRs;
 
 /**
  * @author R.AITYAAZZA
- *
+ * 
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class PdfInvoiceRsImpl extends BaseRs implements PdfInvoiceRs {
 
-	@Inject
-	private PdfInvoiceApi pdfInvoiceApi;
+    @Inject
+    private PdfInvoiceApi pdfInvoiceApi;
 
-	@Override
-	public PdfInvoiceResponse getPDFInvoice(@QueryParam("invoiceNumber") String invoiceNumber,
-			@QueryParam("customerAccountCode") String customerAccountCode) throws Exception {
+    @Override
+    public PdfInvoiceResponse getPDFInvoice(@QueryParam("invoiceNumber") String invoiceNumber, @QueryParam("customerAccountCode") String customerAccountCode) {
 
-		PdfInvoiceResponse result = new PdfInvoiceResponse();
-		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        PdfInvoiceResponse result = new PdfInvoiceResponse();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
-		try {
-			result.setPdfInvoice(pdfInvoiceApi.getPDFInvoice(invoiceNumber, customerAccountCode, getCurrentUser()));
-		} catch (Exception e) {
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		}
+        try {
+            result.setPdfInvoice(pdfInvoiceApi.getPDFInvoice(invoiceNumber, customerAccountCode, getCurrentUser()));
+        } catch (Exception e) {
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
 }

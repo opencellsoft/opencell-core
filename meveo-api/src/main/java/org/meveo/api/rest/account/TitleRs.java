@@ -24,27 +24,27 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface TitleRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ActionStatus create(TitleDto postData);
+    @POST
+    @Path("/")
+    ActionStatus create(TitleDto postData);
 
-	@GET
-	@Path("/")
-	TitleResponseDto find(@QueryParam("titleCode") String titleCode);
+    @GET
+    @Path("/")
+    TitleResponseDto find(@QueryParam("titleCode") String titleCode);
 
-	@GET
-	@Path("/list")
-	TitlesResponseDto list();
+    @GET
+    @Path("/list")
+    TitlesResponseDto list();
 
-	@PUT
-	@Path("/")
-	ActionStatus update(TitleDto postData);
+    @PUT
+    @Path("/")
+    ActionStatus update(TitleDto postData);
 
-	@DELETE
-	@Path("/{titleCode}")
-	public ActionStatus remove(@PathParam("titleCode") String titleCode);
+    @DELETE
+    @Path("/{titleCode}")
+    public ActionStatus remove(@PathParam("titleCode") String titleCode);
 
-	@POST
-	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(TitleDto postData);
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(TitleDto postData);
 }

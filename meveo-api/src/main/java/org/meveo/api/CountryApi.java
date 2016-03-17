@@ -3,6 +3,7 @@ package org.meveo.api;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -43,7 +44,7 @@ public class CountryApi extends BaseApi {
     @Inject
     private LanguageService languageService;
 
-    public void create(CountryDto postData, User currentUser) throws MeveoApiException {
+    public void create(CountryDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCountryCode())) {
             missingParameters.add("countryCode");
@@ -92,7 +93,7 @@ public class CountryApi extends BaseApi {
             }
         }
         if (country.isTransient()) {
-            countryService.create(country, currentUser, provider);
+            countryService.create(country, currentUser);
         } else {
             countryService.update(country, currentUser);
         }
@@ -103,7 +104,7 @@ public class CountryApi extends BaseApi {
         tradingCountry.setProvider(provider);
         tradingCountry.setActive(true);
         tradingCountry.setPrDescription(postData.getName());
-        tradingCountryService.create(tradingCountry, currentUser, provider);
+        tradingCountryService.create(tradingCountry, currentUser);
 
         // If currencyCode exist in reference table ("adm_currency") and don't exist in the trading currency table, create the currency in the trading currency table
         // ('billing_trading_currency").
@@ -113,7 +114,7 @@ public class CountryApi extends BaseApi {
             tradingCurrency.setCurrency(currency);
             tradingCurrency.setCurrencyCode(postData.getCurrencyCode());
             tradingCurrency.setPrDescription(postData.getCurrencyCode());
-            tradingCurrencyService.create(tradingCurrency, currentUser, provider);
+            tradingCurrencyService.create(tradingCurrency, currentUser);
         }
     }
 
@@ -161,7 +162,7 @@ public class CountryApi extends BaseApi {
         }
     }
 
-    public void update(CountryDto postData, User currentUser) throws MeveoApiException {
+    public void update(CountryDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCountryCode())) {
             missingParameters.add("countryCode");
@@ -212,11 +213,11 @@ public class CountryApi extends BaseApi {
             tradingCurrency.setCurrency(currency);
             tradingCurrency.setCurrencyCode(postData.getCurrencyCode());
             tradingCurrency.setPrDescription(postData.getCurrencyCode());
-            tradingCurrencyService.create(tradingCurrency, currentUser, provider);
+            tradingCurrencyService.create(tradingCurrency, currentUser);
         }
     }
 
-    public void createOrUpdate(CountryDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(CountryDto postData, User currentUser) throws MeveoApiException, BusinessException {
         TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode(), currentUser.getProvider());
         if (tradingCountry == null) {
             // create

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.CountryDto;
@@ -131,7 +132,7 @@ public class ProviderApi extends BaseApi {
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
-    public void create(ProviderDto postData, User currentUser) throws MeveoApiException {
+    public void create(ProviderDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -236,7 +237,7 @@ public class ProviderApi extends BaseApi {
 
     }
 
-    public void update(ProviderDto postData, User currentUser) throws MeveoApiException {
+    public void update(ProviderDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -518,8 +519,9 @@ public class ProviderApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void createOrUpdate(ProviderDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(ProviderDto postData, User currentUser) throws MeveoApiException, BusinessException {
         Provider provider = providerService.findByCode(postData.getCode());
 
         if (provider == null) {

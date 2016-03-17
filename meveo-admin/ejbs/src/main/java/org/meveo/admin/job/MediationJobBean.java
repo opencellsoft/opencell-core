@@ -203,7 +203,6 @@ public class MediationJobBean {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createEdr(EDR edr, User currentUser) throws BusinessException {
-		edrService.create(edr, currentUser, currentUser.getProvider());
+		edrService.create(edr, currentUser);
 	}
-
 }

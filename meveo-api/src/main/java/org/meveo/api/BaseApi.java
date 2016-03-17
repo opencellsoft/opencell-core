@@ -62,35 +62,6 @@ public abstract class BaseApi {
         }
     }
 
-    // protected String getMissingParametersExceptionMessage() {
-    //
-    // if (missingParameters == null) {
-    // missingParameters = new ArrayList<String>();
-    // }
-    //
-    // StringBuilder sb = new StringBuilder("The following parameters are required or contain invalid values: ");
-    // List<String> missingFields = new ArrayList<String>();
-    //
-    // if (missingParameters != null) {
-    // for (String param : missingParameters) {
-    // missingFields.add(param);
-    // }
-    // }
-    //
-    // if (!missingFields.isEmpty()) {
-    // if (missingFields.size() > 1) {
-    // sb.append(org.apache.commons.lang.StringUtils.join(missingFields.toArray(), ", "));
-    // } else {
-    // sb.append(missingFields.get(0));
-    // }
-    // sb.append(".");
-    // }
-    //
-    // missingParameters = new ArrayList<String>();
-    //
-    // return sb.toString();
-    // }
-
     /**
      * Populate custom field values from DTO
      * 

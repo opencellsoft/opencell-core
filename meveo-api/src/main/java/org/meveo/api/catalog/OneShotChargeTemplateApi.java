@@ -15,7 +15,6 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceDto;
-import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -81,7 +80,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
-    public void create(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void create(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -160,7 +159,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
             chargeTemplate.setEdrTemplates(edrTemplates);
         }
 
-        oneShotChargeTemplateService.create(chargeTemplate, currentUser, provider);
+        oneShotChargeTemplateService.create(chargeTemplate, currentUser);
 
         // populate customFields
         try {
@@ -175,12 +174,12 @@ public class OneShotChargeTemplateApi extends BaseApi {
             for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
                 CatMessages catMsg = new CatMessages(OneShotChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(), ld.getDescription());
 
-                catMessagesService.create(catMsg, currentUser, provider);
+                catMessagesService.create(catMsg, currentUser);
             }
         }
     }
 
-    public void update(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void update(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -235,7 +234,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
                     } else {
                         CatMessages catMessages = new CatMessages(OneShotChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(),
                             ld.getDescription());
-                        catMessagesService.create(catMessages, currentUser, provider);
+                        catMessagesService.create(catMessages, currentUser);
                     }
                 }
             }
@@ -329,7 +328,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
     }
 
-    public OneShotChargeTemplateWithPriceListDto listWithPrice(String languageCode, String countryCode, String currencyCode, String sellerCode, Date date, User currentUser)
+    public List<OneShotChargeTemplateWithPriceDto> listWithPrice(String languageCode, String countryCode, String currencyCode, String sellerCode, Date date, User currentUser)
             throws MeveoApiException {
         Provider provider = currentUser.getProvider();
         Seller seller = sellerService.findByCode(sellerCode, provider);
@@ -337,7 +336,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
         TradingCountry country = tradingCountryService.findByTradingCountryCode(countryCode, provider);
 
         List<OneShotChargeTemplate> oneShotChargeTemplates = oneShotChargeTemplateService.getSubscriptionChargeTemplates(provider);
-        OneShotChargeTemplateWithPriceListDto oneShotChargeTemplateListDto = new OneShotChargeTemplateWithPriceListDto();
+        List<OneShotChargeTemplateWithPriceDto> oneShotChargeTemplatesWPrice = new ArrayList<>();
 
         for (OneShotChargeTemplate oneShotChargeTemplate : oneShotChargeTemplates) {
             OneShotChargeTemplateWithPriceDto oneShotChargeDto = new OneShotChargeTemplateWithPriceDto();
@@ -368,13 +367,13 @@ public class OneShotChargeTemplateApi extends BaseApi {
                 }
             }
 
-            oneShotChargeTemplateListDto.getOneShotChargeTemplateDtos().add(oneShotChargeDto);
+            oneShotChargeTemplatesWPrice.add(oneShotChargeDto);
         }
 
-        return oneShotChargeTemplateListDto;
+        return oneShotChargeTemplatesWPrice;
     }
 
-    public void createOrUpdate(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (oneShotChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             create(postData, currentUser);
         } else {

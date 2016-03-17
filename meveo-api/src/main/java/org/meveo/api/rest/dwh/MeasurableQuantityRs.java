@@ -17,7 +17,7 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface MeasurableQuantityRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ActionStatus create(MeasurableQuantityDto postData);
+    @POST
+    @Path("/")
+    ActionStatus create(MeasurableQuantityDto postData);
 }

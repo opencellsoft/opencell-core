@@ -86,7 +86,7 @@ public class FilterBean extends BaseBean<Filter> {
 					}
 					for (FilterSelector filterSelector : filter.getSecondarySelectors()) {
 						filterSelector.setProvider(getCurrentProvider());
-						filterSelectorService.create(filterSelector);
+						filterSelectorService.create(filterSelector, getCurrentUser());
 						entity.getSecondarySelectors().add(filterSelector);
 					}
 				}

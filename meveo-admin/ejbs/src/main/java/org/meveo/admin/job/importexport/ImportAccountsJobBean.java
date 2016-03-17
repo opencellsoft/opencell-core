@@ -459,7 +459,7 @@ public class ImportAccountsJobBean {
 		accountImportHisto.setNbUserAccountsIgnored(nbUserAccountsIgnored);
 		accountImportHisto.setNbUserAccountsWarning(nbUserAccountsWarning);
 		accountImportHisto.setProvider(provider);
-		accountImportHistoService.create(accountImportHisto, userJob, provider);
+		accountImportHistoService.create(accountImportHisto, userJob);
 	}
 
 }

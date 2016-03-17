@@ -6,6 +6,7 @@ import javax.interceptor.Interceptors;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.billing.MediationApi;
 import org.meveo.api.dto.ActionStatus;
@@ -20,126 +21,124 @@ import org.meveo.api.rest.impl.BaseRs;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
-
 public class MediationRsImpl extends BaseRs implements MediationRs {
 
-	@Inject
-	private MediationApi mediationApi;
+    @Inject
+    private MediationApi mediationApi;
 
-	@Context
-	private HttpServletRequest httpServletRequest;
+    @Context
+    private HttpServletRequest httpServletRequest;
 
-	@Override
-	public ActionStatus registerCdrList(CdrListDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus registerCdrList(CdrListDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			postData.setIpAddress(httpServletRequest.getRemoteAddr());
-			mediationApi.registerCdrList(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            postData.setIpAddress(httpServletRequest.getRemoteAddr());
+            mediationApi.registerCdrList(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus chargeCdr(String cdr) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus chargeCdr(String cdr) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			mediationApi.chargeCdr(cdr, getCurrentUser(), httpServletRequest.getRemoteAddr());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            mediationApi.chargeCdr(cdr, getCurrentUser(), httpServletRequest.getRemoteAddr());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public CdrReservationResponseDto reserveCdr(String cdr) {
-		CdrReservationResponseDto result = new CdrReservationResponseDto();
-		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-		try {
-			CdrReservationResponseDto response = mediationApi.reserveCdr(cdr, getCurrentUser(),
-					httpServletRequest.getRemoteAddr());
-			double availableQuantity = response.getAvailableQuantity();
-			if (availableQuantity == 0) {
-				result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-				result.getActionStatus().setMessage("INSUFICIENT_BALANCE");
-			} else if (availableQuantity > 0) {
-				result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-				result.getActionStatus().setMessage("NEED_LOWER_QUANTITY");
-				result.setAvailableQuantity(availableQuantity);
-			}
-			result.setAvailableQuantity(availableQuantity);
-			result.setReservationId(response.getReservationId());
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		}
+    @Override
+    public CdrReservationResponseDto reserveCdr(String cdr) {
+        CdrReservationResponseDto result = new CdrReservationResponseDto();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        try {
+            CdrReservationResponseDto response = mediationApi.reserveCdr(cdr, getCurrentUser(), httpServletRequest.getRemoteAddr());
+            double availableQuantity = response.getAvailableQuantity();
+            if (availableQuantity == 0) {
+                result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+                result.getActionStatus().setMessage("INSUFICIENT_BALANCE");
+            } else if (availableQuantity > 0) {
+                result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+                result.getActionStatus().setMessage("NEED_LOWER_QUANTITY");
+                result.setAvailableQuantity(availableQuantity);
+            }
+            result.setAvailableQuantity(availableQuantity);
+            result.setReservationId(response.getReservationId());
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus confirmReservation(PrepaidReservationDto reservationDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus confirmReservation(PrepaidReservationDto reservationDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			mediationApi.confirmReservation(reservationDto, getCurrentUser(), httpServletRequest.getRemoteAddr());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            mediationApi.confirmReservation(reservationDto, getCurrentUser(), httpServletRequest.getRemoteAddr());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus cancelReservation(PrepaidReservationDto reservationDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus cancelReservation(PrepaidReservationDto reservationDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			mediationApi.cancelReservation(reservationDto, getCurrentUser(), httpServletRequest.getRemoteAddr());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            mediationApi.cancelReservation(reservationDto, getCurrentUser(), httpServletRequest.getRemoteAddr());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        return result;
+    }
 
 }

@@ -26,24 +26,24 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface OfferModelScriptRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ActionStatus create(OfferModelScriptDto postData);
+    @POST
+    @Path("/")
+    ActionStatus create(OfferModelScriptDto postData);
 
-	@PUT
-	@Path("/")
-	ActionStatus update(OfferModelScriptDto postData);
+    @PUT
+    @Path("/")
+    ActionStatus update(OfferModelScriptDto postData);
 
-	@POST
-	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(OfferModelScriptDto postData);
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(OfferModelScriptDto postData);
 
-	@DELETE
-	@Path("/{code}")
-	ActionStatus delete(@PathParam("code") String code);
+    @DELETE
+    @Path("/{code}")
+    ActionStatus delete(@PathParam("code") String code);
 
-	@GET
-	@Path("/")
-	OfferModelScriptResponseDto get(@QueryParam("code") String code);
+    @GET
+    @Path("/")
+    OfferModelScriptResponseDto get(@QueryParam("code") String code);
 
 }

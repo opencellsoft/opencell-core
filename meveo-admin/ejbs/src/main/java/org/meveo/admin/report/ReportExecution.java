@@ -41,6 +41,7 @@ import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRLoader;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.bi.JobNameEnum;
 import org.meveo.model.bi.Report;
@@ -180,7 +181,7 @@ public class ReportExecution implements Serializable{
 				generatePDF(report.getFileName(), report.getName(), xmlString,
 						report.getRecordPath(), report.getSchedule());
 				report.computeNextExecutionDate();
-				reportService.update(report);
+				reportService.update(report, null);
 			}
 			if (obj instanceof ReportXMLFileSourceProducer) {
 				log.info("executeReport report class is ReportXMLFileSourceProducer");
@@ -193,18 +194,11 @@ public class ReportExecution implements Serializable{
 				reporting.export(report);
 				log.info("computeNextExecutionDate");
 				report.computeNextExecutionDate();
-				reportService.update(report);
+				reportService.update(report, null);
 			}
-		} catch (ClassNotFoundException e) {
-			log.error("failed to executeReport,class not found exception",e);
-		} catch (InstantiationException e) {
-			log.error("failed to executeReport,instantiation exception",e);
-
-		} catch (IllegalAccessException e) {
-			log.error("failed to executeReport,Illegala access exception",e);
-
+		} catch (Exception e) {
+			log.error("failed to executeReport, {} exception", e.getClass(), e);
 		}
-
 	}
 
 	/**
@@ -239,8 +233,9 @@ public class ReportExecution implements Serializable{
 
 	/**
 	 * Execute all reports from DB.
+	 * @throws BusinessException 
 	 */
-	public void reportsExecution() {
+	public void reportsExecution() throws BusinessException {
 		List<Report> reportList = (List<Report>) reportService.list();
 		Date date = new Date();
 		if (reportList.size() != 0) {
@@ -251,7 +246,7 @@ public class ReportExecution implements Serializable{
 					} else if (report.getActionName() == JobNameEnum.RECURRING_CHARGES_APPLICATION) {
 						// recurringChargeCron.recurringChargeApplication();
 						report.computeNextExecutionDate();
-						reportService.update(report);
+						reportService.update(report, null);
 					}
 
 				}

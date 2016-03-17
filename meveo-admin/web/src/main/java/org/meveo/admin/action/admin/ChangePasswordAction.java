@@ -80,7 +80,7 @@ public class ChangePasswordAction implements Serializable {
 
 		if (validate(currentUser)) {
 			try {
-				userService.changePassword(currentUser, newPassword);
+				userService.changePassword(currentUser, newPassword, currentUser);
 
 			} catch (BusinessException e) {
 				log.error("Error when update the password of #{currentUser.username} with password="

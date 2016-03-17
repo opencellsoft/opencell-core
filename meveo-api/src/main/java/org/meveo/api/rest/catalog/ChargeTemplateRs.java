@@ -20,8 +20,8 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface ChargeTemplateRs extends IBaseRs {
 
-	@GET
-	@Path("/")
-	GetChargeTemplateResponseDto find(@QueryParam("chargeTemplateCode") String chargeTemplateCode);
+    @GET
+    @Path("/")
+    GetChargeTemplateResponseDto find(@QueryParam("chargeTemplateCode") String chargeTemplateCode);
 
 }

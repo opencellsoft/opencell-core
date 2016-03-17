@@ -3,6 +3,7 @@ package org.meveo.api.script;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.script.OfferModelScriptDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -24,7 +25,7 @@ public class OfferModelScriptApi extends BaseApi {
     @Inject
     private OfferModelScriptService offerModelScriptService;
 
-    public void create(OfferModelScriptDto postData, User currentUser) throws MeveoApiException {
+    public void create(OfferModelScriptDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -51,10 +52,10 @@ public class OfferModelScriptApi extends BaseApi {
         }
         offerModelScript.setScript(postData.getScript());
 
-        offerModelScriptService.create(offerModelScript, currentUser, currentUser.getProvider());
+        offerModelScriptService.create(offerModelScript, currentUser);
     }
 
-    public void update(OfferModelScriptDto postData, User currentUser) throws MeveoApiException {
+    public void update(OfferModelScriptDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -83,7 +84,7 @@ public class OfferModelScriptApi extends BaseApi {
         offerModelScriptService.update(offerModelScript, currentUser);
     }
 
-    public void createOrUpdate(OfferModelScriptDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(OfferModelScriptDto postData, User currentUser) throws MeveoApiException, BusinessException {
         String derivedCode = offerModelScriptService.getDerivedCode(postData.getScript());
         OfferModelScript offerModelScript = offerModelScriptService.findByCode(derivedCode, currentUser.getProvider());
         if (offerModelScript == null) {

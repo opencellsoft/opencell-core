@@ -3,6 +3,7 @@ package org.meveo.api;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -19,7 +20,7 @@ public class OccTemplateApi extends BaseApi {
     @Inject
     private OCCTemplateService occTemplateService;
 
-    public void create(OccTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void create(OccTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -46,10 +47,10 @@ public class OccTemplateApi extends BaseApi {
         occTemplate.setAccountCodeClientSide(postData.getAccountCodeClientSide());
         occTemplate.setOccCategory(postData.getOccCategory());
 
-        occTemplateService.create(occTemplate, currentUser, provider);
+        occTemplateService.create(occTemplate, currentUser);
     }
 
-    public void update(OccTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void update(OccTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -116,8 +117,9 @@ public class OccTemplateApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void createOrUpdate(OccTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(OccTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         OCCTemplate occTemplate = occTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
 

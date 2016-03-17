@@ -27,6 +27,7 @@ import org.apache.commons.vfs.auth.StaticUserAuthenticator;
 import org.apache.commons.vfs.impl.DefaultFileSystemConfigBuilder;
 import org.apache.commons.vfs.provider.local.LocalFile;
 import org.apache.commons.vfs.provider.sftp.SftpFileSystemConfigBuilder;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -256,8 +257,9 @@ public class FtpAdapterJobBean {
 	 * @param currentUser
 	 * @throws UnsupportedEncodingException
 	 * @throws NoSuchAlgorithmException
+	 * @throws BusinessException 
 	 */
-	private void createImportedFileHistory(String fileName, Date lastModification, Long size, String remoteServer, int remotePort, String ftpInputDirectory, Provider provider, User currentUser) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+	private void createImportedFileHistory(String fileName, Date lastModification, Long size, String remoteServer, int remotePort, String ftpInputDirectory, Provider provider, User currentUser) throws NoSuchAlgorithmException, UnsupportedEncodingException, BusinessException {
 		FtpImportedFile ftpImportedFile = new FtpImportedFile();
 		ftpImportedFile.setCode(getCode(remoteServer, remotePort, fileName, ftpInputDirectory, size, lastModification));
 		ftpImportedFile.setDescription(fileName);

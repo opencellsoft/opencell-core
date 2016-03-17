@@ -21,25 +21,25 @@ import org.meveo.api.rest.security.RSSecured;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured
 public interface OfferTemplateCategoryRs extends IBaseRs {
-	
-	@Path("/")
-	@POST
-	ActionStatus create(OfferTemplateCategoryDto postData);
-	
-	@Path("/")
-	@PUT
-	ActionStatus update(OfferTemplateCategoryDto postData);
-	
-	@Path("/")
-	@GET
-	GetOfferTemplateCategoryResponseDto find(@QueryParam("offerTemplateCategoryCode") String offerTemplateCategoryCode);
-	
-	@Path("/")
-	@DELETE
-	ActionStatus delete(@QueryParam("offerTemplateCategoryCode") String offerTemplateCategoryCode);
-	
-	@Path("/createOrUpdate")
-	@POST
-	ActionStatus createOrUpdate(OfferTemplateCategoryDto postData);
-	
+
+    @Path("/")
+    @POST
+    ActionStatus create(OfferTemplateCategoryDto postData);
+
+    @Path("/")
+    @PUT
+    ActionStatus update(OfferTemplateCategoryDto postData);
+
+    @Path("/")
+    @GET
+    GetOfferTemplateCategoryResponseDto find(@QueryParam("offerTemplateCategoryCode") String offerTemplateCategoryCode);
+
+    @Path("/")
+    @DELETE
+    ActionStatus delete(@QueryParam("offerTemplateCategoryCode") String offerTemplateCategoryCode);
+
+    @Path("/createOrUpdate")
+    @POST
+    ActionStatus createOrUpdate(OfferTemplateCategoryDto postData);
+
 }
