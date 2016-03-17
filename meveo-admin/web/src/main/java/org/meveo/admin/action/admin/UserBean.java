@@ -40,6 +40,7 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -135,6 +136,7 @@ public class UserBean extends BaseBean<User> {
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
      */
     @Override
+    @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         log.debug("saving new user={}", entity.getUserName());
         boolean passwordsDoNotMatch = password != null && !password.equals(repeatedPassword);

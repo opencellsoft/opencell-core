@@ -27,6 +27,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.model.payments.DunningPlan;
 import org.meveo.model.payments.DunningPlanTransition;
@@ -107,6 +108,7 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
     }
 
     @Override
+    @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         super.saveOrUpdate(killConversation);
         return "/pages/payments/dunning/dunningPlanDetail?dunningPlanId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";

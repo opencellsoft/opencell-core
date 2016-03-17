@@ -24,6 +24,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
@@ -88,6 +89,7 @@ public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification>
     }
 
     @Override
+    @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
     

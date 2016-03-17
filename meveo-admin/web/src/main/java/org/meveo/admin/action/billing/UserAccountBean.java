@@ -37,6 +37,7 @@ import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
@@ -154,7 +155,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation) {
+    @ActionMethod
+	public String saveOrUpdate(boolean killConversation) throws BusinessException{
 		
 	    entity.setBillingAccount(billingAccountService.attach(entity.getBillingAccount()));
 	    
@@ -193,6 +195,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	 * org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
 	@Override 
+    @ActionMethod
 	// TODO this has to be removed as BaseBean has identical method. Only need to take care of userAccountService.createUserAccount method call
 	protected UserAccount saveOrUpdate(UserAccount entity) throws BusinessException{
 

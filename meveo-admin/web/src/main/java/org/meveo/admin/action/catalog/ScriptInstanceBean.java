@@ -27,6 +27,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
@@ -146,6 +147,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     }
 
     @Override
+    @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         String result = getListViewName();
         try {

@@ -29,6 +29,7 @@ import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -243,6 +244,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 	}
 	
 	@Override
+    @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException { 
 		   if(chargeTemplateId!=0){ 
 		    super.saveOrUpdate(killConversation); 

@@ -24,6 +24,7 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
@@ -56,6 +57,7 @@ public class DdRequestLotOpBean extends BaseBean<DDRequestLotOp> {
 	}
 
 	@Override
+    @ActionMethod
 	public DDRequestLotOp saveOrUpdate(DDRequestLotOp entity) throws BusinessException {
 		if (entity.isTransient()) {
 			entity.setDdrequestOp(DDRequestOpEnum.CREATE);

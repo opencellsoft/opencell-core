@@ -27,6 +27,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -232,6 +233,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
+    @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		List<ServiceChargeTemplateRecurring> recurringCharges = entity.getServiceRecurringCharges();
 		for (ServiceChargeTemplateRecurring recurringCharge : recurringCharges) {

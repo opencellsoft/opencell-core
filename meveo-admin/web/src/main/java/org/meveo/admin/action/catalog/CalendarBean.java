@@ -34,6 +34,7 @@ import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarDateInterval;
@@ -315,6 +316,7 @@ public class CalendarBean extends BaseBean<Calendar> {
     }
 
     @Override
+    @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         if (entity instanceof CalendarYearly) {

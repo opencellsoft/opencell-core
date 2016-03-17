@@ -23,6 +23,7 @@ import javax.persistence.EntityExistsException;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.model.payments.DunningPlan;
 import org.meveo.service.base.PersistenceService;
@@ -93,8 +94,8 @@ public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation)
-			throws BusinessException {
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		dunningPlan.getActions().add(entity);
 		super.saveOrUpdate(killConversation);
 		return "/pages/payments/dunning/dunningPlanDetail.xhtml?objectId="

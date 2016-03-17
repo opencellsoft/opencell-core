@@ -26,6 +26,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.service.admin.impl.SellerService;
@@ -78,6 +79,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
 	}
 
 	@Override
+	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		// prefix must be set
 		if (entity.getCurrentInvoiceNb() != null && StringUtils.isBlank(entity.getInvoicePrefix())) {

@@ -9,6 +9,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.script.EntityActionScriptService;
@@ -40,6 +41,7 @@ public class EntityActionScriptBean extends BaseBean<EntityActionScript> {
     }
 
     @Override
+    @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         if (entity.isTransient()) {

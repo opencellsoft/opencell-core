@@ -27,6 +27,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.CatMessages;
@@ -256,8 +257,8 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 		this.objectType = objectType;
 	}
 	@Override
-	public String saveOrUpdate(boolean killConversation)
-			throws BusinessException {
+	@ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		if(entity.isTransient()){
 			entity.setMessageCode(String.format(MESSAGE_CODE,getEntityClass().getSimpleName(),businessEntity.getId()));
 		}

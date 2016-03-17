@@ -27,6 +27,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.PersistenceService;
@@ -129,6 +130,7 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
+    @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
 		// check for unicity

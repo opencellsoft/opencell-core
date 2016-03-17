@@ -42,6 +42,7 @@ import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.action.admin.CurrentUser;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
@@ -326,7 +327,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     // entities.addFetchFields(getListFieldsToFetch());
     // entities.forceRefresh();
     // }
-
+    @ActionMethod
     public String saveOrUpdate(boolean killConversation, String objectName, Long objectId) throws BusinessException {
         String outcome = saveOrUpdate(killConversation);
 
@@ -338,7 +339,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         // + objectId + "&cid=" + conversation.getId());
         return outcome;
     }
-
+    
+    @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         String message = entity.isTransient() ? "save.successful" : "update.successful";
@@ -382,6 +384,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return back();
     }
 
+    @ActionMethod
     public String saveOrUpdateWithMessage(boolean killConversation) throws BusinessException {
         boolean result = true;
         try {

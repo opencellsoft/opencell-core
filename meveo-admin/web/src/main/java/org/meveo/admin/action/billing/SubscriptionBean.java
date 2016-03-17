@@ -31,6 +31,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -232,6 +233,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
+	@Override
+    @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String outcome = super.saveOrUpdate(killConversation);
 

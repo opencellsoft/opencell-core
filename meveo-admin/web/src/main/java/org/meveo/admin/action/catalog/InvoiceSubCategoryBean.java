@@ -28,6 +28,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.service.base.PersistenceService;
@@ -205,8 +206,8 @@ public class InvoiceSubCategoryBean extends
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation)
-			throws BusinessException {
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
 		if (entity.getId() != null) {
 			super.saveOrUpdate(killConversation);

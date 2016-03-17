@@ -8,6 +8,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -41,6 +42,7 @@ public class DiscountPlanItemBean extends BaseBean<DiscountPlanItem> {
 	}
 
 	@Override
+    @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		// check for required fields
 		if (getEntity().getInvoiceCategory() == null && getEntity().getInvoiceSubCategory() == null) {

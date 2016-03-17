@@ -161,8 +161,6 @@ public class ReflectionUtils {
             return false;
         }
         Field field = FieldUtils.getField(object.getClass(), fieldName, true);
-        Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
-        log.error("AKK check if {} has field {}", object.getClass(), fieldName);
         return field != null;
     }
 }

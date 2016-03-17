@@ -29,6 +29,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -157,7 +158,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				.findByOfferTemplate(getEntity()).size() > 0) ? true : false;
 	}
 
+
 	@Override
+	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		boolean newEntity = (entity.getId() == null);
 
@@ -238,7 +241,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	public DualListModel<ServiceTemplate> getIncompatibleServices() {
 
-		log.error("AKK getIncompatibleServices is null {}", incompatibleServices == null);
 		if (incompatibleServices == null) {
 			List<ServiceTemplate> source = null;
 			if (offerServiceTemplate == null || offerServiceTemplate.isTransient()) {

@@ -29,6 +29,7 @@ import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
@@ -111,6 +112,8 @@ public class AccessBean extends CustomFieldBean<Access> {
 		this.selectedSubscription = selectedSubscription;
 	}
 
+
+    @ActionMethod
 	public String saveOrUpdate() throws BusinessException {
 		if (subscriptionId.get() != null) {
 			Subscription subscription = subscriptionService.findById(subscriptionId.get());
@@ -122,6 +125,8 @@ public class AccessBean extends CustomFieldBean<Access> {
 		return "";
 	}
 	
+    @Override
+    @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String result = "";
 		Subscription subscription = subscriptionService.refreshOrRetrieve(entity.getSubscription());

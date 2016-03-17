@@ -5,6 +5,7 @@
 
 	<interceptors>
 		<class>org.jboss.seam.security.SecurityInterceptor</class>
+        <class>org.meveo.admin.web.interceptor.BackingBeanActionMethodInterceptor</class>
 	</interceptors>
 
 	<security:IdentityImpl>

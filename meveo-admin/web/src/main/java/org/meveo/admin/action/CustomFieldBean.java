@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 
@@ -42,6 +43,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     // }
 
     @Override
+    @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         boolean isNew = entity.isTransient();

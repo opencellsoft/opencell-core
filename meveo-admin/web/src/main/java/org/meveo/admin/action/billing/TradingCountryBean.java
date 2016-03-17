@@ -25,6 +25,8 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessEntityException;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.crm.Provider;
@@ -101,7 +103,8 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 	}
 
 	@Override
-	public String saveOrUpdate(boolean killConversation) {
+    @ActionMethod
+	public String saveOrUpdate(boolean killConversation) throws BusinessException{
 		String back = null;
 		try {
 			Provider currentProvider = providerService

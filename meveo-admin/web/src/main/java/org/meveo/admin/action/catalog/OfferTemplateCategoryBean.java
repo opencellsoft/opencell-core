@@ -16,6 +16,7 @@ import javax.sql.rowset.serial.SerialException;
 
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
@@ -54,6 +55,7 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
 	}
 
 	@Override
+    @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		if (entity.getOfferTemplateCategory() != null && entity.getOfferTemplateCategory().getLevel() == 3) {
 			throw new BusinessException("Max level for offer template category.");

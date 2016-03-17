@@ -23,6 +23,7 @@ import javax.persistence.EntityExistsException;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.payments.DunningPlan;
 import org.meveo.model.payments.DunningPlanTransition;
 import org.meveo.service.base.PersistenceService;
@@ -86,6 +87,7 @@ public class DunningPlanTransitionBean extends BaseBean<DunningPlanTransition> {
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
      */
     @Override
+    @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         dunningPlan.getTransitions().add(entity);
         super.saveOrUpdate(killConversation);

@@ -26,6 +26,8 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessEntityException;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.crm.Provider;
@@ -72,7 +74,8 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation) {
+	@ActionMethod
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String back = null;
 		try {
 			Provider currentProvider = providerService

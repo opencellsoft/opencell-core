@@ -25,6 +25,7 @@ import javax.inject.Named;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.crm.Customer;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
@@ -65,6 +66,7 @@ public class CustomerBean extends AccountBean<Customer> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
+    @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         entity.setSeller(sellerService.refreshOrRetrieve(entity.getSeller()));

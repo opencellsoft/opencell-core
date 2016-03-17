@@ -23,6 +23,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -75,8 +76,8 @@ public class RecordedInvoiceBean extends BaseBean<RecordedInvoice> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation)
-			throws BusinessException {
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		entity.getCustomerAccount().getAccountOperations().add(entity);
 
 		return super.saveOrUpdate(killConversation);

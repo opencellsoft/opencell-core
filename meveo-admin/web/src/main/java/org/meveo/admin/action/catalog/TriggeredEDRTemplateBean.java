@@ -24,6 +24,7 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.PersistenceService;
@@ -85,6 +86,7 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 	}
 
 	@Override
+    @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String result = super.saveOrUpdate(killConversation);
 		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(entity);

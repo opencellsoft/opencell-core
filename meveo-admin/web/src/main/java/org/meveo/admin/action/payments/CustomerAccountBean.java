@@ -29,6 +29,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
@@ -116,7 +117,8 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation) {
+    @ActionMethod
+	public String saveOrUpdate(boolean killConversation) throws BusinessException{
 	    
 	    entity.setCustomer(customerService.refreshOrRetrieve(entity.getCustomer()));
 	    

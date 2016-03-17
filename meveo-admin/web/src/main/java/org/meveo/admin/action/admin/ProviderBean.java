@@ -22,6 +22,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
@@ -145,6 +146,7 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     }
 
     @Override
+    @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         if (!getCurrentUser().hasPermission("superAdmin", "superAdminManagement")) {

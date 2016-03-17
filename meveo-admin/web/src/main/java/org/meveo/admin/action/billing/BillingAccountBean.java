@@ -35,8 +35,10 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.ListItemsSelector;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
@@ -171,7 +173,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation) {
+    @ActionMethod
+	public String saveOrUpdate(boolean killConversation) throws BusinessException{
 		
 	    entity.setCustomerAccount(customerAccountService.attach(entity.getCustomerAccount()));
 	    

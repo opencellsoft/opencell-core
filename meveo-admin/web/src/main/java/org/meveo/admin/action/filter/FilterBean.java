@@ -15,6 +15,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.XmlUtil;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.filter.AndCompositeFilterCondition;
@@ -57,6 +58,7 @@ public class FilterBean extends BaseBean<Filter> {
 	}
 
 	@Override
+    @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		if (entity.getInputXml() != null && !StringUtils.isBlank(entity.getInputXml())) {
 			if (!XmlUtil.validate(entity.getInputXml())) {
