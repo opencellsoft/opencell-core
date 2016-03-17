@@ -10,7 +10,6 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:viewParam name="objectId" value="#{pricePlanMatrixBean.objectId}" />
 			<f:viewParam name="tab" value="#{pricePlanMatrixBean.activeTab}" />
 		</f:metadata>
 	</ui:define>
@@ -96,7 +95,7 @@
 		</p:panel>
 
 			<hftl:formPanel label="#{messages['pricePlanMatrix.panel']}"
-			    showFormButtons="false" 
+			    showFormButtons="true" 
 				backingBean="#{pricePlanMatrixBean}" formId="formPricePlan">
 
 				<p:tabView id="tabView"
@@ -205,16 +204,6 @@
 				</p:tabView>
 				<ui:param name="buttons" value="true" />
 				<ui:define name="buttons">
-					<p:commandButton
-						rendered="#{pricePlanMatrixBean.entity.id==null}"
-						action="#{pricePlanMatrixBean.saveOrUpdate(false)}"
-						value="#{messages['action.addSave']}">
-						<f:param name="objectId" value="#{offerTemplateBean.entity.id}"></f:param>
-					</p:commandButton>
-					<p:commandButton
-						rendered="#{pricePlanMatrixBean.entity.id!=null}"
-						action="#{pricePlanMatrixBean.saveOrUpdate(false)}"
-						value="#{messages['action.update']}"/>
 					<p:commandButton id="backButton" value="#{messages['action.back']}"
 						style="left: 35px;"
 						rendered="#{pricePlanMatrixBean.chargeTemplateId!=null}"
