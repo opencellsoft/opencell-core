@@ -12,8 +12,12 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessServiceModel;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.scripts.ServiceModelScript;
 import org.meveo.service.catalog.impl.BusinessServiceService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.script.ServiceModelScriptService;
 
 /**
  * @author Edward P. Legaspi
@@ -21,85 +25,121 @@ import org.meveo.service.catalog.impl.BusinessServiceService;
 @Stateless
 public class BusinessServiceModelApi extends BaseApi {
 
-    @Inject
-    private BusinessServiceService businessServiceService;
+	@Inject
+	private BusinessServiceService businessServiceService;
 
-    public void create(BusinessServiceModelDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
+	@Inject
+	private ServiceModelScriptService serviceModelScriptService;
 
-        handleMissingParameters();
+	@Inject
+	private ServiceTemplateService serviceTemplateService;
 
-        if (businessServiceService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
-            throw new EntityAlreadyExistsException(BusinessServiceModel.class, postData.getCode());
-        }
+	public void create(BusinessServiceModelDto postData, User currentUser) throws MeveoApiException {
+		if (StringUtils.isBlank(postData.getCode())) {
+			missingParameters.add("code");
+		}
 
-        businessServiceService.create(BusinessServiceModelDto.fromDTO(postData, null), currentUser);
-    }
+		handleMissingParameters();
 
-    public void update(BusinessServiceModelDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
+		if (businessServiceService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+			throw new EntityAlreadyExistsException(BusinessServiceModel.class, postData.getCode());
+		}
 
-        handleMissingParameters();
+		ServiceModelScript serviceModelScript = serviceModelScriptService.findByCode(postData.getScriptCode(), currentUser.getProvider());
+		if (serviceModelScript == null) {
+			throw new EntityDoesNotExistsException(ServiceModelScript.class, postData.getScriptCode());
+		}
 
-        BusinessServiceModel bsm = businessServiceService.findByCode(postData.getCode(), currentUser.getProvider());
-        if (bsm == null) {
-            throw new EntityDoesNotExistsException(BusinessServiceModel.class, postData.getCode());
-        }
+		ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(postData.getServiceTemplateCode(), currentUser.getProvider());
+		if (serviceTemplate == null) {
+			throw new EntityDoesNotExistsException(ServiceTemplate.class, postData.getServiceTemplateCode());
+		}
 
-        businessServiceService.update(BusinessServiceModelDto.fromDTO(postData, bsm), currentUser);
-    }
+		try {
+			businessServiceService.create(postData.getCode(), postData.getDescription(), postData.isDuplicatePricePlan(), postData.isDuplicateService(), serviceModelScript,
+					serviceTemplate, currentUser);
+		} catch (BusinessException e) {
+			throw new MeveoApiException(e.getMessage());
+		}
+	}
 
-    public BusinessServiceModelDto find(String businessServiceModelCode, Provider provider) throws MeveoApiException {
-        if (StringUtils.isBlank(businessServiceModelCode)) {
-            missingParameters.add("businessServiceModelCode");
-        }
-        handleMissingParameters();
+	public void update(BusinessServiceModelDto postData, User currentUser) throws MeveoApiException {
+		if (StringUtils.isBlank(postData.getCode())) {
+			missingParameters.add("code");
+		}
 
-        BusinessServiceModel businessServiceModel = businessServiceService.findByCode(businessServiceModelCode, provider);
-        if (businessServiceModel != null) {
-            BusinessServiceModelDto businessServiceModelDto = new BusinessServiceModelDto();
-            businessServiceModelDto.setCode(businessServiceModel.getCode());
-            businessServiceModelDto.setDescription(businessServiceModel.getDescription());
-            if (businessServiceModel.getServiceTemplate() != null) {
-                businessServiceModelDto.setServiceTemplateCode(businessServiceModel.getServiceTemplate().getCode());
-            }
-            if (businessServiceModel.getScript() != null) {
-                businessServiceModelDto.setScriptCode(businessServiceModel.getScript().getCode());
-            }
+		handleMissingParameters();
 
-            return businessServiceModelDto;
-        }
+		BusinessServiceModel bsm = businessServiceService.findByCode(postData.getCode(), currentUser.getProvider());
+		if (bsm == null) {
+			throw new EntityDoesNotExistsException(BusinessServiceModel.class, postData.getCode());
+		}
 
-        throw new EntityDoesNotExistsException(BusinessServiceModel.class, businessServiceModelCode);
+		ServiceModelScript serviceModelScript = serviceModelScriptService.findByCode(postData.getScriptCode(), currentUser.getProvider());
+		if (serviceModelScript == null) {
+			throw new EntityDoesNotExistsException(ServiceModelScript.class, postData.getScriptCode());
+		}
 
-    }
+		ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(postData.getServiceTemplateCode(), currentUser.getProvider());
+		if (serviceTemplate == null) {
+			throw new EntityDoesNotExistsException(ServiceTemplate.class, postData.getServiceTemplateCode());
+		}
 
-    public void remove(String businessServiceModelCode, Provider provider) throws MeveoApiException {
-        if (StringUtils.isBlank(businessServiceModelCode)) {
-            missingParameters.add("businessServiceModelCode");
-        }
+		try {
+			businessServiceService.update(bsm, postData.getDescription(), postData.isDuplicatePricePlan(), postData.isDuplicateService(), serviceModelScript, serviceTemplate,
+					currentUser);
+		} catch (BusinessException e) {
+			throw new MeveoApiException(e.getMessage());
+		}
+	}
 
-        handleMissingParameters();
-        BusinessServiceModel businessServiceModel = businessServiceService.findByCode(businessServiceModelCode, provider);
-        if (businessServiceModel == null) {
-            throw new EntityDoesNotExistsException(BusinessServiceModel.class, businessServiceModelCode);
-        }
+	public BusinessServiceModelDto find(String businessServiceModelCode, Provider provider) throws MeveoApiException {
+		if (StringUtils.isBlank(businessServiceModelCode)) {
+			missingParameters.add("businessServiceModelCode");
+		}
+		handleMissingParameters();
 
-        businessServiceService.remove(businessServiceModel);
-    }
+		BusinessServiceModel businessServiceModel = businessServiceService.findByCode(businessServiceModelCode, provider);
+		if (businessServiceModel != null) {
+			BusinessServiceModelDto businessServiceModelDto = new BusinessServiceModelDto();
+			businessServiceModelDto.setCode(businessServiceModel.getCode());
+			businessServiceModelDto.setDescription(businessServiceModel.getDescription());
+			if (businessServiceModel.getServiceTemplate() != null) {
+				businessServiceModelDto.setServiceTemplateCode(businessServiceModel.getServiceTemplate().getCode());
+			}
+			if (businessServiceModel.getScript() != null) {
+				businessServiceModelDto.setScriptCode(businessServiceModel.getScript().getCode());
+			}
 
-    public void createOrUpdate(BusinessServiceModelDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        BusinessServiceModel businessServiceModel = businessServiceService.findByCode(postData.getCode(), currentUser.getProvider());
-        if (businessServiceModel == null) {
-            // create
-            create(postData, currentUser);
-        } else {
-            // update
-            update(postData, currentUser);
-        }
-    }
+			return businessServiceModelDto;
+		}
+
+		throw new EntityDoesNotExistsException(BusinessServiceModel.class, businessServiceModelCode);
+
+	}
+
+	public void remove(String businessServiceModelCode, Provider provider) throws MeveoApiException {
+		if (StringUtils.isBlank(businessServiceModelCode)) {
+			missingParameters.add("businessServiceModelCode");
+		}
+
+		handleMissingParameters();
+		BusinessServiceModel businessServiceModel = businessServiceService.findByCode(businessServiceModelCode, provider);
+		if (businessServiceModel == null) {
+			throw new EntityDoesNotExistsException(BusinessServiceModel.class, businessServiceModelCode);
+		}
+
+		businessServiceService.remove(businessServiceModel);
+	}
+
+	public void createOrUpdate(BusinessServiceModelDto postData, User currentUser) throws MeveoApiException {
+		BusinessServiceModel businessServiceModel = businessServiceService.findByCode(postData.getCode(), currentUser.getProvider());
+		if (businessServiceModel == null) {
+			// create
+			create(postData, currentUser);
+		} else {
+			// update
+			update(postData, currentUser);
+		}
+	}
 }

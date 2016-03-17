@@ -201,6 +201,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			serviceInstance.getUsageChargeInstances().add(chargeInstance);
 		}
 
+		// execute instantiation script
+		if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+			Map<String, Object> scriptContext = new HashMap<>();
+			scriptContext.put("serviceInstance", serviceInstance);
+
+			serviceScriptService.instantiate(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), scriptContext, creator,
+					creator.getProvider());
+		}
 	}
 
 	/**

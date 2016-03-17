@@ -13,6 +13,7 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -26,6 +27,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -33,6 +35,9 @@ import org.meveo.service.base.BusinessService;
  **/
 @Stateless
 public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
+
+	@Inject
+	private BusinessServiceService businessServiceService;
 
 	@Inject
 	private PricePlanMatrixService pricePlanMatrixService;
@@ -106,6 +111,15 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 				}
 			}
 
+			// get the BSM from BOM
+			BusinessServiceModel bsm = null;
+			for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {
+				if (item.getItemClass().equals(BusinessServiceModel.class.getName())) {
+					bsm = businessServiceService.findByCode(item.getItemCode(), currentUser.getProvider());
+					break;
+				}
+			}
+
 			for (OfferServiceTemplate offerServiceTemplate : bomOffer.getOfferServiceTemplates()) {
 				ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
 
@@ -123,7 +137,7 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 				try {
 					BeanUtils.copyProperties(newServiceTemplate, serviceTemplate);
 					newServiceTemplate.setCode(prefix + serviceTemplate.getCode());
-					newServiceTemplate.setBusinessServiceModel(serviceTemplate.getBusinessServiceModel());
+					newServiceTemplate.setBusinessServiceModel(bsm);
 					newServiceTemplate.setAuditable(null);
 					newServiceTemplate.setId(null);
 					newServiceTemplate.clearUuid();
@@ -307,7 +321,7 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 							newChargeTemplate.setVersion(0);
 							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
 							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
-                            usageChargeTemplateService.create(newChargeTemplate, currentUser);
+							usageChargeTemplateService.create(newChargeTemplate, currentUser);
 
 							ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
