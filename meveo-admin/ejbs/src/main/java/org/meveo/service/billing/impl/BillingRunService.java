@@ -269,7 +269,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			if (invoice.getAmountWithoutTax() != null && invoice.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0) {
 				positiveInvoicesNumber++;
 				positiveInvoicesAmountHT = positiveInvoicesAmountHT.add(invoice.getAmountWithoutTax());
-				positiveInvoicesTaxAmount = positiveInvoicesTaxAmount.add(invoice.getAmountTax());
+				positiveInvoicesTaxAmount = positiveInvoicesTaxAmount.add(invoice.getAmountTax() == null ? BigDecimal.ZERO : invoice.getAmountTax());
 				positiveInvoicesAmount = positiveInvoicesAmount.add(invoice.getAmountWithTax());
 			} else if (invoice.getAmountWithoutTax() == null
 					|| invoice.getAmountWithoutTax().compareTo(BigDecimal.ZERO) == 0) {

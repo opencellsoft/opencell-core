@@ -81,6 +81,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 	@Inject
 	private AccessService accessService;
 	
+	@Inject	
+	private UserAccountService userAccountService;
+	
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
 	/*
@@ -187,6 +190,8 @@ public class RatingService extends BusinessService<WalletOperation>{
 			String criteria3, Date startdate, Date endDate, ChargeApplicationModeEnum mode) throws BusinessException {
 
 		WalletOperation result = new WalletOperation();
+		//TODO do this in the right place (one time by userAccount)				
+	    boolean  isExonerated = userAccountService.isExonerated(chargeInstance.getSubscription().getUserAccount(), chargeInstance.getProvider()); 
 
 		if (chargeInstance instanceof RecurringChargeInstance) {
 			result.setSubscriptionDate(subscriptionDate);
@@ -215,7 +220,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		}
 		result.setCode(code);
 		result.setDescription(chargeInstance.getDescription());
-		result.setTaxPercent(taxPercent);
+		result.setTaxPercent(isExonerated?BigDecimal.ZERO:taxPercent);
 		result.setCurrency(tCurrency.getCurrency());
 		result.setStartDate(startdate);
 		result.setEndDate(endDate);
@@ -333,19 +338,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 			if (ratePrice == null || ratePrice.getAmountWithoutTax() == null) {
 				throw new BusinessException("Invalid price plan for provider " + providerCode + " and charge code "
 						+ bareWalletOperation.getCode());
-			} else {
-				log.debug("found ratePrice:" + ratePrice.getId());
-				unitPriceWithoutTax = ratePrice.getAmountWithoutTax();
-				unitPriceWithTax = ratePrice.getAmountWithTax();
-				if(ratePrice.getAmountWithoutTaxEL()!=null){
-					unitPriceWithoutTax = getExpressionValue(ratePrice.getAmountWithoutTaxEL(),ratePrice, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),unitPriceWithoutTax);
-				}
-				if(ratePrice.getAmountWithTaxEL()!=null){
-					unitPriceWithTax = getExpressionValue(ratePrice.getAmountWithTaxEL(),ratePrice, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),unitPriceWithoutTax);
-				}
-
+			} 
+			log.debug("found ratePrice:" + ratePrice.getId());
+			unitPriceWithoutTax = ratePrice.getAmountWithoutTax();
+			unitPriceWithTax = ratePrice.getAmountWithTax();
+			if(ratePrice.getAmountWithoutTaxEL()!=null){
+				unitPriceWithoutTax = getExpressionValue(ratePrice.getAmountWithoutTaxEL(),ratePrice, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),unitPriceWithoutTax);
 			}
-
+			if(ratePrice.getAmountWithTaxEL()!=null){
+				unitPriceWithTax = getExpressionValue(ratePrice.getAmountWithTaxEL(),ratePrice, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),unitPriceWithoutTax);
+			}
 		}
 		// if the wallet operation correspond to a recurring charge that is
 		// shared, we divide the price by the number of

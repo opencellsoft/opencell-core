@@ -83,6 +83,9 @@ public class UsageRatingService {
     private RatingCacheContainerProvider ratingCacheContainerProvider;
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
+    
+    @Inject
+    private UserAccountService userAccountService;
 
 	// @PreDestroy
 	// accessing Entity manager in predestroy is bugged in jboss7.1.3
@@ -157,6 +160,8 @@ public class UsageRatingService {
 					+ invoiceSubCat.getCode());
 		}
 
+        boolean isExonerated =  userAccountService.isExonerated(chargeInstance.getSubscription().getUserAccount(), provider);
+        
 		TradingCurrency currency = chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount()
 				.getTradingCurrency();
 		Tax tax = invoiceSubcategoryCountry.getTax();
@@ -179,7 +184,7 @@ public class UsageRatingService {
 		}
 
 		walletOperation.setQuantity( NumberUtil.getInChargeUnit(walletOperation.getQuantity(), chargeInstance.getChargeTemplate().getUnitMultiplicator(), chargeInstance.getChargeTemplate().getUnitNbDecimal(), chargeInstance.getChargeTemplate().getRoundingMode()));
-		walletOperation.setTaxPercent(tax.getPercent());
+		walletOperation.setTaxPercent(isExonerated ? BigDecimal.ZERO : tax.getPercent());
 		walletOperation.setStartDate(null);
 		walletOperation.setEndDate(null);
 		walletOperation.setCurrency(currency.getCurrency());
@@ -246,7 +251,7 @@ public class UsageRatingService {
 			synchronized (periodCache) {
 				BigDecimal countedValue = cachedCharge.getInChargeUnit(edr.getQuantity());
 				log.debug("value to deduce {} * {} = {} from current value {}",
-						new Object[] { edr.getQuantity(), cachedCharge.getUnityMultiplicator(), countedValue, periodCache.getValue() });
+						new Object[] { cachedCharge.getInChargeUnit(edr.getQuantity()), cachedCharge.getUnityMultiplicator(), countedValue, periodCache.getValue() });
 
 				if (periodCache.getLevel() == null) {
 					deducedQuantity = countedValue;
@@ -269,8 +274,7 @@ public class UsageRatingService {
 					// set the cache element to dirty so it is saved to DB when
 					// shutdown the server
 					// periodCache.setDbDirty(true);
-					counterInstanceService.updatePeriodValue(periodCache.getCounterPeriodId(), periodCache.getValue(),
-							currentUser);
+					counterInstanceService.updatePeriodValue(periodCache.getCounterPeriodId(), periodCache.getValue(),currentUser);
 				}
 
 				// put back the deduced quantity in charge unit
@@ -315,10 +319,10 @@ public class UsageRatingService {
 			Provider provider = charge.getProvider();
 			UsageChargeInstance chargeInstance = usageChargeInstanceService.findById(charge.getId());
 			if (deducedQuantity == null) {
-				rateEDRwithMatchingCharge(walletOperation, edr, charge.getInChargeUnit(edr.getQuantity()), charge, chargeInstance, provider);
+				rateEDRwithMatchingCharge(walletOperation, edr, edr.getQuantity(), charge, chargeInstance, provider);
 			} else {
 				edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
-				rateEDRwithMatchingCharge(walletOperation, edr, charge.getInChargeUnit(deducedQuantity), charge, chargeInstance, provider);
+				rateEDRwithMatchingCharge(walletOperation, edr, deducedQuantity, charge, chargeInstance, provider);
 			}
 			
 			walletOperationService.chargeWalletOperation(walletOperation, currentUser, provider);

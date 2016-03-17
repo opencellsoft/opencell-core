@@ -42,6 +42,9 @@ public class RealtimeChargingService {
 
 	@Inject
 	private WalletOperationService walletOperationService;
+	
+	@Inject
+	private UserAccountService userAccountService;
 
 
 	public BigDecimal getApplicationPrice(BillingAccount ba,
@@ -100,9 +103,11 @@ public class RealtimeChargingService {
 							+ " and trading country="
 							+ tradingCountry.getCountryCode());
 		}
+		
+		  boolean isExonerated = userAccountService.isExonerated(null, provider);
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
-		if (tax == null) {
+		if (tax == null && !isExonerated ) {
 			throw new IncorrectChargeTemplateException(
 					"no tax exists for invoiceSubcategoryCountry id="
 							+ invoiceSubcategoryCountry.getId());
@@ -126,7 +131,7 @@ public class RealtimeChargingService {
 
 		op.setDescription("");
 		op.setQuantity(NumberUtil.getInChargeUnit(quantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));    
-		op.setTaxPercent(tax.getPercent());
+		op.setTaxPercent(isExonerated ? BigDecimal.ZERO : tax.getPercent());
 		op.setCurrency(currency.getCurrency());
 		op.setStartDate(null);
 		op.setEndDate(null);

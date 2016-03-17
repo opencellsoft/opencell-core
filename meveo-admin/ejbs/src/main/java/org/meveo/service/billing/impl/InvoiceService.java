@@ -120,6 +120,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 	@Inject
 	private SellerService sellerService;
+	
+	
+	@Inject
+	private UserAccountService userAccountService;
 
 	@Inject
 	private RatedTransactionService ratedTransactionService;
@@ -927,8 +931,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		boolean entreprise = invoice.getBillingAccount().getProvider().isEntreprise();
 		int rounding = invoice.getBillingAccount().getProvider().getRounding() == null ? 2 : invoice
 				.getBillingAccount().getProvider().getRounding();
-		boolean exoneratedFromTaxes = invoice.getBillingAccount().getCustomerAccount().getCustomer()
-				.getCustomerCategory().getExoneratedFromTaxes();
+		boolean exoneratedFromTaxes = userAccountService.isExonerated(invoice.getBillingAccount().getUsersAccounts().get(0), invoice.getBillingAccount().getProvider());
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
 		
 		Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
@@ -1007,7 +1010,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 
 		if (invoice.getAmountWithoutTax() != null) {
-			invoice.setAmountWithTax(invoice.getAmountWithoutTax().add(invoice.getAmountTax()));
+			invoice.setAmountWithTax(invoice.getAmountWithoutTax().add(invoice.getAmountTax() == null ? BigDecimal.ZERO  : invoice.getAmountTax()));
 		}
 
 		if (!entreprise && biggestSubCat != null && !exoneratedFromTaxes) {
