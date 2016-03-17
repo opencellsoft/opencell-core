@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 @HandlesExceptions
 public class ExceptionHandler {
 
-	private static final Logger log = LoggerFactory.getLogger(ExceptionHandler.class);
+	/*private static final Logger log = LoggerFactory.getLogger(ExceptionHandler.class);
 	
 	@Inject
 	CreateEventHelper createEventHelper;
@@ -129,6 +129,6 @@ public class ExceptionHandler {
 		} catch (Exception e) {
 			log.error("failed to redirect in handleBusinessException exception={}",e.getMessage(),e);
 		}
-	}
+	}*/
 
 }

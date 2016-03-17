@@ -12,6 +12,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BusinessOfferService;
@@ -31,9 +32,8 @@ public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 
 	private Map<String, String> offerCFVs = new HashMap<>();
 	private String serviceCodePrefix;
-	private List<ServiceTemplate> serviceTemplatesToActivate;
 	private Map<String, String> serviceCFVs = new HashMap<>();
-	DualListModel<ServiceTemplate> dualListModel = new DualListModel<>();
+	DualListModel<ServiceTemplate> serviceDualListModel;
 
 	private String bomOfferInstancePrefix;
 
@@ -55,8 +55,10 @@ public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 		Map<String, Object> options = new HashMap<String, Object>();
 		options.put("resizable", false);
 		options.put("draggable", false);
+		options.put("scrollable", false);
 		options.put("modal", true);
-		options.put("width", 400);
+		options.put("width", 700);
+		options.put("height", 400);
 
 		Map<String, List<String>> params = new HashMap<String, List<String>>();
 		List<String> values = new ArrayList<String>();
@@ -67,7 +69,12 @@ public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 	}
 
 	public void createOfferFromBOM() throws BusinessException {
-		businessOfferService.createOfferFromBOM(getEntity(), bomOfferInstancePrefix, null, currentUser);		
+		List<String> serviceCodes = new ArrayList<String>();
+		for (ServiceTemplate st : serviceDualListModel.getTarget()) {
+			serviceCodes.add(st.getCode());
+		}
+
+		businessOfferService.createOfferFromBOM(getEntity(), bomOfferInstancePrefix, serviceCodes, currentUser);
 		RequestContext.getCurrentInstance().closeDialog(getEntity());
 	}
 
@@ -75,14 +82,27 @@ public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 		messages.info(new BundleKey("messages", "message.bom.offerCreation.ok"));
 	}
 
-	public DualListModel<ServiceTemplate> getServiceTemplates() {
-		List<ServiceTemplate> targetList = new ArrayList<>();
-		// FIXME - for a proper dual list implementation see
-		// UserBean.get/setDualList and saveOrUpdate methods
-		// dualListModel.setSource(entity.getOfferTemplate().getServiceTemplates());
-		dualListModel.setTarget(targetList);
+	public DualListModel<ServiceTemplate> getServiceDualListModel() {
+		if (serviceDualListModel == null) {
+			List<ServiceTemplate> perksSource = null;
+			if (getEntity() != null) {
+				List<ServiceTemplate> serviceTemplates = new ArrayList<>();
+				for (OfferServiceTemplate ost : entity.getOfferTemplate().getOfferServiceTemplates()) {
+					if (ost.getServiceTemplate() != null) {
+						serviceTemplates.add(ost.getServiceTemplate());
+					}
+				}
+				perksSource = serviceTemplates;
+			}
 
-		return dualListModel;
+			serviceDualListModel = new DualListModel<ServiceTemplate>(perksSource, new ArrayList<ServiceTemplate>());
+		}
+
+		return serviceDualListModel;
+	}
+
+	public void setServiceDualListModel(DualListModel<ServiceTemplate> stDM) {
+		serviceDualListModel = stDM;
 	}
 
 	public void onCreateOfferFromBOM(SelectEvent event) {
@@ -95,14 +115,6 @@ public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 
 	public void setServiceCodePrefix(String serviceCodePrefix) {
 		this.serviceCodePrefix = serviceCodePrefix;
-	}
-
-	public List<ServiceTemplate> getServiceTemplatesToActivate() {
-		return serviceTemplatesToActivate;
-	}
-
-	public void setServiceTemplatesToActivate(List<ServiceTemplate> serviceTemplatesToActivate) {
-		this.serviceTemplatesToActivate = serviceTemplatesToActivate;
 	}
 
 	public Map<String, String> getServiceCFVs() {

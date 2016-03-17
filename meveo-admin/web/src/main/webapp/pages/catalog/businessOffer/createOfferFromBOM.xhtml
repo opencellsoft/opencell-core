@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:p="http://primefaces.org/ui">
 
 <ui:define name="metadata">
@@ -27,17 +28,30 @@
 <h:body>
 	<h:form>
 		<p:panel>
+			<h1>#{messages['action.createOfferFromBOM']}</h1>
+			<p:messages id="popupMessages"></p:messages>			
 			<h:panelGroup layout="block" styleClass="form-panel">
 				<h:panelGroup layout="block" styleClass="formFieldGroup">
 					<p:outputLabel value="Prefix" for="prefix"></p:outputLabel>
-					<p:inputText id="prefix"
+					<p:inputText id="prefix" required="true"
 						value="#{businessOfferBean.bomOfferInstancePrefix}"></p:inputText>
+				</h:panelGroup>
+
+				<h:panelGroup layout="block" styleClass="formFieldGroup">
+					<p:outputLabel value="#{messages['menu.serviceTemplates']}"
+						for="serviceTemplates"></p:outputLabel>
+					<p:pickList id="serviceTemplates" required="true"
+						value="#{businessOfferBean.serviceDualListModel}" var="st"
+						itemLabel="#{st.code}" itemValue="#{st}">
+						<s:objectConverter />
+					</p:pickList>
 				</h:panelGroup>
 			</h:panelGroup>
 
 			<h:panelGroup layout="block" styleClass="form-panel-actions">
 				<p:commandButton value="#{messages['action.createOfferFromBOM']}"
-					action="#{businessOfferBean.createOfferFromBOM()}"></p:commandButton>
+					action="#{businessOfferBean.createOfferFromBOM()}"
+					update="popupMessages"></p:commandButton>
 			</h:panelGroup>
 		</p:panel>
 	</h:form>

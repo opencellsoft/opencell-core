@@ -121,7 +121,7 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 			}
 
 			for (OfferServiceTemplate offerServiceTemplate : bomOffer.getOfferServiceTemplates()) {
-				ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
+				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode(), currentUser.getProvider());
 
 				boolean serviceFound = false;
 				for (String serviceCode : serviceCodes) {
