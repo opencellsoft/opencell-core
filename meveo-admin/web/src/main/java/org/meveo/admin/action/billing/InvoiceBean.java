@@ -155,7 +155,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 				invoice.setBillingAccount(adjustedInvoice.getBillingAccount());
 				invoice.setBillingRun(adjustedInvoice.getBillingRun());
 				invoice.setDueDate(adjustedInvoice.getDueDate());
-				invoice.setInvoiceDate(adjustedInvoice.getInvoiceDate());
+				invoice.setInvoiceDate(new Date());				
 				invoice.setPaymentMethod(adjustedInvoice.getPaymentMethod());
 				invoice.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(invoice, getCurrentUser()));
 				invoice.setInvoiceTypeEnum(InvoiceTypeEnum.CREDIT_NOTE_ADJUST);
