@@ -45,12 +45,14 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.service.medina.impl.AccessService;
 
 @Stateless
 public class RatingService extends BusinessService<WalletOperation>{
@@ -75,6 +77,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 	
 	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
+	
+	@Inject
+	private AccessService accessService;
 	
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -265,7 +270,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 				boolean conditionCheck = triggeredEDRTemplate.getConditionEl() == null
 						|| "".equals(triggeredEDRTemplate.getConditionEl())
-						|| matchExpression(triggeredEDRTemplate.getConditionEl(), result, ua);
+						|| matchExpression(triggeredEDRTemplate.getConditionEl(), result, ua,result.getPriceplan());
 				log.debug("checking condition for {} : {} -> {}", triggeredEDRTemplate.getCode(),
 						triggeredEDRTemplate.getConditionEl(), conditionCheck);
 				if (conditionCheck) {
@@ -516,7 +521,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			}
 			if (!StringUtils.isBlank(pricePlan.getCriteriaEL())) {
 				UserAccount ua = bareOperation.getWallet().getUserAccount();
-				if (!matchExpression(pricePlan.getCriteriaEL(), bareOperation, ua)) {
+				if (!matchExpression(pricePlan.getCriteriaEL(), bareOperation, ua,pricePlan)) {
 					log.debug("The operation is not compatible with price plan criteria EL: "
 							+ pricePlan.getCriteriaEL());
 					continue;
@@ -662,6 +667,13 @@ public class RatingService extends BusinessService<WalletOperation>{
 		if(amount!=null){
 			userMap.put("amount",amount.doubleValue());
 		}
+		if(expression.indexOf("access") >= 0 && bareOperation.getEdr()!=null && bareOperation.getEdr().getAccessCode()!=null){
+			Access access= accessService.findByUserIdAndSubscription(bareOperation.getEdr().getAccessCode(),bareOperation.getChargeInstance().getSubscription());
+            userMap.put("access", access);
+		}
+		if(expression.indexOf("priceplan") >= 0){
+			userMap.put("priceplan", priceplan);
+		}
 		if(expression.indexOf("charge") >= 0){
 			ChargeTemplate charge=bareOperation.getChargeInstance().getChargeTemplate();
             userMap.put("charge", charge);
@@ -709,7 +721,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		return result;
 	}
 	
-	private boolean matchExpression(String expression, WalletOperation bareOperation, UserAccount ua)
+	private boolean matchExpression(String expression, WalletOperation bareOperation, UserAccount ua,PricePlanMatrix priceplan)
 			throws BusinessException {
 		Boolean result = true;
 		if (StringUtils.isBlank(expression)) {
@@ -717,6 +729,13 @@ public class RatingService extends BusinessService<WalletOperation>{
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", bareOperation);
+		if(expression.indexOf("access") >= 0 && bareOperation.getEdr()!=null && bareOperation.getEdr().getAccessCode()!=null){
+			Access access= accessService.findByUserIdAndSubscription(bareOperation.getEdr().getAccessCode(),bareOperation.getChargeInstance().getSubscription());
+            userMap.put("access", access);
+		}
+		if(expression.indexOf("priceplan") >= 0){
+			userMap.put("priceplan", priceplan);
+		}
 		if(expression.indexOf("charge") >= 0){
 			ChargeTemplate charge=bareOperation.getChargeInstance().getChargeTemplate();
             userMap.put("charge", charge);
@@ -757,6 +776,10 @@ public class RatingService extends BusinessService<WalletOperation>{
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", walletOperation);
+		if(expression.indexOf("access") >= 0 && walletOperation.getEdr()!=null && walletOperation.getEdr().getAccessCode()!=null){
+			Access access= accessService.findByUserIdAndSubscription(walletOperation.getEdr().getAccessCode(),walletOperation.getChargeInstance().getSubscription());
+            userMap.put("access", access);
+		}
 		if(expression.indexOf("charge") >= 0){
 			ChargeTemplate charge=walletOperation.getChargeInstance().getChargeTemplate();
             userMap.put("charge", charge);
@@ -798,6 +821,10 @@ public class RatingService extends BusinessService<WalletOperation>{
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", walletOperation);
+		if(expression.indexOf("access") >= 0 && walletOperation.getEdr()!=null && walletOperation.getEdr().getAccessCode()!=null){
+			Access access= accessService.findByUserIdAndSubscription(walletOperation.getEdr().getAccessCode(),walletOperation.getChargeInstance().getSubscription());
+            userMap.put("access", access);
+		}
 		if(expression.indexOf("charge") >= 0){
 			ChargeTemplate charge=walletOperation.getChargeInstance().getChargeTemplate();			
             userMap.put("charge", charge);
