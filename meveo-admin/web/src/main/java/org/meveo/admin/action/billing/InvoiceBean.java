@@ -151,15 +151,14 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		if (invoice.isTransient() && adjustedInvoiceIdParam != null && adjustedInvoiceIdParam.get() != null) {
 			if (invoice.getAdjustedInvoice() == null) {
 				Invoice adjustedInvoice = invoiceService.findById(adjustedInvoiceIdParam.get());
+				invoice.setInvoiceDate(new Date());
 				invoice.setAdjustedInvoice(adjustedInvoice);
 				invoice.setBillingAccount(adjustedInvoice.getBillingAccount());
 				invoice.setBillingRun(adjustedInvoice.getBillingRun());
-				invoice.setDueDate(adjustedInvoice.getDueDate());
-				invoice.setInvoiceDate(adjustedInvoice.getInvoiceDate());
+				invoice.setDueDate(adjustedInvoice.getDueDate());				
 				invoice.setPaymentMethod(adjustedInvoice.getPaymentMethod());
 				invoice.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(invoice, getCurrentUser()));
-				invoice.setInvoiceTypeEnum(InvoiceTypeEnum.CREDIT_NOTE_ADJUST);
-
+				invoice.setInvoiceTypeEnum(InvoiceTypeEnum.CREDIT_NOTE_ADJUST);				
 				// duplicate rated transaction for detailed
 				// invoice adjustment
 				if (isDetailed()) {
