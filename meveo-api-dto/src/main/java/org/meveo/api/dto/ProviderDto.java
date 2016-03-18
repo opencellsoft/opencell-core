@@ -43,6 +43,8 @@ public class ProviderDto extends BaseDto {
 	private Boolean displayOffers = false;
 	private Boolean displayEdrs = false;
 	private Boolean displayProvider = false;
+	private Boolean displayCfAsXML = false;
+	private Boolean displayPricePlans = false;
 	private boolean displayFreeTransacInInvoice;
 	private Boolean displayDetail = true;
 	
@@ -90,6 +92,8 @@ public class ProviderDto extends BaseDto {
 			this.setDisplayEdrs(invoiceConfiguration.getDisplayEdrs());
 			this.setDisplayProvider(invoiceConfiguration.getDisplayProvider());
 			this.setDisplayDetail(invoiceConfiguration.getDisplayDetail());
+			this.setDisplayPricePlans(invoiceConfiguration.getDisplayPricePlans());
+			this.setDisplayCfAsXML(invoiceConfiguration.getDisplayCfAsXML());
 		}
 		
 		if (e.getInvoiceAdjustmentPrefix() != null) {
@@ -298,6 +302,22 @@ public class ProviderDto extends BaseDto {
 		this.displayDetail = displayDetail;
 	}
 
+	public Boolean getDisplayCfAsXML() {
+		return displayCfAsXML;
+	}
+
+	public void setDisplayCfAsXML(Boolean displayCfAsXML) {
+		this.displayCfAsXML = displayCfAsXML;
+	}
+
+	public Boolean getDisplayPricePlans() {
+		return displayPricePlans;
+	}
+
+	public void setDisplayPricePlans(Boolean displayPricePlans) {
+		this.displayPricePlans = displayPricePlans;
+	}
+
 	@Override
 	public String toString() {
 		return "ProviderDto [code=" + code + ", description=" + description
@@ -310,7 +330,8 @@ public class ProviderDto extends BaseDto {
 				+ invoicePrefix + ", currentInvoiceNb=" + currentInvoiceNb
 				+ ", displaySubscriptions=" + displaySubscriptions
 				+ ", displayServices=" + displayServices + ", displayOffers="
-				+ displayOffers + ", displayEdrs=" + displayEdrs
+				+ displayOffers + ", displayEdrs=" + displayEdrs+ ", displayPricePlans=" + displayPricePlans
+				+ ", displayCfAsXML=" + displayCfAsXML
 				+ ", displayProvider=" + displayProvider
 				+ ", displayFreeTransacInInvoice="
 				+ displayFreeTransacInInvoice + ", displayDetail="
