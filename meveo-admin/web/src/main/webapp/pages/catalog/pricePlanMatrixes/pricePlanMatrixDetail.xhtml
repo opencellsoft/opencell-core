@@ -95,7 +95,7 @@
 		</p:panel>
 
 			<hftl:formPanel label="#{messages['pricePlanMatrix.panel']}"
-			    showFormButtons="true" 
+			    ajaxSubmit="true" submitPartialProcess=":formPricePlan:tabView"
 				backingBean="#{pricePlanMatrixBean}" formId="formPricePlan" showBackButton="#{pricePlanMatrixBean.chargeTemplateId eq null or pricePlanMatrixBean.chargeTemplateId eq 0}">
 
 				<p:tabView id="tabView"
@@ -196,11 +196,8 @@
 							field="maxSubscriptionAgeInMonth" maxValue="9999" maxlength="4" />
 
 					</p:tab>
-					<p:tab title="#{messages['menu.customFieldTemplates']}" id="tab2"
-						rendered="#{customFieldDataEntryBean.getGroupedFieldTemplates(pricePlanMatrixBean.entity).childCount > 0}">
-						<hftl:customFields backingBean="#{pricePlanMatrixBean}"
+					<hftl:customFields backingBean="#{pricePlanMatrixBean}"
 							messagesId=":formPricePlan:messages" />
-					</p:tab>
 				</p:tabView>
 				<ui:param name="buttons" value="true" />
 				<ui:define name="buttons">

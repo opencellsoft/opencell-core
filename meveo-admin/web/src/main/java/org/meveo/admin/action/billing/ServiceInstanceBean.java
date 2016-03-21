@@ -118,6 +118,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
         log.info("activateService serviceInstanceId:" + entity.getId());
 
         try {
+            entity = serviceInstanceService.refreshOrRetrieve(entity);
             serviceInstanceService.serviceActivation(entity, null, null, getCurrentUser());
             messages.info(new BundleKey("messages", "activation.activateSuccessful"));
 
@@ -181,6 +182,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
         log.info("closeAccount serviceInstanceId:" + entity.getId());
 
         try {
+            entity = serviceInstanceService.refreshOrRetrieve(entity);
             serviceInstanceService.serviceSuspension(entity, new Date(), getCurrentUser());
             messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
 
