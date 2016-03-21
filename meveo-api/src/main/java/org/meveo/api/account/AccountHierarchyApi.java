@@ -1154,9 +1154,11 @@ public class AccountHierarchyApi extends BaseApi {
 
                                         if (!StringUtils.isBlank(billingAccountDto.getBillingCycle())) {
                                             BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingAccountDto.getBillingCycle(), provider);
-                                            if (billingCycle != null) {
-                                                billingAccount.setBillingCycle(billingCycle);
-                                            }
+											if (billingCycle != null) {
+												billingAccount.setBillingCycle(billingCycle);
+											} else {
+												throw new EntityDoesNotExistsException(BillingCycle.class, billingAccountDto.getBillingCycle());
+											}
                                         } else {
                                             missingParameters.add("billingAccount.billingCycle");
                                             handleMissingParameters();
