@@ -48,27 +48,18 @@
 				field="amountWithoutTax" />
 			<hftl:searchField label="#{messages['invoice.amountTax']}"
 				field="amountTax" />
-			<hftl:searchField label="#{messages['invoice.amountWithTax']}"
-				field="amountWithTax" />
-			<hftl:searchField label="#{messages['invoice.paymentMethod']}"
-				field="paymentMethod"/>
-			<hftl:searchField label="#{messages['invoice.alias']}" field="alias" />
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['invoices.title']}"
 			backingBean="#{invoiceBean}" id="datatable_invoicesId" >
-			<hftl:column label="#{messages['invoice.billingAccount']}" field="billingAccount.code" valueIdField="billingAccount.id" entityView="billingAccountDetail" backView="invoices" width="15%"/>
 			<hftl:column label="#{messages['invoice.invoiceNumber']}" field="invoiceNumber" valueIdField="id" entityView="invoiceDetail"/>
+			<hftl:column label="#{messages['invoice.billingAccount']}" field="billingAccount.code" valueIdField="billingAccount.id" entityView="billingAccountDetail" backView="invoices" width="15%"/>
 			<hftl:column label="#{messages['invoice.invoiceType']}" field="invoiceTypeEnum.label" isMessage="true" />
 			<hftl:column label="#{messages['invoice.invoiceDate']}" field="invoiceDate" id="invoiceDate" />
 			<hftl:column label="#{messages['invoice.dueDate']}" field="dueDate" id="dueDate" /> 
 			<hftl:column label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />
 			<hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax" />
-			<hftl:column label="#{messages['invoice.detailed']}" field="isDetailedInvoice" />
-			<hftl:column label="#{messages['invoice.billingRun']}" field="billingRun.id" />
-			<hftl:column label="#{messages['invoice.alias']}" field="alias" />
 			<hftl:column label="#{messages['invoice.netToPay']}" field="netToPay" />
-			<hftl:column label="#{messages['invoice.paymentMethod']}" field="paymentMethod.label" isMessage="true" /> 
 		</hftl:dataList>
 
 	</ui:define>
