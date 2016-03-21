@@ -199,7 +199,7 @@
 					<p:tab title="#{messages['menu.customFieldTemplates']}" id="tab2"
 						rendered="#{customFieldDataEntryBean.getGroupedFieldTemplates(pricePlanMatrixBean.entity).childCount > 0}">
 						<hftl:customFields backingBean="#{pricePlanMatrixBean}"
-							messagesId=":tabView:customFieldTemplatesForm:messages" />
+							messagesId=":formPricePlan:messages" />
 					</p:tab>
 				</p:tabView>
 				<ui:param name="buttons" value="true" />
