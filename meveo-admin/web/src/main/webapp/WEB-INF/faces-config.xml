@@ -1760,20 +1760,20 @@
 		</navigation-case>
 		
 		<navigation-case>
-			<from-outcome>businessOffers</from-outcome>
-			<to-view-id>/pages/catalog/businessOffer/businessOffers.xhtml
+			<from-outcome>businessOfferModels</from-outcome>
+			<to-view-id>/pages/catalog/businessOfferModels/businessOfferModels.xhtml
 			</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>businessOfferDetail</from-outcome>
-			<to-view-id>/pages/catalog/businessOffer/businessOfferDetail.xhtml
+			<from-outcome>businessOfferModelDetail</from-outcome>
+			<to-view-id>/pages/catalog/businessOfferModels/businessOfferModelDetail.xhtml
 			</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>businessOfferCreation</from-outcome>
-			<to-view-id>/pages/catalog/businessOffer/businessOfferCreation.xhtml
+			<to-view-id>/pages/catalog/businessOfferModels/businessOfferCreation.xhtml
 			</to-view-id>
 			<redirect />
 		</navigation-case>

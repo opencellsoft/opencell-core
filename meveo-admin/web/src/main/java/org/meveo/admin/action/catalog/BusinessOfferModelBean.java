@@ -15,7 +15,7 @@ import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.impl.BusinessOfferService;
+import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -23,12 +23,12 @@ import org.primefaces.model.DualListModel;
 
 @Named
 @ViewScoped
-public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
+public class BusinessOfferModelBean extends BaseBean<BusinessOfferModel> {
 
 	private static final long serialVersionUID = 8222060379099238520L;
 
 	@Inject
-	private BusinessOfferService businessOfferService;
+	private BusinessOfferModelService businessOfferModelService;
 
 	private Map<String, String> offerCFVs = new HashMap<>();
 	private String serviceCodePrefix;
@@ -37,18 +37,18 @@ public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 
 	private String bomOfferInstancePrefix;
 
-	public BusinessOfferBean() {
+	public BusinessOfferModelBean() {
 		super(BusinessOfferModel.class);
 	}
 
 	@Override
 	protected IPersistenceService<BusinessOfferModel> getPersistenceService() {
-		return businessOfferService;
+		return businessOfferModelService;
 	}
 
 	@Override
 	protected String getListViewName() {
-		return "businessOffers";
+		return "businessOfferModels";
 	}
 
 	public void createOfferFromBOMPopup() {
@@ -74,7 +74,7 @@ public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 			serviceCodes.add(st.getCode());
 		}
 
-		businessOfferService.createOfferFromBOM(getEntity(), bomOfferInstancePrefix, serviceCodes, currentUser);
+		businessOfferModelService.createOfferFromBOM(getEntity(), bomOfferInstancePrefix, serviceCodes, currentUser);
 		RequestContext.getCurrentInstance().closeDialog(getEntity());
 	}
 

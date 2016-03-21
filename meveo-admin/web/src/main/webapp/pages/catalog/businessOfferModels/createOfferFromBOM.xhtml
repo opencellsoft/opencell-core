@@ -10,9 +10,9 @@
 <ui:define name="metadata">
 	<f:metadata>
 		<f:event type="preRenderView"
-			listener="#{businessOfferBean.preRenderView}" />
+			listener="#{businessOfferModelBean.preRenderView}" />
 
-		<f:viewParam name="objectId" value="#{businessOfferBean.objectId}" />
+		<f:viewParam name="objectId" value="#{businessOfferModelBean.objectId}" />
 	</f:metadata>
 </ui:define>
 
@@ -34,14 +34,14 @@
 				<h:panelGroup layout="block" styleClass="formFieldGroup">
 					<p:outputLabel value="Prefix" for="prefix"></p:outputLabel>
 					<p:inputText id="prefix" required="true"
-						value="#{businessOfferBean.bomOfferInstancePrefix}"></p:inputText>
+						value="#{businessOfferModelBean.bomOfferInstancePrefix}"></p:inputText>
 				</h:panelGroup>
 
 				<h:panelGroup layout="block" styleClass="formFieldGroup">
 					<p:outputLabel value="#{messages['menu.serviceTemplates']}"
 						for="serviceTemplates"></p:outputLabel>
 					<p:pickList id="serviceTemplates" required="true"
-						value="#{businessOfferBean.serviceDualListModel}" var="st"
+						value="#{businessOfferModelBean.serviceDualListModel}" var="st"
 						itemLabel="#{st.code}" itemValue="#{st}">
 						<s:objectConverter />
 					</p:pickList>
@@ -50,7 +50,7 @@
 
 			<h:panelGroup layout="block" styleClass="form-panel-actions">
 				<p:commandButton value="#{messages['action.createOfferFromBOM']}"
-					action="#{businessOfferBean.createOfferFromBOM()}"
+					action="#{businessOfferModelBean.createOfferFromBOM()}"
 					update="popupMessages"></p:commandButton>
 			</h:panelGroup>
 		</p:panel>

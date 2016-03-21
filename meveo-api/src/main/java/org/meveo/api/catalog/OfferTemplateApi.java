@@ -22,7 +22,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.catalog.impl.BusinessOfferService;
+import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.OfferServiceTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -48,7 +48,7 @@ public class OfferTemplateApi extends BaseApi {
 	private OfferServiceTemplateService offerServiceTemplateService;
 
 	@Inject
-	private BusinessOfferService businessOfferService;
+	private BusinessOfferModelService businessOfferModelService;
 
 	@Inject
 	private OfferTemplateCategoryService offerTemplateCategoryService;
@@ -68,7 +68,7 @@ public class OfferTemplateApi extends BaseApi {
 
 		BusinessOfferModel businessOffer = null;
 		if (!StringUtils.isBlank(postData.getBomCode())) {
-			businessOffer = businessOfferService.findByCode(postData.getBomCode(), currentUser.getProvider());
+			businessOffer = businessOfferModelService.findByCode(postData.getBomCode(), currentUser.getProvider());
 			if (businessOffer == null) {
 				throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
 			}
@@ -157,7 +157,7 @@ public class OfferTemplateApi extends BaseApi {
 
 		BusinessOfferModel businessOffer = null;
 		if (!StringUtils.isBlank(postData.getBomCode())) {
-			businessOffer = businessOfferService.findByCode(postData.getBomCode(), currentUser.getProvider());
+			businessOffer = businessOfferModelService.findByCode(postData.getBomCode(), currentUser.getProvider());
 			if (businessOffer == null) {
 				throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
 			}

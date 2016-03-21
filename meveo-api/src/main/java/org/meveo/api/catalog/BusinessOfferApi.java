@@ -13,14 +13,14 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.service.catalog.impl.BusinessOfferService;
+import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.script.offer.OfferScriptService;
 
 @Stateless
 public class BusinessOfferApi extends BaseApi {
 
 	@Inject
-	private BusinessOfferService businessOfferService;
+	private BusinessOfferModelService businessOfferModelService;
 
 	@Inject
 	private OfferScriptService offerScriptService;
@@ -29,7 +29,7 @@ public class BusinessOfferApi extends BaseApi {
 		validate(postData);
 		if (!StringUtils.isBlank(postData.getBomCode())) {
 			// find bom
-			BusinessOfferModel businessOfferModel = businessOfferService.findByCode(postData.getBomCode(), currentUser.getProvider());
+			BusinessOfferModel businessOfferModel = businessOfferModelService.findByCode(postData.getBomCode(), currentUser.getProvider());
 			if (businessOfferModel == null) {
 				throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
 			}
@@ -46,7 +46,7 @@ public class BusinessOfferApi extends BaseApi {
 
 			OfferTemplate newOfferTemplate = null;
 			try {
-				newOfferTemplate = businessOfferService.createOfferFromBOM(businessOfferModel, postData.getPrefix(), postData.getServiceCodes(), currentUser);
+				newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getPrefix(), postData.getServiceCodes(), currentUser);
 			} catch (BusinessException e) {
 				throw new MeveoApiException(e.getMessage());
 			}

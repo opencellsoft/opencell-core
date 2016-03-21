@@ -34,10 +34,10 @@ import org.meveo.service.base.BusinessService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
+public class BusinessOfferModelService extends BusinessService<BusinessOfferModel> {
 
 	@Inject
-	private BusinessServiceService businessServiceService;
+	private BusinessServiceModelService businessServiceModelService;
 
 	@Inject
 	private PricePlanMatrixService pricePlanMatrixService;
@@ -115,7 +115,7 @@ public class BusinessOfferService extends BusinessService<BusinessOfferModel> {
 			BusinessServiceModel bsm = null;
 			for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {
 				if (item.getItemClass().equals(BusinessServiceModel.class.getName())) {
-					bsm = businessServiceService.findByCode(item.getItemCode(), currentUser.getProvider());
+					bsm = businessServiceModelService.findByCode(item.getItemCode(), currentUser.getProvider());
 					break;
 				}
 			}

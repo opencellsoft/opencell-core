@@ -15,7 +15,7 @@ import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.ServiceModelScript;
-import org.meveo.service.catalog.impl.BusinessServiceService;
+import org.meveo.service.catalog.impl.BusinessServiceModelService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.script.ServiceModelScriptService;
 
@@ -26,7 +26,7 @@ import org.meveo.service.script.ServiceModelScriptService;
 public class BusinessServiceModelApi extends BaseApi {
 
 	@Inject
-	private BusinessServiceService businessServiceService;
+	private BusinessServiceModelService businessServiceModelService;
 
 	@Inject
 	private ServiceModelScriptService serviceModelScriptService;
@@ -41,7 +41,7 @@ public class BusinessServiceModelApi extends BaseApi {
 
 		handleMissingParameters();
 
-		if (businessServiceService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+		if (businessServiceModelService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
 			throw new EntityAlreadyExistsException(BusinessServiceModel.class, postData.getCode());
 		}
 
@@ -56,7 +56,7 @@ public class BusinessServiceModelApi extends BaseApi {
 		}
 
 		try {
-			businessServiceService.create(postData.getCode(), postData.getDescription(), postData.isDuplicatePricePlan(), postData.isDuplicateService(), serviceModelScript,
+			businessServiceModelService.create(postData.getCode(), postData.getDescription(), postData.isDuplicatePricePlan(), postData.isDuplicateService(), serviceModelScript,
 					serviceTemplate, currentUser);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
@@ -70,7 +70,7 @@ public class BusinessServiceModelApi extends BaseApi {
 
 		handleMissingParameters();
 
-		BusinessServiceModel bsm = businessServiceService.findByCode(postData.getCode(), currentUser.getProvider());
+		BusinessServiceModel bsm = businessServiceModelService.findByCode(postData.getCode(), currentUser.getProvider());
 		if (bsm == null) {
 			throw new EntityDoesNotExistsException(BusinessServiceModel.class, postData.getCode());
 		}
@@ -86,7 +86,7 @@ public class BusinessServiceModelApi extends BaseApi {
 		}
 
 		try {
-			businessServiceService.update(bsm, postData.getDescription(), postData.isDuplicatePricePlan(), postData.isDuplicateService(), serviceModelScript, serviceTemplate,
+			businessServiceModelService.update(bsm, postData.getDescription(), postData.isDuplicatePricePlan(), postData.isDuplicateService(), serviceModelScript, serviceTemplate,
 					currentUser);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
@@ -99,7 +99,7 @@ public class BusinessServiceModelApi extends BaseApi {
 		}
 		handleMissingParameters();
 
-		BusinessServiceModel businessServiceModel = businessServiceService.findByCode(businessServiceModelCode, provider);
+		BusinessServiceModel businessServiceModel = businessServiceModelService.findByCode(businessServiceModelCode, provider);
 		if (businessServiceModel != null) {
 			BusinessServiceModelDto businessServiceModelDto = new BusinessServiceModelDto();
 			businessServiceModelDto.setCode(businessServiceModel.getCode());
@@ -124,16 +124,16 @@ public class BusinessServiceModelApi extends BaseApi {
 		}
 
 		handleMissingParameters();
-		BusinessServiceModel businessServiceModel = businessServiceService.findByCode(businessServiceModelCode, provider);
+		BusinessServiceModel businessServiceModel = businessServiceModelService.findByCode(businessServiceModelCode, provider);
 		if (businessServiceModel == null) {
 			throw new EntityDoesNotExistsException(BusinessServiceModel.class, businessServiceModelCode);
 		}
 
-		businessServiceService.remove(businessServiceModel);
+		businessServiceModelService.remove(businessServiceModel);
 	}
 
 	public void createOrUpdate(BusinessServiceModelDto postData, User currentUser) throws MeveoApiException {
-		BusinessServiceModel businessServiceModel = businessServiceService.findByCode(postData.getCode(), currentUser.getProvider());
+		BusinessServiceModel businessServiceModel = businessServiceModelService.findByCode(postData.getCode(), currentUser.getProvider());
 		if (businessServiceModel == null) {
 			// create
 			create(postData, currentUser);

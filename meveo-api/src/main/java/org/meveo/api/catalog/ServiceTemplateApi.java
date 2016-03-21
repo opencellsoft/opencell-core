@@ -32,7 +32,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.WalletTemplateService;
-import org.meveo.service.catalog.impl.BusinessServiceService;
+import org.meveo.service.catalog.impl.BusinessServiceModelService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
@@ -85,7 +85,7 @@ public class ServiceTemplateApi extends BaseApi {
     private CounterTemplateService counterTemplateService;
     
     @Inject
-    private BusinessServiceService businessServiceService;
+    private BusinessServiceModelService businessServiceModelService;
 
     private void createServiceChargeTemplateRecurring(ServiceTemplateDto postData, User currentUser, ServiceTemplate serviceTemplate) throws MeveoApiException, BusinessException {
         Provider provider = currentUser.getProvider();
@@ -250,7 +250,7 @@ public class ServiceTemplateApi extends BaseApi {
         
     	BusinessServiceModel businessService = null;
 		if (!StringUtils.isBlank(postData.getSomCode())) {
-			businessService = businessServiceService.findByCode(postData.getSomCode(), currentUser.getProvider());
+			businessService = businessServiceModelService.findByCode(postData.getSomCode(), currentUser.getProvider());
 			if (businessService == null) {
 				throw new EntityDoesNotExistsException(BusinessServiceModel.class, postData.getSomCode());
 			}
@@ -312,7 +312,7 @@ public class ServiceTemplateApi extends BaseApi {
         
         BusinessServiceModel businessService = null;
 		if (!StringUtils.isBlank(postData.getSomCode())) {
-			businessService = businessServiceService.findByCode(postData.getSomCode(), currentUser.getProvider());
+			businessService = businessServiceModelService.findByCode(postData.getSomCode(), currentUser.getProvider());
 			if (businessService == null) {
 				throw new EntityDoesNotExistsException(BusinessServiceModel.class, postData.getSomCode());
 			}

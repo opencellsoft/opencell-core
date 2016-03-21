@@ -15,7 +15,7 @@ import org.meveo.service.base.BusinessService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class BusinessServiceService extends BusinessService<BusinessServiceModel> {
+public class BusinessServiceModelService extends BusinessService<BusinessServiceModel> {
 
 	public void create(String code, String description, boolean isDuplicatePricePlan, boolean isDuplicateService, ServiceModelScript serviceModelScript,
 			ServiceTemplate serviceTemplate, User currentUser) throws BusinessException {
