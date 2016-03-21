@@ -53,13 +53,11 @@ public interface InvoicingRs extends IBaseRs {
      * account to the next calendar date.
      * 
      * @param billingRunId Billing run id
-     * @param nbRuns Number of billing accounts in batch processed by each thread when computing the post invoicing report (by default 100)
-     * @param waitingMillis Nb of millisecond between thread poll (default 1000)
      * @return
      */
     @POST
     @Path("/validateBillingRun")
-    ActionStatus validateBillingRun(@WebParam(name = "billingRunId") Long billingRunId, @WebParam(name = "nbRuns") Long nbRuns, @WebParam(name = "waitingMillis") Long waitingMillis);
+    ActionStatus validateBillingRun(@WebParam(name = "billingRunId") Long billingRunId);
 
     /**
      * Cancels a billing run. Sets RatedTransaction.status associated to billingRun to OPEN. Remove aggregates and invoice associated to the billingRun. Set

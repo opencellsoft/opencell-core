@@ -398,11 +398,7 @@ public class InvoiceApi extends BaseApi {
     }
 
     public void validateBR(BillingRun billingRun, User user) throws BusinessException {
-        try {
-            billingRunService.validate(billingRun.getId(), user, 1, 0);
-        } catch (Exception e) {
-            throw new BusinessException(e);
-        }
+        billingRunService.forceValidate(billingRun.getId(), user);
     }
 
     public void createAgregatesAndInvoice(Long billingRunId, Date lastTransactionDate, User currentUser) throws BusinessException, Exception {
@@ -464,7 +460,7 @@ public class InvoiceApi extends BaseApi {
         log.info("createAgregatesAndInvoice ok");
 
         billingRun = updateBR(billingRun, BillingRunStatusEnum.POSTINVOICED, null, null, currentUser);
-        log.info("update billingRun TERMINATED");
+        log.info("update billingRun POSTINVOICED");
 
         validateBR(billingRun, currentUser);
         log.info("billingRunService.validate ok");

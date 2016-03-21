@@ -144,12 +144,12 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
     }
 
     @Override
-    public ActionStatus validateBillingRun(Long billingRunId, Long nbRuns, Long waitingMillis) {
+    public ActionStatus validateBillingRun(Long billingRunId) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.info("validateBillingRun request={}", billingRunId);
         try {
 
-            invoicingApi.validateBillingRun(billingRunId, getCurrentUser(), nbRuns, waitingMillis);
+            invoicingApi.validateBillingRun(billingRunId, getCurrentUser());
 
         } catch (MeveoApiException mpe) {
             result.setErrorCode(mpe.getErrorCode());

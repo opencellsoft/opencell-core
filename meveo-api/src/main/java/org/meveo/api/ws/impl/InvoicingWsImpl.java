@@ -144,7 +144,7 @@ public class InvoicingWsImpl extends BaseWs implements InvoicingWs {
         log.info("validateBillingRun request={}", billingRunId);
         try {
 
-            invoicingApi.validateBillingRun(billingRunId, getCurrentUser(), null, null);
+            invoicingApi.validateBillingRun(billingRunId, getCurrentUser());
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());

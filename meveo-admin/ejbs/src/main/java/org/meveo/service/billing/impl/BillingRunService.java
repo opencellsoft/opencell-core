@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.ejb.EJB;
@@ -530,23 +531,34 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void createAgregatesAndInvoice(Long billingRunId,Date lastTransactionDate, User currentUser,long nbRuns,long waitingMillis) throws BusinessException, Exception {
+	public void createAgregatesAndInvoice(Long billingRunId,Date lastTransactionDate, User currentUser,long nbRuns,long waitingMillis) throws BusinessException {
 		List<BillingAccount> billingAccounts = getEntityManager()
 				.createNamedQuery("BillingAccount.listByBillingRunId", BillingAccount.class)
 				.setParameter("billingRunId", billingRunId)
                 .getResultList();
-    	SubListCreator subListCreator = new SubListCreator(billingAccounts,(int) nbRuns);
+    	SubListCreator subListCreator;
+		try {
+			subListCreator = new SubListCreator(billingAccounts,(int) nbRuns);
+		} catch (Exception e1) {
+			throw new BusinessException("cannot create  agregates and invoice with nbRuns="+nbRuns);
+		}
     	List<Future<String>> asyncReturns =  new ArrayList<Future<String>>();
 		while (subListCreator.isHasNext()) {
 			asyncReturns.add(ratedTxInvoicingAsync.launchAndForget((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRunId, currentUser));
 			try {
 				Thread.sleep(waitingMillis);
 			} catch (InterruptedException e) {
-				log.error("Failed to create agregates and invoice",e);
+				log.error("Failed to create agregates and invoice waiting for thread",e);
+				throw new BusinessException(e);
 			} 
 		}
 		for(Future<String> futureItsNow : asyncReturns){
-			 futureItsNow.get();	
+			 try {
+				futureItsNow.get();
+			} catch (InterruptedException | ExecutionException e) {
+				log.error("Failed to create agregates and invoice getting future",e);
+				throw new BusinessException(e);
+			}	
 		}
 	
 	}
@@ -594,7 +606,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		if (!isBillable) {
 			throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));				
 		}
-		log.info("selectedBillingAccounts=" + selectedBillingAccounts);
+		log.debug("selectedBillingAccounts=" + selectedBillingAccounts);
 		billingRun.setSelectedBillingAccounts(selectedBillingAccounts);
 
 		billingRun.setInvoiceDate(invoiceDate);
@@ -604,9 +616,30 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return billingRun;
 	}
 	
+	private void incrementInvoiceDatesAndValidate(BillingRun billingRun,User currentUser) throws BusinessException{
+		log.debug("incrementInvoiceDatesAndValidate");
+		for (Invoice invoice : billingRun.getInvoices()) {
+			invoiceService.setInvoiceNumber(invoice, currentUser);
+			invoice.setPdf(null);
+			BillingAccount billingAccount = invoice.getBillingAccount();
+			Date initCalendarDate = billingAccount.getSubscriptionDate();
+			if(initCalendarDate==null){
+				initCalendarDate=billingAccount.getAuditable().getCreated();
+			}
+			Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(initCalendarDate);
+			billingAccount.setNextInvoiceDate(nextCalendarDate);
+			billingAccount.updateAudit(currentUser);
+			invoiceService.update(invoice, currentUser);
+		}
+		billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
+		billingRun.updateAudit(currentUser);
+		update(billingRun,currentUser);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void validate(Long billingRunId,User currentUser,long nbRuns,long waitingMillis) throws Exception{
 		BillingRun billingRun = findById(billingRunId);
+		log.debug("validate, billingRun status={}",billingRun.getStatus());
 		if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
 			refreshOrRetrieve(billingRun);
 			List<BillingAccount> billingAccounts = getBillingAccounts(billingRun);
@@ -645,22 +678,28 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser,nbRuns,waitingMillis);								
 			updateBillingRun(billingRun.getId(),currentUser,null,null,BillingRunStatusEnum.POSTINVOICED,null);
 		} else if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
-			refreshOrRetrieve(billingRun);
-			for (Invoice invoice : billingRun.getInvoices()) {
-				invoiceService.setInvoiceNumber(invoice, currentUser);
-				invoice.setPdf(null);
-				BillingAccount billingAccount = invoice.getBillingAccount();
-				Date initCalendarDate = billingAccount.getSubscriptionDate();
-				if(initCalendarDate==null){
-					initCalendarDate=billingAccount.getAuditable().getCreated();
-				}
-				Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(initCalendarDate);
-				billingAccount.setNextInvoiceDate(nextCalendarDate);
-				billingAccount.updateAudit(currentUser);
-				invoiceService.update(invoice, currentUser);
-			}
-			billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
-			billingRun.updateAudit(currentUser);
+			incrementInvoiceDatesAndValidate(billingRun, currentUser);
+		}
+	}
+	
+	public void forceValidate(Long billingRunId,User currentUser) throws BusinessException{
+		BillingRun billingRun = findById(billingRunId);
+		log.debug("forceValidate, billingRun status={}",billingRun.getStatus());
+		switch(billingRun.getStatus()){
+		case POSTINVOICED:
+		case POSTVALIDATED:
+			incrementInvoiceDatesAndValidate(billingRun, currentUser);
+			break;
+		case PREINVOICED:
+		case PREVALIDATED:
+			createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser,1,0);								
+			updateBillingRun(billingRun.getId(),currentUser,1,0,BillingRunStatusEnum.POSTINVOICED,null);
+			break;
+		case VALIDATED:
+		case CANCELED:
+		case NEW:
+		default:
+			throw new BusinessException("BillingRun with status NEW,VALIDATED or CANCELED cannot be validated");
 		}
 	}
 	
