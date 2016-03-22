@@ -34,7 +34,7 @@
             updateField=":searchForm:billingAccountId">
 		</hftl:entityPopup>
 		
-		<hftl:searchPanel label="#{messages['invoice.search']}"
+		<hftl:searchPanel label="#{messages['invoice.search']}" renderNewButton="false"
 			backingBean="#{invoiceBean}" columns="3">
 		   <hftl:searchField label="#{messages['billingAccount.billingAccountPanel']}" id="billingAccountId" field="billingAccount"
 		        valueLabelField="code" popup="true" popupId="searchBillingAccountPopup" clearButton="true" />
