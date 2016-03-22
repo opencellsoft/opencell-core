@@ -58,38 +58,28 @@ public class ChartApi extends BaseApi {
         if (postData.getMeasurableQuantity() == null || StringUtils.isBlank(postData.getMeasurableQuantity().getCode())) {
             missingParameters.add("measurableQuantity.code");
         }
-        
+
         handleMissingParameters();
-        
 
         Chart chart = chartService.findByCode(postData.getCode(), currentUser.getProvider());
         if (chart != null) {
             throw new EntityAlreadyExistsException(Chart.class, postData.getCode());
         }
-        
-        MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(postData.getMeasurableQuantity().getCode(), currentUser.getProvider());
-        
-        if (measurableQuantity == null) {
-        	throw new EntityDoesNotExistsException(MeasurableQuantity.class, postData.getMeasurableQuantity().getCode());
-        }
-        
+
         if (postData instanceof PieChartDto) {
             PieChart pieChart = fromDTO((PieChartDto) postData, currentUser, null);
-            pieChart.setMeasurableQuantity(measurableQuantity);
             pieChartService.create(pieChart, currentUser);
 
         } else if (postData instanceof LineChartDto) {
             LineChart lineChart = fromDTO((LineChartDto) postData, currentUser, null);
-            lineChart.setMeasurableQuantity(measurableQuantity);
             lineChartService.create(lineChart, currentUser);
 
         } else if (postData instanceof BarChartDto) {
             BarChart barChart = fromDTO((BarChartDto) postData, currentUser, null);
-            barChart.setMeasurableQuantity(measurableQuantity);
             barChartService.create(barChart, currentUser);
-            
+        
         } else {
-        	throw new InvalidParameterException();
+            throw new InvalidParameterException();
         }
     }
 
@@ -103,7 +93,6 @@ public class ChartApi extends BaseApi {
         }
 
         handleMissingParameters();
-        
 
         Chart chart = chartService.findByCode(postData.getCode(), currentUser.getProvider());
         if (chart == null) {
@@ -121,8 +110,9 @@ public class ChartApi extends BaseApi {
         } else if (chart instanceof BarChart) {
             BarChart barChart = fromDTO((BarChartDto) postData, currentUser, (BarChart) chart);
             barChartService.update(barChart, currentUser);
+            
         } else {
-        	throw new InvalidParameterException();
+            throw new InvalidParameterException();
         }
     }
 
@@ -136,8 +126,7 @@ public class ChartApi extends BaseApi {
         ChartDto result = null;
 
         Chart chart = chartService.findByCode(chartCode, currentUser.getProvider());
-        
-        
+
         if (chart == null) {
             throw new EntityDoesNotExistsException(Chart.class, chartCode);
         }
@@ -295,6 +284,9 @@ public class ChartApi extends BaseApi {
             measurableQuantityApi.createOrUpdate(dto.getMeasurableQuantity(), currentUser);
         }
         MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(dto.getMeasurableQuantity().getCode(), currentUser.getProvider());
+        if (measurableQuantity == null) {
+            throw new EntityDoesNotExistsException(MeasurableQuantity.class, dto.getMeasurableQuantity().getCode());
+        }
         chartToUpdate.setMeasurableQuantity(measurableQuantity);
         chartToUpdate.setWidth(dto.getWidth());
         chartToUpdate.setHeight(dto.getHeight());
@@ -302,7 +294,5 @@ public class ChartApi extends BaseApi {
         chartToUpdate.setStyleClass(dto.getStyleClass());
         chartToUpdate.setExtender(dto.getExtender());
         chartToUpdate.setVisible(dto.getVisible());
-
     }
-
 }

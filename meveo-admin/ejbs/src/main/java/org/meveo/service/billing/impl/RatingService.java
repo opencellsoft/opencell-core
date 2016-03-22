@@ -703,7 +703,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		try {
 			res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
 		} catch (BusinessException e1) {
-			log.error("Amount Expression " + expression + " error in price plan "+priceplan+ " e="+e1.getMessage());
+			log.error("Amount Expression {} error in price plan {}", expression, priceplan, e1);
 		}
 		try {
 			if(res!=null){
