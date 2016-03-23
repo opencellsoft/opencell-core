@@ -24495,12 +24495,16 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <type>JAVA</type>\r
             <script>
             <![CDATA[
+            
 package org.meveo.service.script;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
+import org.meveo.api.dto.catalog.OfferServiceTemplateDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.PricePlanDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
@@ -24526,6 +24530,13 @@ import org.meveo.api.catalog.RecurringChargeTemplateApi;
 import org.meveo.api.catalog.UsageChargeTemplateApi;
 import org.meveo.api.catalog.CounterTemplateApi;
 import org.meveo.api.catalog.PricePlanApi;
+import org.meveo.model.catalog.CounterTemplateLevel;
+
+/**
+ * 
+ * @author anasseh
+ * Edited 10/03/2016 12:13
+ */
 
 public class PostpaidOfferScript extends Script {
 	  
@@ -24551,9 +24562,7 @@ public class PostpaidOfferScript extends Script {
 			log.debug("offerCode={}",offerCode);
 			String name = (String) jsonReq.get("name");
 			String description = (String) jsonReq.get("description");
-			Double recurringPrice = jsonReq.get("recurringPrice") == null ? null : Double.valueOf(jsonReq.get("recurringPrice").toString());
-			Long commitment = jsonReq.get("commitment") == null ? null :  Long.valueOf(jsonReq.get("commitment").toString());
-			log.debug("commitment={}, type={}",commitment,commitment.getClass());
+			Double recurringPrice = jsonReq.get("recurringPrice") == null ? null : Double.valueOf(jsonReq.get("recurringPrice").toString());			
 			Boolean proratedSubscription = (Boolean) jsonReq.get("proratedSubscription");
 			String invoiceSubcategory = (String) jsonReq.get("invoiceSubcategory");
 			JSONArray services =  (JSONArray) jsonReq.get("services");
@@ -24561,7 +24570,9 @@ public class PostpaidOfferScript extends Script {
 			OfferTemplateDto offerDto = new OfferTemplateDto();
 			offerDto.setCode(offerCode);
 			offerDto.setDescription(name);
-			ServiceTemplatesDto serviceTemplatesDto = new ServiceTemplatesDto();
+
+			List<OfferServiceTemplateDto> offerServiceTemplates = new ArrayList<OfferServiceTemplateDto>();
+			//ServiceTemplatesDto serviceTemplatesDto = new ServiceTemplatesDto();
 			
 			//abonnement
 			RecurringChargeTemplateDto rct = new RecurringChargeTemplateDto();
@@ -24590,7 +24601,9 @@ public class PostpaidOfferScript extends Script {
 			aboRecs.getServiceChargeTemplateRecurring().add(aboRec);
 			aboServiceTemplateDto.setServiceChargeTemplateRecurrings(aboRecs);
 			serviceTemplateApi.create(aboServiceTemplateDto,user);
-			serviceTemplatesDto.getServiceTemplate().add(aboServiceTemplateDto);
+			OfferServiceTemplateDto aboOstDto=new OfferServiceTemplateDto();
+			aboOstDto.setServiceTemplate(aboServiceTemplateDto);
+			offerServiceTemplates.add(aboOstDto);
 
 			if(services!=null){
 				for(Object o:services){
@@ -24611,7 +24624,7 @@ public class PostpaidOfferScript extends Script {
 						//counter
 						CounterTemplateDto cnt = new CounterTemplateDto();
 						cnt.setCode(offerCode+"_"+code+"_CNT");
-						cnt.setCounterLevel("UA");
+						cnt.setCounterLevel(CounterTemplateLevel.UA);
 						cnt.setDescription("compteur "+code);
 						cnt.setCeiling(BigDecimal.valueOf(counter));
 						cnt.setCalendar("MONTHLY");
@@ -24661,11 +24674,13 @@ public class PostpaidOfferScript extends Script {
 					usgs.getServiceChargeTemplateUsage().add(usageInDto);					
 					serviceTemplateDto.setServiceChargeTemplateUsages(usgs);
 					serviceTemplateApi.create(serviceTemplateDto,user);
-					serviceTemplatesDto.getServiceTemplate().add(serviceTemplateDto);
+					OfferServiceTemplateDto ostDto=new OfferServiceTemplateDto();
+					ostDto.setServiceTemplate(serviceTemplateDto);
+					offerServiceTemplates.add(ostDto);
 				}
 			}
 
-			offerDto.setServiceTemplates(serviceTemplatesDto);
+			offerDto.setOfferServiceTemplates(offerServiceTemplates);
 			offerTemplateApi.create(offerDto,user);
 		} catch(Exception e){
 			result = "{\"result\":\"KO\",\"err\":\""+e.getMessage()+"\"}";
@@ -24691,13 +24706,17 @@ public class PostpaidOfferScript extends Script {
             <type>JAVA</type>\r
             <script>
             <![CDATA[
+            
 package org.meveo.service.script;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
+import org.meveo.api.dto.catalog.OfferServiceTemplateDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.PricePlanDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
@@ -24723,6 +24742,13 @@ import org.meveo.api.catalog.RecurringChargeTemplateApi;
 import org.meveo.api.catalog.UsageChargeTemplateApi;
 import org.meveo.api.catalog.CounterTemplateApi;
 import org.meveo.api.catalog.PricePlanApi;
+import org.meveo.model.catalog.CounterTemplateLevel;
+
+/**
+ * 
+ * @author anasseh
+ * Edited 10/03/2016 12:13
+ */
 
 public class PrepaidOfferScript extends Script {
 	  
@@ -24736,7 +24762,7 @@ public class PrepaidOfferScript extends Script {
   	PricePlanApi pricePlanApi = (PricePlanApi)  getServiceInterface("PricePlanApi");
   	
 	public void execute(Map<String,Object> context, Provider provider, User user) throws BusinessException{
-		log.debug("start postpaidOffer creation script... event = {}",context.get("event"));
+		log.debug("start prepaidOfferScript creation script... event = {}",context.get("event"));
 		InboundRequest req = (InboundRequest)context.get("event");
 		inboundRequestService.create(req,user);
 		log.debug("req.body = {}",req.getBody());
@@ -24748,9 +24774,7 @@ public class PrepaidOfferScript extends Script {
 			log.debug("offerCode={}",offerCode);
 			String name = (String) jsonReq.get("name");
 			String description = (String) jsonReq.get("description");
-			Double recurringPrice = jsonReq.get("recurringPrice") == null ? null : Double.valueOf(jsonReq.get("recurringPrice").toString());
-			Long commitment = jsonReq.get("commitment") == null ? null :  Long.valueOf(jsonReq.get("commitment").toString());
-			log.debug("commitment={}, type={}",commitment,commitment.getClass());
+			Double recurringPrice = jsonReq.get("recurringPrice") == null ? null : Double.valueOf(jsonReq.get("recurringPrice").toString());		
 			Boolean proratedSubscription = (Boolean) jsonReq.get("proratedSubscription");
 			String invoiceSubcategory = (String) jsonReq.get("invoiceSubcategory");
 			JSONArray services =  (JSONArray) jsonReq.get("services");
@@ -24758,7 +24782,7 @@ public class PrepaidOfferScript extends Script {
 			OfferTemplateDto offerDto = new OfferTemplateDto();
 			offerDto.setCode(offerCode);
 			offerDto.setDescription(name);
-			ServiceTemplatesDto serviceTemplatesDto = new ServiceTemplatesDto();
+			List<OfferServiceTemplateDto> offerServiceTemplates = new ArrayList<OfferServiceTemplateDto>();
 			
 			//abonnement
 			RecurringChargeTemplateDto rct = new RecurringChargeTemplateDto();
@@ -24787,15 +24811,17 @@ public class PrepaidOfferScript extends Script {
 			aboRecs.getServiceChargeTemplateRecurring().add(aboRec);
 			aboServiceTemplateDto.setServiceChargeTemplateRecurrings(aboRecs);
 			serviceTemplateApi.create(aboServiceTemplateDto,user);
-			serviceTemplatesDto.getServiceTemplate().add(aboServiceTemplateDto);
+			OfferServiceTemplateDto aboOstDto=new OfferServiceTemplateDto();
+			aboOstDto.setServiceTemplate(aboServiceTemplateDto);
+			offerServiceTemplates.add(aboOstDto);
 
 			if(services!=null){
 				for(Object o:services){
 					JSONObject service = (JSONObject)o;
 					String code = (String)service.get("code");
 					String descr = (String)service.get("description");
-					Long counter = service.get("counter") == null ?null : Long.valueOf( service.get("counter").toString());
-	                    Double priceInCounter = service.get("priceInCounter") == null ? null : Double.valueOf( service.get("priceInCounter").toString());
+					Double counter = service.get("counter") == null ?null : Double.valueOf( service.get("counter").toString());
+	                Double priceInCounter = service.get("priceInCounter") == null ? null : Double.valueOf( service.get("priceInCounter").toString());
 					Double priceOverCounter = service.get("priceOverCounter") == null ? null : Double.valueOf(  service.get("priceOverCounter").toString());					
 					Boolean mandatory =(Boolean) service.get("mandatory");					
 					String invoiceSubcat = (String)service.get("invoiceSubcategory");
@@ -24809,7 +24835,7 @@ public class PrepaidOfferScript extends Script {
 						//counter
 						CounterTemplateDto cnt = new CounterTemplateDto();
 						cnt.setCode(offerCode+"_"+code+"_CNT");
-						cnt.setCounterLevel("UA");
+						cnt.setCounterLevel(CounterTemplateLevel.UA);
 						cnt.setDescription("compteur "+code);
 						cnt.setCeiling(new BigDecimal(counter));
 						cnt.setCalendar("MONTHLY");
@@ -24859,11 +24885,13 @@ public class PrepaidOfferScript extends Script {
 					usgs.getServiceChargeTemplateUsage().add(usageInDto);					
 					serviceTemplateDto.setServiceChargeTemplateUsages(usgs);
 					serviceTemplateApi.create(serviceTemplateDto,user);
-					serviceTemplatesDto.getServiceTemplate().add(serviceTemplateDto);
+					OfferServiceTemplateDto ostDto=new OfferServiceTemplateDto();
+					ostDto.setServiceTemplate(serviceTemplateDto);
+					offerServiceTemplates.add(ostDto);
 				}
 			}
 
-			offerDto.setServiceTemplates(serviceTemplatesDto);
+			offerDto.setOfferServiceTemplates(offerServiceTemplates);
 			offerTemplateApi.create(offerDto,user);
 		} catch(Exception e){
 			result = "{\"result\":\"KO\",\"err\":\""+e.getMessage()+"\"}";
