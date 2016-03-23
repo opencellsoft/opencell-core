@@ -74,7 +74,7 @@
     <pluginRepositories>
         <pluginRepository>
             <id>opencast-public</id>
-            <url>http://repository.opencastproject.org/nexus/content/repositories/public/</url>
+            <url>http://nexus.opencast.org/nexus/content/repositories/public/</url>
         </pluginRepository>
         <pluginRepository>
             <id>central-maven</id>
