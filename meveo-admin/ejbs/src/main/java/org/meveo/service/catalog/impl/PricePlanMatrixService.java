@@ -19,6 +19,7 @@ package org.meveo.service.catalog.impl;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 
     @Inject
     private RatingCacheContainerProvider ratingCacheContainerProvider;
-  
+
     ParamBean param = ParamBean.getInstance();
 
     SimpleDateFormat sdf = new SimpleDateFormat(param.getProperty("excelImport.dateFormat", "dd/MM/yyyy"));
@@ -66,7 +67,6 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
         super.create(pricePlan, creator);
         ratingCacheContainerProvider.addPricePlanToCache(pricePlan);
     }
-
 
     @Override
     public PricePlanMatrix disable(PricePlanMatrix pricePlan) {
@@ -115,23 +115,23 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
             remove(pricePlan);
         }
     }
-    
-    private String getCellAsString(Cell cell){
+
+    private String getCellAsString(Cell cell) {
         switch (cell.getCellType()) {
         case Cell.CELL_TYPE_BOOLEAN:
-            return cell.getBooleanCellValue()+"";
+            return cell.getBooleanCellValue() + "";
         case Cell.CELL_TYPE_ERROR:
         case Cell.CELL_TYPE_BLANK:
         case Cell.CELL_TYPE_FORMULA:
             return null;
         case Cell.CELL_TYPE_NUMERIC:
-            return ""+cell.getNumericCellValue();
+            return "" + cell.getNumericCellValue();
         default:
-            return cell.getStringCellValue(); 
+            return cell.getStringCellValue();
         }
     }
 
-    private Date getCellAsDate(Cell cell){
+    private Date getCellAsDate(Cell cell) {
         switch (cell.getCellType()) {
         case Cell.CELL_TYPE_ERROR:
         case Cell.CELL_TYPE_BLANK:
@@ -140,9 +140,9 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
         case Cell.CELL_TYPE_NUMERIC:
             return DateUtil.getJavaDate(cell.getNumericCellValue());
         default:
-            try{
+            try {
                 return cell.getDateCellValue();
-            } catch(Exception e){
+            } catch (Exception e) {
                 try {
                     return sdf.parse(cell.getStringCellValue());
                 } catch (ParseException e1) {
@@ -153,10 +153,10 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void importExcelLine(Row row,User user, Provider provider) throws BusinessException {
-        EntityManager em=getEntityManager();
+    public void importExcelLine(Row row, User user, Provider provider) throws BusinessException {
+        EntityManager em = getEntityManager();
         Object[] cellsObj = IteratorUtils.toArray(row.cellIterator());
-        int rowIndex= row.getRowNum();
+        int rowIndex = row.getRowNum();
         int i = 0;
         String pricePlanCode = getCellAsString((Cell) cellsObj[i++]);
 
@@ -187,14 +187,14 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
         try {
             pricePlan.setStartSubscriptionDate(getCellAsDate((Cell) cellsObj[i++]));
         } catch (Exception e) {
-            throw new BusinessException("Invalid startAppli in line=" + rowIndex + " expected format:"
-                    + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy") + ", you may change the property excelImport.dateFormat.");
+            throw new BusinessException("Invalid startAppli in line=" + rowIndex + " expected format:" + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy")
+                    + ", you may change the property excelImport.dateFormat.");
         }
         try {
             pricePlan.setEndSubscriptionDate(getCellAsDate((Cell) cellsObj[i++]));
         } catch (Exception e) {
-            throw new BusinessException("Invalid endAppli in line=" + rowIndex  + " expected format:"
-                    + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy") + ", you may change the property excelImport.dateFormat.");
+            throw new BusinessException("Invalid endAppli in line=" + rowIndex + " expected format:" + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy")
+                    + ", you may change the property excelImport.dateFormat.");
         }
         String offerCode = getCellAsString((Cell) cellsObj[i++]);
         String priority = getCellAsString((Cell) cellsObj[i++]);
@@ -211,45 +211,42 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
         try {
             pricePlan.setStartRatingDate(getCellAsDate((Cell) cellsObj[i++]));
         } catch (Exception e) {
-            throw new BusinessException("Invalid startRating in line=" + rowIndex + " expected format:"
-                    + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy") + ", you may change the property excelImport.dateFormat.");
+            throw new BusinessException("Invalid startRating in line=" + rowIndex + " expected format:" + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy")
+                    + ", you may change the property excelImport.dateFormat.");
         }
         try {
             pricePlan.setEndRatingDate(getCellAsDate((Cell) cellsObj[i++]));
         } catch (Exception e) {
-            throw new BusinessException("Invalid endRating in line=" + rowIndex  + " expected format:"
-                    + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy") + ", you may change the property excelImport.dateFormat.");
+            throw new BusinessException("Invalid endRating in line=" + rowIndex + " expected format:" + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy")
+                    + ", you may change the property excelImport.dateFormat.");
         }
         String minSubAge = getCellAsString((Cell) cellsObj[i++]);
         String maxSubAge = getCellAsString((Cell) cellsObj[i++]);
         String validityCalendarCode = getCellAsString((Cell) cellsObj[i++]);
-        log.debug(
-            "priceplanCode={}, priceplanDescription= {}, chargeCode={} sellerCode={}, countryCode={}, currencyCode={},"
-                    + " startSub={}, endSub={}, offerCode={}, priority={}, amountWOTax={}, amountWithTax={},amountWOTaxEL={}, amountWithTaxEL={},"
-                    + " minQuantity={}, maxQuantity={}, criteria1={}, criteria2={}, criteria3={}, criteriaEL={},"
-                    + " startRating={}, endRating={}, minSubAge={}, maxSubAge={}, validityCalendarCode={}",
-                    new Object[] { pricePlanCode, pricePlanDescription,eventCode, sellerCode, countryCode,
-                    currencyCode, pricePlan.getStartSubscriptionDate(), pricePlan.getEndSubscriptionDate(), offerCode, priority, amountWOTax, amountWithTax,amountWOTaxEL, amountWithTaxEL, minQuantity,
-                    maxQuantity, criteria1, criteria2, criteria3, criteriaEL,
-                    pricePlan.getStartRatingDate(),pricePlan.getEndRatingDate(), minSubAge, maxSubAge,validityCalendarCode });
+        log.debug("priceplanCode={}, priceplanDescription= {}, chargeCode={} sellerCode={}, countryCode={}, currencyCode={},"
+                + " startSub={}, endSub={}, offerCode={}, priority={}, amountWOTax={}, amountWithTax={},amountWOTaxEL={}, amountWithTaxEL={},"
+                + " minQuantity={}, maxQuantity={}, criteria1={}, criteria2={}, criteria3={}, criteriaEL={},"
+                + " startRating={}, endRating={}, minSubAge={}, maxSubAge={}, validityCalendarCode={}", new Object[] { pricePlanCode, pricePlanDescription, eventCode, sellerCode,
+                countryCode, currencyCode, pricePlan.getStartSubscriptionDate(), pricePlan.getEndSubscriptionDate(), offerCode, priority, amountWOTax, amountWithTax,
+                amountWOTaxEL, amountWithTaxEL, minQuantity, maxQuantity, criteria1, criteria2, criteria3, criteriaEL, pricePlan.getStartRatingDate(),
+                pricePlan.getEndRatingDate(), minSubAge, maxSubAge, validityCalendarCode });
 
-        if(!StringUtils.isBlank(eventCode)){
+        if (!StringUtils.isBlank(eventCode)) {
             qb = new QueryBuilder(ChargeTemplate.class, "p");
             qb.addCriterion("code", "=", eventCode, false);
             qb.addCriterionEntity("provider", provider);
             @SuppressWarnings("unchecked")
             List<Seller> charges = qb.getQuery(em).getResultList();
-            if(charges.size()==0){
+            if (charges.size() == 0) {
                 throw new BusinessException("cannot find charge in line=" + rowIndex + " with code=" + eventCode);
-            }
-            else if (charges.size()>1){
+            } else if (charges.size() > 1) {
                 throw new BusinessException("more than one charge in line=" + rowIndex + " with code=" + eventCode);
             }
             pricePlan.setEventCode(eventCode);
         } else {
             throw new BusinessException("Empty chargeCode in line=" + rowIndex + ", code=" + eventCode);
         }
-        
+
         // Seller
         if (!StringUtils.isBlank(sellerCode)) {
             qb = new QueryBuilder(Seller.class, "p");
@@ -337,7 +334,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
         } else {
             pricePlan.setOfferTemplate(null);
         }
-        
+
         if (!StringUtils.isBlank(validityCalendarCode)) {
             qb = new QueryBuilder(Calendar.class, "p");
             qb.addCriterion("code", "=", validityCalendarCode, false);
@@ -394,7 +391,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
         } else {
             pricePlan.setAmountWithoutTaxEL(null);
         }
-        
+
         if (!StringUtils.isBlank(amountWithTaxEL)) {
             pricePlan.setAmountWithTaxEL(amountWithTaxEL);
         } else {
@@ -467,7 +464,6 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
             pricePlan.setCriteriaEL(null);
         }
 
-
         // minSubAge
         if (!StringUtils.isBlank(minSubAge)) {
             try {
@@ -493,7 +489,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
         if (pricePlan.getId() == null) {
             create(pricePlan, user);
         } else {
-        	pricePlan.updateAudit(user);
+            pricePlan.updateAudit(user);
             updateNoCheck(pricePlan);
         }
     }
@@ -517,64 +513,67 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
     public List<PricePlanMatrix> getPricePlansForCache() {
         return getEntityManager().createNamedQuery("PricePlanMatrix.getPricePlansForCache", PricePlanMatrix.class).getResultList();
     }
-    
+
     @SuppressWarnings("unchecked")
-	public List<PricePlanMatrix> findByOfferTemplate(OfferTemplate offerTemplate){
-		QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "p");
-		qb.addCriterionEntity("offerTemplate", offerTemplate);
+    public List<PricePlanMatrix> findByOfferTemplate(OfferTemplate offerTemplate) {
+        QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "p");
+        qb.addCriterionEntity("offerTemplate", offerTemplate);
 
-		try {
-			return (List<PricePlanMatrix>) qb.getQuery(getEntityManager())
-					.getResultList();
-		} catch (NoResultException e) {
-			log.warn("failed to find pricePlanMatrix By offerTemplate",e);
-			return null;
-		}
-	}
-    
-	@SuppressWarnings("unchecked")
-	public List<PricePlanMatrix> findByOfferTemplateAndEventCode(OfferTemplate offerTemplate, String chargeCode) {
-		QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "p");
-		if(offerTemplate == null) {
-			qb.addSql("offerTemplate is null");
-		} else {
-			qb.addCriterionEntity("offerTemplate", offerTemplate);
-		}
-		qb.addCriterion("eventCode", "=", chargeCode, true);
+        try {
+            return (List<PricePlanMatrix>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            log.warn("failed to find pricePlanMatrix By offerTemplate", e);
+            return null;
+        }
+    }
 
-		try {
-			return (List<PricePlanMatrix>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			log.warn("failed to find pricePlanMatrix By offerTemplate", e);
-			return null;
-		}
-	}
-    
-	@SuppressWarnings("unchecked")
-	public List<PricePlanMatrix> listByEventCode(String eventCode, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "m", null, provider);
-		qb.addCriterion("eventCode", "=", eventCode, true);
+    public List<PricePlanMatrix> findByOfferTemplateAndEventCode(String offerTemplateCode, String chargeCode, Provider provider) {
 
-		try {
-			return (List<PricePlanMatrix>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
-	} 
+        List<PricePlanMatrix> priceplansByOffer = new ArrayList<>();
 
-	public Long getLastPricePlanByCharge(String eventCode, Provider provider) {
-		QueryBuilder qb = new QueryBuilder("select max(sequence) from PricePlanMatrix m");
-		qb.addCriterion("m.eventCode", "=", eventCode, true);
-		qb.addCriterionEntity("m.provider", provider);
-		try {
-			Long result = (Long) qb.getQuery(getEntityManager()).getSingleResult();
-			return result == null ? 0L : result;
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
-	 
-	public boolean updateCellEdit(PricePlanMatrix entity, User currentUser) throws BusinessException{
+        List<PricePlanMatrix> priceplans = ratingCacheContainerProvider.getPricePlansByChargeCode(provider.getId(), chargeCode);
+        if (priceplans == null) {
+            return priceplansByOffer;
+        }
+        for (PricePlanMatrix pricePlan : priceplans) {
+            if (offerTemplateCode == null) {
+                if (pricePlan.getOfferTemplate() == null) {
+                    priceplansByOffer.add(pricePlan);
+                }
+
+            } else if (pricePlan.getOfferTemplate() != null && pricePlan.getOfferTemplate().getCode().equals(offerTemplateCode)) {
+                priceplansByOffer.add(pricePlan);
+            }
+        }
+
+        return priceplansByOffer;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<PricePlanMatrix> listByEventCode(String eventCode, Provider provider) {
+        QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "m", null, provider);
+        qb.addCriterion("eventCode", "=", eventCode, true);
+
+        try {
+            return (List<PricePlanMatrix>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    public Long getLastPricePlanByCharge(String eventCode, Provider provider) {
+        QueryBuilder qb = new QueryBuilder("select max(sequence) from PricePlanMatrix m");
+        qb.addCriterion("m.eventCode", "=", eventCode, true);
+        qb.addCriterionEntity("m.provider", provider);
+        try {
+            Long result = (Long) qb.getQuery(getEntityManager()).getSingleResult();
+            return result == null ? 0L : result;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    public boolean updateCellEdit(PricePlanMatrix entity, User currentUser) throws BusinessException {
         boolean result = false;
         PricePlanMatrix pricePlanMatrix = findById(entity.getId());
         if (pricePlanMatrix != null) {
@@ -587,113 +586,114 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
                     result = true;
                 }
             }
-			if(!equal(entity.getDescription(),pricePlanMatrix.getDescription())){
-				pricePlanMatrix.setDescription(entity.getDescription());
-				result=true;
-			}
-			if(!equal(entity.getEventCode(),pricePlanMatrix.getEventCode())){
-				pricePlanMatrix.setEventCode(entity.getEventCode());
-				result=true;
-			}
-			if(!(equal(entity.getOfferTemplate(),pricePlanMatrix.getOfferTemplate()))){
-				pricePlanMatrix.setOfferTemplate(entity.getOfferTemplate());
-				result=true;
-			}
-			if(!equal(entity.getSeller(),pricePlanMatrix.getSeller())){
-				pricePlanMatrix.setSeller(entity.getSeller());
-				result=true;
-			}
-			if(!equal(entity.getAmountWithTax(),pricePlanMatrix.getAmountWithTax())){
-				pricePlanMatrix.setAmountWithTax(entity.getAmountWithTax());
-				result=true;
-			}
-			if(!equal(entity.getAmountWithoutTax(),pricePlanMatrix.getAmountWithoutTax())){
-				pricePlanMatrix.setAmountWithoutTax(entity.getAmountWithoutTax());
-				result=true;
-			}
-			if(!equal(entity.getAmountWithoutTaxEL(),pricePlanMatrix.getAmountWithoutTaxEL())){
-				pricePlanMatrix.setAmountWithoutTaxEL(entity.getAmountWithoutTaxEL());
-				result=true;
-			}
-			if(!equal(entity.getAmountWithTaxEL(),pricePlanMatrix.getAmountWithTaxEL())){
-				pricePlanMatrix.setAmountWithTaxEL(entity.getAmountWithTaxEL());
-				result=true;
-			}
-			if(!equal(entity.getStartRatingDate(),pricePlanMatrix.getStartRatingDate())){
-				pricePlanMatrix.setStartRatingDate(entity.getStartRatingDate());
-				result=true;
-			}
-			if(!equal(entity.getEndRatingDate(),pricePlanMatrix.getEndRatingDate())){
-				pricePlanMatrix.setEndRatingDate(entity.getEndRatingDate());
-				result=true;
-			}
-			if(!equal(entity.getCriteriaEL(),pricePlanMatrix.getCriteriaEL())){
-				pricePlanMatrix.setCriteriaEL(entity.getCriteriaEL());
-				result=true;
-			}
-			if(!equal(entity.getTradingCountry(),pricePlanMatrix.getTradingCountry())){
-				pricePlanMatrix.setTradingCountry(entity.getTradingCountry());
-				result=true;
-			}
-			if(!equal(entity.getTradingCurrency(),pricePlanMatrix.getTradingCurrency())){
-				pricePlanMatrix.setTradingCurrency(entity.getTradingCurrency());
-				result=true;
-			}
-			if(!equal(entity.getCriteria1Value(),pricePlanMatrix.getCriteria1Value())){
-				pricePlanMatrix.setCriteria1Value(entity.getCriteria1Value());
-				result=true;
-			}
-			if(!equal(entity.getCriteria2Value(),pricePlanMatrix.getCriteria2Value())){
-				pricePlanMatrix.setCriteria2Value(entity.getCriteria2Value());
-				result=true;
-			}
-			if(!equal(entity.getCriteria3Value(),pricePlanMatrix.getCriteria3Value())){
-				pricePlanMatrix.setCriteria3Value(entity.getCriteria3Value());
-				result=true;
-			}
-			if(!equal(entity.getPriority(),pricePlanMatrix.getPriority())){
-				pricePlanMatrix.setPriority(entity.getPriority());
-				result=true;
-			}
-			if(!equal(entity.getMinQuantity(),pricePlanMatrix.getMinQuantity())){
-				pricePlanMatrix.setMinQuantity(entity.getMinQuantity());
-				result=true;
-			}
-			if(!equal(entity.getMaxQuantity(),pricePlanMatrix.getMaxQuantity())){
-				pricePlanMatrix.setMaxQuantity(entity.getMaxQuantity());
-				result=true;
-			}
-			if(!equal(entity.getStartSubscriptionDate(),pricePlanMatrix.getStartSubscriptionDate())){
-				pricePlanMatrix.setStartSubscriptionDate(entity.getStartSubscriptionDate());
-				result=true;
-			}
-			if(!equal(entity.getEndSubscriptionDate(),pricePlanMatrix.getEndSubscriptionDate())){
-				pricePlanMatrix.setEndSubscriptionDate(entity.getEndSubscriptionDate());
-				result=true;
-			}
-			if(!equal(entity.getMaxSubscriptionAgeInMonth(),pricePlanMatrix.getMaxSubscriptionAgeInMonth())){
-				pricePlanMatrix.setMaxSubscriptionAgeInMonth(entity.getMaxSubscriptionAgeInMonth());
-				result=true;
-			}
-			if(!equal(entity.getMinSubscriptionAgeInMonth(),pricePlanMatrix.getMinSubscriptionAgeInMonth())){
-				pricePlanMatrix.setMinSubscriptionAgeInMonth(entity.getMinSubscriptionAgeInMonth());
-				result=true;
-			}
-			if(!equal(entity.getValidityCalendar(),pricePlanMatrix.getValidityCalendar())){
-				pricePlanMatrix.setValidityCalendar(entity.getValidityCalendar());
-				result=true;
-			}
+            if (!equal(entity.getDescription(), pricePlanMatrix.getDescription())) {
+                pricePlanMatrix.setDescription(entity.getDescription());
+                result = true;
+            }
+            if (!equal(entity.getEventCode(), pricePlanMatrix.getEventCode())) {
+                pricePlanMatrix.setEventCode(entity.getEventCode());
+                result = true;
+            }
+            if (!(equal(entity.getOfferTemplate(), pricePlanMatrix.getOfferTemplate()))) {
+                pricePlanMatrix.setOfferTemplate(entity.getOfferTemplate());
+                result = true;
+            }
+            if (!equal(entity.getSeller(), pricePlanMatrix.getSeller())) {
+                pricePlanMatrix.setSeller(entity.getSeller());
+                result = true;
+            }
+            if (!equal(entity.getAmountWithTax(), pricePlanMatrix.getAmountWithTax())) {
+                pricePlanMatrix.setAmountWithTax(entity.getAmountWithTax());
+                result = true;
+            }
+            if (!equal(entity.getAmountWithoutTax(), pricePlanMatrix.getAmountWithoutTax())) {
+                pricePlanMatrix.setAmountWithoutTax(entity.getAmountWithoutTax());
+                result = true;
+            }
+            if (!equal(entity.getAmountWithoutTaxEL(), pricePlanMatrix.getAmountWithoutTaxEL())) {
+                pricePlanMatrix.setAmountWithoutTaxEL(entity.getAmountWithoutTaxEL());
+                result = true;
+            }
+            if (!equal(entity.getAmountWithTaxEL(), pricePlanMatrix.getAmountWithTaxEL())) {
+                pricePlanMatrix.setAmountWithTaxEL(entity.getAmountWithTaxEL());
+                result = true;
+            }
+            if (!equal(entity.getStartRatingDate(), pricePlanMatrix.getStartRatingDate())) {
+                pricePlanMatrix.setStartRatingDate(entity.getStartRatingDate());
+                result = true;
+            }
+            if (!equal(entity.getEndRatingDate(), pricePlanMatrix.getEndRatingDate())) {
+                pricePlanMatrix.setEndRatingDate(entity.getEndRatingDate());
+                result = true;
+            }
+            if (!equal(entity.getCriteriaEL(), pricePlanMatrix.getCriteriaEL())) {
+                pricePlanMatrix.setCriteriaEL(entity.getCriteriaEL());
+                result = true;
+            }
+            if (!equal(entity.getTradingCountry(), pricePlanMatrix.getTradingCountry())) {
+                pricePlanMatrix.setTradingCountry(entity.getTradingCountry());
+                result = true;
+            }
+            if (!equal(entity.getTradingCurrency(), pricePlanMatrix.getTradingCurrency())) {
+                pricePlanMatrix.setTradingCurrency(entity.getTradingCurrency());
+                result = true;
+            }
+            if (!equal(entity.getCriteria1Value(), pricePlanMatrix.getCriteria1Value())) {
+                pricePlanMatrix.setCriteria1Value(entity.getCriteria1Value());
+                result = true;
+            }
+            if (!equal(entity.getCriteria2Value(), pricePlanMatrix.getCriteria2Value())) {
+                pricePlanMatrix.setCriteria2Value(entity.getCriteria2Value());
+                result = true;
+            }
+            if (!equal(entity.getCriteria3Value(), pricePlanMatrix.getCriteria3Value())) {
+                pricePlanMatrix.setCriteria3Value(entity.getCriteria3Value());
+                result = true;
+            }
+            if (!equal(entity.getPriority(), pricePlanMatrix.getPriority())) {
+                pricePlanMatrix.setPriority(entity.getPriority());
+                result = true;
+            }
+            if (!equal(entity.getMinQuantity(), pricePlanMatrix.getMinQuantity())) {
+                pricePlanMatrix.setMinQuantity(entity.getMinQuantity());
+                result = true;
+            }
+            if (!equal(entity.getMaxQuantity(), pricePlanMatrix.getMaxQuantity())) {
+                pricePlanMatrix.setMaxQuantity(entity.getMaxQuantity());
+                result = true;
+            }
+            if (!equal(entity.getStartSubscriptionDate(), pricePlanMatrix.getStartSubscriptionDate())) {
+                pricePlanMatrix.setStartSubscriptionDate(entity.getStartSubscriptionDate());
+                result = true;
+            }
+            if (!equal(entity.getEndSubscriptionDate(), pricePlanMatrix.getEndSubscriptionDate())) {
+                pricePlanMatrix.setEndSubscriptionDate(entity.getEndSubscriptionDate());
+                result = true;
+            }
+            if (!equal(entity.getMaxSubscriptionAgeInMonth(), pricePlanMatrix.getMaxSubscriptionAgeInMonth())) {
+                pricePlanMatrix.setMaxSubscriptionAgeInMonth(entity.getMaxSubscriptionAgeInMonth());
+                result = true;
+            }
+            if (!equal(entity.getMinSubscriptionAgeInMonth(), pricePlanMatrix.getMinSubscriptionAgeInMonth())) {
+                pricePlanMatrix.setMinSubscriptionAgeInMonth(entity.getMinSubscriptionAgeInMonth());
+                result = true;
+            }
+            if (!equal(entity.getValidityCalendar(), pricePlanMatrix.getValidityCalendar())) {
+                pricePlanMatrix.setValidityCalendar(entity.getValidityCalendar());
+                result = true;
+            }
             if (result) {
                 update(pricePlanMatrix, currentUser);
                 this.ratingCacheContainerProvider.updatePricePlanInCache(pricePlanMatrix);
             }
-		}
-		return result;
-	}
-	public boolean equal(Object obj1,Object obj2){
-		if(obj1==null&&obj2==null){
-			return true;
-		}
-		return obj1!=null?obj1.equals(obj2):(obj2!=null?false:true);
-	}
+        }
+        return result;
+    }
+
+    public boolean equal(Object obj1, Object obj2) {
+        if (obj1 == null && obj2 == null) {
+            return true;
+        }
+        return obj1 != null ? obj1.equals(obj2) : (obj2 != null ? false : true);
+    }
 }

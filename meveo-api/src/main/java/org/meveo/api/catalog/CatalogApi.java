@@ -66,8 +66,8 @@ public class CatalogApi extends BaseApi {
                 price.setTaxIncludedAmount(new BigDecimal(0));
 
                 for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : st.getServiceSubscriptionCharges()) {
-                    List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate, serviceChargeTemplateSubscription
-                        .getChargeTemplate().getCode());
+                    List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(), serviceChargeTemplateSubscription
+                        .getChargeTemplate().getCode(), currentUser.getProvider());
                     if (serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
                             && serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
                         price.setTaxRate(serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax()
@@ -81,7 +81,7 @@ public class CatalogApi extends BaseApi {
                         }
                     } else {
                         List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, serviceChargeTemplateSubscription.getChargeTemplate()
-                            .getCode());
+                            .getCode(), currentUser.getProvider());
                         if (pricePlans != null && pricePlans.size() > 0) {
                             price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
                             if (!currentUser.getProvider().isEntreprise()) {
@@ -110,8 +110,8 @@ public class CatalogApi extends BaseApi {
                 price.setTaxIncludedAmount(new BigDecimal(0));
 
                 for (ServiceChargeTemplateRecurring serviceChargeTemplateRecurring : st.getServiceRecurringCharges()) {
-                    List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate, serviceChargeTemplateRecurring
-                        .getChargeTemplate().getCode());
+                    List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(), serviceChargeTemplateRecurring
+                        .getChargeTemplate().getCode(), currentUser.getProvider());
                     if (serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
                             && serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
                         price.setTaxRate(serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
@@ -124,7 +124,7 @@ public class CatalogApi extends BaseApi {
                         }
                     } else {
                         List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, serviceChargeTemplateRecurring.getChargeTemplate()
-                            .getCode());
+                            .getCode(), currentUser.getProvider());
                         if (pricePlans != null && pricePlans.size() > 0) {
                             price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
                             if (!currentUser.getProvider().isEntreprise()) {
