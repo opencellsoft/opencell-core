@@ -287,7 +287,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         // If field is not versionable - get the value without the date
         CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
         if (cft == null) {
-            log.trace("No CFT found {}/{}", entity, code);
+            // log.trace("No CFT found {}/{}", entity, code);
             return null;
         }
         if (!cft.isVersionable()) {
@@ -350,21 +350,20 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
         return result;
     }
-    
 
-	public Element getCFValuesAsDomElement(ICustomFieldEntity entity, Document doc) {
-		Element customFieldsTag=doc.createElement("customFields");
-		 Map<String, List<CustomFieldInstance>> customFieldsMap = getCustomFieldInstances(entity);
-		 for (List<CustomFieldInstance> cfis : customFieldsMap.values()) {
+    public Element getCFValuesAsDomElement(ICustomFieldEntity entity, Document doc) {
+        Element customFieldsTag = doc.createElement("customFields");
+        Map<String, List<CustomFieldInstance>> customFieldsMap = getCustomFieldInstances(entity);
+        for (List<CustomFieldInstance> cfis : customFieldsMap.values()) {
             for (CustomFieldInstance cfi : cfis) {
                 Element customFieldTag = cfi.toDomElement(doc);
-                if(customFieldTag!=null){
-                	customFieldsTag.appendChild(customFieldTag);
+                if (customFieldTag != null) {
+                    customFieldsTag.appendChild(customFieldTag);
                 }
             }
-		}
-		return customFieldsTag;
-	}
+        }
+        return customFieldsTag;
+    }
 
     /**
      * Set a Custom field value on an entity
@@ -652,6 +651,13 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
     }
 
+    /**
+     * Get a custom field value for a given entity's parent's. If custom field is versionable, a current date will be used to access the value.
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @return Custom field value
+     */
     public Object getInheritedOnlyCFValue(ICustomFieldEntity entity, String code, User currentUser) {
         if (entity.getParentCFEntity() != null) {
             ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
@@ -660,6 +666,14 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         return null;
     }
 
+    /**
+     * Get a custom field value for a given entity's parent's and a date
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @param date Date
+     * @return Custom field value
+     */
     public Object getInheritedOnlyCFValue(ICustomFieldEntity entity, String code, Date date, User currentUser) {
 
         if (entity.getParentCFEntity() != null) {
@@ -669,6 +683,13 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         return null;
     }
 
+    /**
+     * Get a custom field value for a given entity or its parent's. If custom field is versionable, a current date will be used to access the value.
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @return Custom field value
+     */
     public Object getInheritedCFValue(ICustomFieldEntity entity, String code, User currentUser) {
         Object value = getCFValue(entity, code, currentUser);
         if (value == null && entity.getParentCFEntity() != null) {
@@ -678,12 +699,149 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         return value;
     }
 
+    /**
+     * Get a custom field value for a given entity or its parent's and a date
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @param date Date
+     * @return Custom field value
+     */
     public Object getInheritedCFValue(ICustomFieldEntity entity, String code, Date date, User currentUser) {
 
         Object value = getCFValue(entity, code, date, currentUser);
         if (value == null && entity.getParentCFEntity() != null) {
             ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
             return getInheritedCFValue(parentCFEntity, code, date, currentUser);
+        }
+        return value;
+    }
+
+    /**
+     * Match for a given entity's or its parent's custom field (non-versionable values) as close as possible map's key to the key provided and return a map value. Match is
+     * performed by matching a full string and then reducing one by one symbol until a match is found.
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     * 
+     * @param entity Entity to match
+     * @param code Custom field code
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    public Object getInheritedCFValueByClosestMatch(ICustomFieldEntity entity, String code, String keyToMatch) {
+
+        Object value = getCFValueByClosestMatch(entity, code, keyToMatch);
+        if (value == null && entity.getParentCFEntity() != null) {
+            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
+            return getInheritedCFValueByClosestMatch(parentCFEntity, code, keyToMatch);
+        }
+        return value;
+    }
+
+    /**
+     * Match for a given date (versionable values) for a given entity's or its parent's custom field as close as possible map's key to the key provided and return a map value.
+     * Match is performed by matching a full string and then reducing one by one symbol until a match is found.
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     * 
+     * @param entity Entity to match
+     * @param code Custom field code
+     * @param date Date
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    public Object getInheritedCFValueByClosestMatch(ICustomFieldEntity entity, String code, Date date, String keyToMatch) {
+
+        Object value = getCFValueByClosestMatch(entity, code, date, keyToMatch);
+        if (value == null && entity.getParentCFEntity() != null) {
+            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
+            return getInheritedCFValueByClosestMatch(parentCFEntity, code, date, keyToMatch);
+        }
+        return value;
+    }
+
+    /**
+     * Match for a given entity's or its parent's custom field (non-versionable values) map's key as the matrix value and return a map value.
+     * 
+     * Map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
+     * 
+     * <matrix first key>|<matrix second key>|<matrix xx key>|<range of numbers for the third key></li>
+     * 
+     * @param entity Entity to match
+     * @param code Custom field code
+     * @param keys Keys to match. The order must correspond to the order of the keys during data entry
+     * @return Map value that matches the matrix format map key
+     */
+    public Object getInheritedCFValueByMatrix(ICustomFieldEntity entity, String code, Object... keys) {
+
+        Object value = getCFValueByMatrix(entity, code, keys);
+        if (value == null && entity.getParentCFEntity() != null) {
+            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
+            return getInheritedCFValueByMatrix(parentCFEntity, code, keys);
+        }
+        return value;
+    }
+
+    /**
+     * Match for a given date (versionable values) for a given entity's or its parent's custom field (versionable values) map's key as the matrix value and return a map value.
+     * 
+     * Map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
+     * 
+     * <matrix first key>|<matrix second key>|<matrix xx key>|<range of numbers for the third key></li>
+     * 
+     * @param entity Entity to match
+     * @param code Custom field code
+     * @param date Date to match
+     * @param keys Keys to match. The order must correspond to the order of the keys during data entry
+     * @return Map value that matches the matrix format map key
+     */
+    public Object getInheritedCFValueByMatrix(ICustomFieldEntity entity, String code, Date date, Object... keys) {
+
+        Object value = getCFValueByMatrix(entity, code, date, keys);
+        if (value == null && entity.getParentCFEntity() != null) {
+            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
+            return getInheritedCFValueByMatrix(parentCFEntity, code, date, keys);
+        }
+        return value;
+    }
+
+    /**
+     * Match for a given entity's or its parent's custom field (non-versionable values) map's key as a range of numbers value and return a map value.
+     * 
+     * Number ranges is assumed to be the following format: <number from>&gt;<number to>
+     * 
+     * @param entity Entity to match
+     * @param code Custom field code
+     * @param numberToMatch Number (long, integer, double, bigdecimal) value to match
+     * @return Map value that matches the range of numbers in a map key
+     */
+    public Object getInheritedCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Object numberToMatch) {
+
+        Object value = getCFValueByRangeOfNumbers(entity, code, numberToMatch);
+        if (value == null && entity.getParentCFEntity() != null) {
+            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
+            return getInheritedCFValueByRangeOfNumbers(parentCFEntity, code, numberToMatch);
+        }
+        return value;
+    }
+
+    /**
+     * Match for a given date (versionable values) for a given entity's custom field (versionable values) map's key as a range of numbers value and return a map value.
+     * 
+     * Number ranges is assumed to be the following format: <number from>&gt;<number to>
+     * 
+     * @param entity Entity to match
+     * @param code Custom field code
+     * @param date Date to match
+     * @param numberToMatch Number (long, integer, double, bigdecimal) value to match
+     * @return Map value that matches the range of numbers in a map key
+     */
+    public Object getInheritedCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Date date, Object numberToMatch) {
+
+        Object value = getCFValueByRangeOfNumbers(entity, code, numberToMatch);
+        if (value == null && entity.getParentCFEntity() != null) {
+            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
+            return getInheritedCFValueByRangeOfNumbers(parentCFEntity, code, date, numberToMatch);
         }
         return value;
     }
@@ -837,8 +995,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public Object getCFValueByMatrix(ICustomFieldEntity entity, String code, Object... keys) {
 
         CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
-        if (cft == null || cft.getMapKeyType() == null) {
-            log.trace("No CFT found or map key type is unknown  {}/{}", entity, code);
+        if (cft == null) {
+            log.trace("No CFT found {}/{}", entity, code);
             return null;
         }
 
@@ -856,7 +1014,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     }
 
     /**
-     * Match for a given entity's custom field (versionable values) map's key as the matrix value and return a map value.
+     * Match for a given date (versionable values) for a given entity's custom field (versionable values) map's key as the matrix value and return a map value.
      * 
      * Map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
      * 
@@ -871,8 +1029,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public Object getCFValueByMatrix(ICustomFieldEntity entity, String code, Date date, Object... keys) {
 
         CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
-        if (cft == null || cft.getMapKeyType() == null) {
-            log.trace("No CFT found or map key type is unknown  {}/{}", entity, code);
+        if (cft == null) {
+            log.trace("No CFT found {}/{}", entity, code);
             return null;
         }
 
@@ -903,8 +1061,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public Object getCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Object numberToMatch) {
 
         CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
-        if (cft == null || cft.getMapKeyType() == null) {
-            log.trace("No CFT found or map key type is unknown  {}/{}", entity, code);
+        if (cft == null) {
+            log.trace("No CFT found {}/{}", entity, code);
             return null;
         }
 
@@ -922,7 +1080,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     }
 
     /**
-     * Match for a given entity's custom field (versionable values) map's key as a range of numbers value and return a map value.
+     * Match for a given date (versionable values) for a given entity's custom field (versionable values) map's key as a range of numbers value and return a map value.
      * 
      * Number ranges is assumed to be the following format: <number from>&gt;<number to>
      * 
@@ -935,8 +1093,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public Object getCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Date date, Object numberToMatch) {
 
         CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
-        if (cft == null || cft.getMapKeyType() == null) {
-            log.trace("No CFT found or map key type is unknown  {}/{}", entity, code);
+        if (cft == null) {
+            log.trace("No CFT found {}/{}", entity, code);
             return null;
         }
 

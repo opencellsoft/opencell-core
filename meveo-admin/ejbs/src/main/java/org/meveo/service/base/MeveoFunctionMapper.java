@@ -50,8 +50,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
         try {
             addFunction("mv", "getCFValue", MeveoFunctionMapper.class.getMethod("getCFValue", ICustomFieldEntity.class, String.class));
             addFunction("mv", "getCFValueForDate", MeveoFunctionMapper.class.getMethod("getCFValueForDate", ICustomFieldEntity.class, String.class, Date.class));
-            addFunction("mv", "getInheritedCFValue", MeveoFunctionMapper.class.getMethod("getInheritedCFValue", ICustomFieldEntity.class, String.class));
-            addFunction("mv", "getInheritedCFValueForDate", MeveoFunctionMapper.class.getMethod("getInheritedCFValueForDate", ICustomFieldEntity.class, String.class, Date.class));
             addFunction("mv", "getCFValueByClosestMatch", MeveoFunctionMapper.class.getMethod("getCFValueByClosestMatch", ICustomFieldEntity.class, String.class, String.class));
             addFunction("mv", "getCFValueByClosestMatchForDate",
                 MeveoFunctionMapper.class.getMethod("getCFValueByClosestMatchForDate", ICustomFieldEntity.class, String.class, Date.class, String.class));
@@ -77,6 +75,38 @@ public class MeveoFunctionMapper extends FunctionMapper {
                 Date.class, Object.class, Object.class, Object.class, Object.class));
             addFunction("mv", "getCFValueByMatrixForDate5Keys", MeveoFunctionMapper.class.getMethod("getCFValueByMatrixForDate5Keys", ICustomFieldEntity.class, String.class,
                 Date.class, Object.class, Object.class, Object.class, Object.class, Object.class));
+
+            addFunction("mv", "getInheritedCFValue", MeveoFunctionMapper.class.getMethod("getInheritedCFValue", ICustomFieldEntity.class, String.class));
+            addFunction("mv", "getInheritedCFValueForDate", MeveoFunctionMapper.class.getMethod("getInheritedCFValueForDate", ICustomFieldEntity.class, String.class, Date.class));
+
+            addFunction("mv", "getInheritedCFValueByClosestMatch",
+                MeveoFunctionMapper.class.getMethod("getInheritedCFValueByClosestMatch", ICustomFieldEntity.class, String.class, String.class));
+            addFunction("mv", "getInheritedCFValueByClosestMatchForDate",
+                MeveoFunctionMapper.class.getMethod("getInheritedCFValueByClosestMatchForDate", ICustomFieldEntity.class, String.class, Date.class, String.class));
+            addFunction("mv", "getInheritedCFValueByRangeOfNumbers",
+                MeveoFunctionMapper.class.getMethod("getInheritedCFValueByRangeOfNumbers", ICustomFieldEntity.class, String.class, Object.class));
+            addFunction("mv", "getInheritedCFValueByRangeOfNumbersForDate",
+                MeveoFunctionMapper.class.getMethod("getInheritedCFValueByRangeOfNumbersForDate", ICustomFieldEntity.class, String.class, Date.class, Object.class));
+            addFunction("mv", "getInheritedCFValueByMatrix",
+                MeveoFunctionMapper.class.getMethod("getInheritedCFValueByMatrix", ICustomFieldEntity.class, String.class, String.class));
+            addFunction("mv", "getInheritedCFValueByMatrix2Keys",
+                MeveoFunctionMapper.class.getMethod("getInheritedCFValueByMatrix2Keys", ICustomFieldEntity.class, String.class, Object.class, Object.class));
+            addFunction("mv", "getInheritedCFValueByMatrix3Keys",
+                MeveoFunctionMapper.class.getMethod("getInheritedCFValueByMatrix3Keys", ICustomFieldEntity.class, String.class, Object.class, Object.class, Object.class));
+            addFunction("mv", "getInheritedCFValueByMatrix4Keys", MeveoFunctionMapper.class.getMethod("getInheritedCFValueByMatrix4Keys", ICustomFieldEntity.class, String.class,
+                Object.class, Object.class, Object.class, Object.class));
+            addFunction("mv", "getInheritedCFValueByMatrix5Keys", MeveoFunctionMapper.class.getMethod("getInheritedCFValueByMatrix5Keys", ICustomFieldEntity.class, String.class,
+                Object.class, Object.class, Object.class, Object.class, Object.class));
+            addFunction("mv", "getInheritedCFValueByMatrixForDate",
+                MeveoFunctionMapper.class.getMethod("getInheritedCFValueByMatrixForDate", ICustomFieldEntity.class, String.class, Date.class, String.class));
+            addFunction("mv", "getInheritedCFValueByMatrixForDate2Keys",
+                MeveoFunctionMapper.class.getMethod("getInheritedCFValueByMatrixForDate2Keys", ICustomFieldEntity.class, String.class, Date.class, Object.class, Object.class));
+            addFunction("mv", "getInheritedCFValueByMatrixForDate3Keys", MeveoFunctionMapper.class.getMethod("getInheritedCFValueByMatrixForDate3Keys", ICustomFieldEntity.class,
+                String.class, Date.class, Object.class, Object.class, Object.class));
+            addFunction("mv", "getInheritedCFValueByMatrixForDate4Keys", MeveoFunctionMapper.class.getMethod("getInheritedCFValueByMatrixForDate4Keys", ICustomFieldEntity.class,
+                String.class, Date.class, Object.class, Object.class, Object.class, Object.class));
+            addFunction("mv", "getInheritedCFValueByMatrixForDate5Keys", MeveoFunctionMapper.class.getMethod("getInheritedCFValueByMatrixForDate5Keys", ICustomFieldEntity.class,
+                String.class, Date.class, Object.class, Object.class, Object.class, Object.class, Object.class));
 
             addFunction("mv", "executeScript", MeveoFunctionMapper.class.getMethod("executeScript", IEntity.class, String.class, String.class, User.class));
 
@@ -192,30 +222,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
         Object cfValue = getCustomFieldInstanceService().getCFValue(entity, code, date, getCustomFieldInstanceService().getCurrentUser());
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} for {}/{} for {}", cfValue, entity, code, date);
-
-        return cfValue;
-    }
-
-    /**
-     * Exposes CustomFieldInstanceService.getInheritedCFValue() function as EL function. See CustomFieldInstanceService.getInheritedCFValue() function for documentation
-     */
-    public static Object getInheritedCFValue(ICustomFieldEntity entity, String code) {
-
-        Object cfValue = getCustomFieldInstanceService().getInheritedCFValue(entity, code, getCustomFieldInstanceService().getCurrentUser());
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
-        log.trace("Obtained inherited CF value {} for {}/{}", cfValue, entity, code);
-
-        return cfValue;
-    }
-
-    /**
-     * Exposes CustomFieldInstanceService.getInheritedCFValue() function as EL function. See CustomFieldInstanceService.getInheritedCFValue() function for documentation
-     */
-    public static Object getInheritedCFValueForDate(ICustomFieldEntity entity, String code, Date date) {
-
-        Object cfValue = getCustomFieldInstanceService().getInheritedCFValue(entity, code, date, getCustomFieldInstanceService().getCurrentUser());
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
-        log.trace("Obtained inherited CF value {} for {}/{} for {}", cfValue, entity, code, date);
 
         return cfValue;
     }
@@ -408,6 +414,234 @@ public class MeveoFunctionMapper extends FunctionMapper {
         Object cfValue = getCustomFieldInstanceService().getCFValueByMatrix(entity, code, date, keyOne, keyTwo, keyThree, keyFour, keyFive);
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} by matrix for keys {}/{}/{}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, keyThree, keyFour, keyFive, entity, code, date);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getInheritedCFValue() function as EL function. See CustomFieldInstanceService.getInheritedCFValue() function for documentation
+     */
+    public static Object getInheritedCFValue(ICustomFieldEntity entity, String code) {
+
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValue(entity, code, getCustomFieldInstanceService().getCurrentUser());
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} for {}/{}", cfValue, entity, code);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getInheritedCFValue() function as EL function. See CustomFieldInstanceService.getInheritedCFValue() function for documentation
+     */
+    public static Object getInheritedCFValueForDate(ICustomFieldEntity entity, String code, Date date) {
+
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValue(entity, code, date, getCustomFieldInstanceService().getCurrentUser());
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} for {}/{} for {}", cfValue, entity, code, date);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getInheritedCFValueByClosestMatch() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByClosestMatch() function
+     * for documentation
+     */
+    public static Object getInheritedCFValueByClosestMatch(ICustomFieldEntity entity, String code, String keyToMatch) {
+
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByClosestMatch(entity, code, keyToMatch);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} by closest match for key {} for {}/{}", cfValue, keyToMatch, entity, code);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getInheritedCFValueByClosestMatch() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByClosestMatch() function
+     * for documentation
+     */
+    public static Object getInheritedCFValueByClosestMatchForDate(ICustomFieldEntity entity, String code, Date date, String keyToMatch) {
+
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByClosestMatch(entity, code, date, keyToMatch);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} by closest match for key {} for {}/{} for {}", cfValue, keyToMatch, entity, code, date);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getInheritedCFValueByRangeOfNumbers() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByRangeOfNumbers()
+     * function for documentation
+     */
+    public static Object getInheritedCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Object numberToMatch) {
+
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByRangeOfNumbers(entity, code, numberToMatch);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} by range of numbers for number {} for {}/{}", cfValue, numberToMatch, entity, code);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getInheritedCFValueByRangeOfNumbers() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByRangeOfNumbers()
+     * function for documentation
+     */
+    public static Object getInheritedCFValueByRangeOfNumbersForDate(ICustomFieldEntity entity, String code, Date date, Object numberToMatch) {
+
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByRangeOfNumbers(entity, code, date, numberToMatch);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} by range of numbers for number {} for {}/{} for {}", cfValue, numberToMatch, entity, code, date);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getInheritedCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByMatrix() function for
+     * documentation
+     * 
+     * @param entity Entity to find CF value for
+     * @param code Custom field code
+     * @param concatenatedKeys Keys concatenated by "|" sign
+     */
+    public static Object getInheritedCFValueByMatrix(ICustomFieldEntity entity, String code, String concatenatedKeys) {
+
+        if (StringUtils.isBlank(concatenatedKeys)) {
+            return null;
+        }
+
+        String[] keys = concatenatedKeys.split("|");
+
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByMatrix(entity, code, (Object[]) keys);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} by matrix for keys {} for {}/{}", cfValue, keys, entity, code);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getInheritedCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByMatrix() function for
+     * documentation
+     */
+    public static Object getInheritedCFValueByMatrix2Keys(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo) {
+
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByMatrix(entity, code, keyOne, keyTwo);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} by matrix for keys {}/{} for {}/{}", cfValue, keyOne, keyTwo, entity, code);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getInheritedCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByMatrix() function for
+     * documentation
+     */
+    public static Object getInheritedCFValueByMatrix3Keys(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree) {
+
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByMatrix(entity, code, keyOne, keyTwo, keyThree);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} by matrix for keys {}/{}/{} for {}/{}", cfValue, keyOne, keyTwo, keyThree, entity, code);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getInheritedCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByMatrix() function for
+     * documentation
+     */
+    public static Object getInheritedCFValueByMatrix4Keys(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree, Object keyFour) {
+
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByMatrix(entity, code, keyOne, keyTwo, keyThree, keyFour);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} by matrix for keys {}/{}/{}/{} for {}/{}", cfValue, keyOne, keyTwo, keyThree, keyFour, entity, code);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getInheritedCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByMatrix() function for
+     * documentation
+     */
+    public static Object getInheritedCFValueByMatrix5Keys(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree, Object keyFour, Object keyFive) {
+
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByMatrix(entity, code, keyOne, keyTwo, keyThree, keyFour, keyFive);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} by matrix for keys {}/{}/{}/{} for {}/{}", cfValue, keyOne, keyTwo, keyThree, keyFour, keyFive, entity, code);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getInheritedCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByMatrix() function for
+     * documentation
+     * 
+     * @param entity Entity to find CF value for
+     * @param code Custom field code
+     * @param date Date Value date
+     * @param concatenatedKeys Keys concatenated by "|" sign
+     */
+    public static Object getInheritedCFValueByMatrixForDate(ICustomFieldEntity entity, String code, Date date, String concatenatedKeys) {
+
+        if (StringUtils.isBlank(concatenatedKeys)) {
+            return null;
+        }
+
+        String[] keys = concatenatedKeys.split("|");
+
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByMatrix(entity, code, (Object[]) keys);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} by matrix for keys {} for {}/{}", cfValue, keys, entity, code);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getInheritedCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByMatrix() function for
+     * documentation
+     */
+    public static Object getInheritedCFValueByMatrixForDate2Keys(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo) {
+
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByMatrix(entity, code, date, keyOne, keyTwo);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} by matrix for keys {}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, entity, code, date);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getInheritedCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByMatrix() function for
+     * documentation
+     */
+    public static Object getInheritedCFValueByMatrixForDate3Keys(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree) {
+
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByMatrix(entity, code, date, keyOne, keyTwo, keyThree);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} by matrix for keys {}/{}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, keyThree, entity, code, date);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getInheritedCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByMatrix() function for
+     * documentation
+     */
+    public static Object getInheritedCFValueByMatrixForDate4Keys(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree, Object keyFour) {
+
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByMatrix(entity, code, date, keyOne, keyTwo, keyThree, keyFour);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} by matrix for keys {}/{}/{}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, keyThree, keyFour, entity, code, date);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getInheritedCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByMatrix() function for
+     * documentation
+     */
+    public static Object getInheritedCFValueByMatrixForDate5Keys(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree, Object keyFour,
+            Object keyFive) {
+
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByMatrix(entity, code, date, keyOne, keyTwo, keyThree, keyFour, keyFive);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} by matrix for keys {}/{}/{}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, keyThree, keyFour, keyFive, entity, code, date);
 
         return cfValue;
     }
