@@ -58,6 +58,7 @@ import org.meveo.api.dto.notification.JobTriggerDto;
 import org.meveo.api.dto.notification.NotificationDto;
 import org.meveo.api.dto.notification.WebhookNotificationDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
@@ -348,4 +349,17 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         item.setItemEntity(entity);
 
     }
+
+	@SuppressWarnings("unchecked")
+	public List<MeveoModuleItem> findByCodeAndItemType(String code, String className) {
+		QueryBuilder qb = new QueryBuilder(MeveoModuleItem.class, "m");
+		qb.addCriterion("itemCode", "=", code, true);
+		qb.addCriterion("itemClass", "=", className, true);		
+
+		try {
+			return (List<MeveoModuleItem>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
 }

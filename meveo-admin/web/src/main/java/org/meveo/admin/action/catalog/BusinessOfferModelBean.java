@@ -12,10 +12,13 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
+import org.meveo.service.catalog.impl.BusinessServiceModelService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -26,6 +29,9 @@ import org.primefaces.model.DualListModel;
 public class BusinessOfferModelBean extends BaseBean<BusinessOfferModel> {
 
 	private static final long serialVersionUID = 8222060379099238520L;
+
+	@Inject
+	private BusinessServiceModelService businessServiceModelService;
 
 	@Inject
 	private BusinessOfferModelService businessOfferModelService;
@@ -99,6 +105,19 @@ public class BusinessOfferModelBean extends BaseBean<BusinessOfferModel> {
 		}
 
 		return serviceDualListModel;
+	}
+
+	public List<BusinessServiceModel> getBusinessServiceModels(BusinessOfferModel bomEntity) {
+		List<BusinessServiceModel> result = new ArrayList<>();
+		if (bomEntity != null && bomEntity.getModuleItems() != null) {
+			for (MeveoModuleItem item : bomEntity.getModuleItems()) {
+				if (item.getItemClass().equals(BusinessServiceModel.class.getName())) {
+					result.add(businessServiceModelService.findByCode(item.getItemCode(), currentUser.getProvider()));
+				}
+			}
+		}	
+
+		return result;
 	}
 
 	public void setServiceDualListModel(DualListModel<ServiceTemplate> stDM) {

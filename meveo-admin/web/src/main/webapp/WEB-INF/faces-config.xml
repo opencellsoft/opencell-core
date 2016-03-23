@@ -1777,6 +1777,19 @@
 			</to-view-id>
 			<redirect />
 		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>businessServiceModels</from-outcome>
+			<to-view-id>/pages/catalog/businessServiceModels/businessServiceModels.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>businessServiceModelDetail</from-outcome>
+			<to-view-id>/pages/catalog/businessServiceModels/businessServiceModelDetail.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
 	</navigation-rule>
 
 
