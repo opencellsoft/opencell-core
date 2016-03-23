@@ -22321,10 +22321,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createPricePlan>
-         <pricePlan code="${#Project#entityPrefix}_${#TestSuite#index}_PP-REC2" description="">
-            <eventCode>${#Project#entityPrefix}_${#TestSuite#index}_REC1</eventCode>
+         <pricePlan code="${#Project#entityPrefix}_${#TestSuite#index}_PP-REC2">
+            <eventCode>${#Project#entityPrefix}_${#TestSuite#index}_REC2</eventCode>
             <amountWithoutTax>10</amountWithoutTax>
-            <amountWithTax>12</amountWithTax>
          </pricePlan>
       </ws:createPricePlan>
    </soapenv:Body>
@@ -22377,10 +22376,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updatePricePlan>
-         <pricePlan code="${#Project#entityPrefix}_${#TestSuite#index}_PP-REC1" description="">
-            <eventCode>${#Project#entityPrefix}_${#TestSuite#index}_REC1</eventCode>
+         <pricePlan code="${#Project#entityPrefix}_${#TestSuite#index}_PP-REC2">
+            <eventCode>${#Project#entityPrefix}_${#TestSuite#index}_REC2</eventCode>
             <amountWithoutTax>8</amountWithoutTax>
-            <amountWithTax>16</amountWithTax>
          </pricePlan>
       </ws:updatePricePlan>
    </soapenv:Body>
