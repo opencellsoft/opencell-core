@@ -501,4 +501,51 @@ public class DateUtils {
         }
         return result;
     }
+
+    /**
+     * Check if periods overlap
+     * 
+     * @param periodStart One period start date
+     * @param periodEnd One period end date
+     * @param checkStart Second period start date
+     * @param checkEnd Second period end date
+     * @return True if period is within another period
+     */
+    public static boolean isPeriodsOverlap(Date periodStart, Date periodEnd, Date checkStart, Date checkEnd) {
+
+        // Logger log = LoggerFactory.getLogger(DateUtils.class);
+        if (checkStart == null && checkEnd == null) {
+            return true;
+        }
+
+        // Period is not after dates being checked
+        if (checkStart == null && (periodStart == null || periodStart.compareTo(checkEnd) < 0)) {
+            return true;
+
+            // Period is not before dates being checked
+        } else if (checkEnd == null && (periodEnd == null || periodEnd.compareTo(checkStart) > 0)) {
+            return true;
+
+            // Dates are not after period
+        } else if (periodStart == null && (checkStart == null || checkStart.compareTo(periodEnd) < 0)) {
+            return true;
+
+            // Dates are not before period
+        } else if (periodEnd == null && (checkEnd == null || checkEnd.compareTo(periodStart) > 0)) {
+            return true;
+
+        } else if (checkStart != null && checkEnd != null && periodStart != null && periodEnd != null) {
+
+            // Dates end or start within the period
+            if ((checkEnd.compareTo(periodEnd) <= 0 && checkEnd.compareTo(periodStart) > 0) || (checkStart.compareTo(periodEnd) < 0 && checkStart.compareTo(periodStart) >= 0)) {
+                return true;
+            }
+
+            // Period end or start within the dates
+            if ((periodEnd.compareTo(checkEnd) <= 0 && periodEnd.compareTo(checkStart) > 0) || (periodStart.compareTo(checkEnd) < 0 && periodStart.compareTo(checkStart) >= 0)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

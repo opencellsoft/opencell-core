@@ -110,6 +110,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
             addFunction("mv", "executeScript", MeveoFunctionMapper.class.getMethod("executeScript", IEntity.class, String.class, String.class, User.class));
 
+            addFunction("mv", "now", MeveoFunctionMapper.class.getMethod("getNowTimestamp"));
+
         } catch (NoSuchMethodException | SecurityException e) {
             Logger log = LoggerFactory.getLogger(this.getClass());
             log.error("Failed to instantiate EL custom function mv:xx", e);
@@ -681,5 +683,14 @@ public class MeveoFunctionMapper extends FunctionMapper {
         }
 
         return result;
+    }
+
+    /**
+     * Get a timestamp
+     * 
+     * @return
+     */
+    public static Date getNowTimestamp() {
+        return new Date();
     }
 }

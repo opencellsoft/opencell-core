@@ -276,13 +276,15 @@ public class CustomFieldDataEntryBean implements Serializable {
                 // For a strict match need to edit an existing period
                 if (strictMatch) {
                     messages.error(new BundleKey("messages", "customFieldTemplate.matchingPeriodFound.noNew"),
-                        DateUtils.formatDateWithPattern(period.getPeriodStartDate(), datePattern), DateUtils.formatDateWithPattern(period.getPeriodEndDate(), datePattern));
+                        period.getPeriodStartDate() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriodStartDate(), datePattern),
+                        period.getPeriodEndDate() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriodEndDate(), datePattern));
                     valuePeriodMatched.put(entityUuid, false);
 
                     // For a non-strict match user has an option to create a period with a higher priority
                 } else {
-                    messages.warn(new BundleKey("messages", "customFieldTemplate.matchingPeriodFound"), DateUtils.formatDateWithPattern(period.getPeriodStartDate(), datePattern),
-                        DateUtils.formatDateWithPattern(period.getPeriodEndDate(), datePattern));
+                    messages.warn(new BundleKey("messages", "customFieldTemplate.matchingPeriodFound"),
+                        period.getPeriodStartDate() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriodStartDate(), datePattern),
+                        period.getPeriodEndDate() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriodEndDate(), datePattern));
                     valuePeriodMatched.put(entityUuid, true);
                 }
                 FacesContext.getCurrentInstance().validationFailed();

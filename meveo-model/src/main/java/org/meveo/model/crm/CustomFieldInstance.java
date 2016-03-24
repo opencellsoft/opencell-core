@@ -24,6 +24,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.shared.DateUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -343,41 +344,7 @@ public class CustomFieldInstance extends AuditableEntity {
             return match;
         }
         // Check non-strict match case when dates overlap
-        if (startDate == null && endDate == null) {
-            return true;
-        }
-
-        // Period is not after dates being checked
-        if (startDate == null && (periodStartDate == null || periodStartDate.compareTo(endDate) < 0)) {
-            return true;
-
-            // Period is not before dates being checked
-        } else if (endDate == null && (periodEndDate == null || periodEndDate.compareTo(startDate) >= 0)) {
-            return true;
-
-            // Dates are not after period
-        } else if (periodStartDate == null && (startDate == null || startDate.compareTo(endDate) < 0)) {
-            return true;
-
-            // Dates are not before period
-        } else if (periodEndDate == null && (endDate == null || endDate.compareTo(startDate) >= 0)) {
-            return true;
-
-        } else if (startDate != null && endDate != null && periodStartDate != null && periodEndDate != null) {
-
-            // Dates end or start within the period
-            if ((endDate.compareTo(periodEndDate) <= 0 && endDate.compareTo(periodStartDate) > 0)
-                    || (startDate.compareTo(periodEndDate) < 0 && startDate.compareTo(periodStartDate) >= 0)) {
-                return true;
-            }
-
-            // Period end or start within the dates
-            if ((periodEndDate.compareTo(endDate) <= 0 && periodEndDate.compareTo(startDate) > 0)
-                    || (periodStartDate.compareTo(endDate) < 0 && periodStartDate.compareTo(startDate) >= 0)) {
-                return true;
-            }
-        }
-        return false;
+        return DateUtils.isPeriodsOverlap(periodStartDate, periodEndDate, startDate, endDate);
     }
 
     // /**
@@ -408,26 +375,26 @@ public class CustomFieldInstance extends AuditableEntity {
         return String.format("CustomFieldInstance [code=%s, appliesToEntity=%s, periodStartDate=%s, periodEndDate=%s, priority=%s, cfValue=%s, disabled=%s]", code,
             appliesToEntity, periodStartDate, periodEndDate, priority, cfValue, isDisabled());
     }
-    
+
     public String toJson() {
         String result = code + ":";
         result += getCfValue().toJson(sdf);
         return result;
     }
-    
-	public Element toDomElement(Document doc) {
- 		Element customFieldTag=doc.createElement("customField");
- 		customFieldTag.setAttribute("code",code);
- 		if(periodStartDate!=null){
- 	 		customFieldTag.setAttribute("periodStartDate",xmlsdf.format(periodStartDate));
- 		}
- 		if(periodEndDate!=null){
- 	 		customFieldTag.setAttribute("periodEndDate",xmlsdf.format(periodEndDate));
- 		}
- 		
- 		Text customFieldText = doc.createTextNode(getCfValue().toXmlText(xmlsdf));
+
+    public Element toDomElement(Document doc) {
+        Element customFieldTag = doc.createElement("customField");
+        customFieldTag.setAttribute("code", code);
+        if (periodStartDate != null) {
+            customFieldTag.setAttribute("periodStartDate", xmlsdf.format(periodStartDate));
+        }
+        if (periodEndDate != null) {
+            customFieldTag.setAttribute("periodEndDate", xmlsdf.format(periodEndDate));
+        }
+
+        Text customFieldText = doc.createTextNode(getCfValue().toXmlText(xmlsdf));
         customFieldTag.appendChild(customFieldText);
-        
-		return customFieldTag;
-	}
+
+        return customFieldTag;
+    }
 }
