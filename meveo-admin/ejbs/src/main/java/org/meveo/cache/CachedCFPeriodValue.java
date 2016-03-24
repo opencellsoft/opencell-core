@@ -40,7 +40,7 @@ public class CachedCFPeriodValue implements Serializable {
         this.priority = priority;
         this.periodStartDate = periodStartDate;
         this.periodEndDate = periodEndDate;
-        versioned = true;
+        versioned = (periodStartDate != null || periodEndDate != null);
 
     }
 
