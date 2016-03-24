@@ -6391,7 +6391,7 @@
             <column name="discount_accounting_code" />
             <column name="display_free_tx_in_invoice" valueBoolean="true" />
             <column name="email" />
-            <column name="entreprise" valueBoolean="false" />
+            <column name="entreprise" valueBoolean="true" />
             <column name="address_1" />
             <column name="address_2" />
             <column name="address_3" />
