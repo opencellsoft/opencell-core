@@ -276,7 +276,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 				boolean conditionCheck = triggeredEDRTemplate.getConditionEl() == null
 						|| "".equals(triggeredEDRTemplate.getConditionEl())
 						|| matchExpression(triggeredEDRTemplate.getConditionEl(), result, ua,result.getPriceplan());
-				/*was debug*/log.info("checking condition for {} : {} -> {}", triggeredEDRTemplate.getCode(),
+				log.debug("checking condition for {} : {} -> {}", triggeredEDRTemplate.getCode(),
 						triggeredEDRTemplate.getConditionEl(), conditionCheck);
 				if (conditionCheck) {
 					EDR newEdr = new EDR();
@@ -339,7 +339,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 				throw new BusinessException("Invalid price plan for provider " + providerCode + " and charge code "
 						+ bareWalletOperation.getCode());
 			} 
-			/*was debug*/log.info("found ratePrice:" + ratePrice.getId());
+			log.debug("found ratePrice:" + ratePrice.getId());
 			unitPriceWithoutTax = ratePrice.getAmountWithoutTax();
 			unitPriceWithTax = ratePrice.getAmountWithTax();
 			if(ratePrice.getAmountWithoutTaxEL()!=null){
@@ -416,7 +416,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		for (PricePlanMatrix pricePlan : listPricePlan) {
 			boolean sellerAreEqual = pricePlan.getSeller() == null || pricePlan.getSeller().getId().equals(sellerId);
 			if (!sellerAreEqual) {
-				/*was debug*/log.info("The seller of the customer " + sellerId + " is not the same as pricePlan seller "
+				log.debug("The seller of the customer " + sellerId + " is not the same as pricePlan seller "
 						+ pricePlan.getSeller().getId() + " (" + pricePlan.getSeller().getCode() + ")");
 				continue;
 			}
@@ -424,7 +424,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			boolean countryAreEqual = pricePlan.getTradingCountry() == null
 					|| pricePlan.getTradingCountry().getId().equals(countryId);
 			if (!countryAreEqual) {
-				/*was debug*/log.info(
+				log.debug(
 						"The countryId={} of the billing account is not the same as pricePlan with countryId={} and code={}",
 						countryId, pricePlan.getTradingCountry().getId(),
 								pricePlan.getTradingCountry().getCountry().getCountryCode() );
@@ -433,7 +433,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			boolean currencyAreEqual = pricePlan.getTradingCurrency() == null
 					|| (tcurrency != null && tcurrency.getId().equals(pricePlan.getTradingCurrency().getId()));
 			if (!currencyAreEqual) {
-				/*was debug*/log.info("The currency of the customer account "
+				log.debug("The currency of the customer account "
 						+ (tcurrency != null ? tcurrency.getCurrencyCode() : "null")
 						+ " is not the same as pricePlan currency" + pricePlan.getTradingCurrency().getId() + " ("
 						+ pricePlan.getTradingCurrency().getCurrencyCode() + ")");
@@ -446,7 +446,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 							.getEndSubscriptionDate() == null || bareOperation.getSubscriptionDate().before(
 							pricePlan.getEndSubscriptionDate())));
 			if (!subscriptionDateInPricePlanPeriod) {
-				/*was debug*/log.info("The subscription date " + bareOperation.getSubscriptionDate()
+				log.debug("The subscription date " + bareOperation.getSubscriptionDate()
 						+ "is not in the priceplan subscription range");
 				continue;
 			}
@@ -467,16 +467,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 			// pricePlan.getMinSubscriptionAgeInMonth() + ")=" +
 			// subscriptionMinAgeOK);
 			if (!subscriptionMinAgeOK) {
-				/*was debug*/log.info("The subscription age={} is less than the priceplan subscription age min={}",
+				log.debug("The subscription age={} is less than the priceplan subscription age min={}",
 						subscriptionAge, pricePlan.getMinSubscriptionAgeInMonth());
 				continue;
 			}
 			boolean subscriptionMaxAgeOK = pricePlan.getMaxSubscriptionAgeInMonth() == null
 					|| pricePlan.getMaxSubscriptionAgeInMonth() == 0
 					|| subscriptionAge < pricePlan.getMaxSubscriptionAgeInMonth();
-			/*was debug*/log.info("subscriptionMaxAgeOK(" + pricePlan.getMaxSubscriptionAgeInMonth() + ")=" + subscriptionMaxAgeOK);
+			log.debug("subscriptionMaxAgeOK(" + pricePlan.getMaxSubscriptionAgeInMonth() + ")=" + subscriptionMaxAgeOK);
 			if (!subscriptionMaxAgeOK) {
-				/*was debug*/log.info("The subscription age " + subscriptionAge
+				log.debug("The subscription age " + subscriptionAge
 						+ " is greater than the priceplan subscription age max :"
 						+ pricePlan.getMaxSubscriptionAgeInMonth());
 				continue;
@@ -487,10 +487,10 @@ public class RatingService extends BusinessService<WalletOperation>{
                 .getOperationDate().equals(pricePlan.getStartRatingDate()))
 					&& (pricePlan.getEndRatingDate() == null || bareOperation.getOperationDate().before(
 							pricePlan.getEndRatingDate()));
-			/*was debug*/log.info("applicationDateInPricePlanPeriod(" + pricePlan.getStartRatingDate() + " - "
+			log.debug("applicationDateInPricePlanPeriod(" + pricePlan.getStartRatingDate() + " - "
 					+ pricePlan.getEndRatingDate() + ")=" + applicationDateInPricePlanPeriod);
 			if (!applicationDateInPricePlanPeriod) {
-				/*was debug*/log.info("The application date " + bareOperation.getOperationDate()
+				log.debug("The application date " + bareOperation.getOperationDate()
 						+ " is not in the priceplan application range");
 				continue;
 			}
@@ -499,7 +499,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			// log.info("criteria1SameInPricePlan(" +
 			// pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
 			if (!criteria1SameInPricePlan) {
-				/*was debug*/log.info("The operation param1 " + bareOperation.getParameter1()
+				log.debug("The operation param1 " + bareOperation.getParameter1()
 						+ " is not compatible with price plan criteria 1: " + pricePlan.getCriteria1Value());
 				continue;
 			}
@@ -508,7 +508,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			// log.info("criteria2SameInPricePlan(" +
 			// pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
 			if (!criteria2SameInPricePlan) {
-				/*was debug*/log.info("The operation param2 " + bareOperation.getParameter2()
+				log.debug("The operation param2 " + bareOperation.getParameter2()
 						+ " is not compatible with price plan criteria 2: " + pricePlan.getCriteria2Value());
 				continue;
 			}
@@ -517,14 +517,14 @@ public class RatingService extends BusinessService<WalletOperation>{
 			// log.info("criteria3SameInPricePlan(" +
 			// pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
 			if (!criteria3SameInPricePlan) {
-				/*was debug*/log.info("The operation param3 " + bareOperation.getParameter3()
+				log.debug("The operation param3 " + bareOperation.getParameter3()
 						+ " is not compatible with price plan criteria 3: " + pricePlan.getCriteria3Value());
 				continue;
 			}
 			if (!StringUtils.isBlank(pricePlan.getCriteriaEL())) {
 				UserAccount ua = bareOperation.getWallet().getUserAccount();				
 				if (!matchExpression(pricePlan.getCriteriaEL(), bareOperation, ua,pricePlan)) {
-					/*was debug*/log.info("The operation is not compatible with price plan criteria EL: "
+					log.debug("The operation is not compatible with price plan criteria EL: "
 							+ pricePlan.getCriteriaEL());
 					continue;
 				}
@@ -533,37 +533,37 @@ public class RatingService extends BusinessService<WalletOperation>{
 			boolean offerCodeSameInPricePlan = pricePlan.getOfferTemplate() == null
 					|| pricePlan.getOfferTemplate().getCode().equals(bareOperation.getOfferCode());
 			if (!offerCodeSameInPricePlan) {
-				/*was debug*/log.info("The operation offerCode " + bareOperation.getOfferCode()
+				log.debug("The operation offerCode " + bareOperation.getOfferCode()
 						+ " is not compatible with price plan offerCode: "
 						+ ((pricePlan.getOfferTemplate() == null) ? "null" : pricePlan.getOfferTemplate().getCode()));
 				continue;
 			}
-			/*was debug*/log.info("offerCodeSameInPricePlan");
+			log.debug("offerCodeSameInPricePlan");
 			boolean quantityMaxOk = pricePlan.getMaxQuantity() == null
 					|| pricePlan.getMaxQuantity().compareTo(bareOperation.getQuantity()) > 0;
 			if (!quantityMaxOk) {
-				/*was debug*/log.info("the quantity " + bareOperation.getQuantity() + " is strictly greater than "
+				log.debug("the quantity " + bareOperation.getQuantity() + " is strictly greater than "
 						+ pricePlan.getMaxQuantity());
 				continue;
 			} else {
-				/*was debug*/log.info("quantityMaxOkInPricePlan");
+				log.debug("quantityMaxOkInPricePlan");
 			}
 			boolean quantityMinOk = pricePlan.getMinQuantity() == null
 					|| pricePlan.getMinQuantity().compareTo(bareOperation.getQuantity()) <= 0;
 			if (!quantityMinOk) {
-			    /*was debug*/log.info("the quantity " + bareOperation.getQuantity() + " is less than " + pricePlan.getMinQuantity());
+			    log.debug("the quantity " + bareOperation.getQuantity() + " is less than " + pricePlan.getMinQuantity());
 	            continue;
 			} else {
-			    /*was debug*/log.info("quantityMinOkInPricePlan");
+			    log.debug("quantityMinOkInPricePlan");
 			} 
 
             boolean validityCalendarOK = pricePlan.getValidityCalendar() == null || pricePlan.getValidityCalendar().previousCalendarDate(bareOperation.getOperationDate()) != null;
             if (validityCalendarOK) {
-                /*was debug*/log.info("validityCalendarOkInPricePlan calendar " + pricePlan.getValidityCalendar() + " operation date " + bareOperation.getOperationDate());
+                log.debug("validityCalendarOkInPricePlan calendar " + pricePlan.getValidityCalendar() + " operation date " + bareOperation.getOperationDate());
                 bareOperation.setPriceplan(pricePlan);
                 return pricePlan;
             } else if (pricePlan.getValidityCalendar() != null ){
-                /*was debug*/log.info("the operation date " + bareOperation.getOperationDate() + " does not match pricePlan validity calendar " + pricePlan.getValidityCalendar().getCode()
+                log.debug("the operation date " + bareOperation.getOperationDate() + " does not match pricePlan validity calendar " + pricePlan.getValidityCalendar().getCode()
                         + "period range ");
             }
 		}
@@ -649,13 +649,13 @@ public class RatingService extends BusinessService<WalletOperation>{
 			create(operation,currentUser);
 			operationToRerate.updateAudit(currentUser);
 			updateNoCheck(operationToRerate);
-			/*was debug*/log.info("updated wallet operation");
+			log.debug("updated wallet operation");
 		} catch (UnrolledbackBusinessException e) { 
 			log.error("Failed to reRate",e);
 			operationToRerate.setStatus(WalletOperationStatusEnum.TREATED);
 			operationToRerate.setReratedWalletOperation(null);
 		}
-		/*was debug*/log.info("end rerate wallet operation");
+		log.debug("end rerate wallet operation");
 	}
 	
 	private BigDecimal getExpressionValue(String expression,PricePlanMatrix priceplan, WalletOperation bareOperation, UserAccount ua,BigDecimal amount){
