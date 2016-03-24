@@ -1,5 +1,7 @@
 package org.meveo.service.catalog.impl;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
@@ -48,6 +50,18 @@ public class BusinessServiceModelService extends BusinessService<BusinessService
 
 		try {
 			return (BusinessServiceModel) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<BusinessServiceModel> findByScriptId(Long id) {
+		QueryBuilder qb = new QueryBuilder(BusinessServiceModel.class, "b");
+		qb.addCriterion("script.id", "=", id, true);
+
+		try {
+			return (List<BusinessServiceModel>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
 			return null;
 		}

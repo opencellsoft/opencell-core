@@ -16,6 +16,7 @@ import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.module.MeveoModuleItem;
+import org.meveo.model.scripts.OfferModelScript;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
@@ -42,6 +43,8 @@ public class BusinessOfferModelBean extends BaseBean<BusinessOfferModel> {
 	DualListModel<ServiceTemplate> serviceDualListModel;
 
 	private String bomOfferInstancePrefix;
+
+	private List<OfferModelScript> offerModelScripts;
 
 	public BusinessOfferModelBean() {
 		super(BusinessOfferModel.class);
@@ -115,9 +118,14 @@ public class BusinessOfferModelBean extends BaseBean<BusinessOfferModel> {
 					result.add(businessServiceModelService.findByCode(item.getItemCode(), currentUser.getProvider()));
 				}
 			}
-		}	
+		}
 
 		return result;
+	}
+
+	public void refreshScript() {
+		offerModelScripts = null;
+		entity = getPersistenceService().refreshOrRetrieve(entity);
 	}
 
 	public void setServiceDualListModel(DualListModel<ServiceTemplate> stDM) {
@@ -158,6 +166,21 @@ public class BusinessOfferModelBean extends BaseBean<BusinessOfferModel> {
 
 	public void setBomOfferInstancePrefix(String bomOfferInstancePrefix) {
 		this.bomOfferInstancePrefix = bomOfferInstancePrefix;
+	}
+
+	public List<OfferModelScript> getOfferModelScripts() {
+		if (offerModelScripts == null || offerModelScripts.size() == 0) {
+			offerModelScripts = new ArrayList<>();
+			entity = getPersistenceService().refreshOrRetrieve(entity);
+			if (entity.getScript() != null) {
+				offerModelScripts.add(entity.getScript());
+			}
+		}
+		return offerModelScripts;
+	}
+
+	public void setOfferModelScripts(List<OfferModelScript> offerModelScripts) {
+		this.offerModelScripts = offerModelScripts;
 	}
 
 }

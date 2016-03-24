@@ -6,10 +6,12 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -365,6 +367,18 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 		}
 
 		return newOfferTemplate;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<BusinessOfferModel> findByScriptId(Long id) {
+		QueryBuilder qb = new QueryBuilder(BusinessOfferModel.class, "b");
+		qb.addCriterion("script.id", "=", id, true);
+
+		try {
+			return (List<BusinessOfferModel>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 }

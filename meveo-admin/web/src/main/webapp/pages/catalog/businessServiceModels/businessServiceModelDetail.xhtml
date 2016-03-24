@@ -3,6 +3,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:pe="http://primefaces.org/ui/extensions"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -53,7 +54,7 @@
 					<hftl:formField label="#{messages['BusinessEntity.description']}"
 						field="description" useConverter="false" id="description"
 						maxlength="50" />
-					<hftl:formField id="serviceSelectId"
+					<hftl:formField id="serviceSelectId" required="true"
 						label="#{messages['businessServiceModel.serviceTemplate']}"
 						field="serviceTemplate" valueLabelField="code"
 						listElements="#{serviceTemplateBean.listActive}" />
@@ -61,6 +62,212 @@
 			</p:tabView>
 
 		</hftl:formPanel>
+
+		<h:form id="scriptMainForm">
+			<p:panel width="100" header="#{messages['serviceModelScript']}">
+				<p:dataTable id="serviceModelScript" var="entity"
+					value="#{businessServiceModelBean.serviceModelScripts}"
+					paginator="true" rows="10" sortBy="#{entity.code}"
+					paginatorAlwaysVisible="false"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid"
+					reflow="true">
+					<p:column headerText="#{messages['BusinessEntity.description']}">
+						<h:outputText value="#{entity.description}" />
+					</p:column>
+					<hftl:column label="#{messages['scriptInstance.error']}"
+						field="error" isMessage="true" width="15%" />
+					<p:column headerText="#{messages['enableEntity.active']}"
+						width="10%">
+						<h:outputText value="#{messages['commons.yes']}"
+							rendered="#{entity.active != null and entity.active.toString() == 'true'}" />
+						<h:outputText value="#{messages['commons.no']}"
+							rendered="#{entity.active != null and entity.active.toString() == 'false'}" />
+					</p:column>
+
+					<p:column headerText="#{messages['commons.actions']}" width="10%">
+						<p:commandButton id="editActionBtn" icon="ui-icon-document"
+							oncomplete="PF('scriptDialog').show()"
+							action="#{serviceModelScriptBean.initEntity(entity.id)}"
+							update=":scriptForm">
+							<f:setPropertyActionListener
+								target="#{serviceModelScriptBean.backViewSave}"
+								value="businessServiceModelDetail" />
+						</p:commandButton>
+
+						<p:tooltip for="deleteActionlink"
+							value="#{messages['commons.delete']}" showEffect="slide"
+							hideEffect="slide" />
+						<p:commandButton id="deleteActionlink" icon="ui-icon-trash"
+							oncomplete="PF('confirmDeleteActionsWidget').show()">
+							<f:setPropertyActionListener
+								target="#{serviceModelScriptBean.entity}" value="#{entity}" />
+						</p:commandButton>
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton id="addScript"
+							value="#{messages['businessServiceModel.addScript']}"
+							oncomplete="PF('scriptDialog').show()"
+							actionListener="#{serviceModelScriptBean.newEntity()}"
+							update=":scriptForm"
+							rendered="#{businessServiceModelBean.serviceModelScripts eq null or businessServiceModelBean.serviceModelScripts.size() eq 0}">
+							<f:setPropertyActionListener
+								target="#{serviceModelScriptBean.somId}"
+								value="#{businessServiceModelBean.entity.id}" />
+							<f:setPropertyActionListener
+								target="#{serviceModelScriptBean.backViewSave}"
+								value="businessServiceModelDetail" />
+						</p:commandButton>
+					</f:facet>
+				</p:dataTable>
+			</p:panel>
+
+			<p:remoteCommand id="remoteDeleteActionButton"
+				actionListener="#{serviceModelScriptBean.deleteInlist}"
+				action="#{businessServiceModelBean.refreshScript}"
+				name="actionsDoDelete"
+				oncomplete="handleDeleteComplete(xhr,status,args)"
+				update="@form :scriptMainForm:serviceModelScript" />
+
+			<p:confirmDialog id="confirmDeleteActionsDialog"
+				styleClass="confirm-dialog"
+				message="#{messages['commons.confirmDelete']}" header=""
+				severity="alert" widgetVar="confirmDeleteActionsWidget"
+				appendTo="@(body)">
+				<p:panel styleClass="confirm-dialog-content">
+					<p:commandButton value="#{messages['commons.yes']}"
+						oncomplete="actionsDoDelete()"
+						onclick="PF('confirmDeleteActionsWidget').hide()" />
+					<p:commandButton value="#{messages['commons.no']}"
+						onclick="PF('confirmDeleteActionsWidget').hide()" type="button" />
+				</p:panel>
+			</p:confirmDialog>
+
+			<p:confirmDialog id="confirmCanDeleteDialog"
+				styleClass="confirm-dialog"
+				message="#{messages['commons.confirmCanotDelete']}" header=""
+				severity="alert" widgetVar="fieldsConfirmCanotDeleteWidget"
+				appendTo="@(body)">
+				<p:panel styleClass="confirm-dialog-content">
+					<p:commandButton id="canotdeleteOk"
+						value="#{messages['commons.ok']}"
+						oncomplete="PF('fieldsConfirmCanotDeleteWidget').hide()"
+						update="@this" />
+				</p:panel>
+			</p:confirmDialog>
+
+			<script type="text/javascript">
+		//<![CDATA[
+		function handleDeleteComplete(
+				xhr,
+				status,
+				args) {
+			var result = args.result;
+			if (typeof (result) != "undefined"
+					&& !result) {
+				PF('fieldsConfirmCanotDeleteWidget').show();
+			}
+		}
+		//]]>
+	</script>
+		</h:form>
+
+		<p:dialog id="scriptDialog"
+			header="#{messages['businessServiceModel.scriptHeader']}"
+			modal="true" closeOnEscape="true" maximizable="true"
+			widgetVar="scriptDialog" width="90%" height="550px">
+
+			<p:scrollPanel mode="native" style="max-height:550px">
+				<hftl:formPanel formId="scriptForm"
+					label="#{messages['businessServiceModel.scriptHeader']}"
+					backingBean="#{serviceModelScriptBean}" showFormButtons="false">
+
+					<h:panelGroup rendered="#{serviceModelScriptBean.entity.isError()}">
+						<div class="ui-messages ui-widget">
+							<div class="ui-messages-error ui-corner-all">
+								<span class="ui-messages-error-icon"></span>
+								<ul>
+									<li><h:outputText
+											value="#{messages['scriptInstance.compilationFailed']}"
+											styleClass="ui-messages-error-summary" /></li>
+								</ul>
+							</div>
+						</div>
+					</h:panelGroup>
+
+					<hftl:formField label="#{messages['BusinessEntity.code']}"
+						disabled="true" field="code" required="true" allowEdit="false"
+						componentWidth="15" />
+					<hftl:formField label="#{messages['BusinessEntity.description']}"
+						field="description" required="true" allowEdit="false"
+						componentWidth="15" />
+					<hftl:formField
+						label="#{messages['scriptInstance.sourceTypeEnum']}"
+						field="sourceTypeEnum" />
+					<hftl:decorateFormField fieldId="codeMirror"
+						label="#{messages['customizedEntities.actionScriptSrc']}"
+						newLine="true" componentWidth="100">
+						<pe:codeMirror id="codeMirror" theme="eclipse" mode="text/x-java"
+							value="#{serviceModelScriptBean.entity.script}"
+							lineNumbers="true" required="true" />
+					</hftl:decorateFormField>
+					<hftl:formField label="#{messages['enableEntity.disabled']}"
+						doNotShowOnNew="true" allowEdit="false" field="disabled"
+						isMessage="true" newLine="true" />
+
+					<h:panelGroup id="scriptErrors">
+						<hftl:decorateFormField
+							label="#{messages['scriptInstance.compilationErrors']}"
+							componentWidth="100" newLine="true"
+							rendered="#{serviceModelScriptBean.entity.isError()}">
+							<p:dataTable id="entityScripts" var="entity"
+								value="#{serviceModelScriptBean.entity.scriptErrors}"
+								paginator="true" rows="10" sortBy="#{entity.lineNumber}"
+								sortField="lineNumber" paginatorAlwaysVisible="false"
+								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+								rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid"
+								reflow="true">
+								<hftl:column
+									label="#{messages['scriptInstance.compilation.lineNumber']}"
+									field="lineNumber" width="10%" />
+								<hftl:column
+									label="#{messages['scriptInstance.compilation.columnNumber']}"
+									field="columnNumber" width="15%" />
+								<hftl:column
+									label="#{messages['scriptInstance.compilation.message']}"
+									field="message" />
+							</p:dataTable>
+						</hftl:decorateFormField>
+					</h:panelGroup>
+
+					<ui:param name="buttons" value="true" />
+					<ui:define name="buttons">
+						<hf:formButtons backingBean="#{serviceModelScriptBean}"
+							showBackButton="false" ajaxSubmit="true"
+							submitUpdate="@form :scriptMainForm:serviceModelScript"
+							edit="true" killConversationOnSave="false">
+							<p:commandButton
+								value="#{messages['scriptInstance.testCompilation']}"
+								action="#{serviceModelScriptBean.testCompilation}"
+								update="@form" />
+							<p:commandButton value="#{messages['commons.disable']}"
+								rendered="#{not empty serviceModelScriptBean.entity.id and serviceModelScriptBean.entity.active}"
+								actionListener="#{businessServiceModelBean.refreshScript}"
+								action="#{serviceModelScriptBean.disable}" update="@form" />
+							<p:commandButton value="#{messages['commons.enable']}"
+								rendered="#{not empty serviceModelScriptBean.entity.id and serviceModelScriptBean.entity.disabled}"
+								actionListener="#{businessServiceModelBean.refreshScript}"
+								action="#{serviceModelScriptBean.enable}" update="@form" />
+
+							<p:commandButton value="#{messages['commons.close']}"
+								onclick="PF('scriptDialog').hide()" type="button" />
+						</hf:formButtons>
+					</ui:define>
+
+				</hftl:formPanel>
+			</p:scrollPanel>
+		</p:dialog>
 
 	</ui:define>
 </ui:composition>

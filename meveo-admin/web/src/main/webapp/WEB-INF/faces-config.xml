@@ -1769,7 +1769,7 @@
 			<from-outcome>businessOfferModelDetail</from-outcome>
 			<to-view-id>/pages/catalog/businessOfferModels/businessOfferModelDetail.xhtml
 			</to-view-id>
-			<redirect />
+			<redirect include-view-params="true"/>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>businessOfferCreation</from-outcome>
@@ -1788,7 +1788,7 @@
 			<from-outcome>businessServiceModelDetail</from-outcome>
 			<to-view-id>/pages/catalog/businessServiceModels/businessServiceModelDetail.xhtml
 			</to-view-id>
-			<redirect />
+			<redirect include-view-params="true"/>
 		</navigation-case>
 	</navigation-rule>
 

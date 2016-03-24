@@ -11,6 +11,7 @@ import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.MeveoModuleItem;
+import org.meveo.model.scripts.ServiceModelScript;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
@@ -33,6 +34,8 @@ public class BusinessServiceModelBean extends BaseBean<BusinessServiceModel> {
 	private MeveoModuleService meveoModuleService;
 
 	private BusinessOfferModel businessOfferModel;
+	
+	private List<ServiceModelScript> serviceModelScripts;
 
 	public BusinessServiceModelBean() {
 		super(BusinessServiceModel.class);
@@ -46,6 +49,11 @@ public class BusinessServiceModelBean extends BaseBean<BusinessServiceModel> {
 	@Override
 	protected String getListViewName() {
 		return "businessServiceModels";
+	}
+	
+	public void refreshScript() {
+		serviceModelScripts = null;
+		entity = getPersistenceService().refreshOrRetrieve(entity);
 	}
 
 	public List<BusinessOfferModel> getBusinessOfferModels(BusinessServiceModel bsmEntity) {
@@ -70,6 +78,21 @@ public class BusinessServiceModelBean extends BaseBean<BusinessServiceModel> {
 
 	public void setBusinessOfferModel(BusinessOfferModel businessOfferModel) {
 		this.businessOfferModel = businessOfferModel;
+	}
+
+	public List<ServiceModelScript> getServiceModelScripts() {		
+		if (serviceModelScripts == null || serviceModelScripts.size() == 0) {
+			serviceModelScripts = new ArrayList<>();
+			entity = getPersistenceService().refreshOrRetrieve(entity);
+			if (entity.getScript() != null) {
+				serviceModelScripts.add(entity.getScript());
+			}
+		}
+		return serviceModelScripts;
+	}
+
+	public void setServiceModelScripts(List<ServiceModelScript> serviceModelScripts) {
+		this.serviceModelScripts = serviceModelScripts;
 	}
 
 }
