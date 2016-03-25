@@ -1,52 +1,39 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"    
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" 
-	xmlns:p="http://primefaces.org/ui"
-    template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:event type="preRenderView"
-                listener="#{notificationListBean.preRenderView}" />
+            <f:event type="preRenderView" listener="#{notificationListBean.preRenderView}" />
         </f:metadata>
     </ui:define>
 
     <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-   	
-	<ui:define name="body">
-   		
-			<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-			<hftl:searchPanel label="#{messages['menu.notifications']}" columns="3" backingBean="#{notificationListBean}" ajaxUpdateIds="notifications_panel">
-				<hftl:searchField label="#{messages['entity.code']}" field="code" />
-				<hftl:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteBean="#{notificationBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true"/>
-	            <hftl:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
-			</hftl:searchPanel>
+    <ui:define name="body">
 
-			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
+        <!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
-			<hftl:dataList resultsId="notifications" backingBean="#{notificationListBean}" exportButton="false" exportToCsv="true"  fileName="Notifications"  importCsv="true" importStrategy="true" sortBy="code">
-			    <hftl:column label="#{messages['entity.code']}"
-					field="code" />
-				<hftl:column
-					label="#{messages['entity.notification.classNameFilter']}"
-					field="classNameFilter" />
-				<hftl:column style="display:none"
-					label="#{messages['entity.notification.elFilter']}"
-					field="elFilter" />
-				<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />	
-				<hftl:column 
-					label="#{messages['entity.notification.scriptInstance']}"
-					field="scriptInstance" />	
-				<hftl:column
-					label="#{messages['entity.notification.eventTypeFilter']}"
-					field="eventTypeFilter" />
-				<hftl:actionsColumn  permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"/>
-			</hftl:dataList>
-	</ui:define>
+        <hftl:searchPanel label="#{messages['menu.notifications']}" columns="3" backingBean="#{notificationListBean}" ajaxUpdateIds="notifications_panel">
+            <hftl:searchField label="#{messages['entity.code']}" field="code" />
+            <hftl:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteBean="#{notificationBean}"
+                autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
+            <hftl:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
+        </hftl:searchPanel>
+
+        <!-- ===================================== SEARCH USERS RESULTS ================================= -->
+
+        <hftl:dataList resultsId="notifications" backingBean="#{notificationListBean}" exportButton="false" exportToCsv="true" fileName="Notifications" importCsv="true"
+            importStrategy="true" sortBy="code">
+            <hftl:column label="#{messages['entity.code']}" field="code" />
+            <hftl:column label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" />
+            <hftl:column label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
+            <hftl:column label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance" />
+<!--             <hftl:column style="display:none" label="#{messages['entity.notification.elFilter']}" field="elFilter" /> -->
+            <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
+            <hftl:actionsColumn permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}" />
+        </hftl:dataList>
+    </ui:define>
 </ui:composition>

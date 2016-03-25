@@ -40,9 +40,9 @@
                     <p:column headerText="#{messages['export.templateName']}" sortBy="#{templateInfo.key}">
                         <h:outputText value="#{templateInfo.value.name}" />
                     </p:column>
-                    <p:column headerText="#{messages['export.entityToExport']}">
-                        <h:outputText value="#{templateInfo.value.entityToExport.simpleName}" />
-                    </p:column>
+<!--                     <p:column headerText="#{messages['export.entityToExport']}"> -->
+<!--                         <h:outputText value="#{templateInfo.value.entityToExport.simpleName}" /> -->
+<!--                     </p:column> -->
                     <p:column headerText="#{messages['export.entitiesToInclude']}">
                         <h:outputText value="#{templateInfo.value.classesToExportAsFullTxt}" />
                     </p:column>

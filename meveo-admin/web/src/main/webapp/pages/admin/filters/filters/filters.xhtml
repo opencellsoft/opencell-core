@@ -1,40 +1,30 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" template="/layout/template.xhtml">
 
-	<ui:define name="metadata">
-		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{filterListBean.preRenderView}" />
-		</f:metadata>
-	</ui:define>
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{filterListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-	<ui:define name="body">
+    <ui:define name="body">
 
-		<hftl:searchPanel label="#{messages['filter.search']}"
-			backingBean="#{filterListBean}">
-			<hftl:searchField label="#{messages['BusinessEntity.code']}"
-				field="code" />
-			<hftl:searchField label="#{messages['BusinessEntity.description']}"
-				id="description" field="description" />
-		</hftl:searchPanel>
+        <hftl:searchPanel label="#{messages['filter.search']}" backingBean="#{filterListBean}">
+            <hftl:searchField label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:searchField label="#{messages['BusinessEntity.description']}" id="description" field="description" />
+        </hftl:searchPanel>
 
-		<hftl:dataList label="#{messages['filter.title']}"
-			noClose="false" backingBean="#{filterListBean}">
-			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['BusinessEntity.description']}"
-				field="description" />
+        <hftl:dataList label="#{messages['filter.title']}" noClose="false" backingBean="#{filterListBean}">
+            <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
+            <hftl:column label="#{messages['filter.shared']}" isMessage="true" field="shared" />
+            <hftl:column label="#{messages['enableEntity.active']}" isMessage="true" field="active" />
+            <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" renderEnableLink="true" />
+        </hftl:dataList>
 
-			<hftl:actionsColumn
-				permission="#{identity.hasPermission('administration','administrationManagement')}" />
-		</hftl:dataList>
-
-	</ui:define>
+    </ui:define>
 
 </ui:composition>

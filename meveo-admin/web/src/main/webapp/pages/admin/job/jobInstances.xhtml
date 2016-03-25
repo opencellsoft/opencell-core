@@ -35,11 +35,11 @@
                 <hftl:column label="#{messages['timer.jobName']}" field="jobTemplate" />
                 <hftl:column label="#{messages['job.category']}" field="jobCategoryEnum" />
                 <hftl:column label="#{messages['timer.schedule']}" field="timerEntity." />
-                <hftl:column label="#{messages['timer.active']}" field="active" />
+                <hftl:column label="#{messages['timer.active']}" field="active" isMessage="true" />
                 <p:column headerText="#{messages['timer.isRunning']}">
                     <h:outputText styleClass="ui-icon ui-icon-circle-check" rendered="#{jobInstanceListBean.isTimerRunning(entity)}" />
                 </p:column>
-                <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" />
+                <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" renderEnableLink="true" />
             </hftl:dataList>
         </h:panelGroup>
         <h:form>

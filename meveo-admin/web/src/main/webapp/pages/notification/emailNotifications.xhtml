@@ -1,76 +1,51 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"    
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org"
-    template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" template="/layout/template.xhtml">
 
 
     <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-   	
-	<ui:define name="metadata">
-		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{emailNotificationListBean.preRenderView}" />
-		</f:metadata>
-	</ui:define>
-	<ui:define name="body">
-   		
-			<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-			<hftl:searchPanel label="#{messages['menu.emailNotifications']}" columns="3" backingBean="#{emailNotificationListBean}">
-				<hftl:searchField label="#{messages['entity.code']}" field="code" />
-				<hftl:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteBean="#{notificationBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true"/>
-				<hftl:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
-				<hftl:searchField label="#{messages['entity.emailNotification.subject']}" field="subject" />
-				<hftl:searchField label="#{messages['entity.emailNotification.emailFrom']}" field="emailFrom" />
-			</hftl:searchPanel>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{emailNotificationListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+    <ui:define name="body">
 
-			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
+        <!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
-		<hftl:dataList backingBean="#{emailNotificationListBean}" exportButton="false" exportToCsv="true" fileName="EmailNotifications" importCsv="true" importStrategy="true" sortBy="code">
-			   	<hftl:actionsColumn editView="/pages/notification/emailNotificationDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"  />
-				<hftl:column label="#{messages['entity.code']}"
-					field="code" />
-				<hftl:column
-					label="#{messages['entity.notification.classNameFilter']}"
-					field="classNameFilter" />
-				<hftl:column
-					label="#{messages['entity.notification.eventTypeFilter']}"
-					field="eventTypeFilter" />
-				<hftl:column style="display:none"
-					label="#{messages['entity.notification.elFilter']}"
-					field="elFilter" />
-				<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
-			    <hftl:column style="display:none"
-					label="#{messages['entity.notification.scriptInstance']}"
-					field="scriptInstance" />	
-				<hftl:column
-					label="#{messages['entity.emailNotification.emailFrom']}"
-					field="emailFrom" />
-				<hftl:column
-					label="#{messages['entity.emailNotification.emailToEl']}"
-					field="emailToEl"  />
-			<hftl:column style="display:none"
-					label="#{messages['entity.emailNotification.emails']}"
-					field="emails"  />	
-			<hftl:column
-					label="#{messages['entity.emailNotification.subject']}"
-					field="subject" /> 
-			<hftl:column style="display:none"
-					label="#{messages['entity.emailNotification.body']}"
-					field="body"  />		
-			<hftl:column style="display:none"
-					label="#{messages['entity.emailNotification.htmlBody']}"
-					field="htmlBody"  />
-			<hftl:column style="display:none"
-					label="#{messages['counterTemplate.title']}"
-					field="counterTemplate.code" />					
-				
-				
-				
-			</hftl:dataList>
-	</ui:define>
+        <hftl:searchPanel label="#{messages['menu.emailNotifications']}" columns="3" backingBean="#{emailNotificationListBean}">
+            <hftl:searchField label="#{messages['entity.code']}" field="code" />
+            <hftl:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteBean="#{notificationBean}"
+                autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
+            <hftl:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
+            <hftl:searchField label="#{messages['entity.emailNotification.subject']}" field="subject" newLine="true"/>
+            <hftl:searchField label="#{messages['entity.emailNotification.emailFrom']}" field="emailFrom" />
+        </hftl:searchPanel>
+
+        <!-- ===================================== SEARCH USERS RESULTS ================================= -->
+
+        <hftl:dataList backingBean="#{emailNotificationListBean}" exportButton="false" exportToCsv="true" fileName="EmailNotifications" importCsv="true" importStrategy="true"
+            sortBy="code">
+            <hftl:actionsColumn editView="/pages/notification/emailNotificationDetail.xhtml"
+                permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}" renderEnableLink="true" />
+            <hftl:column label="#{messages['entity.code']}" field="code" />
+            <hftl:column label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" />
+            <hftl:column label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
+            <!--             <hftl:column style="display:none" label="#{messages['entity.notification.elFilter']}" field="elFilter" /> -->
+            <!--             <hftl:column style="display:none" label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance" /> -->
+            <hftl:column label="#{messages['entity.emailNotification.emailFrom']}" field="emailFrom" />
+            <hftl:column label="#{messages['entity.emailNotification.emailToEl']}" field="emailToEl" />
+            <!--             <hftl:column style="display:none" label="#{messages['entity.emailNotification.emails']}" field="emails" /> -->
+            <hftl:column label="#{messages['entity.emailNotification.subject']}" field="subject" />
+            <!--             <hftl:column style="display:none" label="#{messages['entity.emailNotification.body']}" field="body" /> -->
+            <!--             <hftl:column style="display:none" label="#{messages['entity.emailNotification.htmlBody']}" field="htmlBody" /> -->
+            <!--             <hftl:column style="display:none" label="#{messages['counterTemplate.title']}" field="counterTemplate.code" /> -->
+            <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
+
+
+
+        </hftl:dataList>
+    </ui:define>
 </ui:composition>

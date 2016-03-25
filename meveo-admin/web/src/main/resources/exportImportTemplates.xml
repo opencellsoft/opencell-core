@@ -346,6 +346,7 @@
             <template ref="ChargeTemplate" />
             <template ref="ServiceTemplate" />
             <template ref="OfferTemplate" />
+            <template ref="BusinessOfferModule" />
             <template ref="PricePlanMatrix" />
             <template ref="DiscountPlan" />
             <template ref="MeveoModule" />
