@@ -37,7 +37,7 @@
 						field="description" id="description" maxlength="100" />
 
 					<hftl:formField label="#{messages['seller.invoicePrefix']}"
-						field="invoicePrefix" id="invoicePrefix" maxlength="50" />
+						field="invoicePrefix" id="invoicePrefix" textArea="true" maxlength="2000" />
 
 					<hftl:decorateFormField fieldId="currentInvoiceNb"
 						label="#{messages['seller.currentInvoiceNb']}">
@@ -49,7 +49,7 @@
 						       field="invoiceSequenceSize" id="invoiceSequenceSize"/>
 
 					<hftl:formField label="#{messages['invoice.adjustment.prefix']}"
-								field="invoiceAdjustmentPrefix" id="invoiceAdjustmentPrefix" />
+								field="invoiceAdjustmentPrefix" id="invoiceAdjustmentPrefix" textArea="true" maxlength="2000" />
 								
 					<hftl:formField label="#{messages['invoice.adjustment.currentSequenceNb']}"
 						field="currentInvoiceAdjustmentNb" id="currentInvoiceAdjustmentNb"/>
