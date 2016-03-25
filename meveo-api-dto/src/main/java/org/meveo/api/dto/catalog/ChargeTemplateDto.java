@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
@@ -46,7 +47,7 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
     private String inputUnitDescription;
     private String ratingUnitDescription;
     private BigDecimal unitMultiplicator;
-    private int unitNbDecimal;
+    private int unitNbDecimal=BaseEntity.NB_PRECISION;
     private RoundingModeEnum roundingModeDtoEnum;
     private CustomFieldsDto customFields = new CustomFieldsDto();
 
