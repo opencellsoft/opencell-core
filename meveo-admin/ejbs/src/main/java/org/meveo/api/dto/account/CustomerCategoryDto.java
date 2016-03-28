@@ -2,6 +2,7 @@ package org.meveo.api.dto.account;
 
 import java.io.Serializable;
 
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -20,6 +21,9 @@ public class CustomerCategoryDto implements Serializable {
 	private String code;
 	private String description;
 	private boolean exoneratedFromTaxes;
+	private String exonerationTaxEl;
+	private String exonerationReason;
+	
 
 	public CustomerCategoryDto() {
 
@@ -49,7 +53,7 @@ public class CustomerCategoryDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "CustomerCategoryDto [code=" + code + ", description=" + description + "]";
+		return "CustomerCategoryDto [code=" + code + ", description=" + description + ", exoneratedFromTaxes=" + exoneratedFromTaxes + ", exonerationTaxEl=" + exonerationTaxEl + ", exonerationReason=" + exonerationReason + "]";
 	}
 
 	public boolean isExoneratedFromTaxes() {
@@ -60,4 +64,31 @@ public class CustomerCategoryDto implements Serializable {
 		this.exoneratedFromTaxes = exoneratedFromTaxes;
 	}
 
+	/**
+	 * @return the exonerationTaxEl
+	 */
+	public String getExonerationTaxEl() {
+		return exonerationTaxEl;
+	}
+
+	/**
+	 * @param exonerationTaxEl the exonerationTaxEl to set
+	 */
+	public void setExonerationTaxEl(String exonerationTaxEl) {
+		this.exonerationTaxEl = exonerationTaxEl;
+	}
+
+	/**
+	 * @return the exonerationReason
+	 */
+	public String getExonerationReason() {
+		return exonerationReason;
+	}
+
+	/**
+	 * @param exonerationReason the exonerationReason to set
+	 */
+	public void setExonerationReason(String exonerationReason) {
+		this.exonerationReason = exonerationReason;
+	}
 }

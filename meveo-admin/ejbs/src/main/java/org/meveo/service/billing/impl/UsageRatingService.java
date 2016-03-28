@@ -81,7 +81,7 @@ public class UsageRatingService {
     private RatingCacheContainerProvider ratingCacheContainerProvider;
     
     @Inject
-    private UserAccountService userAccountService;
+    private BillingAccountService billingAccountService;
 
 
 	// @PreDestroy
@@ -163,7 +163,7 @@ public class UsageRatingService {
 
 		//TODO do this in the right place (one time by userAccount)
 		
-		boolean isExonerated =  userAccountService.isExonerated(chargeInstance.getSubscription().getUserAccount(), provider);
+		boolean isExonerated =  billingAccountService.isExonerated(chargeInstance.getSubscription().getUserAccount().getBillingAccount());
 		walletOperation.setChargeInstance(chargeInstance);
 		walletOperation.setRatingUnitDescription(chargeInstance.getRatingUnitDescription());
 		walletOperation.setSeller(chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount()

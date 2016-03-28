@@ -44,8 +44,7 @@ public class RealtimeChargingService {
 	private WalletOperationService walletOperationService;
 	
 	@Inject
-	private UserAccountService userAccountService;
-
+	private BillingAccountService billingAccountService;
 
 	public BigDecimal getApplicationPrice(BillingAccount ba,
 			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
@@ -111,7 +110,7 @@ public class RealtimeChargingService {
 							+ invoiceSubcategoryCountry.getId());
 		}
 	
-		boolean isExonerated = userAccountService.isExonerated(null, provider);
+		boolean isExonerated = billingAccountService.isExonerated(null);
 		
 		WalletOperation op = new WalletOperation();
 

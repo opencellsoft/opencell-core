@@ -2041,6 +2041,14 @@
         <addColumn tableName="CRM_PROVIDER">
             <column name="EXONERATION_TAX_EL" type="VARCHAR(2000)" />
         </addColumn>        
-    </changeSet> 	    
+    </changeSet> 	
+    
+    <changeSet id="#1528_20160311_2" author="anasseh">
+        <addColumn tableName="CRM_CUSTOMER_CATEGORY">
+            <column name="EXONERATION_TAX_EL" type="VARCHAR(2000)" />    
+            <column name="EXONERATION_REASON" type="VARCHAR(255)" />          
+        </addColumn>   
+        <dropColumn columnName="EXONERATION_TAX_EL" tableName="CRM_PROVIDER" />
+    </changeSet>         
 	
 </databaseChangeLog>

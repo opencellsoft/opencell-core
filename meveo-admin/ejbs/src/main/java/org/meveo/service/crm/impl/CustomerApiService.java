@@ -409,9 +409,9 @@ public class CustomerApiService extends AccountApiService {
 			CustomerCategory customerCategory = new CustomerCategory();
 			customerCategory.setCode(postData.getCode());
 			customerCategory.setDescription(postData.getDescription());
-			customerCategory.setExoneratedFromTaxes(postData
-					.isExoneratedFromTaxes());
-
+			customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
+			customerCategory.setExonerationTaxEl(postData.getExonerationTaxEl());
+			customerCategory.setExonerationReason(postData.getExonerationReason());
 			customerCategoryService.create(customerCategory, currentUser,
 					currentUser.getProvider());
 		} else {
@@ -440,8 +440,9 @@ public class CustomerApiService extends AccountApiService {
 			}
 
 			customerCategory.setDescription(postData.getDescription());
-			customerCategory.setExoneratedFromTaxes(postData
-					.isExoneratedFromTaxes());
+			customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
+			customerCategory.setExonerationTaxEl(postData.getExonerationTaxEl());
+			customerCategory.setExonerationReason(postData.getExonerationReason());
 
 			customerCategoryService.update(customerCategory, currentUser);
 		} else {

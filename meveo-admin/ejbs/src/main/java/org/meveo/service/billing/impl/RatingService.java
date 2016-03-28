@@ -78,7 +78,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 	private RatingCacheContainerProvider ratingCacheContainerProvider;
 	
 	@Inject
-	private UserAccountService userAccountService;
+	private BillingAccountService billingAccountService;
 	
 	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
@@ -191,7 +191,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 		WalletOperation result = new WalletOperation();
 		//TODO do this in the right place (one time by userAccount)
-		boolean  isExonerated = userAccountService.isExonerated(chargeInstance.getSubscription().getUserAccount(), chargeInstance.getProvider());				
+		boolean  isExonerated = billingAccountService.isExonerated(chargeInstance.getSubscription().getUserAccount().getBillingAccount());				
 		
 		if (chargeInstance instanceof RecurringChargeInstance) {
 			result.setSubscriptionDate(subscriptionDate);

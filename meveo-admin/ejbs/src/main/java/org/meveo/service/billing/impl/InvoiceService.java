@@ -125,7 +125,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	private RejectedBillingAccountService rejectedBillingAccountService;
 	
 	@Inject
-	private UserAccountService userAccountService;
+	private BillingAccountService billingAccountService;
 	
 
 	private String PDF_DIR_NAME = "pdf";
@@ -832,7 +832,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		int rounding = invoice.getBillingAccount().getProvider().getRounding() == null ? 2 : invoice
 				.getBillingAccount().getProvider().getRounding();
 		
-		boolean  exoneratedFromTaxes = userAccountService.isExonerated(invoice.getBillingAccount().getUsersAccounts().get(0),invoice.getBillingAccount().getProvider());		
+		boolean  exoneratedFromTaxes = billingAccountService.isExonerated(invoice.getBillingAccount());		
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
 
 		Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
