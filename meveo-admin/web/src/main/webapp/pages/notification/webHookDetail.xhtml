@@ -55,21 +55,21 @@
             <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />
         </hftl:formPanel>
 
-        <p:panel rendered="#{not empty webHookBean.entity.id}">
-            <hftl:dataList backingBean="#{notificationHistoryBean}" dataModel="#{notificationHistoryBean.getLazyDataModel(webHookBean.entity.id)}">
-                <hftl:column label="#{messages['commons.date']}" field="auditable.updated" isDate="true" time="true" />
-                <hftl:column label="#{messages['entity.notification.notificationType']}" field="entityClassName" />
-                <hftl:column label="#{messages['entity.notification']}" field="notification.code" />
-                <hftl:column label="#{messages['entity.notification.retryNr']}" field="nbRetry" />
-                <hftl:column label="#{messages['entity.notification.result']}" field="result" />
-                <p:column headerText="#{messages['entity.notification.inboundRequest']}">
-                    <h:link value="#{entity.inboundRequest.code}" outcome="inboundRequestDetail" rendered="#{entity.inboundRequest != null}">
-                        <f:param name="objectId" value="#{entity.inboundRequest.id}" />
-                    </h:link>
-                </p:column>
-                <hftl:column label="#{messages['commons.status']}" field="status.label" isMessage="true" />
-            </hftl:dataList>
-        </p:panel>
+<!--         <p:panel rendered="#{not empty webHookBean.entity.id}"> -->
+<!--             <hftl:dataList backingBean="#{notificationHistoryBean}" dataModel="#{notificationHistoryBean.getLazyDataModel(webHookBean.entity.id)}"> -->
+<!--                 <hftl:column label="#{messages['commons.date']}" field="auditable.updated" isDate="true" time="true" /> -->
+<!--                 <hftl:column label="#{messages['entity.notification.notificationType']}" field="entityClassName" /> -->
+<!--                 <hftl:column label="#{messages['entity.notification']}" field="notification.code" /> -->
+<!--                 <hftl:column label="#{messages['entity.notification.retryNr']}" field="nbRetry" /> -->
+<!--                 <hftl:column label="#{messages['entity.notification.result']}" field="result" /> -->
+<!--                 <p:column headerText="#{messages['entity.notification.inboundRequest']}"> -->
+<!--                     <h:link value="#{entity.inboundRequest.code}" outcome="inboundRequestDetail" rendered="#{entity.inboundRequest != null}"> -->
+<!--                         <f:param name="objectId" value="#{entity.inboundRequest.id}" /> -->
+<!--                     </h:link> -->
+<!--                 </p:column> -->
+<!--                 <hftl:column label="#{messages['commons.status']}" field="status.label" isMessage="true" /> -->
+<!--             </hftl:dataList> -->
+<!--         </p:panel> -->
 
     </ui:define>
 
