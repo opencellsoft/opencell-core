@@ -1507,5 +1507,8 @@
             <column name="EXONERATION_TAX_EL" type="VARCHAR(2000)" />
         </addColumn>        
     </changeSet>  	
-    
+
+    <changeSet id="#1585_20160325" author="AndriusKarpavicius">
+        <dropColumn tableName="MEVEO_JOB_INSTANCE" columnName="ACTIVE"/>
+    </changeSet>    
 </databaseChangeLog>

@@ -40,7 +40,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 
 @Entity
-@CustomFieldEntity(cftCodePrefix="JOB", cftCodeFields="jobTemplate")
+@CustomFieldEntity(cftCodePrefix = "JOB", cftCodeFields = "jobTemplate")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "MEVEO_JOB_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_JOB_INSTANCE_SEQ")
@@ -53,9 +53,6 @@ public class JobInstance extends BusinessCFEntity {
 
     @Column(name = "PARAMETRES", nullable = true)
     private String parametres;
-
-    @Column(name = "ACTIVE", nullable = false)
-    private boolean active = false;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "JOB_CATEGORY")
@@ -104,20 +101,6 @@ public class JobInstance extends BusinessCFEntity {
     }
 
     /**
-     * @return the active
-     */
-    public boolean isActive() {
-        return active;
-    }
-
-    /**
-     * @param active the active to set
-     */
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    /**
      * @return the timerEntity
      */
     public TimerEntity getTimerEntity() {
@@ -152,7 +135,7 @@ public class JobInstance extends BusinessCFEntity {
     public void setJobCategoryEnum(JobCategoryEnum jobCategoryEnum) {
         this.jobCategoryEnum = jobCategoryEnum;
     }
-   
+
     public List<JobExecutionResultImpl> getExecutionResults() {
         return executionResults;
     }
@@ -178,9 +161,8 @@ public class JobInstance extends BusinessCFEntity {
 
     @Override
     public String toString() {
-        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, active=%s, jobCategoryEnum=%s, timerEntity=%s,  followingJob=%s]",
-            super.toString(), jobTemplate, parametres, active, jobCategoryEnum, timerEntity,
-            followingJob);
+        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, jobCategoryEnum=%s, timerEntity=%s,  followingJob=%s]", super.toString(), jobTemplate,
+            parametres, jobCategoryEnum, timerEntity, followingJob);
     }
 
     @Override
