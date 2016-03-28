@@ -119,16 +119,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	private ProviderService providerService;
 
 	@Inject
-	private SellerService sellerService;
-
-	@Inject
 	private RatedTransactionService ratedTransactionService;
 
 	@Inject
 	private RejectedBillingAccountService rejectedBillingAccountService;
-	
-	@Inject
-	private CustomFieldTemplateService customFieldTemplateService;
 	
 	@Inject
 	private UserAccountService userAccountService;
@@ -273,33 +267,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 
 		if (prefix != null && !StringUtils.isBlank(prefix)) {
-			if (prefix.indexOf("%") >= 0) {
-				int startIndex = prefix.indexOf("%") + 1;
-				int endIndex = prefix.indexOf("%", startIndex);
-				if (endIndex > 0) {
-					String datePattern = prefix.substring(startIndex, endIndex);
-					String invioceDate = DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), datePattern);
-					prefix = prefix.replace("%" + datePattern + "%", invioceDate);
-				}
-			}
-			prefix = evaluatePrefixElExpression(prefix, invoice, DateUtils.getDayFromDate(invoice.getInvoiceDate()),
-					DateUtils.getMonthFromDate(invoice.getInvoiceDate()),
-					DateUtils.getYearFromDate(invoice.getInvoiceDate()));
+			prefix = evaluatePrefixElExpression(prefix, invoice);
 		}
 		if (currentUser != null) {
 			seller.updateAudit(currentUser);
 		} else {
 			seller.updateAudit(seller.getAuditable().getCreator());
 		}
-
-		long nextInvoiceNb = getNextValue(seller, currentUser,invoice.getInvoiceDate());
+        
+		boolean useSysDate = "true".equals(paramBean.getProperty("invoice.sequence.bySysDate", "false"));
+		long nextInvoiceNb = getNextValue(seller, currentUser,useSysDate?new Date():invoice.getInvoiceDate());
 
 		int sequenceSize = getSequenceSize(seller, currentUser);
-
-		StringBuffer num1 = new StringBuffer(org.apache.commons.lang3.StringUtils.leftPad("", sequenceSize, "0"));
-		num1.append(nextInvoiceNb + "");
-
-		String invoiceNumber = num1.substring(num1.length() - sequenceSize);
+		
+		String invoiceNumber =  StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
 		// request to store invoiceNo in alias field
 		invoice.setAlias(invoiceNumber);
 
@@ -307,68 +288,104 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 	}
 
-	public synchronized long getNextValue(Seller seller, User currentUser,Date invoiceDate) {
+	public synchronized long getNextValue(Seller seller, User currentUser,Date dateValue) {
 		long result = 0;
-
-		if (seller != null) {		
-			if (seller.getCFValue(INVOICE_SEQUENCE, invoiceDate) != null) {	
-				CustomFieldTemplate cft = customFieldTemplateService.findByCode(INVOICE_SEQUENCE, seller.getProvider());
-				if(cft == null){
-					throw new RuntimeException("Can not foud template for INVOICE_SEQUENCE CustomField");
-				}
+		if (seller != null) {			
+			if (seller.getCFValue(INVOICE_SEQUENCE, dateValue) != null) {	
 				Long sequenceVal = 1L;
 				try {
-					sequenceVal = Long.parseLong(seller.getCFValue(INVOICE_SEQUENCE, invoiceDate).toString());
+					sequenceVal = Long.parseLong(seller.getCFValue(INVOICE_SEQUENCE, dateValue).toString());
 				} catch (NumberFormatException e) {
 					sequenceVal = 1L;
 				}
-
 				result = 1 + sequenceVal;
-				seller.setCFValue(InvoiceService.INVOICE_SEQUENCE, result,invoiceDate, cft);
+				seller.setCFValue(InvoiceService.INVOICE_SEQUENCE, result, dateValue, null);
 			} else if (seller.getCurrentInvoiceNb() != null) {
 				long currentInvoiceNbre = seller.getCurrentInvoiceNb();
 				result = 1 + currentInvoiceNbre;
 				seller.setCurrentInvoiceNb(result);
 			} else {
-				result = getNextValue(seller.getProvider(), currentUser,invoiceDate);
+				result = getNextValue(seller.getProvider(), currentUser,dateValue);
 			}
 		}
-
 		return result;
 	}
-
-	public synchronized long getNextValue(Provider provider, User currentUser,Date invoiceDate) {
-		long result = 0;		
-		if (provider != null) {
-			if (provider.getCFValue(INVOICE_SEQUENCE, invoiceDate) != null) {
-				CustomFieldTemplate cft = customFieldTemplateService.findByCode(INVOICE_SEQUENCE, provider);
-				if(cft == null){
-					throw new RuntimeException("Can not foud template for INVOICE_SEQUENCE CustomField");
-				}
+	
+	public synchronized long getInvoiceAdjustmentNextValue(Invoice invoiceAdjustment, Seller seller, User currentUser) {
+		long result = 0;
+		if (seller != null) {
+			if (seller.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, invoiceAdjustment.getInvoiceDate()) != null) {
 				Long sequenceVal = 1L;
 				try {
-					sequenceVal = Long.parseLong(provider.getCFValue(INVOICE_SEQUENCE, invoiceDate).toString());
+					sequenceVal = Long.parseLong(seller.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, invoiceAdjustment.getInvoiceDate()).toString());
 				} catch (NumberFormatException e) {
 					sequenceVal = 1L;
 				}
+				result = sequenceVal + 1;
+				seller.setCFValue(InvoiceService.INVOICE_ADJUSTMENT_SEQUENCE, result, invoiceAdjustment.getInvoiceDate(), null);
+			} else if (seller.getCurrentInvoiceAdjustmentNb() != null) {
+				long currentInvoiceAdjustmentNo = seller.getCurrentInvoiceAdjustmentNb();
+				result = 1 + currentInvoiceAdjustmentNo;
+				seller.setCurrentInvoiceAdjustmentNb(result);
+			} else {
+				result = getInvoiceAdjustmentNextValue(invoiceAdjustment, seller.getProvider(), currentUser);
+			}
+		}
+		return result;
+	}
+	
 
+	public synchronized long getNextValue(Provider provider, User currentUser,Date dateValue) {
+		long result = 0;		
+		if (provider != null) {
+			if (provider.getCFValue(INVOICE_SEQUENCE, dateValue) != null) {
+				Long sequenceVal = 1L;
+				try {
+					sequenceVal = Long.parseLong(provider.getCFValue(INVOICE_SEQUENCE, dateValue).toString());
+				} catch (NumberFormatException e) {
+					sequenceVal = 1L;
+				}
 				result = 1 + sequenceVal;
-				provider.setCFValue(InvoiceService.INVOICE_SEQUENCE, result, invoiceDate, cft);
+				provider.setCFValue(InvoiceService.INVOICE_SEQUENCE, result, dateValue, null);
 			} else {
 				long currentInvoiceNbre = provider.getCurrentInvoiceNb() != null ? provider.getCurrentInvoiceNb() : 0;
 				result = 1 + currentInvoiceNbre;
 				provider.setCurrentInvoiceNb(result);
 			}
-
 			if (currentUser != null) {
 				provider.updateAudit(currentUser);
 			} else {
 				provider.updateAudit(provider.getAuditable().getCreator());
 			}
 		}
-
 		return result;
 	}
+	
+	public synchronized long getInvoiceAdjustmentNextValue(Invoice invoiceAdjustment, Provider provider,User currentUser) {
+		long result = 0;		
+		if (provider != null) {
+			if (provider.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, invoiceAdjustment.getInvoiceDate()) != null) {				
+				Long sequenceVal = 1L;
+				try {
+					sequenceVal = Long.parseLong(provider.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, invoiceAdjustment.getInvoiceDate()).toString());
+				} catch (NumberFormatException e) {
+					sequenceVal = 1L;
+				}
+				result = sequenceVal+1;
+				provider.setCFValue(InvoiceService.INVOICE_ADJUSTMENT_SEQUENCE, result, invoiceAdjustment.getInvoiceDate(), null);
+			} else {								
+				long currentInvoiceAdjustmentNo = provider.getCurrentInvoiceAdjustmentNb() != null ? provider.getCurrentInvoiceAdjustmentNb() : 0;
+				result = 1 + currentInvoiceAdjustmentNo;
+				provider.setCurrentInvoiceAdjustmentNb(result);
+			}
+			if (currentUser != null) {
+				provider.updateAudit(currentUser);
+			} else {
+				provider.updateAudit(provider.getAuditable().getCreator());
+			}
+		}		
+		return result;
+	}	
 
 	public List<Invoice> getValidatedInvoicesWithNoPdf(BillingRun br, Provider provider) {
 		return getValidatedInvoicesWithNoPdf(getEntityManager(), br, provider);
@@ -735,39 +752,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			prefix = "";
 		}
 
-		if (prefix != null && !StringUtils.isBlank(prefix)) {
-			if (prefix.indexOf("%") >= 0) {
-				int startIndex = prefix.indexOf("%") + 1;
-				int endIndex = prefix.indexOf("%", startIndex);
-				if (endIndex > 0) {
-					String datePattern = prefix.substring(startIndex, endIndex);
-					String invoiceAdjustmentDate = DateUtils.formatDateWithPattern(invoiceAdjustment.getInvoiceDate(), datePattern);
-					prefix = prefix.replace("%" + datePattern + "%", invoiceAdjustmentDate);
-				}
-			}
-
+		if (prefix != null && !StringUtils.isBlank(prefix)) {			
 			try {
-				prefix = evaluatePrefixElExpression(prefix, invoiceAdjustment,
-						DateUtils.getDayFromDate(invoiceAdjustment.getInvoiceDate()),
-						DateUtils.getMonthFromDate(invoiceAdjustment.getInvoiceDate()),
-						DateUtils.getYearFromDate(invoiceAdjustment.getInvoiceDate()));
+				prefix = evaluatePrefixElExpression(prefix, invoiceAdjustment);
 			} catch (BusinessException e) {
 				log.warn("Invalid prefix={}", e.getMessage());
 				prefix = "";
 			}
 		}
 
-		long nextInvoiceAdjustmentNb = getInvoiceAdjustmentNextValue(invoiceAdjustment, seller, currentUser,invoiceAdjustment.getInvoiceDate());
-
+		long nextInvoiceAdjustmentNb = getInvoiceAdjustmentNextValue(invoiceAdjustment, seller, currentUser);		
 		int padSize = getNBOfChars(seller, currentUser);
-
-		StringBuffer num1 = new StringBuffer(org.apache.commons.lang3.StringUtils.leftPad("", padSize, "0"));
-		num1.append(nextInvoiceAdjustmentNb + "");
-
-		String invoiceAdjustmentNumber = num1.substring(num1.length() - padSize);
-
+		String invoiceAdjustmentNumber = StringUtils.getLongAsNChar(nextInvoiceAdjustmentNb, padSize);		
 		invoiceAdjustment.setAlias(invoiceAdjustmentNumber);
-
 		return (prefix + invoiceAdjustmentNumber);
 	}
 
@@ -788,74 +785,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return result;
 	}
 
-	public synchronized long getInvoiceAdjustmentNextValue(Invoice invoiceAdjustment, Seller seller, User currentUser, Date dateInvoice) {
-		long result = 0;
 
-		if (seller != null) {			
-			if (seller.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, dateInvoice) != null) {
-				CustomFieldTemplate cft = customFieldTemplateService.findByCode(INVOICE_ADJUSTMENT_SEQUENCE, seller.getProvider());
-				Long sequenceVal = 1L;
-				try {
-					sequenceVal = Long.parseLong(seller.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, dateInvoice).toString());
-				} catch (NumberFormatException e) {
-					sequenceVal = 1L;
-				}
 
-				result = 1+sequenceVal;
-				seller.setCFValue(InvoiceService.INVOICE_ADJUSTMENT_SEQUENCE, result,dateInvoice, cft);
-				invoiceAdjustment.setInvoiceAdjustmentCurrentSellerNb(result);
-			} else if (seller.getCurrentInvoiceAdjustmentNb() != null) {
-				long currentInvoiceAdjustmentNo = seller.getCurrentInvoiceAdjustmentNb();
-				result = 1 + currentInvoiceAdjustmentNo;
-			} else {
-				result = getInvoiceAdjustmentNextValue(invoiceAdjustment, seller.getProvider(), currentUser,dateInvoice);
-			}
-		}
-
-		return result;
-	}
-
-	public synchronized long getInvoiceAdjustmentNextValue(Invoice invoiceAdjustment, Provider provider,
-			User currentUser,Date dateInvoice) {
-		long result = 0;
-		CustomFieldTemplate cft = customFieldTemplateService.findByCode(INVOICE_ADJUSTMENT_SEQUENCE, provider);
-		if (provider != null) {
-			if (provider.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, dateInvoice) != null) {
-				
-				Long sequenceVal = 1L;
-				try {
-					sequenceVal = Long.parseLong(provider.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, dateInvoice).toString());
-				} catch (NumberFormatException e) {
-					sequenceVal = 1L;
-				}
-
-				result = 1+sequenceVal;
-				provider.setCFValue(InvoiceService.INVOICE_ADJUSTMENT_SEQUENCE, result,dateInvoice, cft);
-				invoiceAdjustment.setInvoiceAdjustmentCurrentProviderNb(result);
-			} else {
-				long currentInvoiceAdjustmentNo = provider.getCurrentInvoiceAdjustmentNb() != null ? provider
-						.getCurrentInvoiceAdjustmentNb() : 0;
-				result = 1 + currentInvoiceAdjustmentNo;
-			}
-		}
-
-		return result;
-	}
-
-	public void updateCreditNoteNb(Invoice invoiceAdjustment, Long invoiceAdjustmentNo) {
-		Seller seller = invoiceAdjustment.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-		if (seller != null && seller.getCurrentInvoiceAdjustmentNb() != null
-				&& (invoiceAdjustmentNo - 1 == seller.getCurrentInvoiceAdjustmentNb())) {
-			seller.setCurrentInvoiceAdjustmentNb(invoiceAdjustmentNo);
-
-			sellerService.update(seller, getCurrentUser());
-		} else {
-			Provider provider = seller.getProvider();
-			provider.setCurrentInvoiceAdjustmentNb(invoiceAdjustmentNo);
-
-			providerService.update(provider, getCurrentUser());
-		}
-	}
+	
 
 	public synchronized Integer getSequenceSize(Seller seller, User currentUser) {
 		int result = 0;
@@ -871,28 +803,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return result;
 	}
 
-	public String evaluatePrefixElExpression(String prefix, Invoice invoice, int day, int month, int year)
+	public String evaluatePrefixElExpression(String prefix, Invoice invoice)
 			throws BusinessException {
-		String result = null;
-		Date invoiceDate = invoice.getInvoiceDate();
+		String result = null;		
 		if (StringUtils.isBlank(prefix)) {
 			return result;
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		//keep this var, for compatibility
 		if (prefix.indexOf("invoice.") >= 0) {
 			userMap.put("invoice", invoice);
 		}
-		if (prefix.indexOf("day") >= 0) {
-			userMap.put("day", DateUtils.getDayFromDate(invoiceDate));
+		if (prefix.indexOf("entity.") >= 0) {
+			userMap.put("entity", invoice);
 		}
-		if (prefix.indexOf("month") >= 0) {
-			userMap.put("month", DateUtils.getMonthFromDate(invoiceDate) + 1);
-			;
-		}
-		if (prefix.indexOf("year") >= 0) {
-			userMap.put("year", DateUtils.getYearFromDate(invoiceDate));
-			;
-		}
+		
 		Object res = ValueExpressionWrapper.evaluateExpression(prefix, userMap, String.class);
 		try {
 			result = (String) res;
@@ -1045,25 +970,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 
 		invoice.setNetToPay(netToPay);
-	}
-
-	public void updateInvoiceAdjustmentCurrentNb(Invoice invoice) {
-		//why do this here ?
-//		the seq as CF is updated on getSeqValue methode, just like currentSeq field
-				
-//		
-//		// update seller or provider current invoice sequence value
-//		if (invoice.getInvoiceAdjustmentCurrentSellerNb() != null) {
-//			Seller seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-//			seller.setCFValue(InvoiceService.INVOICE_ADJUSTMENT_SEQUENCE,
-//					invoice.getInvoiceAdjustmentCurrentSellerNb() + 1, new Date(), null);
-//			sellerService.update(seller, getCurrentUser());
-//		} else if (invoice.getInvoiceAdjustmentCurrentProviderNb() != null) {
-//			Provider provider = invoice.getProvider();
-//			provider.setCFValue(InvoiceService.INVOICE_ADJUSTMENT_SEQUENCE,
-//					invoice.getInvoiceAdjustmentCurrentProviderNb() + 1, new Date(), null);
-//			providerService.update(provider, getCurrentUser());
-//		}
 	}
 
 	public void recomputeSubCategoryAggregate(Invoice invoice, User currentUser) {

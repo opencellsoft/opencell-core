@@ -80,7 +80,7 @@ public class ValueExpressionWrapper {
     private ValueExpressionWrapper(String expression,Map<Object, Object> userMap,@SuppressWarnings("rawtypes") Class resultClass){
         simpleELResolver = new SimpleELResolver(userMap);
         final VariableMapper variableMapper = new SimpleVariableMapper();
-        final FunctionMapper functionMapper = new SimpleFunctionMapper();
+        final MeveoFunctionMapper functionMapper = new MeveoFunctionMapper();
         final CompositeELResolver compositeELResolver = new CompositeELResolver();
         compositeELResolver.add(simpleELResolver);
         compositeELResolver.add(new ArrayELResolver());

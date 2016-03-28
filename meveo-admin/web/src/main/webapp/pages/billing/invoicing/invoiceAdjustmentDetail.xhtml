@@ -46,10 +46,10 @@
 									</c:if>
 								</h:link>
 							</hftl:decorateFormField>
-
-							<hf:formField label="#{messages['invoice.invoiceNumber']}"
-								disabled="true" field="invoiceNumber" required="true" />
-							<hf:formField label="#{messages['invoice.invoiceDate']}"
+                                                             
+							<hf:formField label="#{messages['invoice.adjustment.number']}"
+								disabled="true" field="invoiceNumber" required="true"  rendered="#{invoiceBean.entity.transient==false}" />
+							<hf:formField label="#{messages['invoice.adjustment.date']}"
 								id="invoiceDate" field="invoiceDate" />
 							<hf:formField label="#{messages['invoice.dueDate']}" id="dueDate"
 								field="dueDate" />

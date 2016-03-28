@@ -151,14 +151,15 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		if (invoice.isTransient() && adjustedInvoiceIdParam != null && adjustedInvoiceIdParam.get() != null) {
 			if (invoice.getAdjustedInvoice() == null) {
 				Invoice adjustedInvoice = invoiceService.findById(adjustedInvoiceIdParam.get());
-				invoice.setInvoiceDate(new Date());
 				invoice.setAdjustedInvoice(adjustedInvoice);
 				invoice.setBillingAccount(adjustedInvoice.getBillingAccount());
 				invoice.setBillingRun(adjustedInvoice.getBillingRun());
-				invoice.setDueDate(adjustedInvoice.getDueDate());				
+				invoice.setDueDate(new Date());
+				invoice.setInvoiceDate(new Date());
 				invoice.setPaymentMethod(adjustedInvoice.getPaymentMethod());
-				invoice.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(invoice, getCurrentUser()));
-				invoice.setInvoiceTypeEnum(InvoiceTypeEnum.CREDIT_NOTE_ADJUST);				
+				invoice.setInvoiceNumber(null);
+				invoice.setInvoiceTypeEnum(InvoiceTypeEnum.CREDIT_NOTE_ADJUST);
+
 				// duplicate rated transaction for detailed
 				// invoice adjustment
 				if (isDetailed()) {
@@ -668,12 +669,14 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 	public String saveOrUpdateInvoiceAdjustment() throws Exception {
 		if (entity.isTransient()) {
+			if( ! InvoiceTypeEnum.COMMERCIAL.name().equals( entity.getInvoiceTypeEnum().name())){
+				entity.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(entity, getCurrentUser()));
+			}
 			if (isDetailed()) {
 				for (RatedTransaction rt : uiRatedTransactions) {
 					ratedTransactionService.create(rt, getCurrentUser());
 				}
-			}
-			invoiceService.updateCreditNoteNb(entity, Long.parseLong(entity.getAlias()));
+			}			
 		}
 
 		super.saveOrUpdate(false);
@@ -686,8 +689,6 @@ public class InvoiceBean extends BaseBean<Invoice> {
 				invoiceService.recomputeAggregates(entity, getCurrentUser());
 			}
 		}
-
-		invoiceService.updateInvoiceAdjustmentCurrentNb(entity);
 
 		// create xml invoice adjustment
 		String invoicesDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo");

@@ -498,7 +498,7 @@
 									
 								<p:rowExpansion>
 									<p:dataTable value="#{entity.invoiceAdjustments}" var="obj">
-										<p:column headerText="#{messages['BusinessEntity.code']}">
+										<p:column headerText="#{messages['invoice.adjustment.number']}">
 											<h:link value="#{obj.invoiceNumber}" outcome="invoiceAdjustmentDetail">
 												<f:param name="adjustedInvoiceIdParam" value="#{entity.id}" />
 												<f:param name="objectId" value="#{obj.id}" />
