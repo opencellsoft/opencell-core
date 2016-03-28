@@ -37,6 +37,12 @@ public class CustomerCategory extends BusinessEntity {
 
 	@Column(name = "EXONERATED_FROM_TAXES")
 	private boolean exoneratedFromTaxes=false ;
+	
+	@Column(name = "EXONERATION_TAX_EL")
+	private String exonerationTaxEl;
+	
+	@Column(name = "EXONERATION_REASON")
+	private String exonerationReason;
 
 	public boolean getExoneratedFromTaxes() {
 		return exoneratedFromTaxes;
@@ -45,4 +51,35 @@ public class CustomerCategory extends BusinessEntity {
 	public void setExoneratedFromTaxes(boolean exoneratedFromTaxes) {
 		this.exoneratedFromTaxes = exoneratedFromTaxes;
 	}
+
+	/**
+	 * @return the exonerationTaxEl
+	 */
+	public String getExonerationTaxEl() {
+		return exonerationTaxEl;
+	}
+
+	/**
+	 * @param exonerationTaxEl the exonerationTaxEl to set
+	 */
+	public void setExonerationTaxEl(String exonerationTaxEl) {
+		this.exonerationTaxEl = exonerationTaxEl;
+	}
+
+	/**
+	 * @return the exonerationReason
+	 */
+	public String getExonerationReason() {
+		return exonerationReason;
+	}
+
+	/**
+	 * @param exonerationReason the exonerationReason to set
+	 */
+	public void setExonerationReason(String exonerationReason) {
+		this.exonerationReason = exonerationReason;
+	}
+	
+	
+	
 }

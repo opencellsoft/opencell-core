@@ -82,7 +82,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 	private AccessService accessService;
 	
 	@Inject	
-	private UserAccountService userAccountService;
+	private BillingAccountService billingAccountService;
 	
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -191,7 +191,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 		WalletOperation result = new WalletOperation();
 		//TODO do this in the right place (one time by userAccount)				
-	    boolean  isExonerated = userAccountService.isExonerated(chargeInstance.getSubscription().getUserAccount(), chargeInstance.getProvider()); 
+	    boolean  isExonerated = billingAccountService.isExonerated(chargeInstance.getSubscription().getUserAccount().getBillingAccount()); 
 
 		if (chargeInstance instanceof RecurringChargeInstance) {
 			result.setSubscriptionDate(subscriptionDate);

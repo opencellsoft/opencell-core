@@ -85,7 +85,7 @@ public class UsageRatingService {
     private PricePlanMatrixService pricePlanMatrixService;
     
     @Inject
-    private UserAccountService userAccountService;
+    private BillingAccountService billingAccountService;
 
 	// @PreDestroy
 	// accessing Entity manager in predestroy is bugged in jboss7.1.3
@@ -160,7 +160,7 @@ public class UsageRatingService {
 					+ invoiceSubCat.getCode());
 		}
 
-        boolean isExonerated =  userAccountService.isExonerated(chargeInstance.getSubscription().getUserAccount(), provider);
+        boolean isExonerated =  billingAccountService.isExonerated(chargeInstance.getSubscription().getUserAccount().getBillingAccount());
         
 		TradingCurrency currency = chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount()
 				.getTradingCurrency();

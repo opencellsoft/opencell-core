@@ -109,7 +109,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	private CustomFieldInstanceService customFieldInstanceService;
 
     @Inject	
-    private UserAccountService userAccountService;
+    private BillingAccountService billingAccountService;
 
 	TransformerFactory transfac = TransformerFactory.newInstance();
 
@@ -1071,12 +1071,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	private void addTaxes(Invoice invoice, Document doc, Element parent) throws BusinessException {
 		// log.debug("adding taxes...");
 		Element taxes = doc.createElement("taxes");
-		boolean exoneratedFromTaxes = userAccountService.isExonerated(invoice.getBillingAccount().getUsersAccounts().get(0), invoice.getBillingAccount().getProvider());
+		boolean exoneratedFromTaxes = billingAccountService.isExonerated(invoice.getBillingAccount());
 		if(exoneratedFromTaxes){	        					 
-			Element exoneratedElement = doc.createElement("exonerated");		
-			String motifCode = null;// (String) invoice.getProvider().CFValue("exonerated.reason.code");					
-			if(motifCode == null) motifCode = "";						
-			exoneratedElement.setAttribute("reason", paramBean.getProperty("exonerated.reason_"+motifCode, "DOM-TOM"));			
+			Element exoneratedElement = doc.createElement("exonerated");							
+			exoneratedElement.setAttribute("reason", invoice.getBillingAccount().getCustomerAccount().getCustomer().getCustomerCategory().getExonerationReason() );		
 			taxes.appendChild(exoneratedElement);	        		           
 		}else{  
 			int rounding = invoice.getProvider().getRounding() == null ? 2 : invoice.getProvider().getRounding();

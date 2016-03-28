@@ -248,11 +248,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
 		
 		List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount);
+		//TODO do this in the right place (one time by userAccount)			
+		boolean isExonerated = billingAccountService.isExonerated(billingAccount);
 
 		for (UserAccount userAccount : userAccounts) {
 			WalletInstance wallet = userAccount.getWallet();
-			//TODO do this in the right place (one time by userAccount)			
-			boolean isExonerated = userAccountService.isExonerated(userAccount, userAccount.getProvider());
 			// TODO : use Named queries
 			CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
 			CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
@@ -673,7 +673,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
 			BigDecimal discountAmountTax=BigDecimal.ZERO;
 			//TODO do this in the right place (one time by userAccount)			
-			boolean isExonerated = userAccountService.isExonerated(userAccount,userAccount.getProvider());			
+			boolean isExonerated = billingAccountService.isExonerated(userAccount.getBillingAccount());			
 			if(!isExonerated){
 				for (Tax tax:taxes) {
 					BigDecimal amountTax=discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED));

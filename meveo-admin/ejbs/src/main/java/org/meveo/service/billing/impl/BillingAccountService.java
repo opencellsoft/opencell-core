@@ -22,7 +22,9 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -35,6 +37,7 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -44,9 +47,11 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
+import org.meveo.service.base.ValueExpressionWrapper;
 
 @Stateless
 public class BillingAccountService extends AccountService<BillingAccount> {
@@ -286,5 +291,37 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			return null;
 		}
 	}
-
+	/**
+	 * Evatuate the exoneration Taxes EL
+	 * 
+	 * @param ba The BillingAccount
+	 * @param provider The Provider
+	 * @return
+	 */
+	public boolean isExonerated(BillingAccount ba){
+		boolean isExonerated = false;
+		CustomerCategory customerCategory = null;
+		if(ba == null ||  ba.getCustomerAccount().getCustomer().getCustomerCategory() == null){
+			return false;
+		}
+		customerCategory = ba.getCustomerAccount().getCustomer().getCustomerCategory();
+		if(customerCategory.getExoneratedFromTaxes()){
+			return true;
+		}
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		if(!StringUtils.isBlank(customerCategory.getExonerationTaxEl())){
+			if(customerCategory.getExonerationTaxEl().indexOf("ba.")>-1){
+				userMap.put("ba", ba);
+			}
+			Boolean isExon = Boolean.FALSE;
+			try {
+				isExon = (Boolean) ValueExpressionWrapper.evaluateExpression(customerCategory.getExonerationTaxEl(), userMap, Boolean.class);
+			} catch (BusinessException e) {
+				log.error("Error evaluateExpression Exoneration taxes:",e);
+				e.printStackTrace();
+			}
+			isExonerated = (isExon == null ? false : isExon);
+		}		
+		return isExonerated;
+	}
 }

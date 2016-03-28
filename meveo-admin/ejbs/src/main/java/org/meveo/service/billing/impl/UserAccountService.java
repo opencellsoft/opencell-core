@@ -20,9 +20,7 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -32,7 +30,6 @@ import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -43,9 +40,7 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.AccountService;
-import org.meveo.service.base.ValueExpressionWrapper;
 
 @Stateless
 public class UserAccountService extends AccountService<UserAccount> {
@@ -166,32 +161,4 @@ public class UserAccountService extends AccountService<UserAccount> {
 		}
 	}
 
-	/**
-	 * Evatuate the exoneration Taxes EL
-	 * 
-	 * @param ua The UserAccount
-	 * @param provider The Provider
-	 * @return
-	 */
-	public boolean isExonerated(UserAccount ua,Provider provider){
-		boolean isExonerated = false;
-		if(ua != null && ua.getBillingAccount().getCustomerAccount().getCustomer().getCustomerCategory().getExoneratedFromTaxes()){
-			return true;
-		}
-		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		if(provider != null &&  !StringUtils.isBlank(provider.getExonerationTaxEl())){
-			if(provider.getExonerationTaxEl().indexOf("ua")>-1){
-				userMap.put("ua", ua);
-			}
-			Boolean isExon = Boolean.FALSE;
-			try {
-				isExon = (Boolean) ValueExpressionWrapper.evaluateExpression(provider.getExonerationTaxEl(), userMap, Boolean.class);
-			} catch (BusinessException e) {
-				log.error("Error evaluateExpression Exoneration taxes:",e);
-				e.printStackTrace();
-			}
-			isExonerated = (isExon == null ? false : isExon);
-		}		
-		return isExonerated;
-	}
 }

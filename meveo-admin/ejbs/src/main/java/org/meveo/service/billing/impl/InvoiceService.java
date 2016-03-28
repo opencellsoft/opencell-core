@@ -120,11 +120,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	private ProviderService providerService;
 	
 	@Inject
-	private UserAccountService userAccountService;
-	
-	@Inject
 	private BillingAccountService billingAccountService;
-
+	
 	@Inject
 	private RatedTransactionService ratedTransactionService;
 
@@ -880,7 +877,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		int rounding = invoice.getBillingAccount().getProvider().getRounding() == null ? 2 : invoice
 				.getBillingAccount().getProvider().getRounding();
 		BillingAccount billingAccount=billingAccountService.findById(invoice.getBillingAccount().getId());
-		boolean exoneratedFromTaxes = userAccountService.isExonerated(billingAccount.getUsersAccounts().get(0), invoice.getBillingAccount().getProvider());
+		boolean exoneratedFromTaxes = billingAccountService.isExonerated(billingAccount);
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
 		
 		Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
