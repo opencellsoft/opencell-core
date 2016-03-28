@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.OfferTemplateCategory;
@@ -15,8 +16,10 @@ public class OfferTemplateCategoryDto implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
+	@XmlAttribute(required = true)
 	private String code;
 	
+	@XmlAttribute()
 	private String description;
 	
 	private String name;
