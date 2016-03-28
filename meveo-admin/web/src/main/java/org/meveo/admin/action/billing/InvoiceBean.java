@@ -156,10 +156,10 @@ public class InvoiceBean extends BaseBean<Invoice> {
 				invoice.setAdjustedInvoice(adjustedInvoice);
 				invoice.setBillingAccount(adjustedInvoice.getBillingAccount());
 				invoice.setBillingRun(adjustedInvoice.getBillingRun());
-				invoice.setDueDate(adjustedInvoice.getDueDate());
+				invoice.setDueDate(new Date());
 				invoice.setInvoiceDate(new Date());				
 				invoice.setPaymentMethod(adjustedInvoice.getPaymentMethod());
-				invoice.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(invoice, getCurrentUser()));
+				invoice.setInvoiceNumber(null);
 				invoice.setInvoiceTypeEnum(InvoiceTypeEnum.CREDIT_NOTE_ADJUST);
 
 				// duplicate rated transaction for detailed
@@ -674,8 +674,10 @@ public class InvoiceBean extends BaseBean<Invoice> {
 				for (RatedTransaction rt : uiRatedTransactions) {
 					ratedTransactionService.create(rt, getCurrentUser());
 				}
-			}
-			invoiceService.updateCreditNoteNb(entity, Long.parseLong(entity.getAlias()), getCurrentUser());
+			}			
+            if( ! InvoiceTypeEnum.COMMERCIAL.name().equals( entity.getInvoiceTypeEnum().name())){
+                entity.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(entity, getCurrentUser()));	
+            }
 		}
 
 		super.saveOrUpdate(false);
@@ -690,8 +692,6 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		}
 		
 		super.saveOrUpdate(false);
-
-		invoiceService.updateInvoiceAdjustmentCurrentNb(entity, getCurrentUser());
 
 		// create xml invoice adjustment
 		String invoicesDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo");

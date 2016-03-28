@@ -45,9 +45,9 @@
 								</h:link>
 							</hftl:decorateFormField>
 
-							<hftl:formField label="#{messages['invoice.invoiceNumber']}"
-								disabled="true" field="invoiceNumber" required="true" />
-							<hftl:formField label="#{messages['invoice.invoiceDate']}"
+							<hftl:formField label="#{messages['invoice.adjustment.number']}"
+								disabled="true" field="invoiceNumber" required="true" rendered="#{invoiceBean.entity.transient==false}" />
+							<hftl:formField label="#{messages['invoice.adjustment.date']}"
 								id="invoiceDate" field="invoiceDate" />
 							<hftl:formField label="#{messages['invoice.dueDate']}" id="dueDate"
 								field="dueDate" />

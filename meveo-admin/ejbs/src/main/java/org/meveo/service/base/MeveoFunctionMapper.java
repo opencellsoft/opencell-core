@@ -18,6 +18,7 @@ import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.script.EntityActionScriptService;
 import org.meveo.service.script.Script;
@@ -111,6 +112,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "executeScript", MeveoFunctionMapper.class.getMethod("executeScript", IEntity.class, String.class, String.class, User.class));
 
             addFunction("mv", "now", MeveoFunctionMapper.class.getMethod("getNowTimestamp"));
+            
+            addFunction("mv", "formatDate", MeveoFunctionMapper.class.getMethod("formatDate", Date.class,String.class));            
 
         } catch (NoSuchMethodException | SecurityException e) {
             Logger log = LoggerFactory.getLogger(this.getClass());
@@ -693,4 +696,17 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Date getNowTimestamp() {
         return new Date();
     }
+    
+    /**	
+     * Format date
+     * 
+     * @param dateFormatPattern  standard java  date and time patterns
+     * @return A formated date
+     */
+    public static String formatDate(Date date,String dateFormatPattern) { 
+        if(date == null){
+            return DateUtils.formatDateWithPattern(new Date(), dateFormatPattern);
+        }
+        return DateUtils.formatDateWithPattern(date, dateFormatPattern);	
+    }       
 }

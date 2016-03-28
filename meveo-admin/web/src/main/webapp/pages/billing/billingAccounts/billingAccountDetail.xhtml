@@ -1,4 +1,4 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
@@ -483,7 +483,7 @@
 									<p:dataTable
 										value="#{invoiceBean.findInvoiceAdjustmentByInvoice(entity)}"
 										var="obj" reflow="false" styleClass="invoice-adjustment-table">
-										<p:column headerText="#{messages['invoice.invoiceNumber']}">
+										<p:column headerText="#{messages['invoice.adjustment.number']}">
 											<h:link value="#{obj.invoiceNumber}"
 												outcome="invoiceAdjustmentDetail">
 												<f:param name="adjustedInvoiceIdParam" value="#{entity.id}" />

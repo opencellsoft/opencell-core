@@ -192,10 +192,6 @@ public class InvoiceApi extends BaseApi {
 
         invoiceService.create(invoice, currentUser);
 
-        if (invoice.getInvoiceTypeEnum() == InvoiceTypeEnum.CREDIT_NOTE_ADJUST) {
-            invoiceService.updateInvoiceAdjustmentCurrentNb(invoice, currentUser);
-        }
-
         List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
 
         for (SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDTO : invoiceDTO.getSubCategoryInvoiceAgregates()) {
