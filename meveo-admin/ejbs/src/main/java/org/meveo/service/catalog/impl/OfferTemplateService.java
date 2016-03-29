@@ -25,6 +25,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
@@ -59,6 +60,18 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 
 		try {
 			return (List<OfferTemplate>) query.getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<OfferTemplate> listNoBOM() {
+		QueryBuilder qb = new QueryBuilder(OfferTemplate.class, "o");
+		qb.addSql(" o.businessOfferModel is null ");
+
+		try {
+			return (List<OfferTemplate>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
 			return null;
 		}

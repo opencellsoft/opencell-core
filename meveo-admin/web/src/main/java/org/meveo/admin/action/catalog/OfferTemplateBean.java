@@ -115,6 +115,10 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 		return offerTemplateService.list(config);
 	}
+	
+	public List<OfferTemplate> listNoBOM() {
+		return offerTemplateService.listNoBOM();
+	}
 
 	@Override
 	protected String getDefaultSort() {

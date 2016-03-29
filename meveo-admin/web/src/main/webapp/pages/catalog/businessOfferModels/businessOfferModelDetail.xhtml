@@ -34,6 +34,19 @@
 			updateField=":formId:tabView:creationScriptId">
 		</hftl:entityPopup>
 
+		<hftl:entityPopup id="offerTemplatePopup"
+			header="#{messages['offerTemplate.title']}"
+			updateField=":formId:tabView:offerSelectId"
+			selection="#{businessOfferModelBean.entity.offerTemplate}"
+			backingBean="#{offerTemplateBean}"
+			dataModel="#{offerTemplateBean.listNoBOM()}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -61,7 +74,7 @@
 					<hftl:formField id="offerSelectId"
 						label="#{messages['pricePlanMatrix.offerCode']}"
 						field="offerTemplate" valueLabelField="code" required="true"
-						listElements="#{offerTemplateBean.listActive}" />
+						popup="true" popupId="offerTemplatePopup" />
 					<hftl:formField id="creationScriptId"
 						label="#{messages['businessOffer.creationScript']}"
 						field="creationScript" valueLabelField="code" required="false"
@@ -70,6 +83,24 @@
 			</p:tabView>
 
 		</hftl:formPanel>
+
+		<h:form id="businessServiceTemplates">
+			<p:panel width="100" header="#{messages['serviceTemplate.title']}">
+				<p:dataTable id="businessServiceTemplates" var="entity"
+					value="#{businessOfferModelBean.bomServices}" paginator="true"
+					rows="10" sortBy="#{entity.code}" paginatorAlwaysVisible="false"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid"
+					reflow="true">
+					<p:column headerText="#{messages['BusinessEntity.code']}">
+						<h:outputText value="#{entity.code}" />
+					</p:column>
+					<p:column headerText="#{messages['BusinessEntity.description']}">
+						<h:outputText value="#{entity.description}" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
 
 		<h:form id="scriptMainForm">
 			<p:panel width="100" header="#{messages['offerModelScript']}">
@@ -101,6 +132,9 @@
 							<f:setPropertyActionListener
 								target="#{offerModelScriptBean.backViewSave}"
 								value="businessOfferModelDetail" />
+							<f:setPropertyActionListener
+								target="#{offerModelScriptBean.bomId}"
+								value="#{businessOfferModelBean.entity.id}" />
 						</p:commandButton>
 
 						<p:tooltip for="deleteActionlink"
@@ -119,7 +153,7 @@
 							oncomplete="PF('scriptDialog').show()"
 							actionListener="#{offerModelScriptBean.newEntity()}"
 							update=":scriptForm"
-							rendered="#{businessOfferModelBean.offerModelScripts eq null or businessOfferModelBean.offerModelScripts.size() eq 0}">
+							rendered="#{(businessOfferModelBean.offerModelScripts eq null or businessOfferModelBean.offerModelScripts.size() eq 0) and not businessOfferModelBean.entity.transient}">
 							<f:setPropertyActionListener
 								target="#{offerModelScriptBean.bomId}"
 								value="#{businessOfferModelBean.entity.id}" />
@@ -208,7 +242,7 @@
 						disabled="true" field="code" required="true" allowEdit="false"
 						componentWidth="15" />
 					<hftl:formField label="#{messages['BusinessEntity.description']}"
-						field="description" required="true" allowEdit="false"
+						field="description" required="false" allowEdit="false"
 						componentWidth="15" />
 					<hftl:formField
 						label="#{messages['scriptInstance.sourceTypeEnum']}"
@@ -224,7 +258,8 @@
 						doNotShowOnNew="true" allowEdit="false" field="disabled"
 						isMessage="true" newLine="true" />
 
-					<h:panelGroup id="scriptErrors">
+					<h:panelGroup id="scriptErrors"
+						rendered="#{offerModelScriptBean.entity.isError()}">
 						<hftl:decorateFormField
 							label="#{messages['scriptInstance.compilationErrors']}"
 							componentWidth="100" newLine="true"
@@ -288,6 +323,5 @@
 					update="formId:messages" />
 			</p:commandButton>
 		</h:panelGroup>
-
 	</ui:define>
 </ui:composition>

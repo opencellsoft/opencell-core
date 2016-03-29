@@ -91,23 +91,50 @@ public class BusinessOfferModelBean extends BaseBean<BusinessOfferModel> {
 		messages.info(new BundleKey("messages", "message.bom.offerCreation.ok"));
 	}
 
+	@Override
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		super.saveOrUpdate(killConversation);
+
+		return null;
+	}
+
 	public DualListModel<ServiceTemplate> getServiceDualListModel() {
 		if (serviceDualListModel == null) {
 			List<ServiceTemplate> perksSource = null;
+			List<ServiceTemplate> perksTarget = new ArrayList<>();
 			if (getEntity() != null) {
 				List<ServiceTemplate> serviceTemplates = new ArrayList<>();
 				for (OfferServiceTemplate ost : entity.getOfferTemplate().getOfferServiceTemplates()) {
 					if (ost.getServiceTemplate() != null) {
-						serviceTemplates.add(ost.getServiceTemplate());
+						if (ost.isMandatory()) {
+							perksTarget.add(ost.getServiceTemplate());
+						} else {
+							serviceTemplates.add(ost.getServiceTemplate());
+						}
 					}
 				}
 				perksSource = serviceTemplates;
 			}
 
-			serviceDualListModel = new DualListModel<ServiceTemplate>(perksSource, new ArrayList<ServiceTemplate>());
+			serviceDualListModel = new DualListModel<ServiceTemplate>(perksSource, perksTarget);
 		}
 
 		return serviceDualListModel;
+	}
+
+	public List<ServiceTemplate> getBomServices() {
+		List<ServiceTemplate> perksSource = null;
+		if (getEntity() != null) {
+			List<ServiceTemplate> serviceTemplates = new ArrayList<>();
+			for (OfferServiceTemplate ost : entity.getOfferTemplate().getOfferServiceTemplates()) {
+				if (ost.getServiceTemplate() != null) {
+					serviceTemplates.add(ost.getServiceTemplate());
+				}
+			}
+			perksSource = serviceTemplates;
+		}
+
+		return perksSource;
 	}
 
 	public List<BusinessServiceModel> getBusinessServiceModels(BusinessOfferModel bomEntity) {

@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.module.MeveoModule;
@@ -70,6 +71,13 @@ public class BusinessServiceModelBean extends BaseBean<BusinessServiceModel> {
 		}
 
 		return result;
+	}
+
+	@Override
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		super.saveOrUpdate(killConversation);
+
+		return null;
 	}
 
 	public BusinessOfferModel getBusinessOfferModel() {
