@@ -1,5 +1,6 @@
 package org.meveo.admin.action.catalog;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -35,11 +36,27 @@ public class ServiceModelScriptBean extends BaseBean<ServiceModelScript> {
 	public ServiceModelScriptBean() {
 		super(ServiceModelScript.class);
 	}
+	
+	@Override
+	public ServiceModelScript initEntity(Long id) {
+		super.initEntity(id);
+
+		if (entity.isError()) {
+			serviceModelScriptService.compileScript(entity, true);
+		}
+
+		return entity;
+	}
 
 	@Override
 	protected IPersistenceService<ServiceModelScript> getPersistenceService() {
 		return serviceModelScriptService;
 	}
+	
+	@Override
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("provider");
+    }
 
 	public void testCompilation() {
 		serviceModelScriptService.compileScript(entity, true);

@@ -1,5 +1,6 @@
 package org.meveo.admin.action.catalog;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -38,9 +39,25 @@ public class OfferModelScriptBean extends BaseBean<OfferModelScript> {
 	}
 
 	@Override
+	public OfferModelScript initEntity(Long id) {
+		super.initEntity(id);
+
+		if (entity.isError()) {
+			offerModelScriptService.compileScript(entity, true);
+		}
+
+		return entity;
+	}
+
+	@Override
 	protected IPersistenceService<OfferModelScript> getPersistenceService() {
 		return offerModelScriptService;
 	}
+	
+	@Override
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("provider");
+    }
 
 	public void testCompilation() {
 		offerModelScriptService.compileScript(entity, true);

@@ -132,7 +132,8 @@ public class ModuleDto extends BaseDataModelDto {
         this.moduleItems = moduleItems;
     }
 
-    public void addModuleItem(BaseDto item) {
+    @SuppressWarnings("unused")
+	public void addModuleItem(BaseDto item) {
         if (item instanceof ScriptInstanceDto) {
             Logger log = LoggerFactory.getLogger(getClass());
         }
