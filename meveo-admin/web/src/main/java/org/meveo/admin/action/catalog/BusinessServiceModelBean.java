@@ -34,7 +34,7 @@ public class BusinessServiceModelBean extends BaseBean<BusinessServiceModel> {
 	private MeveoModuleService meveoModuleService;
 
 	private BusinessOfferModel businessOfferModel;
-	
+
 	private List<ServiceModelScript> serviceModelScripts;
 
 	public BusinessServiceModelBean() {
@@ -50,7 +50,7 @@ public class BusinessServiceModelBean extends BaseBean<BusinessServiceModel> {
 	protected String getListViewName() {
 		return "businessServiceModels";
 	}
-	
+
 	public void refreshScript() {
 		serviceModelScripts = null;
 		entity = getPersistenceService().refreshOrRetrieve(entity);
@@ -80,12 +80,14 @@ public class BusinessServiceModelBean extends BaseBean<BusinessServiceModel> {
 		this.businessOfferModel = businessOfferModel;
 	}
 
-	public List<ServiceModelScript> getServiceModelScripts() {		
+	public List<ServiceModelScript> getServiceModelScripts() {
 		if (serviceModelScripts == null || serviceModelScripts.size() == 0) {
 			serviceModelScripts = new ArrayList<>();
-			entity = getPersistenceService().refreshOrRetrieve(entity);
-			if (entity.getScript() != null) {
-				serviceModelScripts.add(entity.getScript());
+			if (!entity.isTransient()) {
+				entity = getPersistenceService().refreshOrRetrieve(entity);
+				if (entity.getScript() != null) {
+					serviceModelScripts.add(entity.getScript());
+				}
 			}
 		}
 		return serviceModelScripts;

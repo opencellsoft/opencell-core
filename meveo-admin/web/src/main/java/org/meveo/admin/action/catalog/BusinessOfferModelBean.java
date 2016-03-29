@@ -171,9 +171,11 @@ public class BusinessOfferModelBean extends BaseBean<BusinessOfferModel> {
 	public List<OfferModelScript> getOfferModelScripts() {
 		if (offerModelScripts == null || offerModelScripts.size() == 0) {
 			offerModelScripts = new ArrayList<>();
-			entity = getPersistenceService().refreshOrRetrieve(entity);
-			if (entity.getScript() != null) {
-				offerModelScripts.add(entity.getScript());
+			if (!entity.isTransient()) {
+				entity = getPersistenceService().refreshOrRetrieve(entity);
+				if (entity.getScript() != null) {
+					offerModelScripts.add(entity.getScript());
+				}
 			}
 		}
 		return offerModelScripts;
