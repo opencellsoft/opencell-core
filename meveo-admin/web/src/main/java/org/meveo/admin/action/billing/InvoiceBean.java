@@ -676,10 +676,11 @@ public class InvoiceBean extends BaseBean<Invoice> {
 				}
 			}			
             if( ! InvoiceTypeEnum.COMMERCIAL.name().equals( entity.getInvoiceTypeEnum().name())){
-                entity.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(entity, getCurrentUser()));	
+                entity.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(entity, getCurrentUser()));	                
             }
 		}
-
+			
+		entity.setBillingAccount(billingAccountService.refreshOrRetrieve(entity.getBillingAccount()));
 		super.saveOrUpdate(false);
 		invoiceService.commit();
 		
@@ -689,8 +690,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			if (entity.getAmountWithoutTax() == null) {
 				invoiceService.recomputeAggregates(entity, getCurrentUser());
 			}
-		}
-		
+		}		
 		super.saveOrUpdate(false);
 
 		// create xml invoice adjustment

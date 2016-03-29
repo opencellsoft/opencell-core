@@ -340,7 +340,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			} else if (seller.getCurrentInvoiceAdjustmentNb() != null) {
 				long currentInvoiceAdjustmentNo = seller.getCurrentInvoiceAdjustmentNb();
 				result = 1 + currentInvoiceAdjustmentNo;
-				seller.setCurrentInvoiceNb(result);
+				seller.setCurrentInvoiceAdjustmentNb(result);
 			} else {
 				result = getInvoiceAdjustmentNextValue(invoiceAdjustment, seller.getProvider(), currentUser,dateInvoice);
 			}
@@ -401,7 +401,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				long currentInvoiceAdjustmentNo = provider.getCurrentInvoiceAdjustmentNb() != null ? provider
 						.getCurrentInvoiceAdjustmentNb() : 0;
 				result = 1 + currentInvoiceAdjustmentNo;
-				provider.setCurrentInvoiceNb(result);
+				provider.setCurrentInvoiceAdjustmentNb(result);
 			}
 			if (currentUser != null) {
 				provider.updateAudit(currentUser);
@@ -791,7 +791,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	public String getInvoiceAdjustmentNumber(Invoice invoiceAdjustment, User currentUser) {
-		Seller seller = invoiceAdjustment.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+		BillingAccount  billingAccount = billingAccountService.refreshOrRetrieve(invoiceAdjustment.getBillingAccount());
+		Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
 		String prefix = seller.getInvoiceAdjustmentPrefix();
 
 		if (prefix == null) {
