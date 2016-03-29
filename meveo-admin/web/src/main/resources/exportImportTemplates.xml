@@ -344,9 +344,10 @@
             <template ref="TriggeredEDRTemplate" />
             <template ref="CounterTemplate" />
             <template ref="ChargeTemplate" />
+            <template ref="BusinessServiceModel" />
             <template ref="ServiceTemplate" />
+            <template ref="BusinessOfferModel" />
             <template ref="OfferTemplate" />
-            <template ref="BusinessOfferModule" />
             <template ref="PricePlanMatrix" />
             <template ref="DiscountPlan" />
             <template ref="MeveoModule" />
@@ -421,5 +422,33 @@
         <classesToExportAsFull>
             <java-class>org.meveo.model.jobs.TimerEntity</java-class>
         </classesToExportAsFull>
+    </template>
+    <template name="BusinessOfferModel" entityToExport="org.meveo.model.catalog.BusinessOfferModel">
+        <exportAllClassesAsFull>true</exportAllClassesAsFull>
+        <classesToExportAsFull>
+            <java-class>org.meveo.model.catalog.OfferServiceTemplate</java-class>
+        </classesToExportAsFull>        
+        <relatedEntities>
+            <relatedEntity>
+                <entityClass>org.meveo.model.catalog.BusinessServiceModel</entityClass>
+                <selection>select mie from BusinessServiceModel mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
+                    mi.itemClass='org.meveo.model.catalog.BusinessServiceModel' and
+                    mi.meveoModule=:meveoModule and mie.provider=:provider
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>meveoModule</string>
+                        <string>#{entity}</string>
+                    </entry>
+                    <entry>
+                        <string>provider</string>
+                        <string>#{entity.provider}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+        </relatedEntities>
+    </template>
+    <template name="BusinessServiceModel" entityToExport="org.meveo.model.catalog.BusinessServiceModel">
+        <exportAllClassesAsFull>true</exportAllClassesAsFull>
     </template>
 </list>
