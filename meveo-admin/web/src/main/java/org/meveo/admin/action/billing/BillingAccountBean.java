@@ -41,6 +41,7 @@ import org.meveo.admin.util.ListItemsSelector;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.Invoice;
@@ -267,11 +268,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		byte[] invoicePdf = invoice.getPdf();
 		FacesContext context = FacesContext.getCurrentInstance();
 		String invoiceFilename = null;
-		if (invoice.getBillingRun().getStatus() == BillingRunStatusEnum.VALIDATED) {
-			invoiceFilename = invoice.getInvoiceNumber() + ".pdf";
-		} else {
-			invoiceFilename = "unvalidated-invoice.pdf";
+		BillingRun billingRun=invoice.getBillingRun();
+		invoiceFilename = invoice.getInvoiceNumber() + ".pdf";
+		if(billingRun !=null && billingRun.getStatus() != BillingRunStatusEnum.VALIDATED){
+		invoiceFilename = "unvalidated-invoice.pdf";
 		}
+			
 		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
 		response.setContentType("application/pdf"); // fill in
 		response.setHeader("Content-disposition", "attachment; filename=" + invoiceFilename);
@@ -279,7 +281,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		try {
 			OutputStream os = response.getOutputStream();
 			Document document = new Document(PageSize.A4);
-			if (invoice.getBillingRun().getStatus() != BillingRunStatusEnum.VALIDATED) {
+			if (billingRun!=null && billingRun.getStatus() != BillingRunStatusEnum.VALIDATED) {
 				// Add watemark image
 				PdfReader reader = new PdfReader(invoicePdf);
 				int n = reader.getNumberOfPages();
