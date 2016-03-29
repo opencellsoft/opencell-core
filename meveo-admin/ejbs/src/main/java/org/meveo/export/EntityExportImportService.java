@@ -334,7 +334,8 @@ public class EntityExportImportService implements Serializable {
                 exportTemplate.getClassesToExportAsShort().add(Provider.class);
             }
             if (!Permission.class.isAssignableFrom(clazz)
-                    && (exportTemplate.getClassesToExportAsShort() == null || !exportTemplate.getClassesToExportAsShort().contains(Permission.class))) {
+                    && (exportTemplate.getClassesToExportAsShort() == null || !exportTemplate.getClassesToExportAsShort().contains(Permission.class))
+                    && (exportTemplate.getClassesToExportAsFull() == null || !exportTemplate.getClassesToExportAsFull().contains(Permission.class))) {
                 if (exportTemplate.getClassesToExportAsShort() == null) {
                     exportTemplate.setClassesToExportAsShort(new ArrayList<Class<? extends IEntity>>());
                 }

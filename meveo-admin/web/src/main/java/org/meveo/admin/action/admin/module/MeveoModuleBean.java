@@ -127,7 +127,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 
         for (MeveoModuleItem item : module.getModuleItems()) {
 
-            // Load an entity related to a module item. If it was not been able to lead (e.g. was deleted), mark it to be deleted and delete
+            // Load an entity related to a module item. If it was not been able to load (e.g. was deleted), mark it to be deleted and delete
             meveoModuleService.loadModuleItem(item, getCurrentProvider());
 
             if (item.getItemEntity() == null) {

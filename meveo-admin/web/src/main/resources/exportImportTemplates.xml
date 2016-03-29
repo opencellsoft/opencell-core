@@ -54,22 +54,49 @@
     </template>
     <template name="ScriptInstance with all dependencies" entityToExport="org.meveo.model.scripts.ScriptInstance">
         <exportAllClassesAsFull>true</exportAllClassesAsFull>
+        <classesToExportAsFull>
+            <java-class>org.meveo.model.security.Role</java-class> <!-- Might want to include Permissions as well instead of ignoring if not found -->
+        </classesToExportAsFull>
         <classesToIgnoreFKNotFound>
             <java-class>org.meveo.model.admin.User</java-class>
+            <java-class>org.meveo.model.security.Permission</java-class>
         </classesToIgnoreFKNotFound>
     </template>
     <template name="Notification with all dependencies" entityToExport="org.meveo.model.notification.Notification">
         <exportAllClassesAsFull>true</exportAllClassesAsFull>
+        <classesToExportAsFull>
+            <java-class>org.meveo.model.security.Role</java-class> <!-- Might want to include Permissions as well instead of ignoring if not found -->
+        </classesToExportAsFull>
         <classesToIgnoreFKNotFound>
             <java-class>org.meveo.model.admin.User</java-class>
+            <java-class>org.meveo.model.security.Permission</java-class>
         </classesToIgnoreFKNotFound>
     </template>
 
     <template name="MeveoModule" entityToExport="org.meveo.model.module.MeveoModule">
+        <exportAllClassesAsFull>true</exportAllClassesAsFull>
         <classesToExportAsFull>
+            <java-class>org.meveo.model.catalog.OfferServiceTemplate</java-class>
             <java-class>org.meveo.model.module.MeveoModuleItem</java-class>
         </classesToExportAsFull>
         <relatedEntities>
+            <relatedEntity>
+                <entityClass>org.meveo.model.catalog.BusinessServiceModel</entityClass>
+                <selection>select mie from BusinessServiceModel mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
+                    mi.itemClass='org.meveo.model.catalog.BusinessServiceModel' and
+                    mi.meveoModule=:meveoModule and mie.provider=:provider
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>meveoModule</string>
+                        <string>#{entity}</string>
+                    </entry>
+                    <entry>
+                        <string>provider</string>
+                        <string>#{entity.provider}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
             <relatedEntity>
                 <entityClass>org.meveo.model.customEntities.CustomEntityTemplate</entityClass>
                 <selection>select mie from CustomEntityTemplate mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
@@ -344,13 +371,11 @@
             <template ref="TriggeredEDRTemplate" />
             <template ref="CounterTemplate" />
             <template ref="ChargeTemplate" />
-            <template ref="BusinessServiceModel" />
+            <template ref="MeveoModule" />
             <template ref="ServiceTemplate" />
-            <template ref="BusinessOfferModel" />
             <template ref="OfferTemplate" />
             <template ref="PricePlanMatrix" />
             <template ref="DiscountPlan" />
-            <template ref="MeveoModule" />
         </groupedTemplates>
     </template>
 
@@ -422,33 +447,5 @@
         <classesToExportAsFull>
             <java-class>org.meveo.model.jobs.TimerEntity</java-class>
         </classesToExportAsFull>
-    </template>
-    <template name="BusinessOfferModel" entityToExport="org.meveo.model.catalog.BusinessOfferModel">
-        <exportAllClassesAsFull>true</exportAllClassesAsFull>
-        <classesToExportAsFull>
-            <java-class>org.meveo.model.catalog.OfferServiceTemplate</java-class>
-        </classesToExportAsFull>        
-        <relatedEntities>
-            <relatedEntity>
-                <entityClass>org.meveo.model.catalog.BusinessServiceModel</entityClass>
-                <selection>select mie from BusinessServiceModel mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
-                    mi.itemClass='org.meveo.model.catalog.BusinessServiceModel' and
-                    mi.meveoModule=:meveoModule and mie.provider=:provider
-                </selection>
-                <parameters>
-                    <entry>
-                        <string>meveoModule</string>
-                        <string>#{entity}</string>
-                    </entry>
-                    <entry>
-                        <string>provider</string>
-                        <string>#{entity.provider}</string>
-                    </entry>
-                </parameters>
-            </relatedEntity>
-        </relatedEntities>
-    </template>
-    <template name="BusinessServiceModel" entityToExport="org.meveo.model.catalog.BusinessServiceModel">
-        <exportAllClassesAsFull>true</exportAllClassesAsFull>
     </template>
 </list>
