@@ -8,18 +8,18 @@ import org.meveo.service.script.ScriptInterface;
 
 public interface ServiceScriptInterface extends ScriptInterface {
 
-	public void create(Map<String, Object> methodContext, Provider provider, User currentUser);
+	public void createServiceInstance(Map<String, Object> methodContext, Provider provider, User currentUser);
 
-	public void update(Map<String, Object> methodContext, Provider provider, User currentUser);
+	public void updateServiceInstance(Map<String, Object> methodContext, Provider provider, User currentUser);
 
-	public void instantiate(Map<String, Object> methodContext, Provider provider, User currentUser);
+	public void instantiateServiceInstance(Map<String, Object> methodContext, Provider provider, User currentUser);
 
-	public void activate(Map<String, Object> methodContext, Provider provider, User currentUser);
+	public void activateServiceInstance(Map<String, Object> methodContext, Provider provider, User currentUser);
 
-	public void suspend(Map<String, Object> methodContext, Provider provider, User currentUser);
+	public void suspendServiceInstance(Map<String, Object> methodContext, Provider provider, User currentUser);
 
-	public void reactivate(Map<String, Object> methodContext, Provider provider, User currentUser);
+	public void reactivateServiceInstance(Map<String, Object> methodContext, Provider provider, User currentUser);
 
-	public void terminate(Map<String, Object> methodContext, Provider provider, User currentUser);
+	public void terminateServiceInstance(Map<String, Object> methodContext, Provider provider, User currentUser);
 
 }

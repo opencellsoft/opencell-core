@@ -1,5 +1,6 @@
 package org.meveo.service.script;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
@@ -64,9 +66,8 @@ public class ServiceModelScriptService extends CustomScriptService<ServiceModelS
 	 * @return
 	 */
 	public List<CustomScript> getServiceModelScriptsWithError(Provider provider) {
-		return ((List<CustomScript>) getEntityManager()
-				.createNamedQuery("CustomScript.getServiceModelScriptOnError", CustomScript.class)
-				.setParameter("isError", Boolean.TRUE).setParameter("provider", provider).getResultList());
+		return ((List<CustomScript>) getEntityManager().createNamedQuery("CustomScript.getServiceModelScriptOnError", CustomScript.class).setParameter("isError", Boolean.TRUE)
+				.setParameter("provider", provider).getResultList());
 	}
 
 	/**
@@ -100,14 +101,80 @@ public class ServiceModelScriptService extends CustomScriptService<ServiceModelS
 	 *             Any execution exception
 	 */
 	@Override
-	public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser
-			) throws ElementNotFoundException, InvalidScriptException,
+	public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser) throws ElementNotFoundException, InvalidScriptException,
 			InvalidPermissionException, BusinessException {
 		return super.execute(scriptCode, context, currentUser);
 	}
-	
+
 	public String getDerivedCode(String script) {
 		return getPackageName(script) + "." + getClassName(script);
+	}
+
+	// Interface methods
+
+	public void createInterface(ServiceInstance entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException {
+		ServiceScriptInterface scriptInterface = getScriptInstance(currentUser.getProvider(), scriptCode);
+		if (scriptInterface != null) {
+			Map<String, Object> scriptContext = new HashMap<>();
+			scriptContext.put(Script.CONTEXT_ENTITY, entity);
+			scriptInterface.createServiceInstance(scriptContext, currentUser.getProvider(), currentUser);
+		}
+	}
+
+	public void updateInterface(ServiceInstance entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException {
+		ServiceScriptInterface scriptInterface = getScriptInstance(currentUser.getProvider(), scriptCode);
+		if (scriptInterface != null) {
+			Map<String, Object> scriptContext = new HashMap<>();
+			scriptContext.put(Script.CONTEXT_ENTITY, entity);
+			scriptInterface.updateServiceInstance(scriptContext, currentUser.getProvider(), currentUser);
+		}
+	}
+
+	public void instantiateInterface(ServiceInstance entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException,
+			InvalidPermissionException, BusinessException {
+		ServiceScriptInterface scriptInterface = getScriptInstance(currentUser.getProvider(), scriptCode);
+		if (scriptInterface != null) {
+			Map<String, Object> scriptContext = new HashMap<>();
+			scriptContext.put(Script.CONTEXT_ENTITY, entity);
+			scriptInterface.instantiateServiceInstance(scriptContext, currentUser.getProvider(), currentUser);
+		}
+	}
+
+	public void activateInterface(ServiceInstance entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, InvalidPermissionException,
+			BusinessException {
+		ServiceScriptInterface scriptInterface = getScriptInstance(currentUser.getProvider(), scriptCode);
+		if (scriptInterface != null) {
+			Map<String, Object> scriptContext = new HashMap<>();
+			scriptContext.put(Script.CONTEXT_ENTITY, entity);
+			scriptInterface.activateServiceInstance(scriptContext, currentUser.getProvider(), currentUser);
+		}
+	}
+
+	public void suspendInterface(ServiceInstance entity, String scriptCode, Map<String, Object> scriptContext, User currentUser) throws ElementNotFoundException,
+			InvalidScriptException, InvalidPermissionException, BusinessException {
+		ServiceScriptInterface scriptInterface = getScriptInstance(currentUser.getProvider(), scriptCode);
+		if (scriptInterface != null) {
+			scriptContext.put(Script.CONTEXT_ENTITY, entity);
+			scriptInterface.suspendServiceInstance(scriptContext, currentUser.getProvider(), currentUser);
+		}
+	}
+
+	public void reactivateInterface(ServiceInstance entity, String scriptCode, Map<String, Object> scriptContext, User currentUser) throws ElementNotFoundException,
+			InvalidScriptException {
+		ServiceScriptInterface scriptInterface = getScriptInstance(currentUser.getProvider(), scriptCode);
+		if (scriptInterface != null) {
+			scriptContext.put(Script.CONTEXT_ENTITY, entity);
+			scriptInterface.reactivateServiceInstance(scriptContext, currentUser.getProvider(), currentUser);
+		}
+	}
+
+	public void terminateInterface(ServiceInstance entity, String scriptCode, Map<String, Object> scriptContext, User currentUser) throws ElementNotFoundException,
+			InvalidScriptException, InvalidPermissionException, BusinessException {
+		ServiceScriptInterface scriptInterface = getScriptInstance(currentUser.getProvider(), scriptCode);
+		if (scriptInterface != null) {
+			scriptContext.put(Script.CONTEXT_ENTITY, entity);
+			scriptInterface.terminateServiceInstance(scriptContext, currentUser.getProvider(), currentUser);
+		}
 	}
 
 }

@@ -42,7 +42,6 @@ import org.meveo.service.catalog.impl.OfferServiceTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.script.offer.OfferScriptService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DualListModel;
 
@@ -58,9 +57,6 @@ import org.primefaces.model.DualListModel;
 public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	private static final long serialVersionUID = 1L;
-
-	@Inject
-	private OfferScriptService offerScriptService;
 
 	@Inject
 	private SubscriptionService subscriptionService;
@@ -171,13 +167,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		boolean newEntity = (entity.getId() == null);
 
 		String outcome = super.saveOrUpdate(killConversation);
-
-		if (getEntity().getBusinessOfferModel() != null) {
-			if (getEntity().getBusinessOfferModel().getScript() != null) {
-				offerScriptService.create(getEntity(), getEntity().getBusinessOfferModel().getScript().getCode(),
-						currentUser);
-			}
-		}
 
 		if (outcome != null) {
 			return newEntity ? getEditViewName() : outcome;

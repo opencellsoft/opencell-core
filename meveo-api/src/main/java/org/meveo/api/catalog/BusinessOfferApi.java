@@ -6,7 +6,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.BomOfferDto;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
@@ -14,16 +13,12 @@ import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
-import org.meveo.service.script.offer.OfferScriptService;
 
 @Stateless
 public class BusinessOfferApi extends BaseApi {
 
 	@Inject
 	private BusinessOfferModelService businessOfferModelService;
-
-	@Inject
-	private OfferScriptService offerScriptService;
 
 	public void createOfferFromBOM(BomOfferDto postData, User currentUser) throws MeveoApiException {
 		validate(postData);
@@ -57,14 +52,6 @@ public class BusinessOfferApi extends BaseApi {
 					populateCustomFields(postData.getOfferCustomFields(), newOfferTemplate, true, currentUser);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					throw new MeveoApiException(e.getMessage());
-				}
-			}
-
-			if (businessOfferModel.getScript() != null) {
-				try {
-                    offerScriptService.create(newOfferTemplate, businessOfferModel.getScript().getCode(), currentUser);
-				} catch (BusinessException e) {
-                    throw new BusinessApiException(e.getMessage());
 				}
 			}
 		} else {

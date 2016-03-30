@@ -53,13 +53,14 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
-import org.meveo.service.script.service.ServiceScriptService;
+import org.meveo.service.script.ServiceModelScriptService;
+import org.meveo.service.script.service.ServiceScript;
 
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 	@Inject
-	private ServiceScriptService serviceScriptService;
+	private ServiceModelScriptService serviceModelScriptService;
 
 	@Inject
 	private RecurringChargeInstanceService recurringChargeInstanceService;
@@ -75,6 +76,34 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 	@Inject
 	ServiceTemplateService serviceTemplateService;
+	
+	@Override
+	public void create(ServiceInstance serviceInstance, User creator) throws BusinessException {
+		super.create(serviceInstance, creator);
+		
+		if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+			try {
+				serviceModelScriptService.createInterface(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), creator);
+			} catch (BusinessException e) {
+				log.error("Failed to execute a script {}", serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), e);
+			}
+		}
+	}
+	
+	@Override
+	public ServiceInstance update(ServiceInstance serviceInstance, User updater) throws BusinessException {
+		ServiceInstance result = super.update(serviceInstance, updater);
+
+		if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+			try {
+				serviceModelScriptService.updateInterface(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), updater);
+			} catch (BusinessException e) {
+				log.error("Failed to execute a script {}", serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), e);
+			}
+		}
+
+		return result;
+	}
 
 	public ServiceInstance findByCodeAndSubscription(String code, Subscription subscription) {
 		return findByCodeAndSubscription(getEntityManager(), code, subscription);
@@ -205,11 +234,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		// execute instantiation script
 		if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
-			Map<String, Object> scriptContext = new HashMap<>();
-			scriptContext.put("serviceInstance", serviceInstance);
-
-			serviceScriptService.instantiate(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), scriptContext, creator,
-					creator.getProvider());
+			serviceModelScriptService.instantiateInterface(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), creator);
 		}
 	}
 
@@ -314,13 +339,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		update(serviceInstance, creator);
 
 		// execute subscription script
-		if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null
-				&& serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
-			Map<String, Object> scriptContext = new HashMap<>();
-			scriptContext.put("serviceInstance", serviceInstance);
-
-			serviceScriptService.activate(serviceInstance, serviceInstance.getServiceTemplate()
-					.getBusinessServiceModel().getScript().getCode(), scriptContext, creator, creator.getProvider());
+		if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+			serviceModelScriptService.activateInterface(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), creator);
 		}
 	}
 
@@ -348,15 +368,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		}
 
 		// execute termination script
-		if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null
-				&& serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+		if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
 			Map<String, Object> scriptContext = new HashMap<>();
-			scriptContext.put("serviceInstance", serviceInstance);
-			scriptContext.put("terminationDate", terminationDate);
-			scriptContext.put("terminationReason", terminationReason);
+			scriptContext.put(ServiceScript.CONTEXT_TERMINATION_DATE, terminationDate);
+			scriptContext.put(ServiceScript.CONTEXT_TERMINATION_REASON, terminationReason);
 
-			serviceScriptService.terminate(serviceInstance, serviceInstance.getServiceTemplate()
-					.getBusinessServiceModel().getScript().getCode(), scriptContext, user, user.getProvider());
+			serviceModelScriptService
+					.terminateInterface(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), scriptContext, user);
 		}
 
 		String serviceCode = serviceInstance.getCode();
@@ -479,6 +497,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			throw new IncorrectServiceInstanceException("service instance is not active. service Code=" + serviceCode
 					+ ",subscription Code" + subscription.getCode());
 		}
+		
+		if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+			Map<String, Object> scriptContext = new HashMap<>();
+			scriptContext.put(ServiceScript.CONTEXT_SUSPENSION_DATE, suspensionDate);
+			serviceModelScriptService.suspendInterface(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), scriptContext,
+					updater);
+		}
 
 		for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
 			if (recurringChargeInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
@@ -534,6 +559,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			}
 		}
 		update(serviceInstance, updater);
+				
+		if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+			Map<String, Object> scriptContext = new HashMap<>();
+			scriptContext.put(ServiceScript.CONTEXT_REACTIVATION_DATE, subscriptionDate);
+			serviceModelScriptService.reactivateInterface(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), scriptContext,
+					updater);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

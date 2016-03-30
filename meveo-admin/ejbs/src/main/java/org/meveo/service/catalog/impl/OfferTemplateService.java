@@ -21,15 +21,19 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.admin.User;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.script.OfferModelScriptService;
 
 /**
  * Offer Template service implementation.
@@ -37,6 +41,37 @@ import org.meveo.service.base.BusinessService;
  */
 @Stateless
 public class OfferTemplateService extends BusinessService<OfferTemplate> {
+	
+	@Inject
+	private OfferModelScriptService offerModelScriptService;
+	
+	@Override
+	public void create(OfferTemplate offerTemplate, User creator) throws BusinessException {
+		super.create(offerTemplate, creator);
+
+		if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
+			try {
+				offerModelScriptService.createOfferTemplateInterface(offerTemplate, offerTemplate.getBusinessOfferModel().getScript().getCode(), creator);
+			} catch (BusinessException e) {
+				log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
+			}
+		}
+	}
+
+	@Override
+	public OfferTemplate update(OfferTemplate offerTemplate, User updater) throws BusinessException {
+		OfferTemplate result = super.update(offerTemplate, updater);
+
+		if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
+			try {
+				offerModelScriptService.updateOfferTemplateInterface(offerTemplate, offerTemplate.getBusinessOfferModel().getScript().getCode(), updater);
+			} catch (BusinessException e) {
+				log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
+			}
+		}
+
+		return result;
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<OfferTemplate> findByServiceTemplate(EntityManager em,
