@@ -91,7 +91,7 @@ public class ChargeTemplate extends BusinessCFEntity {
 	private BigDecimal unitMultiplicator;
 	
 	@Column(name = "UNIT_NB_DECIMAL")
-	private int unitNbDecimal = BaseEntity.NB_PRECISION;
+	private int unitNbDecimal = BaseEntity.NB_DECIMALS;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ROUNDING_MODE")

@@ -47,7 +47,7 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
     private String inputUnitDescription;
     private String ratingUnitDescription;
     private BigDecimal unitMultiplicator;
-    private int unitNbDecimal=BaseEntity.NB_PRECISION;
+    private int unitNbDecimal=BaseEntity.NB_DECIMALS;
     private RoundingModeEnum roundingModeDtoEnum;
     private CustomFieldsDto customFields = new CustomFieldsDto();
 
