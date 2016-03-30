@@ -20180,7 +20180,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 						private static final Logger log = LoggerFactory.getLogger(Script1.class);
 							
 						@Override
-					    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {
+					    public void execute(Map&lt;String, Object> context, User user) throws BusinessException {
 							log.debug("Hello MEVEO Module");
 						}
 					
@@ -20417,7 +20417,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 							private static final Logger log = LoggerFactory.getLogger(Script3.class);
 								
 							@Override
-						    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {
+						    public void execute(Map&lt;String, Object> context, User user) throws BusinessException {
 								log.debug("Hello MEVEO Module");
 							}
 						
@@ -20497,7 +20497,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 						private static final Logger log = LoggerFactory.getLogger(Script2.class);
 							
 						@Override
-					    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {
+					    public void execute(Map&lt;String, Object> context, User user) throws BusinessException {
 							log.debug("Hello MEVEO Module");
 						}
 					
@@ -20713,7 +20713,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 						private static final Logger log = LoggerFactory.getLogger(Script1.class);
 							
 						@Override
-					    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {
+					    public void execute(Map&lt;String, Object> context, User user) throws BusinessException {
 							log.debug("Hello MEVEO Module");
 						}
 					
@@ -20950,7 +20950,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 							private static final Logger log = LoggerFactory.getLogger(Script3.class);
 								
 							@Override
-						    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {
+						    public void execute(Map&lt;String, Object> context, User user) throws BusinessException {
 								log.debug("Hello MEVEO Module");
 							}
 						
@@ -21030,7 +21030,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 						private static final Logger log = LoggerFactory.getLogger(Script2.class);
 							
 						@Override
-					    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {
+					    public void execute(Map&lt;String, Object> context, User user) throws BusinessException {
 							log.debug("Hello MEVEO Module");
 						}
 					
@@ -24244,7 +24244,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 			  
 			  	private static final Logger log = LoggerFactory.getLogger(The${#Project#entityPrefix}_${#TestSuite#index}_Script1.class);
 			
-				public void execute(Map<String,Object> context, Provider provider, User user) throws BusinessException{
+				public void execute(Map<String,Object> context, User user) throws BusinessException{
 					log.debug("The${#Project#entityPrefix}_${#TestSuite#index}_Script1 creation script...");
 					log.debug("The${#Project#entityPrefix}_${#TestSuite#index}_Script1 creation script.");
 				}
@@ -24284,7 +24284,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 			  
 			  	private static final Logger log = LoggerFactory.getLogger(The${#Project#entityPrefix}_${#TestSuite#index}_Script2.class);
 			
-				public void execute(Map<String,Object> context, Provider provider, User user) throws BusinessException{
+				public void execute(Map<String,Object> context, User user) throws BusinessException{
 					log.debug("The${#Project#entityPrefix}_${#TestSuite#index}_Script2 creation script...");
 					log.debug("The${#Project#entityPrefix}_${#TestSuite#index}_Script2 creation script.");
 				}
@@ -24334,7 +24334,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 			  
 			  	private static final Logger log = LoggerFactory.getLogger(The${#Project#entityPrefix}_${#TestSuite#index}_Script1.class);
 			
-				public void execute(Map<String,Object> context, Provider provider, User user) throws BusinessException{
+				public void execute(Map<String,Object> context, User user) throws BusinessException{
 					log.debug("The${#Project#entityPrefix}_${#TestSuite#index}_Script1 creation script...");
 					log.debug("The${#Project#entityPrefix}_${#TestSuite#index}_Script1 creation script.");
 				}
@@ -24374,7 +24374,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 			  
 			  	private static final Logger log = LoggerFactory.getLogger(The${#Project#entityPrefix}_${#TestSuite#index}_Script2.class);
 			
-				public void execute(Map<String,Object> context, Provider provider, User user) throws BusinessException{
+				public void execute(Map<String,Object> context, User user) throws BusinessException{
 					log.debug("The${#Project#entityPrefix}_${#TestSuite#index}_Script2 creation script...");
 					log.debug("The${#Project#entityPrefix}_${#TestSuite#index}_Script2 creation script.");
 				}

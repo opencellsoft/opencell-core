@@ -51,14 +51,14 @@ public class ScriptingJob extends Job {
         ScriptInterface script = null;
         script = scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
         try {        	
-        	script.init(context, currentUser.getProvider(), currentUser);        	
-        	script.execute(context, currentUser.getProvider(), currentUser);                      
+        	script.init(context, currentUser);        	
+        	script.execute(context, currentUser);                      
         } catch (Exception e) {
         	log.error("Exception on init/execute script",e);
             result.registerError("Error in " + scriptCode + " execution :" + e.getMessage());
         }finally{
         	log.debug("calling script.finalize ....");
-        	script.finalize(context, currentUser.getProvider(), currentUser);
+        	script.finalize(context, currentUser);
         }
     }
 

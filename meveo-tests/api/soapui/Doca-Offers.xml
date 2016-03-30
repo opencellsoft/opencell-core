@@ -24549,7 +24549,7 @@ public class PostpaidOfferScript extends Script {
   	CounterTemplateApi counterTemplateApi = (CounterTemplateApi) getServiceInterface("CounterTemplateApi");
   	PricePlanApi pricePlanApi = (PricePlanApi)  getServiceInterface("PricePlanApi");
   	
-	public void execute(Map<String,Object> context, Provider provider, User user) throws BusinessException{
+	public void execute(Map<String,Object> context, User user) throws BusinessException{
 		log.debug("start postpaidOffer creation script... event = {}",context.get("event"));
 		InboundRequest req = (InboundRequest)context.get("event");
 		inboundRequestService.create(req,user);
@@ -24761,7 +24761,7 @@ public class PrepaidOfferScript extends Script {
   	CounterTemplateApi counterTemplateApi = (CounterTemplateApi) getServiceInterface("CounterTemplateApi");
   	PricePlanApi pricePlanApi = (PricePlanApi)  getServiceInterface("PricePlanApi");
   	
-	public void execute(Map<String,Object> context, Provider provider, User user) throws BusinessException{
+	public void execute(Map<String,Object> context, User user) throws BusinessException{
 		log.debug("start prepaidOfferScript creation script... event = {}",context.get("event"));
 		InboundRequest req = (InboundRequest)context.get("event");
 		inboundRequestService.create(req,user);

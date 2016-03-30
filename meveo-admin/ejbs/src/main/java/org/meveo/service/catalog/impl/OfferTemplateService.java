@@ -51,7 +51,7 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 
 		if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
 			try {
-				offerModelScriptService.createOfferTemplateInterface(offerTemplate, offerTemplate.getBusinessOfferModel().getScript().getCode(), creator);
+				offerModelScriptService.createOfferTemplate(offerTemplate, offerTemplate.getBusinessOfferModel().getScript().getCode(), creator);
 			} catch (BusinessException e) {
 				log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
 			}
@@ -64,7 +64,7 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 
 		if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
 			try {
-				offerModelScriptService.updateOfferTemplateInterface(offerTemplate, offerTemplate.getBusinessOfferModel().getScript().getCode(), updater);
+				offerModelScriptService.updateOfferTemplate(offerTemplate, offerTemplate.getBusinessOfferModel().getScript().getCode(), updater);
 			} catch (BusinessException e) {
 				log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
 			}

@@ -2,24 +2,73 @@ package org.meveo.service.script.service;
 
 import java.util.Map;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.script.ScriptInterface;
 
 public interface ServiceScriptInterface extends ScriptInterface {
 
-	public void createServiceInstance(Map<String, Object> methodContext, Provider provider, User currentUser);
+    /**
+     * Called after ServiceInstance entity creation
+     * 
+     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceInstance
+     * @param currentUser Current user
+     * @throws BusinessException
+     */
+    public void createServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException;
 
-	public void updateServiceInstance(Map<String, Object> methodContext, Provider provider, User currentUser);
+    /**
+     * Called after ServiceInstance entity update
+     * 
+     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceInstance
+     * @param currentUser Current user
+     * @throws BusinessException
+     */
+    public void updateServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException;
 
-	public void instantiateServiceInstance(Map<String, Object> methodContext, Provider provider, User currentUser);
+    /**
+     * Called after ServiceInstance instantiation - essentially happens right after createServiceInstance()
+     * 
+     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceInstance
+     * @param currentUser Current user
+     * @throws BusinessException
+     */
+    public void instantiateServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException;
 
-	public void activateServiceInstance(Map<String, Object> methodContext, Provider provider, User currentUser);
+    /**
+     * Called after ServiceInstance activation
+     * 
+     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceInstance
+     * @param currentUser Current user
+     * @throws BusinessException
+     */
+    public void activateServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException;
 
-	public void suspendServiceInstance(Map<String, Object> methodContext, Provider provider, User currentUser);
+    /**
+     * Called before ServiceInstance suspension
+     * 
+     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceInstance, CONTEXT_SUSPENSION_DATE=Suspension date
+     * @param currentUser Current user
+     * @throws BusinessException
+     */
+    public void suspendServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException;
 
-	public void reactivateServiceInstance(Map<String, Object> methodContext, Provider provider, User currentUser);
+    /**
+     * Called after ServiceInstance reactivation
+     * 
+     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceInstance, CONTEXT_ACTIVATION_DATE=Reactivation date
+     * @param currentUser Current user
+     * @throws BusinessException
+     */
+    public void reactivateServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException;
 
-	public void terminateServiceInstance(Map<String, Object> methodContext, Provider provider, User currentUser);
-
+    /**
+     * Called before ServiceInstance termination
+     * 
+     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceInstance, CONTEXT_TERMINATION_DATE=Termination date,
+     *        CONTEXT_TERMINATION_REASON=Termination reason
+     * @param currentUser Current user
+     * @throws BusinessException
+     */
+    public void terminateServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException;
 }

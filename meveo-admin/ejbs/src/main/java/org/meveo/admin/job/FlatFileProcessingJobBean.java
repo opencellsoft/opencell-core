@@ -93,7 +93,7 @@ public class FlatFileProcessingJobBean {
 				script = scriptInstanceService.getScriptInstance(provider, scriptInstanceFlowCode);
 				Object recordObject = null;
 
-				script.init(context, provider, currentUser);
+				script.init(context, currentUser);
 
 				FileParsers parserUsed = getParserType(mappingConf);
 				IFileParser fileParser = null;
@@ -121,7 +121,7 @@ public class FlatFileProcessingJobBean {
 						Map<String, Object> executeParams = new HashMap<String, Object>();
 						executeParams.put(recordVariableName, recordObject);
 						executeParams.put(originFilename, fileName);
-						script.execute(executeParams, provider, currentUser);
+						script.execute(executeParams, currentUser);
 						outputRecord(recordObject);
 						result.registerSucces();
 						processed++;
@@ -152,7 +152,7 @@ public class FlatFileProcessingJobBean {
 						beanReader.close();
 					}
 					if (script != null) {
-						script.finalize(context, provider, currentUser);
+						script.finalize(context, currentUser);
 					}
 				} catch (Exception e) {
 					report += "\r\n error in script finailzation" + e.getMessage();

@@ -467,7 +467,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         log.trace("Script {} to be executed with parameters {}", scriptCode, context);
 
         SI classInstance = getScriptInstance(currentUser.getProvider(), scriptCode);
-        classInstance.execute(context, currentUser.getProvider(), currentUser);
+        classInstance.execute(context, currentUser);
 
         log.trace("Script {} executed with parameters {}", scriptCode, context);
         return context;
@@ -487,7 +487,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             context = new HashMap<String, Object>();
         }
 
-        compiledScript.execute(context, currentUser.getProvider(), currentUser);
+        compiledScript.execute(context, currentUser);
         return context;
     }
 }

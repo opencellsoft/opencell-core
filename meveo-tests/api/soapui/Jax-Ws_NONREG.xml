@@ -24898,7 +24898,7 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
 	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}_script.class);
 		
 	@Override
-    public void execute(Map<String, Object> context, Provider provider, User user) throws BusinessException {
+    public void execute(Map<String, Object> context, User user) throws BusinessException {
 		log.debug("Hello MEVEO Module");
 	}
 
@@ -25008,7 +25008,7 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
 	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}_script.class);
 		
 	@Override
-    public void execute(Map<String, Object> context, Provider provider, User user) throws BusinessException {
+    public void execute(Map<String, Object> context, User user) throws BusinessException {
 		log.debug("Hello MEVEO Module");
 	}
 
@@ -25098,7 +25098,7 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
 	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}_script.class);
 		
 	@Override
-    public void execute(Map<String, Object> context, Provider provider, User user) throws BusinessException {
+    public void execute(Map<String, Object> context, User user) throws BusinessException {
 		log.debug("Hello MEVEO Module");
 	}
 
@@ -25218,7 +25218,7 @@ public class Script1 extends org.meveo.service.script.Script {
 	private static final Logger log = LoggerFactory.getLogger(Script1.class);
 		
 	@Override
-    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {
+    public void execute(Map&lt;String, Object> context, User user) throws BusinessException {
 		log.debug("Hello MEVEO Module");
 	}
 
@@ -25456,7 +25456,7 @@ public class Script3 extends org.meveo.service.script.Script {
 	private static final Logger log = LoggerFactory.getLogger(Script3.class);
 		
 	@Override
-    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {
+    public void execute(Map&lt;String, Object> context, User user) throws BusinessException {
 		log.debug("Hello MEVEO Module");
 	}
 
@@ -25536,7 +25536,7 @@ public class Script2 extends org.meveo.service.script.Script {
 	private static final Logger log = LoggerFactory.getLogger(Script2.class);
 		
 	@Override
-    public void execute(Map&lt;String, Object> context, Provider provider, User user) throws BusinessException {
+    public void execute(Map&lt;String, Object> context, User user) throws BusinessException {
 		log.debug("Hello MEVEO Module");
 	}
 
@@ -25721,7 +25721,7 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
 	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}_script.class);
 		
 	@Override
-    public void execute(Map<String, Object> context, Provider provider, User user) throws BusinessException {
+    public void execute(Map<String, Object> context, User user) throws BusinessException {
 		log.debug("Hello MEVEO Module");
 	}
 
@@ -25811,7 +25811,7 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
 	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}_script.class);
 		
 	@Override
-    public void execute(Map<String, Object> context, Provider provider, User user) throws BusinessException {
+    public void execute(Map<String, Object> context, User user) throws BusinessException {
 		log.debug("Hello MEVEO Module");
 	}
 

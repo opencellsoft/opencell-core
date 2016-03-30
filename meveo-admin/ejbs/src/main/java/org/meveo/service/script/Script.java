@@ -5,7 +5,6 @@ import java.util.Map;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 
 public abstract class Script implements ScriptInterface {
 
@@ -16,17 +15,17 @@ public abstract class Script implements ScriptInterface {
     public static String CONTEXT_ENTITY = "CONTEXT_ENTITY";
 
     @Override
-    public void init(Map<String, Object> methodContext, Provider provider, User user) throws BusinessException {
+    public void init(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
 
     @Override
-    public void execute(Map<String, Object> methodContext, Provider provider, User user) throws BusinessException {
+    public void execute(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
 
     @Override
-    public void finalize(Map<String, Object> methodContext, Provider provider, User user) throws BusinessException {
+    public void finalize(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
 

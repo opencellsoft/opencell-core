@@ -43,7 +43,7 @@ public class FilteringJobBean {
             return;
         }
         try {
-            scriptInterface.init(variables, provider, currentUser);
+            scriptInterface.init(variables, currentUser);
 
             List<? extends IEntity> xmlEntities = filterService.filteredListAsObjects(filter, provider);
             result.setNbItemsToProcess(xmlEntities.size());
@@ -52,7 +52,7 @@ public class FilteringJobBean {
                 Map<String, Object> context = new HashMap<String, Object>();
                 context.put(recordVariableName, obj);
                 try {
-                    scriptInterface.execute(context, provider, currentUser);
+                    scriptInterface.execute(context, currentUser);
                     result.registerSucces();
                 } catch (BusinessException ex) {
                     result.registerError(ex.getMessage());
@@ -64,7 +64,7 @@ public class FilteringJobBean {
 
         } finally {
             try {
-                scriptInterface.finalize(variables, provider, currentUser);
+                scriptInterface.finalize(variables, currentUser);
 
             } catch (Exception e) {
                 log.error("Error on finally execute", e);
