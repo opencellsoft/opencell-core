@@ -53,7 +53,7 @@
      <changeSet id="1349_20160308" author="anasseh">
 		<sql><![CDATA[UPDATE CAT_CHARGE_TEMPLATE SET UNIT_NB_DECIMAL=23 WHERE UNIT_NB_DECIMAL < 2 ]]></sql>
 	</changeSet>
-     <changeSet id="1349_20160308_2" author="anasseh">
+     <changeSet id="1349_20160308_3" author="anasseh">
 		<sql><![CDATA[UPDATE CAT_CHARGE_TEMPLATE SET UNIT_NB_DECIMAL=12 WHERE UNIT_NB_DECIMAL > 12 ]]></sql>
 	</changeSet>	
 </databaseChangeLog>
