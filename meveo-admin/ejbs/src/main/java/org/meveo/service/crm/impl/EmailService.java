@@ -29,9 +29,11 @@ import javax.activation.FileDataSource;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.mail.Message.RecipientType;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -53,6 +55,41 @@ public class EmailService extends PersistenceService<Email> {
 	@Resource(lookup = "java:/MeveoMail")
 	private static Session mailSession;
 
+	public void sendEmail(String from, List<String> to, List<String> cc,List<String> replytoAddress,String subject, String body)
+			throws BusinessException {
+	      MimeMessage msg = new MimeMessage(mailSession);
+	        try {
+	            msg.setFrom(new InternetAddress(from));
+	            msg.setSentDate(new Date());
+	            msg.setSubject(subject);
+	            if (body.indexOf("<html")>=0) {
+	                msg.setContent(body, "text/html");
+	            } else {
+	                msg.setContent(body, "text/plain");
+	            }
+	            List<InternetAddress> addressTo = new ArrayList<InternetAddress>();
+	            for (int i = 0; i < to.size(); i++) {
+	            	addressTo.add(new InternetAddress(to.get(i)));
+				}
+	            msg.setRecipients(RecipientType.TO, addressTo.toArray(new InternetAddress[addressTo.size()]));
+
+	            if(replytoAddress!=null){
+	            	List<InternetAddress> replyTo = new ArrayList<InternetAddress>();
+	            	for (int i = 0; i < to.size(); i++) {
+	            		replyTo.add(new InternetAddress(replytoAddress.get(i)));
+					}
+	            	msg.setReplyTo(replyTo.toArray(new InternetAddress[replyTo.size()]));
+	            }
+
+	            Transport.send(msg);
+	        } catch(AddressException  e){
+				e.printStackTrace();
+				throw new BusinessException("invalid email address",e);
+	        } catch (MessagingException e) {
+				e.printStackTrace();
+				throw new BusinessException("error sending email",e);
+			}
+	}
 	public void sendEmail(String from, List<String> to, List<String> cc, String subject, String body, List<File> files)
 			throws BusinessException {
 		log.info("start sendEmail details: from:{},to:{},cc:{},subject:{},body:{},files:{}", from, to, cc, subject,
