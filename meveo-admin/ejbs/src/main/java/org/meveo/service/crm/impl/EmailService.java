@@ -54,9 +54,8 @@ import org.meveo.service.base.PersistenceService;
 public class EmailService extends PersistenceService<Email> {
 
 	@Resource(lookup = "java:/MeveoMail")
-	private static Session mailSession;
+	private Session mailSession;
 
-	@Asynchronous
 	public void sendEmail(String from, List<String> to, List<String> cc,List<String> replytoAddress,String subject, String body)
 			throws BusinessException {
 	      MimeMessage msg = new MimeMessage(mailSession);
@@ -92,7 +91,7 @@ public class EmailService extends PersistenceService<Email> {
 				throw new BusinessException("error sending email",e);
 			}
 	}
-	
+
 	public void sendEmail(String from, List<String> to, List<String> cc, String subject, String body, List<File> files)
 			throws BusinessException {
 		log.info("start sendEmail details: from:{},to:{},cc:{},subject:{},body:{},files:{}", from, to, cc, subject,
