@@ -235,7 +235,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 
 	private void configureBarChartModel(BarChartModel chartModel, BarChart barChart) {
 		if (barChart.getExtender() != null) {
-			chartModel.setExtender(entity.getExtender());
+			chartModel.setExtender(barChart.getExtender());
 		}
 
 		chartModel.setStacked(barChart.isStacked());
