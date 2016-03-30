@@ -164,10 +164,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		try {
 			return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
-			log.info("Invoice with invoice number #0 was not found. Returning null.", invoiceNumber);
+			log.info("Invoice with invoice number {} was not found for provider {}. Returning null.", invoiceNumber,provider.getCode());
 			return null;
 		} catch (NonUniqueResultException e) {
-			log.info("Multiple invoices with invoice number #0 was found. Returning null.", invoiceNumber);
+			log.info("Multiple invoices with invoice number {} was found for provider {}. Returning null.", invoiceNumber,provider.getCode());
 			return null;
 		} catch (Exception e) {
 			return null;
