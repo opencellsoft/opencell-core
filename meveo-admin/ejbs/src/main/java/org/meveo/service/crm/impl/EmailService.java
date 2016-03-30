@@ -55,7 +55,7 @@ public class EmailService extends PersistenceService<Email> {
 
 	public void sendEmail(String from, List<String> to, List<String> cc, String subject, String body, List<File> files)
 			throws BusinessException {
-		log.info("start sendEmail details: from:#0,to:#1,cc:#2,subject:#3,body:#4,files:#5", from, to, cc, subject,
+		log.info("start sendEmail details: from:{},to:{},cc:{},subject:{},body:{},files:{}", from, to, cc, subject,
 				body, files);
 		MimeMessage message = new MimeMessage(mailSession);
 		if (to == null || to.size() == 0) {
@@ -96,12 +96,13 @@ public class EmailService extends PersistenceService<Email> {
 						attached.setFileName(file.getName());
 						multipart.addBodyPart(attached, index);
 						index++;
+						log.debug("added file "+file.getName()+" to email body part");
 					}
 				}
 			}
 			message.setContent(multipart);
 			Transport.send(message);
-			log.info("send email(s)");
+			log.debug("sent email");
 
 		} catch (Exception e) {
 			log.error(e.getMessage());
