@@ -66,10 +66,12 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
@@ -113,7 +115,10 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 	@Inject
 	private PDFParametersConstruction pDFParametersConstruction;
-
+	
+	@Inject
+	private BillingRunService billingRunService;
+	
 	@Inject
 	@RequestParam()
 	private Instance<Long> adjustedInvoiceIdParam;
@@ -669,7 +674,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	}
 
 	public String saveOrUpdateInvoiceAdjustment() throws Exception {
-		if (entity.isTransient()) {
+		if (entity.isTransient()) {			
 			if (isDetailed()) {
 				for (RatedTransaction rt : uiRatedTransactions) {
 					ratedTransactionService.create(rt, getCurrentUser());
@@ -679,11 +684,15 @@ public class InvoiceBean extends BaseBean<Invoice> {
                 entity.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(entity, getCurrentUser()));	                
             }
 		}
-			
-		entity.setBillingAccount(billingAccountService.refreshOrRetrieve(entity.getBillingAccount()));
-		super.saveOrUpdate(false);
-		invoiceService.commit();
 		
+		entity.setBillingAccount(billingAccountService.refreshOrRetrieve( entity.getBillingAccount()));
+		entity.setBillingRun(billingRunService.refreshOrRetrieve(entity.getBillingRun()));		
+		entity.setAdjustedInvoice(invoiceService.refreshOrRetrieve(entity.getAdjustedInvoice()));
+		if (isDetailed()) {
+			super.saveOrUpdate(false);
+		}else{
+			entity = invoiceService.update(entity, getCurrentUser());
+		}		
 		if (isDetailed()) {
 			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, new Date(),getCurrentUser(), true);
 		} else {
@@ -691,7 +700,11 @@ public class InvoiceBean extends BaseBean<Invoice> {
 				invoiceService.recomputeAggregates(entity, getCurrentUser());
 			}
 		}		
-		super.saveOrUpdate(false);
+		if (isDetailed()) {
+			super.saveOrUpdate(false);
+		}else{
+			entity = invoiceService.update(entity, getCurrentUser());
+		}		
 
 		// create xml invoice adjustment
 		String invoicesDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo");
