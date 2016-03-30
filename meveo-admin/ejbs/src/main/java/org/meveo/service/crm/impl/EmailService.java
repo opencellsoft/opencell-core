@@ -27,7 +27,6 @@ import java.util.List;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.annotation.Resource;
-import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
