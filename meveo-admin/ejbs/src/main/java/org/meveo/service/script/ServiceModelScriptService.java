@@ -17,6 +17,7 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
@@ -36,12 +37,12 @@ public class ServiceModelScriptService extends CustomScriptService<ServiceModelS
 
     @Override
     public void create(ServiceModelScript serviceModelScript, User creator) throws BusinessException {
-        String packageName = getPackageName(serviceModelScript.getScript());
+
         String className = getClassName(serviceModelScript.getScript());
-        if (packageName == null || className == null) {
-            throw new RuntimeException(resourceMessages.getString("message.ServiceModelScript.sourceInvalid"));
+        if (className == null) {
+            throw new BusinessException(resourceMessages.getString("message.ServiceModelScript.sourceInvalid"));
         }
-        serviceModelScript.setCode(packageName + "." + className);
+        serviceModelScript.setCode(getFullClassname(serviceModelScript.getScript()));
 
         super.create(serviceModelScript, creator);
     }
@@ -49,12 +50,11 @@ public class ServiceModelScriptService extends CustomScriptService<ServiceModelS
     @Override
     public ServiceModelScript update(ServiceModelScript serviceModelScript, User updater) throws BusinessException {
 
-        String packageName = getPackageName(serviceModelScript.getScript());
         String className = getClassName(serviceModelScript.getScript());
-        if (packageName == null || className == null) {
-            throw new RuntimeException(resourceMessages.getString("message.ServiceModelScript.sourceInvalid"));
+        if (className == null) {
+            throw new BusinessException(resourceMessages.getString("message.ServiceModelScript.sourceInvalid"));
         }
-        serviceModelScript.setCode(packageName + "." + className);
+        serviceModelScript.setCode(getFullClassname(serviceModelScript.getScript()));
 
         serviceModelScript = super.update(serviceModelScript, updater);
 
@@ -81,24 +81,20 @@ public class ServiceModelScriptService extends CustomScriptService<ServiceModelS
         compile(ServiceModelScripts);
     }
 
-    public String getDerivedCode(String script) {
-        return getPackageName(script) + "." + getClassName(script);
-    }
-
     // Interface methods
 
-    public void createServiceInstance(ServiceInstance entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+    public void createServiceTemplate(ServiceTemplate entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
         ServiceScriptInterface scriptInterface = getScriptInstance(currentUser.getProvider(), scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
-        scriptInterface.createServiceInstance(scriptContext, currentUser);
+        scriptInterface.createServiceTemplate(scriptContext, currentUser);
     }
 
-    public void updateServiceInstance(ServiceInstance entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+    public void updateServiceTemplate(ServiceTemplate entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
         ServiceScriptInterface scriptInterface = getScriptInstance(currentUser.getProvider(), scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
-        scriptInterface.updateServiceInstance(scriptContext, currentUser);
+        scriptInterface.updateServiceTemplate(scriptContext, currentUser);
     }
 
     public void instantiateServiceInstance(ServiceInstance entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {

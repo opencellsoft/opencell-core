@@ -35,7 +35,7 @@ public class ServiceModelScriptApi extends BaseApi {
 
         handleMissingParameters();
 
-        String derivedCode = serviceModelScriptService.getDerivedCode(postData.getScript());
+        String derivedCode = serviceModelScriptService.getFullClassname(postData.getScript());
 
         if (serviceModelScriptService.findByCode(derivedCode, currentUser.getProvider()) != null) {
             throw new EntityAlreadyExistsException(ServiceModelScript.class, postData.getCode());
@@ -65,7 +65,7 @@ public class ServiceModelScriptApi extends BaseApi {
 
         handleMissingParameters();
 
-        String derivedCode = serviceModelScriptService.getDerivedCode(postData.getScript());
+        String derivedCode = serviceModelScriptService.getFullClassname(postData.getScript());
 
         ServiceModelScript serviceModelScript = serviceModelScriptService.findByCode(derivedCode, currentUser.getProvider());
         if (serviceModelScript == null) {
@@ -84,7 +84,7 @@ public class ServiceModelScriptApi extends BaseApi {
     }
 
     public void createOrUpdate(ServiceModelScriptDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        String derivedCode = serviceModelScriptService.getDerivedCode(postData.getScript());
+        String derivedCode = serviceModelScriptService.getFullClassname(postData.getScript());
         ServiceModelScript ServiceModelScript = serviceModelScriptService.findByCode(derivedCode, currentUser.getProvider());
         if (ServiceModelScript == null) {
             create(postData, currentUser);

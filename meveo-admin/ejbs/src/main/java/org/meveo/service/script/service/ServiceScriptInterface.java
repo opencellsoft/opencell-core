@@ -9,22 +9,22 @@ import org.meveo.service.script.ScriptInterface;
 public interface ServiceScriptInterface extends ScriptInterface {
 
     /**
-     * Called after ServiceInstance entity creation
+     * Called after ServiceTemplate entity creation
      * 
-     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceInstance
+     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceTemplate
      * @param currentUser Current user
      * @throws BusinessException
      */
-    public void createServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException;
+    public void createServiceTemplate(Map<String, Object> methodContext, User currentUser) throws BusinessException;
 
     /**
-     * Called after ServiceInstance entity update
+     * Called after ServiceTemplate entity update
      * 
-     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceInstance
+     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceTemplate
      * @param currentUser Current user
      * @throws BusinessException
      */
-    public void updateServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException;
+    public void updateServiceTemplate(Map<String, Object> methodContext, User currentUser) throws BusinessException;
 
     /**
      * Called after ServiceInstance instantiation - essentially happens right after createServiceInstance()

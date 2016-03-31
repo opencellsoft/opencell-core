@@ -873,10 +873,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return result;
 	}
 
-	public void recomputeAggregates(Invoice invoice, User currentUser) throws BusinessException {
-		boolean entreprise = invoice.getBillingAccount().getProvider().isEntreprise();
-		int rounding = invoice.getBillingAccount().getProvider().getRounding() == null ? 2 : invoice
-				.getBillingAccount().getProvider().getRounding();
+	public void recomputeAggregates(Invoice invoice, User currentUser) throws BusinessException {		
+		boolean entreprise = invoice.getProvider().isEntreprise();
+		int rounding = invoice.getProvider().getRounding() == null ? 2 : invoice.getProvider().getRounding();
 		BillingAccount billingAccount=billingAccountService.findById(invoice.getBillingAccount().getId());
 		boolean exoneratedFromTaxes = billingAccountService.isExonerated(billingAccount);
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
