@@ -200,8 +200,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      */
     public void compileScript(T script, boolean testCompile) {
         try {
-            final String packageName = getPackageName(script.getScript());
-            final String qName = (packageName != null ? packageName + '.' : "") + getClassName(script.getScript());
+            final String qName = getFullClassname(script.getScript());
             final String codeSource = script.getScript();
 
             log.trace("Compiling code for {}: {}", qName, codeSource);
@@ -388,6 +387,18 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             className = StringUtils.patternMacher("public class (.*) implements", src);
         }
         return className;
+    }
+
+    /**
+     * Gets a full classname of a script by combining a package (if applicable) and a classname
+     * 
+     * @param script Java source code
+     * @return Full classname
+     */
+    public String getFullClassname(String script) {
+        String packageName = getPackageName(script);
+        String className = getClassName(script);
+        return (packageName != null ? packageName + "." : "") + className;
     }
 
     /**

@@ -17,12 +17,12 @@ public class ServiceScript extends Script implements ServiceScriptInterface {
     public static String CONTEXT_TERMINATION_REASON = "CONTEXT_TERMINATION_REASON";
 
     @Override
-    public void createServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+    public void createServiceTemplate(Map<String, Object> methodContext, User currentUser) throws BusinessException {
 
     }
 
     @Override
-    public void updateServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+    public void updateServiceTemplate(Map<String, Object> methodContext, User currentUser) throws BusinessException {
 
     }
 
