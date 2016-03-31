@@ -4,47 +4,42 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SearchWithRatingJobCategoryTestCase</title>
+<title>SearchWithCodeClassNameFilterEventTypeFilterTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SearchWithRatingJobCategoryTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">SearchWithCodeClassNameFilterEventTypeFilterTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>open</td>
-	<td>${url}</td>
+	<td>clickAndWait</td>
+	<td>${MeveoInstances}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${UsernameID}</td>
-	<td>${userName}</td>
+	<td>${SearchWithCode}</td>
+	<td>01</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${PasswordID}</td>
-	<td>${passWord}</td>
+	<td>${SearchWithDescription}</td>
+	<td>Description for meveo instance</td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>${Connect}</td>
-	<td></td>
+	<td>type</td>
+	<td>${searchWithVersion}</td>
+	<td>1</td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>${JobInstances}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${searchJobCategory}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SearchWithRating}</td>
-	<td></td>
+	<td>type</td>
+	<td>${searchWithOwner}</td>
+	<td>admin</td>
 </tr>
 <tr>
 	<td>click</td>

@@ -4,22 +4,37 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>NewRecurringChargeTestCase</title>
+<title>SearchWithRatingJobCategoryTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">NewRecurringChargeTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">SearchWithRatingJobCategoryTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${NewDunningPlan}</td>
+	<td>${JobInstances}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${searchJobCategory}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SearchWithRating}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${buttonSearch}</td>
+	<td></td>
 </tr>
 </tbody></table>
 </body>
