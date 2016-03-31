@@ -453,11 +453,15 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 
 	public WalletOperation prerateSubscription(Date subscriptionDate, RecurringChargeInstance chargeInstance, Date nextapplicationDate) throws BusinessException {
-		return rateSubscription(subscriptionDate, chargeInstance, nextapplicationDate);
+		return rateSubscription(subscriptionDate, chargeInstance, nextapplicationDate, true);
 	}
 
 	public WalletOperation rateSubscription(Date subscriptionDate, RecurringChargeInstance chargeInstance, Date nextapplicationDate) throws BusinessException {
-		WalletOperation result = null;
+		return rateSubscription(subscriptionDate, chargeInstance, nextapplicationDate, false);
+	}
+	
+	public WalletOperation rateSubscription(Date subscriptionDate, RecurringChargeInstance chargeInstance, Date nextapplicationDate, boolean preRateOnly) throws BusinessException {
+				WalletOperation result = null;
 		Date applicationDate = chargeInstance.getChargeDate();
 
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
@@ -524,7 +528,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		if (!recurringChargeTemplate.getApplyInAdvance()) {
 			applicationDate = nextapplicationDate;
 		}
-		if (subscriptionDate == null) {
+		if (!preRateOnly) {
 			result = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(), chargeInstance.getServiceInstance().getSubscription(), chargeInstance,
 					ApplicationTypeEnum.PRORATA_SUBSCRIPTION, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency,
 					countryId, tax.getPercent(), null, nextapplicationDate, recurringChargeTemplate.getInvoiceSubCategory(), chargeInstance.getCriteria1(),
