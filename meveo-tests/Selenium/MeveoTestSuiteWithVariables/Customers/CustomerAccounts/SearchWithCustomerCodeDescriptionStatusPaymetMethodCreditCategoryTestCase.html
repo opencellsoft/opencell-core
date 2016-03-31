@@ -13,7 +13,7 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${Customers}</td>
+	<td>${CustomersAccounts}</td>
 	<td></td>
 </tr>
 <tr>
@@ -22,44 +22,59 @@
 	<td></td>
 </tr>
 <tr>
+	<td>click</td>
+	<td>${SearchWithChooseCustomer}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>xpath=/html/body/div[1]/div[1]/div[2]/form/div[1]/div[2]/span/div/div/input</td>
+	<td>CUST</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=/html/body/div[1]/div[1]/div[2]/form/div[1]/div[3]/button[1]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${SearchCode}</td>
-	<td>10_cust</td>
+	<td>10_ca</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${searchWithDescription}</td>
-	<td>_cust</td>
+	<td>${SearchDescription}</td>
+	<td>_ca</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SearchWithSelectCustomerCategory}</td>
+	<td>${SearchWithStatus}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;Client&quot;)</td>
+	<td>${Active}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${ChooseParentSeller}</td>
+	<td>${SearchWithPaymentMethod}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;France Seller&quot;)</td>
+	<td>${Check}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${SearchWithSelectBrand}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;Demo Product and Services&quot;)</td>
-	<td></td>
+	<td>type</td>
+	<td>${SearchWithCreditCategory}</td>
+	<td>vip</td>
 </tr>
 <tr>
 	<td>click</td>

@@ -4,16 +4,16 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SearchWithCodeAndDescriptionTestCase</title>
+<title>NewServiceTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SearchWithCodeAndDescriptionTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">NewServiceTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${Subscriptions}</td>
+	<td>${CatalogueServices}</td>
 	<td></td>
 </tr>
 <tr>
@@ -22,28 +22,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>${SearchCode}</td>
-	<td>01_Sub</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SearchWithStatus}</td>
+	<td>clickAndWait</td>
+	<td>${buttonNew}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${ActiveStatus}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${SearchDescription}</td>
-	<td>Description for 01_Sub</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${buttonSearch}</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
 	<td></td>
 </tr>
 </tbody></table>
