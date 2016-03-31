@@ -48,12 +48,12 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
 
     @Override
     public void create(ScriptInstance scriptInstance, User creator) throws BusinessException {
-        String packageName = getPackageName(scriptInstance.getScript());
+       
         String className = getClassName(scriptInstance.getScript());
-        if (packageName == null || className == null) {
-            throw new RuntimeException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
+        if (className == null) {
+            throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
         }
-        scriptInstance.setCode(packageName + "." + className);
+        scriptInstance.setCode(getFullClassname(scriptInstance.getScript()));
 
         super.create(scriptInstance, creator);
 
@@ -62,12 +62,11 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
     @Override
     public ScriptInstance update(ScriptInstance scriptInstance, User updater) throws BusinessException {
 
-        String packageName = getPackageName(scriptInstance.getScript());
         String className = getClassName(scriptInstance.getScript());
-        if (packageName == null || className == null) {
-            throw new RuntimeException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
+        if (className == null) {
+            throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
         }
-        scriptInstance.setCode(packageName + "." + className);
+        scriptInstance.setCode(getFullClassname(scriptInstance.getScript()));
 
         scriptInstance = super.update(scriptInstance, updater);
 
@@ -143,7 +142,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
             String javaSrc = scriptInstance.getScript();
             javaSrc = javaSrc.replaceAll("LoggerFactory.getLogger", "new org.meveo.service.script.RunTimeLogger(" + getClassName(javaSrc) + ".class,\""
                     + currentUser.getProvider().getCode() + "\",\"" + scriptCode + "\",\"ScriptInstanceService\");//");
-            Class<ScriptInterface> compiledScript = compileJavaSource(javaSrc, getPackageName(scriptInstance.getScript()) + "." + getClassName(scriptInstance.getScript()));
+            Class<ScriptInterface> compiledScript = compileJavaSource(javaSrc, getFullClassname(scriptInstance.getScript()));
             execute(compiledScript.newInstance(), context, currentUser);
 
         } catch (Exception e) {

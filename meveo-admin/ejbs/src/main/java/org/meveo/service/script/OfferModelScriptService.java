@@ -37,12 +37,12 @@ public class OfferModelScriptService extends CustomScriptService<OfferModelScrip
 
     @Override
     public void create(OfferModelScript offerModelScript, User creator) throws BusinessException {
-        String packageName = getPackageName(offerModelScript.getScript());
+
         String className = getClassName(offerModelScript.getScript());
-        if (packageName == null || className == null) {
-            throw new RuntimeException(resourceMessages.getString("message.OfferModelScript.sourceInvalid"));
+        if (className == null) {
+            throw new BusinessException(resourceMessages.getString("message.OfferModelScript.sourceInvalid"));
         }
-        offerModelScript.setCode(packageName + "." + className);
+        offerModelScript.setCode(getFullClassname(offerModelScript.getScript()));
 
         super.create(offerModelScript, creator);
     }
@@ -50,12 +50,11 @@ public class OfferModelScriptService extends CustomScriptService<OfferModelScrip
     @Override
     public OfferModelScript update(OfferModelScript offerModelScript, User updater) throws BusinessException {
 
-        String packageName = getPackageName(offerModelScript.getScript());
         String className = getClassName(offerModelScript.getScript());
-        if (packageName == null || className == null) {
-            throw new RuntimeException(resourceMessages.getString("message.OfferModelScript.sourceInvalid"));
+        if (className == null) {
+            throw new BusinessException(resourceMessages.getString("message.OfferModelScript.sourceInvalid"));
         }
-        offerModelScript.setCode(packageName + "." + className);
+        offerModelScript.setCode(getFullClassname(offerModelScript.getScript()));
 
         offerModelScript = super.update(offerModelScript, updater);
 
@@ -80,10 +79,6 @@ public class OfferModelScriptService extends CustomScriptService<OfferModelScrip
     void compileAll() {
         List<OfferModelScript> offerModelScripts = findByType(ScriptSourceTypeEnum.JAVA);
         compile(offerModelScripts);
-    }
-
-    public String getDerivedCode(String script) {
-        return getPackageName(script) + "." + getClassName(script);
     }
 
     // Interface methods

@@ -37,12 +37,12 @@ public class ServiceModelScriptService extends CustomScriptService<ServiceModelS
 
     @Override
     public void create(ServiceModelScript serviceModelScript, User creator) throws BusinessException {
-        String packageName = getPackageName(serviceModelScript.getScript());
+
         String className = getClassName(serviceModelScript.getScript());
-        if (packageName == null || className == null) {
-            throw new RuntimeException(resourceMessages.getString("message.ServiceModelScript.sourceInvalid"));
+        if (className == null) {
+            throw new BusinessException(resourceMessages.getString("message.ServiceModelScript.sourceInvalid"));
         }
-        serviceModelScript.setCode(packageName + "." + className);
+        serviceModelScript.setCode(getFullClassname(serviceModelScript.getScript()));
 
         super.create(serviceModelScript, creator);
     }
@@ -50,12 +50,11 @@ public class ServiceModelScriptService extends CustomScriptService<ServiceModelS
     @Override
     public ServiceModelScript update(ServiceModelScript serviceModelScript, User updater) throws BusinessException {
 
-        String packageName = getPackageName(serviceModelScript.getScript());
         String className = getClassName(serviceModelScript.getScript());
-        if (packageName == null || className == null) {
-            throw new RuntimeException(resourceMessages.getString("message.ServiceModelScript.sourceInvalid"));
+        if (className == null) {
+            throw new BusinessException(resourceMessages.getString("message.ServiceModelScript.sourceInvalid"));
         }
-        serviceModelScript.setCode(packageName + "." + className);
+        serviceModelScript.setCode(getFullClassname(serviceModelScript.getScript()));
 
         serviceModelScript = super.update(serviceModelScript, updater);
 
@@ -80,10 +79,6 @@ public class ServiceModelScriptService extends CustomScriptService<ServiceModelS
     void compileAll() {
         List<ServiceModelScript> ServiceModelScripts = findByType(ScriptSourceTypeEnum.JAVA);
         compile(ServiceModelScripts);
-    }
-
-    public String getDerivedCode(String script) {
-        return getPackageName(script) + "." + getClassName(script);
     }
 
     // Interface methods
