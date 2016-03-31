@@ -705,7 +705,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		}else{
 			entity = invoiceService.update(entity, getCurrentUser());
 		}		
-
+		invoiceService.commit();
 		// create xml invoice adjustment
 		String invoicesDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo");
 		File billingRundir = new File(invoicesDir + File.separator + getCurrentProvider().getCode() + File.separator
