@@ -72,35 +72,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     private WalletOperationService walletOperationService;
 
     @Inject
-    ServiceTemplateService serviceTemplateService;
-
-    @Override
-    public void create(ServiceInstance serviceInstance, User creator) throws BusinessException {
-        super.create(serviceInstance, creator);
-
-        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
-            try {
-                serviceModelScriptService.createServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), creator);
-            } catch (BusinessException e) {
-                log.error("Failed to execute a script {}", serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), e);
-            }
-        }
-    }
-
-    @Override
-    public ServiceInstance update(ServiceInstance serviceInstance, User updater) throws BusinessException {
-        ServiceInstance result = super.update(serviceInstance, updater);
-
-        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
-            try {
-                serviceModelScriptService.updateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), updater);
-            } catch (BusinessException e) {
-                log.error("Failed to execute a script {}", serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), e);
-            }
-        }
-
-        return result;
-    }
+    ServiceTemplateService serviceTemplateService;   
 
     public ServiceInstance findByCodeAndSubscription(String code, Subscription subscription) {
         return findByCodeAndSubscription(getEntityManager(), code, subscription);

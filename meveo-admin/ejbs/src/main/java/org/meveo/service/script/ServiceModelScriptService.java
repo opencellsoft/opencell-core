@@ -17,6 +17,7 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
@@ -87,18 +88,18 @@ public class ServiceModelScriptService extends CustomScriptService<ServiceModelS
 
     // Interface methods
 
-    public void createServiceInstance(ServiceInstance entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+    public void createServiceTemplate(ServiceTemplate entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
         ServiceScriptInterface scriptInterface = getScriptInstance(currentUser.getProvider(), scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
-        scriptInterface.createServiceInstance(scriptContext, currentUser);
+        scriptInterface.createServiceTemplate(scriptContext, currentUser);
     }
 
-    public void updateServiceInstance(ServiceInstance entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+    public void updateServiceTemplate(ServiceTemplate entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
         ServiceScriptInterface scriptInterface = getScriptInstance(currentUser.getProvider(), scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
-        scriptInterface.updateServiceInstance(scriptContext, currentUser);
+        scriptInterface.updateServiceTemplate(scriptContext, currentUser);
     }
 
     public void instantiateServiceInstance(ServiceInstance entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {

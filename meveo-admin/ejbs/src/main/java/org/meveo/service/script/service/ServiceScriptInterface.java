@@ -15,7 +15,7 @@ public interface ServiceScriptInterface extends ScriptInterface {
      * @param currentUser Current user
      * @throws BusinessException
      */
-    public void createServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException;
+    public void createServiceTemplate(Map<String, Object> methodContext, User currentUser) throws BusinessException;
 
     /**
      * Called after ServiceInstance entity update
@@ -24,7 +24,7 @@ public interface ServiceScriptInterface extends ScriptInterface {
      * @param currentUser Current user
      * @throws BusinessException
      */
-    public void updateServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException;
+    public void updateServiceTemplate(Map<String, Object> methodContext, User currentUser) throws BusinessException;
 
     /**
      * Called after ServiceInstance instantiation - essentially happens right after createServiceInstance()
