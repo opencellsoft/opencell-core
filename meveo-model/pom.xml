@@ -3,7 +3,7 @@
     <parent>
         <artifactId>meveo</artifactId>
         <groupId>org.meveo</groupId>
-        <version>4.2.0-beta-SNAPSHOT</version>
+        <version>4.2.1-snapshot</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>meveo-model</artifactId>
