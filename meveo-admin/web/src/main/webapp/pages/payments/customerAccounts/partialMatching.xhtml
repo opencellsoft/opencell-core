@@ -1,10 +1,10 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"	
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org" 
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -17,23 +17,23 @@
 			<f:facet name="header">
 				<h:outputText value="#{messages['customerAccount.transferAccountTitle']}" />
 			</f:facet>
-		<custom:dataList backingBean="#{accountOperationBean}" dataModel="#{accountOperationBean.getPartialMatchingOps()}" edit="false">    																												
-			<custom:column label="#{messages['accountOperation.type']}" field="accountOperation"	childField="type" />									
-			<custom:column label="#{messages['accountOperation.occCode']}" field="accountOperation"	childField="occCode" />					
-			<custom:column label="#{messages['accountOperation.occDescription']}" fiefield="accountOperation"	childFieldld="occDescription"/>
-			<custom:column label="#{messages['accountOperation.transactionDate']}" field="accountOperation"	childField="transactionDate" />						
-			<custom:column label="#{messages['accountOperation.dueDate']}" field="accountOperation"	childField="dueDate" />
-			<custom:column label="#{messages['accountOperation.debit']}" field="accountOperation"	childField="amount" rendered="#{entity.accountOperation.transactionCategory.toString() == 'DEBIT'}" />						
-			<custom:column label="#{messages['accountOperation.credit']}" field="accountOperation"	childField="amount" rendered="#{entity.accountOperation.transactionCategory.toString() == 'CREDIT'}" />
-	    	<custom:column label="#{messages['accountOperation.matchingStatus']}" field="accountOperation"	childField="matchingStatus" />
+		<hftl:dataList backingBean="#{accountOperationBean}" dataModel="#{accountOperationBean.getPartialMatchingOps()}" edit="false">    																												
+			<hftl:column label="#{messages['accountOperation.type']}" field="accountOperation"	childField="type" />									
+			<hftl:column label="#{messages['accountOperation.occCode']}" field="accountOperation"	childField="occCode" />					
+			<hftl:column label="#{messages['accountOperation.occDescription']}" fiefield="accountOperation"	childFieldld="occDescription"/>
+			<hftl:column label="#{messages['accountOperation.transactionDate']}" field="accountOperation"	childField="transactionDate" />						
+			<hftl:column label="#{messages['accountOperation.dueDate']}" field="accountOperation"	childField="dueDate" />
+			<hftl:column label="#{messages['accountOperation.debit']}" field="accountOperation"	childField="amount" rendered="#{entity.accountOperation.transactionCategory.toString() == 'DEBIT'}" />						
+			<hftl:column label="#{messages['accountOperation.credit']}" field="accountOperation"	childField="amount" rendered="#{entity.accountOperation.transactionCategory.toString() == 'CREDIT'}" />
+	    	<hftl:column label="#{messages['accountOperation.matchingStatus']}" field="accountOperation"	childField="matchingStatus" />
 			<p:column styleClass="actions-column">
             	<f:facet name="header">
                 	<h:outputText value="#{messages['commons.actions']}" />
              	</f:facet>
                 <h:commandLink id="selectPartialOcc" value="#{messages['matching.buttonSelectPartialOcc']}" rendered="#{entity.partialMatchingAllowed}" action="#{accountOperationBean.partialMatching(entity)}" />                	             	          	             
-            	<p:toolTip for="selectPartialOcc" value="#{messages['matching.selectPartialOcc']}"/>
+            	<!--  <p:toolTip for="selectPartialOcc" value="#{messages['matching.selectPartialOcc']}"/>-->
              </p:column>							
-		</custom:dataList>	  
+		</hftl:dataList>	  
 	  	</p:panel>				
 	</ui:define>
 </ui:composition>
