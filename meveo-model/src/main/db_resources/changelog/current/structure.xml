@@ -1508,6 +1508,7 @@
     </changeSet>  	
 
     <changeSet id="#1585_20160325" author="AndriusKarpavicius">
+        <sql>update MEVEO_JOB_INSTANCE set disabled=not(active)</sql>
         <dropColumn tableName="MEVEO_JOB_INSTANCE" columnName="ACTIVE"/>
     </changeSet>    
 
