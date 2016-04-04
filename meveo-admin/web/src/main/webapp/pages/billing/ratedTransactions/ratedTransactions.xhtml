@@ -99,7 +99,7 @@
 			<hftl:searchField label="#{messages['ratedTransaction.usageDate']}" field="usageDate" />
 
         </hftl:searchPanel>
-        <hftl:dataList backingBean="#{ratedTransactionListBean}" deleteManyButton="false">
+        <hftl:dataList backingBean="#{ratedTransactionListBean}" deleteManyButton="false" exportButton="true" exportXlsxButton="false">
 		<hftl:column  label="#{messages['BusinessEntity.code']}" field="code"  width="70"/> 
 			 <hftl:column label="#{messages['walletOperation.status']}" field="status.label" isMessage="true" width="70"/>
 			 <p:column width="100">
