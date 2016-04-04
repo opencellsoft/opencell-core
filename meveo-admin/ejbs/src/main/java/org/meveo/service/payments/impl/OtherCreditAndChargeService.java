@@ -21,6 +21,7 @@ package org.meveo.service.payments.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.DiscriminatorValue;
@@ -43,6 +44,9 @@ public class OtherCreditAndChargeService extends
 
 	@Inject
 	private OCCTemplateService occTemplateService;
+	
+	@EJB
+	private CustomerAccountService customerAccountService;
 
 	public void addOCC(String codeOCCTemplate, String descToAppend,
 			CustomerAccount customerAccount, BigDecimal amount, Date dueDate,
@@ -72,6 +76,9 @@ public class OtherCreditAndChargeService extends
 			log.warn("addOCC user is null");
 			throw new BusinessException("user is null");
 		}
+		
+		customerAccount = customerAccountService.refreshOrRetrieve(customerAccount);
+		
 		OCCTemplate occTemplate = occTemplateService.findByCode(
 				codeOCCTemplate, customerAccount.getProvider().getCode());
 		if (occTemplate == null) {

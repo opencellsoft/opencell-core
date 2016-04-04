@@ -157,7 +157,8 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
 		} catch (Exception e) {
 			log.error("failed to transfer account ",e);
-			messages.error(new BundleKey("messages", "customerAccount.transfertKO"));
+			messages.error(new BundleKey("messages", "customerAccount.transfertKO"), e.getMessage());
+			return null;
 		}
 
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId=" + entity.getId()
