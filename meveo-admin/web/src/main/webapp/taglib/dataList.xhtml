@@ -56,10 +56,10 @@
     </c:if>
 
     <c:if test="${empty exportButton}">
-        <c:set var="exportButton" value="true" />
+        <c:set var="exportButton" value="false" />
     </c:if>
     <c:if test="${empty exportXlsxButton}">
-        <c:set var="exportXlsxButton" value="false" />
+        <c:set var="exportXlsxButton" value="true" />
     </c:if>
 
     <c:if test="${empty fileName}">
@@ -132,7 +132,7 @@
                     <p:dataExporter type="xls" target="datatable_#{resultsId}" fileName="data" pageOnly="false" />
                 </p:commandButton>
                 <p:commandButton id="#{formId}buttonXlsxExport" icon="ui-icon-xls" value="#{messages['commons.exportExcel']}" ajax="false" rendered="#{exportXlsxButton}">
-                    <pe:exporter type="xlsx" target="datatable_#{resultsId}" fileName="data" pageOnly="false" skipComponents="true" />
+                    <pe:exporter type="xlsx" target="datatable_#{resultsId}" fileName="data" pageOnly="false" skipComponents="true" selectionOnly="#{backingBean.selectedEntities.size()>0}"/>
                 </p:commandButton>
                 <p:commandButton value="#{messages['commons.importCsv']}" rendered="#{importCsv}" type="button" onclick="PF('csvDialog').show();" />
                 <p:commandButton id="#{formId}buttonCsvExport" value="#{messages['commons.exportCsv']}" ajax="false" rendered="#{exportToCsv}">
