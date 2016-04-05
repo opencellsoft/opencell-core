@@ -3,8 +3,8 @@
     <parent>
         <artifactId>meveo</artifactId>
         <groupId>org.meveo</groupId>
-        <version>4.2</version>
         <relativePath>../pom.xml</relativePath>
+        <version>4.2.0</version>
     </parent>
     <artifactId>meveo-model</artifactId>
     <packaging>jar</packaging>

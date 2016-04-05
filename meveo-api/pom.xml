@@ -5,8 +5,8 @@
     <parent>
         <groupId>org.meveo</groupId>
         <artifactId>meveo</artifactId>
-        <version>4.2</version>
         <relativePath>../pom.xml</relativePath>
+        <version>4.2.0</version>
     </parent>
     <artifactId>meveo-api</artifactId>
     <name>MEVEO API</name>
