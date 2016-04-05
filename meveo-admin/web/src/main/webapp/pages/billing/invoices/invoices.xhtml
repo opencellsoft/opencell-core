@@ -55,10 +55,10 @@
 			<hftl:column label="#{messages['invoice.invoiceNumber']}" field="invoiceNumber" valueIdField="id" entityView="invoiceDetail"/>
 			<hftl:column label="#{messages['invoice.billingAccount']}" field="billingAccount.code" valueIdField="billingAccount.id" entityView="billingAccountDetail" backView="invoices" width="15%"/>
 			<hftl:column label="#{messages['invoice.invoiceType']}" field="invoiceTypeEnum.label" isMessage="true" />
-			<hftl:column label="#{messages['invoice.invoiceDate']}" field="invoiceDate" id="invoiceDate" />
-			<hftl:column label="#{messages['invoice.dueDate']}" field="dueDate" id="dueDate" /> 
-			<hftl:column label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />
-			<hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax" />
+			<hftl:column label="#{messages['invoice.invoiceDate']}" field="invoiceDate" isDate="true" />
+			<hftl:column label="#{messages['invoice.dueDate']}" field="dueDate" isDate="true" /> 
+			<hftl:column label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" converterParam="4digits" wrapHeader="true"  />
+			<hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax" converterParam="4digits" wrapHeader="true"  />
 			<hftl:column label="#{messages['invoice.netToPay']}" field="netToPay" />
 		</hftl:dataList>
 
