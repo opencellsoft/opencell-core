@@ -151,7 +151,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				serviceInst.getId());
 
 		if (chargeInst != null) {
-			throw new BusinessException("charge instance code already exists. code=" + chargeCode);
+			throw new BusinessException("charge instance code already exists. code=" + chargeCode + " service instance id " + serviceInst.getId());
 		}
 		log.debug("create chargeInstance for charge {}",chargeCode);
 		RecurringChargeInstance chargeInstance = new RecurringChargeInstance();
