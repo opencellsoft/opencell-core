@@ -24490,7 +24490,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>\r
       <ws:createOrUpdate>\r
          <!--Optional:-->\r
-         <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.PostpaidOfferScript" description="SCRIPT_INSTANCE${#TestSuite#ticket}">\r
+         <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.PostpaidOfferScript" description="SCRIPT_INSTANCE_POSTPAID">\r
             <!--Optional:-->\r
             <type>JAVA</type>\r
             <script>
@@ -24534,8 +24534,8 @@ import org.meveo.model.catalog.CounterTemplateLevel;
 
 /**
  * 
- * @author anasseh
- * Edited 10/03/2016 12:13
+ * @author Seb
+ * Edited 06/04/2016 00:56
  */
 
 public class PostpaidOfferScript extends Script {
@@ -24548,7 +24548,8 @@ public class PostpaidOfferScript extends Script {
   	UsageChargeTemplateApi usageChargeTemplateApi = (UsageChargeTemplateApi) getServiceInterface("UsageChargeTemplateApi");
   	CounterTemplateApi counterTemplateApi = (CounterTemplateApi) getServiceInterface("CounterTemplateApi");
   	PricePlanApi pricePlanApi = (PricePlanApi)  getServiceInterface("PricePlanApi");
-  	
+
+  	@Override
 	public void execute(Map<String,Object> context, User user) throws BusinessException{
 		log.debug("start postpaidOffer creation script... event = {}",context.get("event"));
 		InboundRequest req = (InboundRequest)context.get("event");
@@ -24701,7 +24702,7 @@ public class PostpaidOfferScript extends Script {
    <soapenv:Body>\r
       <ws:createOrUpdate>\r
          <!--Optional:-->\r
-         <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.PrepaidOfferScript" description="SCRIPT_INSTANCE${#TestSuite#ticket}">\r
+         <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.PrepaidOfferScript" description="SCRIPT_INSTANCE_PREPAID">\r
             <!--Optional:-->\r
             <type>JAVA</type>\r
             <script>
@@ -24746,8 +24747,8 @@ import org.meveo.model.catalog.CounterTemplateLevel;
 
 /**
  * 
- * @author anasseh
- * Edited 10/03/2016 12:13
+ * @author Seb
+ * Edited 06/04/2016 00:56
  */
 
 public class PrepaidOfferScript extends Script {
@@ -24760,7 +24761,8 @@ public class PrepaidOfferScript extends Script {
   	UsageChargeTemplateApi usageChargeTemplateApi = (UsageChargeTemplateApi) getServiceInterface("UsageChargeTemplateApi");
   	CounterTemplateApi counterTemplateApi = (CounterTemplateApi) getServiceInterface("CounterTemplateApi");
   	PricePlanApi pricePlanApi = (PricePlanApi)  getServiceInterface("PricePlanApi");
-  	
+
+  	@Override
 	public void execute(Map<String,Object> context, User user) throws BusinessException{
 		log.debug("start prepaidOfferScript creation script... event = {}",context.get("event"));
 		InboundRequest req = (InboundRequest)context.get("event");
