@@ -54,8 +54,10 @@ public class FilteredListApi extends BaseApi {
 
 			// check if user owned the filter
 			if (filter.getShared() == null || !filter.getShared()) {
-				if (filter.getAuditable().getCreator().getId() != currentUser.getId()) {
-					throw new MeveoApiException("INVALID_FILTER_OWNER");
+				if (filter.getAuditable() != null) {
+					if (filter.getAuditable().getCreator().getId() != currentUser.getId()) {
+						throw new MeveoApiException("INVALID_FILTER_OWNER");
+					}
 				}
 			}
 
