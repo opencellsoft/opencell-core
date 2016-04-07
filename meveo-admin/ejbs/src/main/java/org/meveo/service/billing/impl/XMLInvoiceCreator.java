@@ -315,6 +315,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 			addPaymentInfo(billingAccount, doc, billingAccountTag);
 			
+			header.appendChild(billingAccountTag);
+			
 			if (invoice.getInvoiceDate() != null) {
 				Element invoiceDate = doc.createElement("invoiceDate");
 				Text invoiceDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(invoice.getInvoiceDate(),
