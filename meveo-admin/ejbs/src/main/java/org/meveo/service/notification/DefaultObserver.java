@@ -194,15 +194,17 @@ public class DefaultObserver {
             }
 
         } catch (Exception e1) {
-            log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1);
-            try {
-                NotificationHistory notificationHistory = notificationHistoryService.create(notif, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
-                if (e instanceof InboundRequest) {
-                    ((InboundRequest) e).add(notificationHistory);
-                }
-            } catch (Exception e2) {
-            	log.error("Failed to firing notification",e);
-            }
+        	if(notif != null) {
+	            log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1);
+	            try {
+	                NotificationHistory notificationHistory = notificationHistoryService.create(notif, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
+	                if (e instanceof InboundRequest) {
+	                    ((InboundRequest) e).add(notificationHistory);
+	                }
+	            } catch (Exception e2) {
+	            	log.error("Failed to firing notification",e);
+	            }
+        	}
         }
     }
 
