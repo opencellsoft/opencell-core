@@ -1,6 +1,7 @@
 package org.meveo.admin.ftp;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
@@ -32,6 +33,9 @@ public class MeveoMinaFTPListener {
 	private MeveoDefaultFtplet meveoDefaultFtplet;
 	
 	private ParamBean paramBean=ParamBean.getInstance();
+	
+	
+	private FtpServer server = null;
 
 	@PostConstruct
 	private void init() throws FtpException {
@@ -60,10 +64,24 @@ public class MeveoMinaFTPListener {
 		serverFactory.setUserManager(userManager);
 
 		// start the server
-		FtpServer server = serverFactory.createServer();
+		server = serverFactory.createServer();
 
 		server.start();
 		log.debug("ftp server is started at port "+portStr);
 
 	}
+	
+	@PreDestroy
+	private void stopServer() {
+		try {
+			if (server != null) {
+				server.stop();
+				log.debug("ftp server stoped");
+			}
+		} catch (Exception e) {
+			log.error("Error stoping ftp server", e);
+		}
+	}
+	
+	
 }
