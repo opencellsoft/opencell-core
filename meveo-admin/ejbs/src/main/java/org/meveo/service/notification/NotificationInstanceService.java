@@ -21,7 +21,7 @@ public abstract class NotificationInstanceService<T extends Notification> extend
     public void create(T notification, User creator) throws BusinessException {
         // Instantiate a counter instance if counter template is provided
         try {
-            manageCounterInstantiation(notification);
+            manageCounterInstantiation(notification, creator);
         } catch (BusinessException e) {
             throw new RuntimeException(e);
         }
@@ -33,7 +33,7 @@ public abstract class NotificationInstanceService<T extends Notification> extend
     public T update(T notification, User updater) throws BusinessException {
         // Instantiate a counter instance if counter template is provided
         try {
-            manageCounterInstantiation(notification);
+            manageCounterInstantiation(notification, updater);
         } catch (BusinessException e) {
             throw new RuntimeException(e);
         }
@@ -68,7 +68,7 @@ public abstract class NotificationInstanceService<T extends Notification> extend
      * @param entity Entity being saved or updated
      * @throws BusinessException
      */
-    protected void manageCounterInstantiation(T entity) throws BusinessException {
+    protected void manageCounterInstantiation(T entity, User currentUser) throws BusinessException {
 
         // Remove counter instance if counter is no longer associated to a notification
         if (entity.getCounterTemplate() == null && entity.getCounterInstance() != null) {
@@ -78,7 +78,7 @@ public abstract class NotificationInstanceService<T extends Notification> extend
         } else if (entity.getCounterTemplate() != null
                 && (entity.getCounterInstance() == null || (entity.getCounterInstance() != null && !entity.getCounterTemplate().getId()
                     .equals(entity.getCounterInstance().getCounterTemplate().getId())))) {
-            counterInstanceService.counterInstanciation(entity, entity.getCounterTemplate(), getCurrentUser());
+            counterInstanceService.counterInstanciation(entity, entity.getCounterTemplate(), currentUser);
         }
     }
 }

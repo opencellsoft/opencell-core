@@ -79,6 +79,9 @@ public class WebhookNotificationApi extends BaseApi {
         CounterTemplate counterTemplate = null;
         if (!StringUtils.isBlank(postData.getCounterTemplate())) {
             counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+            if (counterTemplate == null) {
+                throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCounterTemplate());
+            }
         }
 
         WebHook webHook = new WebHook();
@@ -173,6 +176,9 @@ public class WebhookNotificationApi extends BaseApi {
             CounterTemplate counterTemplate = null;
             if (!StringUtils.isBlank(postData.getCounterTemplate())) {
                 counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+                if (counterTemplate == null) {
+                    throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCounterTemplate());
+                }
             }
 
             webHook.setClassNameFilter(postData.getClassNameFilter());

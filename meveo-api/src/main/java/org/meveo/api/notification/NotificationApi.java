@@ -86,6 +86,9 @@ public class NotificationApi extends BaseApi {
         CounterTemplate counterTemplate = null;
         if (!StringUtils.isBlank(postData.getCounterTemplate())) {
             counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+            if (counterTemplate == null){
+                throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCounterTemplate());
+            }
         }
 
         ScriptNotification notif = new ScriptNotification();
@@ -156,6 +159,9 @@ public class NotificationApi extends BaseApi {
         CounterTemplate counterTemplate = null;
         if (!StringUtils.isBlank(postData.getCounterTemplate())) {
             counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+            if (counterTemplate == null) {
+                throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCounterTemplate());
+            }
         }
 
         notif.setClassNameFilter(postData.getClassNameFilter());
