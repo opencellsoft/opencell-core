@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -373,6 +374,11 @@ public class UserBean extends BaseBean<User> {
         log.debug("getFileList " + folder);
 
         fileList = file.listFiles() == null ? new ArrayList<File>() : new ArrayList<File>(Arrays.asList(file.listFiles()));
+        fileList.sort(new Comparator<File> (){
+    		public int compare(File f1, File f2) {
+    			return f1.getName().compareTo(f2.getName());
+    		}
+    	});
         if (this.selectedFolder != null) {
             if (fileList.size() == 0) {
                 currentDirEmpty = true;
