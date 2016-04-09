@@ -48,7 +48,10 @@ public class BusinessOfferModelApi extends BaseApi {
 				throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplateCode());
 			}
 
-			OfferModelScript scriptInstance = offerModelScriptService.findByCode(postData.getScriptCode(), currentUser.getProvider());
+			OfferModelScript scriptInstance = null;
+			if (!StringUtils.isBlank(postData.getScriptCode())) {
+				scriptInstance = offerModelScriptService.findByCode(postData.getScriptCode(), currentUser.getProvider());
+			}
 
 			BusinessOfferModel businessOfferModel = new BusinessOfferModel();
 			businessOfferModel.setCode(postData.getCode());
@@ -93,7 +96,10 @@ public class BusinessOfferModelApi extends BaseApi {
 				throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplateCode());
 			}
 
-			OfferModelScript scriptInstance = offerModelScriptService.findByCode(postData.getScriptCode(), currentUser.getProvider());
+			OfferModelScript scriptInstance = null;
+			if (!StringUtils.isBlank(postData.getScriptCode())) {
+				scriptInstance = offerModelScriptService.findByCode(postData.getScriptCode(), currentUser.getProvider());
+			}
 
 			businessOfferModel.setDescription(StringUtils.isBlank(postData.getDescription()) ? postData.getCode() : postData.getDescription());
 			businessOfferModel.setOfferTemplate(offerTemplate);

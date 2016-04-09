@@ -11,6 +11,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 
@@ -44,6 +45,18 @@ public class BusinessOfferApi extends BaseApi {
 				newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getPrefix(), postData.getServiceCodes(), currentUser);
 			} catch (BusinessException e) {
 				throw new MeveoApiException(e.getMessage());
+			}
+
+			// populate service custom fields
+
+			if (postData.getServiceCustomFields() != null) {
+				for (OfferServiceTemplate ost : newOfferTemplate.getOfferServiceTemplates()) {
+					try {
+						populateCustomFields(postData.getServiceCustomFields(), ost.getServiceTemplate(), true, currentUser);
+					} catch (IllegalArgumentException | IllegalAccessException e) {
+						throw new MeveoApiException(e.getMessage());
+					}
+				}
 			}
 
 			// populate offer custom fields
