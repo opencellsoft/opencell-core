@@ -13,6 +13,10 @@
 <cc:interface>
 	<cc:attribute name="treeValue" required="true" />
 	<cc:attribute name="entity" required="true" />
+	<cc:attribute name="menuPanel" required="false" default=".col1" />
+	<cc:attribute name="menuWidth" required="false" default="25%" />
+	<cc:attribute name="contentPanel" required="false" default=".col2" />
+	<cc:attribute name="contentWidth" required="false" default="75%" />
 </cc:interface>
 
 <cc:implementation>
@@ -102,6 +106,35 @@
 
             </p:panel>
 	    </h:form>
+	    
+	    <script>
+	    jQuery((function ($) {
+	    	var toggleButton = $("#{cc.attrs.menuPanel} .ui-panel-titlebar #toggle-button")[0];
+	    	if(!toggleButton){
+	    		$("#{cc.attrs.menuPanel} .ui-panel-titlebar").append('<a href="#" id="toggle-button" class="ui-panel-titlebar-icon ui-corner-all ui-state-default" style="display: block;"><span class="ui-icon ui-icon-minusthick"></span></a>');
+	    		toggleButton = $("#{cc.attrs.menuPanel} .ui-panel-titlebar #toggle-button")[0];
+	    	}
+	        $(toggleButton).on("click", function (e) {
+	            $(this).data("visible", !$(this).data("visible"));
+	            var icon = $(this).children().first();
+	            if ($(this).data("visible")) {
+	            	icon.removeClass("ui-icon-minusthick");
+	                icon.addClass("ui-icon-plusthick");
+	                $("#{cc.attrs.menuPanel} .ui-panel-title").hide();
+	                $("#{cc.attrs.menuPanel} .ui-panel-content").hide();
+	                $("#{cc.attrs.menuPanel}").css("width", "2%");
+	                $("#{cc.attrs.contentPanel}").css("width", "98%");
+	            } else {
+	            	icon.removeClass("ui-icon-plusthick");
+	                icon.addClass("ui-icon-minusthick");
+	                $("#{cc.attrs.menuPanel} .ui-panel-title").show();
+	                $("#{cc.attrs.menuPanel} .ui-panel-content").show();
+	                $("#{cc.attrs.menuPanel}").css("width", "#{cc.attrs.menuWidth}");
+	                $("#{cc.attrs.contentPanel}").css("width", "#{cc.attrs.contentWidth}");
+	            }
+	        });
+	    }(jQuery)));
+	    </script>
 
 	</ui:fragment>
 </cc:implementation>
