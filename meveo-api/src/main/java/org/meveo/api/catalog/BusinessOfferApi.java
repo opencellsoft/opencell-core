@@ -13,13 +13,22 @@ import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
 
 @Stateless
 public class BusinessOfferApi extends BaseApi {
 
 	@Inject
 	private BusinessOfferModelService businessOfferModelService;
+
+	@Inject
+	private ServiceTemplateService serviceTemplateService;
+
+	@Inject
+	private OfferTemplateService offerTemplateService;
 
 	public void createOfferFromBOM(BomOfferDto postData, User currentUser) throws MeveoApiException {
 		validate(postData);
@@ -48,12 +57,17 @@ public class BusinessOfferApi extends BaseApi {
 			}
 
 			// populate service custom fields
-
 			if (postData.getServiceCustomFields() != null) {
 				for (OfferServiceTemplate ost : newOfferTemplate.getOfferServiceTemplates()) {
+					ServiceTemplate serviceTemplate = ost.getServiceTemplate();
 					try {
-						populateCustomFields(postData.getServiceCustomFields(), ost.getServiceTemplate(), true, currentUser);
+						populateCustomFields(postData.getServiceCustomFields(), serviceTemplate, true, currentUser);
 					} catch (IllegalArgumentException | IllegalAccessException e) {
+						throw new MeveoApiException(e.getMessage());
+					}
+					try {
+						serviceTemplateService.update(serviceTemplate, currentUser);
+					} catch (BusinessException e) {
 						throw new MeveoApiException(e.getMessage());
 					}
 				}
@@ -64,6 +78,11 @@ public class BusinessOfferApi extends BaseApi {
 				try {
 					populateCustomFields(postData.getOfferCustomFields(), newOfferTemplate, true, currentUser);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
+					throw new MeveoApiException(e.getMessage());
+				}
+				try {
+					offerTemplateService.update(newOfferTemplate, currentUser);
+				} catch (BusinessException e) {
 					throw new MeveoApiException(e.getMessage());
 				}
 			}
