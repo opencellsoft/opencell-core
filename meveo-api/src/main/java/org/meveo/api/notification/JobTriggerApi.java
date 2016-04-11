@@ -74,10 +74,16 @@ public class JobTriggerApi extends BaseApi {
         CounterTemplate counterTemplate = null;
         if (!StringUtils.isBlank(postData.getCounterTemplate())) {
             counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+            if (counterTemplate == null) {
+                throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCounterTemplate());
+            }
         }
         JobInstance jobInstance = null;
         if (!StringUtils.isBlank(postData.getJobInstance())) {
             jobInstance = jobInstanceService.findByCode(postData.getJobInstance(), currentUser.getProvider());
+            if (jobInstance == null) {
+                throw new EntityDoesNotExistsException(JobInstance.class, postData.getJobInstance());
+            }
         }
 
         JobTrigger notif = new JobTrigger();
@@ -148,11 +154,17 @@ public class JobTriggerApi extends BaseApi {
         CounterTemplate counterTemplate = null;
         if (!StringUtils.isBlank(postData.getCounterTemplate())) {
             counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+            if (counterTemplate == null) {
+                throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCounterTemplate());
+            }
         }
 
         JobInstance jobInstance = null;
         if (!StringUtils.isBlank(postData.getJobInstance())) {
             jobInstance = jobInstanceService.findByCode(postData.getJobInstance(), currentUser.getProvider());
+            if (jobInstance == null) {
+                throw new EntityDoesNotExistsException(JobInstance.class, postData.getJobInstance());
+            }
         }
 
         notif.setClassNameFilter(postData.getClassNameFilter());

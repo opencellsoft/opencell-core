@@ -42,7 +42,7 @@ public class MeasurableQuantityApi extends BaseApi {
 
     }
 
-    private void update(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("measurableQuantityCode");
             handleMissingParameters();
