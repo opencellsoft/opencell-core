@@ -44,16 +44,18 @@ public class PageAccessFilter implements Filter {
 
 	@Inject
 	private Logger logger;
-	
+
 	@Inject
 	private Identity identity;
 
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 
+		// initialize config and pages properties
 		this.config = config;
 		this.pages = Collections.synchronizedMap(new HashMap<String, Page>());
 
+		// load page configuration from page-access.xml file
 		String pageAccessFileName = config.getServletContext().getRealPath(config.getInitParameter(CONFIG_FILE));
 		File pageAccessFile = new File(pageAccessFileName);
 		try {
@@ -62,6 +64,8 @@ public class PageAccessFilter implements Filter {
 			if (pageAccess != null) {
 				StringBuilder key = new StringBuilder();
 				for (Page page : pageAccess.getPages()) {
+					// key is a concatenation of the contextPath, the
+					// pageDirectory, and the view-id
 					key.setLength(0);
 					key.append(config.getServletContext().getContextPath());
 					key.append(config.getInitParameter(PAGES_DIRECTORY));
@@ -80,42 +84,50 @@ public class PageAccessFilter implements Filter {
 			throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
-		
+
 		String pageKey = request.getRequestURI();
-		
+
 		Page page = this.pages.get(pageKey);
-		
-		if(identity != null && page != null){
-			boolean result = true;
-			List<Object> parameters = new ArrayList<>();
+
+		if (identity != null && page != null) {
 			
+			List<Object> parameters = new ArrayList<>();
+
+			// load the identity object as the currentUser
 			parameters.add("currentUser");
 			parameters.add(this.identity);
-			
+
 			String value = null;
 			String key = null;
-			
-			for (Param paramKey : page.getParameters()){
+
+			// load all parameters needed for the expression's evaluation
+			for (Param paramKey : page.getParameters()) {
 				key = paramKey.getName();
 				value = request.getParameter(key);
-				if(value != null){
+				if (value != null) {
 					parameters.add(key);
 					parameters.add(value);
 				}
 			}
-			
-			
-			for(String constraint : page.getConstraints()){
+
+			boolean result = true;
+			// load all constraints
+			for (String constraint : page.getConstraints()) {
 				try {
-					result = result && ValueExpressionWrapper.evaluateToBooleanMultiVariable(constraint, parameters.toArray());
-					if(!result){
+					result = result
+							&& ValueExpressionWrapper.evaluateToBooleanMultiVariable(constraint, parameters.toArray());
+					// if the result is false any succeeding expressions will never be true.
+					// so immediately log a warning then redirect user to error page.
+					if (!result) {
 						logger.warn("User does not have permission to access the page. Redirecting to error page...");
-						response.sendRedirect(request.getServletContext().getContextPath() + config.getInitParameter(ERROR_PAGE));
+						response.sendRedirect(
+								request.getServletContext().getContextPath() + config.getInitParameter(ERROR_PAGE));
 						return;
 					}
 				} catch (BusinessException e) {
 					logger.error("Failed to execute constraint expression. Redirecting to error page...", e);
-					response.sendRedirect(request.getServletContext().getContextPath() + config.getInitParameter(ERROR_PAGE));
+					response.sendRedirect(
+							request.getServletContext().getContextPath() + config.getInitParameter(ERROR_PAGE));
 					return;
 				}
 			}
