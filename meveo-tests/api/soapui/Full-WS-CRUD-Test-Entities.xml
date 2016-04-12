@@ -24781,7 +24781,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                         <maxValue>3</maxValue>
                         <cacheValue>false</cacheValue>
                         <guiPosition>tab:Custom fields:0;field:1</guiPosition>
-                        <applicableOnEl>#{mv:executeScript(entity, "org.meveo.test.TestCFTScript",null,entity.auditable.creator,entity.provider) > 10}</applicableOnEl>
+                        <applicableOnEl>#{mv:executeScript(entity, "org.meveo.test.TestCFTScript",null,entity.auditable.creator) > 10}</applicableOnEl>
                      </customFieldTemplate>
                      <filter code="${#Project#entityPrefix}_${#TestSuite#index}_Filter2" description="Filter2">
                         <shared>true</shared>
@@ -25314,7 +25314,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                         <maxValue>3</maxValue>
                         <cacheValue>false</cacheValue>
                         <guiPosition>tab:Custom fields:0;field:1</guiPosition>
-                        <applicableOnEl>#{mv:executeScript(entity, "org.meveo.test.TestCFTScript",null,entity.auditable.creator,entity.provider) > 10}</applicableOnEl>
+                        <applicableOnEl>#{mv:executeScript(entity, "org.meveo.test.TestCFTScript",null,entity.auditable.creator) > 10}</applicableOnEl>
                      </customFieldTemplate>
                      <filter code="${#Project#entityPrefix}_${#TestSuite#index}_Filter2" description="Filter2">
                         <shared>true</shared>
