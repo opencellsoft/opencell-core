@@ -1,0 +1,21 @@
+<page-access>
+	<page view-id="/admin/catMessages/catMessagesDetail.jsf">
+		<param name="edit" />
+		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
+	</page>
+	
+	<page view-id="/admin/properties/properties.jsf" >
+		<param name="edit" />
+		<constraint>#{currentUser.hasPermission('superAdmin','superAdminManagement')}</constraint>
+	</page>
+	
+	<page view-id="/admin/providers/providerDetail.jsf" >
+		<param name="edit" />
+		<constraint>#{currentUser.hasPermission('superAdmin','superAdminManagement')}</constraint>
+	</page>
+
+	<page view-id="/billing/billingAccounts/billingAccountDetail.jsf">
+		<param name="edit" />
+		<constraint>#{currentUser.hasPermission('account','accountManagement') or (!edit and currentUser.hasPermission('account','accountVisualization'))}</constraint>
+	</page>
+</page-access>
