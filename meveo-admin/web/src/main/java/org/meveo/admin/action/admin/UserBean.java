@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -112,7 +113,7 @@ public class UserBean extends BaseBean<User> {
     private String selectedFileName;
     private String newFilename;
     private String directoryName;
-    private ArrayList<File> fileList;
+    private List<File> fileList;
     private UploadedFile file;
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
@@ -373,12 +374,14 @@ public class UserBean extends BaseBean<User> {
         File file = new File(folder);
         log.debug("getFileList " + folder);
 
-        fileList = file.listFiles() == null ? new ArrayList<File>() : new ArrayList<File>(Arrays.asList(file.listFiles()));
-        fileList.sort(new Comparator<File> (){
-    		public int compare(File f1, File f2) {
-    			return f1.getName().compareTo(f2.getName());
-    		}
-    	});
+        File[] files = file.listFiles();
+
+        fileList = files == null ? new ArrayList<File>() : new ArrayList<File>(Arrays.asList(files));
+        Collections.sort(fileList, new Comparator<File>() {
+            public int compare(File f1, File f2) {
+                return f1.getName().compareTo(f2.getName());
+            }
+        });
         if (this.selectedFolder != null) {
             if (fileList.size() == 0) {
                 currentDirEmpty = true;
