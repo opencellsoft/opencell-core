@@ -854,6 +854,48 @@
      
     <changeSet id="#1101_20151207-1" author="AndriusKarpavicius">
         <sql>
+            update CAT_COUNTER_TEMPLATE set CEILING_EXPRESSION_EL=replace(CEILING_EXPRESSION_EL,'.customFields[','.getCFValue(')  where CEILING_EXPRESSION_EL is not null and CEILING_EXPRESSION_EL not like '%mv:%';
+            update CAT_COUNTER_TEMPLATE set CEILING_EXPRESSION_EL=replace(CEILING_EXPRESSION_EL,'].cfValue',')')  where CEILING_EXPRESSION_EL is not null and CEILING_EXPRESSION_EL not like '%mv:%';
+            update CAT_DISCOUNT_PLAN_ITEM set EXPRESSION_EL=replace(EXPRESSION_EL,'.customFields[','.getCFValue(')  where EXPRESSION_EL is not null and EXPRESSION_EL not like '%mv:%';
+            update CAT_DISCOUNT_PLAN_ITEM set EXPRESSION_EL=replace(EXPRESSION_EL,'].cfValue',')')  where EXPRESSION_EL is not null and EXPRESSION_EL not like '%mv:%';
+            update CAT_TRIGGERED_EDR set SUBSCRIPTION_EL=replace(SUBSCRIPTION_EL,'.customFields[','.getCFValue(')  where SUBSCRIPTION_EL is not null and SUBSCRIPTION_EL not like '%mv:%';
+            update CAT_TRIGGERED_EDR set SUBSCRIPTION_EL=replace(SUBSCRIPTION_EL,'].cfValue',')')  where SUBSCRIPTION_EL is not null and SUBSCRIPTION_EL not like '%mv:%';
+            update CAT_TRIGGERED_EDR set CONDITION_EL=replace(CONDITION_EL,'.customFields[','.getCFValue(')  where CONDITION_EL is not null and CONDITION_EL not like '%mv:%';
+            update CAT_TRIGGERED_EDR set CONDITION_EL=replace(CONDITION_EL,'].cfValue',')')  where CONDITION_EL is not null and CONDITION_EL not like '%mv:%';
+            update CAT_TRIGGERED_EDR set QUANTITY_EL=replace(QUANTITY_EL,'.customFields[','.getCFValue(')  where QUANTITY_EL is not null and QUANTITY_EL not like '%mv:%';
+            update CAT_TRIGGERED_EDR set QUANTITY_EL=replace(QUANTITY_EL,'].cfValue',')')  where QUANTITY_EL is not null and QUANTITY_EL not like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_1_EL=replace(PARAM_1_EL,'.customFields[','.getCFValue(')  where PARAM_1_EL is not null and PARAM_1_EL not like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_1_EL=replace(PARAM_1_EL,'].cfValue',')')  where PARAM_1_EL is not null and PARAM_1_EL not like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_2_EL=replace(PARAM_2_EL,'.customFields[','.getCFValue(')  where PARAM_2_EL is not null and PARAM_2_EL not like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_2_EL=replace(PARAM_2_EL,'].cfValue',')')  where PARAM_2_EL is not null and PARAM_2_EL not like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_3_EL=replace(PARAM_3_EL,'.customFields[','.getCFValue(')  where PARAM_3_EL is not null and PARAM_3_EL not like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_3_EL=replace(PARAM_3_EL,'].cfValue',')')  where PARAM_3_EL is not null and PARAM_3_EL not like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_4_EL=replace(PARAM_4_EL,'.customFields[','.getCFValue(')  where PARAM_4_EL is not null and PARAM_4_EL not like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_4_EL=replace(PARAM_4_EL,'].cfValue',')')  where PARAM_4_EL is not null and PARAM_4_EL not like '%mv:%';
+            update MEVEO_NATIVE_FILTER_CONDITION set EL=replace(EL,'.customFields[','.getCFValue(')  where EL is not null and EL not like '%mv:%';
+            update MEVEO_NATIVE_FILTER_CONDITION set EL=replace(EL,'].cfValue',')')  where EL is not null and EL not like '%mv:%';
+            update ADM_NOTIF_EMAIL set EMAIL_TO_EL=replace(EMAIL_TO_EL,'.customFields[','.getCFValue(')  where EMAIL_TO_EL is not null and EMAIL_TO_EL not like '%mv:%';
+            update ADM_NOTIF_EMAIL set EMAIL_TO_EL=replace(EMAIL_TO_EL,'].cfValue',')')  where EMAIL_TO_EL is not null and EMAIL_TO_EL not like '%mv:%';
+            update ADM_NOTIF_WEBHOOKS set BODY_EL=replace(BODY_EL,'.customFields[','.getCFValue(')  where BODY_EL is not null and BODY_EL not like '%mv:%';
+            update ADM_NOTIF_WEBHOOKS set BODY_EL=replace(BODY_EL,'].cfValue',')')  where BODY_EL is not null and BODY_EL not like '%mv:%';
+            update ADM_NOTIF_IM set ID_EXPRESSION=replace(ID_EXPRESSION,'.customFields[','.getCFValue(')  where ID_EXPRESSION is not null and ID_EXPRESSION not like '%mv:%';
+            update ADM_NOTIF_IM set ID_EXPRESSION=replace(ID_EXPRESSION,'].cfValue',')')  where ID_EXPRESSION is not null and ID_EXPRESSION not like '%mv:%';
+            update ADM_NOTIFICATION set EVENT_EXPRESSION_FILTER=replace(EVENT_EXPRESSION_FILTER,'.customFields[','.getCFValue(')  where EVENT_EXPRESSION_FILTER is not null and EVENT_EXPRESSION_FILTER not like '%mv:%';
+            update ADM_NOTIFICATION set EVENT_EXPRESSION_FILTER=replace(EVENT_EXPRESSION_FILTER,'].cfValue',')')  where EVENT_EXPRESSION_FILTER is not null and EVENT_EXPRESSION_FILTER not like '%mv:%';
+            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.customFields[','.getCFValue(')  where CONDITION_EL is not null and CONDITION_EL not like '%mv:%';
+            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'].cfValue',')')  where CONDITION_EL is not null and CONDITION_EL not like '%mv:%';
+            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.customFields[','.getCFValue(')  where CONDITION_EL is not null and CONDITION_EL not like '%mv:%';
+            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'].cfValue',')')  where CONDITION_EL is not null and CONDITION_EL not like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL=replace(CRITERIA_EL,'.customFields[','.getCFValue(')  where CRITERIA_EL is not null and CRITERIA_EL not like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL=replace(CRITERIA_EL,'].cfValue',')')  where CRITERIA_EL is not null and CRITERIA_EL not like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL=replace(AMOUNT_WITHOUT_TAX_EL,'.customFields[','.getCFValue(')  where AMOUNT_WITHOUT_TAX_EL is not null and AMOUNT_WITHOUT_TAX_EL not like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL=replace(AMOUNT_WITHOUT_TAX_EL,'].cfValue',')')  where AMOUNT_WITHOUT_TAX_EL is not null and AMOUNT_WITHOUT_TAX_EL not like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL=replace(AMOUNT_WITH_TAX_EL,'.customFields[','.getCFValue(')  where AMOUNT_WITH_TAX_EL is not null and AMOUNT_WITH_TAX_EL not like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL=replace(AMOUNT_WITH_TAX_EL,'].cfValue',')')  where AMOUNT_WITH_TAX_EL is not null and AMOUNT_WITH_TAX_EL not like '%mv:%';
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL=replace(FILTER_EL,'.customFields[','.getCFValue(')  where FILTER_EL is not null and FILTER_EL not like '%mv:%';
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL=replace(FILTER_EL,'].cfValue',')')  where FILTER_EL is not null and FILTER_EL not like '%mv:%';
+
+        
             update CAT_COUNTER_TEMPLATE set CEILING_EXPRESSION_EL= regexp_replace(CEILING_EXPRESSION_EL, E'([a-z|A-Z|\.]*)\.getCFValue\\(', E'mv:getCFValue\(\\1,','g')  where CEILING_EXPRESSION_EL is not null and CEILING_EXPRESSION_EL not like '%mv:%';
             update CAT_DISCOUNT_PLAN_ITEM set EXPRESSION_EL= regexp_replace(EXPRESSION_EL, E'([a-z|A-Z|\.]*)\.getCFValue\\(', E'mv:getCFValue\(\\1,','g')  where EXPRESSION_EL is not null and EXPRESSION_EL not like '%mv:%';
             update CAT_TRIGGERED_EDR set SUBSCRIPTION_EL= regexp_replace(SUBSCRIPTION_EL, E'([a-z|A-Z|\.]*)\.getCFValue\\(', E'mv:getCFValue\(\\1,','g')  where SUBSCRIPTION_EL is not null and SUBSCRIPTION_EL not like '%mv:%';
