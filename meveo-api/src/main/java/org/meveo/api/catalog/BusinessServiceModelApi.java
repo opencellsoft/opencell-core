@@ -38,6 +38,9 @@ public class BusinessServiceModelApi extends BaseApi {
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
 		}
+		if (StringUtils.isBlank(postData.getServiceTemplateCode())) {
+			missingParameters.add("serviceTemplateCode");
+		}
 
 		handleMissingParameters();
 
@@ -45,9 +48,12 @@ public class BusinessServiceModelApi extends BaseApi {
 			throw new EntityAlreadyExistsException(BusinessServiceModel.class, postData.getCode());
 		}
 
-		ServiceModelScript serviceModelScript = serviceModelScriptService.findByCode(postData.getScriptCode(), currentUser.getProvider());
-		if (serviceModelScript == null) {
-			throw new EntityDoesNotExistsException(ServiceModelScript.class, postData.getScriptCode());
+		ServiceModelScript serviceModelScript = null;
+		if (!StringUtils.isBlank(postData.getScriptCode())) {
+			serviceModelScript = serviceModelScriptService.findByCode(postData.getScriptCode(), currentUser.getProvider());
+			if (serviceModelScript == null) {
+				throw new EntityDoesNotExistsException(ServiceModelScript.class, postData.getScriptCode());
+			}
 		}
 
 		ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(postData.getServiceTemplateCode(), currentUser.getProvider());
@@ -67,6 +73,9 @@ public class BusinessServiceModelApi extends BaseApi {
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
 		}
+		if (StringUtils.isBlank(postData.getServiceTemplateCode())) {
+			missingParameters.add("serviceTemplateCode");
+		}
 
 		handleMissingParameters();
 
@@ -75,9 +84,12 @@ public class BusinessServiceModelApi extends BaseApi {
 			throw new EntityDoesNotExistsException(BusinessServiceModel.class, postData.getCode());
 		}
 
-		ServiceModelScript serviceModelScript = serviceModelScriptService.findByCode(postData.getScriptCode(), currentUser.getProvider());
-		if (serviceModelScript == null) {
-			throw new EntityDoesNotExistsException(ServiceModelScript.class, postData.getScriptCode());
+		ServiceModelScript serviceModelScript = null;
+		if (!StringUtils.isBlank(postData.getScriptCode())) {
+			serviceModelScript = serviceModelScriptService.findByCode(postData.getScriptCode(), currentUser.getProvider());
+			if (serviceModelScript == null) {
+				throw new EntityDoesNotExistsException(ServiceModelScript.class, postData.getScriptCode());
+			}
 		}
 
 		ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(postData.getServiceTemplateCode(), currentUser.getProvider());

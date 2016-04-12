@@ -24,6 +24,7 @@ public class BomOfferDto extends BaseDto {
 	private String bomCode;
 
 	private CustomFieldsDto offerCustomFields;
+	private CustomFieldsDto serviceCustomFields;
 
 	private String prefix;
 
@@ -57,7 +58,8 @@ public class BomOfferDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "BomOfferDto [bomCode=" + bomCode + ", offerCustomFields=" + offerCustomFields + ", prefix=" + prefix + ", serviceCodes=" + serviceCodes + "]";
+		return "BomOfferDto [bomCode=" + bomCode + ", offerCustomFields=" + offerCustomFields + ", serviceCustomFields=" + serviceCustomFields + ", prefix=" + prefix
+				+ ", serviceCodes=" + serviceCodes + "]";
 	}
 
 	public List<String> getServiceCodes() {
@@ -66,6 +68,14 @@ public class BomOfferDto extends BaseDto {
 
 	public void setServiceCodes(List<String> serviceCodes) {
 		this.serviceCodes = serviceCodes;
+	}
+
+	public CustomFieldsDto getServiceCustomFields() {
+		return serviceCustomFields;
+	}
+
+	public void setServiceCustomFields(CustomFieldsDto serviceCustomFields) {
+		this.serviceCustomFields = serviceCustomFields;
 	}
 
 	// private String bomVersion;
