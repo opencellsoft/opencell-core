@@ -1,66 +1,49 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:p="http://primefaces.org/ui"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-	<ui:define name="metadata">
-		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{customerSearchBean.preRenderView}" />
-		</f:metadata>
-	</ui:define>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{customerSearchBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-	<ui:define name="body">
+    <ui:define name="body">
 
-		<hftl:searchPanel label="#{messages['customerSearch.search']}"
-			backingBean="#{customerSearchBean}" renderNewButton="false"
-			columns="2">
-			<hftl:searchField label="#{messages['businessEntity.code']}"
-				field="code" />
-			<hftl:searchField label="#{messages['businessEntity.description']}"
-				field="description" />
-			<hftl:searchField label="#{messages['accountEntity.externalRef1']}"
-				field="externalRef1" />
-			<hftl:searchField label="#{messages['accountEntity.externalRef2']}"
-				field="externalRef2" />
+        <hftl:searchPanel label="#{messages['customerSearch.search']}" backingBean="#{customerSearchBean}" renderNewButton="false" columns="2">
+            <hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
+            <hftl:searchField label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:searchField label="#{messages['accountEntity.externalRef1']}" field="externalRef1" />
+            <hftl:searchField label="#{messages['accountEntity.externalRef2']}" field="externalRef2" />
 
-			<hftl:decorateFormField fieldId="accountType" label="#{messages['customerSearch.type']}">
+            <hftl:decorateFormField fieldId="accountType" label="#{messages['customerSearch.type']}">
                 <p:selectOneMenu id="accountType" value="#{customerSearchBean.filters['type_class']}">
                     <f:selectItem itemLabel="" />
-                    <f:selectItem itemLabel="#{messages['customer.type']}" itemValue="org.meveo.model.crm.Customer" />
-                    <f:selectItem itemLabel="#{messages['customerAccount.type']}" itemValue="org.meveo.model.payments.CustomerAccount" />
-                    <f:selectItem itemLabel="#{messages['billingAccount.type']}" itemValue="org.meveo.model.billing.BillingAccount" />
-                    <f:selectItem itemLabel="#{messages['userAccount.type']}" itemValue="org.meveo.model.billing.UserAccount" />
+                    <f:selectItem itemLabel="#{messages['accounType.ACCT_CUST']}" itemValue="org.meveo.model.crm.Customer" />
+                    <f:selectItem itemLabel="#{messages['accounType.ACCT_CA']}" itemValue="org.meveo.model.payments.CustomerAccount" />
+                    <f:selectItem itemLabel="#{messages['accounType.ACCT_BA']}" itemValue="org.meveo.model.billing.BillingAccount" />
+                    <f:selectItem itemLabel="#{messages['accounType.ACCT_UA']}" itemValue="org.meveo.model.billing.UserAccount" />
                 </p:selectOneMenu>
             </hftl:decorateFormField>
-		</hftl:searchPanel>
+        </hftl:searchPanel>
 
-		<hftl:dataList backingBean="#{customerSearchBean}"
-			label="#{messages['customerSearch.title']}" exportToXml="false">
-			<hftl:column label="#{messages['businessEntity.code']}" field="code"
-				editView="#{customerSearchBean.getView(entity['accountType'])}" propagateConversation="false"
-				objectIdParamName="#{customerSearchBean.getIdParameterName(entity['accountType'])}"/>
-			<hftl:column label="#{messages['businessEntity.description']}"
-				field="description" />
-			<hftl:column label="#{messages['accountEntity.externalRef1']}"
-				field="externalRef1" />
-			<hftl:column label="#{messages['accountEntity.externalRef2']}"
-				field="externalRef2" />
-			<hftl:column label="#{messages['customerSearch.type']}"
-				field="accountType"/>
+        <hftl:dataList backingBean="#{customerSearchBean}" label="#{messages['customerSearch.title']}" exportToXml="false">
+            <hftl:column label="#{messages['businessEntity.code']}" field="code" editView="#{customerSearchBean.getView(entity['accountType'])}" propagateConversation="false"
+                objectIdParamName="#{customerSearchBean.getIdParameterName(entity['accountType'])}" />
+            <hftl:column label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:column label="#{messages['accountEntity.externalRef1']}" field="externalRef1" />
+            <hftl:column label="#{messages['accountEntity.externalRef2']}" field="externalRef2" />
+            <hftl:column label="#{messages['customerSearch.type']}" field="accountType" messagePrefix="accounType" isMessage="true"/>
 
-<!-- 			<hftl:actionsColumn renderDeleteLink="false" -->
-<!-- 				objectIdParamName="#{customerSearchBean.getIdParameterName(entity['accountType'])}" -->
-<!-- 				editView="#{customerSearchBean.getView(entity['accountType'])}" -->
-<!-- 				permission="#{identity.hasPermission('account','accountManagement')}" /> -->
-		</hftl:dataList>
+            <!-- 			<hftl:actionsColumn renderDeleteLink="false" -->
+            <!-- 				objectIdParamName="#{customerSearchBean.getIdParameterName(entity['accountType'])}" -->
+            <!-- 				editView="#{customerSearchBean.getView(entity['accountType'])}" -->
+            <!-- 				permission="#{identity.hasPermission('account','accountManagement')}" /> -->
+        </hftl:dataList>
 
-	</ui:define>
+    </ui:define>
 
 </ui:composition>

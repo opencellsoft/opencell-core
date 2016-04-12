@@ -112,7 +112,7 @@
 
 		<p:dialog id="serviceTerminationPopup"
 			header="#{messages['serviceTerminationPopup.title']}"
-			widgetVar="dlg_serviceTerminationPopup"  modal="true" appendTo="@(body)" closeOnEscape="true" width="400" >
+			widgetVar="dlg_serviceTerminationPopup"  modal="true" appendTo="@(body)" closeOnEscape="true" width="700" >
 			<p:outputPanel id="terminationPanel">
                 <p:messages id="terminationMessages"/>
 				<hftl:formPanel edit="true"
@@ -123,10 +123,10 @@
 					showFormButtons="false" useCustomIdParam="true">
 
 						<hftl:formField label="#{messages['serviceInstance.code']}"
-							field="code" size="50" edit="false" />
+							field="code" size="50" edit="false" componentWidth="25"/>
 						<hftl:formField
 							label="#{messages['serviceInstance.terminationDate']}"
-							field="terminationDate" required="true" edit="true" />
+							field="terminationDate" required="true" edit="true" componentWidth="25"/>
 						<hftl:formField label="Motifs "
 							field="subscriptionTerminationReason" valueLabelField="descriptionOrCode"
 							required="true"  edit="true"
@@ -294,13 +294,13 @@
 					</p:tab>
 					<p:tab title="#{messages['subscription.tab.subscription']}">
 						<hftl:formPanel showDeleteButton="false" formId="subscriptionFormId"
-							label="#{messages['subscription.panel']}" ajaxSubmit="true"
+							 ajaxSubmit="true"
 							submitPartialProcess=":subscriptionTab:subscriptionFormId:informationTab"
 							backingBean="#{subscriptionBean}" useCustomIdParam="true">
 
 								<p:tabView id="informationTab" styleClass="tab-child"
 									activeIndex="#{subscriptionBean.activeTab}">
-									<p:tab title="#{messages['billingAccount.tab.information']}">
+									<p:tab title="#{messages['subscription.panel']}">
 
 										<!--Creation window fields-->
 										<hftl:formField id="userSelectId"

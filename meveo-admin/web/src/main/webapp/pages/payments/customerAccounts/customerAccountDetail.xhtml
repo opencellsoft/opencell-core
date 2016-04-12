@@ -81,8 +81,7 @@
 						<p:tab id="compte"
 							title="#{messages['customerAccount.tab.account']}">
 							<hftl:formPanel 
-								formId="formCustomerAccount"
-								label="#{messages['customerAccount.form']}"
+								formId="formCustomerAccount"								
 								backingBean="#{customerAccountBean}" showFormButtons="false"
 								useCustomIdParam="true" >
 									<p:tabView id="childTab" activeIndex="#{customerAccountBean.activeTab}">
@@ -92,7 +91,7 @@
                                              <hftl:formField id="customerSelectId"
 													label="#{messages['customerAccount.customer']}"
 													field="customer" valueLabelField="code" required="true"
-													popup="true" popupId="searchCustomerPopup" allowEdit="false" />
+													popup="true" popupId="searchCustomerPopup" allowEdit="false" displayOneLine="true" componentWidth="100"/>
                                               
                                               <p:fieldset legend="#{messages['customerAccount.form']}" styleClass="clearLeft" >
                                                     
@@ -115,12 +114,12 @@
 												<hftl:formField id="currencySelectId"
 													label="#{messages['currency.codeCurrency']}"
 													required="true" field="tradingCurrency"
-													valueLabelField="currencyCode" listBean="#{tradingCurrencyBean}"/> 
+													valueLabelField="currencyCode" listBean="#{tradingCurrencyBean}" componentWidth="10"/> 
 <!--                                                     popup="true" popupId="customerAccCurrencyPopup" /> -->
                                                <hftl:formField id="trLanguageSelectId"
 														label="#{messages['tradingLanguage.tradingLanguage']}"
 														field="tradingLanguage" valueLabelField="languageCode"
-														required="true" listBean="#{tradingLanguageBean}"/> 
+														required="true" listBean="#{tradingLanguageBean}" componentWidth="10"/> 
 <!--                                                         popup="true" popupId="tradingLanguagePopup" />	                                                -->
 
 
@@ -378,12 +377,12 @@
 								</ui:define> 
 							</hftl:dataList>
 
-							<h:form>
-								<hf:formButtons columns="3" backingBean="#{customerAccountBean}"
-									edit="#{customerAccountBean.edit}" ajaxSubmit="false"
-									useCustomIdParam="true">
-								</hf:formButtons>
-							</h:form>
+<!-- 							<h:form> -->
+<!-- 								<hf:formButtons columns="3" backingBean="#{customerAccountBean}" -->
+<!-- 									edit="#{customerAccountBean.edit}" ajaxSubmit="false" -->
+<!-- 									useCustomIdParam="true"> -->
+<!-- 								</hf:formButtons> -->
+<!-- 							</h:form> -->
 						</p:tab>
 					</p:tabView>
 

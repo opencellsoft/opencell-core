@@ -16,6 +16,7 @@
         edit - edit or view mode
         formId - form id value. Defaults to "formId"
         showFormButtons - should default form buttons be displayed
+        showMessages - should messages be displayed
         Attributes related to a default form buttons:
             ajaxSubmit - should create/update form submit be done in ajax way
             submitPartialProcess - items to process during ajax submit
@@ -73,6 +74,9 @@
     </c:if>
     <c:if test="${empty(enctype)}">
         <c:set var="enctype" value="application/x-www-form-urlencoded" />
+    </c:if>    
+    <c:if test="${empty showMessages}">
+        <c:set var="showMessages" value="true" />
     </c:if>
 
     <h:form id="#{formId}" enctype="#{enctype}">
@@ -83,7 +87,9 @@
                 </f:facet>
             </c:if>
             <h:panelGroup layout="block" styleClass="form-panel">
-                <p:messages id="messages" />
+                <c:if test="#{showMessages}">
+                    <p:messages id="messages" />
+                </c:if>
                 <p:outputPanel styleClass="form-panel-fields #{edit ? '' : ' form-panel-fields-view'}">
                     <c:set var="id" value="${null}" />
                     <c:set var="edit" value="${null}" />
@@ -96,7 +102,8 @@
                         submitPartialSubmitFilter="#{submitPartialSubmitFilter}" submitUpdate="#{submitUpdate}" killConversationOnSave="#{killConversationOnSave}"
                         killConversationOnBack="#{killConversationOnBack}" useCustomIdParam="#{useCustomIdParam}" objectIdParamName="#{objectIdParamName}"
                         showBackButton="#{showBackButton}" showEditButton="#{showEditButton}" showEnableDisableButton="#{showEnableDisableButton}"
-                        showDeleteButton="#{showDeleteButton}" updateConfirmationMessage="#{updateConfirmationMessage}" formId="#{formId}" submitActionListener="#{submitActionListener}"/>
+                        showDeleteButton="#{showDeleteButton}" updateConfirmationMessage="#{updateConfirmationMessage}" formId="#{formId}"
+                        submitActionListener="#{submitActionListener}" />
                 </c:if>
                 <c:if test="#{buttons}">
                     <h:panelGroup layout="block" styleClass="form-panel-actions">

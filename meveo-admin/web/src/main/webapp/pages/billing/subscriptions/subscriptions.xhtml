@@ -18,10 +18,10 @@
 		<hftl:searchPanel columns="3" label="#{messages['subscription.search']}"
 			backingBean="#{subscriptionListBean}">
 			<hftl:searchField label="#{messages['subscription.code']}" field="code" />
-			<hftl:searchField label="#{messages['subscription.status']}"
-				field="status" />
 			<hftl:searchField label="#{messages['subscription.description']}"
 				field="description" />
+            <hftl:searchField label="#{messages['subscription.status']}"
+                field="status" />
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['subscription.title']}" sortBy="code"
@@ -29,8 +29,6 @@
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true"/>
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
-			<hftl:column label="#{messages['subscription.status']}"
-				field="status.label" isMessage="true" />
 			<hftl:column label="#{messages['subscription.userAccount']}"
 				field="userAccount.code" valueIdField="userAccount.id" objectIdParamName="userAccountId"
 				entityView="userAccountDetail" propagateConversation="false"/>
@@ -38,6 +36,8 @@
 				field="serviceInstances" isList="true" valueLabelField="descriptionAndStatus"
 				valueIdField="id" objectIdParamName="serviceInstanceId" useCustomIdParam="false"
 				entityView="serviceInstanceDetail" backView="subscriptions"	/>
+            <hftl:column label="#{messages['subscription.status']}"
+                field="status.label" isMessage="true" />
 <!-- 			<hftl:actionsColumn useCustomIdParam="true" renderDeleteLink="false" -->
 <!-- 				permission="#{identity.hasPermission('billing','billingManagement')}" /> -->
 		</hftl:dataList>

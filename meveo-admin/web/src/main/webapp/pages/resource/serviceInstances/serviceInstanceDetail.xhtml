@@ -65,13 +65,13 @@
         </hftl:formPanel>
 
         <h:form id="operationsForm" rendered="#{not empty serviceInstanceBean.entity.id}">
-            <p:commandButton action="#{serviceInstanceBean.activateService}" value="#{messages['button.activateButton']}" ajax="false"
+            <p:commandButton action="#{serviceInstanceBean.activateService}" value="#{messages['serviceInstance.activateButton']}" ajax="false"
                 onclick="if(confirm('#{messages['confirmationMessage.confirmActivation']}')){return true;}else{return false;}"
                 disabled="#{serviceInstanceBean.entity.status.toString() == 'ACTIVE' or serviceInstanceBean.entity.status.toString() == 'TERMINATED'}" />
-            <p:commandButton action="#{serviceInstanceBean.cancelService}" value="#{messages['button.cancelButton']}" ajax="false"
+            <p:commandButton action="#{serviceInstanceBean.cancelService}" value="#{messages['serviceInstance.cancelButton']}" ajax="false"
                 onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}"
                 disabled="#{serviceInstanceBean.entity.status.toString() != 'ACTIVE'}" />
-            <p:commandButton action="#{serviceInstanceBean.suspendService}" value="#{messages['button.suspendButton']}" ajax="false"
+            <p:commandButton action="#{serviceInstanceBean.suspendService}" value="#{messages['serviceInstance.suspendButton']}" ajax="false"
                 onclick="if(confirm('#{messages['confirmationMessage.confirmSuspension']}')){return true;}else{return false;}"
                 disabled="#{serviceInstanceBean.entity.status.toString() != 'ACTIVE'}" />
         </h:form>

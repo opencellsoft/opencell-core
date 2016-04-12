@@ -14,19 +14,19 @@
         <hftl:searchPanel label="#{messages['userAccount.search']}" backingBean="#{userAccountListBean}">
             <hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
             <hftl:searchField label="#{messages['userAccount.name']}" field="name.lastName" />
-            <hftl:searchField label="#{messages['billingAccount.status']}" field="status" />
             <hftl:searchField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
             <hftl:searchField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
+            <hftl:searchField label="#{messages['billingAccount.status']}" field="status" />
         </hftl:searchPanel>
 
         <hftl:dataList label="#{messages['userAccount.title']}" backingBean="#{userAccountListBean}" sortBy="code">
             <hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true" />
             <hftl:column label="#{messages['businessEntity.description']}" field="description" />
             <hftl:column label="#{messages['userAccount.name']}" field="name" />
-            <hftl:column label="#{messages['billingAccount.status']}" field="status.label" isMessage="true" />
+            <hftl:column label="#{messages['address.address1']}" field="address.address1" />
             <hftl:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" isDate="true" />
             <hftl:column label="#{messages['billingAccount.terminationDate']}" field="terminationDate" isDate="true" />
-            <hftl:column label="#{messages['address.address1']}" field="address.address1" />
+            <hftl:column label="#{messages['billingAccount.status']}" field="status.label" isMessage="true" />
 
             <hftl:actionsColumn useCustomIdParam="true" permission="#{identity.hasPermission('billing','billingManagement')}" />
         </hftl:dataList>
