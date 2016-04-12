@@ -47,6 +47,12 @@
 <!-- 		<param-value>modena</param-value> -->
 <!-- 	</context-param> -->
 
+	<!-- Primefaces FontAwesome -->
+	<context-param>
+		<param-name>primefaces.FONT_AWESOME</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
 	<session-config>
 		<session-timeout>30</session-timeout>
 	</session-config>
