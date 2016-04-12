@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 @WebFilter(filterName = "pageAccessFilter", urlPatterns = { "/pages/*" }, initParams = {
 		@WebInitParam(name = "configFile", value = "/WEB-INF/page-access.xml"),
 		@WebInitParam(name = "pagesDirectory", value = "/pages"),
-		@WebInitParam(name = "errorPage", value = "/errors/403.xhtml") })
+		@WebInitParam(name = "errorPage", value = "/errors/403.jsf") })
 public class PageAccessFilter implements Filter {
 
 	private static final String CONFIG_FILE = "configFile";
