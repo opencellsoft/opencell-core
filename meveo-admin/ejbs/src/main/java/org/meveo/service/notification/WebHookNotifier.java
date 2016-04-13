@@ -21,7 +21,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IEntity;
-import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
@@ -69,7 +68,7 @@ public class WebHookNotifier {
     }
 
     @Asynchronous
-    public NotificationHistory sendRequest(WebHook webHook, IEntity e, Map<String, Object> context) {
+    public void sendRequest(WebHook webHook, IEntity entity, Map<String, Object> context) {
         log.debug("webhook sendRequest");
         String result = "";
 
@@ -80,10 +79,10 @@ public class WebHookNotifier {
             }
 
             if (!StringUtils.isBlank(webHook.getPage())) {
-                String page = evaluate(webHook.getPage(), e, context);
+                String page = evaluate(webHook.getPage(), entity, context);
                 url += ((url.endsWith("/") || page.startsWith("/")) ? "" : "/") + page;
             }
-            Map<String, String> params = evaluateMap(webHook.getWebhookParams(), e, context);
+            Map<String, String> params = evaluateMap(webHook.getWebhookParams(), entity, context);
 
             String paramQuery = "";
             String sep = "";
@@ -96,7 +95,7 @@ public class WebHookNotifier {
             if (WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()) {
                 url += "?" + paramQuery;
             } else if (WebHookMethodEnum.HTTP_POST == webHook.getHttpMethod()) {
-                bodyEL_evaluated = evaluate(webHook.getBodyEL(), e, context);
+                bodyEL_evaluated = evaluate(webHook.getBodyEL(), entity, context);
                 log.debug("Evaluated BodyEL={}", bodyEL_evaluated);
                 if (StringUtils.isBlank(bodyEL_evaluated)) {
                     paramQuery += "&" + bodyEL_evaluated;
@@ -107,7 +106,7 @@ public class WebHookNotifier {
 
             HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
 
-            Map<String, String> headers = evaluateMap(webHook.getHeaders(), e, context);
+            Map<String, String> headers = evaluateMap(webHook.getHeaders(), entity, context);
             if (!StringUtils.isBlank(webHook.getUsername()) && !headers.containsKey("Authorization")) {
                 byte[] bytes = Base64.encodeBase64((webHook.getUsername() + ":" + webHook.getPassword()).getBytes());
                 headers.put("Authorization", "Basic " + new String(bytes));
@@ -150,14 +149,14 @@ public class WebHookNotifier {
             if (responseCode != 200) {
                 try {
                     log.debug("webhook httpStatus error : " + responseCode + " response=" + result);
-                    return notificationHistoryService.create(webHook, e, "http error status=" + responseCode + " response=" + result, NotificationHistoryStatusEnum.FAILED);
+                    notificationHistoryService.create(webHook, entity, "http error status=" + responseCode + " response=" + result, NotificationHistoryStatusEnum.FAILED);
                 } catch (BusinessException e2) {
-                    log.error("Failed to create webhook ", e);
+                    log.error("Failed to create webhook ", entity);
                 }
             } else {
                 if (webHook.getScriptInstance() != null) {
                     HashMap<Object, Object> userMap = new HashMap<Object, Object>();
-                    userMap.put("event", e);
+                    userMap.put("event", entity);
                     userMap.put("response", result);
 
                     try {
@@ -175,27 +174,19 @@ public class WebHookNotifier {
                     }
                 }
                 log.debug("webhook answer : " + result);
-                return notificationHistoryService.create(webHook, e, result, NotificationHistoryStatusEnum.SENT);
+                notificationHistoryService.create(webHook, entity, result, NotificationHistoryStatusEnum.SENT);
 
             }
-        } catch (BusinessException e1) {
+        } catch (Exception e) {
             try {
-                log.debug("webhook business error : ", e1);
-                return notificationHistoryService.create(webHook, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
+                log.debug("webhook business error : ", e);
+                notificationHistoryService.create(webHook, entity, e.getMessage(), e instanceof IOException ? NotificationHistoryStatusEnum.TO_RETRY
+                        : NotificationHistoryStatusEnum.FAILED);
             } catch (BusinessException e2) {
-                log.error("Failed to create webhook business ", e2);
+                log.error("Failed to create notification history", e2);
 
-            }
-        } catch (IOException e1) {
-            try {
-                log.debug("webhook io error : ", e1);
-                return notificationHistoryService.create(webHook, e, e1.getMessage(), NotificationHistoryStatusEnum.TO_RETRY);
-            } catch (BusinessException e2) {
-                log.error("Failed to create webhook io ", e2);
             }
         }
-
-        return null;
     }
 
     public static void main(String[] args) {

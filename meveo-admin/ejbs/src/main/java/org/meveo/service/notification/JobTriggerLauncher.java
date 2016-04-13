@@ -2,13 +2,13 @@ package org.meveo.service.notification;
 
 import java.util.HashMap;
 
+import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.IEntity;
 import org.meveo.model.notification.JobTrigger;
-import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.service.job.JobInstanceService;
 import org.slf4j.Logger;
@@ -32,30 +32,24 @@ public class JobTriggerLauncher {
     @Inject
     private Logger log;
 
-    public NotificationHistory launch(JobTrigger jobTrigger, IEntity e) {
+    @Asynchronous
+    public void launch(JobTrigger jobTrigger, IEntity entity) {
         try {
             log.debug("launch jobTrigger:{}", jobTrigger);
             HashMap<Object, Object> userMap = new HashMap<Object, Object>();
-            userMap.put("event", e);
+            userMap.put("event", entity);
             jobInstanceService.triggerExecution(jobTrigger.getJobInstance().getCode(), jobTrigger.getJobParams(), jobTrigger.getAuditable().getCreator());
             log.debug("launch jobTrigger:{} launched", jobTrigger);
 
-            return notificationHistoryService.create(jobTrigger, e, "", NotificationHistoryStatusEnum.SENT);
+            notificationHistoryService.create(jobTrigger, entity, "", NotificationHistoryStatusEnum.SENT);
+            
 
-        } catch (BusinessException e1) {
+        } catch (Exception e) {
             try {
-                return notificationHistoryService.create(jobTrigger, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
+                notificationHistoryService.create(jobTrigger, entity, e.getMessage(), NotificationHistoryStatusEnum.FAILED);
             } catch (BusinessException e2) {
-                log.error("Failed to create notification history business", e);
-            }
-
-        } catch (Exception e1) {
-            try {
-                return notificationHistoryService.create(jobTrigger, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
-            } catch (BusinessException e2) {
-                log.error("Failed to create notification history address", e);
+                log.error("Failed to create notification history", entity);
             }
         }
-        return null;
     }
 }

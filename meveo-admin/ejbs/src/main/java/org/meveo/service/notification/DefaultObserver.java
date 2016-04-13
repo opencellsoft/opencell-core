@@ -141,6 +141,10 @@ public class DefaultObserver {
     }
 
     private void fireNotification(Notification notif, IEntity e) {
+        if (notif == null) {
+            return;
+        }
+
         log.debug("Fire Notification for notif with {} and entity with id={}", notif, e.getId());
         try {
             if (!matchExpression(notif.getElFilter(), e)) {
@@ -149,8 +153,7 @@ public class DefaultObserver {
             }
 
             boolean sendNotify = true;
-            // Check if the counter associated to notification was not exhausted
-            // yet
+            // Check if the counter associated to notification was not exhausted yet
             if (notif.getCounterInstance() != null) {
                 try {
                     counterInstanceService.deduceCounterValue(notif.getCounterInstance(), new Date(), notif.getAuditable().getCreated(), new BigDecimal(1), notif.getAuditable()
@@ -163,8 +166,9 @@ public class DefaultObserver {
             if (!sendNotify) {
                 return;
             }
+
             Map<String, Object> context = new HashMap<String, Object>();
-            // re think notif and script - maybe create pre and post script
+            // Rethink notif and script - maybe create pre and post script
             if (!(notif instanceof WebHook)) {
                 if (notif.getScriptInstance() != null) {
                     ScriptInstance script = (ScriptInstance) scriptInstanceService.attach(notif.getScriptInstance());
@@ -172,44 +176,39 @@ public class DefaultObserver {
                 }
             }
 
-            NotificationHistory histo = null;
-
-            // then the notification itself
+            // Execute notification
+            
+            // ONLY ScriptNotifications will produce notification history in synchronous mode. Other type notifications will produce notification history in asynchronous mode and thus
+            // will not be related to inbound request.
             if (notif instanceof ScriptNotification) {
-                histo = notificationHistoryService.create(notif, e, "", NotificationHistoryStatusEnum.SENT);
+                NotificationHistory histo = notificationHistoryService.create(notif, e, "", NotificationHistoryStatusEnum.SENT);
+
+                if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ && histo != null) {
+                    ((InboundRequest) e).add(histo);
+                }
 
             } else if (notif instanceof EmailNotification) {
-                histo = emailNotifier.sendEmail((EmailNotification) notif, e, context);
+                emailNotifier.sendEmail((EmailNotification) notif, e, context);
 
             } else if (notif instanceof WebHook) {
-                histo = webHookNotifier.sendRequest((WebHook) notif, e, context);
+                webHookNotifier.sendRequest((WebHook) notif, e, context);
 
             } else if (notif instanceof InstantMessagingNotification) {
-                histo = imNotifier.sendInstantMessage((InstantMessagingNotification) notif, e);
-
-            } else if (notif.getEventTypeFilter() == NotificationEventTypeEnum.FILE_UPLOAD || notif.getEventTypeFilter() == NotificationEventTypeEnum.FILE_DOWNLOAD
-                    || notif.getEventTypeFilter() == NotificationEventTypeEnum.FILE_DELETE || notif.getEventTypeFilter() == NotificationEventTypeEnum.FILE_RENAME) {
-                histo = notificationHistoryService.create(notif, e, "", NotificationHistoryStatusEnum.SENT);
+                imNotifier.sendInstantMessage((InstantMessagingNotification) notif, e);
 
             } else if (notif instanceof JobTrigger) {
-                histo = jobTriggerLauncher.launch((JobTrigger) notif, e);
-            }
-
-            if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ && histo != null) {
-                ((InboundRequest) e).add(histo);
+                jobTriggerLauncher.launch((JobTrigger) notif, e);
             }
 
         } catch (Exception e1) {
-            if (notif != null) {
-                log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1);
-                try {
-                    NotificationHistory notificationHistory = notificationHistoryService.create(notif, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
-                    if (e instanceof InboundRequest) {
-                        ((InboundRequest) e).add(notificationHistory);
-                    }
-                } catch (Exception e2) {
-                    log.error("Failed to firing notification", e);
+            log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1);
+            try {
+                NotificationHistory notificationHistory = notificationHistoryService.create(notif, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
+                if (e instanceof InboundRequest) {
+                    ((InboundRequest) e).add(notificationHistory);
                 }
+            } catch (Exception e2) {
+                log.error("Failed to create notification history", e);
             }
         }
     }
