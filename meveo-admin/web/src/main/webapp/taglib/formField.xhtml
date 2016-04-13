@@ -63,6 +63,7 @@
         isMessage and messagePrefix - display a translatable message prefixed with messagePrefix and a field value
         converter - converter (id) to apply 
         negativeValue - allow to enter negative values in a spinner
+        spinner - show spinner
         
      Additional attributes applicable to Boolean type fields        
         isMessage - display a translatable message commons.yes/no instead of a plain true/false value 
@@ -164,7 +165,7 @@
         value="${rendered and (((not doNotShowOnNew) or (doNotShowOnNew and entity.id!=null)) and ((not showOnlyOnNew) or (showOnlyOnNew and edit and entity.id==null)) and ((not showOnlyOnConsult) or (showOnlyOnConsult and edit== false)))}" />
 
     <c:if test="${empty(componentWidth)}">
-        <c:set var="componentWidth" value="${size>40 or textArea?50:25}" />
+        <c:set var="componentWidth" value="${size>45 or textArea?50:25}" />
     </c:if>
     <c:set var="fieldIdPrefix" value="${field.concat(childField!=null?'_'.concat(childField):'')}" />
     <c:set var="newEntity" value="${entity.id==null}" />
@@ -209,7 +210,7 @@
                 <c:set var="textArea" value="false" />
             </c:if>
             <c:if test="${empty(cols)}">
-                <c:set var="cols" value="80" />
+                <c:set var="cols" value="${componentWidth&lt;=50?80:componentWidth&lt;=75?140:200}" />
             </c:if>
             <c:if test="${empty(rows)}">
                 <c:set var="rows" value="5" />
@@ -271,6 +272,10 @@
             <c:if test="${empty(negativeValue)}">
                 <c:set var="negativeValue" value="false" />
             </c:if>
+            
+            <c:if test="${empty(spinner)}">
+                <c:set var="spinner" value="${fieldInfo.numberType!=FieldNumberTypeEnum.BigDecimal and fieldInfo.numberType!=FieldNumberTypeEnum.Double and fieldInfo.numberType!=FieldNumberTypeEnum.Float}" />
+            </c:if>
 
             <hftl:formNumberField id="${empty(id)?fieldIdPrefix.concat('_number'):id}" fieldItem="#{fieldItem}" fieldIdPrefix="${fieldIdPrefix}" label="${label}"
                 disabled="${disabled}" required="${required}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}"
@@ -278,7 +283,7 @@
                 labelWidth="${labelWidth}" inputWidth="${inputWidth}" size="${size}" maxlength="${maxlength}" listValues="${listValues}" minValue="${minValue}"
                 maxValue="${maxValue}" isMessage="${isMessage}" messagePrefix="${messagePrefix}" converter="${empty(converter)?fieldInfo.numberConverter:converter}"
                 negativeValue="${negativeValue}"
-                spinner="${fieldInfo.numberType!=FieldNumberTypeEnum.BigDecimal and fieldInfo.numberType!=FieldNumberTypeEnum.Double and fieldInfo.numberType!=FieldNumberTypeEnum.Float}"
+                spinner="${spinner}"
                 edit="#{edit}" />
 
         </c:if>
