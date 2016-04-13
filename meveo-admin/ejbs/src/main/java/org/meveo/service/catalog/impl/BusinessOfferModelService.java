@@ -95,6 +95,8 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 
 		newOfferTemplate.setBusinessOfferModel(businessOfferModel);
 
+		prefix = prefix + "_";
+
 		List<ServiceTemplate> newServiceTemplates = new ArrayList<>();
 		// 2 create services
 		if (bomOffer.getOfferServiceTemplates() != null) {
