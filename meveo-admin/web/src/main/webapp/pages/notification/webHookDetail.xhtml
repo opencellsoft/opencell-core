@@ -31,13 +31,13 @@
             <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" required="true" size="60" maxlength="255"
                 autocompleteBean="#{notificationBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
             <hftl:formField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" required="true" />
-            <hftl:formField label="#{messages['entity.notification.elFilter']}" field="elFilter" textArea="true" maxlength="2000" componentWidth="50" newLine="true" />
+            <hftl:formField label="#{messages['entity.notification.elFilter']}" field="elFilter" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />
 
             <hftl:formField id="counterTemplateSelectedId" label="#{messages['counterTemplate.title']}" field="counterTemplate" valueLabelField="code" popup="true"
                 popupId="searchCounterTemplatePopup" clearButton="true" required="false" />
 
             <hftl:formField label="#{messages['entity.webHook.host']}" field="host" required="true" size="100" maxlength="255" />
-            <hftl:formField label="#{messages['entity.webHook.port']}" field="port" maxValue="65535" />
+            <hftl:formField label="#{messages['entity.webHook.port']}" field="port" maxValue="65535" spinner="false"/>
             <hftl:formField label="#{messages['entity.webHook.page']}" field="page" size="100" maxlength="255" required="true" />
             <hftl:formField label="#{messages['entity.webHook.httpMethod']}" field="httpMethod" required="true" />
             <hftl:formField label="#{messages['entity.webHook.username']}" field="username" size="40" maxlength="255" newLine="true" />

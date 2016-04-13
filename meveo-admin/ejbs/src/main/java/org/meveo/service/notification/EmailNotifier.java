@@ -22,6 +22,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IEntity;
 import org.meveo.model.notification.EmailNotification;
+import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class EmailNotifier {
     private Logger log;
 
     @Asynchronous
-    public void sendEmail(EmailNotification notification, IEntity e, Map<String, Object> context) {
+    public NotificationHistory sendEmail(EmailNotification notification, IEntity e, Map<String, Object> context) {
         MimeMessage msg = new MimeMessage(mailSession);
         try {
             msg.setFrom(new InternetAddress(notification.getEmailFrom()));
@@ -73,27 +74,28 @@ public class EmailNotifier {
             msg.setReplyTo(replytoAddress);
 
             Transport.send(msg);
-            notificationHistoryService.create(notification, e, "", NotificationHistoryStatusEnum.SENT);
+            return notificationHistoryService.create(notification, e, "", NotificationHistoryStatusEnum.SENT);
 
         } catch (BusinessException e1) {
             try {
-                notificationHistoryService.create(notification, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
+                return notificationHistoryService.create(notification, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
             } catch (BusinessException e2) {
                 log.error("Failed to create notification history business", e);
             }
 
         } catch (AddressException e1) {
             try {
-                notificationHistoryService.create(notification, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
+                return notificationHistoryService.create(notification, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
             } catch (BusinessException e2) {
                 log.error("Failed to create notification history address", e);
             }
         } catch (MessagingException e1) {
             try {
-                notificationHistoryService.create(notification, e, e1.getMessage(), NotificationHistoryStatusEnum.TO_RETRY);
+                return notificationHistoryService.create(notification, e, e1.getMessage(), NotificationHistoryStatusEnum.TO_RETRY);
             } catch (BusinessException e2) {
                 log.error("Failed to create notification history messaging ", e);
             }
         }
+        return null;
     }
 }

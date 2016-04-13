@@ -1561,4 +1561,10 @@
         </addColumn>   
         <dropColumn columnName="EXONERATION_TAX_EL" tableName="CRM_PROVIDER" />
     </changeSet>      
+    <changeSet id="#1588_20160412" author="AndriusKarpavicius">
+        <dropNotNullConstraint tableName="adm_notif_webhooks" columnName="HTTP_PORT"/>  
+
+        <modifyDataType tableName="ADM_NOTIF_EMAIL" columnName="EMAIL_BODY" newDataType="TEXT"/>
+        <modifyDataType tableName="ADM_NOTIF_EMAIL" columnName="EMAIL_HTML_BODY" newDataType="TEXT"/>
+    </changeSet>    
 </databaseChangeLog>

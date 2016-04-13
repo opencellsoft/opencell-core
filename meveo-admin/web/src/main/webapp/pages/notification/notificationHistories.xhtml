@@ -26,21 +26,22 @@
         <!-- ===================================== SEARCH RESULTS ======================================= -->
 
         <hftl:dataList backingBean="#{notificationHistoryBean}" exportButton="false" fileName="NotificationHistories" exportToCsv="true">
-            <hftl:column label="#{messages['commons.date']}" field="auditable.updated" isDate="true" time="true" />
-            <p:column headerText="#{messages['entity.notification.notificationType']}" width="10%">
+            <hftl:column label="#{messages['commons.date']}" field="auditable.created" isDate="true" time="true" width="10%"/>
+            <p:column headerText="#{messages['entity.notification.notificationType']}" width="20%">
                 <h:link value="#{entity.inboundRequest.code}" outcome="inboundRequestDetail" rendered="#{entity.inboundRequest != null}">
                     <f:param name="objectId" value="#{entity.inboundRequest.id}" />
+                    <f:param name="backView" value="notificationHistories" />
                 </h:link>
-            	<h:outputText value="#{entity.entityClassName}" rendered="#{entity.inboundRequest == null}"></h:outputText>
+            	<h:outputText value="#{entity.entityClassName}" rendered="#{entity.inboundRequest == null}"/>
             </p:column>
-            <hftl:column label="#{messages['entity.notification']}" field="notification.code" />
-            <hftl:column label="#{messages['entity.notification.retryNr']}" field="nbRetry" />
-            <hftl:column label="#{messages['commons.status']}" field="status.label" isMessage="true" />
-            <p:column headerText="#{messages['entity.notification.result']}" width="20%">
-            	<h:outputText value="#{entity.result}"></h:outputText>
+            <hftl:column label="#{messages['entity.notification']}" field="notification.code" width="15%"/>
+            <hftl:column label="#{messages['entity.notification.retryNr']}" field="nbRetry" width="6%"/>
+            <hftl:column label="#{messages['commons.status']}" field="status.label" isMessage="true" width="8%"/>
+            <p:column headerText="#{messages['entity.notification.result']}">
+            	<h:outputText value="#{entity.result}"/>
             </p:column>
-           <hftl:column  label="#{messages['entity.notification.entityCode']}"  style="display:none" field="entityCode" />
-			<hftl:column  label="#{messages['entity.notification.serializedEntity']}"  style="display:none" field="serializedEntity" />
+<!--            <hftl:column  label="#{messages['entity.notification.entityCode']}"  style="display:none" field="entityCode" /> -->
+<!-- 			<hftl:column  label="#{messages['entity.notification.serializedEntity']}"  style="display:none" field="serializedEntity" /> -->
         </hftl:dataList>
     </ui:define>
 </ui:composition>

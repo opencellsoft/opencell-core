@@ -21,6 +21,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IEntity;
+import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
@@ -68,7 +69,7 @@ public class WebHookNotifier {
     }
 
     @Asynchronous
-    public void sendRequest(WebHook webHook, IEntity e, Map<String, Object> context) {
+    public NotificationHistory sendRequest(WebHook webHook, IEntity e, Map<String, Object> context) {
         log.debug("webhook sendRequest");
         String result = "";
 
@@ -79,7 +80,8 @@ public class WebHookNotifier {
             }
 
             if (!StringUtils.isBlank(webHook.getPage())) {
-                url += (url.endsWith("/") ? "" : "/") + evaluate(webHook.getPage(), e, context);
+                String page = evaluate(webHook.getPage(), e, context);
+                url += ((url.endsWith("/") || page.startsWith("/")) ? "" : "/") + page;
             }
             Map<String, String> params = evaluateMap(webHook.getWebhookParams(), e, context);
 
@@ -126,7 +128,7 @@ public class WebHookNotifier {
             }
             conn.setUseCaches(false);
 
-            if (WebHookMethodEnum.HTTP_GET != webHook.getHttpMethod()) {
+            if (WebHookMethodEnum.HTTP_GET != webHook.getHttpMethod() && WebHookMethodEnum.HTTP_DELETE != webHook.getHttpMethod()) {
                 conn.setDoOutput(true);
                 OutputStream os = conn.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
@@ -148,7 +150,7 @@ public class WebHookNotifier {
             if (responseCode != 200) {
                 try {
                     log.debug("webhook httpStatus error : " + responseCode + " response=" + result);
-                    notificationHistoryService.create(webHook, e, "http error status=" + responseCode + " response=" + result, NotificationHistoryStatusEnum.FAILED);
+                    return notificationHistoryService.create(webHook, e, "http error status=" + responseCode + " response=" + result, NotificationHistoryStatusEnum.FAILED);
                 } catch (BusinessException e2) {
                     log.error("Failed to create webhook ", e);
                 }
@@ -172,13 +174,14 @@ public class WebHookNotifier {
                         log.error("Failed to execute a script {}", webHook.getScriptInstance().getCode(), ee);
                     }
                 }
-                notificationHistoryService.create(webHook, e, result, NotificationHistoryStatusEnum.SENT);
                 log.debug("webhook answer : " + result);
+                return notificationHistoryService.create(webHook, e, result, NotificationHistoryStatusEnum.SENT);
+
             }
         } catch (BusinessException e1) {
             try {
                 log.debug("webhook business error : ", e1);
-                notificationHistoryService.create(webHook, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
+                return notificationHistoryService.create(webHook, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
             } catch (BusinessException e2) {
                 log.error("Failed to create webhook business ", e2);
 
@@ -186,11 +189,13 @@ public class WebHookNotifier {
         } catch (IOException e1) {
             try {
                 log.debug("webhook io error : ", e1);
-                notificationHistoryService.create(webHook, e, e1.getMessage(), NotificationHistoryStatusEnum.TO_RETRY);
+                return notificationHistoryService.create(webHook, e, e1.getMessage(), NotificationHistoryStatusEnum.TO_RETRY);
             } catch (BusinessException e2) {
                 log.error("Failed to create webhook io ", e2);
             }
         }
+
+        return null;
     }
 
     public static void main(String[] args) {

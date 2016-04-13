@@ -51,6 +51,7 @@ import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
+import org.meveo.model.notification.ScriptNotification;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -67,7 +68,7 @@ public class DefaultObserver {
 
     @Inject
     private Logger log;
-    
+
     @Inject
     private GenericNotificationService genericNotificationService;
 
@@ -79,7 +80,7 @@ public class DefaultObserver {
 
     @Inject
     private EmailNotifier emailNotifier;
-   
+
     @Inject
     private WebHookNotifier webHookNotifier;
 
@@ -91,16 +92,15 @@ public class DefaultObserver {
 
     @Inject
     private NotificationCacheContainerProvider notificationCacheContainerProvider;
-    
+
     @Inject
     private RemoteInstanceNotifier remoteInstanceNotifier;
-    
+
     @Inject
     private ScriptInstanceService scriptInstanceService;
-    
+
     @Inject
     private JobTriggerLauncher jobTriggerLauncher;
-    
 
     private boolean matchExpression(String expression, Object o) throws BusinessException {
         Boolean result = true;
@@ -119,34 +119,35 @@ public class DefaultObserver {
         return result;
     }
 
-    private void executeScript(ScriptInstance scriptInstance, Object o, Map<String, String> params,Map<String,Object> context) throws BusinessException {
+    private void executeScript(ScriptInstance scriptInstance, Object o, Map<String, String> params, Map<String, Object> context) throws BusinessException {
         log.debug("execute notification script: {}", scriptInstance.getCode());
 
-        try{
-        	ScriptInterface scriptInterface = scriptInstanceService.getScriptInstance(scriptInstance.getProvider(),scriptInstance.getCode());
-        	Map<Object, Object> userMap = new HashMap<Object, Object>();
+        try {
+            ScriptInterface scriptInterface = scriptInstanceService.getScriptInstance(scriptInstance.getProvider(), scriptInstance.getCode());
+            Map<Object, Object> userMap = new HashMap<Object, Object>();
             userMap.put("event", o);
             userMap.put("manager", manager);
-        	for (@SuppressWarnings("rawtypes") Map.Entry entry : params.entrySet()) {
-        	    context.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression( (String)entry.getValue(), userMap, Object.class));
-        	}        	
-        	scriptInterface.init(context, scriptInstance.getAuditable().getCreator());
-	    	scriptInterface.execute(context, scriptInstance.getAuditable().getCreator());
-	    	scriptInterface.finalize(context, scriptInstance.getAuditable().getCreator());
+            for (@SuppressWarnings("rawtypes")
+            Map.Entry entry : params.entrySet()) {
+                context.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), userMap, Object.class));
+            }
+            scriptInterface.init(context, scriptInstance.getAuditable().getCreator());
+            scriptInterface.execute(context, scriptInstance.getAuditable().getCreator());
+            scriptInterface.finalize(context, scriptInstance.getAuditable().getCreator());
 
-        } catch(Exception e){
-        	log.error("failed script execution",e);
+        } catch (Exception e) {
+            log.error("failed script execution", e);
         }
-    }    
+    }
 
     private void fireNotification(Notification notif, IEntity e) {
         log.debug("Fire Notification for notif with {} and entity with id={}", notif, e.getId());
         try {
             if (!matchExpression(notif.getElFilter(), e)) {
-            	log.debug("Expression {} does not match", notif.getElFilter());
+                log.debug("Expression {} does not match", notif.getElFilter());
                 return;
-            }           
-            
+            }
+
             boolean sendNotify = true;
             // Check if the counter associated to notification was not exhausted
             // yet
@@ -162,49 +163,54 @@ public class DefaultObserver {
             if (!sendNotify) {
                 return;
             }
-            Map<String,Object> context = new HashMap<String,Object>();
-            //re think notif and script
+            Map<String, Object> context = new HashMap<String, Object>();
+            // re think notif and script - maybe create pre and post script
             if (!(notif instanceof WebHook)) {
-	            if (notif.getScriptInstance()!=null) {
-	            	ScriptInstance script = (ScriptInstance) scriptInstanceService.attach(notif.getScriptInstance());
-	                executeScript(script, e,notif.getParams(),context);
-	            }
-            } 
+                if (notif.getScriptInstance() != null) {
+                    ScriptInstance script = (ScriptInstance) scriptInstanceService.attach(notif.getScriptInstance());
+                    executeScript(script, e, notif.getParams(), context);
+                }
+            }
+
+            NotificationHistory histo = null;
+
             // then the notification itself
-            if (notif instanceof EmailNotification) {
-                emailNotifier.sendEmail((EmailNotification) notif, e,context);
+            if (notif instanceof ScriptNotification) {
+                histo = notificationHistoryService.create(notif, e, "", NotificationHistoryStatusEnum.SENT);
+
+            } else if (notif instanceof EmailNotification) {
+                histo = emailNotifier.sendEmail((EmailNotification) notif, e, context);
+
             } else if (notif instanceof WebHook) {
-                webHookNotifier.sendRequest((WebHook) notif, e,context);
+                histo = webHookNotifier.sendRequest((WebHook) notif, e, context);
+
             } else if (notif instanceof InstantMessagingNotification) {
-                imNotifier.sendInstantMessage((InstantMessagingNotification) notif, e);
-            } else if (notif.getEventTypeFilter()==NotificationEventTypeEnum.FILE_UPLOAD||
-            		notif.getEventTypeFilter()==NotificationEventTypeEnum.FILE_DOWNLOAD||
-            		notif.getEventTypeFilter()==NotificationEventTypeEnum.FILE_DELETE||
-            		notif.getEventTypeFilter()==NotificationEventTypeEnum.FILE_RENAME){
-            	notificationHistoryService.createNotificationByAuditable(notif, e,"", NotificationHistoryStatusEnum.SENT);
-            }else if(notif.getEventTypeFilter() != NotificationEventTypeEnum.INBOUND_REQ){
-                notificationHistoryService.createNotificationByAuditable(notif, e, "", NotificationHistoryStatusEnum.SENT);
+                histo = imNotifier.sendInstantMessage((InstantMessagingNotification) notif, e);
+
+            } else if (notif.getEventTypeFilter() == NotificationEventTypeEnum.FILE_UPLOAD || notif.getEventTypeFilter() == NotificationEventTypeEnum.FILE_DOWNLOAD
+                    || notif.getEventTypeFilter() == NotificationEventTypeEnum.FILE_DELETE || notif.getEventTypeFilter() == NotificationEventTypeEnum.FILE_RENAME) {
+                histo = notificationHistoryService.create(notif, e, "", NotificationHistoryStatusEnum.SENT);
+
+            } else if (notif instanceof JobTrigger) {
+                histo = jobTriggerLauncher.launch((JobTrigger) notif, e);
             }
-            if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ) {
-                NotificationHistory histo = notificationHistoryService.createNotificationByAuditable(notif, e, "", NotificationHistoryStatusEnum.SENT);
+
+            if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ && histo != null) {
                 ((InboundRequest) e).add(histo);
-            }
-            if(notif instanceof JobTrigger){
-            	jobTriggerLauncher.launch((JobTrigger) notif, e);
             }
 
         } catch (Exception e1) {
-        	if(notif != null) {
-	            log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1);
-	            try {
-	                NotificationHistory notificationHistory = notificationHistoryService.create(notif, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
-	                if (e instanceof InboundRequest) {
-	                    ((InboundRequest) e).add(notificationHistory);
-	                }
-	            } catch (Exception e2) {
-	            	log.error("Failed to firing notification",e);
-	            }
-        	}
+            if (notif != null) {
+                log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1);
+                try {
+                    NotificationHistory notificationHistory = notificationHistoryService.create(notif, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
+                    if (e instanceof InboundRequest) {
+                        ((InboundRequest) e).add(notificationHistory);
+                    }
+                } catch (Exception e2) {
+                    log.error("Failed to firing notification", e);
+                }
+            }
         }
     }
 
@@ -212,7 +218,7 @@ public class DefaultObserver {
         log.debug("Fire Cdr Notification for notif {} and  cdr {}", notif, cdr);
         try {
             if (!StringUtils.isBlank(notif.getScriptInstance()) && matchExpression(notif.getElFilter(), cdr)) {
-                executeScript(notif.getScriptInstance(), cdr,notif.getParams(),new HashMap<String, Object>());
+                executeScript(notif.getScriptInstance(), cdr, notif.getParams(), new HashMap<String, Object>());
             }
         } catch (BusinessException e1) {
             log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1);
@@ -222,7 +228,7 @@ public class DefaultObserver {
 
     private void checkEvent(NotificationEventTypeEnum type, BaseEntity entity) {
         for (Notification notif : notificationCacheContainerProvider.getApplicableNotifications(type, entity)) {
-        	notif = genericNotificationService.findById(notif.getId());
+            notif = genericNotificationService.findById(notif.getId());
             fireNotification(notif, entity);
         }
     }
@@ -283,62 +289,69 @@ public class DefaultObserver {
         log.debug("Defaut observer : inbound request {} ", e.getCode());
         checkEvent(NotificationEventTypeEnum.INBOUND_REQ, e);
     }
-    
-    
-   public void LowBalance(@Observes @LowBalance WalletInstance e){
-       log.debug("Defaut observer : low balance on {} ", e.getCode());
-       checkEvent(NotificationEventTypeEnum.LOW_BALANCE, e);
-       
-   }
-   
-   public void businesException(@Observes  BusinessExceptionEvent bee){
-       log.debug("Defaut observer : BusinessExceptionEvent {} ", bee);
-       StringWriter errors = new StringWriter();
-       bee.getException().printStackTrace(new PrintWriter(errors));
-	   String meveoInstanceCode = ParamBean.getInstance().getProperty("monitoring.instanceCode","");
-       int bodyMaxLegthByte = Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.stackTrace.lengthInBytes", "9999"));
-       String stackTrace = errors.toString();
-       String input = "{"+
-				"	  #meveoInstanceCode#: #"+meveoInstanceCode+"#,"+
-				"	  #subject#: #"+bee.getException().getMessage()+"#,"+
-				"	  #body#: #"+StringUtils.truncate(stackTrace, bodyMaxLegthByte, true)+"#,"+
-				"	  #additionnalInfo1#: #"+LogExtractionService.getLogs(new Date(System.currentTimeMillis()-Integer.parseInt(ParamBean.getInstance().
-						getProperty("meveo.notifier.log.timeBefore_ms", "5000"))) , new Date())+"#,"+
-				"	  #additionnalInfo2#: ##,"+
-				"	  #additionnalInfo3#: ##,"+
-				"	  #additionnalInfo4#: ##"+
-				"}";
-       log.trace("Defaut observer : input {} ", input.replaceAll("#", "\""));       
-       remoteInstanceNotifier.invoke(input.replaceAll("\"","'").replaceAll("#", "\"").replaceAll("\\[", "(").replaceAll("\\]", ")"),ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
-       
-		//TODO handel reponse
-		//if pertinent, if need logs
-      
-   }
-   
-	public void customFieldEndPeriodEvent(@Observes CFEndPeriodEvent event) {
-		log.debug("DefaultObserver.customFieldEndPeriodEvent : {}", event);
-	}
-	
-	public void knownMeveoInstance(@Observes InboundCommunicationEvent event) {
-		log.debug("DefaultObserver.knownMeveoInstance" + event);
-	}
-	
-	public void ftpFileUpload(@Observes @FileUpload MeveoFtpFile importedFile){
-		log.debug("observe a file upload event ");
-		checkEvent(NotificationEventTypeEnum.FILE_UPLOAD,importedFile);
-	}
-	public void ftpFileDownload(@Observes @FileDownload MeveoFtpFile importedFile){
-		log.debug("observe a file download event ");
-		checkEvent(NotificationEventTypeEnum.FILE_DOWNLOAD,importedFile);
-	}
-	public void ftpFileDelete(@Observes @FileDelete MeveoFtpFile importedFile){
-		log.debug("observe a file delete event ");
-		checkEvent(NotificationEventTypeEnum.FILE_DELETE,importedFile);
-	}
-	public void ftpFileRename(@Observes @FileRename MeveoFtpFile importedFile){
-		log.debug("observe a file rename event ");
-		checkEvent(NotificationEventTypeEnum.FILE_RENAME,importedFile);
-	}
-   
+
+    public void LowBalance(@Observes @LowBalance WalletInstance e) {
+        log.debug("Defaut observer : low balance on {} ", e.getCode());
+        checkEvent(NotificationEventTypeEnum.LOW_BALANCE, e);
+
+    }
+
+    public void businesException(@Observes BusinessExceptionEvent bee) {
+        log.debug("Defaut observer : BusinessExceptionEvent {} ", bee);
+        StringWriter errors = new StringWriter();
+        bee.getException().printStackTrace(new PrintWriter(errors));
+        String meveoInstanceCode = ParamBean.getInstance().getProperty("monitoring.instanceCode", "");
+        int bodyMaxLegthByte = Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.stackTrace.lengthInBytes", "9999"));
+        String stackTrace = errors.toString();
+        String input = "{"
+                + "	  #meveoInstanceCode#: #"
+                + meveoInstanceCode
+                + "#,"
+                + "	  #subject#: #"
+                + bee.getException().getMessage()
+                + "#,"
+                + "	  #body#: #"
+                + StringUtils.truncate(stackTrace, bodyMaxLegthByte, true)
+                + "#,"
+                + "	  #additionnalInfo1#: #"
+                + LogExtractionService.getLogs(
+                    new Date(System.currentTimeMillis() - Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.log.timeBefore_ms", "5000"))), new Date()) + "#,"
+                + "	  #additionnalInfo2#: ##," + "	  #additionnalInfo3#: ##," + "	  #additionnalInfo4#: ##" + "}";
+        log.trace("Defaut observer : input {} ", input.replaceAll("#", "\""));
+        remoteInstanceNotifier.invoke(input.replaceAll("\"", "'").replaceAll("#", "\"").replaceAll("\\[", "(").replaceAll("\\]", ")"),
+            ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
+
+        // TODO handel reponse
+        // if pertinent, if need logs
+
+    }
+
+    public void customFieldEndPeriodEvent(@Observes CFEndPeriodEvent event) {
+        log.debug("DefaultObserver.customFieldEndPeriodEvent : {}", event);
+    }
+
+    public void knownMeveoInstance(@Observes InboundCommunicationEvent event) {
+        log.debug("DefaultObserver.knownMeveoInstance" + event);
+    }
+
+    public void ftpFileUpload(@Observes @FileUpload MeveoFtpFile importedFile) {
+        log.debug("observe a file upload event ");
+        checkEvent(NotificationEventTypeEnum.FILE_UPLOAD, importedFile);
+    }
+
+    public void ftpFileDownload(@Observes @FileDownload MeveoFtpFile importedFile) {
+        log.debug("observe a file download event ");
+        checkEvent(NotificationEventTypeEnum.FILE_DOWNLOAD, importedFile);
+    }
+
+    public void ftpFileDelete(@Observes @FileDelete MeveoFtpFile importedFile) {
+        log.debug("observe a file delete event ");
+        checkEvent(NotificationEventTypeEnum.FILE_DELETE, importedFile);
+    }
+
+    public void ftpFileRename(@Observes @FileRename MeveoFtpFile importedFile) {
+        log.debug("observe a file rename event ");
+        checkEvent(NotificationEventTypeEnum.FILE_RENAME, importedFile);
+    }
+
 }
