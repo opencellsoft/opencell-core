@@ -551,7 +551,22 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             messages.error(e.getMessage());
         }
     }
-
+    
+    public void terminateSubscription() {
+    	try { 
+    		log.debug("selected subscriptionTerminationReason={},terminationDate={},subscriptionId={},status={}", new Object[] {
+    				entity.getSubscriptionTerminationReason(), entity.getTerminationDate(), entity.getCode(),
+    				entity.getStatus() });
+    		subscriptionService.terminateSubscription(entity,entity.getTerminationDate(), entity.getSubscriptionTerminationReason(), getCurrentUser());
+    		messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
+    	} catch (BusinessException e1) {
+    		messages.error(e1.getMessage());
+    	} catch (Exception e) {
+    		log.error("unexpected exception when terminating service!", e);
+    		messages.error(e.getMessage());
+    	}
+    }
+    
 	public void cancelService() {
 		try {
 

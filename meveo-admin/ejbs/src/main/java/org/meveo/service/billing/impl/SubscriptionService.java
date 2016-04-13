@@ -182,6 +182,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 }
             }
         }
+        subscription=refreshOrRetrieve(subscription);
         for (Access access : subscription.getAccessPoints()) {
             access.setEndDate(terminationDate);
             accessService.update(access, user);

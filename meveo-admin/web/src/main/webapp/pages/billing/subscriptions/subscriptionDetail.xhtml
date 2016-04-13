@@ -147,6 +147,42 @@
 			</p:outputPanel>
 		</p:dialog>
 
+<p:dialog id="subscriptionTerminationPopup"
+			header="#{messages['subscriptionTerminationPopup.title']}"
+			widgetVar="dlg_subscriptionTerminationPopup"  modal="true" appendTo="@(body)" closeOnEscape="true" width="400" >
+			<p:outputPanel id="subscriptionTerminationPanel">
+                <p:messages id="subTerminationMessages"/>
+				<hftl:formPanel edit="true"
+					backingBean="#{subscriptionBean}" 
+					styleClass="formPanel" formId="subForm"
+					showFormButtons="false" useCustomIdParam="true">
+
+						<hftl:formField label="#{messages['businessEntity.code']}"
+							field="code" size="50" edit="false" /> 
+						<hftl:formField
+							label="#{messages['serviceInstance.terminationDate']}"
+							field="terminationDate" required="true" edit="true"  pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"/>
+							
+						<hftl:formField label="Motifs "
+							field="subscriptionTerminationReason" valueLabelField="descriptionOrCode"
+							required="true"  edit="true"
+							listElements="#{subscriptionTerminationReasonService.listReasons()}" />
+
+                        <ui:param name="buttons" value="true"/>
+                        <ui:define name="buttons">                        
+							<p:commandButton action="#{subscriptionBean.terminateSubscription()}"
+								value="#{messages['button.terminateButton']}"
+								oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_subscriptionTerminationPopup').hide()"
+								update=":subscriptionTab:subscriptionInfosTab"/>
+							<p:commandButton immediate="true"
+								onclick="PF('dlg_subscriptionTerminationPopup').hide()" type="button"
+								value="#{messages['management.close']}" />
+						</ui:define>
+
+				</hftl:formPanel>
+			</p:outputPanel>
+		</p:dialog>
+
         <h:panelGroup styleClass="col2-set">
             <h:panelGroup styleClass="col1" id="hierarchyGroup">
 					<hf:hierarchyPanel
@@ -292,7 +328,7 @@
 							</h:panelGroup>
 						</h:form>
 					</p:tab>
-					<p:tab title="#{messages['subscription.tab.subscription']}">
+					<p:tab title="#{messages['subscription.tab.subscription']}" id="subscriptionInfosTab">
 						<hftl:formPanel showDeleteButton="false" formId="subscriptionFormId"
 							 ajaxSubmit="true"
 							submitPartialProcess=":subscriptionTab:subscriptionFormId:informationTab"
@@ -333,6 +369,13 @@
 									<hftl:customFields backingBean="#{subscriptionBean}" messagesId=":subscriptionTab:subscriptionFormId:messages" />
 
 								</p:tabView>
+								<ui:param name="buttons" value="true" />
+				                <ui:define name="buttons">
+								<p:commandButton value="#{messages['button.terminateButton']}" id="subTerminationButton"
+										onclick="PF('dlg_subscriptionTerminationPopup').show();"
+										type="button"
+										disabled="#{not empty subscriptionBean.entity.terminationDate}" /> 
+										</ui:define>
 						</hftl:formPanel>
 					</p:tab>
 					<p:tab id="oneShotChgTab"

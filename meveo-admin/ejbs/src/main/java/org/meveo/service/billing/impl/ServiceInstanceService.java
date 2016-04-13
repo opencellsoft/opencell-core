@@ -323,7 +323,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE) {
             throw new IncorrectServiceInstanceException("service instance is inactive. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
         }
-
+        serviceInstance=refreshOrRetrieve(serviceInstance);
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
             Date chargeDate = recurringChargeInstance.getChargeDate();
             Date nextChargeDate = recurringChargeInstance.getNextChargeDate();
