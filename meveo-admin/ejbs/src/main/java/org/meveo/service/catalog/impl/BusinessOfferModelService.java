@@ -11,6 +11,7 @@ import javax.persistence.NoResultException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.dto.catalog.ServiceCodeDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
@@ -77,7 +78,8 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 	@Inject
 	private OfferTemplateService offerTemplateService;
 
-	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, String prefix, List<String> serviceCodes, User currentUser) throws BusinessException {
+	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, String prefix, String offerDescription, List<ServiceCodeDto> serviceCodes, User currentUser)
+			throws BusinessException {
 		OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
 
 		// 1 create offer
@@ -88,7 +90,8 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 			throw new BusinessException("" + MeveoApiErrorCodeEnum.ENTITY_ALREADY_EXISTS_EXCEPTION);
 		}
 
-		newOfferTemplate.setCode(prefix + bomOffer.getCode());
+		newOfferTemplate.setCode(prefix);
+		newOfferTemplate.setDescription(offerDescription);
 
 		newOfferTemplate.setBusinessOfferModel(businessOfferModel);
 
@@ -98,7 +101,9 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 			// check if service template exists
 			if (serviceCodes != null && serviceCodes.size() > 0) {
 				boolean serviceFound = false;
-				for (String serviceCode : serviceCodes) {
+				for (ServiceCodeDto serviceCodeDto : serviceCodes) {
+					String serviceCode = serviceCodeDto.getCode();
+
 					for (OfferServiceTemplate offerServiceTemplate : bomOffer.getOfferServiceTemplates()) {
 						ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
 						if (serviceCode.equals(serviceTemplate.getCode())) {
@@ -126,8 +131,11 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode(), currentUser.getProvider());
 
 				boolean serviceFound = false;
-				for (String serviceCode : serviceCodes) {
+				ServiceCodeDto serviceCodeDto = new ServiceCodeDto();
+				for (ServiceCodeDto tempServiceCodeDto : serviceCodes) {
+					String serviceCode = tempServiceCodeDto.getCode();
 					if (serviceCode.equals(serviceTemplate.getCode())) {
+						serviceCodeDto = tempServiceCodeDto;
 						serviceFound = true;
 					}
 				}
@@ -139,6 +147,7 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 				try {
 					BeanUtils.copyProperties(newServiceTemplate, serviceTemplate);
 					newServiceTemplate.setCode(prefix + serviceTemplate.getCode());
+					newServiceTemplate.setDescription(serviceCodeDto.getDescription());
 					newServiceTemplate.setBusinessServiceModel(bsm);
 					newServiceTemplate.setAuditable(null);
 					newServiceTemplate.setId(null);

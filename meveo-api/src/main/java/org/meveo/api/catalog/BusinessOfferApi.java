@@ -51,7 +51,8 @@ public class BusinessOfferApi extends BaseApi {
 
 			OfferTemplate newOfferTemplate = null;
 			try {
-				newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getPrefix(), postData.getServiceCodes(), currentUser);
+				newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getPrefix(), postData.getDescription(), postData.getServiceCodes(),
+						currentUser);
 			} catch (BusinessException e) {
 				throw new MeveoApiException(e.getMessage());
 			}
