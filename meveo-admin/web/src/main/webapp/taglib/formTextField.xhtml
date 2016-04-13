@@ -49,7 +49,7 @@
             </p:autoComplete>
         </c:if>
         <c:if test="#{textArea and edit}">
-            <p:inputTextarea id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" cols="#{cols}" rows="#{rows}" maxlength="#{maxlength}" />
+            <p:inputTextarea id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" cols="#{cols}" rows="#{rows}" maxlength="#{maxlength}" autoResize="true"/>
         </c:if>
         <c:if test="#{isHtml and edit}">
             <p:editor id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}"></p:editor>

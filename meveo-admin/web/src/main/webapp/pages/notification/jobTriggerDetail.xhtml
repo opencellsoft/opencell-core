@@ -32,7 +32,7 @@
             <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" required="true" size="60" maxlength="255"
                 autocompleteBean="#{jobTriggerBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
             <hftl:formField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" required="true" />
-            <hftl:formField label="#{messages['entity.notification.elFilter']}" field="elFilter" textArea="true" maxlength="2000" componentWidth="50" newLine="true" />
+            <hftl:formField label="#{messages['entity.notification.elFilter']}" field="elFilter" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />
 
             <hftl:formField id="scriptInstanceSelectId" label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance" valueLabelField="code" required="false"
                 popup="true" popupId="scriptInstancePopup" newLine="true" />

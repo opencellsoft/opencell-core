@@ -1,61 +1,40 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-					<p:menuitem outcome="counterTemplates"
-						value="#{messages['menu.counterTemplates']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+    <ui:define name="body">
+        <p:panel>
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+                    <p:menuitem outcome="counterTemplates" value="#{messages['menu.counterTemplates']}" />
+                </p:breadCrumb>
+            </h:form>
+        </p:panel>
 
-		<hftl:formPanel id="formPanel" formId="counterTemplatId"
-			label="#{messages['menu.counterTemplates']}"
-			backingBean="#{counterTemplateBean}" showEnableDisableButton="true">
-             
-              <h:panelGrid columns="3" cellpadding="5">
-			<h:outputLink id="exprEl" value="#">
-				<h:outputText value="#{messages['counterTemplate.elExpressionVariables']}" />
-			</h:outputLink>
-			<p:tooltip  for="exprEl" value="#{messages['counterTemplate.elExpressionUsed']}" />
-			  </h:panelGrid>
-             
-			<hftl:formField label="#{messages['businessEntity.code']}" field="code"
-				required="true" validateUnique="true" />
-			<hftl:formField label="#{messages['businessEntity.description']}"
-				field="description" id="description" />
-			<hftl:formField
-				label="#{messages['usageChargeTemplate.unityDescription']}"
-				field="unityDescription" />
-            <hftl:formField
-                label="#{messages['counterTemplate.counterType']}"
-                field="counterType" required="true"/>
-            <hftl:formField
-                label="#{messages['counterTemplate.counterLevel']}"
-                field="counterLevel" required="true"/>
-			<hftl:formField label="#{messages['counterTemplate.level']}"
-				field="ceiling" converter="bigDecimal4DigitsConverter"  />
-			<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
-				field="disabled" isMessage="true" />
-			<hftl:formField label="#{messages['billingCycle.calendar']}"
-				field="calendar" valueLabelField="code" required="true" 
-				listBean="#{calendarBean}" />
-			<hftl:formField label="#{messages['counterTemplate.ceilingExpressionEl']}"
-			   field="ceilingExpressionEl"  textArea="true" maxlength="2000"/>	
+        <hftl:formPanel id="formPanel" formId="counterTemplatId" label="#{messages['menu.counterTemplates']}" backingBean="#{counterTemplateBean}" showEnableDisableButton="true">
 
-		</hftl:formPanel>
+            <h:panelGrid columns="3" cellpadding="5">
+                <h:outputLink id="exprEl" value="#">
+                    <h:outputText value="#{messages['counterTemplate.elExpressionVariables']}" />
+                </h:outputLink>
+                <p:tooltip for="exprEl" value="#{messages['counterTemplate.elExpressionUsed']}" />
+            </h:panelGrid>
 
-	</ui:define>
+            <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" />
+            <hftl:formField label="#{messages['businessEntity.description']}" field="description" id="description" />
+            <hftl:formField label="#{messages['usageChargeTemplate.unityDescription']}" field="unityDescription" />
+            <hftl:formField label="#{messages['counterTemplate.counterType']}" field="counterType" required="true" />
+            <hftl:formField label="#{messages['counterTemplate.counterLevel']}" field="counterLevel" required="true" />
+            <hftl:formField label="#{messages['counterTemplate.level']}" field="ceiling" converter="bigDecimal4DigitsConverter" />
+            <hftl:formField label="#{messages['billingCycle.calendar']}" field="calendar" valueLabelField="code" required="true" listBean="#{calendarBean}" />
+            <hftl:formField label="#{messages['counterTemplate.ceilingExpressionEl']}" field="ceilingExpressionEl" textArea="true" rows="1" maxlength="2000" />            
+            <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true"/>
+
+        </hftl:formPanel>
+
+    </ui:define>
 </ui:composition>

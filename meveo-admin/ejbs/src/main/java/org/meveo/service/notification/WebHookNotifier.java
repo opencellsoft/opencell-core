@@ -74,12 +74,12 @@ public class WebHookNotifier {
 
         try {
             String url = webHook.getHost().startsWith("http") ? webHook.getHost() : "http://" + webHook.getHost();
-            if (webHook.getPort() > 0) {
+            if (webHook.getPort() != null) {
                 url += ":" + webHook.getPort();
             }
 
             if (!StringUtils.isBlank(webHook.getPage())) {
-                url += "/" + evaluate(webHook.getPage(), e, context);
+                url += (url.endsWith("/") ? "" : "/") + evaluate(webHook.getPage(), e, context);
             }
             Map<String, String> params = evaluateMap(webHook.getWebhookParams(), e, context);
 
