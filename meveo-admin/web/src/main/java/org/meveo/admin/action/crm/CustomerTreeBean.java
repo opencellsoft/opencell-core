@@ -22,8 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpSession;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.commons.utils.StringUtils;
@@ -46,6 +48,7 @@ import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+import org.slf4j.Logger;
 
 /**
  * Standard backing bean for {@link AccountEntity} that allows build accounts hierarchy for richfaces tree component. In this Bean you can set icons and links used in tree.
@@ -103,6 +106,9 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
     @Inject
     private AccessService accessService;
+    
+    @Inject
+    private Logger log;
 
     private TreeNode accountsHierarchy;
 
@@ -111,6 +117,29 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
     private Class selectedEntityClass;
 
     // private TreeNodeData selectedNode;
+    
+    public boolean isVisible() {
+    	HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+    	Boolean visible = (Boolean) session.getAttribute("hierarchyPanel:visible");
+    	if(visible == null){
+    		visible = false;
+    		session.setAttribute("hierarchyPanel:visible", visible);
+    	}
+		return visible;
+	}
+    
+    public void toggleVisibility(){
+    	HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+    	Boolean visible = (Boolean) session.getAttribute("hierarchyPanel:visible");
+    	if(visible == null){
+    		visible = false;
+    		session.setAttribute("hierarchyPanel:visible", visible);
+    	} else {
+    		visible = !visible;
+    		session.setAttribute("hierarchyPanel:visible", visible);
+    	}
+    	log.debug("Visibility set to: " + visible);
+    }
 
     /**
      * Override get instance method because AccountEntity is abstract class and can not be instantiated in {@link BaseBean}.
