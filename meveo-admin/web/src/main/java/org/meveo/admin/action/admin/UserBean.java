@@ -28,8 +28,6 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -345,6 +343,10 @@ public class UserBean extends BaseBean<User> {
     public String getSelectedFolder() {
         return selectedFolder;
     }
+    
+    public boolean hasSelectedFolder() {
+    	return !StringUtils.isBlank(selectedFolder);
+    }
 
     public void setSelectedFolder(String selectedFolder) {
         setSelectedFileName(null);
@@ -377,20 +379,16 @@ public class UserBean extends BaseBean<User> {
         File[] files = file.listFiles();
 
         fileList = files == null ? new ArrayList<File>() : new ArrayList<File>(Arrays.asList(files));
-        Collections.sort(fileList, new Comparator<File>() {
-            public int compare(File f1, File f2) {
-                return f1.getName().compareTo(f2.getName());
-            }
-        });
-        if (this.selectedFolder != null) {
-            if (fileList.size() == 0) {
-                currentDirEmpty = true;
-            }
-            File parent = new File("..");
-            fileList.add(0, parent);
-        }
+    	currentDirEmpty = !StringUtils.isBlank(this.selectedFolder) && fileList.size() == 0;
     }
-
+    
+    public String getFileType(String fileName){
+    	if(fileName != null && fileName.endsWith(".zip")){
+    		return "zip";
+    	}
+    	return "text";
+    }
+    
     public String getLastModified(File file) {
         return sdf.format(new Date(file.lastModified()));
     }
@@ -473,7 +471,7 @@ public class UserBean extends BaseBean<User> {
 
     public void deleteDirectory() {
         log.debug("deleteDirectory:" + selectedFolder);
-        if (!StringUtils.isBlank(selectedFolder) && currentDirEmpty) {
+        if (currentDirEmpty) {
             String filePath = getFilePath("");
             File currentDir = new File(filePath);
             if (currentDir.exists() && currentDir.isDirectory()) {

@@ -1,13 +1,15 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:o="http://omnifaces.org/ui"
 	xmlns:of="http://omnifaces.org/functions"
  	template="/layout/template.xhtml">
-
+ 	
+ 
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView" listener="#{userBean.init}" />
@@ -34,34 +36,50 @@
 		</p:confirmDialog>
 
 		<p:panel id="fileExplorer">
-		<f:facet name="header">
+			
+			<f:facet name="header">
 				<h:outputText value="#{messages['menu.fileExplorer']}" />
 			</f:facet>
+			
 			<h:form>
-				<p:growl id="messages" showDetail="true" />
-				<p:dataList value="#{userBean.fileList}" var="file"
-					styleClass="align-left">
-					<f:facet name="header">
-						<p:button value="home"
-							action="#{userBean.setSelectedFolder(null)}"
-							rendered="#{userBean.getSelectedFolder()!=null}" />
-						<br />
-            #{userBean.selectedFolder}
-        </f:facet>
-					<p:commandLink action="#{userBean.setSelectedFolder(file.name)}"
-						value='#{file.name}/' rendered="#{file.isDirectory()}"
-						update=":#{p:component('fileExplorer')}">
-					</p:commandLink>
-					<p:commandLink action="#{userBean.setSelectedFileName(file.name)}"
-						value="#{userBean.getLastModified(file)}: #{file.name}" rendered="#{!file.isDirectory()}"
-						update=":#{p:component('fileExplorer')}">
-					</p:commandLink>
-				</p:dataList>
-				<p:panel rendered="#{userBean.selectedFileName!=null}"
-					id="fileManageForm">
-					<br />
-		#{userBean.selectedFileName}
-	    <p:commandButton value="#{messages['fileExplorer.download']}"
+ 				<p:growl id="messages" showDetail="true" />
+				<p:dataTable var="file" value="#{userBean.fileList}" sortBy="#{file.name}">
+				    <f:facet name="header">
+				    	<p:spacer width="8" />
+				    	<p:commandButton icon="fa fa-level-up" value="Up"
+				    		rendered="#{userBean.hasSelectedFolder()}" 
+				    		action="#{userBean.setSelectedFolder('..')}" 
+				    		update=":#{p:component('fileExplorer')}" />
+			    		<p:spacer width="8" />
+				    	<h:outputText value="#{messages['fileExplorer.currentDirectory']}: #{userBean.selectedFolder}" 
+				    		rendered="#{userBean.hasSelectedFolder()}"/>
+				    </f:facet>
+				    <p:column headerText="#{messages['fileExplorer.fileName']}" sortBy="#{file.name}">
+						<p:commandLink action="#{userBean.setSelectedFolder(file.name)}"
+							rendered="#{file.isDirectory()}"
+							update=":#{p:component('fileExplorer')}">
+							<i class="fa fa-folder-o fa-2x"></i>
+							<p:spacer width="8" />
+							<h:outputText value='#{file.name}' />
+						</p:commandLink>
+						<p:commandLink action="#{userBean.setSelectedFileName(file.name)}"
+							rendered="#{!file.isDirectory()}"
+							update=":#{p:component('fileExplorer')}">
+							<i class="fa fa-file-#{userBean.getFileType(file.name)}-o fa-2x"></i>
+							<p:spacer width="8" />
+							<h:outputText value='#{file.name}' />
+						</p:commandLink>
+				    </p:column>
+				 
+				    <p:column headerText="#{messages['fileExplorer.fileDate']}" sortBy="#{file.lastModified()}">
+				        <h:outputText value="#{file.lastModified()}">
+				        	<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+				        </h:outputText>
+				    </p:column>
+				</p:dataTable>
+				<p:panel rendered="#{userBean.selectedFileName!=null}" id="fileManageForm">
+         			#{userBean.selectedFileName}
+					<p:commandButton value="#{messages['fileExplorer.download']}"
 						icon="ui-icon-arrowthick-1-s" ajax="false">
 						<p:fileDownload value="#{userBean.selectedFile}" />
 						<f:param name="cid"
@@ -78,41 +96,44 @@
 					</p:commandButton>
 				</p:panel>
 			</h:form>
-			<h:form rendered="#{userBean.selectedFileName!=null}">
-				<p:inputText id="newFilename" value="#{userBean.newFilename}"/>
-				<p:commandButton value="#{messages['fileExplorer.renameFile']}"
-						action="#{userBean.renameFile()}"
-						update=":#{p:component('fileExplorer')}">
-						<f:param name="cid"
-							value="#{javax.enterprise.context.conversation.id}" />
-					</p:commandButton>
-			</h:form>
-			<h:form rendered="#{userBean.selectedFileName==null}">
-				<p:inputText id="dirName" value="#{userBean.directoryName}"/>
-				<p:commandButton value="#{messages['fileExplorer.createDirectory']}"
-						action="#{userBean.createDirectory()}"
-						update=":#{p:component('fileExplorer')}">
-						<f:param name="cid"
-							value="#{javax.enterprise.context.conversation.id}" />
-					</p:commandButton>
-			</h:form>
-			<h:form rendered="#{userBean.selectedFolder!=null and userBean.currentDirEmpty}">
-				<p:commandButton value="#{messages['fileExplorer.deleteDirectory']}"
-						action="#{userBean.deleteDirectory()}"
-						update=":#{p:component('fileExplorer')}">
-						<p:confirm header="Confirmation"
-							message="#{messages['fileExplorer.deleteDirectoryConfirm']}"
-							icon="ui-icon-alert" />
-						<f:param name="cid"
-							value="#{javax.enterprise.context.conversation.id}" />
-					</p:commandButton>
-			</h:form>
 			
-			<h:form rendered="#{userBean.selectedFileName==null}">
-				<p:fileUpload fileUploadListener="#{userBean.handleFileUpload}"
-					multiple="true" mode="advanced" dragDropSupport="true"
-					fileLimit="5" update=":fileExplorer" />
-			</h:form>
+			<h:form rendered="#{userBean.selectedFileName!=null}">
+                 <p:inputText id="newFilename" value="#{userBean.newFilename}"/>
+                 <p:commandButton value="#{messages['fileExplorer.renameFile']}"
+                         action="#{userBean.renameFile()}"
+                         update=":#{p:component('fileExplorer')}">
+                         <f:param name="cid"
+                             value="#{javax.enterprise.context.conversation.id}" />
+                     </p:commandButton>
+             </h:form>
+             
+             <h:form rendered="#{userBean.selectedFileName==null}">
+                 <p:inputText id="dirName" value="#{userBean.directoryName}"/>
+                 <p:commandButton value="#{messages['fileExplorer.createDirectory']}"
+                         action="#{userBean.createDirectory()}"
+                         update=":#{p:component('fileExplorer')}">
+                         <f:param name="cid"
+                             value="#{javax.enterprise.context.conversation.id}" />
+                     </p:commandButton>
+             </h:form>
+             
+             <h:form rendered="#{userBean.currentDirEmpty}">
+                 <p:commandButton value="#{messages['fileExplorer.deleteDirectory']}"
+                         action="#{userBean.deleteDirectory()}"
+                         update=":#{p:component('fileExplorer')}">
+                         <p:confirm header="Confirmation"
+                             message="#{messages['fileExplorer.deleteDirectoryConfirm']}"
+                             icon="ui-icon-alert" />
+                         <f:param name="cid"
+                             value="#{javax.enterprise.context.conversation.id}" />
+                     </p:commandButton>
+             </h:form>
+             
+             <h:form rendered="#{userBean.selectedFileName==null}">
+                 <p:fileUpload fileUploadListener="#{userBean.handleFileUpload}"
+                     multiple="true" mode="advanced" dragDropSupport="true"
+                     fileLimit="5" update=":fileExplorer" />
+             </h:form>
 		</p:panel>
 	</ui:define>
 
