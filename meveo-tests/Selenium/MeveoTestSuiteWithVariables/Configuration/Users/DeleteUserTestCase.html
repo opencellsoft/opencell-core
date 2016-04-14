@@ -4,41 +4,41 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>DeleteRecurringChargeTestCase</title>
+<title>DeleteContactTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">DeleteRecurringChargeTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">DeleteContactTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>assertText</td>
-	<td>//a[contains(text(),'${CodeValue}')]</td>
-	<td>${CodeValue}</td>
+	<td>link=${LoginValue}</td>
+	<td>${LoginValue}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>//a[contains(text(),'${CodeValue}')]</td>
+	<td>link=${LoginValue}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${IconDelete}</td>
+	<td>id=datatable_results:2:resultsdeletelink</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>//div[@id='datatable_jobTriggers:0:confirmDeleteDialog']/div[2]/span[2]</td>
+	<td>css=span.ui-confirm-dialog-message</td>
 	<td>Do you really want to delete this record?</td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>//div[@id='datatable_jobTriggers:0:confirmDeleteDialog']/div[2]/span[2]</td>
+	<td>css=span.ui-confirm-dialog-message</td>
 	<td>Do you really want to delete this record?</td>
 </tr>
 <tr>
 	<td>verifyText</td>
-	<td>//div[@id='datatable_jobTriggers:0:confirmDeleteDialog']/div[2]/span[2]</td>
+	<td>css=span.ui-confirm-dialog-message</td>
 	<td>Do you really want to delete this record?</td>
 </tr>
 <tr>

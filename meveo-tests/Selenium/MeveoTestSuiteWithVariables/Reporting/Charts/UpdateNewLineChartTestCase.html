@@ -4,31 +4,31 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SuccessJobInstancesTestCase</title>
+<title>UpdateNewBarChartTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SuccessJobInstancesTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">UpdateNewBarChartTestCase</td></tr>
 </thead><tbody>
-<tr>
-	<td>clickAndWait</td>
-	<td>${Charts}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
 <tr>
 	<td>if</td>
 	<td>${ChartBool}==true</td>
 	<td></td>
 </tr>
 <tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${CodeLineChart}')]</td>
+	<td>${CodeLineChart}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${CodeLineChart}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
-	<td>${NewLineChart}</td>
+	<td>//a[contains(text(),'${CodeLineChart}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -702,8 +702,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${saveButtonWhenCreate}</td>
+	<td>clickAndWait</td>
+	<td>${saveButtonWhenUpdate}</td>
 	<td></td>
 </tr>
 <tr>
@@ -720,11 +720,6 @@
 	<td>verifyElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${CodeLineChart}')]</td>
-	<td>${CodeLineChart}</td>
 </tr>
 <tr>
 	<td>endIf</td>

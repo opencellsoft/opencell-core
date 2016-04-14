@@ -18,17 +18,17 @@
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>//a[contains(text(),'${CodeChart}')]</td>
-	<td>${CodeChart}</td>
+	<td>//a[contains(text(),'${CodeBarChart}')]</td>
+	<td>${CodeBarChart}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>//a[contains(text(),'${CodeChart}')]</td>
+	<td>//a[contains(text(),'${CodeBarChart}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>//a[contains(text(),'${CodeChart}')]</td>
+	<td>//a[contains(text(),'${CodeBarChart}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -44,7 +44,27 @@
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>${CodeChart}</td>
+	<td>${CodeBarChart}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${descriptionText}</td>
+	<td>${DescriptionValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -178,6 +198,46 @@
 </tr>
 <tr>
 	<td>if</td>
+	<td>${WidthBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Width}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${Width}</td>
+	<td>${WidthValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${HeightBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Height}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${Height}</td>
+	<td>${HeightValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
 	<td>${CSSstyleBool}==true</td>
 	<td></td>
 </tr>
@@ -238,6 +298,26 @@
 </tr>
 <tr>
 	<td>if</td>
+	<td>${VisibleBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Visible}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${Visible}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
 	<td>${StackedBool}==true</td>
 	<td></td>
 </tr>
@@ -250,6 +330,46 @@
 	<td>click</td>
 	<td>${Stacked}</td>
 	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${BarPaddingBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${BarPadding}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${BarPadding}</td>
+	<td>${BarPaddingValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${BarMarginBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${BarMargin}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${BarMargin}</td>
+	<td>${BarMarginValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
