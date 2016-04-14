@@ -86,19 +86,19 @@ public class UserAccountService extends AccountService<UserAccount> {
 		return update(userAccount, updater);
 	}
 
-	public UserAccount userAccountCancellation(UserAccount userAccount, Date terminationDate, User updater)
+	public UserAccount userAccountCancellation(UserAccount userAccount, Date cancelationDate, User updater)
 			throws BusinessException {
 
 		SubscriptionService subscriptionService = getManagedBeanInstance(SubscriptionService.class);
 
-		if (terminationDate == null) {
-			terminationDate = new Date();
+		if (cancelationDate == null) {
+			cancelationDate = new Date();
 		}
 		List<Subscription> subscriptions = userAccount.getSubscriptions();
 		for (Subscription subscription : subscriptions) {
-			subscriptionService.subscriptionCancellation(subscription, terminationDate, updater);
+			subscriptionService.subscriptionCancellation(subscription, cancelationDate, updater);
 		}
-		userAccount.setTerminationDate(terminationDate);
+		userAccount.setTerminationDate(cancelationDate);
 		userAccount.setStatus(AccountStatusEnum.CANCELED);
 		return update(userAccount, updater);
 	}
@@ -114,7 +114,6 @@ public class UserAccountService extends AccountService<UserAccount> {
 		}
 
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
-		userAccount.setStatusDate(activationDate);
 		return update(userAccount, updater);
 	}
 

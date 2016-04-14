@@ -94,7 +94,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
          */
         subscription.setTerminationDate(cancelationDate);
         subscription.setStatus(SubscriptionStatusEnum.CANCELED);
-        subscription.setStatusDate(new Date());
         update(subscription, updater);
     }
 
@@ -121,7 +120,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         subscription.setTerminationDate(suspensionDate);
         subscription.setStatus(SubscriptionStatusEnum.SUSPENDED);
-        subscription.setStatusDate(new Date());
         update(subscription, updater);
     }
 
@@ -140,7 +138,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.setTerminationDate(null);
         subscription.setSubscriptionTerminationReason(null);
         subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
-        subscription.setStatusDate(reactivationDate);
 
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         for (ServiceInstance serviceInstance : serviceInstances) {
@@ -192,7 +189,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
         subscription.setTerminationDate(terminationDate);
         subscription.setStatus(SubscriptionStatusEnum.RESILIATED);
-        subscription.setStatusDate(new Date());
         update(subscription, user);
     }
 
