@@ -18,6 +18,8 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -63,6 +65,16 @@ public class SubscriptionChargeTemplateBean extends BaseBean<OneShotChargeTempla
 	@Override
 	protected String getDefaultSort() {
 		return "code";
+	}
+	
+	public List<OneShotChargeTemplate> getSubscriptionCharges() {
+		List<OneShotChargeTemplate> result = oneShotChargeTemplateService.getSubscriptionChargeTemplates();
+		return result;
+	}
+	
+	public List<OneShotChargeTemplate> getTerminationCharges() {
+		List<OneShotChargeTemplate> result = oneShotChargeTemplateService.getTerminationChargeTemplates();
+		return result;
 	}
 
 }
