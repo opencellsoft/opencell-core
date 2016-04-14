@@ -45,7 +45,6 @@ public class TerminationReasonApi extends BaseApi {
         SubscriptionTerminationReason subscriptionTerminationReason = new SubscriptionTerminationReason();
 
         subscriptionTerminationReason.setCode(postData.getCode());
-        subscriptionTerminationReason.setDescription(postData.getDescription());
         subscriptionTerminationReason.setApplyAgreement(postData.isApplyAgreement());
         subscriptionTerminationReason.setApplyReimbursment(postData.isApplyReimbursment());
         subscriptionTerminationReason.setApplyTerminationCharges(postData.isApplyTerminationCharges());
@@ -72,8 +71,7 @@ public class TerminationReasonApi extends BaseApi {
         if (subscriptionTerminationReason == null) {
             throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, postData.getCode());
         }
-
-        subscriptionTerminationReason.setDescription(postData.getDescription());
+        
         subscriptionTerminationReason.setApplyAgreement(postData.isApplyAgreement());
         subscriptionTerminationReason.setApplyReimbursment(postData.isApplyReimbursment());
         subscriptionTerminationReason.setApplyTerminationCharges(postData.isApplyTerminationCharges());
