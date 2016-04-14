@@ -31,7 +31,7 @@
 	<ui:fragment>
 		<!-- Default size -->
 
-        <h:form>
+        <h:form styleClass="formNoBottomBorder">
           <c:if test="#{cc.attrs.mode eq 'toggle'}">
 		  	<p:panel styleClass="#{cc.attrs.id}_grid" header="#{messages['customer.tree']}" >
 		  		<hf:hierarchyPanelTreeContent treeValue="#{cc.attrs.treeValue}" />
@@ -39,10 +39,10 @@
 		  	<p:remoteCommand name="toggleVisibility" actionListener="#{cc.attrs.treeBean.toggleVisibility}" />
 		  </c:if>
 		  <c:if test="#{cc.attrs.mode eq 'overlay'}">
-		  	<p:commandButton id="customerHierarchyBtn" icon="fa fa-street-view" style="cursor:pointer"
+		  	<p:commandButton id="customerHierarchyBtn" icon="fa fa-bars" style="cursor:pointer"
 				 type="button" />
 			<p:overlayPanel for="customerHierarchyBtn" showEvent="mouseover"
-				dismissable="true" showCloseIcon="true"
+				dismissable="true" showCloseIcon="true" 
 				styleClass="#{cc.attrs.id}_grid">
 				<hf:hierarchyPanelTreeContent treeValue="#{cc.attrs.treeValue}" />
 			</p:overlayPanel>

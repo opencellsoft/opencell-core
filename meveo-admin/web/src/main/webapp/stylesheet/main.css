@@ -613,3 +613,7 @@ vertical-align:top !important;
 	-webkit-border-radius:3px;
 	border-radius:3px;
 }
+
+form.formNoBottomBorder {
+	border-bottom: none;
+}
