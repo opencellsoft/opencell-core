@@ -373,6 +373,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		try {
 			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(entity, getCurrentUser());
 			invoiceService.producePdf(parameters, getCurrentUser());
+			entity=invoiceService.refreshOrRetrieve(entity);
 			messages.info(new BundleKey("messages", "invoice.pdfGeneration"));
 		} catch (InvoiceXmlNotFoundException e) {
 			messages.error(new BundleKey("messages", "invoice.xmlNotFound"));
@@ -382,7 +383,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			log.error("failed to generate PDF ", e);
 		}
 	}
-
+	
 	public List<SubCategoryInvoiceAgregate> getDiscountAggregates() {
 		return invoiceAgregateService.findDiscountAggregates(entity);
 	}
