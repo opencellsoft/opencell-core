@@ -39,7 +39,7 @@
                 reflow="false" resizableColumns="true" rowIndexVar="rowIndex">
 
                 <p:ajax event="cellEdit" update="#{messagesId} #{updateOnAddEdit}" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />
-                <p:column headerText="#{messages['commons.key']}" rendered="#{cft.storageType eq CustomFieldStorageTypeEnum.MAP}">
+                <p:column headerText="#{messages['commons.key']}" rendered="#{cft.storageType eq CustomFieldStorageTypeEnum.MAP}" sortBy="#{mapValues['key']}">
                     <p:cellEditor>
                         <f:facet name="output">
                             <h:outputText value="#{mapValues['key']}" styleClass="field-value" />
@@ -49,7 +49,7 @@
                         </f:facet>
                     </p:cellEditor>
                 </p:column>
-                <p:column headerText="#{messages['commons.value']}">
+                <p:column headerText="#{messages['commons.value']}" sortBy="#{mapValues['value']}">
                     <p:cellEditor>
                         <f:facet name="output">
                             <hftl:customFieldValueMuteField edit="false" id="cfValue_out" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}" />
@@ -118,7 +118,7 @@
                 reflow="false" resizableColumns="true" rowIndexVar="rowIndex">
 
                 <p:ajax event="cellEdit" update="#{messagesId} #{updateOnAddEdit}" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />
-                <p:columns value="#{cft.matrixColumnsSorted}" var="column" headerText="#{column.label}">
+                <p:columns value="#{cft.matrixColumnsSorted}" var="column" headerText="#{column.label}" sortBy="#{mapValues[column.code]}">
                     <p:cellEditor>
                         <f:facet name="output">
                             <h:outputText value="#{mapValues[column.code]}" styleClass="field-value" />
@@ -133,7 +133,7 @@
                         </f:facet>
                     </p:cellEditor>
                 </p:columns>
-                <p:column headerText="#{messages['commons.value']}" width="20%">
+                <p:column headerText="#{messages['commons.value']}" width="20%" sortBy="#{mapValues['value']}">
                     <p:cellEditor>
                         <f:facet name="output">
                             <hftl:customFieldValueMuteField edit="false" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}" />

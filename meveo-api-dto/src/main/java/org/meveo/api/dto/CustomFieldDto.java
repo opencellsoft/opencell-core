@@ -1,6 +1,7 @@
 package org.meveo.api.dto;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -52,8 +53,9 @@ public class CustomFieldDto {
     @XmlElement(name = "value")
     protected List<CustomFieldValueDto> listValue;
 
-    @XmlElement()
-    protected Map<String, CustomFieldValueDto> mapValue;
+    // DO NOT change to Map. Used LinkedHashMap to preserve the item order during read/write
+    @XmlElement(type = LinkedHashMap.class)
+    protected LinkedHashMap<String, CustomFieldValueDto> mapValue;
 
     @XmlElement()
     protected EntityReferenceDto entityReferenceValue;
@@ -86,7 +88,6 @@ public class CustomFieldDto {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static CustomFieldDto toDTO(String code, Object value) {
 
-        
         CustomFieldDto dto = new CustomFieldDto();
         dto.setCode(code);
         if (value instanceof String) {
@@ -193,7 +194,7 @@ public class CustomFieldDto {
         return mapValue;
     }
 
-    public void setMapValue(Map<String, CustomFieldValueDto> mapValue) {
+    public void setMapValue(LinkedHashMap<String, CustomFieldValueDto> mapValue) {
         this.mapValue = mapValue;
     }
 

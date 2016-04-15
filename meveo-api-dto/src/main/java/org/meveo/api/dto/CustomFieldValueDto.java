@@ -3,7 +3,7 @@ package org.meveo.api.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -79,19 +79,19 @@ public class CustomFieldValueDto implements Serializable {
         return values;
     }
 
-    public static Map<String, Object> fromDTO(Map<String, CustomFieldValueDto> mapValue) {
-        Map<String, Object> values = new HashMap<String, Object>();
+    public static LinkedHashMap<String, Object> fromDTO(Map<String, CustomFieldValueDto> mapValue) {
+        LinkedHashMap<String, Object> values = new LinkedHashMap<String, Object>();
         for (Map.Entry<String, CustomFieldValueDto> valueDto : mapValue.entrySet()) {
             values.put(valueDto.getKey(), valueDto.getValue().fromDTO());
         }
         return values;
     }
 
-    public static Map<String, CustomFieldValueDto> toDTO(Map<String, Object> mapValue) {
+    public static LinkedHashMap<String, CustomFieldValueDto> toDTO(Map<String, Object> mapValue) {
         if (mapValue == null || mapValue.entrySet().size() == 0) {
             return null;
         }
-        Map<String, CustomFieldValueDto> dtos = new HashMap<String, CustomFieldValueDto>();
+        LinkedHashMap<String, CustomFieldValueDto> dtos = new LinkedHashMap<String, CustomFieldValueDto>();
 
         for (Map.Entry<String, Object> mapItem : mapValue.entrySet()) {
             CustomFieldValueDto dto = new CustomFieldValueDto();

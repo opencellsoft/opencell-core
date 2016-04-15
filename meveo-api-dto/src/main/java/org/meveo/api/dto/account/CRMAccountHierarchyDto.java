@@ -1,7 +1,7 @@
 package org.meveo.api.dto.account;
 
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -458,7 +458,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
 			customFields.getCustomField().add(customFieldDto);
 		}
 		if(customFieldDto.getMapValue() == null){
-			customFieldDto.setMapValue(new HashMap<String,CustomFieldValueDto>());
+			customFieldDto.setMapValue(new LinkedHashMap<String,CustomFieldValueDto>());
 		}
 		if(cfMapToAdd.getDoubleValue() != null){
 			CustomFieldValueDto cfValue = new CustomFieldValueDto(cfMapToAdd.getDoubleValue());
