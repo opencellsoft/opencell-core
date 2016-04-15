@@ -86,6 +86,11 @@ public class PageAccessFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) res;
 
 		String pageKey = request.getRequestURI();
+		if(pageKey!=null && pageKey.endsWith(".jsf")){
+			pageKey = pageKey.substring(0, pageKey.lastIndexOf(".jsf"));
+		} else if(pageKey!=null && pageKey.endsWith(".xhtml")){
+			pageKey = pageKey.substring(0, pageKey.lastIndexOf(".xhtml"));
+		}
 
 		Page page = this.pages.get(pageKey);
 
@@ -110,15 +115,15 @@ public class PageAccessFilter implements Filter {
 				}
 			}
 
-			boolean result = true;
+			boolean allow = true;
 			// load all constraints
 			for (String constraint : page.getConstraints()) {
 				try {
-					result = result
+					allow = allow
 							&& ValueExpressionWrapper.evaluateToBooleanMultiVariable(constraint, parameters.toArray());
-					// if the result is false any succeeding expressions will never be true.
+					// if allow is false any succeeding expressions will never be true.
 					// so immediately log a warning then redirect user to error page.
-					if (!result) {
+					if (!allow) {
 						logger.warn("User does not have permission to access the page. Redirecting to error page...");
 						response.sendRedirect(
 								request.getServletContext().getContextPath() + config.getInitParameter(ERROR_PAGE));
