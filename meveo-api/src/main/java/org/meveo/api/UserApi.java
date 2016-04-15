@@ -9,7 +9,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -81,7 +80,7 @@ public class UserApi extends BaseApi {
         name.setLastName(postData.getLastName());
         name.setFirstName(postData.getFirstName());
         user.setName(name);
-        user.setPassword(Sha1Encrypt.encodePassword(postData.getPassword()));
+        user.setPassword(postData.getPassword());
         user.setLastPasswordModification(new Date());
         user.setProvider(provider);
 

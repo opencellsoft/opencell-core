@@ -386,12 +386,12 @@ input[type="submit"],
 	display: inline-block;
 }
 .col2-set .col1 {
-	width: 25%; 
+	width: 3%; 
 	float:left;
 }
 
 .col2-set .col2 {
-	width: 75%; 
+	width: 97%; 
 	float:left;
 }
 
@@ -612,4 +612,8 @@ vertical-align:top !important;
 	-moz-border-radius:3px;
 	-webkit-border-radius:3px;
 	border-radius:3px;
+}
+
+form.formNoBottomBorder {
+	border-bottom: none;
 }

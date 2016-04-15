@@ -154,7 +154,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         serviceInstance.setStatus(InstanceStatusEnum.INACTIVE);
-        serviceInstance.setStatusDate(new Date());
         serviceInstance.setCode(serviceCode);
         serviceInstance.setInvoicingCalendar(serviceInstance.getServiceTemplate().getInvoicingCalendar());
         create(serviceInstance, creator); // AKK was with subscription.getProvider()
@@ -248,7 +247,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity(),
                     creator);
                 oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
-                oneShotChargeInstance.setStatusDate(new Date());
                 oneShotChargeInstanceService.update(oneShotChargeInstance, creator);
             }
         } else {
@@ -265,7 +263,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             recurringChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
             recurringChargeInstance.setSeller(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
             recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-            recurringChargeInstance.setStatusDate(new Date());
             recurringChargeInstanceService.update(recurringChargeInstance, creator);
             walletOperationService.chargeSubscription(recurringChargeInstance, creator);
 
@@ -282,7 +279,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
-        serviceInstance.setStatusDate(new Date());
         update(serviceInstance, creator);
 
         // execute subscription script
@@ -357,7 +353,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             }
             recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
-            recurringChargeInstance.setStatusDate(new Date());
             recurringChargeInstanceService.update(recurringChargeInstance, user);
         }
 
@@ -379,7 +374,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         serviceInstance.setTerminationDate(terminationDate);
         serviceInstance.setStatus(InstanceStatusEnum.TERMINATED);
-        serviceInstance.setStatusDate(new Date());
         update(serviceInstance, user);
     }
 
@@ -437,7 +431,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         serviceInstance.setStatus(InstanceStatusEnum.SUSPENDED);
-        serviceInstance.setStatusDate(new Date());
         serviceInstance.setTerminationDate(suspensionDate);
         update(serviceInstance, updater);
     }
@@ -459,7 +452,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
-        serviceInstance.setStatusDate(new Date());
         serviceInstance.setSubscriptionDate(reactivationDate);
         serviceInstance.setDescription(serviceTemplate.getDescription());
         serviceInstance.setTerminationDate(null);

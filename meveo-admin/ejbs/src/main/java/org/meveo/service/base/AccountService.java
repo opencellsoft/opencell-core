@@ -51,7 +51,7 @@ public abstract class AccountService<P extends AccountEntity> extends BusinessSe
 		log.debug("start of find {} by name={}, address={}", getEntityClass().getSimpleName(), name, address);
 		final Class<? extends P> productClass = getEntityClass();
 		StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
-		queryString.append(" WHERE 1=1");
+		queryString.append(" WHERE 1=1 AND a.provider=:provider");
 
 		if (name != null) {
 			if (!StringUtils.isBlank(name.getFirstName())) {
@@ -87,6 +87,8 @@ public abstract class AccountService<P extends AccountEntity> extends BusinessSe
 		}
 
 		Query query = getEntityManager().createQuery(queryString.toString());
+		
+		query.setParameter("provider", provider);
 
 		if (name != null) {
 			if (!StringUtils.isBlank(name.getFirstName())) {
