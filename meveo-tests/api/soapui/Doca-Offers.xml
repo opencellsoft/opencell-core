@@ -24643,7 +24643,7 @@ public class PostpaidOfferScript extends Script {
 						usg.setDescription(descr);
 						usg.setCode(offerCode+"_"+code+"_IN");
 						usg.setInvoiceSubCategory("SERV_"+invoiceSubcat);
-						usg.setFilterParam1(code);
+						usg.setFilterParam1(serviceTemplateDto.getCode());
 						usageChargeTemplateApi.create(usg,user);
 						
 						ServiceUsageChargeTemplateDto usageInDto = new ServiceUsageChargeTemplateDto();
@@ -24666,7 +24666,7 @@ public class PostpaidOfferScript extends Script {
 					usg.setDescription(descr);
 					usg.setCode(offerCode+"_"+code+"_OVER");
 					usg.setInvoiceSubCategory("SERV_"+invoiceSubcat);
-					usg.setFilterParam1(code);
+					usg.setFilterParam1(serviceTemplateDto.getCode());
 					usageChargeTemplateApi.create(usg,user);
 					
 
@@ -24875,7 +24875,7 @@ public class PrepaidOfferScript extends Script {
 						usg.setDescription(descr);
 						usg.setCode(offerCode+"_"+code+"_IN");
 						usg.setInvoiceSubCategory("SERV_"+invoiceSubcat);
-						usg.setFilterParam1(code);
+						usg.setFilterParam1(serviceTemplateDto.getCode());
 						usageChargeTemplateApi.create(usg,user);
 						
 						ServiceUsageChargeTemplateDto usageInDto = new ServiceUsageChargeTemplateDto();
@@ -24899,7 +24899,7 @@ public class PrepaidOfferScript extends Script {
 					usg.setDescription(descr);
 					usg.setCode(offerCode+"_"+code+"_OVER");
 					usg.setInvoiceSubCategory("SERV_"+invoiceSubcat);
-					usg.setFilterParam1(code);
+					usg.setFilterParam1(serviceTemplateDto.getCode());
 					usageChargeTemplateApi.create(usg,user);
 					
 
