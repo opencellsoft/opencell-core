@@ -24501,6 +24501,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.catalog.OfferServiceTemplateDto;
@@ -24523,6 +24524,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.meveo.api.billing.WalletApi;
 import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.catalog.ServiceTemplateApi;
 import org.meveo.api.catalog.RecurringChargeTemplateApi;
@@ -24535,7 +24537,8 @@ import org.meveo.model.catalog.CounterTemplateLevel;
  * 
  * @author Seb
  * Edited 06/04/2016 00:56
- * Edited 17/04/2016 00:56 :set Prorated at termination too
+ * Edited 17/04/2016       : set Prorated at termination too
+ *                         : set Param1 as serviceCode
  * 
  */
 
@@ -24549,6 +24552,7 @@ public class PostpaidOfferScript extends Script {
   	UsageChargeTemplateApi usageChargeTemplateApi = (UsageChargeTemplateApi) getServiceInterface("UsageChargeTemplateApi");
   	CounterTemplateApi counterTemplateApi = (CounterTemplateApi) getServiceInterface("CounterTemplateApi");
   	PricePlanApi pricePlanApi = (PricePlanApi)  getServiceInterface("PricePlanApi");
+  	
 
   	@Override
 	public void execute(Map<String,Object> context, User user) throws BusinessException{
@@ -24639,6 +24643,7 @@ public class PostpaidOfferScript extends Script {
 						usg.setDescription(descr);
 						usg.setCode(offerCode+"_"+code+"_IN");
 						usg.setInvoiceSubCategory("SERV_"+invoiceSubcat);
+						usg.setFilterParam1(code);
 						usageChargeTemplateApi.create(usg,user);
 						
 						ServiceUsageChargeTemplateDto usageInDto = new ServiceUsageChargeTemplateDto();
@@ -24661,6 +24666,7 @@ public class PostpaidOfferScript extends Script {
 					usg.setDescription(descr);
 					usg.setCode(offerCode+"_"+code+"_OVER");
 					usg.setInvoiceSubCategory("SERV_"+invoiceSubcat);
+					usg.setFilterParam1(code);
 					usageChargeTemplateApi.create(usg,user);
 					
 
@@ -24714,10 +24720,12 @@ package org.meveo.service.script;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.billing.WalletTemplateDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.catalog.OfferServiceTemplateDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
@@ -24730,7 +24738,9 @@ import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplatesDto;
 import org.meveo.api.dto.catalog.ServiceUsageChargeTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
+import org.meveo.api.dto.catalog.WalletsDto;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.service.notification.InboundRequestService;
@@ -24739,6 +24749,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.meveo.api.billing.WalletApi;
 import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.catalog.ServiceTemplateApi;
 import org.meveo.api.catalog.RecurringChargeTemplateApi;
@@ -24751,6 +24762,8 @@ import org.meveo.model.catalog.CounterTemplateLevel;
  * 
  * @author Seb
  * Edited 06/04/2016 00:56
+ * Edited 17/042016 : Create Prepaid wallet
+ *                  : set Param1 as serviceCode
  */
 
 public class PrepaidOfferScript extends Script {
@@ -24763,6 +24776,7 @@ public class PrepaidOfferScript extends Script {
   	UsageChargeTemplateApi usageChargeTemplateApi = (UsageChargeTemplateApi) getServiceInterface("UsageChargeTemplateApi");
   	CounterTemplateApi counterTemplateApi = (CounterTemplateApi) getServiceInterface("CounterTemplateApi");
   	PricePlanApi pricePlanApi = (PricePlanApi)  getServiceInterface("PricePlanApi");
+  	WalletApi walletApi = (WalletApi)  getServiceInterface("WalletApi");
 
   	@Override
 	public void execute(Map<String,Object> context, User user) throws BusinessException{
@@ -24787,6 +24801,16 @@ public class PrepaidOfferScript extends Script {
 			offerDto.setCode(offerCode);
 			offerDto.setDescription(name);
 			List<OfferServiceTemplateDto> offerServiceTemplates = new ArrayList<OfferServiceTemplateDto>();
+			
+			WalletTemplateDto walletTemplateDto = new WalletTemplateDto();
+			walletTemplateDto.setCode("PREPAID");
+			walletTemplateDto.setDescription("Prepaid wallet");
+			walletTemplateDto.setWalletType(BillingWalletTypeEnum.PREPAID);
+			walletApi.createOrUpdate(walletTemplateDto, user);
+			log.debug("Prepaid wallet created");
+			
+			WalletsDto walletsDto = new WalletsDto();
+			walletsDto.setWallet(Arrays.asList(walletTemplateDto.getCode()));
 			
 			//abonnement
 			RecurringChargeTemplateDto rct = new RecurringChargeTemplateDto();
@@ -24851,11 +24875,13 @@ public class PrepaidOfferScript extends Script {
 						usg.setDescription(descr);
 						usg.setCode(offerCode+"_"+code+"_IN");
 						usg.setInvoiceSubCategory("SERV_"+invoiceSubcat);
+						usg.setFilterParam1(code);
 						usageChargeTemplateApi.create(usg,user);
 						
 						ServiceUsageChargeTemplateDto usageInDto = new ServiceUsageChargeTemplateDto();
 						usageInDto.setCode(offerCode+"_"+code+"_IN");
 						usageInDto.setCounterTemplate(offerCode+"_"+code+"_CNT");
+						usageInDto.setWallets(walletsDto);
 						usgs.getServiceChargeTemplateUsage().add(usageInDto);
 						
 
@@ -24873,6 +24899,7 @@ public class PrepaidOfferScript extends Script {
 					usg.setDescription(descr);
 					usg.setCode(offerCode+"_"+code+"_OVER");
 					usg.setInvoiceSubCategory("SERV_"+invoiceSubcat);
+					usg.setFilterParam1(code);
 					usageChargeTemplateApi.create(usg,user);
 					
 
@@ -24886,7 +24913,8 @@ public class PrepaidOfferScript extends Script {
 					
 					ServiceUsageChargeTemplateDto usageInDto = new ServiceUsageChargeTemplateDto();
 					usageInDto.setCode(offerCode+"_"+code+"_OVER");
-					usgs.getServiceChargeTemplateUsage().add(usageInDto);					
+					usgs.getServiceChargeTemplateUsage().add(usageInDto);
+					usageInDto.setWallets(walletsDto);
 					serviceTemplateDto.setServiceChargeTemplateUsages(usgs);
 					serviceTemplateApi.create(serviceTemplateDto,user);
 					OfferServiceTemplateDto ostDto=new OfferServiceTemplateDto();
@@ -24897,6 +24925,7 @@ public class PrepaidOfferScript extends Script {
 
 			offerDto.setOfferServiceTemplates(offerServiceTemplates);
 			offerTemplateApi.create(offerDto,user);
+
 		} catch(Exception e){
 			result = "{\"result\":\"KO\",\"err\":\""+e.getMessage()+"\"}";
 			e.printStackTrace();
