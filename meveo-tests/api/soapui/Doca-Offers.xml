@@ -24495,7 +24495,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <type>JAVA</type>\r
             <script>
             <![CDATA[
-            
 package org.meveo.service.script;
 
 import java.math.BigDecimal;
@@ -24536,6 +24535,8 @@ import org.meveo.model.catalog.CounterTemplateLevel;
  * 
  * @author Seb
  * Edited 06/04/2016 00:56
+ * Edited 17/04/2016 00:56 :set Prorated at termination too
+ * 
  */
 
 public class PostpaidOfferScript extends Script {
@@ -24584,6 +24585,7 @@ public class PostpaidOfferScript extends Script {
 			rct.setCode(offerCode+"_ABO_REC");
 			rct.setInvoiceSubCategory("ABO_"+invoiceSubcategory);
 			rct.setSubscriptionProrata(proratedSubscription);
+			rct.setTerminationProrata(proratedSubscription);
 			recurringChargeTemplateApi.create(rct,user);
 			
 			PricePlanDto rpp = new PricePlanDto();
