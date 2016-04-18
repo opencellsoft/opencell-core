@@ -87,11 +87,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${AddServiceBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>waitForElementPresent</td>
 	<td>${ServicesTab}</td>
 	<td></td>
@@ -262,11 +257,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${backButton}</td>
 	<td></td>
@@ -280,6 +270,11 @@
 	<td>assertText</td>
 	<td>${CodeLocatorResult}</td>
 	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//tbody[@id='datatable_results_data']/tr/td[4]/a</td>
+	<td>${ServiceValue}</td>
 </tr>
 </tbody></table>
 </body>

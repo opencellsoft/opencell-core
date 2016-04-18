@@ -4,12 +4,12 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SuccessInformationTestSuite</title>
+<title>SuccessOfferTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SuccessInformationTestSuite</td></tr>
+<tr><td rowspan="1" colspan="3">SuccessOfferTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
@@ -84,6 +84,11 @@
 <tr>
 	<td>verifyElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${AddServiceBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -257,6 +262,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
 	<td>assertElementPresent</td>
 	<td>${backButton}</td>
 	<td></td>
@@ -270,11 +280,6 @@
 	<td>assertText</td>
 	<td>${CodeLocatorResult}</td>
 	<td>${Code}</td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>//tbody[@id='datatable_results_data']/tr/td[4]/a</td>
-	<td>${ServiceValue}</td>
 </tr>
 </tbody></table>
 </body>
