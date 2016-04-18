@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.OfferServiceTemplate;
@@ -16,9 +18,12 @@ import org.meveo.model.catalog.ServiceTemplate;
 @XmlRootElement(name = "OfferServiceTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OfferServiceTemplateDto {
-	
+
 	private ServiceTemplateDto serviceTemplate;
-	private boolean mandatory;
+	private Boolean mandatory;
+
+	@XmlElementWrapper(name = "incompatibleServices")
+	@XmlElement(name = "serviceTemplate")
 	private List<ServiceTemplateDto> incompatibleServices = new ArrayList<>();
 
 	public OfferServiceTemplateDto() {
@@ -37,11 +42,7 @@ public class OfferServiceTemplateDto {
 		}
 	}
 
-	public boolean isMandatory() {
-		return mandatory;
-	}
-
-	public void setMandatory(boolean mandatory) {
+	public void setMandatory(Boolean mandatory) {
 		this.mandatory = mandatory;
 	}
 
@@ -55,8 +56,7 @@ public class OfferServiceTemplateDto {
 
 	@Override
 	public String toString() {
-		return "OfferServiceTemplateDto [serviceTemplate=" + serviceTemplate + ", mandatory=" + mandatory
-				+ ", incompatibleServices=" + incompatibleServices + "]";
+		return "OfferServiceTemplateDto [serviceTemplate=" + serviceTemplate + ", mandatory=" + mandatory + ", incompatibleServices=" + incompatibleServices + "]";
 	}
 
 	public ServiceTemplateDto getServiceTemplate() {
@@ -65,6 +65,10 @@ public class OfferServiceTemplateDto {
 
 	public void setServiceTemplate(ServiceTemplateDto serviceTemplate) {
 		this.serviceTemplate = serviceTemplate;
+	}
+
+	public Boolean getMandatory() {
+		return mandatory;
 	}
 
 }
