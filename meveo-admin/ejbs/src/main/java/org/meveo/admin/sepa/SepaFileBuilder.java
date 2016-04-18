@@ -96,8 +96,8 @@ public class SepaFileBuilder {
 		PaymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference()
 				+ "-" + dDRequestItem.getId());
 		PaymentInformation.setPmtMtd(ParamBean.getInstance().getProperty("sepa.PmtMtd", "TRF"));
-		PaymentInformation.setNbOfTxs(dDRequestItem.getInvoices().size());
-		PaymentInformation.setCtrlSum(dDRequestItem.getAmountInvoices()
+		PaymentInformation.setNbOfTxs(1);
+		PaymentInformation.setCtrlSum(dDRequestItem.getAmount()
 				.setScale(2, RoundingMode.HALF_UP));
 		PmtTpInf PaymentTypeInformation = new PmtTpInf();
 		PaymentInformation.setPmtTpInf(PaymentTypeInformation);
@@ -138,11 +138,8 @@ public class SepaFileBuilder {
 		other.setId(providerBC.getIcs());
 		SchmeNm SchemeName = new SchmeNm();
 		other.setSchmeNm(SchemeName);
-		SchemeName.setPrtry("SEPA");
-		for (RecordedInvoice invoice : dDRequestItem.getInvoices()) {
-			addTransaction(invoice, PaymentInformation);
-		}
-
+		SchemeName.setPrtry("SEPA");		
+		addTransaction(dDRequestItem.getRecordedInvoice(), PaymentInformation);
 	}
 
 	public void addTransaction(RecordedInvoice invoice,

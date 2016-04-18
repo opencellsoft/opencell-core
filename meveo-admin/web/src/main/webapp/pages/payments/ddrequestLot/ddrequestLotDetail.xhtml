@@ -26,7 +26,7 @@
 			<hftl:formField label="#{messages['ddrequestLot.fileName']}" field="fileName" />
 			<hftl:formField label="#{messages['ddrequestLot.sendDate']}" field="sendDate" />
 			<hftl:formField label="#{messages['ddrequestLot.invoicesNumber']}" field="invoicesNumber" />
-			<hftl:formField label="#{messages['ddrequestLot.invoicesAmount']}" field="invoicesAmount" />
+			<hftl:formField label="#{messages['ddrequestLot.invoicesAmount']}" field="invoicesAmount"  />
 			<hftl:formField label="#{messages['ddrequestLot.paymentCreated']}" field="paymentCreated" isMessage="true"/>
 			<hftl:formField label="#{messages['ddrequestLot.rejectedCause']}" field="rejectedCause" />
 		   </p:panel>	
@@ -35,25 +35,27 @@
      		<p:commandButton value="#{messages['action.back']}" action="#{ddRequestLOTBean.back}" immediate="true" />
    		</h:panelGrid>	
 		</hftl:formPanel>					 
-			<hftl:dataList backingBean="#{recordedInvoiceBean}" dataModel="#{ddRequestLOTBean.entity.getInvoices()}" edit="#{false}" checkMany="#{false}" deleteManyButton="false">
+			<hftl:dataList backingBean="#{recordedInvoiceBean}" dataModel="#{ddRequestLOTBean.entity.getDdrequestItems()}" edit="#{false}" checkMany="#{false}" deleteManyButton="false">
 						<hftl:column showSortLinks="false"
 							label="#{messages['accountOperation.operationDate']}"
-							field="auditable.created" isDate="true"/>
+							field="recordedInvoice.auditable.created" isDate="true"/>
 						<hftl:column label="#{messages['accountOperation.reference']}"
-							field="reference" />	
+							field="recordedInvoice.reference" />	
 						<hftl:column label="#{messages['accountOperation.occCode']}"
-							field="occCode" />					
+							field="recordedInvoice.occCode" />					
 						<hftl:column
 							label="#{messages['accountOperation.occDescription']}"
-							field="occDescription" />
+							field="recordedInvoice.occDescription" />
 						<hftl:column label="#{messages['accountOperation.transactionDate']}"
-							field="transactionDate" />						
+							field="recordedInvoice.transactionDate" />						
 						<hftl:column label="#{messages['accountOperation.dueDate']}"
-							field="dueDate" />
+							field="recordedInvoice.dueDate" />
 					<hftl:column label="#{messages['recordedInvoice.amount']}"
-							field="amount" />							
+							field="recordedInvoice.amount" />							
 						<hftl:column label="#{messages['accountOperation.netToPay']}"
-							field="netToPay" />
+							field="recordedInvoice.netToPay" />
+						<hftl:column label="#{messages['ddRequestItem.errorMsg']}"
+							field="errorMsg" />							
 												- 					
 					</hftl:dataList>
 				 

@@ -26,24 +26,27 @@ import javax.ejb.Stateless;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
+import org.meveo.model.payments.DDRequestFileFormatEnum;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
 
 	@SuppressWarnings("unchecked")
-	public List<DDRequestLotOp> getDDRequestOps(Provider currentProvider) {
+	public List<DDRequestLotOp> getDDRequestOps(Provider currentProvider,DDRequestFileFormatEnum fileFormat) {
 		List<DDRequestLotOp> ddrequestOps = new ArrayList<DDRequestLotOp>();
 
 		try {
 			ddrequestOps = (List<DDRequestLotOp>) getEntityManager() 
-					.createQuery("from " + DDRequestLotOp.class.getSimpleName() + " as p left join fetch p.ddrequestLOT t where p.status=:status and p.provider=:currentProvider")
+					.createQuery("from " + DDRequestLotOp.class.getSimpleName() + " as p  left join fetch p.ddrequestLOT t where p.status=:status and p.provider=:currentProvider and "
+							+ "p.fileFormat=:fileFormatIN")
 					.setParameter("status", DDRequestOpStatusEnum.WAIT)
-					.setParameter("currentProvider", currentProvider).getResultList();
+					.setParameter("currentProvider", currentProvider)
+					.setParameter("fileFormatIN", fileFormat)
+					.getResultList();
 		} catch (Exception e) {
 			log.error("failed to get DDRequestOps",e);
 		}
-
 		return ddrequestOps;
 	}
 

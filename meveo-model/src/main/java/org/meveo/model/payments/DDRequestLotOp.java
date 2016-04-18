@@ -63,6 +63,10 @@ public class DDRequestLotOp extends AuditableEntity {
 
 	@Column(name = "ERROR_CAUSE")
 	private String errorCause;
+	
+	@Column(name = "FILE_FORMAT")
+	@Enumerated(EnumType.STRING)
+	private DDRequestFileFormatEnum fileFormat;
 
 	/**
 	 * @return the fromDueDate
@@ -147,4 +151,19 @@ public class DDRequestLotOp extends AuditableEntity {
 		return errorCause;
 	}
 
+	/**
+	 * @return the fileFormat
+	 */
+	public DDRequestFileFormatEnum getFileFormat() {
+		return fileFormat;
+	}
+
+	/**
+	 * @param fileFormat the fileFormat to set
+	 */
+	public void setFileFormat(DDRequestFileFormatEnum fileFormat) {
+		this.fileFormat = fileFormat;
+	}
+
+	
 }

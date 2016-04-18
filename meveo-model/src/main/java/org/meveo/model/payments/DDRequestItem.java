@@ -19,21 +19,19 @@
 package org.meveo.model.payments;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.meveo.model.AuditableEntity;
 
@@ -47,8 +45,6 @@ public class DDRequestItem extends AuditableEntity {
 	@Column(name = "AMOUNT")
 	private BigDecimal amount;
 
-	@Column(name = "AMOUNT_INVOICES")
-	private BigDecimal amountInvoices;
 
 	@Column(name = "PAYMENT_INFO")
 	private String paymentInfo;// IBAN for direct debit
@@ -85,14 +81,14 @@ public class DDRequestItem extends AuditableEntity {
 	@JoinColumn(name = "DDREQUEST_LOT_ID")
 	private DDRequestLOT ddRequestLOT;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CUSTOMER_ACCOUNT_ID")
-	private CustomerAccount customerAccount;
-
-	@OneToMany(mappedBy = "ddRequestItem", fetch = FetchType.LAZY)
-	private List<RecordedInvoice> invoices = new ArrayList<RecordedInvoice>();
+	@ManyToOne(optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ACCOUNT_OPERATION_ID")
+	private RecordedInvoice recordedInvoice;
 	
-	@ManyToOne(optional = true)
+	@Column(name = "ERROR_MSG")
+	private String errorMsg;
+	
+	@OneToOne(optional = true)
 	@JoinColumn(name = "PAYMENT_ID")
 	private AutomatedPayment automatedPayment;
 
@@ -188,28 +184,22 @@ public class DDRequestItem extends AuditableEntity {
 		this.ddRequestLOT = ddRequestLOT;
 	}
 
-	public CustomerAccount getCustomerAccount() {
-		return customerAccount;
+
+
+	
+
+	/**
+	 * @return the recordedInvoice
+	 */
+	public RecordedInvoice getRecordedInvoice() {
+		return recordedInvoice;
 	}
 
-	public void setCustomerAccount(CustomerAccount customerAccount) {
-		this.customerAccount = customerAccount;
-	}
-
-	public void setInvoices(List<RecordedInvoice> invoices) {
-		this.invoices = invoices;
-	}
-
-	public List<RecordedInvoice> getInvoices() {
-		return invoices;
-	}
-
-	public void setAmountInvoices(BigDecimal amountInvoices) {
-		this.amountInvoices = amountInvoices;
-	}
-
-	public BigDecimal getAmountInvoices() {
-		return amountInvoices;
+	/**
+	 * @param recordedInvoice the recordedInvoice to set
+	 */
+	public void setRecordedInvoice(RecordedInvoice recordedInvoice) {
+		this.recordedInvoice = recordedInvoice;
 	}
 
 	public String getPaymentInfo6() {
@@ -227,7 +217,27 @@ public class DDRequestItem extends AuditableEntity {
 	public void setAutomatedPayment(AutomatedPayment automatedPayment) {
 		this.automatedPayment = automatedPayment;
 	}
+
+	/**
+	 * @return the errorMsg
+	 */
+	public String getErrorMsg() {
+		return errorMsg;
+	}
+
+	/**
+	 * @param errorMsg the errorMsg to set
+	 */
+	public void setErrorMsg(String errorMsg) {
+		this.errorMsg = errorMsg;
+	}
 	
+	
+	
+	@Transient
+	public boolean hasError(){
+		 return !(errorMsg == null || errorMsg.trim().length() == 0);
+	}
 	
 
 }

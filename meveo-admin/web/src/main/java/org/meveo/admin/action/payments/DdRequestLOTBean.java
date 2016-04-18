@@ -95,6 +95,7 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 			DDRequestLotOp ddrequestLotOp = new DDRequestLotOp();
 			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.FILE);
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
+			ddrequestLotOp.setFileFormat(entity.getFileFormat());
 			ddrequestLotOp.setDdrequestLOT(entity);
 			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser());
 			messages.info(new BundleKey("messages",
@@ -118,6 +119,7 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 			DDRequestLotOp ddrequestLotOp = new DDRequestLotOp();
 			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.PAYMENT);
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
+			ddrequestLotOp.setFileFormat(entity.getFileFormat());
 			ddrequestLotOp.setDdrequestLOT(entity);
 			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser());
 			messages.info(new BundleKey("messages",
