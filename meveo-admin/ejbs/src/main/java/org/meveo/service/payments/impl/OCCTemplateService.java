@@ -24,6 +24,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.base.PersistenceService;
@@ -68,22 +69,22 @@ public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 		return occTemplates;
 	}
 
-	public OCCTemplate getDunningOCCTemplate(Provider provider) throws Exception {
+	public OCCTemplate getDunningOCCTemplate(User user) throws Exception {
 		String occCodeDefaultValue = "OD_PREL";				
-		return getOccTemplateByCFKeyOrProperty(DUNNING_OCC_CODE, occCodeDefaultValue, provider);
+		return getOccTemplateByCFKeyOrProperty(DUNNING_OCC_CODE, occCodeDefaultValue, user);
 	}
 
-	public OCCTemplate getDirectDebitOCCTemplate(Provider provider) {				
+	public OCCTemplate getDirectDebitOCCTemplate(User user) {				
 		String occCodeDefaultValue = "DD_OCC";				
-		return getOccTemplateByCFKeyOrProperty(DDREQUEST_OCC_CODE, occCodeDefaultValue, provider);
+		return getOccTemplateByCFKeyOrProperty(DDREQUEST_OCC_CODE, occCodeDefaultValue, user);
 	}
 
-    private OCCTemplate getOccTemplateByCFKeyOrProperty(String occCodeKey, String occCodeDefaultValue, Provider provider) {
+    private OCCTemplate getOccTemplateByCFKeyOrProperty(String occCodeKey, String occCodeDefaultValue, User user) {
 
         try {
             String occTemplateCode = null;
-            occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCodeKey, occCodeDefaultValue, provider, true, getCurrentUser());
-            return findByCode(occTemplateCode, provider);
+            occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCodeKey, occCodeDefaultValue, user.getProvider(), true, user);
+            return findByCode(occTemplateCode, user.getProvider());
 
         } catch (Exception e) {
             log.error("error while getting occ template ", e);

@@ -19,17 +19,21 @@
 package org.meveo.model.payments;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @DiscriminatorValue(value = "I")
@@ -79,16 +83,11 @@ public class RecordedInvoice extends AccountOperation {
 	@Column(name = "PAYMENT_INFO6")
 	private String paymentInfo6;// bic
 
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "DDRequestLOT_ID")
-	private DDRequestLOT ddRequestLOT;
-
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "DDREQUEST_ITEM_ID")
-	private DDRequestItem ddRequestItem;
-
 	@Column(name = "BILLING_ACCOUNT_NAME")
 	private String billingAccountName;
+	
+	@OneToMany(mappedBy = "recordedInvoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();
 
 	public Date getProductionDate() {
 		return productionDate;
@@ -178,13 +177,6 @@ public class RecordedInvoice extends AccountOperation {
 		this.paymentInfo4 = paymentInfo4;
 	}
 
-	public void setDdRequestLOT(DDRequestLOT ddRequestLOT) {
-		this.ddRequestLOT = ddRequestLOT;
-	}
-
-	public DDRequestLOT getDdRequestLOT() {
-		return ddRequestLOT;
-	}
 
 	public void setBillingAccountName(String billingAccountName) {
 		this.billingAccountName = billingAccountName;
@@ -202,14 +194,6 @@ public class RecordedInvoice extends AccountOperation {
 		return paymentInfo5;
 	}
 
-	public void setDdRequestItem(DDRequestItem ddRequestItem) {
-		this.ddRequestItem = ddRequestItem;
-	}
-
-	public DDRequestItem getDdRequestItem() {
-		return ddRequestItem;
-	}
-
 	public String getPaymentInfo6() {
 		return paymentInfo6;
 	}
@@ -218,5 +202,28 @@ public class RecordedInvoice extends AccountOperation {
 		this.paymentInfo6 = paymentInfo6;
 	}
 
+	/**
+	 * @return the ddrequestItems
+	 */
+	public List<DDRequestItem> getDdrequestItems() {
+		return ddrequestItems;
+	}
+
+	/**
+	 * @param ddrequestItems the ddrequestItems to set
+	 */
+	public void setDdrequestItems(List<DDRequestItem> ddrequestItems) {
+		this.ddrequestItems = ddrequestItems;
+	}
+
+	@Transient
+	public DDRequestItem getPayedDDRequestItem(){
+		for(DDRequestItem ddRequestItem : ddrequestItems){
+			if(!ddRequestItem.hasError()){
+				return ddRequestItem;
+			}
+		}
+		return null;
+	}
 	
 }

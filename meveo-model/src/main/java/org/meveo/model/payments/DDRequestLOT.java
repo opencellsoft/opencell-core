@@ -26,6 +26,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -62,9 +64,6 @@ public class DDRequestLOT extends AuditableEntity {
 	@Column(name = "INVOICE_AMOUNT", precision = 23, scale = 12)
 	private BigDecimal invoicesAmount;
 
-	@OneToMany(mappedBy = "ddRequestLOT", fetch = FetchType.LAZY)
-	private List<RecordedInvoice> invoices = new ArrayList<RecordedInvoice>();
-
 	@OneToMany(mappedBy = "ddRequestLOT", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();
 	
@@ -77,7 +76,9 @@ public class DDRequestLOT extends AuditableEntity {
 	@Column(name = "REJECTED_INVOICES")
 	private Integer rejectedInvoices;
 	
-	
+	@Column(name = "FILE_FORMAT")
+	@Enumerated(EnumType.STRING)
+	private DDRequestFileFormatEnum fileFormat;
 	
 	public String getFileName() {
 		return fileName;
@@ -95,13 +96,6 @@ public class DDRequestLOT extends AuditableEntity {
 		this.sendDate = sendDate;
 	}
 
-	public void setInvoices(List<RecordedInvoice> invoices) {
-		this.invoices = invoices;
-	}
-
-	public List<RecordedInvoice> getInvoices() {
-		return invoices;
-	}
 
 	public Integer getInvoicesNumber() {
 		return invoicesNumber;
@@ -167,6 +161,20 @@ public class DDRequestLOT extends AuditableEntity {
 
 	public void setRejectedInvoices(Integer rejectedInvoices) {
 		this.rejectedInvoices = rejectedInvoices;
+	}
+
+	/**
+	 * @return the fileFormat
+	 */
+	public DDRequestFileFormatEnum getFileFormat() {
+		return fileFormat;
+	}
+
+	/**
+	 * @param fileFormat the fileFormat to set
+	 */
+	public void setFileFormat(DDRequestFileFormatEnum fileFormat) {
+		this.fileFormat = fileFormat;
 	}
 
 	

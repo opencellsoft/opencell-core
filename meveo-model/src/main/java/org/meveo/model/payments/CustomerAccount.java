@@ -92,11 +92,6 @@ public class CustomerAccount extends AccountEntity {
 	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<ActionDunning> actionDunnings = new ArrayList<ActionDunning>();
 
-	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
-	// TODO : Add orphanRemoval annotation.
-	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	private List<DDRequestItem> dDRequestItems = new ArrayList<DDRequestItem>();
-
 	@Column(name = "DATE_STATUS")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateStatus;
@@ -234,13 +229,6 @@ public class CustomerAccount extends AccountEntity {
 		this.actionDunnings = actionDunnings;
 	}
 
-	public List<DDRequestItem> getdDRequestItems() {
-		return dDRequestItems;
-	}
-
-	public void setdDRequestItems(List<DDRequestItem> dDRequestItems) {
-		this.dDRequestItems = dDRequestItems;
-	}
 
 	public String getMandateIdentification() {
 		return mandateIdentification;

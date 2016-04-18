@@ -1561,4 +1561,28 @@
         </addColumn>   
         <dropColumn columnName="EXONERATION_TAX_EL" tableName="CRM_PROVIDER" />
     </changeSet>      
+    
+    <changeSet id="#1640_20160413" author="anasseh">	
+        <addColumn tableName="AR_DDREQUEST_ITEM">	
+            <column name="ERROR_MSG" type="VARCHAR(1000)" />             
+        </addColumn>   
+        <addColumn tableName="AR_DDREQUEST_LOT">	
+            <column name="FILE_FORMAT" type="VARCHAR(100)" />             
+        </addColumn>     
+        <addColumn tableName="AR_DDREQUEST_LOT_OP">	
+            <column name="FILE_FORMAT" type="VARCHAR(100)" />             
+        </addColumn>    
+        <dropColumn tableName="AR_DDREQUEST_ITEM" columnName="CUSTOMER_ACCOUNT_ID"/>
+        <dropColumn tableName="AR_ACCOUNT_OPERATION" columnName="ddrequestlot_id"/>  
+         <dropColumn tableName="AR_ACCOUNT_OPERATION" columnName="ddrequest_item_id"/> 
+        
+        <addColumn tableName="AR_DDREQUEST_ITEM">	
+            <column name="ACCOUNT_OPERATION_ID" type="BIGINT"></column>            
+        </addColumn>      
+		<addForeignKeyConstraint baseColumnNames="ACCOUNT_OPERATION_ID"
+			baseTableName="AR_DDREQUEST_ITEM" constraintName="fk_ar_occ_dd_item"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />                   
+    </changeSet> 
+            
 </databaseChangeLog>
