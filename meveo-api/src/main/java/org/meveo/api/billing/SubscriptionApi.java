@@ -502,7 +502,7 @@ public class SubscriptionApi extends BaseApi {
                 if (postData.getCreateWallet() != null && postData.getCreateWallet()) {
                     subscription.getUserAccount().getWalletInstance(postData.getWallet());
                 } else {
-                    throw new MeveoApiException("Subscription is already RESILIATED.");
+                    throw new MeveoApiException("Wallet " + postData.getWallet() + " is not attached to the user account, but were instructed not to create it");
                 }
             }
         }
