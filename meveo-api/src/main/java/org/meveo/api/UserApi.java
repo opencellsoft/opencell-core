@@ -51,9 +51,6 @@ public class UserApi extends BaseApi {
         if (StringUtils.isBlank(postData.getRole())) {
             missingParameters.add("role");
         }
-        if (StringUtils.isBlank(postData.getLastName())) {
-            missingParameters.add("lastName");
-        }
 
         handleMissingParameters();
 
@@ -76,6 +73,7 @@ public class UserApi extends BaseApi {
 
         User user = new User();
         user.setUserName(postData.getUsername().toUpperCase());
+        user.setEmail((postData.getEmail()));
         Name name = new Name();
         name.setLastName(postData.getLastName());
         name.setFirstName(postData.getFirstName());
@@ -102,9 +100,6 @@ public class UserApi extends BaseApi {
         if (StringUtils.isBlank(postData.getRole())) {
             missingParameters.add("role");
         }
-        if (StringUtils.isBlank(postData.getLastName())) {
-            missingParameters.add("lastName");
-        }
 
         handleMissingParameters();
 
@@ -128,6 +123,7 @@ public class UserApi extends BaseApi {
         }
 
         user.setUserName(postData.getUsername());
+        user.setEmail((postData.getEmail()));
         Name name = new Name();
         name.setLastName(postData.getLastName());
         name.setFirstName(postData.getFirstName());
