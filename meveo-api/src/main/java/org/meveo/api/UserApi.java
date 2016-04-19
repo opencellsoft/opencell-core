@@ -124,6 +124,7 @@ public class UserApi extends BaseApi {
 
         user.setUserName(postData.getUsername());
         user.setEmail((postData.getEmail()));
+        user.setNewPassword(postData.getPassword());
         Name name = new Name();
         name.setLastName(postData.getLastName());
         name.setFirstName(postData.getFirstName());
