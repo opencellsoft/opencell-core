@@ -759,7 +759,7 @@ public class CustomFieldValue implements Serializable {
             } else if (Double.class.getSimpleName().equals(subType) || BigDecimal.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<List<Double>>() {
                 }.getType();
-            } else if (Long.class.getSimpleName().equals(subType)) {
+            } else if (Long.class.getSimpleName().equals(subType) || Integer.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<List<Long>>() {
                 }.getType();
             } else if (EntityReferenceWrapper.class.getSimpleName().equals(subType)) {
@@ -787,7 +787,7 @@ public class CustomFieldValue implements Serializable {
             } else if (Double.class.getSimpleName().equals(subType) || BigDecimal.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<LinkedHashMap<String, Double>>() {
                 }.getType();
-            } else if (Long.class.getSimpleName().equals(subType)) {
+            } else if (Long.class.getSimpleName().equals(subType) || Integer.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<LinkedHashMap<String, Long>>() {
                 }.getType();
             } else if (EntityReferenceWrapper.class.getSimpleName().equals(subType)) {
@@ -815,7 +815,7 @@ public class CustomFieldValue implements Serializable {
             } else if (Double.class.getSimpleName().equals(subType) || BigDecimal.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<LinkedHashMap<String, Double>>() {
                 }.getType();
-            } else if (Long.class.getSimpleName().equals(subType)) {
+            } else if (Long.class.getSimpleName().equals(subType) || Integer.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<LinkedHashMap<String, Long>>() {
                 }.getType();
             } else if (EntityReferenceWrapper.class.getSimpleName().equals(subType)) {

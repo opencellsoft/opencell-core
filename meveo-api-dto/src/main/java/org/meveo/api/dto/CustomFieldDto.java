@@ -54,7 +54,7 @@ public class CustomFieldDto {
     protected List<CustomFieldValueDto> listValue;
 
     // DO NOT change to Map. Used LinkedHashMap to preserve the item order during read/write
-    @XmlElement(type = LinkedHashMap.class)
+    @XmlElement
     protected LinkedHashMap<String, CustomFieldValueDto> mapValue;
 
     @XmlElement()

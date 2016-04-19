@@ -17,6 +17,7 @@ import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.ProviderDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
+import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
@@ -31,6 +32,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceCategory;
@@ -213,6 +215,20 @@ public class ProviderApi extends BaseApi {
         if (postData.getInvoiceAdjustmentSequenceSize() != null) {
             provider.setInvoiceAdjustmentSequenceSize(postData.getInvoiceAdjustmentSequenceSize());
         }
+        if (postData.getBankCoordinates() != null) {
+            provider.getBankCoordinates().setBankCode(postData.getBankCoordinates().getBankCode());
+            provider.getBankCoordinates().setBranchCode(postData.getBankCoordinates().getBranchCode());
+            provider.getBankCoordinates().setAccountNumber(postData.getBankCoordinates().getAccountNumber());
+            provider.getBankCoordinates().setKey(postData.getBankCoordinates().getKey());
+            provider.getBankCoordinates().setIban(postData.getBankCoordinates().getIban());
+            provider.getBankCoordinates().setBic(postData.getBankCoordinates().getBic());
+            provider.getBankCoordinates().setAccountOwner(postData.getBankCoordinates().getAccountOwner());
+            provider.getBankCoordinates().setBankName(postData.getBankCoordinates().getBankName());
+            provider.getBankCoordinates().setBankId(postData.getBankCoordinates().getBankId());
+            provider.getBankCoordinates().setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
+            provider.getBankCoordinates().setIssuerName(postData.getBankCoordinates().getIssuerName());
+            provider.getBankCoordinates().setIcs(postData.getBankCoordinates().getIcs());
+        }
 
         providerService.create(provider, currentUser);
 
@@ -330,6 +346,46 @@ public class ProviderApi extends BaseApi {
 
         if (postData.getInvoiceAdjustmentSequenceSize() != null) {
             provider.setInvoiceAdjustmentSequenceSize(postData.getInvoiceAdjustmentSequenceSize());
+        }
+        if (postData.getBankCoordinates() != null) {
+            BankCoordinates bankCoordinates = new BankCoordinates();
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
+                bankCoordinates.setBankCode(postData.getBankCoordinates().getBankCode());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getBranchCode())) {
+                bankCoordinates.setBranchCode(postData.getBankCoordinates().getBranchCode());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountNumber())) {
+                bankCoordinates.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getKey())) {
+                bankCoordinates.setKey(postData.getBankCoordinates().getKey());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
+                bankCoordinates.setIban(postData.getBankCoordinates().getIban());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getBic())) {
+                bankCoordinates.setBic(postData.getBankCoordinates().getBic());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountOwner())) {
+                bankCoordinates.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getBankName())) {
+                bankCoordinates.setBankName(postData.getBankCoordinates().getBankName());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getBankId())) {
+                bankCoordinates.setBankId(postData.getBankCoordinates().getBankId());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerNumber())) {
+                bankCoordinates.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerName())) {
+                bankCoordinates.setIssuerName(postData.getBankCoordinates().getIssuerName());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getIcs())) {
+                bankCoordinates.setIcs(postData.getBankCoordinates().getIcs());
+            }
+            provider.setBankCoordinates(bankCoordinates);
         }
 
         provider = providerService.update(provider, currentUser);

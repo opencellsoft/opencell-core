@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
@@ -47,11 +48,10 @@ public class ProviderDto extends BaseDto {
 	private Boolean displayPricePlans = false;
 	private boolean displayFreeTransacInInvoice;
 	private Boolean displayDetail = true;
-	
-	
 	private String invoiceAdjustmentPrefix;
 	private Long currentInvoiceAdjustmentNb;
 	private Integer invoiceAdjustmentSequenceSize;
+	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
 	
 	
 	@XmlElement(required = false)
@@ -107,6 +107,9 @@ public class ProviderDto extends BaseDto {
 		if (e.getInvoiceAdjustmentSequenceSize() != null) {
 			this.setInvoiceAdjustmentSequenceSize(e.getInvoiceAdjustmentSequenceSize());
 		}
+		if (e.getBankCoordinates() != null) {
+	         this.setBankCoordinates(new BankCoordinatesDto(e.getBankCoordinates()));
+	        }
 	}
 
 	public String getCode() {
@@ -317,6 +320,15 @@ public class ProviderDto extends BaseDto {
 	public void setDisplayPricePlans(Boolean displayPricePlans) {
 		this.displayPricePlans = displayPricePlans;
 	}
+	
+
+	public BankCoordinatesDto getBankCoordinates() {
+		return bankCoordinates;
+	}
+
+	public void setBankCoordinates(BankCoordinatesDto bankCoordinates) {
+		this.bankCoordinates = bankCoordinates;
+	}
 
 	@Override
 	public String toString() {
@@ -339,7 +351,7 @@ public class ProviderDto extends BaseDto {
 				+ invoiceAdjustmentPrefix + ", currentInvoiceAdjustmentNb="
 				+ currentInvoiceAdjustmentNb
 				+ ", invoiceAdjustmentSequenceSize="
-				+ invoiceAdjustmentSequenceSize + ", customFields="
+				+ invoiceAdjustmentSequenceSize + ", bankCoordinates="+ bankCoordinates+ ", customFields="
 				+ customFields + "]";
 	}
 

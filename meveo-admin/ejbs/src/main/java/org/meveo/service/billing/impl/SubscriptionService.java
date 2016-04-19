@@ -162,7 +162,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         if (terminationDate == null) {
             terminationDate = new Date();
         }
-
+        subscription=refreshOrRetrieve(subscription);
         // execute termination script
         if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
             offerModelScriptService.terminateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), terminationDate, terminationReason,
@@ -179,7 +179,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 }
             }
         }
-        subscription=refreshOrRetrieve(subscription);
         for (Access access : subscription.getAccessPoints()) {
             access.setEndDate(terminationDate);
             accessService.update(access, user);
