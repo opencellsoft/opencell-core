@@ -24,12 +24,12 @@
 			formField1="code" 
 			column1Label="#{messages['BusinessEntity.code']}" column1="code" 
 			selection="#{ratedTransactionBean.entity.priceplan}" 
-			updateField=":#{p:component('priceplanSelectId')}" >
+			updateField=":formId:priceplanSelectId :formId:priceplanSelectId_text" >
 		</hftl:entityPopup> 
 		
 		<hftl:entityPopup id="searchWalletInstancePopup"
 			header="#{messages['walletTemplate.title']}"
-			updateField=":#{p:component('walletId')}"
+			updateField=":formId:walletId :formId:walletId_text"
 			selection="#{ratedTransactionBean.entity.wallet}"
 			backingBean="#{walletTemplateBean}"
 			formField1Label="#{messages['BusinessEntity.code']}"
@@ -42,7 +42,7 @@
 		<hftl:entityPopup id="searchInvoicePopup"
 			header="#{messages['invoice.search']}"
 			backingBean="#{invoiceBean}"
-			updateField=":#{p:component('invoice')}"
+			updateField=":formId:invoice :formId:invoice_text"
 			selection="#{ratedTransactionBean.entity.invoice}"
 			column1Label="#{messages['role.id']}"
 			column1="id"
@@ -63,13 +63,13 @@
 			column2Label="#{messages['invoiceSubCategory.description']}"
 			column2="description" 
 			selection="#{ratedTransactionBean.entity.billingAccount}"
-            updateField=":#{p:component('billingAccountId')}">
+            updateField=":formId:billingAccountId :formId:billingAccountId_text">
 		</hftl:entityPopup>  
 		  
 		  <hftl:entityPopup id="searchBillingRunPopup"
 			header="#{messages['billingRun.search']}"
 			backingBean="#{billingRunBean}"
-			updateField=":#{p:component('billingRunId')}"
+			updateField=":formId:billingRunId :formId:billingRunId_text"
 			selection="#{ratedTransactionBean.entity.billingRun}"
 			searchField1Label="#{messages['role.id']}"
 			searchField1="id" 
@@ -83,7 +83,7 @@
 		  <hftl:entityPopup id="searchEdrPopup"
 			header="#{messages['ratedTransaction.edr']}"
 			backingBean="#{edrBean}"
-			updateField=":#{p:component('edrId')}"
+			updateField=":formId:edrId :formId:edrId_text"
 			selection="#{ratedTransactionBean.entity.edr}"
 			searchField1Label="#{messages['role.id']}"
 			searchField1="id"  

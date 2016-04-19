@@ -40,7 +40,7 @@
 
 		<hftl:entityPopup id="searchSubscriptionPopup"
 			header="#{messages['access.subscription']}"
-			updateField=":#{p:component('subscriptionId')}"
+			updateField=":formId:tabView:subscriptionId :formId:tabView:subscriptionId_text"
 			selection="#{accessBean.entity.subscription}"
 			backingBean="#{subscriptionBean}"
 			searchField1Label="#{messages['subscription.code']}"

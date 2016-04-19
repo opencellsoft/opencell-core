@@ -19,7 +19,7 @@
 		</p:panel>
 
         <hftl:entityPopup id="searchCounterTemplatePopup" header="#{messages['counterTemplate.title']}"
-            updateField=":instantMessagingNotificationForm:formId:counterTemplateSelectedId"
+            updateField=":formId:counterTemplateSelectedId :formId:counterTemplateSelectedId_text"
             selection="#{instantMessagingNotificationBean.entity.counterTemplate}" backingBean="#{counterTemplateBean}"
             searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}"
             column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"

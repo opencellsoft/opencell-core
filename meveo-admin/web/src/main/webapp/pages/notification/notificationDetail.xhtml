@@ -26,7 +26,7 @@
 			column1="code" selection="#{notificationBean.entity.scriptInstance}"
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description"
-			updateField=":notificationForm:scriptInstanceSelectId">
+			updateField=":notificationForm:scriptInstanceSelectId :notificationForm:scriptInstanceSelectId_text">
 		</hftl:entityPopup>
 		
 		<hftl:formPanel formId="notificationForm"
@@ -46,7 +46,7 @@
 			
 			<hftl:formField id="scriptInstanceSelectId"
 										label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance"
-										valueLabelField="descriptionOrCode" required="true" popup="true"
+										valueLabelField="code" required="true" popup="true"
 										popupId="scriptInstancePopup" />
 										
 			<hftl:formField label="#{messages['entity.notification.params']}" field="params" newLine="true" componentWidth="100%" />  

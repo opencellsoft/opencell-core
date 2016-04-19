@@ -18,10 +18,10 @@
         <hftl:entityPopup id="creationScriptPopup" header="#{messages['businessOffer.search']}" backingBean="#{scriptInstanceListBean}"
             searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" searchField2Label="#{messages['BusinessEntity.description']}" searchField2="description"
             column1Label="#{messages['BusinessEntity.code']}" column1="code" column2Label="#{messages['BusinessEntity.description']}" column2="description"
-            selection="#{businessOfferModelBean.entity.creationScript}" updateField=":formId:tabView:creationScriptId">
+            selection="#{businessOfferModelBean.entity.creationScript}" updateField=":formId:tabView:creationScriptId :formId:tabView:creationScriptId_text">
         </hftl:entityPopup>
 
-        <hftl:entityPopup id="offerTemplatePopup" header="#{messages['offerTemplate.title']}" updateField=":formId:tabView:offerSelectId, :businessServiceTemplates"
+        <hftl:entityPopup id="offerTemplatePopup" header="#{messages['offerTemplate.title']}" updateField=":formId:tabView:offerSelectId :formId:tabView:offerSelectId_text :businessServiceTemplates"
             selection="#{businessOfferModelBean.entity.offerTemplate}" backingBean="#{offerTemplateBean}" dataModel="#{offerTemplateBean.listNoBOM()}"
             searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
             column2Label="#{messages['businessEntity.description']}" column2="description">

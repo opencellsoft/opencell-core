@@ -13,7 +13,7 @@
 
 	<hftl:entityPopup id="searchChargeTemplatePopup"
 			header="#{messages['usageChargeTemplate.title']}"
-			updateField=":ServiceUsageform:chargeTemplateSelectedId"
+			updateField=":ServiceUsageform:chargeTemplateSelectedId :ServiceUsageform:chargeTemplateSelectedId_text"
 			selection="#{serviceUsageChargeTemplateBean.entity.chargeTemplate}"
 			backingBean="#{usageChargeTemplateBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
@@ -26,7 +26,7 @@
 		
 		<hftl:entityPopup id="searchServiceTemplatePopup"
 			header="#{messages['serviceTemplate.title']}"
-			updateField=":ServiceUsageform:serviceTemplateSelectedId"
+			updateField=":ServiceUsageform:serviceTemplateSelectedId :ServiceUsageform:serviceTemplateSelectedId_text"
 			selection="#{serviceUsageChargeTemplateBean.entity.serviceTemplate}"
 			backingBean="#{serviceTemplateBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
@@ -39,7 +39,7 @@
 		
 		<hftl:entityPopup id="searchCounterTemplatePopup"
 			header="#{messages['counterTemplate.title']}"
-			updateField=":ServiceUsageform:counterTemplateSelectedId"
+			updateField=":ServiceUsageform:counterTemplateSelectedId :ServiceUsageform:counterTemplateSelectedId_text"
 			selection="#{serviceUsageChargeTemplateBean.entity.counterTemplate}"
 			backingBean="#{counterTemplateBean}"
 			searchField1Label="#{messages['businessEntity.code']}"

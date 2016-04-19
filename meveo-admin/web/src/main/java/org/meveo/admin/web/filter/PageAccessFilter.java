@@ -93,8 +93,8 @@ public class PageAccessFilter implements Filter {
 		}
 
 		Page page = this.pages.get(pageKey);
-
-		if (identity != null && page != null) {
+		
+		if (identity != null && identity.isLoggedIn() && page != null) {
 			
 			List<Object> parameters = new ArrayList<>();
 
