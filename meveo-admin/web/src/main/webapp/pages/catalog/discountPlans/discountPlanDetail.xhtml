@@ -24,7 +24,7 @@
 	
 	<hftl:entityPopup id="searchInvoiceCategoryPopup"
 			header="#{messages['invoiceCategory.panel']}"
-			updateField=":tabView:formDiscountPlanItem:categorySelectId,:tabView:formDiscountPlanItem:invoiceSubCategories"
+			updateField=":tabView:formDiscountPlanItem:categorySelectId :tabView:formDiscountPlanItem:categorySelectId_text :tabView:formDiscountPlanItem:invoiceSubCategories"
 			selection="#{discountPlanBean.discountPlanItem.invoiceCategory}"
 			backingBean="#{invoiceCategoryBean}"
 			searchField1Label="#{messages['invoiceCategory.code']}"

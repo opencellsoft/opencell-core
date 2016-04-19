@@ -21,7 +21,7 @@
 				column1Label="#{messages['BusinessEntity.code']}" column1="code"
 				column2Label="#{messages['BusinessEntity.description']}"
 				column2="description"
-				updateField=":#{p:component('discountPlan')}">
+				updateField=":formDiscountPlanItem:discountPlan :formDiscountPlanItem:discountPlan_text">
 			</hftl:entityPopup>
 
 			<hftl:entityPopup id="popupOfferTemplates"
@@ -33,7 +33,7 @@
 				column1Label="#{messages['BusinessEntity.code']}" column1="code"
 				column2Label="#{messages['BusinessEntity.description']}"
 				column2="description"
-				updateField=":#{p:component('offerTemplate')}">
+				updateField=":formDiscountPlanItem:offerTemplate :formDiscountPlanItem:offerTemplate_text">
 			</hftl:entityPopup>
 
 			<hftl:entityPopup id="popupChargeTemplates"
@@ -45,7 +45,7 @@
 				column1Label="#{messages['BusinessEntity.code']}" column1="code"
 				column2Label="#{messages['BusinessEntity.description']}"
 				column2="description"
-				updateField=":#{p:component('chargeTemplate')}">
+				updateField=":formDiscountPlanItem:chargeTemplate :formDiscountPlanItem:chargeTemplate_text">
 			</hftl:entityPopup>
 		</c:if>
 

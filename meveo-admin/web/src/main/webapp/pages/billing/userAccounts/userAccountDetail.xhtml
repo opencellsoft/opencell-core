@@ -32,7 +32,8 @@
         </p:panel>
         <hftl:entityPopup id="billingAccountPopup" header="#{messages['billingAccount.popup.header']}" backingBean="#{billingAccountBean}"
             searchField1Label="#{messages['billingAccount.code']}" searchField1="code" column1Label="#{messages['billingAccount.code']}" column1="code"
-            selection="#{userAccountBean.entity.billingAccount}" updateField=":parentTab:userAccountFormId:userAccountTab:billingAccountSelectId">
+            selection="#{userAccountBean.entity.billingAccount}" 
+            updateField=":parentTab:userAccountFormId:userAccountTab:billingAccountSelectId :parentTab:userAccountFormId:userAccountTab:billingAccountSelectId_text">
         </hftl:entityPopup>
 
         <!-- 		<hftl:entityPopup id="walletOperationPopup" -->

@@ -56,7 +56,7 @@
 			searchField2="name" column1Label="#{messages['userAccount.code']}"
 			column1="code" column2Label="#{messages['userAccount.name']}"
 			column2="name" selection="#{subscriptionBean.entity.userAccount}"
-			updateField=":subscriptionTab:subscriptionFormId:informationTab:userSelectId">
+			updateField=":subscriptionTab:subscriptionFormId:informationTab:userSelectId :subscriptionTab:subscriptionFormId:informationTab:userSelectId_text">
 		</hftl:entityPopup>
 
 <!-- 		<hftl:entityPopup id="offerPopup" -->
@@ -98,7 +98,7 @@
 			column2Label="#{messages['chargeTemplate.description']}"
 			column2="description"
 			selection="#{subscriptionBean.recurringChargeInstance.chargeTemplate}"
-			updateField=":recurringChgForm1:RCchargeTemplateSelectId">
+			updateField=":recurringChgForm1:RCchargeTemplateSelectId :recurringChgForm1:RCchargeTemplateSelectId_text recurringChgForm1:description_txt">
 		</hftl:entityPopup>
 		<p:panel>
 			<h:form id="crumbmenuForm">

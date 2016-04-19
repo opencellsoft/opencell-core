@@ -20,7 +20,7 @@
             searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
         </hftl:entityPopup>
 
-        <hftl:entityPopup id="serviceTemplatePopup" header="#{messages['businessServiceModel.serviceTemplate']}" updateField=":formId:tabView:serviceSelectId"
+        <hftl:entityPopup id="serviceTemplatePopup" header="#{messages['businessServiceModel.serviceTemplate']}" updateField=":formId:tabView:serviceSelectId :formId:tabView:serviceSelectId_text"
             selection="#{businessServiceModelBean.entity.serviceTemplate}" backingBean="#{serviceTemplateBean}" dataModel="#{serviceTemplateBean.listNoBSM()}"
             searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
             column2Label="#{messages['businessEntity.description']}" column2="description">

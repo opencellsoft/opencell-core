@@ -21,7 +21,7 @@
 	<ui:define name="body">
 		<hftl:entityPopup id="searchRecurringChargeTemplatePopup"
 			header="#{messages['serviceTemplate.recurringCharges']}"
-			updateField=":tabView:formRecurringCharge:recurringChargeTemplateSelectedId"
+			updateField=":tabView:formRecurringCharge:recurringChargeTemplateSelectedId :tabView:formRecurringCharge:recurringChargeTemplateSelectedId_text"
 			selection="#{serviceTemplateBean.serviceChargeTemplateRecurring.chargeTemplate}"
 			backingBean="#{recurringChargeTemplateBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
@@ -33,7 +33,7 @@
 
 		<hftl:entityPopup id="searchSubscriptionChargeTemplatePopup"
 			header="#{messages['serviceTemplate.subscriptionCharges']}"
-			updateField=":tabView:formSubscriptionCharge:subscriptionChargeTemplateSelectedId"
+			updateField=":tabView:formSubscriptionCharge:subscriptionChargeTemplateSelectedId :tabView:formSubscriptionCharge:subscriptionChargeTemplateSelectedId_text"
 			selection="#{serviceTemplateBean.serviceChargeTemplateSubscription.chargeTemplate}"
 			backingBean="#{subscriptionChargeTemplateBean}"
 			dataModel="#{subscriptionChargeTemplateBean.subscriptionCharges}"
@@ -46,7 +46,7 @@
 
 		<hftl:entityPopup id="searchTerminationChargeTemplatePopup"
 			header="#{messages['serviceTemplate.terminationCharges']}"
-			updateField=":tabView:formTerminationCharge:terminationChargeTemplateSelectedId"
+			updateField=":tabView:formTerminationCharge:terminationChargeTemplateSelectedId :tabView:formTerminationCharge:terminationChargeTemplateSelectedId_text"
 			selection="#{serviceTemplateBean.serviceChargeTemplateTermination.chargeTemplate}"
 			backingBean="#{terminationChargeTemplateBean}"
 			dataModel="#{subscriptionChargeTemplateBean.terminationCharges}"
@@ -59,7 +59,7 @@
 
 		<hftl:entityPopup id="searchUsageChargeTemplatePopup"
 			header="#{messages['usageChargeTemplate.title']}"
-			updateField=":tabView:formUsageCharge:usageChargeTemplateSelectedId"
+			updateField=":tabView:formUsageCharge:usageChargeTemplateSelectedId :tabView:formUsageCharge:usageChargeTemplateSelectedId_text"
 			selection="#{serviceTemplateBean.serviceChargeTemplateUsage.chargeTemplate}"
 			backingBean="#{usageChargeTemplateBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
@@ -71,7 +71,7 @@
 
 		<hftl:entityPopup id="searchCounterTemplatePopup"
 			header="#{messages['counterTemplate.title']}"
-			updateField=":tabView:formUsageCharge:counterTemplateSelectedId"
+			updateField=":tabView:formUsageCharge:counterTemplateSelectedId :tabView:formUsageCharge:counterTemplateSelectedId_text"
 			selection="#{serviceChargeTemplateUsage.counterTemplate}"
 			backingBean="#{counterTemplateBean}"
 			searchField1Label="#{messages['businessEntity.code']}"

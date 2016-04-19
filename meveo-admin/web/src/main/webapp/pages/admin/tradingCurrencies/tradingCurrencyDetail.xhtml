@@ -18,7 +18,7 @@
 		<c:if test="#{tradingCurrencyBean.edit}">
 			<hftl:entityPopup id="currencyPopup"
 				header="#{messages['currency.popup.header']}"
-				updateField=":currenciesFormId:currencySelectedId,:currenciesFormId:prDescription"
+				updateField=":currenciesFormId:currencySelectedId :currenciesFormId:currencySelectedId_text :currenciesFormId:prDescription"
 				selection="#{tradingCurrencyBean.entity.currency}"
 				backingBean="#{currencyBean}"
 				searchField1Label="#{messages['currency.currencyCode']}"

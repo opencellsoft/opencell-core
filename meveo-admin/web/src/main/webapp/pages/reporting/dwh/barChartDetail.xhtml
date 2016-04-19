@@ -13,7 +13,7 @@
 
 		<hftl:entityPopup id="searchMeasurableQuantity"
 			header="#{messages['measurableQuantity.popup.header']}"
-			updateField=":formChat:measurableQuantityId"
+			updateField=":formChat:measurableQuantityId :formChat:measurableQuantityId_text"
 			selection="#{barChartBean.entity.measurableQuantity}"
 			backingBean="#{measurableQuantityBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
@@ -24,7 +24,7 @@
 
 		<hftl:entityPopup id="searchRole"
 			header="#{messages['role.userRolePanel']}"
-			updateField=":formChat:roleId"
+			updateField=":formChat:roleId :formChat:roleId_text"
 			selection="#{barChartBean.entity.role}" backingBean="#{userRoleBean}"
 			searchField1Label="#{messages['commons.name']}" searchField1="name"
 			column1Label="#{messages['commons.name']}" column1="name"

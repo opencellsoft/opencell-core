@@ -26,13 +26,13 @@
         <hftl:entityPopup id="serviceTemplatePopup" header="#{messages['serviceTemplate.popup.header']}" backingBean="#{serviceTemplateBean}"
             searchField1Label="#{messages['serviceTemplate.code']}" searchField1="code" searchField2Label="#{messages['serviceTemplate.description']}" searchField2="description"
             column1Label="#{messages['serviceTemplate.code']}" column1="code" column2Label="#{messages['serviceTemplate.description']}" column2="description"
-            selection="#{serviceInstanceBean.entity.serviceTemplate}" updateField=":formId:serviceSelectedId">
+            selection="#{serviceInstanceBean.entity.serviceTemplate}" updateField=":formId:tabView:serviceSelectedId :formId:tabView:serviceSelectedId_text">
         </hftl:entityPopup>
 
         <hftl:entityPopup id="subscriptionPopup" header="#{messages['subscription.popup.header']}" backingBean="#{subscriptionBean}"
             searchField1Label="#{messages['subscription.code']}" searchField1="code" searchField2Label="#{messages['subscription.description']}" searchField2="description"
             column1Label="#{messages['subscription.code']}" column1="code" column2Label="#{messages['subscription.description']}" column2="description"
-            selection="#{serviceInstanceBean.entity.subscription}" updateField=":formId:subscriptionSelectedId">
+            selection="#{serviceInstanceBean.entity.subscription}" updateField=":formId:tabView:subscriptionSelectedId :formId:tabView:subscriptionSelectedId_text">
         </hftl:entityPopup>
 
         <hftl:formPanel label="#{messages['serviceInstance.panel']}" backingBean="#{serviceInstanceBean}" ajaxSubmit="true" submitPartialProcess=":formId:tabView"
