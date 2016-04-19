@@ -20,6 +20,9 @@ public class TerminationReasonDto implements Serializable {
 
     @XmlAttribute(required = true)
     private String code;
+    
+    @XmlAttribute
+    private String description;
 
     private boolean applyAgreement;
 
@@ -33,6 +36,7 @@ public class TerminationReasonDto implements Serializable {
 
     public TerminationReasonDto(SubscriptionTerminationReason e) {
         code = e.getCode();
+        description = e.getDescription();
         applyAgreement = e.isApplyAgreement();
         applyReimbursment = e.isApplyReimbursment();
         applyTerminationCharges = e.isApplyTerminationCharges();
@@ -44,6 +48,14 @@ public class TerminationReasonDto implements Serializable {
 
     public void setCode(String code) {
         this.code = code;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public boolean isApplyAgreement() {
@@ -71,9 +83,9 @@ public class TerminationReasonDto implements Serializable {
     }
 
     @Override
-	public String toString() {
-		return "TerminationReasonDto [code=" + code + ", applyAgreement=" + applyAgreement + ", applyReimbursment=" + applyReimbursment + ", applyTerminationCharges="
-				+ applyTerminationCharges + "]";
-	}
+    public String toString() {
+        return "TerminationReasonDto [code=" + code + ", description=" + description + ", applyAgreement=" + applyAgreement + ", applyReimbursment=" + applyReimbursment
+                + ", applyTerminationCharges=" + applyTerminationCharges + "]";
+    }
 
 }
