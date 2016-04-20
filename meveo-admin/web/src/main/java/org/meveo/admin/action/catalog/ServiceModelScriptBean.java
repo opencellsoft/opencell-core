@@ -84,6 +84,12 @@ public class ServiceModelScriptBean extends BaseBean<ServiceModelScript> {
             messages.error(new BundleKey("messages", "serviceModelScript.actionAlreadyExists"));
             return null;
         }
+        
+		// check duplicate script
+		if (serviceModelScriptService.isExistsCode(entity.getCode(), getCurrentProvider())) {
+			messages.error(new BundleKey("messages", "javax.persistence.EntityExistsException"));
+			return null;
+		}
 
         try {
             String result = super.saveOrUpdate(killConversation);

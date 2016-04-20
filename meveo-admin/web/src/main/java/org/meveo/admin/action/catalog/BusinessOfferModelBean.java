@@ -18,6 +18,7 @@ import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.model.scripts.OfferModelScript;
+import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
@@ -37,6 +38,9 @@ public class BusinessOfferModelBean extends BaseBean<BusinessOfferModel> {
 
 	@Inject
 	private BusinessOfferModelService businessOfferModelService;
+	
+	@Inject
+	private MeveoModuleService meveoModuleService;
 
 	private Map<String, String> offerCFVs = new HashMap<>();
 	private String serviceCodePrefix;
@@ -96,6 +100,12 @@ public class BusinessOfferModelBean extends BaseBean<BusinessOfferModel> {
 
 	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		// check for duplicate
+		if (meveoModuleService.findByCode(entity.getCode(), getCurrentProvider()) != null) {
+			messages.error(new BundleKey("messages", "javax.persistence.EntityExistsException"));
+			return null;
+		}
+		
 		super.saveOrUpdate(killConversation);
 
 		return null;
