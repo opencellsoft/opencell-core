@@ -35,19 +35,19 @@ public interface AccountOperationRs extends IBaseRs {
     AccountOperationsResponseDto list(@QueryParam("customerAccountCode") String customerAccountCode);
 
     @POST
-    @Path("/")
+    @Path("/matchOperations")
     ActionStatus matchOperations(MatchOperationRequestDto postData);
 
     @POST
-    @Path("/")
+    @Path("/unMatchingOperations")
     ActionStatus unMatchingOperations(UnMatchingOperationRequestDto postData);
 
     @POST
-    @Path("/")
+    @Path("/addLitigation")
     ActionStatus addLitigation(LitigationRequestDto postData);
 
     @POST
-    @Path("/")
+    @Path("/cancelLitigation")
     ActionStatus cancelLitigation(LitigationRequestDto postData);
 
 }
