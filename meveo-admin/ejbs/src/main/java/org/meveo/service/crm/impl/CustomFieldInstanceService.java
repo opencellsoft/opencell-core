@@ -681,6 +681,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     @SuppressWarnings("unchecked")
     public Object getInheritedOnlyCFValueCumulative(ICustomFieldEntity entity, String code, User currentUser) {
 
+        if (entity == null){
+            return null; 
+        }
         ICustomFieldEntity parentEntity = entity.getParentCFEntity();
         List<Object> cfValues = new ArrayList<>();
 
