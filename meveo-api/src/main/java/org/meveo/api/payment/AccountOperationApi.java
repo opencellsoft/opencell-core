@@ -195,7 +195,9 @@ public class AccountOperationApi extends BaseApi {
             MatchingAmountsDto matchingAmountsDto = new MatchingAmountsDto();
             for (MatchingAmount matchingAmount : matchingAmounts) {
                 matchingAmountDto = new MatchingAmountDto();
-                matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
+				if (matchingAmount.getMatchingCode() != null) {
+					matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
+				}
                 matchingAmountDto.setMatchingAmount(matchingAmount.getMatchingAmount());
                 matchingAmountsDto.getMatchingAmount().add(matchingAmountDto);
             }
