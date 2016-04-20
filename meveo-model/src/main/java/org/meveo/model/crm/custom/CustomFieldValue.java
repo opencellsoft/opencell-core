@@ -1138,7 +1138,7 @@ public class CustomFieldValue implements Serializable {
      * @param toSerialize whether complex values should be serialized
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void setValue(Object value, boolean toSerialize) {
+    public void setValue(Object value, boolean toSerialize) {
 
         if (value instanceof Date) {
             dateValue = (Date) value;

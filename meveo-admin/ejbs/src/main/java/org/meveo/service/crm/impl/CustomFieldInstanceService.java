@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -191,9 +192,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
         try {
             // If no template found - create it first
-        	log.info("currentUser:"+currentUser);
-        	log.info("currentUser.getProvider():"+currentUser.getProvider());
-        	
+            log.info("currentUser:" + currentUser);
+            log.info("currentUser.getProvider():" + currentUser.getProvider());
+
             CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity, currentUser.getProvider());
             if (cft == null) {
                 cft = new CustomFieldTemplate();
@@ -667,6 +668,49 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             return getInheritedCFValue(parentCFEntity, code, currentUser);
         }
         return null;
+    }
+
+    /**
+     * Get a cumulative and unique custom field value for a given entity's all parent chain. Applies to Map (matrix) values only. The closest parent entity's CF value will be
+     * preserved. If custom field is versionable, a current date will be used to access the value.
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @return Custom field value
+     */
+    @SuppressWarnings("unchecked")
+    public Object getInheritedOnlyCFValueCumulative(ICustomFieldEntity entity, String code, User currentUser) {
+
+        ICustomFieldEntity parentEntity = entity.getParentCFEntity();
+        List<Object> cfValues = new ArrayList<>();
+
+        while (parentEntity != null) {
+            Object value = getCFValue(parentEntity, code, currentUser);
+            if (value != null) {
+                cfValues.add(value);
+            }
+            parentEntity = parentEntity.getParentCFEntity();
+        }
+
+        if (cfValues.isEmpty()) {
+            return null;
+
+        } else if (!(cfValues.get(0) instanceof Map) || cfValues.size() == 0) {
+            return cfValues.get(0);
+
+        } else {
+            Map<String, Object> valueMap = new LinkedHashMap<>();
+            valueMap.putAll((Map<String, Object>) cfValues.get(0));
+            for (int i = 1; i < cfValues.size(); i++) {
+                Map<String, Object> iterMap = (Map<String, Object>) cfValues.get(i);
+                for (Entry<String, Object> mapItem : iterMap.entrySet()) {
+                    if (!valueMap.containsKey(mapItem.getKey())) {
+                        valueMap.put(mapItem.getKey(), mapItem.getValue());
+                    }
+                }
+            }
+            return valueMap;
+        }
     }
 
     /**
