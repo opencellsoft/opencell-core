@@ -166,6 +166,8 @@ public class InvoiceBean extends BaseBean<Invoice> {
 				invoice.setPaymentMethod(adjustedInvoice.getPaymentMethod());
 				invoice.setInvoiceNumber(null);
 				invoice.setInvoiceTypeEnum(InvoiceTypeEnum.CREDIT_NOTE_ADJUST);
+				invoice.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(invoice, getCurrentUser()));	                
+
 
 				// duplicate rated transaction for detailed
 				// invoice adjustment
@@ -681,14 +683,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 					ratedTransactionService.create(rt, getCurrentUser());
 				}
 			}			
-            if( ! InvoiceTypeEnum.COMMERCIAL.name().equals( entity.getInvoiceTypeEnum().name())){
-                entity.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(entity, getCurrentUser()));	                
-            }
 		}
-		
-		entity.setBillingAccount(billingAccountService.refreshOrRetrieve( entity.getBillingAccount()));
-		entity.setBillingRun(billingRunService.refreshOrRetrieve(entity.getBillingRun()));		
-		entity.setAdjustedInvoice(invoiceService.refreshOrRetrieve(entity.getAdjustedInvoice()));
 		if (isDetailed()) {
 			super.saveOrUpdate(false);
 		}else{
