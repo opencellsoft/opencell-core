@@ -94,6 +94,9 @@ public class UserApi extends BaseApi {
         if (StringUtils.isBlank(postData.getUsername())) {
             missingParameters.add("username");
         }
+        if (StringUtils.isBlank(postData.getEmail())) {
+            missingParameters.add("email");
+        }
         if (StringUtils.isBlank(postData.getProvider())) {
             missingParameters.add("provider");
         }
