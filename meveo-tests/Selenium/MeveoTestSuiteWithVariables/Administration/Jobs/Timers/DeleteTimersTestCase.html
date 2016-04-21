@@ -12,13 +12,38 @@
 <tr><td rowspan="1" colspan="3">DeleteRecurringChargeTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>click</td>
-	<td>${IconDelete}</td>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${Code}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${deleteNo}</td>
+	<td>id=datatable_results:0:resultsdeletelink</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//div[@id='datatable_results:1:confirmDeleteDialog']/div[2]/span[2]</td>
+	<td>Do you really want to delete this record?</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//div[@id='datatable_results:1:confirmDeleteDialog']/div[2]/span[2]</td>
+	<td>Do you really want to delete this record?</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='datatable_results:1:confirmDeleteDialog']/div[2]/span[2]</td>
+	<td>Do you really want to delete this record?</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=datatable_results:1:deleteOk</td>
 	<td></td>
 </tr>
 </tbody></table>
