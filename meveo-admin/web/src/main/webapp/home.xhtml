@@ -981,12 +981,12 @@
 												<f:facet name="header">
 													<h:outputText value="Actions" />
 												</f:facet>
-												<p:button id="scriptInstancesButton"
+												<p:button id="scriptInstancesButton" rendered="#{entity.discriminatorValue eq 'ScriptInstance'}"
 													outcome="scriptInstanceDetail" icon="ui-icon-search">
 													<f:param name="objectId" value="#{entity.id}" />
 													<f:param name="edit" value="true" />
 												</p:button>
-												<p:commandButton icon="ui-icon-trash"
+												<p:commandButton icon="ui-icon-trash" rendered="#{entity.discriminatorValue eq 'ScriptInstance'}"
 													action="#{scriptInstanceBean.deleteInlist}"
 													update=":#{p:component('accordionTax')}"
 													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
