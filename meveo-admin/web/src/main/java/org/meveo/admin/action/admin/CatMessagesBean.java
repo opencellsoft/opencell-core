@@ -21,6 +21,7 @@ package org.meveo.admin.action.admin;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -31,6 +32,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.CsvReader;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceCategory;
@@ -75,7 +77,7 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 	@Inject
 	private CatMessagesService catMessagesService;
 
-
+	// inject services
 	@Inject
 	private TitleService titleService;
 	@Inject
@@ -229,10 +231,17 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 	public void setBusinessEntity(BusinessEntity businessEntity) throws BusinessException{
 		this.businessEntity = businessEntity;
 		if(businessEntity!=null){
-			CatMessages temp=catMessagesService.findByCodeAndLanguage(String.format(MESSAGE_CODE, getEntityClass().getSimpleName(),businessEntity.getId()), entity.getLanguageCode(), getCurrentProvider());
-			if(temp!=null){
-				this.setObjectId(temp.getId());
-				initEntity();
+			List<CatMessages> catMessagesList = catMessagesService.getCatMessagesList(String.format(MESSAGE_CODE, getEntityClass().getSimpleName(),businessEntity.getId()));
+			this.getLanguageMessagesMap().clear();
+			for (CatMessages catMessages : catMessagesList) {
+				this.getLanguageMessagesMap().put(catMessages.getLanguageCode(), catMessages.getDescription());
+			}
+			if(entity.getLanguageCode() != null){
+				CatMessages temp=catMessagesService.findByCodeAndLanguage(String.format(MESSAGE_CODE, getEntityClass().getSimpleName(),businessEntity.getId()), entity.getLanguageCode(), getCurrentProvider());
+				if(temp!=null){
+					this.setObjectId(temp.getId());
+					initEntity();
+				}
 			}
 		}
 	}
@@ -258,13 +267,82 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 	public void setObjectType(String objectType) {
 		this.objectType = objectType;
 	}
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	@ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		if(entity.isTransient()){
-			entity.setMessageCode(String.format(MESSAGE_CODE,getEntityClass().getSimpleName(),businessEntity.getId()));
+		if(entity.getLanguageCode() == null){ // multilanguage
+			String statusKey = null;
+			String description = null;
+			CatMessages catMsg = null;
+			if (businessEntity.getId() != null) {
+				statusKey = "update.successful";
+				for (String key : languageMessagesMap.keySet()) {
+					description = languageMessagesMap.get(key);
+					catMsg = catMessagesService.getCatMessages(businessEntity, key);
+					if (catMsg != null) {
+						if(StringUtils.isBlank(description)){
+							catMessagesService.remove(catMsg);
+						} else {
+							catMsg.setDescription(description);
+							catMessagesService.update(catMsg, getCurrentUser());
+						}
+					} else if(!StringUtils.isBlank(description)){
+						catMsg = new CatMessages(businessEntity, key, description);
+						catMessagesService.create(catMsg, getCurrentUser());
+					}
+				}
+			} else {
+				statusKey = "save.successful";
+				for (String key : languageMessagesMap.keySet()) {
+					description = languageMessagesMap.get(key);
+					if(!StringUtils.isBlank(description)){
+						catMsg = new CatMessages(businessEntity, key, description);
+						catMessagesService.create(catMsg, getCurrentUser());
+					}
+				}
+			}
+			
+			if(businessEntity.isTransient()){
+				getEntityService().create(businessEntity, getCurrentUser());
+			} else {
+				getEntityService().update(businessEntity, getCurrentUser());
+			}
+			messages.info(new BundleKey("messages", statusKey));
+			return back();
+		} else { // single entity
+			if(entity.isTransient()){
+				entity.setMessageCode(String.format(MESSAGE_CODE,getEntityClass().getSimpleName(),businessEntity.getId()));
+			}
+			return super.saveOrUpdate(killConversation);
 		}
-		return super.saveOrUpdate(killConversation);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private IPersistenceService getEntityService() throws BusinessException{
+		IPersistenceService service=null;
+		if(businessEntity instanceof Title){
+			service=titleService;
+		}else if(businessEntity instanceof RecurringChargeTemplate){
+			service=recurringChargeTemplateService;
+		}else if(businessEntity instanceof OneShotChargeTemplate){
+			service=oneShotChargeTemplateService;
+		}else if(businessEntity instanceof UsageChargeTemplate){
+			service=usageChargeTemplateService;
+		}else if(businessEntity instanceof PricePlanMatrix){
+			service=pricePlanMatrixService;
+		}else if(businessEntity instanceof InvoiceCategory){
+			service=invoiceCategoryService;
+		}else if(businessEntity instanceof InvoiceSubCategory){
+			service=invoiceSubCategoryService;
+		}else if(businessEntity instanceof Tax){
+			service=taxService;
+		}
+		if(service==null){
+			throw new BusinessException("Invalid class type!");
+		}
+		return service;
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -288,7 +366,7 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 			clazz=Tax.class;
 		}
 		if(clazz==null){
-			throw new BusinessException("Wrong class type!");
+			throw new BusinessException("Invalid class type!");
 		}
 		return clazz;
 	}

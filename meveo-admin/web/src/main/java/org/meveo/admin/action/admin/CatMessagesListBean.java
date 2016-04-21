@@ -19,14 +19,37 @@
 package org.meveo.admin.action.admin;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.CatMessages;
+import org.meveo.service.catalog.impl.CatMessagesService;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.CellEditEvent;
 
 @Named
 @ConversationScoped
 public class CatMessagesListBean extends CatMessagesBean {
 
     private static final long serialVersionUID = -3037867704912788015L;
+    
+    public void onCellEdit(CellEditEvent event) throws BusinessException{
+    	String oldDescription = (String) event.getOldValue();
+    	String newDescription = (String) event.getNewValue();
+    	boolean hasNewDescription = StringUtils.isBlank(oldDescription) && !StringUtils.isBlank(newDescription);
+    	boolean isDifferentDescription = !StringUtils.isBlank(oldDescription) && !oldDescription.equals(newDescription);
+    	if(hasNewDescription || isDifferentDescription){
+    		DataTable o = (DataTable) event.getSource();
+    		CatMessages catMsg = (CatMessages)o.getRowData();
+    		if(StringUtils.isBlank(newDescription)){
+    			this.delete(catMsg.getId());
+    		} else {
+        		catMsg.setDescription(newDescription);
+        		this.saveOrUpdate(catMsg);
+    		}
+    	}
+    }
     
 }
