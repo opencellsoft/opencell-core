@@ -19,13 +19,11 @@
 package org.meveo.admin.action.admin;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.CatMessages;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 
