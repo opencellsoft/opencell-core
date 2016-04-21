@@ -5,7 +5,9 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
+import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -62,9 +64,9 @@ public class BusinessOfferModelApi extends BaseApi {
 			businessOfferModel.setScript(scriptInstance);
 			businessOfferModel.setDescription(StringUtils.isBlank(postData.getDescription()) ? postData.getCode() : postData.getDescription());
 
-			// create bsm
-			if (postData.getBsmCodes() != null) {
-				for (String bsmCode : postData.getBsmCodes()) {
+			for (BaseDto dto : postData.getModuleItems()) {
+				if (dto instanceof BusinessServiceModelDto) {
+					String bsmCode =((BusinessServiceModelDto) dto).getCode();
 					BusinessServiceModel bsm = businessServiceModelService.findByCode(bsmCode, currentUser.getProvider());
 					if (bsm == null) {
 						throw new EntityDoesNotExistsException(BusinessServiceModel.class, bsmCode);
