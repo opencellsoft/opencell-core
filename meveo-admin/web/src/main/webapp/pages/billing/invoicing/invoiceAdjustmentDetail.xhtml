@@ -155,7 +155,7 @@
 
 							<p:column rendered="#{ ! invoiceBean.entity.provider.entreprise}">
 								<p:inputText value="#{entity.amountWithTax}" required="true"
-									readonly="#{not invoiceBean.entity.transient}">
+									readonly="true">
 									<f:converter converterId="bigDecimal4DigitsConverter" />
 									<p:ajax event="change"
 										listener="#{invoiceBean.reComputeInvoiceAdjustment(entity)}"
