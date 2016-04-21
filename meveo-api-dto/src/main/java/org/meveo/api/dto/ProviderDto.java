@@ -51,6 +51,7 @@ public class ProviderDto extends BaseDto {
 	private String invoiceAdjustmentPrefix;
 	private Long currentInvoiceAdjustmentNb;
 	private Integer invoiceAdjustmentSequenceSize;
+	private Integer rounding=2;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
 	
 	
@@ -77,6 +78,7 @@ public class ProviderDto extends BaseDto {
 		multiCurrency = e.getMulticurrencyFlag();
 		multiCountry = e.getMulticountryFlag();
 		multiLanguage = e.getMultilanguageFlag();
+		rounding=e.getRounding();
 		
 		customFields = CustomFieldsDto.toDTO(customFieldInstances);
 		
@@ -330,6 +332,14 @@ public class ProviderDto extends BaseDto {
 		this.bankCoordinates = bankCoordinates;
 	}
 
+	public Integer getRounding() {
+		return rounding;
+	}
+
+	public void setRounding(Integer rounding) {
+		this.rounding = rounding;
+	}
+	
 	@Override
 	public String toString() {
 		return "ProviderDto [code=" + code + ", description=" + description
@@ -351,9 +361,13 @@ public class ProviderDto extends BaseDto {
 				+ invoiceAdjustmentPrefix + ", currentInvoiceAdjustmentNb="
 				+ currentInvoiceAdjustmentNb
 				+ ", invoiceAdjustmentSequenceSize="
-				+ invoiceAdjustmentSequenceSize + ", bankCoordinates="+ bankCoordinates+ ", customFields="
+				+ invoiceAdjustmentSequenceSize + ", bankCoordinates="+ bankCoordinates+", rounding="+ rounding+ ", customFields="
 				+ customFields + "]";
 	}
+
+	
+	
+	
 
 	
 }
