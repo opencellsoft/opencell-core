@@ -65,14 +65,16 @@ public abstract class AccountEntity extends BusinessCFEntity {
 	@Column(name = "DEFAULT_LEVEL")
 	private Boolean defaultLevel = true;
 
-	@Column(name = "PROVIDER_CONTACT")
+    @Column(name = "PROVIDER_CONTACT", length = 255)
+    @Size(max = 255)
 	private String providerContact;
 
 	@ManyToOne
 	@JoinColumn(name = "PRIMARY_CONTACT")
 	private ProviderContact primaryContact;
 
-    @Column(name = "ACCOUNT_TYPE", insertable = true, updatable = false)
+    @Column(name = "ACCOUNT_TYPE", insertable = true, updatable = false, length = 10)
+    @Size(max = 10)
     protected String accountType;
         
     public String getExternalRef1() {

@@ -23,6 +23,7 @@ import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.BaseEntity;
@@ -36,10 +37,12 @@ import org.meveo.model.ExportIdentifier;
 public class SubscriptionTerminationReason extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "CODE")
+	@Column(name = "CODE", length = 255)
+	@Size(max = 255)
 	private String code;
 
-	@Column(name = "DESCRIPTION")
+	@Column(name = "DESCRIPTION", length = 255)
+    @Size(max = 255)
 	private String description;
 
 	@Column(name = "APPLY_AGREEMENT")

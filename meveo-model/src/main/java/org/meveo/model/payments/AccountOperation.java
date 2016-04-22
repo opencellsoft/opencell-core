@@ -38,6 +38,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 
@@ -57,7 +58,8 @@ public class AccountOperation extends AuditableEntity {
 	@Temporal(TemporalType.DATE)
 	private Date dueDate;
 
-	@Column(name = "TRANSACTION_TYPE", insertable = false, updatable = false)
+	@Column(name = "TRANSACTION_TYPE", insertable = false, updatable = false, length = 31)
+	@Size(max = 31)	
 	private String type;
 
 	@Column(name = "TRANSACTION_DATE")
@@ -68,13 +70,16 @@ public class AccountOperation extends AuditableEntity {
 	@Enumerated(EnumType.STRING)
 	private OperationCategoryEnum transactionCategory;
 
-	@Column(name = "REFERENCE")
+	@Column(name = "REFERENCE", length = 255)
+	@Size(max = 255)
 	private String reference;
 
-	@Column(name = "ACCOUNT_CODE")
+	@Column(name = "ACCOUNT_CODE", length = 255)
+    @Size(max = 255)
 	private String accountCode;
 
-	@Column(name = "ACCOUNT_CODE_CLIENT_SIDE")
+	@Column(name = "ACCOUNT_CODE_CLIENT_SIDE", length = 255)
+    @Size(max = 255)
 	private String accountCodeClientSide;
 
 	@Column(name = "AMOUNT", precision = 23, scale = 12)
@@ -97,10 +102,12 @@ public class AccountOperation extends AuditableEntity {
 	@OneToMany(mappedBy = "accountOperation")
 	private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
 
-	@Column(name = "OCC_CODE")
+	@Column(name = "OCC_CODE", length = 255)
+    @Size(max = 255)
 	private String occCode;
 
-	@Column(name = "OCC_DESCRIPTION")
+	@Column(name = "OCC_DESCRIPTION", length = 255)
+    @Size(max = 255)
 	private String occDescription;
 	
 	

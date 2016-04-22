@@ -27,6 +27,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
@@ -44,13 +45,14 @@ public class Contact extends BaseEntity {
 
 	// It is provider resposibility to create contacts with unique codes
 	@Column(name = "CONTACT_CODE", length = 50)
-	String contactCode;
+	@Size(max = 50)
+	private String contactCode;
 
 	@Embedded
-	CommunicationPolicy contactPolicy;
+	private CommunicationPolicy contactPolicy;
 
 	@OneToMany
-	List<Message> messages;
+	private List<Message> messages;
 
 	public String getContactCode() {
 		return contactCode;

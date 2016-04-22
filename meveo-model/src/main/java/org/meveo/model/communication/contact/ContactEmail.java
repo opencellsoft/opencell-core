@@ -22,23 +22,24 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Entity
 @DiscriminatorValue("EMAIL")
 public class ContactEmail extends ContactCoordinates {
 
-	private static final long serialVersionUID = -1945441703405654584L;
+    private static final long serialVersionUID = -1945441703405654584L;
 
-	@Column(name = "EMAIL")
-	@Pattern(regexp = ".+@.+\\..{2,4}")
-	private String email;
+    @Column(name = "EMAIL", length = 255)
+    @Pattern(regexp = ".+@.+\\..{2,4}")
+    @Size(max = 255)
+    private String email;
 
-	public String getEmail() {
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

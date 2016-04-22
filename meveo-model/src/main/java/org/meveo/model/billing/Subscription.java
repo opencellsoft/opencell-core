@@ -96,7 +96,7 @@ public class Subscription extends BusinessCFEntity{
 	private Date endAgreementDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SUB_TERMIN_REASON_ID", nullable = true)
+	@JoinColumn(name = "SUB_TERMIN_REASON_ID")
 	private SubscriptionTerminationReason subscriptionTerminationReason;
 
 	@Column(name = "DEFAULT_LEVEL")

@@ -128,13 +128,16 @@ public class RatedTransaction extends BaseEntity {
 	@JoinColumn(name = "INVOICE_SUB_CATEGORY_ID")
 	private InvoiceSubCategory invoiceSubCategory;
 
-	@Column(name = "CODE")
+	@Column(name = "CODE", length = 255)
+	@Size(max = 255)
 	private String code;
 
-	@Column(name = "DESCRIPTION")
+	@Column(name = "DESCRIPTION", length = 255)
+    @Size(max = 255)
 	private String description;
 
 	@Column(name = "UNITY_DESCRIPTION", length = 20)
+	@Size(max = 20)
 	private String unityDescription;
 
 	@Column(name = "UNIT_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
@@ -181,13 +184,16 @@ public class RatedTransaction extends BaseEntity {
 	@Column(name = "DO_NOT_TRIGGER_INVOICING")
 	private boolean doNotTriggerInvoicing = false;
 
-	@Column(name = "PARAMETER_1")
+	@Column(name = "PARAMETER_1", length = 255)
+    @Size(max = 255)
 	private String parameter1;
 
-	@Column(name = "PARAMETER_2")
+	@Column(name = "PARAMETER_2", length = 255)
+    @Size(max = 255)
 	private String parameter2;
 
-	@Column(name = "PARAMETER_3")
+	@Column(name = "PARAMETER_3", length = 255)
+    @Size(max = 255)
 	private String parameter3;
 
 	@ManyToOne(fetch = FetchType.LAZY)

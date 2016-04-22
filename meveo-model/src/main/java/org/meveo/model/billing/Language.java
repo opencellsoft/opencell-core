@@ -22,6 +22,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ProviderlessEntity;
@@ -37,9 +38,11 @@ public class Language extends ProviderlessEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "LANGUAGE_CODE", length = 3)
+	@Size(max = 3)
 	private String languageCode;
 
 	@Column(name = "DESCRIPTION_EN", length = 100)
+	@Size(max = 100)
 	private String descriptionEn;
 
 	public String getLanguageCode() {

@@ -25,6 +25,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
@@ -38,16 +39,20 @@ public class OCCTemplate extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "CODE")
+	@Column(name = "CODE", length = 255)
+    @Size(max = 255)
 	private String code;
 
-	@Column(name = "DESCRIPTION", nullable = true)
+	@Column(name = "DESCRIPTION", length = 255)
+    @Size(max = 255)
 	private String description;
 
-	@Column(name = "ACCOUNT_CODE")
+	@Column(name = "ACCOUNT_CODE", length = 255)
+    @Size(max = 255)
 	private String accountCode;
 
-	@Column(name = "ACCOUNT_CODE_CLIENT_SIDE")
+	@Column(name = "ACCOUNT_CODE_CLIENT_SIDE", length = 255)
+    @Size(max = 255)
 	private String accountCodeClientSide;
 
 	@Column(name = "OCC_CATEGORY")

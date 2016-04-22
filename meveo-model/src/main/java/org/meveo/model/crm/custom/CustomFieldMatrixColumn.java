@@ -3,6 +3,7 @@ package org.meveo.model.crm.custom;
 import java.io.Serializable;
 
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Embeddable
@@ -14,14 +15,17 @@ public class CustomFieldMatrixColumn implements Serializable, Comparable<CustomF
 
     // @Column(name = "CODE", nullable = false, length = 20)
     @Size(max = 20)
+    @NotNull
     private String code;
 
     // @Column(name = "LABEL", nullable = false, length = 50)
     @Size(max = 50)
+    @NotNull
     private String label;
 
     // @Column(name = "KEY_TYPE", nullable = false, length = 10)
     // @Enumerated(EnumType.STRING)
+    @NotNull
     private CustomFieldMapKeyEnum keyType;
 
     public int getPosition() {

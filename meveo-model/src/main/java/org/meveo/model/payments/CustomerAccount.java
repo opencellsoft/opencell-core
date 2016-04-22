@@ -36,6 +36,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -112,9 +113,11 @@ public class CustomerAccount extends AccountEntity {
 	private DunningLevelEnum dunningLevel = DunningLevelEnum.R0;
 
 	@Column(name = "PASSWORD", length = 10)
+	@Size(max = 10)
 	private String password = "";
 
 	@Column(name = "MANDATE_IDENTIFICATION", length = 256)
+	@Size(max = 256)
 	private String mandateIdentification = "";
 
 	@Column(name = "MANDATE_DATE")

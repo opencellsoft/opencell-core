@@ -44,8 +44,6 @@ public class CalendarDaily extends Calendar {
 
     private static final long MILLISEC_IN_DAY = 24 * 3600 * 1000L;
 
-    GregorianCalendar calendar = new GregorianCalendar();
-
     public List<HourInDay> getHours() {
         return hours;
     }
@@ -62,7 +60,7 @@ public class CalendarDaily extends Calendar {
      * @return Next calendar date.
      */
     public Date nextCalendarDate(Date date) {
-        calendar = new GregorianCalendar();
+        GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(date);
         calendar.set(java.util.Calendar.SECOND, 0);
         calendar.set(java.util.Calendar.MILLISECOND, 0);

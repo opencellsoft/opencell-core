@@ -27,6 +27,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BaseEntity;
 
@@ -39,7 +40,8 @@ public class JobHistory extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "HISTORY_TYPE", insertable = false, updatable = false)
+    @Column(name = "HISTORY_TYPE", insertable = false, updatable = false, length = 31)
+    @Size(max = 31)
 	private String type;
 
 	@Column(name = "EXECUTION_DATE")

@@ -27,6 +27,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
@@ -42,20 +44,28 @@ public class InvoiceTemplate extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "CODE", nullable = false, length = 20)
+	@Size(max = 20)
+	@NotNull
 	private String code;
 
-	@Column(name = "TEMPLATE_VERSION", nullable = false)
+	@Column(name = "TEMPLATE_VERSION", nullable = false, length = 255)
+	@Size(max = 255)
+    @NotNull
 	private String templateVersion;
 
 	@Column(name = "VALIDITY_START_DATE", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
+	@NotNull
 	private Date validityStartDate;
 
 	@Column(name = "VALIDITY_END_DATE", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
+	@NotNull
 	private Date validityEndDate;
 
-	@Column(name = "FILE_NAME", nullable = false)
+	@Column(name = "FILE_NAME", nullable = false, length = 255)
+    @Size(max = 255)
+	@NotNull
 	private String fileName;
 
 	public String getCode() {

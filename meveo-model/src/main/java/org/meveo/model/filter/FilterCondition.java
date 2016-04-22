@@ -10,6 +10,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BaseEntity;
 
@@ -29,6 +31,8 @@ public class FilterCondition extends BaseEntity {
 	public Filter filter;
 
 	@Column(name = "FILTER_CONDITION_TYPE", length = 50, nullable = false)
+	@Size(max = 50)
+	@NotNull
 	public String filterConditionType;
 
 	public boolean match(BaseEntity e) {

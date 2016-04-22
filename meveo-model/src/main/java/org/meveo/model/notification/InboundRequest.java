@@ -17,6 +17,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.model.BusinessEntity;
@@ -37,6 +38,7 @@ public class InboundRequest extends BusinessEntity {
 	private int contentLength;
 
 	@Column(name="CONTENT_TYPE",length=255)
+	@Size(max = 255)
 	private String contentType;
 
 	@ElementCollection(fetch=FetchType.LAZY)
@@ -44,12 +46,15 @@ public class InboundRequest extends BusinessEntity {
 	private Map<String,String> parameters = new HashMap<String, String>();
 
 	@Column(name="PROTOCOL",length=20)
+	@Size(max = 20)
 	private String protocol;
 	
 	@Column(name="SCHEME",length=20)
+    @Size(max = 20)
 	private String scheme;
 	
 	@Column(name="REMOTE_ADRR",length=255)
+    @Size(max = 255)
 	private String remoteAddr;
 
 	@Column(name="REMOTE_PORT")
@@ -58,9 +63,11 @@ public class InboundRequest extends BusinessEntity {
 	transient private String body;
 	
 	@Column(name="METHOD",length=10)
+    @Size(max = 10)
 	private String method;
 
 	@Column(name="AUTH_TYPE",length=11)
+    @Size(max = 11)
 	private String authType;
 
 	@ElementCollection(fetch=FetchType.LAZY)
@@ -72,9 +79,11 @@ public class InboundRequest extends BusinessEntity {
 	private Map<String,String> headers = new HashMap<String, String>();
 
 	@Column(name="PATH_INFO",length=255)
+    @Size(max = 255)
 	private String pathInfo;
 	
 	@Column(name="REQUEST_URI",length=255)
+    @Size(max = 255)
 	private String requestURI;
 	
 	//TODO: add parts of a multipart/form-data POST request
@@ -85,9 +94,11 @@ public class InboundRequest extends BusinessEntity {
 	private List<NotificationHistory> notificationHistories = new ArrayList<NotificationHistory>();
 
 	@Column(name="RESP_CONTENT_TYPE",length=255)
+    @Size(max = 255)
 	private String responseContentType;
 
 	@Column(name="RESP_ENCODING",length=50)
+    @Size(max = 50)
 	private String responseEncoding;
 
 	transient private String responseBody;

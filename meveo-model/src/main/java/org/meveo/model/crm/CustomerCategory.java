@@ -23,6 +23,7 @@ import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -38,10 +39,12 @@ public class CustomerCategory extends BusinessEntity {
 	@Column(name = "EXONERATED_FROM_TAXES")
 	private boolean exoneratedFromTaxes=false ;
 	
-	@Column(name = "EXONERATION_TAX_EL")
+	@Column(name = "EXONERATION_TAX_EL", length = 2000)
+	@Size(max = 2000)
 	private String exonerationTaxEl;
 	
-	@Column(name = "EXONERATION_REASON")
+	@Column(name = "EXONERATION_REASON", length = 255)
+    @Size(max = 255)
 	private String exonerationReason;
 
 	public boolean getExoneratedFromTaxes() {

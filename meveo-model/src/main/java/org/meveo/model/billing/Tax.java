@@ -27,6 +27,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -50,6 +51,7 @@ public class Tax extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "ACCOUNTING_CODE", length = 255)
+	@Size(max = 255)
 	private String accountingCode;
 
 	@Column(name = "TAX_PERCENTAGE", precision = NB_PRECISION, scale = NB_DECIMALS)

@@ -21,6 +21,7 @@ package org.meveo.model.communication.email;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.communication.MessageTemplate;
 
@@ -28,10 +29,17 @@ import org.meveo.model.communication.MessageTemplate;
 @DiscriminatorValue("EMAIL")
 public class EmailTemplate extends MessageTemplate {
 	private static final long serialVersionUID = 7634125312706917352L;
+	
+	@Column(name = "SUBJECT", length = 255)
+    @Size(max = 255)
 	private String subject;
-	@Column(length = 4000)
+	
+	@Column(name = "HTMLCONTENT", length = 4000)
+	@Size(max = 4000)
 	private String htmlContent;
-	@Column(length = 4000)
+	
+	@Column(name = "TEXTCONTENT", length = 4000)
+    @Size(max = 4000)
 	private String textContent;
 
 	public String getSubject() {

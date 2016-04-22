@@ -30,15 +30,15 @@ public class Address implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "ADDRESS_1", length = 50)
-	@Size(max = 80)
+	@Size(max = 50)
 	protected String address1;
 
 	@Column(name = "ADDRESS_2", length = 50)
-	@Size(max = 80)
+	@Size(max = 50)
 	protected String address2;
 
 	@Column(name = "ADDRESS_3", length = 50)
-	@Size(max = 80)
+	@Size(max = 50)
 	protected String address3;
 
 	@Column(name = "ADDRESS_ZIPCODE", length = 10)

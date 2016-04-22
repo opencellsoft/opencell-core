@@ -24,6 +24,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
@@ -39,9 +40,11 @@ public class Discount extends AuditableEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "DISCOUNT_CODE", length = 20)
+	@Size(max = 20)
 	private String discountCode;
 
 	@Column(name = "PR_DESCRIPTION", length = 100)
+	@Size(max = 100)
 	private String prDescription;
 
 	@Column(name = "POURCENT")

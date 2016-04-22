@@ -1,13 +1,11 @@
 package org.meveo.model.notification;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -28,19 +26,21 @@ public class NotificationHistory extends AuditableEntity {
 	@JoinColumn(name="INBOUND_REQUEST_ID")
 	private InboundRequest inboundRequest;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.LAZY, optional= false)
 	@NotNull
 	@JoinColumn(name="NOTIFICATION_ID")
 	private Notification notification;
 	
 	@Column(name="ENTITY_CLASSNAME",length=255, nullable = false)
+	@Size(max = 255)
 	@NotNull
 	private String entityClassName;
 	
 	@Column(name="ENTITY_CODE",length=35)
+	@Size(max = 35)
 	private String entityCode;
 
-	@Column(name="SERIALIZED_ENTITY") 
+	@Column(name="SERIALIZED_ENTITY", columnDefinition="TEXT") 
 	private String serializedEntity;
 
 	@Column(name="NB_RETRY")

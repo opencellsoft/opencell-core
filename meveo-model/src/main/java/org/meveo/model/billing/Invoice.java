@@ -37,6 +37,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ObservableEntity;
@@ -66,10 +67,12 @@ public class Invoice extends AuditableEntity {
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
 
-	@Column(name = "INVOICE_NUMBER", length = 20)
+	@Column(name = "INVOICE_NUMBER", length = 50)
+	@Size(max = 50)
 	private String invoiceNumber;
 
-	@Column(name = "TEMPORARY_INVOICE_NUMBER", length = 50, unique = true)
+	@Column(name = "TEMPORARY_INVOICE_NUMBER", length = 20, unique = true)
+	@Size(max = 20)
 	private String temporaryInvoiceNumber;
 
 	@Column(name = "PRODUCT_DATE")
@@ -103,10 +106,12 @@ public class Invoice extends AuditableEntity {
 	@Enumerated(EnumType.STRING)
 	private PaymentMethodEnum paymentMethod;
 
-	@Column(name = "IBAN")
+	@Column(name = "IBAN", length = 255)
+	@Size(max = 255)
 	private String iban;
 
-	@Column(name = "ALIAS")
+	@Column(name = "ALIAS", length = 255)
+    @Size(max = 255)
 	private String alias;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -125,6 +130,7 @@ public class Invoice extends AuditableEntity {
 	private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
 
 	@Column(name = "COMMENT", length = 1200)
+	@Size(max = 1200)
 	private String comment;
 
 	@Column(name = "PDF")

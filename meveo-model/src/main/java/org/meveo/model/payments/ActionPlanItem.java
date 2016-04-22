@@ -57,7 +57,8 @@ public class ActionPlanItem extends AuditableEntity {
 	@Column(name = "CHARGE_AMOUNT")
 	private BigDecimal chargeAmount;
 
-	@Column(name = "LETTER_TEMPLATE")
+	@Column(name = "LETTER_TEMPLATE", length = 255)
+    @Size(max = 255)
 	private String letterTemplate;
 
 	@ManyToOne(fetch = FetchType.LAZY)

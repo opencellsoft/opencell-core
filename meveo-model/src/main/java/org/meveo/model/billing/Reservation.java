@@ -19,6 +19,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.rating.EDR;
@@ -31,6 +32,7 @@ public class Reservation extends AuditableEntity {
 	private static final long serialVersionUID = 4110616902439820101L;
 
 	@Column(name = "INPUT_MESSAGE")
+	@Size(max = 255)
 	private String inputMessage;
 	
 	@Temporal(TemporalType.DATE)

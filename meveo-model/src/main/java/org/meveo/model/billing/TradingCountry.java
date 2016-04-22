@@ -30,6 +30,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
@@ -53,6 +54,7 @@ public class TradingCountry extends AuditableEntity {
 	private Country country;
 
 	@Column(name = "PR_DESCRIPTION", length = 100)
+	@Size(max = 100)
 	private String prDescription;
 
 	@Transient

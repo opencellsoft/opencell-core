@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
@@ -26,12 +27,14 @@ public class OfferServiceTemplate extends BaseEntity {
 
     private static final long serialVersionUID = -1872859127097329926L;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "OFFER_TEMPLATE_ID")
+    @NotNull
     private OfferTemplate offerTemplate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "SERVICE_TEMPLATE_ID")
+    @NotNull
     private ServiceTemplate serviceTemplate;
 
     @Column(name = "MANDATORY")

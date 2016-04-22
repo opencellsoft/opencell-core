@@ -26,10 +26,11 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -52,16 +53,20 @@ public class MeveoInstance extends BusinessEntity {
     @JoinColumn(name = "CUSTOMER_ID")
     private Customer customer;
 
-    @Column(name = "PRODUCT_NAME")
+    @Column(name = "PRODUCT_NAME", length = 255)
+    @Size(max = 255)
     private String productName;
 
-    @Column(name = "PRODUCT_VERSION")
+    @Column(name = "PRODUCT_VERSION", length = 255)
+    @Size(max = 255)
     private String productVersion;
 
-    @Column(name = "OWNER")
+    @Column(name = "OWNER", length = 255)
+    @Size(max = 255)
     private String owner;
 
-    @Column(name = "MD5")
+    @Column(name = "MD5", length = 255)
+    @Size(max = 255)
     private String md5;
 
     @Enumerated(EnumType.STRING)
@@ -74,61 +79,81 @@ public class MeveoInstance extends BusinessEntity {
     @Column(name = "UPDATE_DATE")
     private Date updateDate;
 
-    @Column(name = "KEY_ENTREPRISE")
+    @Column(name = "KEY_ENTREPRISE", length = 255)
+    @Size(max = 255)
     private String keyEntreprise;
 
-    @Column(name = "MAC_ADDRESS")
+    @Column(name = "MAC_ADDRESS", length = 255)
+    @Size(max = 255)
     private String macAddress;
 
-    @Column(name = "MACHINE_VENDOR")
+    @Column(name = "MACHINE_VENDOR", length = 255)
+    @Size(max = 255)
     private String machineVendor;
 
-    @Column(name = "INSTALLATION_MODE")
+    @Column(name = "INSTALLATION_MODE", length = 255)
+    @Size(max = 255)
     private String installationMode;
 
-    @Column(name = "NB_CORES")
+    @Column(name = "NB_CORES", length = 255)
+    @Size(max = 255)
     private String nbCores;
 
-    @Column(name = "MEMORY")
+    @Column(name = "MEMORY", length = 255)
+    @Size(max = 255)
     private String memory;
 
-    @Column(name = "HD_SIZE")
+    @Column(name = "HD_SIZE", length = 255)
+    @Size(max = 255)
     private String hdSize;
 
-    @Column(name = "OS_NAME")
+    @Column(name = "OS_NAME", length = 255)
+    @Size(max = 255)
     private String osName;
 
-    @Column(name = "PS_VERSION")
+    @Column(name = "PS_VERSION", length = 255)
+    @Size(max = 255)
     private String osVersion;
 
-    @Column(name = "OS_ARCH")
+    @Column(name = "OS_ARCH", length = 255)
+    @Size(max = 255)
     private String osArch;
 
-    @Column(name = "JAVA_VM_VERSION")
+    @Column(name = "JAVA_VM_VERSION", length = 255)
+    @Size(max = 255)
     private String javaVmVersion;
 
-    @Column(name = "JAVA_VM_NAME")
+    @Column(name = "JAVA_VM_NAME", length = 255)
+    @Size(max = 255)
     private String javaVmName;
 
-    @Column(name = "JAVA_VENDOR")
+    @Column(name = "JAVA_VENDOR", length = 255)
+    @Size(max = 255)
     private String javaVendor;
 
-    @Column(name = "JAVA_VERSION")
+    @Column(name = "JAVA_VERSION", length = 255)
+    @Size(max = 255)
     private String javaVersion;
 
-    @Column(name = "AS_VENDOR")
+    @Column(name = "AS_VENDOR", length = 255)
+    @Size(max = 255)
     private String asVendor;
 
-    @Column(name = "AS_VERSION")
+    @Column(name = "AS_VERSION", length = 255)
+    @Size(max = 255)
     private String asVersion;
 
-    @Column(name = "URL", nullable = false)
+    @Column(name = "URL", nullable = false, length = 60)
+    @Size(max = 60)
+    @NotNull
     private String url;
     
-    @Column(name = "AUTH_USERNAME")
+    @Column(name = "AUTH_USERNAME", length = 60)
+    @Size(max = 60)
     private String authUsername;
     
-    @Column(name = "AUTH_PASSWORD")
+    @Column(name = "AUTH_PASSWORD", length = 60)
+    @Size(max = 60)
     private String authPassword;
     
     public MeveoInstance() {

@@ -36,6 +36,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.IEntity;
 import org.meveo.model.IVersionedEntity;
@@ -59,6 +60,7 @@ public class JournalEntry implements IEntity, IVersionedEntity {
 	private Integer version;
 
 	@Column(name = "PROVIDER_CODE", length = 20)
+    @Size(max = 20)
 	private String providerCode;
 
 	@Column(name = "TYPE")
@@ -69,9 +71,11 @@ public class JournalEntry implements IEntity, IVersionedEntity {
 	private Long originId;
 
 	@Column(name = "INVOICE_NUMBER", length = 20)
+    @Size(max = 20)
 	private String invoiceNumber;
 
 	@Column(name = "ACCOUNTING_CODE", length = 255)
+    @Size(max = 255)
 	private String accountingCode;
 
 	@Column(name = "INVOICE_DATE")
@@ -79,18 +83,22 @@ public class JournalEntry implements IEntity, IVersionedEntity {
 	private Date invoiceDate;
 
 	@Column(name = "CUSTOMER_ACCOUNT_CODE", length = 20)
+    @Size(max = 20)
 	private String customerAccountCode;
 
 	@Column(name = "TAX_CODE", length = 10)
+    @Size(max = 10)
 	private String taxCode;
 
 	@Column(name = "TAX_DESCRIPTION", length = 20)
+    @Size(max = 20)
 	private String taxDescription;
 
 	@Column(name = "TAX_PERCENT")
 	private BigDecimal taxPercent;
 
 	@Column(name = "SUB_CAT_DESC", length = 50)
+    @Size(max = 50)
 	private String subCatDescription;
 
 	@Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)

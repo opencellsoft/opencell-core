@@ -78,11 +78,12 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @NotNull
     protected String code;
 
-    @Column(name = "DESCRIPTION", nullable = true, length = 100)
+    @Column(name = "DESCRIPTION", length = 100)
     @Size(max = 100)
     protected String description;
 
     @Column(name = "DISABLED", nullable = false)
+    @NotNull
     private boolean disabled;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -135,7 +136,8 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 
     private static final String PM_SEP = ",";
 
-    @Column(name = "PAYMENT_METHODS")
+    @Column(name = "PAYMENT_METHODS", length = 255)
+    @Size(max = 255)
     private String serializedPaymentMethods;
 
     @Transient
@@ -147,12 +149,14 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     private Blob logo;
 
     @Column(name = "INVOICE_PREFIX", length = 2000)
+    @Size(max = 2000)
     private String invoicePrefix;
 
     @Column(name = "CURRENT_INVOICE_NB")
     private Long currentInvoiceNb;
 
     @Column(name = "INVOICE_ADJUSTMENT_PREFIX", length = 2000)
+    @Size(max = 2000)
     private String invoiceAdjustmentPrefix;
 
     @Column(name = "CURRENT_INVOICE_ADJUSTMENT_NB")
@@ -196,10 +200,13 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @Column(name = "DISPLAY_FREE_TX_IN_INVOICE")
     private boolean displayFreeTransacInInvoice = false;
 
-    @Column(name = "UUID", nullable = false, updatable = false, length = 50)
+    @Column(name = "UUID", nullable = false, updatable = false, length = 60)
+    @Size(max = 60)
+    @NotNull
     private String uuid = UUID.randomUUID().toString();
 
     @Column(name = "DISCOUNT_ACCOUNTING_CODE", length = 255)
+    @Size(max = 255)
     private String discountAccountingCode;
 
     @Column(name = "PREPAID_RESRV_DELAY_MS")

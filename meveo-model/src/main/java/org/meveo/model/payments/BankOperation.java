@@ -27,6 +27,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 
@@ -37,7 +38,8 @@ public class BankOperation extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "CODE_OP")
+	@Column(name = "CODE_OP", length = 255)
+    @Size(max = 255)
 	private String codeOp;
 
 	@Column(name = "DATE_OP")
@@ -48,19 +50,24 @@ public class BankOperation extends AuditableEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateVal;
 
-	@Column(name = "LABEL_1")
+	@Column(name = "LABEL_1", length = 255)
+    @Size(max = 255)
 	private String lebel1;
 
-	@Column(name = "LABEL_2")
+	@Column(name = "LABEL_2", length = 255)
+    @Size(max = 255)
 	private String lebel2;
 
-	@Column(name = "LABEL_3")
+	@Column(name = "LABEL_3", length = 255)
+    @Size(max = 255)
 	private String lebel3;
 
-	@Column(name = "INVOICE_ID")
+	@Column(name = "INVOICE_ID", length = 255)
+    @Size(max = 255)
 	private String invocieId;
 
-	@Column(name = "REFERENCE")
+	@Column(name = "REFERENCE", length = 255)
+    @Size(max = 255)
 	private String refrence;
 
 	@Column(name = "DEBIT")
@@ -72,10 +79,12 @@ public class BankOperation extends AuditableEntity {
 	@Column(name = "IS_VALID")
 	private boolean isValid;
 
-	@Column(name = "ERROR_CAUSE")
+	@Column(name = "ERROR_CAUSE", length = 255)
+    @Size(max = 255)
 	private String errorMessage;
 
-	@Column(name = "FILE_NAME")
+	@Column(name = "FILE_NAME", length = 255)
+    @Size(max = 255)
 	private String fileName;
 
 	public BankOperation() {

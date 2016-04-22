@@ -25,6 +25,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
@@ -48,6 +49,7 @@ public class DiscountLanguage extends AuditableEntity {
 	private TradingLanguage tradingLanguage;
 
 	@Column(name = "DESCRIPTION", length = 50)
+	@Size(max = 50)
 	private String description;
 
 	public Discount getDiscount() {

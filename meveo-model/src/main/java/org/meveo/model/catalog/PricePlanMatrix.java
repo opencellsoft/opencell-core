@@ -34,6 +34,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessCFEntity;
@@ -59,9 +60,10 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
 
 	@Column(name = "EVENT_CODE", length = 100, nullable = false)
 	@Size(min = 1, max = 100)
+	@NotNull
 	private String eventCode;
 
-	@ManyToOne(fetch = FetchType.LAZY,optional=true)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "OFFER_ID")
 	private OfferTemplate offerTemplate;
 
@@ -95,16 +97,20 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
 	@Column(name = "MAX_SUBSCR_AGE")
 	private Long maxSubscriptionAgeInMonth;
 
-	@Column(name = "CRITERIA_1")
+	@Column(name = "CRITERIA_1", length = 255)
+	@Size(max = 255)
 	private String criteria1Value;
 
-	@Column(name = "CRITERIA_2")
+	@Column(name = "CRITERIA_2", length = 255)
+    @Size(max = 255)
 	private String criteria2Value;
 
-	@Column(name = "CRITERIA_3")
+	@Column(name = "CRITERIA_3", length = 255)
+    @Size(max = 255)
 	private String criteria3Value;
 	
-	@Column(name = "CRITERIA_EL",length=2000)
+	@Column(name = "CRITERIA_EL", length=2000)
+	@Size(max = 2000)
 	private String criteriaEL;
 
 	@Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
@@ -115,11 +121,13 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
 	@Digits(integer = 23, fraction = 12)
 	private BigDecimal amountWithTax;
 
-	@Column(name = "AMOUNT_WITHOUT_TAX_EL",length=2000)
-	private String amountWithoutTaxEL;
+    @Column(name = "AMOUNT_WITHOUT_TAX_EL", length = 2000)
+    @Size(max = 2000)
+    private String amountWithoutTaxEL;
 
-	@Column(name = "AMOUNT_WITH_TAX_EL",length=2000)
-	private String amountWithTaxEL;
+    @Column(name = "AMOUNT_WITH_TAX_EL", length = 2000)
+    @Size(max = 2000)
+    private String amountWithTaxEL;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TRADING_CURRENCY_ID")

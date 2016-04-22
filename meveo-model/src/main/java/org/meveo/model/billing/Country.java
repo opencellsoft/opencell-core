@@ -25,6 +25,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ProviderlessEntity;
@@ -38,9 +39,11 @@ public class Country extends ProviderlessEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "COUNTRY_CODE", length = 10)
+	@Size(max = 10)
 	private String countryCode;
 
 	@Column(name = "DESCRIPTION_EN", length = 100)
+	@Size(max = 100)
 	private String descriptionEn;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -32,6 +32,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BaseEntity;
@@ -49,6 +50,7 @@ public class Report extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "NAME", length = 50)
+    @Size(max = 50)
 	private String name;
 
 	@Column(name = "DESCRIPTION", nullable = true, length = 50)
@@ -68,17 +70,21 @@ public class Report extends BaseEntity {
 	@Column(name = "END_DATE")
 	private Date endDate;
 
-	@Column(name = "REPORT_FILE_NAME")
+	@Column(name = "REPORT_FILE_NAME", length = 255)
+    @Size(max = 255)
 	private String fileName;
 
-	@Column(name = "PRODUCER_CLASS_NAME")
+	@Column(name = "PRODUCER_CLASS_NAME", length = 255)
+    @Size(max = 255)
 	private String producerClassName;
 
-	@Column(name = "DS_RECORD_PATH")
+	@Column(name = "DS_RECORD_PATH", length = 255)
+    @Size(max = 255)
 	private String recordPath;
 
 	@Column(name = "REPORT_FREQUENCY", nullable = false)
 	@Enumerated(EnumType.STRING)
+	@NotNull
 	private ExecutionFrequencyEnum frequency;
 
 	@Column(name = "EXECUTION_HOUR")
@@ -105,6 +111,7 @@ public class Report extends BaseEntity {
 
 	@Column(name = "OUTPUT_FORMAT", nullable = false)
 	@Enumerated(EnumType.STRING)
+	@NotNull
 	private OutputFormatEnum outputFormat;
 
 	public void computeNextExecutionDate() {

@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.ExportIdentifier;
@@ -24,10 +25,12 @@ public class EntityActionScript extends CustomScript {
     private String localCode;
 
     @Column(name = "APPLIES_TO", nullable = false, length = 100)
+    @Size(max = 100)
+    @NotNull
     private String appliesTo;
 
-    @Column(name = "APPLICABLE_ON_EL", length = 150)
-    @Size(max = 150)
+    @Column(name = "APPLICABLE_ON_EL", length = 2000)
+    @Size(max = 2000)
     private String applicableOnEl;
 
     @Column(name = "label", length = 50)

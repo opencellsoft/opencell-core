@@ -12,6 +12,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.BaseEntity;
@@ -25,10 +27,14 @@ public class Role extends BaseEntity {
 
     private static final long serialVersionUID = -2309961042891712685L;
 
-    @Column(name = "ROLE_NAME", nullable = false)
+    @Column(name = "ROLE_NAME", nullable = false, length = 255)
+    @Size(max = 255)
+    @NotNull
     private String name;
 
-    @Column(name = "ROLE_DESCRIPTION", nullable = true)
+    @Column(name = "ROLE_DESCRIPTION", nullable = false, length = 255)
+    @Size(max = 255)
+    @NotNull
     private String description;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

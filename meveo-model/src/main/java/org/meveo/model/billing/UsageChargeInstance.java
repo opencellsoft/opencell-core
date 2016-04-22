@@ -31,6 +31,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "BILLING_USAGE_CHARGE_INST")
@@ -52,6 +53,7 @@ public class UsageChargeInstance extends ChargeInstance {
 	private CounterInstance counter;
 
 	@Column(name = "RATING_UNIT_DESCRIPTION", length = 20)
+	@Size(max = 20)
 	private String ratingUnitDescription;
 	
 	@Temporal(TemporalType.TIMESTAMP)

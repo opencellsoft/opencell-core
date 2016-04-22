@@ -29,6 +29,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -45,7 +46,7 @@ public abstract class MessageSenderConfig extends BusinessEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "MEDIA", insertable = false, updatable = false)
-	MediaEnum media;
+	private MediaEnum media;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PRIORITY")
@@ -54,13 +55,15 @@ public abstract class MessageSenderConfig extends BusinessEntity {
 	@Column(name = "MANAGE_NON_DISTRIB")
 	private Boolean manageNonDistributedMessage;
 
-	@Column(name = "NON_DISTRIB_EMAIL")
+	@Column(name = "NON_DISTRIB_EMAIL", length = 255)
+    @Size(max = 255)
 	private String NonDistributedEmail;
 
 	@Column(name = "USE_ACK")
 	private Boolean useAcknoledgement;
 
-	@Column(name = "ACK_EMAIL")
+	@Column(name = "ACK_EMAIL", length = 255)
+    @Size(max = 255)
 	private String ackEmail;
 
 	@Embedded

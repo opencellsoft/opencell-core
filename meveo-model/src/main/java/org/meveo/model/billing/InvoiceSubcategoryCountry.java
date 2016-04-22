@@ -25,6 +25,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
@@ -52,6 +53,7 @@ public class InvoiceSubcategoryCountry extends AuditableEntity {
 	private Tax tax;
 	
 	@Column(name = "FILTER_EL", length = 2000)
+	@Size(max = 2000)
 	private String filterEL;
 
 	public InvoiceSubCategory getInvoiceSubCategory() {

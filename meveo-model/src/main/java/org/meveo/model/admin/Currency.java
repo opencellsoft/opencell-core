@@ -22,6 +22,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ProviderlessEntity;
@@ -39,10 +40,12 @@ public class Currency extends ProviderlessEntity {
 
 	/** Currency code e.g. EUR for euros. */
 	@Column(name = "CURRENCY_CODE", length = 3, unique = true)
+	@Size(max = 3)
 	private String currencyCode;
 
 	/** Currency name. */
-	@Column(name = "DESCRIPTION_EN")
+	@Column(name = "DESCRIPTION_EN", length = 255)
+	@Size(max = 255)
 	private String descriptionEn;
 
 	/** Flag field that indicates if it is system currency. */

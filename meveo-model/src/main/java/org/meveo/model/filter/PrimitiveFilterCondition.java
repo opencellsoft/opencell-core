@@ -7,6 +7,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BaseEntity;
 
@@ -22,12 +23,15 @@ public class PrimitiveFilterCondition extends FilterCondition {
 	private static final long serialVersionUID = 5812098177203454113L;
 
 	@Column(name = "FIELD_NAME", length = 60)
+    @Size(max = 60)
 	private String fieldName;
 
 	@Column(name = "OPERATOR", length = 60)
+    @Size(max = 60)
 	private String operator;
 
 	@Column(name = "OPERAND", length = 255)
+    @Size(max = 255)
 	private String operand;
 
 	@Override

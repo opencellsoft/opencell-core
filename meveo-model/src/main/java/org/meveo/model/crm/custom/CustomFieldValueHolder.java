@@ -13,6 +13,12 @@ import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Used to facilitate custom field value data entry in GUI
+ * 
+ * @author Andrius Karpavicius
+ * 
+ */
 public class CustomFieldValueHolder implements Serializable {
 
     private static final long serialVersionUID = 2516863650382630587L;

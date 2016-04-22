@@ -23,24 +23,24 @@ public class InstantMessagingNotification extends Notification {
 
     @Column(name = "IM_PROVIDER", length = 20)
     @NotNull
-    InstantMessagingProviderEnum imProvider;
+    private InstantMessagingProviderEnum imProvider;
 
     @Column(name = "ID_EXPRESSION", length = 2000)
     @Size(max = 2000)
-    String idEl;
+    private String idEl;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "ADM_NOTIF_IM_LIST")
-    Set<String> ids;
+    private Set<String> ids;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "ADM_NOTIF_IM_USER")
-    Set<User> users;
+    private Set<User> users;
 
     @Column(name = "MESSAGE", length = 2000)
     @NotNull
     @Size(max = 2000)
-    String message;
+    private String message;
 
     public String getIdEl() {
         return idEl;

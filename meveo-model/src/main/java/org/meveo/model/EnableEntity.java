@@ -20,6 +20,7 @@ package org.meveo.model;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
 
 @MappedSuperclass
 public class EnableEntity extends BaseEntity implements IEnable {
@@ -27,6 +28,7 @@ public class EnableEntity extends BaseEntity implements IEnable {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "DISABLED", nullable = false)
+	@NotNull
 	private boolean disabled;
 
 	public boolean isDisabled() {

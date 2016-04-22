@@ -24,6 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
@@ -37,12 +38,15 @@ public class CatMessages extends AuditableEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "CODE", length = 50)
+	@Size(max = 50)
 	private String messageCode;
 
 	@Column(name = "LANGUAGE_CODE", length = 3)
+	@Size(max = 3)
 	private String languageCode;
 
 	@Column(name = "DESCRIPTION", length = 100)
+	@Size(max = 100)
 	private String description;
 	
 	@Transient

@@ -28,6 +28,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BaseEntity;
 import org.meveo.model.bi.Report;
@@ -41,7 +42,8 @@ import org.meveo.model.bi.Report;
 public class Email extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
-	@Column(name = "EMAIL")
+	@Column(name = "EMAIL", length = 255)
+	@Size(max = 255)
 	private String address;
 
 	@ManyToMany(fetch = FetchType.LAZY)

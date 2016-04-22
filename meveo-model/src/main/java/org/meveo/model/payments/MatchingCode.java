@@ -33,6 +33,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
@@ -45,7 +46,8 @@ public class MatchingCode extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "CODE")
+	@Column(name = "CODE", length = 255)
+    @Size(max = 255)
 	private String code;
 
 	@Column(name = "MATCHING_TYPE")

@@ -31,6 +31,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -64,10 +65,11 @@ public class Campaign extends BusinessEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "MEDIA")
-	MediaEnum media;
+	private MediaEnum media;
 
-	@Column(name = "SUB_MEDIA")
-	String subMedia;
+	@Column(name = "SUB_MEDIA", length = 255)
+	@Size(max = 255)
+	private String subMedia;
 
 	@Column(name = "USE_ANY_MEDIA")
 	private Boolean useAnyMedia;

@@ -33,7 +33,8 @@ public class FilterSelector extends BaseEntity {
 	@Column(name = "TARGET_ENTITY", length = 100, nullable = false)
 	private String targetEntity;
 
-	@Column(name = "ALIAS", length = 50, nullable = false)
+	@Column(name = "ALIAS", length = 50)
+	@Size(max = 50)
 	private String alias;
 
 	/**

@@ -39,6 +39,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Currency;
@@ -128,7 +129,8 @@ public class BillingRun extends AuditableEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastTransactionDate;
 
-	@Column(name = "REJECTION_REASON")
+	@Column(name = "REJECTION_REASON", length = 255)
+    @Size(max = 255)
 	private String rejectionReason;
 
 	@ManyToOne(fetch = FetchType.LAZY)

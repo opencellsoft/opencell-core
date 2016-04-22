@@ -22,6 +22,8 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @MappedSuperclass
 public abstract class BusinessCFEntity extends BusinessEntity implements ICustomFieldEntity {
@@ -29,6 +31,8 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
     private static final long serialVersionUID = -6054446440106807337L;
 
     @Column(name = "UUID", nullable = false, updatable = false, length = 50)
+    @Size(max = 50)
+    @NotNull
     private String uuid = UUID.randomUUID().toString();
 
     @Override

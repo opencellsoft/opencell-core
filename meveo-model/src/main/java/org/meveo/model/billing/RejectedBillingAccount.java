@@ -25,6 +25,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 
@@ -49,6 +50,7 @@ public class RejectedBillingAccount extends AuditableEntity {
 	private BillingRun billingRun;
 	
 	@Column(name = "REJECT_CAUSE", length=3000)
+	@Size(max = 3000)
 	private String rejectCause;
 	
 	

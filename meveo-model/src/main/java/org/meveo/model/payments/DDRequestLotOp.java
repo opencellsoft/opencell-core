@@ -31,6 +31,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 
@@ -61,7 +62,8 @@ public class DDRequestLotOp extends AuditableEntity {
 	@JoinColumn(name = "DDREQUEST_LOT_ID")
 	private DDRequestLOT ddrequestLOT;
 
-	@Column(name = "ERROR_CAUSE")
+	@Column(name = "ERROR_CAUSE", length = 255)
+    @Size(max = 255)
 	private String errorCause;
 	
 	@Column(name = "FILE_FORMAT")

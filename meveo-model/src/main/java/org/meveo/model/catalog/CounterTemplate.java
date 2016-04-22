@@ -33,6 +33,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
@@ -59,6 +60,7 @@ public class CounterTemplate extends BusinessEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "COUNTER_TYPE", nullable = false)
+	@NotNull
 	private CounterTypeEnum counterType = CounterTypeEnum.USAGE;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -70,11 +72,12 @@ public class CounterTemplate extends BusinessEntity {
 	private BigDecimal ceiling;
 
 	@Column(name = "UNITY_DESCRIPTION", length = 20)
-	@Size(min = 0, max = 20)
+	@Size(max = 20)
 	private String unityDescription;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "COUNTER_LEVEL", nullable = false)
+	@NotNull
 	private CounterTemplateLevel counterLevel = CounterTemplateLevel.UA;
 	
 	@Column(name = "CEILING_EXPRESSION_EL", length = 2000)

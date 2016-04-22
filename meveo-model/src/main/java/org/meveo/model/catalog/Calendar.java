@@ -29,6 +29,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -46,6 +47,7 @@ public abstract class Calendar extends BusinessEntity {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "CAL_TYPE", insertable = false, updatable = false)
+    @Size(max = 31)
     private String calendarType;
 
     @Transient

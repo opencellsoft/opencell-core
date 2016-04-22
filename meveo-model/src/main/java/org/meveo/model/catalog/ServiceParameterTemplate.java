@@ -23,6 +23,7 @@ import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -35,16 +36,19 @@ public class ServiceParameterTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "VALUE")
+	@Column(name = "VALUE", length = 255)
+    @Size(max = 255)
 	private String value;
 
-	@Column(name = "NAME")
+	@Column(name = "NAME", length = 255)
+	@Size(max = 255)
 	private String name;
 
 	@Column(name = "CUMULATIVE_PERIODS")
 	private Integer cumulativePeriods;
 
-	@Column(name = "DEFAULT_VALUE")
+	@Column(name = "DEFAULT_VALUE", length = 255)
+    @Size(max = 255)
 	private String defaultValue;
 
 	public String getDefaultValue() {

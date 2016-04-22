@@ -6,85 +6,87 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "DWH_CHART_LINE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_CHART_LINE_SEQ")
 public class LineChart extends Chart {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1563273820297215070L;
 
 	@Column(name = "FILLED")
-	boolean filled;
+	private boolean filled;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "LEGEND_POSITION")
-	LegendPositionEnum legendPosition;
+	private LegendPositionEnum legendPosition;
 
 	@Column(name = "SERIES_COLORS", length = 1000)
-	String seriesColors = "1b788f";
+	@Size(max = 1000)
+	private String seriesColors = "1b788f";
 
 	@Column(name = "SHADOW")
-	boolean shadow = true;
+	private boolean shadow = true;
 
 	@Column(name = "MIN_X")
-	int minX;
+	private int minX;
 
 	@Column(name = "MAX_X")
-	int maxX;
+	private int maxX;
 
 	@Column(name = "MIN_Y")
-	int minY;
+	private int minY;
 
 	@Column(name = "MAX_Y")
-	int maxY;
+	private int maxY;
 
 	// Whether line segments should be broken at null
 	// value, fall will join point on either side of line.
 	@Column(name = "BREAK_ON_NULL")
-	boolean breakOnNull;
+	private boolean breakOnNull;
 
-	@Column(name = "X_AXIS_LABEL")
-	String xaxisLabel;
+	@Column(name = "X_AXIS_LABEL", length = 255)
+	@Size(max = 255)
+	private String xaxisLabel;
 
-	@Column(name = "Y_AXIS_LABEL")
-	String yaxisLabel;
+	@Column(name = "Y_AXIS_LABEL", length = 255)
+    @Size(max = 255)
+	private String yaxisLabel;
 
 	// Angle of the x-axis ticks
 	@Column(name = "X_AXIS_ANGLE")
-	Integer xaxisAngle;
+	private Integer xaxisAngle;
 
 	@Column(name = "Y_AXIS_ANGLE")
-	Integer yaxisAngle;
+	private Integer yaxisAngle;
 
 	// Whether to stack series
 	@Column(name = "STACKED")
-	boolean stacked;
+	private boolean stacked;
 
 	// Enables plot zooming.
 	@Column(name = "ZOOM")
-	boolean zoom;
+	private boolean zoom;
 
 	// Enables animation on plot rendering
 	@Column(name = "ANIMATE")
-	boolean animate;
+	private boolean animate;
 
 	// Defines visibility of datatip.
 	@Column(name = "SHOW_DATA_TIP")
-	boolean showDataTip = true;
+	private boolean showDataTip = true;
 
 	// Template string for datatips.
-	@Column(name = "DATA_TIP_FORMAT")
-	String datatipFormat;
+	@Column(name = "DATA_TIP_FORMAT", length = 255)
+    @Size(max = 255)
+	private String datatipFormat;
 
 	@Column(name = "LEGEND_COLS")
-	int legendCols;
+	private int legendCols;
 
 	@Column(name = "LEGEND_ROWS")
-	int legendRows;
+	private int legendRows;
 
 	public boolean isFilled() {
 		return filled;

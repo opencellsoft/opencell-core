@@ -1591,6 +1591,13 @@
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />                   
     </changeSet> 
     
+    <changeSet id="#1548_20160421" author="AndriusKarpavicius">
+        <modifyDataType tableName="MEVEO_SCRIPT_INSTANCE" columnName="APPLICABLE_ON_EL" newDataType="varchar(2000)"/>
+        <addNotNullConstraint tableName="CUST_CEI" columnName="CET_CODE"/>
+        <addNotNullConstraint tableName="CUST_CET" columnName="name"/>
+        <addNotNullConstraint tableName="CAT_OFFER_TEMPLATE_CATEGORY" columnName="NAME"/>
+    </changeSet>
+    
     <changeSet id="#1651-20160421" author="Mbarek">
 	<modifyDataType columnName="APPLICABLE_ON_EL"
 		newDataType="VARCHAR(2000)" tableName="CRM_CUSTOM_FIELD_TMPL" />

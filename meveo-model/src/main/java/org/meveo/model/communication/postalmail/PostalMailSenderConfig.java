@@ -18,11 +18,13 @@
  */
 package org.meveo.model.communication.postalmail;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.communication.MessageSenderConfig;
 import org.meveo.model.shared.Address;
@@ -48,6 +50,8 @@ public class PostalMailSenderConfig extends MessageSenderConfig {
 
 	private boolean addAddressFrontPage;
 
+	@Column(name = "STAMPTYPE", length = 255)
+    @Size(max = 255)
 	private String STAMPtype;
 
 	public Address getUndeliveredReturnAddress() {

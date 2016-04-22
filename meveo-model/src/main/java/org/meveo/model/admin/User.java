@@ -34,6 +34,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
@@ -58,12 +59,15 @@ public class User extends AuditableEntity {
 	private Name name = new Name();
 
 	@Column(name = "USERNAME", length = 50, unique = true)
+	@Size(max = 50)
 	private String userName;
 
 	@Column(name = "PASSWORD", length = 50)
+	@Size(max = 50)
 	private String password;
 
 	@Column(name = "EMAIL", length = 100)
+	@Size(max = 100)
 	private String email;
 
 	@ManyToMany(fetch = FetchType.LAZY)

@@ -23,22 +23,27 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
+import javax.validation.constraints.Size;
 
 @Embeddable
 public class InterBankTitle implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "CREDITOR_CODE")
+	@Column(name = "CREDITOR_CODE", length = 255)
+	@Size(max = 255)
 	private String codeCreancier;
 
-	@Column(name = "FINANCIAL_INSTITUTION_CODE")
+	@Column(name = "FINANCIAL_INSTITUTION_CODE", length = 255)
+    @Size(max = 255)
 	protected String codeEtablissementCreancier;
 
-	@Column(name = "CENTER_CODE")
+	@Column(name = "CENTER_CODE", length = 255)
+    @Size(max = 255)
 	protected String codeCentre;
 
-	@Column(name = "NNE")
+	@Column(name = "NNE", length = 255)
+    @Size(max = 255)
 	protected String nne;
 
 	@Embedded

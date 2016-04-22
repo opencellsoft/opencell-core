@@ -31,6 +31,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.DunningHistory;
@@ -42,7 +43,8 @@ public class DunningLOT extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "FILE_NAME")
+	@Column(name = "FILE_NAME", length = 255)
+    @Size(max = 255)
 	private String fileName;
 
 	@Enumerated(EnumType.STRING)

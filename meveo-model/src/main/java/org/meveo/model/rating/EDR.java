@@ -34,6 +34,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
@@ -53,18 +55,21 @@ public class EDR extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "SUBSCRIPTION_ID")
+	@NotNull
 	private Subscription subscription;
 
 	/**
 	 * the origin batch the EDR comes from (like a CDR file name or EDR table)
 	 */
-	@Column(name = "ORIGIN_BATCH")
+	@Column(name = "ORIGIN_BATCH", length = 255)
+    @Size(max = 255)
 	private String originBatch;
 
 	/**
 	 * the origin record the EDR comes from (like a CDR magic number)
 	 */
-	@Column(name = "ORIGIN_RECORD")
+	@Column(name = "ORIGIN_RECORD", length = 255)
+    @Size(max = 255)
 	private String originRecord;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -74,31 +79,40 @@ public class EDR extends BaseEntity {
 	@Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal quantity;
 
-	@Column(name = "PARAMETER_1")
+	@Column(name = "PARAMETER_1", length = 255)
+    @Size(max = 255)
 	private String parameter1;
 
-	@Column(name = "PARAMETER_2")
+	@Column(name = "PARAMETER_2", length = 255)
+    @Size(max = 255)
 	private String parameter2;
 
-	@Column(name = "PARAMETER_3")
+	@Column(name = "PARAMETER_3", length = 255)
+    @Size(max = 255)
 	private String parameter3;
 	
-	@Column(name = "PARAMETER_4")
+	@Column(name = "PARAMETER_4", length = 255)
+    @Size(max = 255)
 	private String parameter4;
 
-	@Column(name = "PARAMETER_5")
+	@Column(name = "PARAMETER_5", length = 255)
+    @Size(max = 255)
 	private String parameter5;
 	
-	@Column(name = "PARAMETER_6")
+	@Column(name = "PARAMETER_6", length = 255)
+    @Size(max = 255)
 	private String parameter6;
 	
-	@Column(name = "PARAMETER_7")
+	@Column(name = "PARAMETER_7", length = 255)
+    @Size(max = 255)
 	private String parameter7;
 	
-	@Column(name = "PARAMETER_8")
+	@Column(name = "PARAMETER_8", length = 255)
+    @Size(max = 255)
 	private String parameter8;
 	
-	@Column(name = "PARAMETER_9")
+	@Column(name = "PARAMETER_9", length = 255)
+    @Size(max = 255)
 	private String parameter9;
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -140,7 +154,8 @@ public class EDR extends BaseEntity {
 	@Column(name = "STATUS")
 	private EDRStatusEnum status;
 
-	@Column(name = "REJECT_REASON")
+	@Column(name = "REJECT_REASON", length = 255)
+    @Size(max = 255)
 	private String rejectReason;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -151,7 +166,8 @@ public class EDR extends BaseEntity {
 	@Column(name = "LAST_UPDATED")
 	private Date lastUpdate;
 	
-	@Column(name = "ACCESS_CODE")
+	@Column(name = "ACCESS_CODE", length = 255)
+    @Size(max = 255)
 	private String accessCode;
 	
 	@JoinColumn(name = "HEADER_EDR_ID")

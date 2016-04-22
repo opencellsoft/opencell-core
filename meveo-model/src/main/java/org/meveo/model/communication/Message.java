@@ -29,6 +29,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BaseEntity;
 import org.meveo.model.communication.contact.Contact;
@@ -40,7 +41,8 @@ public class Message extends BaseEntity {
 
 	private static final long serialVersionUID = 2760596592135889373L;
 
-	@JoinColumn(name = "TEMPLATE_CODE")
+	@Column(name = "TEMPLATE_CODE", length = 255)
+	@Size(max = 255)
 	private String templateCode;
 
 	@OneToMany(mappedBy = "message")
@@ -56,21 +58,23 @@ public class Message extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "MEDIA")
-	MediaEnum media;
+	private MediaEnum media;
 
-	@Column(name = "SUB_MEDIA")
-	String subMedia;
+	@Column(name = "SUB_MEDIA", length = 255)
+    @Size(max = 255)
+	private String subMedia;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PRIORITY")
-	PriorityEnum priority;
+	private PriorityEnum priority;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
-	MessageStatusEnum status;
+	private MessageStatusEnum status;
 
-	@Column(name = "REJECTION_REASON")
-	String rejectionReason;
+	@Column(name = "REJECTION_REASON", length = 255)
+    @Size(max = 255)
+	private String rejectionReason;
 
 	public String getTemplateCode() {
 		return templateCode;

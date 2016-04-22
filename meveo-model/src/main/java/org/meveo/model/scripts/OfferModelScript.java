@@ -2,6 +2,8 @@ package org.meveo.model.scripts;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.ExportIdentifier;
 
