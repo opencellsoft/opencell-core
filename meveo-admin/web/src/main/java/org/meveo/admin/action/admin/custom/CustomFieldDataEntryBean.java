@@ -538,7 +538,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                         customFieldInstanceService.remove(cfi, (ICustomFieldEntity) entity);
                         log.trace("Remove empty cfi value {}", cfi);
                     } else {
-                        log.error("Will ommit from saving cfi {}", cfi);
+                        log.trace("Will ommit from saving cfi {}", cfi);
                     }
 
                     // Do not update existing CF value if it is not updatable
