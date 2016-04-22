@@ -41,7 +41,7 @@ public class Message extends BaseEntity {
 
 	private static final long serialVersionUID = 2760596592135889373L;
 
-	@Column(name = "TEMPLATE_CODE", length = 255)
+	@Column(name = "TEMPLATECODE", length = 255)
 	@Size(max = 255)
 	private String templateCode;
 
