@@ -24,6 +24,23 @@ public class BusinessServiceModelDto extends ModuleDto {
 	private boolean duplicateService;
 
 	private boolean duplicatePricePlan;
+	
+	public BusinessServiceModelDto() {
+		
+	}
+
+	public BusinessServiceModelDto(BusinessServiceModel e) {
+		super(e);
+
+		if (e.getServiceTemplate() != null) {
+			serviceTemplateCode = e.getServiceTemplate().getCode();
+		}
+		if (e.getScript() != null) {
+			scriptCode = e.getScript().getCode();
+		}
+		duplicateService = e.isDuplicateService();
+		duplicatePricePlan = e.isDuplicatePricePlan();
+	}
 
 	public String getServiceTemplateCode() {
 		return serviceTemplateCode;

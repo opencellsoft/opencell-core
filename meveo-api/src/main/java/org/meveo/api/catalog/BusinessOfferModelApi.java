@@ -19,6 +19,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.model.scripts.OfferModelScript;
+import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -38,6 +39,9 @@ public class BusinessOfferModelApi extends BaseApi {
 
 	@Inject
 	private BusinessServiceModelService businessServiceModelService;
+
+	@Inject
+	private MeveoModuleService meveoModuleService;
 
 	public void create(BusinessOfferModelDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getOfferTemplateCode())) {
@@ -66,7 +70,7 @@ public class BusinessOfferModelApi extends BaseApi {
 
 			for (BaseDto dto : postData.getModuleItems()) {
 				if (dto instanceof BusinessServiceModelDto) {
-					String bsmCode =((BusinessServiceModelDto) dto).getCode();
+					String bsmCode = ((BusinessServiceModelDto) dto).getCode();
 					BusinessServiceModel bsm = businessServiceModelService.findByCode(bsmCode, currentUser.getProvider());
 					if (bsm == null) {
 						throw new EntityDoesNotExistsException(BusinessServiceModel.class, bsmCode);
@@ -134,9 +138,8 @@ public class BusinessOfferModelApi extends BaseApi {
 
 		BusinessOfferModel businessOfferModel = businessOfferModelService.findByCode(businessOfferModelCode, provider);
 		if (businessOfferModel != null) {
-			BusinessOfferModelDto businessOfferModelDto = new BusinessOfferModelDto();
-			businessOfferModelDto.setCode(businessOfferModel.getCode());
-			businessOfferModelDto.setDescription(businessOfferModel.getDescription());
+			BusinessOfferModelDto businessOfferModelDto = new BusinessOfferModelDto(meveoModuleService.moduleToDto(businessOfferModel, provider));
+
 			if (businessOfferModel.getOfferTemplate() != null) {
 				businessOfferModelDto.setOfferTemplateCode(businessOfferModel.getOfferTemplate().getCode());
 			}

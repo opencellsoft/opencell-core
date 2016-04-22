@@ -75,7 +75,15 @@ public class ModuleDto extends BaseDataModelDto {
         this.moduleItems = new ArrayList<BaseDto>();
     }
 
-    public String getCode() {
+    public ModuleDto(ModuleDto dto) {
+    	  this.code = dto.getCode();
+          this.description = dto.getDescription();
+          this.license = dto.getLicense();
+          this.logoPicture = dto.getLogoPicture();
+          this.moduleItems = dto.getModuleItems();
+	}
+
+	public String getCode() {
         return code;
     }
 
