@@ -106,6 +106,14 @@
     <o:importConstants type="org.meveo.util.view.FieldInformation.FieldTypeEnum" />
     <o:importConstants type="org.meveo.util.view.FieldInformation.FieldNumberTypeEnum" />
 
+    <c:if test="${entity == null}">
+        <!--         <c:set var="fieldEntityIsNull" value="true"/> -->
+        <c:set var="entity" value="${formLevelEntity!=null?formLevelEntity:backingBean.entity}" />
+    </c:if>
+    <!-- <c:set var="formEntityIsNull" value="#{formLevelEntity==null}"/> -->
+
+    <hftl:getFieldInformation backingBean="${backingBean}" entity="${entity}" fieldName="${field}" childFieldName="${childField}" var="fieldInfo" />
+
     <c:if test="${empty(required)}">
         <c:set var="required" value="false" />
     </c:if>
@@ -116,7 +124,7 @@
         <c:set var="size" value="${field =='description'?80:35}" />
     </c:if>
     <c:if test="${empty(maxlength)}">
-        <c:set var="maxlength" value="${field =='description'?100:(size&lt;=40?40:size)}" />
+        <c:set var="maxlength" value="${fieldInfo.maxLength != null?fieldInfo.maxLength:(size&lt;=40?40:size)}" />
     </c:if>
     <c:if test="${empty(popup)}">
         <c:set var="popup" value="false" />
@@ -140,11 +148,7 @@
     <c:if test="${empty(allowEdit)}">
         <c:set var="allowEdit" value="true" />
     </c:if>
-    <c:if test="${entity == null}">
-        <!--         <c:set var="fieldEntityIsNull" value="true"/> -->
-        <c:set var="entity" value="${formLevelEntity!=null?formLevelEntity:backingBean.entity}" />
-    </c:if>
-    <!-- <c:set var="formEntityIsNull" value="#{formLevelEntity==null}"/> -->
+
 
     <c:if test="${empty(childField)}">
         <c:set var="fieldItem" value="${entity[field]}" />
@@ -185,7 +189,6 @@
     <!--                 <h:outputText value=" formEntityIsNull is null "/> -->
     <!--         <h:outputText value="#{formEntityIsNull}"/> -->
     <!-- </c:if> -->
-    <hftl:getFieldInformation backingBean="${backingBean}" entity="${entity}" fieldName="${field}" childFieldName="${childField}" var="fieldInfo" />
 
     <c:if test="#{rendered}">
         <!--  Select and entity or a FK to an entity -->

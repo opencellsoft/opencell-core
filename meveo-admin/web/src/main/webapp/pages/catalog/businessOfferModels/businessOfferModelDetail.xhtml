@@ -42,7 +42,7 @@
             <p:tabView id="tabView" activeIndex="#{businessOfferModelBean.activeTab}">
                 <p:tab title="#{messages['commons.information']}">
                     <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />
-                    <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description" maxlength="50" />
+                    <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description" />
                     <hftl:formField id="offerSelectId" label="#{messages['pricePlanMatrix.offerCode']}" field="offerTemplate" valueLabelField="code" required="true" popup="true"
                         popupId="offerTemplatePopup" />
                     <hftl:formField id="creationScriptId" label="#{messages['businessOffer.creationScript']}" field="creationScript" valueLabelField="code" required="false"

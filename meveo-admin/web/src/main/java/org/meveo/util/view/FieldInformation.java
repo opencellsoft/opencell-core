@@ -12,6 +12,8 @@ public class FieldInformation {
 
     protected FieldTypeEnum fieldType;
 
+    protected Integer maxLength;
+    
     protected FieldNumberTypeEnum numberType;
 
     protected String numberConverter;
@@ -25,6 +27,10 @@ public class FieldInformation {
 
     public FieldTypeEnum getFieldType() {
         return fieldType;
+    }
+    
+    public Integer getMaxLength() {
+        return maxLength;
     }
 
     public String getNumberConverter() {
