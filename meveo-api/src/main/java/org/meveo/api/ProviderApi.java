@@ -161,6 +161,7 @@ public class ProviderApi extends BaseApi {
         provider.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
         provider.setDisplayFreeTransacInInvoice(postData.isDisplayFreeTransacInInvoice());
         provider.setRounding(postData.getRounding());
+        provider.setEmail(postData.getEmail());
 
         // search for country
         if (!StringUtils.isBlank(postData.getCountry())) {
@@ -278,6 +279,7 @@ public class ProviderApi extends BaseApi {
         provider.setMulticurrencyFlag(postData.isMultiCurrency());
         provider.setMultilanguageFlag(postData.isMultiLanguage());
         provider.setRounding(postData.getRounding());
+        provider.setEmail(postData.getEmail());
 
         // search for country
         if (!StringUtils.isBlank(postData.getCountry())) {
