@@ -153,6 +153,12 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         String result = getListViewName();
         try {
+			// check duplicate script
+			if (scriptInstanceService.isExistsCode(scriptInstanceService.getFullClassname(entity.getScript()), getCurrentProvider())) {
+				messages.error(new BundleKey("messages", "javax.persistence.EntityExistsException"));
+				return null;
+			}
+    		
             // Update roles
             getEntity().getExecutionRoles().clear();
             getEntity().getExecutionRoles().addAll(roleService.refreshOrRetrieve(execRolesDM.getTarget()));

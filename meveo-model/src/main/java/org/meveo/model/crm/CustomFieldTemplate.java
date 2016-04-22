@@ -130,8 +130,8 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Size(max = 80)
     private String regExp;
 
-    @Column(name = "APPLICABLE_ON_EL", length = 150)
-    @Size(max = 150)
+    @Column(name = "APPLICABLE_ON_EL", length = 2000)
+    @Size(max = 2000)
     private String applicableOnEl;
 
     @Column(name = "CACHE_VALUE")

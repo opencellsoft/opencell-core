@@ -97,6 +97,9 @@ public class XMLInvoiceGenerationJobBean {
 
 				while (subListCreator.isHasNext()) {
 					futures.add(xmlInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), billingRundir,result));
+					if(result.getNbItemsProcessedWithError()==0){
+					updateBillingRun(billingRun.getId(), currentUser);
+					}
 	                if (subListCreator.isHasNext()) {
 	                    try {
 	                        Thread.sleep(waitingMillis.longValue());
@@ -121,7 +124,7 @@ public class XMLInvoiceGenerationJobBean {
 	                }
 	            }
 	            
-				updateBillingRun(billingRun.getId(), currentUser);
+				
 			} catch (Exception e) {
 	            log.error("Failed to generate XML invoices",e);
 	            result.registerError(e.getMessage());

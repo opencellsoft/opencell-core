@@ -15,7 +15,7 @@
 		<c:if test="#{tradingLanguageBean.edit}">
 			<hftl:entityPopup id="languagePopup"
 				header="#{messages['tradingLanguage.popup.header']}"
-				updateField=":languagesFormId:languageSelectedId :languagesFormId:prDescription"
+				updateField=":languagesFormId:languageSelectedId :languagesFormId:languageSelectedId_text :languagesFormId:prDescription"
 				selection="#{tradingLanguageBean.entity.language}"
 				backingBean="#{languageBean}"
 				searchField1Label="#{messages['language.languageCode']}"

@@ -94,7 +94,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
          */
         subscription.setTerminationDate(cancelationDate);
         subscription.setStatus(SubscriptionStatusEnum.CANCELED);
-        subscription.setStatusDate(new Date());
         update(subscription, updater);
     }
 
@@ -121,7 +120,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         subscription.setTerminationDate(suspensionDate);
         subscription.setStatus(SubscriptionStatusEnum.SUSPENDED);
-        subscription.setStatusDate(new Date());
         update(subscription, updater);
     }
 
@@ -140,7 +138,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.setTerminationDate(null);
         subscription.setSubscriptionTerminationReason(null);
         subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
-        subscription.setStatusDate(reactivationDate);
 
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         for (ServiceInstance serviceInstance : serviceInstances) {
@@ -165,7 +162,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         if (terminationDate == null) {
             terminationDate = new Date();
         }
-
+        subscription=refreshOrRetrieve(subscription);
         // execute termination script
         if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
             offerModelScriptService.terminateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), terminationDate, terminationReason,
@@ -191,7 +188,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
         subscription.setTerminationDate(terminationDate);
         subscription.setStatus(SubscriptionStatusEnum.RESILIATED);
-        subscription.setStatusDate(new Date());
         update(subscription, user);
     }
 

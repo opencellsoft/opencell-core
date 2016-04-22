@@ -230,7 +230,12 @@ public abstract class BaseApi {
                             }
 
                         } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
-                            Long longValue = (Long) valueToCheck;
+                            Long longValue = null;
+                            if (valueToCheck instanceof Integer) {
+                                longValue = ((Integer) valueToCheck).longValue();
+                            } else {
+                                longValue = (Long) valueToCheck;
+                            }
 
                             if (cft.getMaxValue() != null && longValue.compareTo(cft.getMaxValue()) > 0) {
                                 throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + longValue + " is bigger then " + cft.getMaxValue()
@@ -243,7 +248,12 @@ public abstract class BaseApi {
                                         + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
                             }
                         } else if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-                            Double doubleValue = (Double) valueToCheck;
+                            Double doubleValue = null;
+                            if (valueToCheck instanceof Integer) {
+                                doubleValue = ((Integer) valueToCheck).doubleValue();
+                            } else {
+                                doubleValue = (Double) valueToCheck;
+                            }
 
                             if (cft.getMaxValue() != null && doubleValue.compareTo(cft.getMaxValue().doubleValue()) > 0) {
                                 throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + doubleValue + " is bigger then " + cft.getMaxValue()

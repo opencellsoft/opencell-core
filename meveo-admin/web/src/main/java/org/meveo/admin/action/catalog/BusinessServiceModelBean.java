@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -75,6 +76,11 @@ public class BusinessServiceModelBean extends BaseBean<BusinessServiceModel> {
 
 	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		if (meveoModuleService.findByCode(entity.getCode(), getCurrentProvider()) != null) {
+			messages.error(new BundleKey("messages", "javax.persistence.EntityExistsException"));
+			return null;
+		}
+		
 		super.saveOrUpdate(killConversation);
 
 		return null;

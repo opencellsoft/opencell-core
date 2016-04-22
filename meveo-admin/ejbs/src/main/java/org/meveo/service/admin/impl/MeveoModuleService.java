@@ -47,6 +47,8 @@ import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.ScriptInstanceDto;
+import org.meveo.api.dto.catalog.BusinessOfferModelDto;
+import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.dwh.BarChartDto;
 import org.meveo.api.dto.dwh.LineChartDto;
@@ -64,6 +66,8 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -260,6 +264,13 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 
             } else if (item.getItemEntity() instanceof MeveoModule) {
                 moduleDto.addModuleItem(moduleToDto((MeveoModule) item.getItemEntity(), provider));
+                
+            } else if (item.getItemEntity() instanceof BusinessServiceModel) {
+                moduleDto.addModuleItem(new BusinessServiceModelDto((BusinessServiceModel) item.getItemEntity()));
+                
+            } else if (item.getItemEntity() instanceof BusinessOfferModel) {
+                moduleDto.addModuleItem(new BusinessOfferModelDto((BusinessOfferModel) item.getItemEntity()));
+                
             }
         }
         return moduleDto;

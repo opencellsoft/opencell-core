@@ -11,6 +11,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.admin.User;
@@ -38,13 +39,14 @@ public class EmailNotification extends Notification {
 	private Set<User> users;
 	
 	@Column(name="EMAIL_SUBJECT",length=500,nullable=false)
+	@NotNull
 	@Size(max=500)
 	private String subject;
 
-	@Column(name="EMAIL_BODY",length=2000)
+	@Column(name="EMAIL_BODY", columnDefinition = "TEXT")
 	private String body;
 
-	@Column(name="EMAIL_HTML_BODY",length=2000)
+	@Column(name="EMAIL_HTML_BODY", columnDefinition = "TEXT")
 	private String htmlBody;
 
 	@ElementCollection(fetch=FetchType.EAGER)

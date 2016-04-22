@@ -102,6 +102,21 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         return result;
     }
 
+	public boolean isExistsCode(String code, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(CustomScript.class, "t", null, provider);
+		qb.addCriterion("code", "=", code, true);
+
+		try {
+			if (qb.getQuery(getEntityManager()).getSingleResult() != null) {
+				return true;
+			}
+		} catch (NoResultException e) {
+
+		}
+
+		return false;
+	}
+
     @Override
     public void create(T script, User creator) throws BusinessException {
 

@@ -1,13 +1,11 @@
 package org.meveo.service.notification;
 
-import java.util.Date;
-
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.Auditable;
 import org.meveo.model.IAuditable;
 import org.meveo.model.IEntity;
+import org.meveo.model.admin.User;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
@@ -18,45 +16,21 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
 
     public NotificationHistory create(Notification notification, IEntity e, String result, NotificationHistoryStatusEnum status) throws BusinessException {
         NotificationHistory history = new NotificationHistory();
-        if (e instanceof IAuditable) {
-            Auditable auditable = new Auditable();
-            auditable.setCreated(new Date());
-            if(((IAuditable) e).getAuditable()!=null){
-            	auditable.setCreator(((IAuditable) e).getAuditable().getCreator());
-            }
-            history.setAuditable(auditable);
-        }
         history.setNotification(notification);
         history.setEntityClassName(e.getClass().getName());
         history.setSerializedEntity(e.getId() == null ? e.toString() : e.getId().toString());
         history.setResult(result);
         history.setStatus(status);
         history.setProvider(notification.getProvider());
-        super.create(history,getCurrentUser()); // AKK was with history.getProvider()
-
-        return history;
-
-    }
-    public NotificationHistory createNotificationByAuditable(Notification notification, IEntity e, String result, NotificationHistoryStatusEnum status) throws BusinessException {
-        NotificationHistory history = new NotificationHistory();
-        Auditable auditable = new Auditable();
-        if (e instanceof IAuditable) {
-            auditable.setCreated(new Date());
-            if(((IAuditable) e).getAuditable()!=null){
-            	auditable.setCreator(((IAuditable) e).getAuditable().getCreator());
-            }
-            history.setAuditable(auditable);
+        User currentUser = null;
+        if (e instanceof IAuditable && ((IAuditable) e).getAuditable() != null) {
+            currentUser = ((IAuditable) e).getAuditable().getCreator();
+        } else {
+            currentUser = getCurrentUser();
         }
-        history.setNotification(notification);
-        history.setEntityClassName(e.getClass().getName());
-        history.setSerializedEntity(e.getId() == null ? e.toString() : e.getId().toString());
-        history.setResult(result);
-        history.setStatus(status);
-        history.setProvider(notification.getProvider());
-        super.create(history,auditable.getCreator()); // AKK was with history.getProvider()
+        super.create(history, currentUser); // AKK was with history.getProvider()
 
         return history;
 
     }
-
 }

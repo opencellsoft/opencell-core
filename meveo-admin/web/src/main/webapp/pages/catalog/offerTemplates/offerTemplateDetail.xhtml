@@ -19,7 +19,7 @@
 	<ui:define name="body">
 		<hftl:entityPopup id="searchServiceTemplatePopup"
 			header="#{messages['offerServiceTemplate.serviceTemplate']}"
-			updateField=":tabView:serviceForm:serviceTemplateCode"
+			updateField=":tabView:serviceForm:serviceTemplateCode :tabView:serviceForm:serviceTemplateCode_text"
 			selection="#{offerTemplateBean.offerServiceTemplate.serviceTemplate}"
 			backingBean="#{serviceTemplateBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"

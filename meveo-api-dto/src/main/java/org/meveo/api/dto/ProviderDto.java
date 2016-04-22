@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
@@ -47,11 +48,12 @@ public class ProviderDto extends BaseDto {
 	private Boolean displayPricePlans = false;
 	private boolean displayFreeTransacInInvoice;
 	private Boolean displayDetail = true;
-	
-	
 	private String invoiceAdjustmentPrefix;
 	private Long currentInvoiceAdjustmentNb;
 	private Integer invoiceAdjustmentSequenceSize;
+	private Integer rounding=2;
+	private String email;
+	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
 	
 	
 	@XmlElement(required = false)
@@ -77,6 +79,8 @@ public class ProviderDto extends BaseDto {
 		multiCurrency = e.getMulticurrencyFlag();
 		multiCountry = e.getMulticountryFlag();
 		multiLanguage = e.getMultilanguageFlag();
+		rounding=e.getRounding();
+		email = e.getEmail();
 		
 		customFields = CustomFieldsDto.toDTO(customFieldInstances);
 		
@@ -107,6 +111,9 @@ public class ProviderDto extends BaseDto {
 		if (e.getInvoiceAdjustmentSequenceSize() != null) {
 			this.setInvoiceAdjustmentSequenceSize(e.getInvoiceAdjustmentSequenceSize());
 		}
+		if (e.getBankCoordinates() != null) {
+	         this.setBankCoordinates(new BankCoordinatesDto(e.getBankCoordinates()));
+	        }
 	}
 
 	public String getCode() {
@@ -317,6 +324,39 @@ public class ProviderDto extends BaseDto {
 	public void setDisplayPricePlans(Boolean displayPricePlans) {
 		this.displayPricePlans = displayPricePlans;
 	}
+	
+
+	public BankCoordinatesDto getBankCoordinates() {
+		return bankCoordinates;
+	}
+
+	public void setBankCoordinates(BankCoordinatesDto bankCoordinates) {
+		this.bankCoordinates = bankCoordinates;
+	}
+
+	public Integer getRounding() {
+		return rounding;
+	}
+
+	public void setRounding(Integer rounding) {
+		this.rounding = rounding;
+	}
+	
+	
+	
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	@Override
 	public String toString() {
@@ -339,9 +379,13 @@ public class ProviderDto extends BaseDto {
 				+ invoiceAdjustmentPrefix + ", currentInvoiceAdjustmentNb="
 				+ currentInvoiceAdjustmentNb
 				+ ", invoiceAdjustmentSequenceSize="
-				+ invoiceAdjustmentSequenceSize + ", customFields="
+				+ invoiceAdjustmentSequenceSize + ", bankCoordinates="+ bankCoordinates+", rounding="+ rounding+", email="+ email+ ", customFields="
 				+ customFields + "]";
 	}
+
+	
+	
+	
 
 	
 }

@@ -111,7 +111,7 @@ public class UserBean extends BaseBean<User> {
     private String selectedFileName;
     private String newFilename;
     private String directoryName;
-    private ArrayList<File> fileList;
+    private List<File> fileList;
     private UploadedFile file;
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
@@ -343,6 +343,10 @@ public class UserBean extends BaseBean<User> {
     public String getSelectedFolder() {
         return selectedFolder;
     }
+    
+    public boolean hasSelectedFolder() {
+    	return !StringUtils.isBlank(selectedFolder);
+    }
 
     public void setSelectedFolder(String selectedFolder) {
         setSelectedFileName(null);
@@ -372,16 +376,19 @@ public class UserBean extends BaseBean<User> {
         File file = new File(folder);
         log.debug("getFileList " + folder);
 
-        fileList = file.listFiles() == null ? new ArrayList<File>() : new ArrayList<File>(Arrays.asList(file.listFiles()));
-        if (this.selectedFolder != null) {
-            if (fileList.size() == 0) {
-                currentDirEmpty = true;
-            }
-            File parent = new File("..");
-            fileList.add(0, parent);
-        }
-    }
+        File[] files = file.listFiles();
 
+        fileList = files == null ? new ArrayList<File>() : new ArrayList<File>(Arrays.asList(files));
+    	currentDirEmpty = !StringUtils.isBlank(this.selectedFolder) && fileList.size() == 0;
+    }
+    
+    public String getFileType(String fileName){
+    	if(fileName != null && fileName.endsWith(".zip")){
+    		return "zip";
+    	}
+    	return "text";
+    }
+    
     public String getLastModified(File file) {
         return sdf.format(new Date(file.lastModified()));
     }
@@ -464,7 +471,7 @@ public class UserBean extends BaseBean<User> {
 
     public void deleteDirectory() {
         log.debug("deleteDirectory:" + selectedFolder);
-        if (!StringUtils.isBlank(selectedFolder) && currentDirEmpty) {
+        if (currentDirEmpty) {
             String filePath = getFilePath("");
             File currentDir = new File(filePath);
             if (currentDir.exists() && currentDir.isDirectory()) {

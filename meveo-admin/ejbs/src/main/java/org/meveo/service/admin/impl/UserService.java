@@ -87,7 +87,7 @@ public class UserService extends PersistenceService<User> {
 
 		user.setUserName(user.getUserName().toUpperCase());
 		if (!StringUtils.isBlank(user.getNewPassword())) {
-			String encryptedPassword = Sha1Encrypt.encodePassword(user.getPassword());
+			String encryptedPassword = Sha1Encrypt.encodePassword(user.getNewPassword());
 			user.setPassword(encryptedPassword);
 		}
 

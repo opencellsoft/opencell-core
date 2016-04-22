@@ -11,6 +11,7 @@ import javax.persistence.NoResultException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.dto.catalog.ServiceCodeDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
@@ -29,6 +30,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.service.base.BusinessService;
 
@@ -77,7 +79,8 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 	@Inject
 	private OfferTemplateService offerTemplateService;
 
-	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, String prefix, List<String> serviceCodes, User currentUser) throws BusinessException {
+	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, String prefix, String offerDescription, List<ServiceCodeDto> serviceCodes, User currentUser)
+			throws BusinessException {
 		OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
 
 		// 1 create offer
@@ -88,17 +91,24 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 			throw new BusinessException("" + MeveoApiErrorCodeEnum.ENTITY_ALREADY_EXISTS_EXCEPTION);
 		}
 
-		newOfferTemplate.setCode(prefix + bomOffer.getCode());
+		newOfferTemplate.setCode(prefix);
+		newOfferTemplate.setDescription(offerDescription);
 
 		newOfferTemplate.setBusinessOfferModel(businessOfferModel);
 
-		List<ServiceTemplate> newServiceTemplates = new ArrayList<>();
+		offerTemplateService.create(newOfferTemplate, currentUser);
+
+		prefix = prefix + "_";
+
+		List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
 		// 2 create services
 		if (bomOffer.getOfferServiceTemplates() != null) {
 			// check if service template exists
 			if (serviceCodes != null && serviceCodes.size() > 0) {
 				boolean serviceFound = false;
-				for (String serviceCode : serviceCodes) {
+				for (ServiceCodeDto serviceCodeDto : serviceCodes) {
+					String serviceCode = serviceCodeDto.getCode();
+
 					for (OfferServiceTemplate offerServiceTemplate : bomOffer.getOfferServiceTemplates()) {
 						ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
 						if (serviceCode.equals(serviceTemplate.getCode())) {
@@ -123,11 +133,15 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 			}
 
 			for (OfferServiceTemplate offerServiceTemplate : bomOffer.getOfferServiceTemplates()) {
+				offerServiceTemplate = offerServiceTemplateService.refreshOrRetrieve(offerServiceTemplate);
 				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode(), currentUser.getProvider());
 
 				boolean serviceFound = false;
-				for (String serviceCode : serviceCodes) {
+				ServiceCodeDto serviceCodeDto = new ServiceCodeDto();
+				for (ServiceCodeDto tempServiceCodeDto : serviceCodes) {
+					String serviceCode = tempServiceCodeDto.getCode();
 					if (serviceCode.equals(serviceTemplate.getCode())) {
+						serviceCodeDto = tempServiceCodeDto;
 						serviceFound = true;
 					}
 				}
@@ -135,10 +149,17 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 					continue;
 				}
 
+				OfferServiceTemplate newOfferServiceTemplate = new OfferServiceTemplate();
+				newOfferServiceTemplate.setMandatory(offerServiceTemplate.isMandatory());
+				if (offerServiceTemplate.getIncompatibleServices() != null) {
+					newOfferServiceTemplate.getIncompatibleServices().addAll(offerServiceTemplate.getIncompatibleServices());
+				}
 				ServiceTemplate newServiceTemplate = new ServiceTemplate();
+
 				try {
 					BeanUtils.copyProperties(newServiceTemplate, serviceTemplate);
 					newServiceTemplate.setCode(prefix + serviceTemplate.getCode());
+					newServiceTemplate.setDescription(serviceCodeDto.getDescription());
 					newServiceTemplate.setBusinessServiceModel(bsm);
 					newServiceTemplate.setAuditable(null);
 					newServiceTemplate.setId(null);
@@ -148,6 +169,9 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 					newServiceTemplate.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
 					newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
 					newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
+					newOfferServiceTemplate.setServiceTemplate(newServiceTemplate);
+
+					serviceTemplateService.create(newOfferServiceTemplate.getServiceTemplate(), currentUser);
 
 					// create price plans
 					if (serviceTemplate.getServiceRecurringCharges() != null && serviceTemplate.getServiceRecurringCharges().size() > 0) {
@@ -256,6 +280,10 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 							ServiceChargeTemplateRecurring serviceChargeTemplate = new ServiceChargeTemplateRecurring();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
 							serviceChargeTemplate.setServiceTemplate(newServiceTemplate);
+							if (serviceCharge.getWalletTemplates() != null) {
+								serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
+								serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
+							}
 							serviceChargeTemplateRecurringService.create(serviceChargeTemplate, currentUser);
 
 							newServiceTemplate.getServiceRecurringCharges().add(serviceChargeTemplate);
@@ -280,6 +308,10 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 							ServiceChargeTemplateSubscription serviceChargeTemplate = new ServiceChargeTemplateSubscription();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
 							serviceChargeTemplate.setServiceTemplate(newServiceTemplate);
+							if (serviceCharge.getWalletTemplates() != null) {
+								serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
+								serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
+							}
 							serviceChargeTemplateSubscriptionService.create(serviceChargeTemplate, currentUser);
 
 							newServiceTemplate.getServiceSubscriptionCharges().add(serviceChargeTemplate);
@@ -304,6 +336,10 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 							ServiceChargeTemplateTermination serviceChargeTemplate = new ServiceChargeTemplateTermination();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
 							serviceChargeTemplate.setServiceTemplate(newServiceTemplate);
+							if (serviceCharge.getWalletTemplates() != null) {
+								serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
+								serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
+							}
 							serviceChargeTemplateTerminationService.create(serviceChargeTemplate, currentUser);
 
 							newServiceTemplate.getServiceTerminationCharges().add(serviceChargeTemplate);
@@ -328,6 +364,10 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 							ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
 							serviceChargeTemplate.setServiceTemplate(newServiceTemplate);
+							if (serviceCharge.getWalletTemplates() != null) {
+								serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
+								serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
+							}
 							serviceChargeTemplateUsageService.create(serviceChargeTemplate, currentUser);
 
 							if (serviceCharge.getCounterTemplate() != null) {
@@ -346,24 +386,20 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 						}
 					}
 
-					serviceTemplateService.create(newServiceTemplate, currentUser);
-					newServiceTemplates.add(newServiceTemplate);
+					newOfferServiceTemplate.setServiceTemplate(newServiceTemplate);
+					newOfferServiceTemplates.add(newOfferServiceTemplate);
 				} catch (IllegalAccessException | InvocationTargetException e) {
 					throw new BusinessException(e.getMessage());
 				}
 			}
 		}
 
-		offerTemplateService.create(newOfferTemplate, currentUser);
-
 		// add to offer
-		for (ServiceTemplate newServiceTemplate : newServiceTemplates) {
-			OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
-			offerServiceTemplate.setServiceTemplate(newServiceTemplate);
-			offerServiceTemplate.setOfferTemplate(newOfferTemplate);
-			offerServiceTemplateService.create(offerServiceTemplate, currentUser);
+		for (OfferServiceTemplate newOfferServiceTemplate : newOfferServiceTemplates) {
+			newOfferServiceTemplate.setOfferTemplate(newOfferTemplate);
+			offerServiceTemplateService.create(newOfferServiceTemplate, currentUser);
 
-			newOfferTemplate.addOfferServiceTemplate(offerServiceTemplate);
+			newOfferTemplate.addOfferServiceTemplate(newOfferServiceTemplate);
 		}
 
 		return newOfferTemplate;

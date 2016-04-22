@@ -1,86 +1,65 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:of="http://omnifaces.org/functions"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:of="http://omnifaces.org/functions" xmlns:c="http://java.sun.com/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="sellers" value="#{messages['menu.sellers']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
-		<hftl:formPanel formId="sellerFormId" ajaxSubmit="true" submitPartialProcess=":sellerFormId:tabView"
-				label="#{messages['seller.title']}" backingBean="#{sellerBean}">
-			<p:tabView id="tabView">
+    <ui:define name="body">
+        <p:panel>
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                    <p:menuitem outcome="sellers" value="#{messages['menu.sellers']}" />
+                </p:breadCrumb>
+            </h:form>
+        </p:panel>
+        <hftl:formPanel formId="sellerFormId" ajaxSubmit="true" submitPartialProcess=":sellerFormId:tabView" label="#{messages['seller.title']}" backingBean="#{sellerBean}">
+            <p:tabView id="tabView">
 
-				<p:tab title="#{messages['customer.tab.information']}">
-					<div class="alert-box alert-box-notice">#{messages['message.info.seller.invoicePrefixRequiredWhenInvoiceNoSet']}</div>
+                <p:tab title="#{messages['customer.tab.information']}">
+                    <div class="alert-box alert-box-notice">#{messages['message.info.seller.invoicePrefixRequiredWhenInvoiceNoSet']}</div>
 
 
-					<hftl:formField label="#{messages['businessEntity.code']}"
-						field="code" maxlength="35" required="true" />
+                    <hftl:formField label="#{messages['businessEntity.code']}" field="code" maxlength="35" required="true" />
 
-					<hftl:formField label="#{messages['businessEntity.description']}"
-						field="description" id="description" maxlength="100" />
+                    <hftl:formField label="#{messages['businessEntity.description']}" field="description" id="description" maxlength="100" />
 
-					<hftl:formField label="#{messages['seller.invoicePrefix']}"
-						field="invoicePrefix" id="invoicePrefix" textArea="true" maxlength="2000" />
+                    <hftl:formField id="trCurrencySelectId" label="#{messages['currency.codeCurrency']}" field="tradingCurrency" valueLabelField="currencyCode"
+                        listBean="#{tradingCurrencyBean}" />
+                    <!--                                 popup="true" popupId="sellerCurrencyPopup" /> -->
 
-					<hftl:decorateFormField fieldId="currentInvoiceNb"
-						label="#{messages['seller.currentInvoiceNb']}">
-						<p:inputText id="currentInvoiceNb"
-							value="#{sellerBean.entity.currentInvoiceNb}" />
-					</hftl:decorateFormField>
-					
-					<hftl:formField label="#{messages['provider.invoiceSequenceSize']}"
-						       field="invoiceSequenceSize" id="invoiceSequenceSize"/>
+                    <hftl:formField id="trCountrySelectId" label="#{messages['tradingCountry.tradingCountry']}" field="tradingCountry" valueLabelField="countryCode"
+                        listBean="#{tradingCountryBean}" />
+                    <!--                                 popup="true" popupId="sellerCountryPopup" /> -->
 
-					<hftl:formField label="#{messages['invoice.adjustment.prefix']}"
-								field="invoiceAdjustmentPrefix" id="invoiceAdjustmentPrefix" textArea="true" maxlength="2000" />
-								
-					<hftl:formField label="#{messages['invoice.adjustment.currentSequenceNb']}"
-						field="currentInvoiceAdjustmentNb" id="currentInvoiceAdjustmentNb"/>
-						
-				 	<hftl:formField label="#{messages['invoice.adjustment.sequenceSize']}"
-				       field="invoiceAdjustmentSequenceSize" id="invoiceAdjustmentSequenceSize"/>
+                    <hftl:formField id="trLanguageSelectId" label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage" valueLabelField="languageCode"
+                        listBean="#{tradingLanguageBean}" />
+                    <!--                                 popup="true"	popupId="sellerLanguagePopup" /> -->
 
-					<hftl:formField id="trCurrencySelectId"
-						label="#{messages['currency.codeCurrency']}"
-						field="tradingCurrency" valueLabelField="currencyCode"
-						listBean="#{tradingCurrencyBean}" />
-					<!--                                 popup="true" popupId="sellerCurrencyPopup" /> -->
+                    <hftl:formField id="parentSelectId" label="#{messages['seller.parent']}" field="seller" valueLabelField="code" listBean="#{sellerBean}" />
+                    <!--                                 popup="true" popupId="sellerParentPopup" /> -->
 
-					<hftl:formField id="trCountrySelectId"
-						label="#{messages['tradingCountry.tradingCountry']}"
-						field="tradingCountry" valueLabelField="countryCode"
-						listBean="#{tradingCountryBean}" />
-					<!--                                 popup="true" popupId="sellerCountryPopup" /> -->
 
-					<hftl:formField id="trLanguageSelectId"
-						label="#{messages['tradingLanguage.tradingLanguage']}"
-						field="tradingLanguage" valueLabelField="languageCode"
-						listBean="#{tradingLanguageBean}" />
-					<!--                                 popup="true"	popupId="sellerLanguagePopup" /> -->
+                    <p:fieldset legend="#{messages['seller.invoicing.title']}" styleClass="clearLeft">
+                        <hftl:formField label="#{messages['seller.invoicePrefix']}" field="invoicePrefix" id="invoicePrefix" textArea="true" rows="1" maxlength="2000" />
 
-					<hftl:formField id="parentSelectId"
-						label="#{messages['seller.parent']}" field="seller"
-						valueLabelField="code" listBean="#{sellerBean}" />
-					<!--                                 popup="true" popupId="sellerParentPopup" /> -->
+                        <hftl:decorateFormField fieldId="currentInvoiceNb" label="#{messages['seller.currentInvoiceNb']}">
+                            <p:inputText id="currentInvoiceNb" value="#{sellerBean.entity.currentInvoiceNb}" />
+                        </hftl:decorateFormField>
 
-					<!-- <p:tab title="#{messages['billingAccount.tab.information']}">
+                        <hftl:formField label="#{messages['provider.invoiceSequenceSize']}" field="invoiceSequenceSize" id="invoiceSequenceSize" />
+
+                        <hftl:formField label="#{messages['invoice.adjustment.prefix']}" field="invoiceAdjustmentPrefix" id="invoiceAdjustmentPrefix" textArea="true"
+                            maxlength="2000" rows="1" newLine="true"/>
+
+                        <hftl:formField label="#{messages['invoice.adjustment.currentSequenceNb']}" field="currentInvoiceAdjustmentNb" id="currentInvoiceAdjustmentNb" />
+
+                        <hftl:formField label="#{messages['invoice.adjustment.sequenceSize']}" field="invoiceAdjustmentSequenceSize" id="invoiceAdjustmentSequenceSize" />
+                    </p:fieldset>
+
+                    <!-- <p:tab title="#{messages['billingAccount.tab.information']}">
 							<hftl:formField label="#{messages['address.address1']}"
 								field="address" id="address1" childField="address1"
 								popup="false" size="80" maxlength="80" />
@@ -103,13 +82,13 @@
 
 					</p:tab> -->
 
-				</p:tab>
+                </p:tab>
 
                 <hftl:customFields backingBean="#{sellerBean}" messagesId=":sellerFormId:messages" />
 
-			</p:tabView>
-		</hftl:formPanel>
+            </p:tabView>
+        </hftl:formPanel>
 
-	</ui:define>
+    </ui:define>
 
 </ui:composition>

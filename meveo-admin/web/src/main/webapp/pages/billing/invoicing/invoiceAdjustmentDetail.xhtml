@@ -48,9 +48,9 @@
 							<hftl:formField label="#{messages['invoice.adjustment.number']}"
 								disabled="true" field="invoiceNumber" required="true" rendered="#{invoiceBean.entity.transient==false}" />
 							<hftl:formField label="#{messages['invoice.adjustment.date']}"
-								id="invoiceDate" field="invoiceDate" />
+								id="invoiceDate" field="invoiceDate" disabled="#{not invoiceBean.entity.transient}" />
 							<hftl:formField label="#{messages['invoice.dueDate']}" id="dueDate"
-								field="dueDate" />
+								field="dueDate" disabled="#{not invoiceBean.entity.transient}" />
 						</p:fieldset>
 
 						<h:panelGroup layout="block" styleClass="form-panel-actions">
@@ -144,18 +144,18 @@
 
 							<!-- // -->
 							<p:column>
-								<p:inputText value="#{entity.amountWithoutTax}"
+								<p:inputText value="#{entity.amountWithoutTax}" required="true"
 									readonly="#{not invoiceBean.entity.transient}">
 									<f:converter converterId="bigDecimal4DigitsConverter" />
-									<p:ajax event="change"
+									<p:ajax event="change" 
 										listener="#{invoiceBean.reComputeInvoiceAdjustment(entity)}"
 										update="resultsId_invoiceAdjustmentLines" />
 								</p:inputText>
 							</p:column>
 
 							<p:column rendered="#{ ! invoiceBean.entity.provider.entreprise}">
-								<p:inputText value="#{entity.amountWithTax}"
-									readonly="#{not invoiceBean.entity.transient}">
+								<p:inputText value="#{entity.amountWithTax}" required="true"
+									readonly="true">
 									<f:converter converterId="bigDecimal4DigitsConverter" />
 									<p:ajax event="change"
 										listener="#{invoiceBean.reComputeInvoiceAdjustment(entity)}"
@@ -242,7 +242,7 @@
 								<h:outputText value="#{entity.adjustedRatedTx.quantity}" />
 							</p:column>
 							<p:column>
-								<p:inputText value="#{entity.unitAmountWithoutTax}">
+								<p:inputText value="#{entity.unitAmountWithoutTax}" required="true" readonly="#{not invoiceBean.entity.transient}">
 									<f:converter converterId="bigDecimal4DigitsConverter" />
 									<p:ajax event="change"
 										listener="#{invoiceBean.reComputeDetailedInvoiceAdjustment(entity)}"
@@ -251,7 +251,7 @@
 							</p:column>
 
 							<p:column>
-								<p:inputText value="#{entity.quantity}">
+								<p:inputText value="#{entity.quantity}" required="true" readonly="#{not invoiceBean.entity.transient}">
 									<f:converter converterId="bigDecimal4DigitsConverter" />
 									<p:ajax event="change"
 										listener="#{invoiceBean.reComputeDetailedInvoiceAdjustment(entity)}"
@@ -335,7 +335,7 @@
 								<h:outputText value="#{entity.adjustedRatedTx.quantity}" />
 							</p:column>
 							<p:column>
-								<p:inputText value="#{entity.unitAmountWithoutTax}">
+								<p:inputText value="#{entity.unitAmountWithoutTax}" required="true" readonly="#{not invoiceBean.entity.transient}">
 									<f:converter converterId="bigDecimal4DigitsConverter" />
 									<p:ajax event="change"
 										listener="#{invoiceBean.reComputeDetailedInvoiceAdjustment(entity)}"
@@ -343,7 +343,7 @@
 								</p:inputText>
 							</p:column>
 							<p:column>
-								<p:inputText value="#{entity.unitAmountWithTax}">
+								<p:inputText value="#{entity.unitAmountWithTax}" required="true" readonly="#{not invoiceBean.entity.transient}">
 									<f:converter converterId="bigDecimal4DigitsConverter" />
 									<p:ajax event="change"
 										listener="#{invoiceBean.reComputeDetailedInvoiceAdjustment(entity)}"
@@ -352,7 +352,7 @@
 							</p:column>
 
 							<p:column>
-								<p:inputText value="#{entity.quantity}">
+								<p:inputText value="#{entity.quantity}" required="true" readonly="#{not invoiceBean.entity.transient}">
 									<f:converter converterId="bigDecimal4DigitsConverter" />
 									<p:ajax event="change"
 										listener="#{invoiceBean.reComputeDetailedInvoiceAdjustment(entity)}"

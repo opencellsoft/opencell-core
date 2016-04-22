@@ -24,63 +24,56 @@ import com.skype.Skype;
 @Stateless
 public class InstantMessagingNotifier {
 
-	@Inject
-	Logger log;
-	
-	@Resource(lookup = "java:/MeveoMail")
-	private Session mailSession;
+    @Inject
+    Logger log;
 
-	@Inject 
-	NotificationHistoryService notificationHistoryService;
-	
-	//Jabber jabber = new Jabber();
-	
-	@Asynchronous
-	public void sendInstantMessage(InstantMessagingNotification notification, IEntity e){
-		try {
-			HashMap<Object,Object> userMap = new HashMap<Object, Object>();
-			userMap.put("event", e);
-			Set<String> imIdSet = notification.getIds();
-			if(imIdSet==null){
-				imIdSet = new HashSet<String>();
-			}
-			if(!StringUtils.isBlank(notification.getIdEl())){
-				imIdSet.add((String)ValueExpressionWrapper.evaluateExpression(notification.getIdEl(), userMap, String.class));
-			}
-			String message = (String)ValueExpressionWrapper.evaluateExpression(notification.getMessage(), userMap, String.class);
-			
-			switch(notification.getImProvider()){
-			case SKYPE:
-				for(String imId:imIdSet){
-					log.debug("send skype message to {}, mess={}",imId,message);
-					Skype.chat(imId).send(message);
-				}
-				break;
-			case FACEBOOK:
-				break;
-			case GTALK:
-				
-				break;
-			case TWITTER:
-				break;
-			case YAHOO_MESSENGER:
-				break;
-			}
-			notificationHistoryService.create(notification, e, "", NotificationHistoryStatusEnum.SENT);
+    @Resource(lookup = "java:/MeveoMail")
+    private Session mailSession;
 
-		} catch (BusinessException e1) {
-			try {
-				notificationHistoryService.create(notification, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
-			} catch (BusinessException e2) {
-				log.error("Failed to create notification history business",e);
-			}
-			
-		} catch (Exception e1) {
-			try {
-				notificationHistoryService.create(notification, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
-			} catch (BusinessException e2) {
-				log.error("Failed to create notification history exception",e);
-			}
-		} 
-	}
+    @Inject
+    NotificationHistoryService notificationHistoryService;
+
+    // Jabber jabber = new Jabber();
+
+    @Asynchronous
+    public void sendInstantMessage(InstantMessagingNotification notification, IEntity entity) {
+        try {
+            HashMap<Object, Object> userMap = new HashMap<Object, Object>();
+            userMap.put("event", entity);
+            Set<String> imIdSet = notification.getIds();
+            if (imIdSet == null) {
+                imIdSet = new HashSet<String>();
+            }
+            if (!StringUtils.isBlank(notification.getIdEl())) {
+                imIdSet.add((String) ValueExpressionWrapper.evaluateExpression(notification.getIdEl(), userMap, String.class));
+            }
+            String message = (String) ValueExpressionWrapper.evaluateExpression(notification.getMessage(), userMap, String.class);
+
+            switch (notification.getImProvider()) {
+            case SKYPE:
+                for (String imId : imIdSet) {
+                    log.debug("send skype message to {}, mess={}", imId, message);
+                    Skype.chat(imId).send(message);
+                }
+                break;
+            case FACEBOOK:
+                break;
+            case GTALK:
+
+                break;
+            case TWITTER:
+                break;
+            case YAHOO_MESSENGER:
+                break;
+            }
+            notificationHistoryService.create(notification, entity, "", NotificationHistoryStatusEnum.SENT);
+
+        } catch (Exception e) {
+            try {
+                notificationHistoryService.create(notification, entity, e.getMessage(), NotificationHistoryStatusEnum.FAILED);
+            } catch (BusinessException e2) {
+                log.error("Failed to create notification history", entity);
+            }
+        }
+    }
 }

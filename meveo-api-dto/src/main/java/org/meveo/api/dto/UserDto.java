@@ -62,6 +62,7 @@ public class UserDto extends BaseDto {
 		}
 		username = user.getUserName();
 		provider = user.getProvider().getCode();
+		email=user.getEmail();
 
 		if (user.getRoles() != null) {
 			roles = new ArrayList<String>();

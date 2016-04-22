@@ -1561,7 +1561,17 @@
         </addColumn>   
         <dropColumn columnName="EXONERATION_TAX_EL" tableName="CRM_PROVIDER" />
     </changeSet>      
+<<<<<<< HEAD
     
+=======
+    <changeSet id="#1588_20160412" author="AndriusKarpavicius">
+        <dropNotNullConstraint tableName="adm_notif_webhooks" columnName="HTTP_PORT"/>  
+
+        <modifyDataType tableName="ADM_NOTIF_EMAIL" columnName="EMAIL_BODY" newDataType="TEXT"/>
+        <modifyDataType tableName="ADM_NOTIF_EMAIL" columnName="EMAIL_HTML_BODY" newDataType="TEXT"/>
+    </changeSet>   
+         
+>>>>>>> integration
     <changeSet id="#1640_20160413" author="anasseh">	
         <addColumn tableName="AR_DDREQUEST_ITEM">	
             <column name="ERROR_MSG" type="VARCHAR(1000)" />             
@@ -1584,5 +1594,15 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />                   
     </changeSet> 
+<<<<<<< HEAD
             
+=======
+    
+    <changeSet id="#1651-20160421" author="Mbarek">
+	<modifyDataType columnName="APPLICABLE_ON_EL"
+		newDataType="VARCHAR(2000)" tableName="CRM_CUSTOM_FIELD_TMPL" />
+    </changeSet>	
+    
+ 
+>>>>>>> integration
 </databaseChangeLog>

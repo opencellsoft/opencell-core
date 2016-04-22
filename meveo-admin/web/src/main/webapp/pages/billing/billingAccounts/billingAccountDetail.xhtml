@@ -48,7 +48,7 @@
 				column1Label="#{messages['customerAccount.code']}" column1="code"
 				column2Label="#{messages['customerAccount.name']}" column2="name"
 				selection="#{billingAccountBean.entity.customerAccount}"
-				updateField=":parentTab:formId:childTab:customerSelectId">
+				updateField=":parentTab:formId:childTab:customerSelectId :parentTab:formId:childTab:customerSelectId_text">
 			</hftl:entityPopup>
 
 <!-- 			<hftl:entityPopup id="billingCyclePopup" -->
@@ -274,8 +274,7 @@
 
 														<hftl:formField
 															label="#{messages['billingAccount.electronicBilling']}"
-															field="electronicBilling" isMessage="true"
-															listenerUpdate=":parentTab:formId:childTab:emailField" />
+															field="electronicBilling" isMessage="true" />
 
 														<h:panelGroup id="emailField">
                                                            <hftl:decorateFormField fieldId="email_select" label="#{messages['billingAccount.email']}">
@@ -283,7 +282,6 @@
 															<p:inputText id="email_select"
 																rendered="#{billingAccountBean.edit}"
 																value="#{billingAccountBean.entity.email}"
-																required="#{billingAccountBean.entity.electronicBilling}"
 																size="20" maxlength="100"
 																converter="nullableStringConverter">
 																<o:validator validatorId="javax.faces.RegularExpression"

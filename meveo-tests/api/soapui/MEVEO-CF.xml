@@ -12782,7 +12782,7 @@
       <wsdl:output message="ns1:activateServicesResponse" name="activateServicesResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint></con:endpoints><con:operation id="01920c32-0161-4c09-84a7-528acd168aea" isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="a0cfa8a5-e743-4bc4-a1e0-9fa863e3bb94" isOneWay="false" action="" name="applyOneShotChargeInstance" bindingOperationName="applyOneShotChargeInstance" type="Request-Response" outputName="applyOneShotChargeInstanceResponse" inputName="applyOneShotChargeInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="bf660402-6cda-4d02-bec7-347dc9233ad9" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="b424369e-8ccb-4796-b824-f4dba1c0c8d8" isOneWay="false" action="" name="createOrUpdateSubscription" bindingOperationName="createOrUpdateSubscription" type="Request-Response" outputName="createOrUpdateSubscriptionResponse" inputName="createOrUpdateSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="c186395a-7d3b-4b5b-9d2d-e100a0e34daa" isOneWay="false" action="" name="findSubscription" bindingOperationName="findSubscription" type="Request-Response" outputName="findSubscriptionResponse" inputName="findSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="83b66ff0-0603-4434-a66e-b773698bc51d" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="1581d29b-75f5-4e8f-842e-a5c4af44d587" isOneWay="false" action="" name="instantiateServices" bindingOperationName="instantiateServices" type="Request-Response" outputName="instantiateServicesResponse" inputName="instantiateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="cc2b7b5c-39cb-4c14-87b1-857a52c35574" isOneWay="false" action="" name="listSubscriptionByUserAccount" bindingOperationName="listSubscriptionByUserAccount" type="Request-Response" outputName="listSubscriptionByUserAccountResponse" inputName="listSubscriptionByUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="b4af1edc-15f9-4866-81ee-f90fbe22cf50" isOneWay="false" action="" name="terminateServices" bindingOperationName="terminateServices" type="Request-Response" outputName="terminateServicesResponse" inputName="terminateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="66c68412-91b2-426f-a06b-771fc3fd628f" isOneWay="false" action="" name="terminateSubscription" bindingOperationName="terminateSubscription" type="Request-Response" outputName="terminateSubscriptionResponse" inputName="terminateSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="1289097b-1e25-4bad-8b50-2079c00fd3c2" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation></con:interface><con:interface xsi:type="con:RestService" id="df9523f5-ebd3-41b1-8d36-c525c9ddce42" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO CF" type="rest" definitionUrl="SELLER_DATE_SINGLE_V" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache/><con:endpoints/></con:interface><con:testSuite id="472fe052-2321-48cc-894f-c262e1826cd3" name="Setup Authorization"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="4a6617b1-743c-44f2-b121-9dbb5521e8fb" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="setAllHeaders" searchProperties="true"><con:settings/><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint></con:endpoints><con:operation id="01920c32-0161-4c09-84a7-528acd168aea" isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="a0cfa8a5-e743-4bc4-a1e0-9fa863e3bb94" isOneWay="false" action="" name="applyOneShotChargeInstance" bindingOperationName="applyOneShotChargeInstance" type="Request-Response" outputName="applyOneShotChargeInstanceResponse" inputName="applyOneShotChargeInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="bf660402-6cda-4d02-bec7-347dc9233ad9" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="b424369e-8ccb-4796-b824-f4dba1c0c8d8" isOneWay="false" action="" name="createOrUpdateSubscription" bindingOperationName="createOrUpdateSubscription" type="Request-Response" outputName="createOrUpdateSubscriptionResponse" inputName="createOrUpdateSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="c186395a-7d3b-4b5b-9d2d-e100a0e34daa" isOneWay="false" action="" name="findSubscription" bindingOperationName="findSubscription" type="Request-Response" outputName="findSubscriptionResponse" inputName="findSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="83b66ff0-0603-4434-a66e-b773698bc51d" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="1581d29b-75f5-4e8f-842e-a5c4af44d587" isOneWay="false" action="" name="instantiateServices" bindingOperationName="instantiateServices" type="Request-Response" outputName="instantiateServicesResponse" inputName="instantiateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="cc2b7b5c-39cb-4c14-87b1-857a52c35574" isOneWay="false" action="" name="listSubscriptionByUserAccount" bindingOperationName="listSubscriptionByUserAccount" type="Request-Response" outputName="listSubscriptionByUserAccountResponse" inputName="listSubscriptionByUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="b4af1edc-15f9-4866-81ee-f90fbe22cf50" isOneWay="false" action="" name="terminateServices" bindingOperationName="terminateServices" type="Request-Response" outputName="terminateServicesResponse" inputName="terminateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="66c68412-91b2-426f-a06b-771fc3fd628f" isOneWay="false" action="" name="terminateSubscription" bindingOperationName="terminateSubscription" type="Request-Response" outputName="terminateSubscriptionResponse" inputName="terminateSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="1289097b-1e25-4bad-8b50-2079c00fd3c2" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation></con:interface><con:interface xsi:type="con:RestService" id="df9523f5-ebd3-41b1-8d36-c525c9ddce42" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO CF" type="rest" definitionUrl="SELLER_DATE_SINGLE_V" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT"/><con:endpoints/></con:interface><con:interface xsi:type="con:RestService" id="03f488f9-f60e-4aef-ad70-b3cdb58831b8" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://localhost:8080" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart=""/><con:endpoints><con:endpoint>http://localhost:8080</con:endpoint></con:endpoints><con:resource name="Customer" path="/meveo/api/rest/account/customer" id="1224e4ed-0996-4503-b004-a449dd20884d"><con:settings/><con:parameters/><con:method name="create" id="0121542d-fded-40cb-84f6-72c77321bc15" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401 400</con:status><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:cus="http://localhost/meveo/api/rest/account/customerAccount">cus:Response</con:element></con:representation><con:request name="Request 1" id="8416cdbc-93a8-4f29-8d4d-2c97eb9d8269" mediaType="application/json" postQueryString="false"><con:settings/><con:endpoint>http://localhost:8080</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:interface><con:testSuite id="472fe052-2321-48cc-894f-c262e1826cd3" name="Setup Authorization"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="4a6617b1-743c-44f2-b121-9dbb5521e8fb" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="setAllHeaders" searchProperties="true"><con:settings/><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
 import com.eviware.soapui.support.types.*;
 
 StringToStringMap headers = new StringToStringMap();
@@ -13554,13 +13554,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_NV">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>a|b</key>\r
+                        <key>a|1&lt;8</key>\r
                         <value>\r
                            <stringValue>SELLER_STRING_VALUE_15</stringValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>c|d</key>\r
+                        <key>c|1&lt;9</key>\r
                         <value>\r
                            <stringValue>SELLER_STRING_VALUE_16</stringValue>\r
                         </value>\r
@@ -13570,13 +13570,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_NV">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>c|e</key>\r
+                        <key>c|1&lt;8</key>\r
                         <value>\r
                            <longValue>60</longValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>d|y</key>\r
+                        <key>d|1&lt;8</key>\r
                         <value>\r
                            <longValue>61</longValue>\r
                         </value>\r
@@ -13592,13 +13592,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_NV">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>three|four</key>\r
+                        <key>three|11&lt;81</key>\r
                         <value>\r
                            <doubleValue>62.63</doubleValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>one|two</key>\r
+                        <key>one|12&lt;82</key>\r
                         <value>\r
                            <doubleValue>64.65</doubleValue>\r
                         </value>\r
@@ -13614,13 +13614,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_NV">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>g|q</key>\r
+                        <key>g|13&lt;83</key>\r
                         <value>\r
                            <dateValue>2008-08-01</dateValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>h|h</key>\r
+                        <key>h|14&lt;84</key>\r
                         <value>\r
                            <dateValue>2008-09-01</dateValue>\r
                         </value>\r
@@ -13636,13 +13636,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_NV">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>i|o</key>\r
+                        <key>i|15&lt;85</key>\r
                         <value>\r
                            <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>j|u</key>\r
+                        <key>j|16&lt;86</key>\r
                         <value>\r
                            <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY"/>\r
                         </value>\r
@@ -13659,13 +13659,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_VC" valueDate="2015-09-10">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>k|x</key>\r
+                        <key>k|17&lt;87</key>\r
                         <value>\r
                            <stringValue>SELLER_STRING_VALUE_17</stringValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>l|r</key>\r
+                        <key>l|18&lt;88</key>\r
                         <value>\r
                            <stringValue>SELLER_STRING_VALUE_18</stringValue>\r
                         </value>\r
@@ -13681,13 +13681,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_VC" valueDate="2015-08-10">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>m|a</key>\r
+                        <key>m|1&lt;8</key>\r
                         <value>\r
                            <stringValue>SELLER_STRING_VALUE_19</stringValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>n|a</key>\r
+                        <key>n|1&lt;8</key>\r
                         <value>\r
                            <stringValue>SELLER_STRING_VALUE_20</stringValue>\r
                         </value>\r
@@ -13703,13 +13703,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_VC" valueDate="2015-09-10">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>o|e</key>\r
+                        <key>o|1&lt;8</key>\r
                         <value>\r
                            <longValue>66</longValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>p|r</key>\r
+                        <key>p|1&lt;8</key>\r
                         <value>\r
                            <longValue>67</longValue>\r
                         </value>\r
@@ -13725,13 +13725,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_VC" valueDate="2015-08-10">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>q|t</key>\r
+                        <key>q|11&lt;81</key>\r
                         <value>\r
                            <longValue>68</longValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>r|i</key>\r
+                        <key>r|11&lt;81</key>\r
                         <value>\r
                            <longValue>69</longValue>\r
                         </value>\r
@@ -13747,13 +13747,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_VC" valueDate="2015-09-10">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>s|s</key>\r
+                        <key>s|12&lt;82</key>\r
                         <value>\r
                            <doubleValue>70.71</doubleValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>t|w</key>\r
+                        <key>t|12&lt;82</key>\r
                         <value>\r
                            <doubleValue>72.73</doubleValue>\r
                         </value>\r
@@ -13769,13 +13769,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_VC" valueDate="2015-08-10">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>t|a</key>\r
+                        <key>t|13&lt;83</key>\r
                         <value>\r
                            <doubleValue>74.75</doubleValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>v|t</key>\r
+                        <key>v|13&lt;83</key>\r
                         <value>\r
                            <doubleValue>76.77</doubleValue>\r
                         </value>\r
@@ -13791,13 +13791,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_VC" valueDate="2015-09-10">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>x|x</key>\r
+                        <key>x|14&lt;84</key>\r
                         <value>\r
                            <dateValue>2007-08-01</dateValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>y|g</key>\r
+                        <key>y|15&lt;85</key>\r
                         <value>\r
                            <dateValue>2007-09-01</dateValue>\r
                         </value>\r
@@ -13813,13 +13813,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_VC" valueDate="2015-08-10">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>z|l</key>\r
+                        <key>z|16&lt;86</key>\r
                         <value>\r
                            <dateValue>2006-08-01</dateValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>aa|qq</key>\r
+                        <key>aa|17&lt;87</key>\r
                         <value>\r
                            <dateValue>2006-09-01</dateValue>\r
                         </value>\r
@@ -13835,13 +13835,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_VC" valueDate="2015-09-10">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>bb|qq</key>\r
+                        <key>bb|1&lt;8</key>\r
                         <value>\r
                            <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY0"/>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>cc|rr</key>\r
+                        <key>cc|1&lt;8</key>\r
                         <value>\r
                            <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY0"/>\r
                         </value>\r
@@ -13857,13 +13857,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_VC" valueDate="2015-08-10">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>dd|aa</key>\r
+                        <key>dd|1&lt;8</key>\r
                         <value>\r
                            <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY1"/>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>ee|tt</key>\r
+                        <key>ee|1&lt;8</key>\r
                         <value>\r
                            <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY1"/>\r
                         </value>\r
@@ -13880,13 +13880,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>ff|jj</key>\r
+                        <key>ff|1&lt;8</key>\r
                         <value>\r
                            <stringValue>SELLER_STRING_VALUE_21</stringValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>gg|ll</key>\r
+                        <key>gg|1&lt;8</key>\r
                         <value>\r
                            <stringValue>SELLER_STRING_VALUE_22</stringValue>\r
                         </value>\r
@@ -13902,13 +13902,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>hh|qq</key>\r
+                        <key>hh|11&lt;81</key>\r
                         <value>\r
                            <stringValue>SELLER_STRING_VALUE_23</stringValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>ii|jh</key>\r
+                        <key>ii|12&lt;82</key>\r
                         <value>\r
                            <stringValue>SELLER_STRING_VALUE_24</stringValue>\r
                         </value>\r
@@ -13924,13 +13924,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>jj|df</key>\r
+                        <key>jj|13&lt;83</key>\r
                         <value>\r
                            <longValue>78</longValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>kk|lk</key>\r
+                        <key>kk|14&lt;84</key>\r
                         <value>\r
                            <longValue>79</longValue>\r
                         </value>\r
@@ -13946,13 +13946,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>ll|s</key>\r
+                        <key>ll|1&lt;8</key>\r
                         <value>\r
                            <longValue>80</longValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>mm|l</key>\r
+                        <key>mm|1&lt;8</key>\r
                         <value>\r
                            <longValue>81</longValue>\r
                         </value>\r
@@ -13968,13 +13968,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>nn|o</key>\r
+                        <key>nn|1&lt;8</key>\r
                         <value>\r
                            <doubleValue>82.83</doubleValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>oo|u</key>\r
+                        <key>oo|1&lt;8</key>\r
                         <value>\r
                            <doubleValue>84.85</doubleValue>\r
                         </value>\r
@@ -13990,13 +13990,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>pp|q</key>\r
+                        <key>pp|12&lt;82</key>\r
                         <value>\r
                            <doubleValue>86.87</doubleValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>qq|o</key>\r
+                        <key>qq|13&lt;83</key>\r
                         <value>\r
                            <doubleValue>88.89</doubleValue>\r
                         </value>\r
@@ -14012,13 +14012,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>rr|j</key>\r
+                        <key>rr|1&lt;8</key>\r
                         <value>\r
                            <dateValue>2005-08-01</dateValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>ss|l</key>\r
+                        <key>ss|1&lt;8</key>\r
                         <value>\r
                            <dateValue>2005-09-01</dateValue>\r
                         </value>\r
@@ -14034,13 +14034,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>tt|p</key>\r
+                        <key>tt|13&lt;83</key>\r
                         <value>\r
                            <dateValue>2004-08-01</dateValue>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>uu|w</key>\r
+                        <key>uu|14&lt;84</key>\r
                         <value>\r
                            <dateValue>2004-09-01</dateValue>\r
                         </value>\r
@@ -14056,13 +14056,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>vv|w</key>\r
+                        <key>vv|1&lt;8</key>\r
                         <value>\r
                            <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY2"/>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>vv|h</key>\r
+                        <key>vv|10&lt;81</key>\r
                         <value>\r
                            <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY2"/>\r
                         </value>\r
@@ -14078,13 +14078,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
                   <mapValue>\r
                      <entry>\r
-                        <key>xx|q</key>\r
+                        <key>xx|1&lt;8</key>\r
                         <value>\r
                            <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY3"/>\r
                         </value>\r
                      </entry>\r
                      <entry>\r
-                        <key>yy|l</key>\r
+                        <key>yy|1&lt;8</key>\r
                         <value>\r
                            <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY3"/>\r
                         </value>\r
@@ -14186,15 +14186,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>p</key>
-                           <value>
-                              <longValue>67</longValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>o</key>
                            <value>
                               <longValue>66</longValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>p</key>
+                           <value>
+                              <longValue>67</longValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -14204,15 +14204,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>r</key>
-                           <value>
-                              <longValue>69</longValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>q</key>
                            <value>
                               <longValue>68</longValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>r</key>
+                           <value>
+                              <longValue>69</longValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -14222,15 +14222,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>t</key>
-                           <value>
-                              <doubleValue>72.73</doubleValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>s</key>
                            <value>
                               <doubleValue>70.71</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>t</key>
+                           <value>
+                              <doubleValue>72.73</doubleValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -14240,15 +14240,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>v</key>
-                           <value>
-                              <doubleValue>76.77</doubleValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>t</key>
                            <value>
                               <doubleValue>74.75</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>v</key>
+                           <value>
+                              <doubleValue>76.77</doubleValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -14280,15 +14280,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_NV">
                      <mapValue>
                         <entry>
-                           <key>b</key>
-                           <value>
-                              <stringValue>SELLER_STRING_VALUE_16</stringValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>a</key>
                            <value>
                               <stringValue>SELLER_STRING_VALUE_15</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>b</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_16</stringValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -14298,15 +14298,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MAP_NV">
                      <mapValue>
                         <entry>
-                           <key>f</key>
-                           <value>
-                              <doubleValue>64.65</doubleValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>e</key>
                            <value>
                               <doubleValue>62.63</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>f</key>
+                           <value>
+                              <doubleValue>64.65</doubleValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -14468,15 +14468,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
-                           <key>oo</key>
-                           <value>
-                              <doubleValue>84.85</doubleValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>nn</key>
                            <value>
                               <doubleValue>82.83</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>oo</key>
+                           <value>
+                              <doubleValue>84.85</doubleValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -14540,15 +14540,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
-                           <key>kk</key>
-                           <value>
-                              <longValue>79</longValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>jj</key>
                            <value>
                               <longValue>78</longValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>kk</key>
+                           <value>
+                              <longValue>79</longValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -14558,15 +14558,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
-                           <key>mm</key>
-                           <value>
-                              <longValue>81</longValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>ll</key>
                            <value>
                               <longValue>80</longValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>mm</key>
+                           <value>
+                              <longValue>81</longValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -14610,15 +14610,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
-                           <key>yy</key>
-                           <value>
-                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY3"/>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>xx</key>
                            <value>
                               <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY3"/>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>yy</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY3"/>
                            </value>
                         </entry>
                      </mapValue>
@@ -14636,15 +14636,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MAP_NV">
                      <mapValue>
                         <entry>
-                           <key>j</key>
-                           <value>
-                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY"/>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>i</key>
                            <value>
                               <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>j</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY"/>
                            </value>
                         </entry>
                      </mapValue>
@@ -14678,15 +14678,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>y</key>
-                           <value>
-                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>x</key>
                            <value>
                               <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>y</key>
+                           <value>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -14696,15 +14696,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>aa</key>
-                           <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>z</key>
                            <value>
                               <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>aa</key>
+                           <value>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -14756,15 +14756,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
-                           <key>ii</key>
-                           <value>
-                              <stringValue>SELLER_STRING_VALUE_24</stringValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>hh</key>
                            <value>
                               <stringValue>SELLER_STRING_VALUE_23</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>ii</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_24</stringValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -14786,15 +14786,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MAP_NV">
                      <mapValue>
                         <entry>
-                           <key>d</key>
-                           <value>
-                              <longValue>61</longValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>c</key>
                            <value>
                               <longValue>60</longValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>d</key>
+                           <value>
+                              <longValue>61</longValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -14838,15 +14838,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>l</key>
-                           <value>
-                              <stringValue>SELLER_STRING_VALUE_18</stringValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>k</key>
                            <value>
                               <stringValue>SELLER_STRING_VALUE_17</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>l</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_18</stringValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -14856,15 +14856,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>n</key>
-                           <value>
-                              <stringValue>SELLER_STRING_VALUE_20</stringValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>m</key>
                            <value>
                               <stringValue>SELLER_STRING_VALUE_19</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>n</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_20</stringValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -14969,7 +14969,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="4b5fb5e2-0d5d-4762-bd63-81a7bc2cca44" name="Contains"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_NV">
                      <mapValue>
                         <entry>
-                           <key>c|d</key>
+                           <key>a|1&lt;8</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_15</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>c|1&lt;9</key>
                            <value>
                               <stringValue>SELLER_STRING_VALUE_16</stringValue>
                            </value>
@@ -14980,24 +14986,18 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                               <stringValue>MAT_1/MAT_2</stringValue>
                            </value>
                         </entry>
-                        <entry>
-                           <key>a|b</key>
-                           <value>
-                              <stringValue>SELLER_STRING_VALUE_15</stringValue>
-                           </value>
-                        </entry>
                      </mapValue>
                   </customField>
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="5cc99552-bdd4-4e02-b11b-203c36a1ddb4" name="Contains 76"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_NV">
                      <mapValue>
                         <entry>
-                           <key>c|e</key>
+                           <key>c|1&lt;8</key>
                            <value>
                               <longValue>60</longValue>
                            </value>
                         </entry>
                         <entry>
-                           <key>d|y</key>
+                           <key>d|1&lt;8</key>
                            <value>
                               <longValue>61</longValue>
                            </value>
@@ -15013,15 +15013,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="0233a6fb-7b68-4109-ad1e-2073f651b186" name="Contains 77"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_NV">
                      <mapValue>
                         <entry>
-                           <key>one|two</key>
+                           <key>three|11&lt;81</key>
                            <value>
-                              <doubleValue>64.65</doubleValue>
+                              <doubleValue>62.63</doubleValue>
                            </value>
                         </entry>
                         <entry>
-                           <key>three|four</key>
+                           <key>one|12&lt;82</key>
                            <value>
-                              <doubleValue>62.63</doubleValue>
+                              <doubleValue>64.65</doubleValue>
                            </value>
                         </entry>
                         <entry>
@@ -15035,13 +15035,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="6623ed4a-55b3-4ead-a954-f3ce62b4eef0" name="Contains 78"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_NV">
                      <mapValue>
                         <entry>
-                           <key>g|q</key>
+                           <key>g|13&lt;83</key>
                            <value>
                               <dateValue>2008-08-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
                         </entry>
                         <entry>
-                           <key>h|h</key>
+                           <key>h|14&lt;84</key>
                            <value>
                               <dateValue>2008-09-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
@@ -15053,12 +15053,17 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                            </value>
                         </entry>
                      </mapValue>
-                  </customField>
-]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="3e5fef52-0feb-479a-a041-298f28ab03ad" name="Contains 79"><con:configuration><token><![CDATA[
+                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="3e5fef52-0feb-479a-a041-298f28ab03ad" name="Contains 79"><con:configuration><token><![CDATA[
                   <customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_NV">
                      <mapValue>
                         <entry>
-                           <key>j|u</key>
+                           <key>i|15&lt;85</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>j|16&lt;86</key>
                            <value>
                               <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY"/>
                            </value>
@@ -15069,20 +15074,20 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                               <stringValue>MAT_1/MAT_2</stringValue>
                            </value>
                         </entry>
-                        <entry>
-                           <key>i|o</key>
-                           <value>
-                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>
-                           </value>
-                        </entry>
                      </mapValue>
                   </customField>
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="f393f102-e948-455f-822b-ecc68e4d3527" name="Contains 80"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>k|x</key>
+                           <key>k|17&lt;87</key>
                            <value>
                               <stringValue>SELLER_STRING_VALUE_17</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>l|18&lt;88</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_18</stringValue>
                            </value>
                         </entry>
                         <entry>
@@ -15091,24 +15096,18 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                               <stringValue>MAT_1/MAT_2</stringValue>
                            </value>
                         </entry>
-                        <entry>
-                           <key>l|r</key>
-                           <value>
-                              <stringValue>SELLER_STRING_VALUE_18</stringValue>
-                           </value>
-                        </entry>
                      </mapValue>
                   </customField>
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="de26f43b-d68b-444f-9ad1-4ed59867cc7c" name="Contains 81"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>m|a</key>
+                           <key>m|1&lt;8</key>
                            <value>
                               <stringValue>SELLER_STRING_VALUE_19</stringValue>
                            </value>
                         </entry>
                         <entry>
-                           <key>n|a</key>
+                           <key>n|1&lt;8</key>
                            <value>
                               <stringValue>SELLER_STRING_VALUE_20</stringValue>
                            </value>
@@ -15124,13 +15123,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="a01c11fc-4a3f-438d-be08-981c455f97d5" name="Contains 82"><con:configuration><token><![CDATA[  <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>o|e</key>
+                           <key>o|1&lt;8</key>
                            <value>
                               <longValue>66</longValue>
                            </value>
                         </entry>
                         <entry>
-                           <key>p|r</key>
+                           <key>p|1&lt;8</key>
                            <value>
                               <longValue>67</longValue>
                            </value>
@@ -15146,13 +15145,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="540a42aa-a055-4c16-abff-cbeef4ed4195" name="Contains 83"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>q|t</key>
+                           <key>q|11&lt;81</key>
                            <value>
                               <longValue>68</longValue>
                            </value>
                         </entry>
                         <entry>
-                           <key>r|i</key>
+                           <key>r|11&lt;81</key>
                            <value>
                               <longValue>69</longValue>
                            </value>
@@ -15168,15 +15167,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="747614c8-d461-4915-a46f-b9200f90440b" name="Contains 84"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>t|w</key>
+                           <key>s|12&lt;82</key>
                            <value>
-                              <doubleValue>72.73</doubleValue>
+                              <doubleValue>70.71</doubleValue>
                            </value>
                         </entry>
                         <entry>
-                           <key>s|s</key>
+                           <key>t|12&lt;82</key>
                            <value>
-                              <doubleValue>70.71</doubleValue>
+                              <doubleValue>72.73</doubleValue>
                            </value>
                         </entry>
                         <entry>
@@ -15190,15 +15189,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="f7fc282e-0b2b-49df-b6e1-3124109bd4f6" name="Contains 85"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>v|t</key>
+                           <key>t|13&lt;83</key>
                            <value>
-                              <doubleValue>76.77</doubleValue>
+                              <doubleValue>74.75</doubleValue>
                            </value>
                         </entry>
                         <entry>
-                           <key>t|a</key>
+                           <key>v|13&lt;83</key>
                            <value>
-                              <doubleValue>74.75</doubleValue>
+                              <doubleValue>76.77</doubleValue>
                            </value>
                         </entry>
                         <entry>
@@ -15212,13 +15211,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="20c26967-9432-43a2-9fd7-3b873dd5004e" name="Contains 86"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>x|x</key>
+                           <key>x|14&lt;84</key>
                            <value>
                               <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
                         </entry>
                         <entry>
-                           <key>y|g</key>
+                           <key>y|15&lt;85</key>
                            <value>
                               <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
@@ -15234,15 +15233,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="74d28737-884b-41f4-b8b7-36ce5920dd40" name="Contains 87"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>aa|qq</key>
+                           <key>z|16&lt;86</key>
                            <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
                         </entry>
                         <entry>
-                           <key>z|l</key>
+                           <key>aa|17&lt;87</key>
                            <value>
-                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
                         </entry>
                         <entry>
@@ -15256,15 +15255,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="0e2d4bcd-9b73-4df9-86d0-5ff08e56ba0f" name="Contains 88"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>cc|rr</key>
+                           <key>bb|1&lt;8</key>
                            <value>
-                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY0"/>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY0"/>
                            </value>
                         </entry>
                         <entry>
-                           <key>bb|qq</key>
+                           <key>cc|1&lt;8</key>
                            <value>
-                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY0"/>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY0"/>
                            </value>
                         </entry>
                         <entry>
@@ -15278,7 +15277,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="79193ae5-cae6-45ab-9c18-fefbbe5a8c8f" name="Contains 89"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>ee|tt</key>
+                           <key>dd|1&lt;8</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY1"/>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>ee|1&lt;8</key>
                            <value>
                               <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY1"/>
                            </value>
@@ -15289,24 +15294,18 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                               <stringValue>MAT_1/MAT_2</stringValue>
                            </value>
                         </entry>
-                        <entry>
-                           <key>dd|aa</key>
-                           <value>
-                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY1"/>
-                           </value>
-                        </entry>
                      </mapValue>
                   </customField>
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="63d3a823-35ee-41ce-8fbc-32e2f7a0befe" name="Contains 90"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
-                           <key>ff|jj</key>
+                           <key>ff|1&lt;8</key>
                            <value>
                               <stringValue>SELLER_STRING_VALUE_21</stringValue>
                            </value>
                         </entry>
                         <entry>
-                           <key>gg|ll</key>
+                           <key>gg|1&lt;8</key>
                            <value>
                               <stringValue>SELLER_STRING_VALUE_22</stringValue>
                            </value>
@@ -15322,13 +15321,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="5ee9b478-9e71-4287-a173-c90089ceeaf9" name="Contains 91"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
-                           <key>hh|qq</key>
+                           <key>hh|11&lt;81</key>
                            <value>
                               <stringValue>SELLER_STRING_VALUE_23</stringValue>
                            </value>
                         </entry>
                         <entry>
-                           <key>ii|jh</key>
+                           <key>ii|12&lt;82</key>
                            <value>
                               <stringValue>SELLER_STRING_VALUE_24</stringValue>
                            </value>
@@ -15344,21 +15343,21 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="cfabfa57-7600-4e9c-a29e-73beb394ccf6" name="Contains 92"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
-                           <key>jj|df</key>
+                           <key>jj|13&lt;83</key>
                            <value>
                               <longValue>78</longValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>kk|14&lt;84</key>
+                           <value>
+                              <longValue>79</longValue>
                            </value>
                         </entry>
                         <entry>
                            <key>key</key>
                            <value>
                               <stringValue>MAT_1/MAT_2</stringValue>
-                           </value>
-                        </entry>
-                        <entry>
-                           <key>kk|lk</key>
-                           <value>
-                              <longValue>79</longValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -15366,9 +15365,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="3e08a615-13d0-4858-af32-de61c1a57b0c" name="Contains 93"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
-                           <key>ll|s</key>
+                           <key>ll|1&lt;8</key>
                            <value>
                               <longValue>80</longValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>mm|1&lt;8</key>
+                           <value>
+                              <longValue>81</longValue>
                            </value>
                         </entry>
                         <entry>
@@ -15377,26 +15382,20 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                               <stringValue>MAT_1/MAT_2</stringValue>
                            </value>
                         </entry>
-                        <entry>
-                           <key>mm|l</key>
-                           <value>
-                              <longValue>81</longValue>
-                           </value>
-                        </entry>
                      </mapValue>
                   </customField>
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="71918a87-b907-4a5e-9af7-7d7f8c0794fc" name="Contains 94"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
-                           <key>oo|u</key>
+                           <key>nn|1&lt;8</key>
                            <value>
-                              <doubleValue>84.85</doubleValue>
+                              <doubleValue>82.83</doubleValue>
                            </value>
                         </entry>
                         <entry>
-                           <key>nn|o</key>
+                           <key>oo|1&lt;8</key>
                            <value>
-                              <doubleValue>82.83</doubleValue>
+                              <doubleValue>84.85</doubleValue>
                            </value>
                         </entry>
                         <entry>
@@ -15410,13 +15409,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="d14efdbe-2898-479e-8ef8-aaf76b9ce1e8" name="Contains 95"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
-                           <key>pp|q</key>
+                           <key>pp|12&lt;82</key>
                            <value>
                               <doubleValue>86.87</doubleValue>
                            </value>
                         </entry>
                         <entry>
-                           <key>qq|o</key>
+                           <key>qq|13&lt;83</key>
                            <value>
                               <doubleValue>88.89</doubleValue>
                            </value>
@@ -15432,15 +15431,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="506a38c7-47c3-4969-ad7c-a5ddd850eb17" name="Contains 96"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
-                           <key>ss|l</key>
+                           <key>rr|1&lt;8</key>
                            <value>
-                              <dateValue>2005-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2005-08-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
                         </entry>
                         <entry>
-                           <key>rr|j</key>
+                           <key>ss|1&lt;8</key>
                            <value>
-                              <dateValue>2005-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2005-09-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
                         </entry>
                         <entry>
@@ -15454,13 +15453,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="a7423054-8025-4610-9503-94eb2faf1f7a" name="Contains 97"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
-                           <key>tt|p</key>
+                           <key>tt|13&lt;83</key>
                            <value>
                               <dateValue>2004-08-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
                         </entry>
                         <entry>
-                           <key>uu|w</key>
+                           <key>uu|14&lt;84</key>
                            <value>
                               <dateValue>2004-09-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
@@ -15476,13 +15475,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="71260bb8-1c89-4a95-bbc9-fbb4403d71ce" name="Contains 98"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
-                           <key>vv|w</key>
+                           <key>vv|1&lt;8</key>
                            <value>
                               <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY2"/>
                            </value>
                         </entry>
                         <entry>
-                           <key>vv|h</key>
+                           <key>vv|10&lt;81</key>
                            <value>
                               <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY2"/>
                            </value>
@@ -15498,15 +15497,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="9803df74-d2f6-4ebb-9f18-e478836b895c" name="Contains 99"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
-                           <key>yy|l</key>
+                           <key>xx|1&lt;8</key>
                            <value>
-                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY3"/>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY3"/>
                            </value>
                         </entry>
                         <entry>
-                           <key>xx|q</key>
+                           <key>yy|1&lt;8</key>
                            <value>
-                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY3"/>
+                              <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY3"/>
                            </value>
                         </entry>
                         <entry>
@@ -15971,30 +15970,30 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>ye</key>
-                           <value>
-                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>xe</key>
                            <value>
                               <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>ye</key>
+                           <value>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
                         </entry>
                      </mapValue>
                   </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>aayy</key>
-                           <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>y</key>
                            <value>
                               <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>aayy</key>
+                           <value>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -16008,30 +16007,30 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>y</key>
-                           <value>
-                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>x</key>
                            <value>
                               <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>y</key>
+                           <value>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
                         </entry>
                      </mapValue>
                   </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>aa</key>
-                           <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>z</key>
                            <value>
                               <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>aa</key>
+                           <value>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -16289,15 +16288,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>ye</key>
-                           <value>
-                              <dateValue>2007-06-01T00:00:00${#Project#timezone}:00</dateValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>xe</key>
                            <value>
                               <dateValue>2007-07-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>ye</key>
+                           <value>
+                              <dateValue>2007-06-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -16320,30 +16319,30 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>z</key>
-                           <value>
-                              <dateValue>2017-09-01T00:00:00${#Project#timezone}:00</dateValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>x</key>
                            <value>
                               <dateValue>2002-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>z</key>
+                           <value>
+                              <dateValue>2017-09-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
                         </entry>
                      </mapValue>
                   </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>aa</key>
-                           <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>z</key>
                            <value>
                               <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>aa</key>
+                           <value>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -16788,15 +16787,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 2" id="ce84ec44-b4f4-4ad0-978b-6410349e00bb"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_CHARGE_STRING_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
-                           <key>ii</key>
-                           <value>
-                              <stringValue>CHARGE_STRING_VALUE_24</stringValue>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>hh</key>
                            <value>
                               <stringValue>CHARGE_STRING_VALUE_23</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>ii</key>
+                           <value>
+                              <stringValue>CHARGE_STRING_VALUE_24</stringValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -16851,15 +16850,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 2" id="cf1a9840-3a04-4956-b5eb-1cca872d648d"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_OFFER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
-                           <key>yy</key>
-                           <value>
-                              <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY3"/>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>xx</key>
                            <value>
                               <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY3"/>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>yy</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY3"/>
                            </value>
                         </entry>
                      </mapValue>
@@ -17214,15 +17213,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c6ccdc4a-df78-4079-920e-7c9d1abc50eb"/><con:assertion type="Simple Contains" id="5e9baae0-455d-4384-897e-46d023d6eaec" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 1" id="5155584b-2214-4f04-aed8-3c4b4df21ce0"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_CHARGE_ENTITY_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
                      <mapValue>
                         <entry>
-                           <key>dd</key>
-                           <value>
-                              <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY015"/>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>bb</key>
                            <value>
                               <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY0"/>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>dd</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY015"/>
                            </value>
                         </entry>
                      </mapValue>
@@ -17337,15 +17336,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 2" id="cf1a9840-3a04-4956-b5eb-1cca872d648d"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_OFFER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
-                           <key>yy</key>
-                           <value>
-                              <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY3"/>
-                           </value>
-                        </entry>
-                        <entry>
                            <key>xx</key>
                            <value>
                               <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY3"/>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>yy</key>
+                           <value>
+                              <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY3"/>
                            </value>
                         </entry>
                      </mapValue>
@@ -18465,7 +18464,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <mapKeyType>STRING</mapKeyType>\r
             <matrixColumns>\r
                <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
-               <matrixColumn code="MAT_2" position="2" label="Two" keyType="STRING"/>\r
+               <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>\r
             </matrixColumns>\r
          </customField>\r
       </ws:createOrUpdateField>\r
@@ -18482,7 +18481,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <versionable>true</versionable>
             <matrixColumns>
                <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>
-               <matrixColumn code="MAT_2" position="2" label="Two" keyType="STRING"/>
+               <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>
             </matrixColumns>
          </customField>
       </ws:createOrUpdateField>
@@ -18501,7 +18500,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <calendar>MONTHLY</calendar>
             <matrixColumns>
                <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>
-               <matrixColumn code="MAT_2" position="2" label="Two" keyType="STRING"/>
+               <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>
             </matrixColumns>
          </customField>
       </ws:createOrUpdateField>
@@ -19615,7 +19614,839 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <appliesTo>CUST</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/><con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="abb76448-b057-486b-b954-1f6d80c24d20" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customization" searchProperties="true"><con:settings/><con:testStep type="request" name="Clear PurgeJob customizations" id="08736227-fdad-4e12-bc98-e9f3a1419e0d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>customizeEntity</con:operation><con:request name="Clear PurgeJob customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/><con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Test customer matrix value order" id="1392b8f2-27ba-4a57-9ecd-36110c9cf9cb"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Test customer matrix value order" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomer>\r
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST_MATRIX_ORDER" description="CUST">\r
+            <name>\r
+               <title>M</title>\r
+               <firstName>Edward</firstName>\r
+               <lastName>Legaspi</lastName>\r
+            </name>\r
+            <address>\r
+               <address1>adresse 1</address1>\r
+               <address2/>\r
+               <address3>adresse 3</address3>\r
+               <zipCode>21000</zipCode>\r
+               <city>Dijon</city>\r
+               <country>FR</country>\r
+            </address>\r
+            <customerCategory>CLIENT</customerCategory>\r
+            <customerBrand>DEFAULT</customerBrand>\r
+            <seller>SELLER_FR</seller>\r
+            <contactInformation>\r
+               <email>613@manaty.net</email>\r
+               <phone>+33100000000</phone>\r
+               <mobile>+33666666666</mobile>\r
+            </contactInformation>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_MATRIX_NV">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>COURT|0&lt;50</key>\r
+                        <value>\r
+                           <doubleValue>1000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|50&lt;100</key>\r
+                        <value>\r
+                           <doubleValue>2000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|100&lt;150</key>\r
+                        <value>\r
+                           <doubleValue>3000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|150&lt;200</key>\r
+                        <value>\r
+                           <doubleValue>4000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|200&lt;300</key>\r
+                        <value>\r
+                           <doubleValue>5000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|300&lt;450</key>\r
+                        <value>\r
+                           <doubleValue>6000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|450&lt;650</key>\r
+                        <value>\r
+                           <doubleValue>7000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|650&lt;900</key>\r
+                        <value>\r
+                           <doubleValue>8000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|900&lt;1200</key>\r
+                        <value>\r
+                           <doubleValue>1000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|50&lt;100</key>\r
+                        <value>\r
+                           <doubleValue>2000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|100&lt;150</key>\r
+                        <value>\r
+                           <doubleValue>3000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|150&lt;200</key>\r
+                        <value>\r
+                           <doubleValue>4000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|200&lt;300</key>\r
+                        <value>\r
+                           <doubleValue>5000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|300&lt;450</key>\r
+                        <value>\r
+                           <doubleValue>6000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|450&lt;650</key>\r
+                        <value>\r
+                           <doubleValue>7000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|650&lt;900</key>\r
+                        <value>\r
+                           <doubleValue>8000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|900&lt;1200</key>\r
+                        <value>\r
+                           <doubleValue>9000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|1900&lt;2200</key>\r
+                        <value>\r
+                           <doubleValue>9000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+            </customFields>\r
+         </customer>\r
+      </ws:createCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find customer matrix value order" id="2e1734d7-572f-4d3b-b434-9942597fca59"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomer</con:operation><con:request name="Find customer matrix value order" id="c86136db-6ca0-4125-9817-87936ab06776"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>
+         <customerCode>${#TestSuite#ticket}_${#TestSuite#index}_CUST_MATRIX_ORDER</customerCode>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="9a80037d-6912-4535-9956-a09d5a2a8da8" name="Contains 1"><con:configuration><token><![CDATA[               <customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_MATRIX_NV">
+                     <mapValue>
+                        <entry>
+                           <key>COURT|0&lt;50</key>
+                           <value>
+                              <doubleValue>1000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|50&lt;100</key>
+                           <value>
+                              <doubleValue>2000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|100&lt;150</key>
+                           <value>
+                              <doubleValue>3000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|150&lt;200</key>
+                           <value>
+                              <doubleValue>4000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|200&lt;300</key>
+                           <value>
+                              <doubleValue>5000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|300&lt;450</key>
+                           <value>
+                              <doubleValue>6000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|450&lt;650</key>
+                           <value>
+                              <doubleValue>7000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|650&lt;900</key>
+                           <value>
+                              <doubleValue>8000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|900&lt;1200</key>
+                           <value>
+                              <doubleValue>1000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|50&lt;100</key>
+                           <value>
+                              <doubleValue>2000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|100&lt;150</key>
+                           <value>
+                              <doubleValue>3000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|150&lt;200</key>
+                           <value>
+                              <doubleValue>4000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|200&lt;300</key>
+                           <value>
+                              <doubleValue>5000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|300&lt;450</key>
+                           <value>
+                              <doubleValue>6000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|450&lt;650</key>
+                           <value>
+                              <doubleValue>7000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|650&lt;900</key>
+                           <value>
+                              <doubleValue>8000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|900&lt;1200</key>
+                           <value>
+                              <doubleValue>9000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|1900&lt;2200</key>
+                           <value>
+                              <doubleValue>9000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Test customer map value order" id="66a3eec7-17f6-4bce-a90f-4a264291d310"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Test customer map value order" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomer>\r
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST_MAP_ORDER" description="CUST">\r
+            <name>\r
+               <title>M</title>\r
+               <firstName>Edward</firstName>\r
+               <lastName>Legaspi</lastName>\r
+            </name>\r
+            <address>\r
+               <address1>adresse 1</address1>\r
+               <address2/>\r
+               <address3>adresse 3</address3>\r
+               <zipCode>21000</zipCode>\r
+               <city>Dijon</city>\r
+               <country>FR</country>\r
+            </address>\r
+            <customerCategory>CLIENT</customerCategory>\r
+            <customerBrand>DEFAULT</customerBrand>\r
+            <seller>SELLER_FR</seller>\r
+            <contactInformation>\r
+               <email>613@manaty.net</email>\r
+               <phone>+33100000000</phone>\r
+               <mobile>+33666666666</mobile>\r
+            </contactInformation>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_MAP_NV">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>COURT|0&lt;50</key>\r
+                        <value>\r
+                           <doubleValue>1000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|50&lt;100</key>\r
+                        <value>\r
+                           <doubleValue>2000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|100&lt;150</key>\r
+                        <value>\r
+                           <doubleValue>3000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|150&lt;200</key>\r
+                        <value>\r
+                           <doubleValue>4000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|200&lt;300</key>\r
+                        <value>\r
+                           <doubleValue>5000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|300&lt;450</key>\r
+                        <value>\r
+                           <doubleValue>6000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|450&lt;650</key>\r
+                        <value>\r
+                           <doubleValue>7000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|650&lt;900</key>\r
+                        <value>\r
+                           <doubleValue>8000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|900&lt;1200</key>\r
+                        <value>\r
+                           <doubleValue>1000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|50&lt;100</key>\r
+                        <value>\r
+                           <doubleValue>2000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|100&lt;150</key>\r
+                        <value>\r
+                           <doubleValue>3000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|150&lt;200</key>\r
+                        <value>\r
+                           <doubleValue>4000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|200&lt;300</key>\r
+                        <value>\r
+                           <doubleValue>5000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|300&lt;450</key>\r
+                        <value>\r
+                           <doubleValue>6000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|450&lt;650</key>\r
+                        <value>\r
+                           <doubleValue>7000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|650&lt;900</key>\r
+                        <value>\r
+                           <doubleValue>8000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|900&lt;1200</key>\r
+                        <value>\r
+                           <doubleValue>9000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>MOYEN|1900&lt;2200</key>\r
+                        <value>\r
+                           <doubleValue>9000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+            </customFields>\r
+         </customer>\r
+      </ws:createCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find customer map value order" id="3193783b-2657-442f-85df-f3d81615791d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomer</con:operation><con:request name="Find customer map value order" id="c86136db-6ca0-4125-9817-87936ab06776"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>
+         <customerCode>${#TestSuite#ticket}_${#TestSuite#index}_CUST_MAP_ORDER</customerCode>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="9a80037d-6912-4535-9956-a09d5a2a8da8" name="Contains 1"><con:configuration><token><![CDATA[               <customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_MAP_NV">
+                     <mapValue>
+                        <entry>
+                           <key>COURT|0&lt;50</key>
+                           <value>
+                              <doubleValue>1000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|50&lt;100</key>
+                           <value>
+                              <doubleValue>2000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|100&lt;150</key>
+                           <value>
+                              <doubleValue>3000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|150&lt;200</key>
+                           <value>
+                              <doubleValue>4000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|200&lt;300</key>
+                           <value>
+                              <doubleValue>5000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|300&lt;450</key>
+                           <value>
+                              <doubleValue>6000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|450&lt;650</key>
+                           <value>
+                              <doubleValue>7000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|650&lt;900</key>
+                           <value>
+                              <doubleValue>8000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|900&lt;1200</key>
+                           <value>
+                              <doubleValue>1000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|50&lt;100</key>
+                           <value>
+                              <doubleValue>2000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|100&lt;150</key>
+                           <value>
+                              <doubleValue>3000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|150&lt;200</key>
+                           <value>
+                              <doubleValue>4000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|200&lt;300</key>
+                           <value>
+                              <doubleValue>5000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|300&lt;450</key>
+                           <value>
+                              <doubleValue>6000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|450&lt;650</key>
+                           <value>
+                              <doubleValue>7000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|650&lt;900</key>
+                           <value>
+                              <doubleValue>8000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|900&lt;1200</key>
+                           <value>
+                              <doubleValue>9000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|1900&lt;2200</key>
+                           <value>
+                              <doubleValue>9000.0</doubleValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="restrequest" name="Test Customer matrix value order REST" id="98331a60-eed5-4dc8-aeb0-0f09cb250332"><con:settings/><con:config service="http://localhost:8080" methodName="create" resourcePath="/meveo/api/rest/account/customer" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Test Customer matrix value order REST" id="ed3d71ca-a972-49ec-8e7e-0c9b83be4397" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080</con:endpoint><con:request><![CDATA[{
+   "code": "${#TestSuite#ticket}_${#TestSuite#index}_CUST_MATRIX_ORDER_REST",
+      "customerCategory": "CLIENT",
+      "seller": "SELLER_FR",
+      "name":    {},
+      "customFields": {
+      	"customField":[     {      
+         "code": "${#Project#baseEntityPrefix}_CUST_DOUBLE_MATRIX_NV",
+         "mapValue": {
+         	  "COURT|0<50": {"value": 1000.0},
+         	  "COURT|50<100": {"value": 2000.0},
+            "COURT|100<150": {"value": 3000.0},
+            "COURT|150<200": {"value": 4000.0},
+            "COURT|200<300": {"value": 5000.0},
+            "COURT|300<450": {"value": 6000.0},
+            "COURT|450<650": {"value": 7000.0},
+            "COURT|650<900": {"value": 8000.0},
+            "COURT|900<1200": {"value": 1000.0},
+            "MOYEN|50<100": {"value": 2000.0},
+            "MOYEN|100<150": {"value": 3000.0},
+            "MOYEN|150<200": {"value": 4000.0},
+            "MOYEN|200<300": {"value": 5000.0},
+            "MOYEN|300<450": {"value": 6000.0},
+            "MOYEN|450<650": {"value": 7000.0},
+            "MOYEN|650<900": {"value": 8000.0},
+            "MOYEN|900<1200": {"value": 9000.0},
+            "MOYEN|1900<2200": {"value": 9000.0}
+          }}]
+      }
+}
+
+]]></con:request><con:originalUri>http://localhost/meveo/api/rest/account/customerAccount</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="00440cc1-fc98-4d8b-9714-2404fca62e59" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:assertion type="Simple Contains" id="1989af79-43a8-41e9-ab63-7c7cfde76fa6" name="Contains"><con:configuration><token>"status":"SUCCESS"</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="request" name="Find customer matrix value order REST" id="91eeff01-dd07-435b-880d-624e2116cc8f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomer</con:operation><con:request name="Find customer matrix value order REST" id="c86136db-6ca0-4125-9817-87936ab06776"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>
+         <customerCode>${#TestSuite#ticket}_${#TestSuite#index}_CUST_MATRIX_ORDER_REST</customerCode>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="9a80037d-6912-4535-9956-a09d5a2a8da8" name="Contains 1"><con:configuration><token><![CDATA[               <customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_MATRIX_NV">
+                     <mapValue>
+                        <entry>
+                           <key>COURT|0&lt;50</key>
+                           <value>
+                              <doubleValue>1000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|50&lt;100</key>
+                           <value>
+                              <doubleValue>2000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|100&lt;150</key>
+                           <value>
+                              <doubleValue>3000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|150&lt;200</key>
+                           <value>
+                              <doubleValue>4000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|200&lt;300</key>
+                           <value>
+                              <doubleValue>5000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|300&lt;450</key>
+                           <value>
+                              <doubleValue>6000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|450&lt;650</key>
+                           <value>
+                              <doubleValue>7000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|650&lt;900</key>
+                           <value>
+                              <doubleValue>8000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|900&lt;1200</key>
+                           <value>
+                              <doubleValue>1000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|50&lt;100</key>
+                           <value>
+                              <doubleValue>2000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|100&lt;150</key>
+                           <value>
+                              <doubleValue>3000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|150&lt;200</key>
+                           <value>
+                              <doubleValue>4000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|200&lt;300</key>
+                           <value>
+                              <doubleValue>5000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|300&lt;450</key>
+                           <value>
+                              <doubleValue>6000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|450&lt;650</key>
+                           <value>
+                              <doubleValue>7000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|650&lt;900</key>
+                           <value>
+                              <doubleValue>8000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|900&lt;1200</key>
+                           <value>
+                              <doubleValue>9000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|1900&lt;2200</key>
+                           <value>
+                              <doubleValue>9000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="restrequest" name="Test Customer map value order REST" id="2d9de62c-b6ca-4827-9d05-fc4e6f01adf1"><con:settings/><con:config service="http://localhost:8080" methodName="create" resourcePath="/meveo/api/rest/account/customer" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Test Customer map value order REST" id="ed3d71ca-a972-49ec-8e7e-0c9b83be4397" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080</con:endpoint><con:request><![CDATA[{
+   "code": "${#TestSuite#ticket}_${#TestSuite#index}_CUST_MAP_ORDER_REST",
+      "customerCategory": "CLIENT",
+      "seller": "SELLER_FR",
+      "name":    {},
+      "customFields": {
+      	"customField":[     {      
+         "code": "${#Project#baseEntityPrefix}_CUST_DOUBLE_MAP_NV",
+         "mapValue": {
+         	  "COURT|0<50": {"value": 1000.0},
+         	  "COURT|50<100": {"value": 2000.0},
+            "COURT|100<150": {"value": 3000.0},
+            "COURT|150<200": {"value": 4000.0},
+            "COURT|200<300": {"value": 5000.0},
+            "COURT|300<450": {"value": 6000.0},
+            "COURT|450<650": {"value": 7000.0},
+            "COURT|650<900": {"value": 8000.0},
+            "COURT|900<1200": {"value": 1000.0},
+            "MOYEN|50<100": {"value": 2000.0},
+            "MOYEN|100<150": {"value": 3000.0},
+            "MOYEN|150<200": {"value": 4000.0},
+            "MOYEN|200<300": {"value": 5000.0},
+            "MOYEN|300<450": {"value": 6000.0},
+            "MOYEN|450<650": {"value": 7000.0},
+            "MOYEN|650<900": {"value": 8000.0},
+            "MOYEN|900<1200": {"value": 9000.0},
+            "MOYEN|1900<2200": {"value": 9000.0}
+          }}]
+      }
+}
+
+]]></con:request><con:originalUri>http://localhost/meveo/api/rest/account/customerAccount</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="00440cc1-fc98-4d8b-9714-2404fca62e59" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:assertion type="Simple Contains" id="1989af79-43a8-41e9-ab63-7c7cfde76fa6" name="Contains"><con:configuration><token>"status":"SUCCESS"</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="request" name="Find customer map value order REST" id="4bada713-67c9-40e4-8884-3101900a9a0e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomer</con:operation><con:request name="Find customer map value order REST" id="c86136db-6ca0-4125-9817-87936ab06776"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>
+         <customerCode>${#TestSuite#ticket}_${#TestSuite#index}_CUST_MAP_ORDER_REST</customerCode>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="9a80037d-6912-4535-9956-a09d5a2a8da8" name="Contains 1"><con:configuration><token><![CDATA[               <customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_MAP_NV">
+                     <mapValue>
+                        <entry>
+                           <key>COURT|0&lt;50</key>
+                           <value>
+                              <doubleValue>1000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|50&lt;100</key>
+                           <value>
+                              <doubleValue>2000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|100&lt;150</key>
+                           <value>
+                              <doubleValue>3000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|150&lt;200</key>
+                           <value>
+                              <doubleValue>4000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|200&lt;300</key>
+                           <value>
+                              <doubleValue>5000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|300&lt;450</key>
+                           <value>
+                              <doubleValue>6000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|450&lt;650</key>
+                           <value>
+                              <doubleValue>7000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|650&lt;900</key>
+                           <value>
+                              <doubleValue>8000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>COURT|900&lt;1200</key>
+                           <value>
+                              <doubleValue>1000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|50&lt;100</key>
+                           <value>
+                              <doubleValue>2000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|100&lt;150</key>
+                           <value>
+                              <doubleValue>3000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|150&lt;200</key>
+                           <value>
+                              <doubleValue>4000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|200&lt;300</key>
+                           <value>
+                              <doubleValue>5000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|300&lt;450</key>
+                           <value>
+                              <doubleValue>6000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|450&lt;650</key>
+                           <value>
+                              <doubleValue>7000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|650&lt;900</key>
+                           <value>
+                              <doubleValue>8000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|900&lt;1200</key>
+                           <value>
+                              <doubleValue>9000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>MOYEN|1900&lt;2200</key>
+                           <value>
+                              <doubleValue>9000.0</doubleValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="abb76448-b057-486b-b954-1f6d80c24d20" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customization" searchProperties="true"><con:settings/><con:testStep type="request" name="Clear PurgeJob customizations" id="08736227-fdad-4e12-bc98-e9f3a1419e0d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>customizeEntity</con:operation><con:request name="Clear PurgeJob customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:customizeEntity>\r
@@ -19909,7 +20740,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </ws:findEntityCustomizations>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a0d930a4-fcda-4758-bc4d-f90c5778b278"/><con:assertion type="Simple Contains" id="0e570331-b92b-4421-99d2-1fed729e547c" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple NotContains" id="3071f92b-9fe4-44e6-b8f4-ef54c178116b" name="Not Contains"><con:configuration><token>${#TestSuite#ticket}_${#TestSuite#index}_PurgeJob_ACTION4</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>193</con:value></con:property></con:properties><con:setupScript>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple NotContains" id="3071f92b-9fe4-44e6-b8f4-ef54c178116b" name="Not Contains"><con:configuration><token>${#TestSuite#ticket}_${#TestSuite#index}_PurgeJob_ACTION4</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>198</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript><con:reportParameters/></con:testSuite><con:testSuite id="9b9a3a43-4576-4cb5-a078-379d65785ca4" name="CRM Account Hierarchy"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="c28a1e28-09b3-4a00-855f-1c675813d8d0" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create" searchProperties="true"><con:settings/><con:testStep type="request" name="S" id="2efb24c3-af43-4d4c-9c3b-75851733a639"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCRMAccountHierarchy</con:operation><con:request name="S" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -21864,5 +22695,5 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="859a31e6-b4f0-4ffe-9532-3338af139133" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>currentDate</con:name><con:value>2015-09-23</con:value></con:property><con:property><con:name>ticket</con:name><con:value>1089d</con:value></con:property><con:property><con:name>index</con:name><con:value>9</con:value></con:property></con:properties><con:setupScript>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/><con:assertion type="Simple Contains" id="859a31e6-b4f0-4ffe-9532-3338af139133" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>currentDate</con:name><con:value>2015-09-23</con:value></con:property><con:property><con:name>ticket</con:name><con:value>1089d</con:value></con:property><con:property><con:name>index</con:name><con:value>12</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE">${#Project#meveoEndpoint}/SettingsWs</con:endpoint></con:endpointStrategy><con:requirements/><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>timezone</con:name><con:value>-03</con:value></con:property><con:property><con:name>timezone2</con:name><con:value>-03</con:value></con:property><con:property><con:name>meveoUserName</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoSuperUserName</con:name><con:value>meveo.superadmin</con:value></con:property><con:property><con:name>meveoSuperPassword</con:name><con:value>meveo.superadmin</con:value></con:property><con:property><con:name>entityPrefix</con:name><con:value>CF</con:value></con:property><con:property><con:name>baseEntityPrefix</con:name><con:value>CF_BASE</con:value></con:property></con:properties><con:wssContainer/><con:databaseConnectionContainer/><con:oAuth2ProfileContainer/><con:reporting><con:xmlTemplates/><con:parameters/></con:reporting><con:sensitiveInformation/></con:soapui-project>

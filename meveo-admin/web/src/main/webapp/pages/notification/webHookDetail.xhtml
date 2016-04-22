@@ -7,7 +7,7 @@
 
     <ui:define name="body">
 
-        <hftl:entityPopup id="searchCounterTemplatePopup" header="#{messages['counterTemplate.title']}" updateField=":webHookFormId:counterTemplateSelectedId"
+        <hftl:entityPopup id="searchCounterTemplatePopup" header="#{messages['counterTemplate.title']}" updateField=":webHookFormId:counterTemplateSelectedId :webHookFormId:counterTemplateSelectedId_text"
             selection="#{webHookBean.entity.counterTemplate}" backingBean="#{counterTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
             column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
             dataModel="#{counterTemplateBean.getLazyDataModel('NOTIFICATION')}">
@@ -15,7 +15,7 @@
         <hftl:entityPopup id="scriptInstancePopup" header="#{messages['scriptInstance.title']}" backingBean="#{scriptInstanceBean}"
             searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
             selection="#{webHookBean.entity.scriptInstance}" column2Label="#{messages['BusinessEntity.description']}" column2="description"
-            updateField=":webHookFormId:scriptInstanceSelectId">
+            updateField=":webHookFormId:scriptInstanceSelectId :webHookFormId:scriptInstanceSelectId_text">
         </hftl:entityPopup>
         <p:panel>
             <h:form id="crumbmenuForm">
@@ -31,13 +31,13 @@
             <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" required="true" size="60" maxlength="255"
                 autocompleteBean="#{notificationBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
             <hftl:formField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" required="true" />
-            <hftl:formField label="#{messages['entity.notification.elFilter']}" field="elFilter" textArea="true" maxlength="2000" componentWidth="50" newLine="true" />
+            <hftl:formField label="#{messages['entity.notification.elFilter']}" field="elFilter" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />
 
             <hftl:formField id="counterTemplateSelectedId" label="#{messages['counterTemplate.title']}" field="counterTemplate" valueLabelField="code" popup="true"
                 popupId="searchCounterTemplatePopup" clearButton="true" required="false" />
 
             <hftl:formField label="#{messages['entity.webHook.host']}" field="host" required="true" size="100" maxlength="255" />
-            <hftl:formField label="#{messages['entity.webHook.port']}" field="port" maxValue="65535" />
+            <hftl:formField label="#{messages['entity.webHook.port']}" field="port" maxValue="65535" spinner="false"/>
             <hftl:formField label="#{messages['entity.webHook.page']}" field="page" size="100" maxlength="255" required="true" />
             <hftl:formField label="#{messages['entity.webHook.httpMethod']}" field="httpMethod" required="true" />
             <hftl:formField label="#{messages['entity.webHook.username']}" field="username" size="40" maxlength="255" newLine="true" />
@@ -48,7 +48,7 @@
 
             <hftl:formField label="#{messages['entity.webHook.bodyEL']}" field="bodyEL" textArea="true" maxlength="2000" />
 
-            <hftl:formField id="scriptInstanceSelectId" label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance" valueLabelField="descriptionOrCode"
+            <hftl:formField id="scriptInstanceSelectId" label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance" valueLabelField="code"
                 required="false" popup="true" popupId="scriptInstancePopup" newLine="true" />
             <hftl:formField label="#{messages['entity.notification.params']}" field="params" componentWidth="100" />
 

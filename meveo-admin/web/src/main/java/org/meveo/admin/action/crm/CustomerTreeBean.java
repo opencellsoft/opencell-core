@@ -18,11 +18,14 @@
  */
 package org.meveo.admin.action.crm;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpSession;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.commons.utils.StringUtils;
@@ -45,6 +48,7 @@ import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+import org.slf4j.Logger;
 
 /**
  * Standard backing bean for {@link AccountEntity} that allows build accounts hierarchy for richfaces tree component. In this Bean you can set icons and links used in tree.
@@ -57,6 +61,23 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
     private static final String ACCESS_KEY = "access";
 
     private static final long serialVersionUID = 1L;
+    
+    // This is a list of available FontAwesome currency symbols
+    private static final List<String> CURRENCIES = new ArrayList<String>() {
+		private static final long serialVersionUID = 3959294292718669361L;
+
+		{
+			add("GPB");
+			add("KRW");
+			add("INR");
+			add("EUR");
+			add("TRY");
+			add("RUB");
+			add("JPY");
+			add("ILS");
+			add("USD");
+		}
+	};
 
     /**
      * Injected @{link AccountEntity} service. Extends {@link PersistenceService}.
@@ -85,6 +106,9 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
     @Inject
     private AccessService accessService;
+    
+    @Inject
+    private Logger log;
 
     private TreeNode accountsHierarchy;
 
@@ -93,6 +117,29 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
     private Class selectedEntityClass;
 
     // private TreeNodeData selectedNode;
+    
+    public boolean isVisible() {
+    	HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+    	Boolean visible = (Boolean) session.getAttribute("hierarchyPanel:visible");
+    	if(visible == null){
+    		visible = false;
+    		session.setAttribute("hierarchyPanel:visible", visible);
+    	}
+		return visible;
+	}
+    
+    public void toggleVisibility(){
+    	HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+    	Boolean visible = (Boolean) session.getAttribute("hierarchyPanel:visible");
+    	if(visible == null){
+    		visible = false;
+    		session.setAttribute("hierarchyPanel:visible", visible);
+    	} else {
+    		visible = !visible;
+    		session.setAttribute("hierarchyPanel:visible", visible);
+    	}
+    	log.debug("Visibility set to: " + visible);
+    }
 
     /**
      * Override get instance method because AccountEntity is abstract class and can not be instantiated in {@link BaseBean}.
@@ -200,7 +247,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
         if (entity instanceof Customer) {
             Customer customer = (Customer) entity;
-            TreeNodeData treeNodeData = new TreeNodeData(customer.getId(), customer.getCode(), null, null, false, Customer.ACCOUNT_TYPE, selectedEntityClass == Customer.class
+            TreeNodeData treeNodeData = new TreeNodeData(customer.getId(), customer.getDescriptionOrCode(), null, null, false, Customer.ACCOUNT_TYPE, selectedEntityClass == Customer.class
                     && customer.getId().equals(selectedEntityId));
             TreeNode treeNode = new DefaultTreeNode(Customer.ACCOUNT_TYPE, treeNodeData, parent);
             if (treeNodeData.isSelected()) {
@@ -220,8 +267,9 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
             CustomerAccount customerAccount = (CustomerAccount) entity;
             String firstName = (customerAccount.getName() != null && customerAccount.getName().getFirstName() != null) ? customerAccount.getName().getFirstName() : "";
             String lastName = (customerAccount.getName() != null && customerAccount.getName().getLastName() != null) ? customerAccount.getName().getLastName() : "";
-            TreeNodeData treeNodeData = new TreeNodeData(customerAccount.getId(), customerAccount.getCode(), firstName, lastName, false, CustomerAccount.ACCOUNT_TYPE,
+            TreeNodeData treeNodeData = new TreeNodeData(customerAccount.getId(), customerAccount.getDescriptionOrCode(), firstName, lastName, false, CustomerAccount.ACCOUNT_TYPE,
                 selectedEntityClass == CustomerAccount.class && customerAccount.getId().equals(selectedEntityId));
+            treeNodeData.setCurrency(customerAccount.getTradingCurrency().getCurrencyCode());
             TreeNode treeNode = new DefaultTreeNode(CustomerAccount.ACCOUNT_TYPE, treeNodeData, parent);
             if (treeNodeData.isSelected()) {
                 expandTreeNode(treeNode);
@@ -241,7 +289,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
             String firstName = (billingAccount.getName() != null && billingAccount.getName().getFirstName() != null) ? billingAccount.getName().getFirstName() : "";
             String lastName = (billingAccount.getName() != null && billingAccount.getName().getLastName() != null) ? billingAccount.getName().getLastName() : "";
-            TreeNodeData treeNodeData = new TreeNodeData(billingAccount.getId(), billingAccount.getCode(), firstName, lastName, false, BillingAccount.ACCOUNT_TYPE,
+            TreeNodeData treeNodeData = new TreeNodeData(billingAccount.getId(), billingAccount.getDescriptionOrCode(), firstName, lastName, false, BillingAccount.ACCOUNT_TYPE,
                 selectedEntityClass == BillingAccount.class && billingAccount.getId().equals(selectedEntityId));
             TreeNode treeNode = new DefaultTreeNode(BillingAccount.ACCOUNT_TYPE, treeNodeData, parent);
             if (treeNodeData.isSelected()) {
@@ -261,7 +309,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
             UserAccount userAccount = (UserAccount) entity;
             String firstName = (userAccount.getName() != null && userAccount.getName().getFirstName() != null) ? userAccount.getName().getFirstName() : "";
             String lastName = (userAccount.getName() != null && userAccount.getName().getLastName() != null) ? userAccount.getName().getLastName() : "";
-            TreeNodeData treeNodeData = new TreeNodeData(userAccount.getId(), userAccount.getCode(), firstName, lastName, false, UserAccount.ACCOUNT_TYPE,
+            TreeNodeData treeNodeData = new TreeNodeData(userAccount.getId(), userAccount.getDescriptionOrCode(), firstName, lastName, false, UserAccount.ACCOUNT_TYPE,
                 selectedEntityClass == UserAccount.class && userAccount.getId().equals(selectedEntityId));
             TreeNode treeNode = new DefaultTreeNode(UserAccount.ACCOUNT_TYPE, treeNodeData, parent);
             if (treeNodeData.isSelected()) {
@@ -281,7 +329,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
         } else if (entity instanceof Subscription) {
             Subscription subscription = (Subscription) entity;
-            TreeNodeData treeNodeData = new TreeNodeData(subscription.getId(), subscription.getCode(), null, null, false, SUBSCRIPTION_KEY,
+            TreeNodeData treeNodeData = new TreeNodeData(subscription.getId(), subscription.getDescriptionOrCode(), null, null, false, SUBSCRIPTION_KEY,
                 selectedEntityClass == Subscription.class && subscription.getId().equals(selectedEntityId));
             TreeNode treeNode = new DefaultTreeNode(SUBSCRIPTION_KEY, treeNodeData, parent);
             if (treeNodeData.isSelected()) {
@@ -362,6 +410,9 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
         private boolean showName;
         private String type;
         private boolean selected;
+        // currency is an optional property, initialize it with the setter
+        private String currency;
+		
 
         public TreeNodeData(Long id, String code, String firstName, String lastName, boolean showName, String type, boolean selected) {
             super();
@@ -393,6 +444,14 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
         public String getType() {
             return type;
         }
+        
+        public String getCurrency() {
+			return currency;
+		}
+        
+        public void setCurrency(String currency) {
+			this.currency = currency;
+		}
 
         public String getFirstAndLastName() {
             String result = lastName;
@@ -400,6 +459,15 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
                 result = firstName + " " + lastName;
             }
             return result;
+        }
+        
+        public String getCurrencyIconClass(){
+    		String iconClass = "fa fa-";
+        	if(CustomerTreeBean.CURRENCIES.contains(currency)){
+        		return iconClass + currency.toLowerCase();
+        	}
+    		return iconClass + "usd";
+        	
         }
 
         @Override

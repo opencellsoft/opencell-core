@@ -56,7 +56,7 @@
 			searchField2="name" column1Label="#{messages['userAccount.code']}"
 			column1="code" column2Label="#{messages['userAccount.name']}"
 			column2="name" selection="#{subscriptionBean.entity.userAccount}"
-			updateField=":subscriptionTab:subscriptionFormId:informationTab:userSelectId">
+			updateField=":subscriptionTab:subscriptionFormId:informationTab:userSelectId :subscriptionTab:subscriptionFormId:informationTab:userSelectId_text">
 		</hftl:entityPopup>
 
 <!-- 		<hftl:entityPopup id="offerPopup" -->
@@ -98,7 +98,7 @@
 			column2Label="#{messages['chargeTemplate.description']}"
 			column2="description"
 			selection="#{subscriptionBean.recurringChargeInstance.chargeTemplate}"
-			updateField=":recurringChgForm1:RCchargeTemplateSelectId">
+			updateField=":recurringChgForm1:RCchargeTemplateSelectId :recurringChgForm1:RCchargeTemplateSelectId_text recurringChgForm1:description_txt">
 		</hftl:entityPopup>
 		<p:panel>
 			<h:form id="crumbmenuForm">
@@ -140,6 +140,42 @@
 								update=":subscriptionTab:headerInfo1 :subscriptionTab:ST_results2_form:instantiatePanelActions :#{p:component('srvInstansFrm')} :#{p:component('operationFrm')} :subscriptionTab:headerInfo1:messages :subscriptionTab:ST_results2_form terminationMessages" />
 							<p:commandButton immediate="true"
 								onclick="PF('dlg_serviceTerminationPopup').hide()" type="button"
+								value="#{messages['management.close']}" />
+						</ui:define>
+
+				</hftl:formPanel>
+			</p:outputPanel>
+		</p:dialog>
+
+<p:dialog id="subscriptionTerminationPopup"
+			header="#{messages['subscriptionTerminationPopup.title']}"
+			widgetVar="dlg_subscriptionTerminationPopup"  modal="true" appendTo="@(body)" closeOnEscape="true" width="400" >
+			<p:outputPanel id="subscriptionTerminationPanel">
+                <p:messages id="subTerminationMessages"/>
+				<hftl:formPanel edit="true"
+					backingBean="#{subscriptionBean}" 
+					styleClass="formPanel" formId="subForm"
+					showFormButtons="false" useCustomIdParam="true">
+
+						<hftl:formField label="#{messages['businessEntity.code']}"
+							field="code" size="50" edit="false" /> 
+						<hftl:formField
+							label="#{messages['serviceInstance.terminationDate']}"
+							field="terminationDate" required="true" edit="true"  pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"/>
+							
+						<hftl:formField label="Motifs "
+							field="subscriptionTerminationReason" valueLabelField="descriptionOrCode"
+							required="true"  edit="true"
+							listElements="#{subscriptionTerminationReasonService.listReasons()}" />
+
+                        <ui:param name="buttons" value="true"/>
+                        <ui:define name="buttons">                        
+							<p:commandButton action="#{subscriptionBean.terminateSubscription()}"
+								value="#{messages['button.terminateButton']}"
+								oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_subscriptionTerminationPopup').hide()"
+								update=":subscriptionTab:subscriptionInfosTab"/>
+							<p:commandButton immediate="true"
+								onclick="PF('dlg_subscriptionTerminationPopup').hide()" type="button"
 								value="#{messages['management.close']}" />
 						</ui:define>
 
@@ -292,7 +328,7 @@
 							</h:panelGroup>
 						</h:form>
 					</p:tab>
-					<p:tab title="#{messages['subscription.tab.subscription']}">
+					<p:tab title="#{messages['subscription.tab.subscription']}" id="subscriptionInfosTab">
 						<hftl:formPanel showDeleteButton="false" formId="subscriptionFormId"
 							 ajaxSubmit="true"
 							submitPartialProcess=":subscriptionTab:subscriptionFormId:informationTab"
@@ -333,6 +369,13 @@
 									<hftl:customFields backingBean="#{subscriptionBean}" messagesId=":subscriptionTab:subscriptionFormId:messages" />
 
 								</p:tabView>
+								<ui:param name="buttons" value="true" />
+				                <ui:define name="buttons">
+								<p:commandButton value="#{messages['button.terminateButton']}" id="subTerminationButton"
+										onclick="PF('dlg_subscriptionTerminationPopup').show();"
+										type="button"
+										disabled="#{not empty subscriptionBean.entity.terminationDate}" /> 
+										</ui:define>
 						</hftl:formPanel>
 					</p:tab>
 					<p:tab id="oneShotChgTab"
@@ -474,7 +517,7 @@
 																	<hftl:formField id="oneshot_description"
 																		label="#{messages['businessEntity.description']}"
 																		field="description" size="50" maxlength="50"
-																		textArea="true" rows="4" disabled="true" edit="true" />
+																		textArea="true" rows="1" disabled="true" edit="true" />
 																	<hftl:formField
 																		label="#{messages['oneShotChargeInstance.chargeDate']}"
 																		required="true" field="chargeDate" edit="true" />

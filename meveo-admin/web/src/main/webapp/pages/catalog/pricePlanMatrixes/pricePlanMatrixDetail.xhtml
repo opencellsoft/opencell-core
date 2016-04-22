@@ -39,7 +39,7 @@
 			column1Label="#{messages['charge.description']}" column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" eventBackingBean="#{pricePlanMatrixBean}"
-			updateField=":formPricePlan:tabView:chargeSelectId,:formPricePlan:tabView:pricePlanCode">
+			updateField=":formPricePlan:tabView:chargeSelectId :formPricePlan:tabView:chargeSelectId_text :formPricePlan:tabView:pricePlanCode">
 		</hftl:entityPopup>
 
 		<!-- 		<hftl:entityPopup id="pricPlanMatCurrencyPopup" -->
@@ -103,10 +103,15 @@
 					<p:tab title="#{messages['commons.tab.information']}">
 						<hftl:formField label="#{messages['BusinessEntity.code']}"
 							field="code" required="true" id="pricePlanCode" />
-						<hftl:formField id="chargeSelectId" required="true"
-							label="#{messages['pricePlanMatrix.eventCode']}"
-							field="eventCode" popup="true" popupId="pricPlanMatChargePopup"
-							disabled="true" />
+<!-- 						<hftl:formField id="chargeSelectId" required="true" -->
+<!-- 							label="#{messages['pricePlanMatrix.eventCode']}" -->
+<!-- 							field="eventCode" popup="true" popupId="pricPlanMatChargePopup" -->
+<!-- 							disabled="true" /> -->
+							
+						<hftl:formField id="chargeSelectId"
+    							label="#{messages['pricePlanMatrix.eventCode']}"
+    							field="eventCode" valueLabelField="code" required="true"
+    							popup="true" popupId="pricPlanMatChargePopup" /> 
 
 						<hftl:formLanguageFields entity="#{pricePlanMatrixBean.entity}"
 							backingBean="#{pricePlanMatrixBean}" multiLang="true"
@@ -166,7 +171,7 @@
 							label="#{messages['pricePlanMatrix.criteria3Value']}"
 							field="criteria3Value" />
 						<hftl:formField label="#{messages['pricePlanMatrix.criteriaEL']}"
-							field="criteriaEL" textArea="true" maxlength="2000" />
+							field="criteriaEL" textArea="true" rows="1" maxlength="2000" />
 
 						<hftl:formField
 							label="#{messages['pricePlanMatrix.amountWithoutTax']}"
@@ -174,7 +179,7 @@
 							required="true" newLine="true" />
 						<hftl:formField
 							label="#{messages['pricePlanMatrix.amountWithoutTax']} EL"
-							field="amountWithoutTaxEL" textArea="true" maxlength="2000" />
+							field="amountWithoutTaxEL" textArea="true" rows="1" maxlength="2000" />
 
 						<hftl:formField
 							label="#{messages['pricePlanMatrix.amountWithTax']}"
@@ -184,7 +189,7 @@
 							required="true" />
 						<hftl:formField
 							label="#{messages['pricePlanMatrix.amountWithTax']} EL"
-							field="amountWithTaxEL" textArea="true" maxlength="2000"
+							field="amountWithTaxEL" textArea="true" rows="1" maxlength="2000"
 							rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}" />
 
 						<hftl:formField

@@ -148,7 +148,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		}
 
 		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
-		billingAccount.setStatusDate(activationDate);
 		return update(billingAccount, updater);
 	}
 

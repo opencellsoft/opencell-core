@@ -23,13 +23,17 @@ public class BomOfferDto extends BaseDto {
 	@XmlAttribute(required = true)
 	private String bomCode;
 
+	@XmlAttribute
+	private String description;
+
 	private CustomFieldsDto offerCustomFields;
+	private CustomFieldsDto serviceCustomFields;
 
 	private String prefix;
 
 	@XmlElementWrapper(name = "serviceCodes")
-	@XmlElement(name = "service")
-	private List<String> serviceCodes;
+	@XmlElement(name = "serviceCode")
+	private List<ServiceCodeDto> serviceCodes;
 
 	public String getBomCode() {
 		return bomCode;
@@ -57,19 +61,32 @@ public class BomOfferDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "BomOfferDto [bomCode=" + bomCode + ", offerCustomFields=" + offerCustomFields + ", prefix=" + prefix + ", serviceCodes=" + serviceCodes + "]";
+		return "BomOfferDto [bomCode=" + bomCode + ", description=" + description + ", offerCustomFields=" + offerCustomFields + ", serviceCustomFields=" + serviceCustomFields
+				+ ", prefix=" + prefix + ", serviceCodes=" + serviceCodes + "]";
 	}
 
-	public List<String> getServiceCodes() {
+	public CustomFieldsDto getServiceCustomFields() {
+		return serviceCustomFields;
+	}
+
+	public void setServiceCustomFields(CustomFieldsDto serviceCustomFields) {
+		this.serviceCustomFields = serviceCustomFields;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public List<ServiceCodeDto> getServiceCodes() {
 		return serviceCodes;
 	}
 
-	public void setServiceCodes(List<String> serviceCodes) {
+	public void setServiceCodes(List<ServiceCodeDto> serviceCodes) {
 		this.serviceCodes = serviceCodes;
 	}
 
-	// private String bomVersion;
-	// private String serviceCodePrefix;
-	// private List<String> servicesToActivate;
-	// private Map<String, CustomFieldsDto> serviceCFVs;
 }

@@ -20,7 +20,7 @@ public class TerminationReasonDto implements Serializable {
 
     @XmlAttribute(required = true)
     private String code;
-
+    
     @XmlAttribute
     private String description;
 
@@ -49,7 +49,7 @@ public class TerminationReasonDto implements Serializable {
     public void setCode(String code) {
         this.code = code;
     }
-
+    
     public String getDescription() {
         return description;
     }

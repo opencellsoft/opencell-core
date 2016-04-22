@@ -32,9 +32,8 @@ public class WebHook extends Notification {
     private String host;
 
     @Column(name = "HTTP_PORT")
-    @NotNull
     @Max(65535)
-    private int port;
+    private Integer port;
 
     @Column(name = "HTTP_PAGE", length = 255)
     @NotNull
@@ -80,11 +79,11 @@ public class WebHook extends Notification {
         this.host = host;
     }
 
-    public int getPort() {
+    public Integer getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(Integer port) {
         this.port = port;
     }
 

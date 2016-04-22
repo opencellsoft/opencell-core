@@ -13,7 +13,7 @@
 
 		<hftl:entityPopup id="searchCalendarPopup1"
 			header="#{messages['calendar.search']}" backingBean="#{calendarBean}"
-			updateField=":formId:joinCalendar1"
+			updateField=":formId:joinCalendar1 :formId:joinCalendar1_text"
 			selection="#{calendarBean.entity.joinCalendar1}"
 			searchField1Label="#{messages['calendar.name']}" searchField1="code"
 			searchField2Label="#{messages['BusinessEntity.description']}"
@@ -25,7 +25,7 @@
 
 		<hftl:entityPopup id="searchCalendarPopup2"
 			header="#{messages['calendar.search']}" backingBean="#{calendarBean}"
-			updateField=":formId:joinCalendar2"
+			updateField=":formId:joinCalendar2 :formId:joinCalendar2_text"
 			selection="#{calendarBean.entity.joinCalendar2}"
 			searchField1Label="#{messages['calendar.name']}" searchField1="code"
 			searchField2Label="#{messages['BusinessEntity.description']}"

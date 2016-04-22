@@ -9,7 +9,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -52,9 +51,6 @@ public class UserApi extends BaseApi {
         if (StringUtils.isBlank(postData.getRole())) {
             missingParameters.add("role");
         }
-        if (StringUtils.isBlank(postData.getLastName())) {
-            missingParameters.add("lastName");
-        }
 
         handleMissingParameters();
 
@@ -77,11 +73,12 @@ public class UserApi extends BaseApi {
 
         User user = new User();
         user.setUserName(postData.getUsername().toUpperCase());
+        user.setEmail((postData.getEmail()));
         Name name = new Name();
         name.setLastName(postData.getLastName());
         name.setFirstName(postData.getFirstName());
         user.setName(name);
-        user.setPassword(Sha1Encrypt.encodePassword(postData.getPassword()));
+        user.setPassword(postData.getPassword());
         user.setLastPasswordModification(new Date());
         user.setProvider(provider);
 
@@ -97,14 +94,14 @@ public class UserApi extends BaseApi {
         if (StringUtils.isBlank(postData.getUsername())) {
             missingParameters.add("username");
         }
+        if (StringUtils.isBlank(postData.getEmail())) {
+            missingParameters.add("email");
+        }
         if (StringUtils.isBlank(postData.getProvider())) {
             missingParameters.add("provider");
         }
         if (StringUtils.isBlank(postData.getRole())) {
             missingParameters.add("role");
-        }
-        if (StringUtils.isBlank(postData.getLastName())) {
-            missingParameters.add("lastName");
         }
 
         handleMissingParameters();
@@ -129,6 +126,8 @@ public class UserApi extends BaseApi {
         }
 
         user.setUserName(postData.getUsername());
+        user.setEmail((postData.getEmail()));
+        user.setNewPassword(postData.getPassword());
         Name name = new Name();
         name.setLastName(postData.getLastName());
         name.setFirstName(postData.getFirstName());

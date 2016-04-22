@@ -105,7 +105,11 @@ public class OfferTemplateApi extends BaseApi {
 				}
 
 				OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
-				offerServiceTemplate.setMandatory(serviceTemplateDto.isMandatory());
+				if (offerServiceTemplateDto.getMandatory() == null) {
+					offerServiceTemplate.setMandatory(serviceTemplateDto.isMandatory());
+				} else {
+					offerServiceTemplate.setMandatory(offerServiceTemplateDto.getMandatory());
+				}
 				offerServiceTemplate.setOfferTemplate(offerTemplate);
 				offerServiceTemplate.setServiceTemplate(serviceTemplate);
 				offerServiceTemplate.setProvider(currentUser.getProvider());
@@ -260,7 +264,11 @@ public class OfferTemplateApi extends BaseApi {
 						}
 
 						OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
-						offerServiceTemplate.setMandatory(serviceTemplateDto.isMandatory());
+						if (offerServiceTemplateDto.getMandatory() == null) {
+							offerServiceTemplate.setMandatory(serviceTemplateDto.isMandatory());
+						} else {
+							offerServiceTemplate.setMandatory(offerServiceTemplateDto.getMandatory());
+						}
 						offerServiceTemplate.setOfferTemplate(offerTemplate);
 						offerServiceTemplate.setServiceTemplate(serviceTemplate);
 						offerServiceTemplate.setProvider(currentUser.getProvider());
@@ -298,7 +306,11 @@ public class OfferTemplateApi extends BaseApi {
 					}
 
 					OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
-					offerServiceTemplate.setMandatory(serviceTemplateDto.isMandatory());
+					if (offerServiceTemplateDto.getMandatory() == null) {
+						offerServiceTemplate.setMandatory(serviceTemplateDto.isMandatory());
+					} else {
+						offerServiceTemplate.setMandatory(offerServiceTemplateDto.getMandatory());
+					}
 					offerServiceTemplate.setOfferTemplate(offerTemplate);
 					offerServiceTemplate.setServiceTemplate(serviceTemplate);
 					offerServiceTemplate.setProvider(currentUser.getProvider());

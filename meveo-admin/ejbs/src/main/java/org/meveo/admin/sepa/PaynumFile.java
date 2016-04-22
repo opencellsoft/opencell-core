@@ -48,6 +48,7 @@ public class PaynumFile {
 	
 	public String getDDFileName(DDRequestLOT ddRequestLot) throws BusinessException {
 		String fileName = null;
+<<<<<<< HEAD
 		if(DDRequestFileFormatEnum.PAYNUM.name().equals( ddRequestLot.getFileFormat().name())){
 			String codeCreancier_paramKey = "paynum.codeCreancier";
 			String codeCreancier = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(codeCreancier_paramKey, null,
@@ -62,6 +63,16 @@ public class PaynumFile {
 			fileName = fileName + "_" + DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd") + ArConfig.getDDRequestFileNameExtension();
 		}
 
+=======
+		
+		String codeCreancier_paramKey = "paynum.codeCreancier";
+		String codeCreancier = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(codeCreancier_paramKey, null,
+				ddRequestLot.getProvider(), true, ddRequestLot.getAuditable().getCreator());			
+		fileName =  DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd")+"_"+(ddRequestLot.getInvoicesNumber() - ddRequestLot.getRejectedInvoices() )+
+		"_"+(ddRequestLot.getInvoicesAmount().setScale((ddRequestLot.getProvider().getRounding()==null?2:ddRequestLot.getProvider().getRounding()), RoundingMode.HALF_UP).multiply(new BigDecimal(100)).longValue())+
+		"_ppf_factures_"+codeCreancier+".csv";	
+			
+>>>>>>> integration
 		String outputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo");
 
 		outputDir = outputDir + File.separator + ddRequestLot.getProvider().getCode() + File.separator + ArConfig.getDDRequestOutputDirectory();

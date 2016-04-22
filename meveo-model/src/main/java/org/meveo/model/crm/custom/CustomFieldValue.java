@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -338,12 +339,12 @@ public class CustomFieldValue implements Serializable {
 
         return result;
     }
-    
+
     public String toXmlText(SimpleDateFormat sdf) {
         String result = "";
 
         if (stringValue != null) {
-            result += stringValue ;
+            result += stringValue;
         } else if (dateValue != null) {
             result += sdf.format(dateValue);
         } else if (longValue != null) {
@@ -647,7 +648,7 @@ public class CustomFieldValue implements Serializable {
             // Handle map that stores matrix type values
             if (mapValue.containsKey(MAP_KEY)) {
 
-                Map<String, Object> mapCopy = new HashMap<String, Object>();
+                Map<String, Object> mapCopy = new LinkedHashMap<String, Object>();
                 mapCopy.putAll(mapValue);
                 mapCopy.remove(MAP_KEY);
 
@@ -758,7 +759,7 @@ public class CustomFieldValue implements Serializable {
             } else if (Double.class.getSimpleName().equals(subType) || BigDecimal.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<List<Double>>() {
                 }.getType();
-            } else if (Long.class.getSimpleName().equals(subType)) {
+            } else if (Long.class.getSimpleName().equals(subType) || Integer.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<List<Long>>() {
                 }.getType();
             } else if (EntityReferenceWrapper.class.getSimpleName().equals(subType)) {
@@ -776,24 +777,24 @@ public class CustomFieldValue implements Serializable {
         } else if ("map".equals(type)) {
 
             // Type defaults to String
-            Type itemType = new TypeToken<Map<String, String>>() {
+            Type itemType = new TypeToken<LinkedHashMap<String, String>>() {
             }.getType();
 
             // Determine an appropriate type
             if (Date.class.getSimpleName().equals(subType)) {
-                itemType = new TypeToken<Map<String, Date>>() {
+                itemType = new TypeToken<LinkedHashMap<String, Date>>() {
                 }.getType();
             } else if (Double.class.getSimpleName().equals(subType) || BigDecimal.class.getSimpleName().equals(subType)) {
-                itemType = new TypeToken<Map<String, Double>>() {
+                itemType = new TypeToken<LinkedHashMap<String, Double>>() {
                 }.getType();
-            } else if (Long.class.getSimpleName().equals(subType)) {
-                itemType = new TypeToken<Map<String, Long>>() {
+            } else if (Long.class.getSimpleName().equals(subType) || Integer.class.getSimpleName().equals(subType)) {
+                itemType = new TypeToken<LinkedHashMap<String, Long>>() {
                 }.getType();
             } else if (EntityReferenceWrapper.class.getSimpleName().equals(subType)) {
-                itemType = new TypeToken<Map<String, EntityReferenceWrapper>>() {
+                itemType = new TypeToken<LinkedHashMap<String, EntityReferenceWrapper>>() {
                 }.getType();
             } else if (ChildEntityValueWrapper.class.getSimpleName().equals(subType)) {
-                itemType = new TypeToken<List<ChildEntityValueWrapper>>() {
+                itemType = new TypeToken<LinkedHashMap<String, ChildEntityValueWrapper>>() {
                 }.getType();
             }
 
@@ -804,24 +805,24 @@ public class CustomFieldValue implements Serializable {
         } else if ("matrix".equals(type)) {
 
             // Type defaults to String
-            Type itemType = new TypeToken<Map<String, String>>() {
+            Type itemType = new TypeToken<LinkedHashMap<String, String>>() {
             }.getType();
 
             // Determine an appropriate type
             if (Date.class.getSimpleName().equals(subType)) {
-                itemType = new TypeToken<Map<String, Date>>() {
+                itemType = new TypeToken<LinkedHashMap<String, Date>>() {
                 }.getType();
             } else if (Double.class.getSimpleName().equals(subType) || BigDecimal.class.getSimpleName().equals(subType)) {
-                itemType = new TypeToken<Map<String, Double>>() {
+                itemType = new TypeToken<LinkedHashMap<String, Double>>() {
                 }.getType();
-            } else if (Long.class.getSimpleName().equals(subType)) {
-                itemType = new TypeToken<Map<String, Long>>() {
+            } else if (Long.class.getSimpleName().equals(subType) || Integer.class.getSimpleName().equals(subType)) {
+                itemType = new TypeToken<LinkedHashMap<String, Long>>() {
                 }.getType();
             } else if (EntityReferenceWrapper.class.getSimpleName().equals(subType)) {
-                itemType = new TypeToken<Map<String, EntityReferenceWrapper>>() {
+                itemType = new TypeToken<LinkedHashMap<String, EntityReferenceWrapper>>() {
                 }.getType();
             } else if (ChildEntityValueWrapper.class.getSimpleName().equals(subType)) {
-                itemType = new TypeToken<List<ChildEntityValueWrapper>>() {
+                itemType = new TypeToken<LinkedHashMap<String, ChildEntityValueWrapper>>() {
                 }.getType();
             }
 
@@ -1049,7 +1050,7 @@ public class CustomFieldValue implements Serializable {
             // Populate customFieldValue.mapValue from mapValuesForGUI field
         } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
 
-            Map<String, Object> mapValue = new HashMap<String, Object>();
+            Map<String, Object> mapValue = new LinkedHashMap<String, Object>();
 
             for (Map<String, Object> listItem : this.getMapValuesForGUI()) {
                 if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
@@ -1067,7 +1068,7 @@ public class CustomFieldValue implements Serializable {
             // Populate customFieldValue.mapValue from matrixValuesForGUI field
         } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
 
-            Map<String, Object> mapValue = new HashMap<String, Object>();
+            Map<String, Object> mapValue = new LinkedHashMap<String, Object>();
 
             List<String> columnKeys = new ArrayList<String>();
             for (CustomFieldMatrixColumn column : cft.getMatrixColumnsSorted()) {
@@ -1137,7 +1138,7 @@ public class CustomFieldValue implements Serializable {
      * @param toSerialize whether complex values should be serialized
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void setValue(Object value, boolean toSerialize) {
+    public void setValue(Object value, boolean toSerialize) {
 
         if (value instanceof Date) {
             dateValue = (Date) value;
