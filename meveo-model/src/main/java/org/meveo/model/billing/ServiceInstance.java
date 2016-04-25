@@ -110,7 +110,7 @@ public class ServiceInstance extends BusinessCFEntity {
     private List<UsageChargeInstance> usageChargeInstances = new ArrayList<UsageChargeInstance>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SUB_TERMIN_REASON_ID", nullable = true)
+    @JoinColumn(name = "SUB_TERMIN_REASON_ID")
     private SubscriptionTerminationReason subscriptionTerminationReason;
 
     @Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)

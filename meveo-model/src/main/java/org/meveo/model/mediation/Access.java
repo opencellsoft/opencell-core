@@ -33,6 +33,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
@@ -65,14 +67,17 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     @Column(name = "END_DATE")
     private Date endDate;
 
-    @Column(name = "ACCES_USER_ID")
+    @Column(name = "ACCES_USER_ID", length = 255)
+    @Size(max = 255)
     private String accessUserId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SUBSCRIPTION_ID")
     private Subscription subscription;
 
-    @Column(name = "UUID", nullable = false, updatable = false, length = 50)
+    @Column(name = "UUID", nullable = false, updatable = false, length = 60)
+    @Size(max = 60)
+    @NotNull
     private String uuid = UUID.randomUUID().toString();
 
     public Date getStartDate() {

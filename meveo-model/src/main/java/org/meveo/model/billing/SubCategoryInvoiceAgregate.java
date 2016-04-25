@@ -35,6 +35,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
 @Entity
 @DiscriminatorValue("F")
@@ -62,9 +63,11 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	private List<RatedTransaction> ratedtransactions = new ArrayList<RatedTransaction>();
 
 	@Column(name = "DISCOUNT_PLAN_CODE", length = 50)
+	@Size(max = 50)
 	private String discountPlanCode;
 
 	@Column(name = "DISCOUNT_PLAN_ITEM_CODE", length = 50)
+    @Size(max = 50)
 	private String discountPlanItemCode;
 
 	@Column(name = "DISCOUNT_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)

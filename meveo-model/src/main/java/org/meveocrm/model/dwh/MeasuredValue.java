@@ -20,7 +20,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessEntity;
 
 @Entity
 @Table(name = "DWH_MEASURED_VALUE")
@@ -49,15 +48,19 @@ public class MeasuredValue extends BaseEntity {
 	private Date date;
 
 	@Column(name = "DIMENSION_1", length = 255)
+    @Size(max = 255)
 	private String dimension1;
 
 	@Column(name = "DIMENSION_2", length = 255)
+    @Size(max = 255)
 	private String dimension2;
 
 	@Column(name = "DIMENSION_3", length = 255)
+    @Size(max = 255)
 	private String dimension3;
 
 	@Column(name = "DIMENSION_4", length = 255)
+    @Size(max = 255)
 	private String dimension4;
 
 	@Column(name = "VALUE", precision = NB_PRECISION, scale = NB_DECIMALS)

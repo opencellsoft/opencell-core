@@ -29,19 +29,19 @@ public class BankCoordinates implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "BANK_CODE", nullable = true, length = 5)
+	@Column(name = "BANK_CODE", length = 5)
 	@Size(max = 5)
 	private String bankCode;
 
-	@Column(name = "BRANCH_CODE", nullable = true, length = 5)
+	@Column(name = "BRANCH_CODE", length = 5)
 	@Size(max = 5)
 	private String branchCode;
 
-	@Column(name = "ACCOUNT_NUMBER", nullable = true, length = 11)
+	@Column(name = "ACCOUNT_NUMBER", length = 11)
 	@Size(max = 11)
 	private String accountNumber;
 
-	@Column(name = "HASH_KEY", nullable = true, length = 2)
+	@Column(name = "HASH_KEY", length = 2)
 	@Size(max = 2)
 	private String key;
 

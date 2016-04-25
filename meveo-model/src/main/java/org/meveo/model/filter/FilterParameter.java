@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 
@@ -32,6 +33,7 @@ public class FilterParameter extends BusinessEntity {
 	public Filter filter;
 
 	@Column(name = "DEFAULT_VALUE", length = 50)
+	@Size(max = 50)
 	private String defaultValue;
 
 	@Column(name = "VALUE_REQUIRED")
@@ -42,6 +44,7 @@ public class FilterParameter extends BusinessEntity {
 	private FilterParameterTypeEnum fieldType;
 
 	@Column(name = "ENTITY_CLAZZ", length = 255)
+    @Size(max = 255)
 	private String entityClazz;
 
 	@ElementCollection(fetch = FetchType.EAGER)

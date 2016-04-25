@@ -21,6 +21,7 @@ package org.meveo.model.communication.email;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.communication.MessageSenderConfig;
 
@@ -30,25 +31,30 @@ public class EmailSenderConfig extends MessageSenderConfig {
 
 	private static final long serialVersionUID = -7349972726209816384L;
 
-	@Column(name = "SMTP_HOST")
+	@Column(name = "SMTP_HOST", length = 255)
+	@Size(max = 255)
 	private String SMTPHost;
 
 	@Column(name = "SMTP_PORT")
 	private Integer SMTPPort;
 
 	@Column(name = "LOGIN", length = 50)
+    @Size(max = 50)
 	private String login;
 
 	@Column(name = "PASSWORD", length = 50)
+    @Size(max = 50)
 	private String password;
 
 	@Column(name = "USE_SSL")
 	private Boolean useSSL;
 
-	@Column(name = "DEFAULT_FROM_EMAIL")
+	@Column(name = "DEFAULT_FROM_EMAIL", length = 255)
+    @Size(max = 255)
 	private String defaultFromEmail;
 
-	@Column(name = "DEFAULT_REPLY_EMAIL")
+	@Column(name = "DEFAULT_REPLY_EMAIL", length = 255)
+    @Size(max = 255)
 	private String defaultReplyEmail;
 
 	public String getSMTPHost() {

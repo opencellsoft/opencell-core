@@ -53,7 +53,9 @@ public class CustomFieldInstance extends AuditableEntity {
     @NotNull
     private String code;
 
-    @Column(name = "APPLIES_TO_UUID", nullable = false, length = 50)
+    @Column(name = "APPLIES_TO_UUID", nullable = false, length = 60)
+    @Size(max = 60)
+    @NotNull
     private String appliesToEntity;
 
     @Temporal(TemporalType.TIMESTAMP)

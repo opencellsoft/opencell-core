@@ -23,6 +23,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.facelets.FaceletContext;
 import javax.faces.view.facelets.TagConfig;
 import javax.faces.view.facelets.TagHandler;
+import javax.validation.constraints.Size;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.IEntity;
@@ -126,6 +127,13 @@ public class GetFieldInformationHandler extends TagHandler {
         FieldInformation fieldInfo = new FieldInformation();
         if (fieldClassType == String.class) {
             fieldInfo.fieldType = FieldTypeEnum.Text;
+
+            if (field.isAnnotationPresent(Size.class)) {
+                int maxLength = field.getAnnotation(Size.class).max();
+                if (maxLength>0){
+                    fieldInfo.maxLength = maxLength;
+                }
+            }
 
         } else if (fieldClassType == Boolean.class || (fieldClassType.isPrimitive() && fieldClassType.getName().equals("boolean"))) {
             fieldInfo.fieldType = FieldTypeEnum.Boolean;
@@ -251,7 +259,7 @@ public class GetFieldInformationHandler extends TagHandler {
         } else {
 
             try {
-                //log.debug("get declared field {}",fieldName);
+                // log.debug("get declared field {}",fieldName);
                 field = c.getDeclaredField(fieldName);
             } catch (NoSuchFieldException e) {
 

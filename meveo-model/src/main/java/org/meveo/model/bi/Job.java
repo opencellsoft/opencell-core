@@ -28,6 +28,7 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ProviderlessEntity;
@@ -44,6 +45,7 @@ public class Job extends ProviderlessEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "NAME", unique = true, length = 50)
+	@Size(max = 50)
 	private String name;
 
 	@Column(name = "LAST_EXECUTION_DATE")

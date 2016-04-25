@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -20,7 +22,9 @@ public class CustomEntityInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = 8281478284763353310L;
 
-    @Column(name = "CET_CODE", length = 100, nullable = false)
+    @Column(name = "CET_CODE", length = 50, nullable = false)
+    @Size(max = 50)
+    @NotNull
     public String cetCode;
 
     @Override

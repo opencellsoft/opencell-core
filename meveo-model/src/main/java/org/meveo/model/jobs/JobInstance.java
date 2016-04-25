@@ -33,6 +33,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -48,15 +50,18 @@ public class JobInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = -5517252645289726288L;
 
-    @Column(name = "JOB_TEMPLATE", nullable = false)
+    @Column(name = "JOB_TEMPLATE", nullable = false, length = 255)
+    @Size(max = 255)
+    @NotNull
     private String jobTemplate;
 
-    @Column(name = "PARAMETRES", nullable = true)
+    @Column(name = "PARAMETRES", length = 255)
+    @Size(max = 255)
     private String parametres;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "JOB_CATEGORY")
-    JobCategoryEnum jobCategoryEnum;
+    private JobCategoryEnum jobCategoryEnum;
 
     @OneToMany(mappedBy = "jobInstance", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<JobExecutionResultImpl> executionResults = new ArrayList<JobExecutionResultImpl>();

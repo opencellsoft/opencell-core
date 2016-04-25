@@ -48,6 +48,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ObservableEntity;
@@ -97,13 +98,16 @@ public class ChargeInstance extends BusinessEntity {
 	@Column(name = "AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	protected BigDecimal amountWithTax;
 
-	@Column(name = "CRITERIA_1")
+	@Column(name = "CRITERIA_1", length = 255)
+	@Size(max = 255)
 	protected String criteria1;
 
-	@Column(name = "CRITERIA_2")
+	@Column(name = "CRITERIA_2", length = 255)
+    @Size(max = 255)
 	protected String criteria2;
 
-	@Column(name = "CRITERIA_3")
+	@Column(name = "CRITERIA_3", length = 255)
+    @Size(max = 255)
 	protected String criteria3;
 
 	@OneToMany(mappedBy = "chargeInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -118,6 +122,7 @@ public class ChargeInstance extends BusinessEntity {
 	protected Subscription subscription;
 
 	@Column(name = "PR_DESCRIPTION", length = 100)
+	@Size(max = 100)
 	protected String prDescription;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -126,7 +131,7 @@ public class ChargeInstance extends BusinessEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TRADING_COUNTRY")
-	TradingCountry country;
+	private TradingCountry country;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "BILLING_CHRGINST_WALLET", joinColumns = @JoinColumn(name = "CHRG_INSTANCE_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_INSTANCE_ID"))

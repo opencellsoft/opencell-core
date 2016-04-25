@@ -12,6 +12,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ExportIdentifier;
@@ -49,13 +51,19 @@ public class Permission implements IEntity, Serializable {
     @Access(AccessType.PROPERTY)
     private Long id;
 
-    @Column(name = "RESSOURCE", nullable = false)
+    @Column(name = "RESSOURCE", nullable = false, length = 255)
+    @Size(max = 255)
+    @NotNull
     private String resource;
 
-    @Column(name = "PERMISSION", nullable = false)
+    @Column(name = "PERMISSION", nullable = false, length = 255)
+    @Size(max = 255)
+    @NotNull
     private String permission;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 255)
+    @Size(max = 255)
+    @NotNull
     private String name;
 
     public Long getId() {

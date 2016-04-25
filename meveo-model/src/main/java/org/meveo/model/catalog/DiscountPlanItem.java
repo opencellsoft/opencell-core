@@ -12,6 +12,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
@@ -32,10 +33,12 @@ public class DiscountPlanItem extends AuditableEntity {
 
 	@Column(name = "CODE", length = 60, nullable = false)
 	@Size(max = 60, min = 1)
+	@NotNull
 	private String code;
 
 	@ManyToOne
 	@JoinColumn(name = "DISCOUNT_PLAN_ID", nullable = false)
+    @NotNull
 	private DiscountPlan discountPlan;
 
 	@ManyToOne
@@ -53,6 +56,7 @@ public class DiscountPlanItem extends AuditableEntity {
 	private BigDecimal percent = new BigDecimal(0);
 
 	@Column(name = "ACCOUNTING_CODE", length = 255)
+	@Size(max = 255)
 	private String accountingCode;
 	
 	@Column(name = "EXPRESSION_EL", length = 2000)

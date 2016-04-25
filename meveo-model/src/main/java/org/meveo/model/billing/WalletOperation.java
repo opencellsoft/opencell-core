@@ -42,6 +42,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BaseEntity;
@@ -125,6 +126,7 @@ public class WalletOperation extends BusinessEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CHARGE_INSTANCE_ID",nullable=false)
+	@NotNull
 	private ChargeInstance chargeInstance;	
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -167,13 +169,16 @@ public class WalletOperation extends BusinessEntity {
 	// @JoinColumn(name = "EDR_ID")
 	// private EDR usageEdr;
 
-	@Column(name = "PARAMETER_1")
+	@Column(name = "PARAMETER_1", length = 255)
+	@Size(max = 255)
 	private String parameter1;
 
-	@Column(name = "PARAMETER_2")
+	@Column(name = "PARAMETER_2", length = 255)
+    @Size(max = 255)
 	private String parameter2;
 
-	@Column(name = "PARAMETER_3")
+	@Column(name = "PARAMETER_3", length = 255)
+    @Size(max = 255)
 	private String parameter3;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -208,9 +213,11 @@ public class WalletOperation extends BusinessEntity {
 	private WalletOperation reratedWalletOperation;
 	
 	@Column(name = "INPUT_UNIT_DESCRIPTION", length = 20)
+	@Size(max = 20)
 	private String inputUnitDescription;
 	
 	@Column(name = "RATING_UNIT_DESCRIPTION", length = 20)
+    @Size(max = 20)
 	private String ratingUnitDescription;
 	
 	@Column(name = "INPUT_QUANTITY", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)

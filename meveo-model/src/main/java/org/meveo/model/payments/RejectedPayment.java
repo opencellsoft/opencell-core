@@ -27,6 +27,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 @Entity
 @DiscriminatorValue(value = "R")
@@ -38,20 +39,24 @@ public class RejectedPayment extends AccountOperation {
     @Enumerated(EnumType.STRING)
     private RejectedType rejectedType;
 
-    @Column(name = "BANK_LOT")
+    @Column(name = "BANK_LOT", length = 255)
+    @Size(max = 255)
     private String bankLot;
 
-    @Column(name = "BANK_REFERENCE")
+    @Column(name = "BANK_REFERENCE", length = 255)
+    @Size(max = 255)
     private String bankReference;
 
     @Column(name = "REJECTED_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date rejectedDate;
 
-    @Column(name = "REJECTED_DESCRIPTION")
+    @Column(name = "REJECTED_DESCRIPTION", length = 255)
+    @Size(max = 255)
     private String rejectedDescription;
 
-    @Column(name = "REJECTED_CODE")
+    @Column(name = "REJECTED_CODE", length = 255)
+    @Size(max = 255)
     private String rejectedCode;
 
     public String getBankLot() {

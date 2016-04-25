@@ -25,6 +25,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -41,7 +42,8 @@ public class MessageVariableValue extends BusinessEntity {
 	@JoinColumn(name = "MESSAGE")
 	private Message message;
 
-	@Column(name = "VALUE")
+	@Column(name = "VALUE", length = 255)
+    @Size(max = 255)
 	private String value;
 
 	public Message getMessage() {

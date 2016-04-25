@@ -34,6 +34,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -73,6 +74,7 @@ public class Customer extends AccountEntity {
 	private Seller seller;
 
 	@Column(name = "MANDATE_IDENTIFICATION", length = 35)
+	@Size(max = 35)
 	private String mandateIdentification = "";
 
 	@Column(name = "MANDATE_DATE")

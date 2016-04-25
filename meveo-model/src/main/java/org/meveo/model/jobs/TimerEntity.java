@@ -32,6 +32,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -44,25 +46,39 @@ public class TimerEntity extends BusinessEntity{
 
 	private static final long serialVersionUID = -3764934334462355788L;
 
-	@Column(name = "SC_YEAR", nullable = false)
+	@Column(name = "SC_YEAR", nullable = false, length = 255)
+	@Size(max = 255)
+	@NotNull
 	private String year = "*";
 
-	@Column(name = "SC_MONTH", nullable = false)
+	@Column(name = "SC_MONTH", nullable = false, length = 255)
+    @Size(max = 255)
+    @NotNull
 	private String month = "*";
 
-	@Column(name = "SC_D_O_MONTH", nullable = false)
+	@Column(name = "SC_D_O_MONTH", nullable = false, length = 255)
+    @Size(max = 255)
+    @NotNull
 	private String dayOfMonth = "*";
 
-	@Column(name = "SC_D_O_WEEK", nullable = false)
+	@Column(name = "SC_D_O_WEEK", nullable = false, length = 255)
+    @Size(max = 255)
+    @NotNull
 	private String dayOfWeek = "*";
 
-	@Column(name = "SC_HOUR", nullable = false)
+	@Column(name = "SC_HOUR", nullable = false, length = 255)
+    @Size(max = 255)
+    @NotNull
 	private String hour = "*";
 
-	@Column(name = "SC_MIN", nullable = false)
+	@Column(name = "SC_MIN", nullable = false, length = 255)
+    @Size(max = 255)
+    @NotNull
 	private String minute = "0";
 
-	@Column(name = "SC_SEC", nullable = false)
+	@Column(name = "SC_SEC", nullable = false, length = 255)
+    @Size(max = 255)
+    @NotNull
 	private String second = "0";
 
 	@Temporal(TemporalType.TIMESTAMP)

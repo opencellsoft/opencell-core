@@ -55,7 +55,7 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
 
     @Enumerated(EnumType.STRING)
     @Column(name = "JOB_LAUNCHER")
-    JobLauncherEnum jobLauncherEnum;
+    private JobLauncherEnum jobLauncherEnum;
 
     @Transient
     private List<String> warnings = new ArrayList<String>();
@@ -63,7 +63,7 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
     @Transient
     private List<String> errors = new ArrayList<String>();
 
-    @Column(name = "REPORT")
+    @Column(name = "REPORT", columnDefinition="TEXT")
     private String report;
 
     public synchronized void registerSucces() {

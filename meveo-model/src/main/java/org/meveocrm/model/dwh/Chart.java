@@ -11,6 +11,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -28,29 +29,34 @@ public class Chart extends BusinessEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ROLE_ID")
-    Role role;
+    private Role role;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MSR_QTY_ID")
-    MeasurableQuantity measurableQuantity;
+    private MeasurableQuantity measurableQuantity;
 
     @Column(name = "WIDTH", length = 10)
-    String width = "500px";
+    @Size(max = 10)
+    private String width = "500px";
 
     @Column(name = "HEIGHT", length = 10)
-    String height = "300px";
+    @Size(max = 10)
+    private String height = "300px";
 
     @Column(name = "CSS_STYLE", length = 1000)
-    String style;
+    @Size(max = 1000)
+    private String style;
 
-    @Column(name = "CSS_STYLE_CLASS")
-    String styleClass;
+    @Column(name = "CSS_STYLE_CLASS", length = 255)
+    @Size(max = 255)
+    private String styleClass;
 
-    @Column(name = "EXTENDER")
-    String extender;
+    @Column(name = "EXTENDER", length = 255)
+    @Size(max = 255)
+    private String extender;
 
     @Column(name = "VISIBLE")
-    Boolean visible = false;
+    private Boolean visible = false;
 
     @Transient
     private User user;

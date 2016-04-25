@@ -6,6 +6,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "DWH_CHART_PIE")
@@ -15,32 +16,33 @@ public class PieChart extends Chart {
     private static final long serialVersionUID = -3549868233998052477L;
 
     @Column(name = "FILLED")
-    boolean filled;
+    private boolean filled;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "LEGEND_POSITION")
-    LegendPositionEnum legendPosition;
+    private LegendPositionEnum legendPosition;
 
     @Column(name = "SERIES_COLORS", length = 1000)
-    String seriesColors = "1b788f";
+    @Size(max = 1000)
+    private String seriesColors = "1b788f";
 
     @Column(name = "DIAMETER")
-    Integer diameter;
+    private Integer diameter;
 
     @Column(name = "SLICE_MARGIN")
-    int sliceMargin;
+    private int sliceMargin;
 
     @Column(name = "SHADOW")
-    boolean shadow = true;
+    private boolean shadow = true;
 
     @Column(name = "SHOW_DATA_LABELS")
-    boolean showDataLabels;
+    private boolean showDataLabels;
 
     @Column(name = "LEGEND_COLS")
-    int legendCols;
+    private int legendCols;
 
     @Column(name = "LEGEND_ROWS")
-    int legendRows;
+    private int legendRows;
 
     public boolean isFilled() {
         return filled;

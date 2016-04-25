@@ -35,7 +35,7 @@ public class WebHook extends Notification {
     @Max(65535)
     private Integer port;
 
-    @Column(name = "HTTP_PAGE", length = 255)
+    @Column(name = "HTTP_PAGE", length = 255, nullable = false)
     @NotNull
     @Size(max = 255)
     private String page;

@@ -51,7 +51,7 @@ import org.meveo.model.ObservableEntity;
 public class OfferTemplate extends BusinessCFEntity {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "NAME", nullable = false, length = 100)
+	@Column(name = "NAME", length = 100)
 	@Size(max = 100)
 	private String name;
 

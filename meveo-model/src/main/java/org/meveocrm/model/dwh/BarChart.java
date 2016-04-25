@@ -6,6 +6,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "DWH_CHART_BAR")
@@ -16,71 +18,76 @@ public class BarChart extends Chart {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name="LEGEND_POSITION")
-	LegendPositionEnum legendPosition;
+	private LegendPositionEnum legendPosition;
 	
 
 	@Column(name="BARPADDING")
-	int barPadding = 8;
+	@NotNull
+	private int barPadding = 8;
 
 	@Column(name="BARMARGIN")
-	int barMargin = 10;
+    @NotNull
+	private int barMargin = 10;
 
 	@Column(name="ORIENTATION")
-	OrientationEnum orientation;
+	private OrientationEnum orientation;
 
 	//Enables stacked display of bars
 	@Column(name="STACKED")
-	boolean stacked;
+	private boolean stacked;
 	
 	//Minimum boundary value.
 	@Column(name="MIN")
-	Double min;
+	private Double min;
 	
 	//Minimum boundary value.
 	@Column(name="MAX")
-	Double max;
+	private Double max;
 
 	//Whether line segments should be broken at null
 	//value, fall will join point on either side of line.
 	@Column(name="BREAK_ON_NULL")
-	boolean breakOnNull;
+	private boolean breakOnNull;
 
 
-	@Column(name="X_AXIS_LABEL")
-	String xaxisLabel;
+	@Column(name="X_AXIS_LABEL", length = 255)
+	@Size(max = 255)
+	private String xaxisLabel;
 
-	@Column(name="Y_AXIS_LABEL")
-	String yaxisLabel;
+	@Column(name="Y_AXIS_LABEL", length = 255)
+    @Size(max = 255)
+	private String yaxisLabel;
 	
 	//Angle of the x-axis ticks
 	@Column(name="X_AXIS_ANGLE")
-	Integer xaxisAngle;
+	private Integer xaxisAngle;
 
 	@Column(name="Y_AXIS_ANGLE")
-	Integer yaxisAngle;
+	private Integer yaxisAngle;
 	
 
 	@Column(name="LEGEND_COLS")
-	int legendCols;
+	private int legendCols;
 
 	@Column(name="LEGEND_ROWS")
-	int legendRows;
+	private int legendRows;
 
 	//Enables plot zooming.
 	@Column(name="ZOOM")
-	boolean zoom;
+	private boolean zoom;
 	
 	//Enables animation on plot rendering
 	@Column(name="ANIMATE")
-	boolean animate;
+	private boolean animate;
 	
 	//Defines visibility of datatip.
 	@Column(name="SHOW_DATA_TIP")
-	boolean showDataTip=true;
+	private boolean showDataTip=true;
 	
 	//Template string for datatips.
-	@Column(name="DATA_TIP_FORMAT")
-	String datatipFormat;
+	@Column(name="DATA_TIP_FORMAT", length = 255)
+    @Size(max = 255)
+	private String datatipFormat;
 
 	public LegendPositionEnum getLegendPosition() {
 		return legendPosition;

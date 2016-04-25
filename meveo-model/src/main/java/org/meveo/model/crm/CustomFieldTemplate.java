@@ -115,9 +115,11 @@ public class CustomFieldTemplate extends BusinessEntity {
     private String guiPosition;
 
     @Column(name = "ALLOW_EDIT")
+    @NotNull
     private boolean allowEdit = true;
 
     @Column(name = "HIDE_ON_NEW")
+    @NotNull
     private boolean hideOnNew;
 
     @Column(name = "MAX_VALUE")
@@ -135,6 +137,7 @@ public class CustomFieldTemplate extends BusinessEntity {
     private String applicableOnEl;
 
     @Column(name = "CACHE_VALUE")
+    @NotNull
     private boolean cacheValue;
 
     public CustomFieldTypeEnum getFieldType() {

@@ -16,6 +16,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -43,9 +45,11 @@ public class MeveoModule extends BusinessEntity implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "MODULE_LICENSE", nullable = false)
+    @NotNull
     private ModuleLicenseEnum license = ModuleLicenseEnum.GPL;
 
-    @Column(name = "LOGO_PICTURE")
+    @Column(name = "LOGO_PICTURE", length = 255)
+    @Size(max = 255)
     private String logoPicture;
 
     public List<MeveoModuleItem> getModuleItems() {

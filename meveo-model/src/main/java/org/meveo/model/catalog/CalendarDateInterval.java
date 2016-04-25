@@ -51,6 +51,7 @@ public class CalendarDateInterval extends BaseProviderlessEntity implements Comp
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "CALENDAR_ID")
+    @NotNull
     private CalendarInterval calendar;
 
     public CalendarDateInterval() {

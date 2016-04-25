@@ -25,16 +25,19 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 @Entity
 @DiscriminatorValue(value = "AP")
 public class AutomatedPayment extends Payment {
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "BANK_LOT")
+    @Column(name = "BANK_LOT", length = 255)
+    @Size(max = 255)
     private String bankLot;
 
-    @Column(name = "BANK_REFERENCE")
+    @Column(name = "BANK_REFERENCE", length = 255)
+    @Size(max = 255)
     private String bankReference;
 
     @Column(name = "DEPOSIT_DATE")

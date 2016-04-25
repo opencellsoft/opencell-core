@@ -34,6 +34,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 
@@ -44,10 +45,12 @@ public class DDRequestLOT extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "FILE_NAME")
+	@Column(name = "FILE_NAME", length = 255)
+    @Size(max = 255)
 	private String fileName;
 	
-	@Column(name = "RETURN_FILE_NAME")
+	@Column(name = "RETURN_FILE_NAME", length = 255)
+    @Size(max = 255)
 	private String returnFileName;
 
 	@Column(name = "SEND_DATE")
@@ -67,10 +70,12 @@ public class DDRequestLOT extends AuditableEntity {
 	@OneToMany(mappedBy = "ddRequestLOT", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();
 	
-	@Column(name = "RETURN_STATUS_CODE")
+	@Column(name = "RETURN_STATUS_CODE", length = 255)
+    @Size(max = 255)
 	private String returnStatusCode;
 
-	@Column(name = "REJECTED_CAUSE")
+	@Column(name = "REJECTED_CAUSE", length = 255)
+    @Size(max = 255)
 	private String rejectedCause;
 	
 	@Column(name = "REJECTED_INVOICES")

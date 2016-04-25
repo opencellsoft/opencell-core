@@ -33,6 +33,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.IEntity;
 import org.meveo.model.IVersionedEntity;
@@ -55,18 +56,23 @@ public class DWHAccountOperation implements Serializable, IEntity, IVersionedEnt
 	private Integer version;
 
 	@Column(name = "PROVIDER_CODE", length = 20)
+	@Size(max = 20)
 	private String providerCode;
 
 	@Column(name = "ACCOUNT_CODE", length = 50)
+	@Size(max = 50)
 	private String accountCode;
 
 	@Column(name = "ACCOUNT_DESCRIPTION", length = 255)
+    @Size(max = 255)
 	private String accountDescription;
 
-	@Column(name = "ACCOUNTING_CODE")
+	@Column(name = "ACCOUNTING_CODE", length = 255)
+    @Size(max = 255)
 	private String accountingCode;
 
-	@Column(name = "ACCOUNTING_CODE_CLIENT_SIDE")
+	@Column(name = "ACCOUNTING_CODE_CLIENT_SIDE", length = 255)
+    @Size(max = 255)
 	private String accountingCodeClientSide;
 
 	@Column(name = "TRANSACTION_DATE")
@@ -87,12 +93,15 @@ public class DWHAccountOperation implements Serializable, IEntity, IVersionedEnt
 	private byte type;
 
 	@Column(name = "OCC_CODE", length = 10)
+	@Size(max = 10)
 	private String occCode;
 
 	@Column(name = "OCC_DESCRIPTION", length = 255)
+    @Size(max = 255)
 	private String occDescription;
 
 	@Column(name = "REFERENCE", length = 50)
+    @Size(max = 50)
 	private String reference;
 
 	@Column(name = "AMOUNT")

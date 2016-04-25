@@ -30,6 +30,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 
@@ -62,9 +64,11 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	private Integer itemNumber;
 
 	@Column(name = "ACCOUNTING_CODE", length = 255)
+	@Size(max = 255)
 	private String accountingCode;
 
 	@Column(name = "DESCRIPTION", length = 50)
+	@Size(max = 50)
 	private String description;
 
 	@Column(name = "TAX_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
@@ -101,15 +105,13 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	private TradingLanguage tradingLanguage;
 
 	@Column(name = "PR_DESCRIPTION", length = 50)
+	@Size(max = 50)
 	private String prDescription;
 
-
 	@Column(name = "DISCOUNT_AGGREGATE", nullable = false)
+	@NotNull
 	private boolean discountAggregate;
 	
-	
-	
-
 	public TradingCurrency getTradingCurrency() {
 		return tradingCurrency;
 	}

@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -28,18 +29,23 @@ public class MeasurableQuantity extends BusinessEntity {
 	private static final long serialVersionUID = -4864192159320969937L;
 
 	@Column(name = "THEME", length = 255)
+	@Size(max = 255)
 	private String theme;
 
 	@Column(name = "DIMENSION_1", length = 255)
+    @Size(max = 255)
 	private String dimension1;
 
 	@Column(name = "DIMENSION_2", length = 255)
+    @Size(max = 255)
 	private String dimension2;
 
 	@Column(name = "DIMENSION_3", length = 255)
+    @Size(max = 255)
 	private String dimension3;
 
 	@Column(name = "DIMENSION_4", length = 255)
+    @Size(max = 255)
 	private String dimension4;
 
 	@Column(name = "EDITABLE")
@@ -53,6 +59,7 @@ public class MeasurableQuantity extends BusinessEntity {
 	 * those queries as they could break separation of data between providers
 	 */
 	@Column(name = "SQL_QUERY", length = 2000)
+    @Size(max = 2000)
 	private String sqlQuery;
 
 	@Enumerated(EnumType.STRING)

@@ -16,6 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessCFEntity;
@@ -40,6 +41,7 @@ public class OfferTemplateCategory extends BusinessCFEntity {
 
 	@Column(name = "NAME", nullable = false, length = 100)
 	@Size(max = 100)
+	@NotNull
 	private String name;
 
 	@Column(name = "IMAGE")
@@ -48,6 +50,7 @@ public class OfferTemplateCategory extends BusinessCFEntity {
 	private Blob image;
 
 	@Column(name = "IMAGE_CONTENT_TYPE", length = 50)
+	@Size(max = 50)
 	private String imageContentType;
 
 	@ManyToOne

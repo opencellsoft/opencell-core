@@ -105,7 +105,7 @@ public class UserAccount extends AccountEntity {
 	Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TERMIN_REASON_ID", nullable = true)
+	@JoinColumn(name = "TERMIN_REASON_ID")
 	private SubscriptionTerminationReason terminationReason;
 
 	public UserAccount() {

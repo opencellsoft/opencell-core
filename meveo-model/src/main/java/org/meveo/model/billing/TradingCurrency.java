@@ -29,6 +29,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
@@ -49,6 +50,7 @@ public class TradingCurrency extends AuditableEntity {
 	private Currency currency;
 
 	@Column(name = "PR_DESCRIPTION", length = 100)
+	@Size(max = 100)
 	private String prDescription;
 
 	@Column(name = "PR_CURRENCY_TO_THIS", precision = NB_PRECISION, scale = NB_DECIMALS)

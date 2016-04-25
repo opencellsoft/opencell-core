@@ -7,6 +7,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseProviderlessEntity;
@@ -27,12 +29,17 @@ public class MeveoModuleItem extends BaseProviderlessEntity {
     private MeveoModule meveoModule;
 
     @Column(name = "APPLIES_TO", length = 100)
+    @Size(max = 100)
     private String appliesTo;
 
     @Column(name = "ITEM_TYPE", length = 100, nullable = false)
+    @Size(max = 100)
+    @NotNull
     private String itemClass;
 
     @Column(name = "ITEM_CODE", length = 60, nullable = false)
+    @Size(max = 60)
+    @NotNull
     private String itemCode;
 
     @Transient

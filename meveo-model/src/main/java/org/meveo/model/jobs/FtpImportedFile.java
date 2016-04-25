@@ -8,6 +8,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 
@@ -17,7 +19,9 @@ import org.meveo.model.BusinessEntity;
 public class FtpImportedFile extends BusinessEntity {
     private static final long serialVersionUID = 430457580612075457L;
 
-    @Column(name = "URI")
+    @Column(name = "URI", length = 2000, nullable = false)
+    @Size(max = 2000)
+    @NotNull
     private String uri;
 
     @Column(name = "SIZE")

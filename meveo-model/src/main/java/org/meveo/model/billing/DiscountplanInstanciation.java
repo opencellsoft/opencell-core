@@ -28,6 +28,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 
@@ -47,7 +48,8 @@ public class DiscountplanInstanciation extends AuditableEntity {
 	@Column(name = "USAGE_TYPE")
 	private EventTypeEnum usageType;
 
-	@Column(name = "CHARGE_CODE")
+	@Column(name = "CHARGE_CODE", length = 255)
+	@Size(max = 255)
 	private String chargeCode;
 
 	@Column(name = "START_SUBSCRIPTION_DATE")

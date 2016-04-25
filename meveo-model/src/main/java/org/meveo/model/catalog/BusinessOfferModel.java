@@ -3,6 +3,7 @@ package org.meveo.model.catalog;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.meveo.model.ObservableEntity;
@@ -20,7 +21,7 @@ public class BusinessOfferModel extends MeveoModule {
 	@JoinColumn(name = "OFFER_TEMPLATE_ID")
 	private OfferTemplate offerTemplate;
 
-	@ManyToOne
+	@OneToOne
 	@JoinColumn(name = "SCRIPT_INSTANCE_ID")
 	private OfferModelScript script;
 

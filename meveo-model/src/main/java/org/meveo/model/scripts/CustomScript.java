@@ -17,6 +17,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -34,6 +35,7 @@ public abstract class CustomScript extends BusinessEntity {
     private static final long serialVersionUID = 8176170199770220430L;
 
     @Column(name = "SCRIPT", nullable = false, columnDefinition = "TEXT")
+    @NotNull
     private String script;
 
     @Enumerated(EnumType.STRING)

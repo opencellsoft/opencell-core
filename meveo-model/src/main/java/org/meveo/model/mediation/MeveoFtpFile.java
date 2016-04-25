@@ -13,9 +13,6 @@ import org.meveo.model.AuditableEntity;
  */
 public class MeveoFtpFile extends AuditableEntity implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6610759225502996091L;
 	
 	private String filename;

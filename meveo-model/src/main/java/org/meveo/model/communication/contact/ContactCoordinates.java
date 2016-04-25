@@ -44,7 +44,7 @@ public class ContactCoordinates extends BusinessEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "MEDIA", insertable = false, updatable = false)
-	MediaEnum media;
+	private MediaEnum media;
 
 	public MediaEnum getMedia() {
 		return media;

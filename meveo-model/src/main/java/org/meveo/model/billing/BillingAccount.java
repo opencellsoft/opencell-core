@@ -42,6 +42,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -75,7 +76,8 @@ public class BillingAccount extends AccountEntity {
 	@Embedded
 	private BankCoordinates bankCoordinates = new BankCoordinates();
 
-	@Column(name = "EMAIL")
+	@Column(name = "EMAIL", length = 255)
+    @Size(max = 255)
 	// @Pattern(regexp = ".+@.+\\..{2,4}")
 	private String email;
 
@@ -149,11 +151,12 @@ public class BillingAccount extends AccountEntity {
 	@Column(name = "BR_AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal brAmountWithTax;
 
-	@Column(name = "INVOICE_PREFIX")
+	@Column(name = "INVOICE_PREFIX", length = 255)
+    @Size(max = 255)
 	private String invoicePrefix;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TERMIN_REASON_ID", nullable = true)
+	@JoinColumn(name = "TERMIN_REASON_ID")
 	private SubscriptionTerminationReason terminationReason;
 
 	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)

@@ -32,6 +32,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -50,12 +51,14 @@ public abstract class MessageTemplate extends BusinessEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "MEDIA", insertable = false, updatable = false)
-	MediaEnum media;
+	private MediaEnum media;
 
-	@Column(name = "TAG_START")
+	@Column(name = "TAG_START", length = 255)
+    @Size(max = 255)
 	private String tagStartDelimiter = "#{";
 
-	@Column(name = "TAG_END")
+	@Column(name = "TAG_END", length = 255)
+    @Size(max = 255)
 	private String tagEndDelimiter = "}";
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -68,7 +71,7 @@ public abstract class MessageTemplate extends BusinessEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TYPE")
-	MessageTemplateTypeEnum type;
+	private MessageTemplateTypeEnum type;
 
 	public MediaEnum getMedia() {
 		return media;

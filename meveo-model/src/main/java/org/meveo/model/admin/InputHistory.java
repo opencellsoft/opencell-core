@@ -31,6 +31,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BaseEntity;
 
@@ -53,7 +54,8 @@ public class InputHistory extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "NAME")
+	@Column(name = "NAME", length = 255)
+	@Size(max = 255)
 	private String name;
 
 	@Column(name = "START_DATE")

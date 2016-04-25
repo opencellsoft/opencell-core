@@ -7,6 +7,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
@@ -24,6 +26,8 @@ public class CustomEntityTemplate extends BusinessEntity implements Comparable<C
     public static String CFT_PREFIX = "CE";
 
     @Column(name = "name", length = 100, nullable = false)
+    @Size(max = 100)
+    @NotNull
     private String name;
 
     public String getName() {

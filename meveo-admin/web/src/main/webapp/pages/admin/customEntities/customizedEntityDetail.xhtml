@@ -377,7 +377,7 @@
                 <hftl:formPanel formId="cftForm" label="#{messages['customFieldTemplate.panel']}" backingBean="#{customFieldTemplateBean}" showFormButtons="false">
 
                     <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" componentWidth="15" />
-                    <hftl:formField label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" useConverter="false" id="description" maxlength="50"
+                    <hftl:formField label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" useConverter="false" id="description"
                         componentWidth="35" />
                     <hftl:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" componentWidth="10"
                         listenerUpdate=":cftForm:listValuesField :cftForm:defaultValueField :cftForm:entityClazzField validations" />
@@ -391,7 +391,7 @@
                             rendered="#{customFieldTemplateBean.entity.storageType == 'MAP'}" />
                     </h:panelGroup>
                     <h:panelGroup id="defaultValueField">
-                        <hftl:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" maxlength="50" componentWidth="20"
+                        <hftl:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" componentWidth="20"
                             rendered="#{customFieldTemplateBean.entity.fieldType != 'DATE' and customFieldTemplateBean.entity.fieldType != 'ENTITY' and customFieldTemplateBean.entity.fieldType != 'CHILD_ENTITY' and customFieldTemplateBean.entity.storageType == 'SINGLE'}"
                             newLine="true" />
                     </h:panelGroup>
@@ -467,7 +467,7 @@
                         <hftl:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="10" />
                         <hftl:formField label="#{messages['customFieldTemplate.hideOnNew']}" field="hideOnNew" isMessage="true" componentWidth="8" />
                         <hftl:formField label="#{messages['customFieldTemplate.allowEdit']}" field="allowEdit" isMessage="true" componentWidth="7" />
-                        <hftl:formField label="#{messages['customFieldTemplate.applicableOnEl']}" field="applicableOnEl"  textArea="true" maxlength="2000" />
+                        <hftl:formField label="#{messages['customFieldTemplate.applicableOnEl']}" field="applicableOnEl"  textArea="true" maxlength="2000" rows="1"/>
                         <hftl:formField label="#{messages['customFieldTemplate.minValue']}" field="minValue" negativeValue="true" componentWidth="15"
                             rendered="#{customFieldTemplateBean.entity.fieldType == 'LONG' or customFieldTemplateBean.entity.fieldType == 'DOUBLE'}" />
                         <hftl:formField label="#{messages[customFieldTemplateBean.entity.fieldType == 'STRING'?'customFieldTemplate.maxValueTxt':'customFieldTemplate.maxValue']}"
@@ -541,7 +541,7 @@
                     <hftl:formField label="#{messages['BusinessEntity.code']}" field="localCode" required="true" allowEdit="false" componentWidth="15" />
                     <hftl:formField label="#{messages['customizedEntities.actionLabel']}" field="label" required="true" useConverter="false" maxlength="50" componentWidth="20" />
                     <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" maxlength="50" componentWidth="35" />
-                    <hftl:formField label="#{messages['customizedEntities.actionApplicableOnEl']}" field="applicableOnEl" componentWidth="30" textArea="true" maxlength="2000"/>
+                    <hftl:formField label="#{messages['customizedEntities.actionApplicableOnEl']}" field="applicableOnEl" componentWidth="50" textArea="true" maxlength="2000" rows="1"/>
                     <hftl:formField label="#{messages['scriptInstance.sourceTypeEnum']}" field="sourceTypeEnum" />
                     <hftl:decorateFormField fieldId="codeMirror" label="#{messages['customizedEntities.actionScriptSrc']}" newLine="true" componentWidth="100">
                         <pe:codeMirror id="codeMirror" theme="eclipse" mode="text/x-java" value="#{entityActionScriptBean.entity.script}" lineNumbers="true" required="true" />

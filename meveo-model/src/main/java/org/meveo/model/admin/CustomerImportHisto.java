@@ -21,6 +21,7 @@ package org.meveo.model.admin;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.bi.JobHistory;
 
@@ -30,7 +31,8 @@ public class CustomerImportHisto extends JobHistory {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "FILE_NAME")
+	@Column(name = "FILE_NAME", length = 255)
+	@Size(max = 255)
 	private String fileName;
 
 	@Column(name = "NB_SELLERS")

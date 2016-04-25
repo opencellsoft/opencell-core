@@ -34,6 +34,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
 @Entity
 @DiscriminatorValue(value = "I")
@@ -62,28 +63,36 @@ public class RecordedInvoice extends AccountOperation {
 	@Enumerated(EnumType.STRING)
 	private PaymentMethodEnum paymentMethod;
 
-	@Column(name = "PAYMENT_INFO")
+	@Column(name = "PAYMENT_INFO", length = 255)
+    @Size(max = 255)
 	private String paymentInfo;// IBAN for direct debit
 
-	@Column(name = "PAYMENT_INFO1")
+	@Column(name = "PAYMENT_INFO1", length = 255)
+    @Size(max = 255)
 	private String paymentInfo1;// bank code
 
-	@Column(name = "PAYMENT_INFO2")
+	@Column(name = "PAYMENT_INFO2", length = 255)
+    @Size(max = 255)
 	private String paymentInfo2;// code guichet
 
-	@Column(name = "PAYMENT_INFO3")
+	@Column(name = "PAYMENT_INFO3", length = 255)
+    @Size(max = 255)
 	private String paymentInfo3;// Num compte
 
-	@Column(name = "PAYMENT_INFO4")
+	@Column(name = "PAYMENT_INFO4", length = 255)
+    @Size(max = 255)
 	private String paymentInfo4;// RIB
 
-	@Column(name = "PAYMENT_INFO5")
+	@Column(name = "PAYMENT_INFO5", length = 255)
+    @Size(max = 255)
 	private String paymentInfo5;// bankName
 	
-	@Column(name = "PAYMENT_INFO6")
+	@Column(name = "PAYMENT_INFO6", length = 255)
+    @Size(max = 255)
 	private String paymentInfo6;// bic
 
-	@Column(name = "BILLING_ACCOUNT_NAME")
+	@Column(name = "BILLING_ACCOUNT_NAME", length = 255)
+    @Size(max = 255)
 	private String billingAccountName;
 	
 	@OneToMany(mappedBy = "recordedInvoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

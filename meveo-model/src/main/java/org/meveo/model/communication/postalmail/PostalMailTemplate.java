@@ -21,6 +21,7 @@ package org.meveo.model.communication.postalmail;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.communication.MessageTemplate;
 
@@ -30,7 +31,8 @@ public class PostalMailTemplate extends MessageTemplate {
 
 	private static final long serialVersionUID = 6264421465934474507L;
 
-	@Column(name = "JASPER_FILENAME")
+	@Column(name = "JASPER_FILENAME", length = 255)
+    @Size(max = 255)
 	private String jasperFileName;
 
 	public String getJasperFileName() {
