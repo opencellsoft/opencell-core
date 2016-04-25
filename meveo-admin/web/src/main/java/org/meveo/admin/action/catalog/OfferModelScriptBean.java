@@ -88,7 +88,7 @@ public class OfferModelScriptBean extends BaseBean<OfferModelScript> {
 		}
 
 		// check duplicate script
-		if (offerModelScriptService.isExistsCode(entity.getCode(), getCurrentProvider())) {
+		if (entity.isTransient() && offerModelScriptService.isExistsCode(entity.getCode(), getCurrentProvider())) {
 			messages.error(new BundleKey("messages", "javax.persistence.EntityExistsException"));
 			return null;
 		}

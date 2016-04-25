@@ -993,6 +993,32 @@
 													<f:setPropertyActionListener
 														target="#{scriptInstanceBean.entity}" value="#{entity}"></f:setPropertyActionListener>
 												</p:commandButton>
+												
+												<p:button id="offerModelButton" rendered="#{entity.discriminatorValue eq 'OfferModel'}"
+													outcome="businessOfferModelDetail" icon="ui-icon-search">
+													<f:param name="objectId" value="#{entity.businessOfferModel.id}" />
+													<f:param name="edit" value="true" />
+												</p:button>
+												<p:commandButton icon="ui-icon-trash" rendered="#{entity.discriminatorValue eq 'OfferModel'}"
+													action="#{offerModelScriptBean.deleteInlist}"
+													update=":#{p:component('accordionTax')}"
+													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+													<f:setPropertyActionListener
+														target="#{offerModelScriptBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+												</p:commandButton>
+												
+												<p:button id="serviceModelButton" rendered="#{entity.discriminatorValue eq 'ServiceModel'}"
+													outcome="businessServiceModelDetail" icon="ui-icon-search">
+													<f:param name="objectId" value="#{entity.businessServiceModel.id}" />
+													<f:param name="edit" value="true" />
+												</p:button>
+												<p:commandButton icon="ui-icon-trash" rendered="#{entity.discriminatorValue eq 'ServiceModel'}"
+													action="#{serviceModelScriptBean.deleteInlist}"
+													update=":#{p:component('accordionTax')}"
+													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+													<f:setPropertyActionListener
+														target="#{serviceModelScriptBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+												</p:commandButton>
 											</p:column>
 										</hftl:dataList>
 									</h:panelGrid>

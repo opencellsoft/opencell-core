@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.meveo.model.ObservableEntity;
@@ -21,7 +22,7 @@ public class BusinessServiceModel extends MeveoModule {
 	@JoinColumn(name = "SERVICE_TEMPLATE_ID")
 	private ServiceTemplate serviceTemplate;
 
-	@ManyToOne
+	@OneToOne
 	@JoinColumn(name = "SCRIPT_INSTANCE_ID")
 	private ServiceModelScript script;
 

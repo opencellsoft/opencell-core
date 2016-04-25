@@ -86,7 +86,7 @@ public class ServiceModelScriptBean extends BaseBean<ServiceModelScript> {
         }
         
 		// check duplicate script
-		if (serviceModelScriptService.isExistsCode(entity.getCode(), getCurrentProvider())) {
+		if (entity.isTransient() && serviceModelScriptService.isExistsCode(entity.getCode(), getCurrentProvider())) {
 			messages.error(new BundleKey("messages", "javax.persistence.EntityExistsException"));
 			return null;
 		}
