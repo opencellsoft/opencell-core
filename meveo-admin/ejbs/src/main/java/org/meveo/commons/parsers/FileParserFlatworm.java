@@ -20,7 +20,7 @@ public class FileParserFlatworm implements IFileParser {
     private String mappingDescriptor = null;    
     private String recordName = null;
     private BufferedReader bufferedReader = null;
-    private Object recordObject = null;
+    private RecordContext recordContext = null;
     private RecordRejectedException recordRejectedException=null;
     
     
@@ -55,7 +55,7 @@ public class FileParserFlatworm implements IFileParser {
 			 return false;
 		 }
 		record = null;
-		recordObject= null;
+		recordContext.setRecord(null);
 		try {
 			record =   fileFormat.getNextRecord(bufferedReader);
 		} catch ( Exception e) {
@@ -63,7 +63,8 @@ public class FileParserFlatworm implements IFileParser {
 			return true;
 		}
 		if(record != null){
-			recordObject =  record.getBean(recordName);		
+			recordContext.setRecord(record.getBean(recordName));	
+			recordContext.setLineContent(recordContext.getRecord().toString());
 			return true;
 		}else{
 			return false;
@@ -71,11 +72,11 @@ public class FileParserFlatworm implements IFileParser {
 	}
 	
 	@Override
-	public Object getNextRecord()  throws RecordRejectedException {	
-		if(recordObject == null){
+	public RecordContext getNextRecord()  throws RecordRejectedException {	
+		if(recordContext.getRecord() == null){
 			throw  recordRejectedException;
 		}
-		return recordObject;   
+		return recordContext;   
 	}
 
 	

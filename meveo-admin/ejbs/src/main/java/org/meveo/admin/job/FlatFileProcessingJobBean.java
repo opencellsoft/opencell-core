@@ -116,7 +116,7 @@ public class FlatFileProcessingJobBean {
 				while (fileParser.hasNext()) {
 					cpLines++;
 					try {
-						recordObject = fileParser.getNextRecord();
+						recordObject = fileParser.getNextRecord().getRecord();
 						log.debug("recordObject:{}", recordObject.toString());
 						Map<String, Object> executeParams = new HashMap<String, Object>();
 						executeParams.put(recordVariableName, recordObject);

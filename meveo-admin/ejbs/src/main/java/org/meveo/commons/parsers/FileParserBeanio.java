@@ -16,7 +16,7 @@ public class FileParserBeanio implements IFileParser {
     private BeanReader beanReader = null;     
     private String mappingDescriptor = null;    
     private String streamName = null;
-    private Object recordObject = null;
+    private RecordContext recordContext = null;
     private RecordRejectedException recordRejectedException=null;
     private static final Logger log = LoggerFactory.getLogger(FileParserBeanio.class);
     
@@ -50,15 +50,18 @@ public class FileParserBeanio implements IFileParser {
 		if(beanReader == null){
 			return false;
 		}
-		recordObject= null;
+		recordContext.setRecord(null);
 		try{
-			recordObject =  beanReader.read();
+			recordContext.setRecord(beanReader.read());
+			recordContext.setLineContent(beanReader.getRecordContext(beanReader.getLineNumber()).getRecordText());
+			recordContext.setLineNumber(beanReader.getLineNumber());
+			
 		}catch(Exception e  ){
 			log.warn("cant parse record",e);
 			recordRejectedException =  new RecordRejectedException(e.getMessage());
 			return true;
 		}
-		if(recordObject != null){
+		if(recordContext.getRecord() != null){
 			return true;
 		}else{
 			return false;
@@ -66,11 +69,11 @@ public class FileParserBeanio implements IFileParser {
 	}
 
 	@Override
-	public Object getNextRecord() throws RecordRejectedException{
-		if(recordObject == null){
+	public RecordContext getNextRecord() throws RecordRejectedException{
+		if(recordContext == null){
 			throw  recordRejectedException;
 		}
-		return recordObject; 
+		return recordContext; 
 	}
 
 
