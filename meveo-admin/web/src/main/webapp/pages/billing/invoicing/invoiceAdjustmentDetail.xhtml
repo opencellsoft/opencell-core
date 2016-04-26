@@ -3,7 +3,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -141,18 +142,21 @@
 
 							<!-- // -->
 							<p:column>
-								<p:inputText value="#{entity.amountWithoutTax}" required="true" label="#{messages['invoice.amountWithoutTax']}"
+								<p:inputText id="amountWithoutTax" value="#{entity.amountWithoutTax}" required="true" label="#{messages['invoice.amountWithoutTax']}"
 									readonly="#{not invoiceBean.entity.transient}">
+									<pe:keyFilter mask="num" /> 
 									<f:converter converterId="bigDecimal4DigitsConverter" />
 									<p:ajax event="change" 
 										listener="#{invoiceBean.reComputeInvoiceAdjustment(entity)}"
 										update="resultsId_invoiceAdjustmentLines" />
 								</p:inputText>
+								
 							</p:column>
 
 							<p:column rendered="#{ ! invoiceBean.entity.provider.entreprise}">
 								<p:inputText value="#{entity.amountWithTax}" required="true" label="#{messages['invoice.amountWithTax']}"
 									readonly="true">
+									<pe:keyFilter mask="num" />
 									<f:converter converterId="bigDecimal4DigitsConverter" />
 									<p:ajax event="change"
 										listener="#{invoiceBean.reComputeInvoiceAdjustment(entity)}"
@@ -240,6 +244,7 @@
 							</p:column>
 							<p:column>
 								<p:inputText value="#{entity.unitAmountWithoutTax}" required="true" readonly="#{not invoiceBean.entity.transient}" label="#{messages['ratedTransaction.unitAmountWithoutTax']}">
+								    <pe:keyFilter mask="num" />
 									<f:converter converterId="bigDecimal4DigitsConverter" />
 									<p:ajax event="change"
 										listener="#{invoiceBean.reComputeDetailedInvoiceAdjustment(entity)}"
@@ -249,6 +254,7 @@
 
 							<p:column>
 								<p:inputText value="#{entity.quantity}" required="true" readonly="#{not invoiceBean.entity.transient}" label="#{messages['ratedTransaction.quantity']}">
+								    <pe:keyFilter mask="num" />
 									<f:converter converterId="bigDecimal4DigitsConverter" />
 									<p:ajax event="change"
 										listener="#{invoiceBean.reComputeDetailedInvoiceAdjustment(entity)}"
@@ -333,6 +339,7 @@
 							</p:column>
 							<p:column>
 								<p:inputText value="#{entity.unitAmountWithoutTax}" required="true" readonly="#{not invoiceBean.entity.transient}" label="#{messages['ratedTransaction.unitAmountWithoutTax']}">
+								    <pe:keyFilter mask="num" />
 									<f:converter converterId="bigDecimal4DigitsConverter" />
 									<p:ajax event="change"
 										listener="#{invoiceBean.reComputeDetailedInvoiceAdjustment(entity)}"
@@ -341,6 +348,7 @@
 							</p:column>
 							<p:column>
 								<p:inputText value="#{entity.unitAmountWithTax}" required="true" readonly="#{not invoiceBean.entity.transient}" label="#{messages['ratedTransaction.unitAmountWithTax']}">
+								    <pe:keyFilter mask="num" />
 									<f:converter converterId="bigDecimal4DigitsConverter" />
 									<p:ajax event="change"
 										listener="#{invoiceBean.reComputeDetailedInvoiceAdjustment(entity)}"
@@ -350,6 +358,7 @@
 
 							<p:column>
 								<p:inputText value="#{entity.quantity}" required="true" readonly="#{not invoiceBean.entity.transient}" label="#{messages['ratedTransaction.quantity']}">
+								    <pe:keyFilter mask="num" />
 									<f:converter converterId="bigDecimal4DigitsConverter" />
 									<p:ajax event="change"
 										listener="#{invoiceBean.reComputeDetailedInvoiceAdjustment(entity)}"
