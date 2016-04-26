@@ -20,6 +20,7 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomizedEntity;
+import org.meveo.service.custom.CustomizedEntityService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.EntityActionScriptService;
@@ -40,6 +41,11 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
      * Request parameter
      */
     private String entityClassName;
+
+    /**
+     * Request parameter
+     */
+    private String appliesTo;
 
     /**
      * Class corresponding to a entityClassName value of CustomEntityTemplate class if null
@@ -74,6 +80,9 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     @Inject
     private JobInstanceService jobInstanceService;
 
+    @Inject
+    private CustomizedEntityService customizedEntityService;
+
     public CustomEntityTemplateBean() {
         super(CustomEntityTemplate.class);
     }
@@ -89,6 +98,14 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         }
 
         this.entityClassName = entityClassName;
+    }
+
+    public String getAppliesTo() {
+        return appliesTo;
+    }
+
+    public void setAppliesTo(String appliesTo) {
+        this.appliesTo = appliesTo;
     }
 
     @Override
@@ -107,6 +124,19 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
      * @throws ClassNotFoundException
      */
     public CustomizedEntity getCustomizedEntity() throws ClassNotFoundException {
+
+        // Convert appliesTo parameter to a entityClassName of objectId value in case of customEntity template
+        if (customizedEntity == null && appliesTo != null) {
+
+            CustomizedEntity customizedEntityMatched = customizedEntityService.getCustomizedEntity(appliesTo, getCurrentProvider());
+            if (customizedEntityMatched != null) {
+                setEntityClassName(customizedEntityMatched.getEntityClass().getName());
+                if (customizedEntityMatched.getCustomEntityId() != null) {
+                    setObjectIdFromSet(customizedEntityMatched.getCustomEntityId());
+                    initEntity();
+                }
+            }
+        }
 
         if (customizedEntity == null && entityClassName != null && !CustomEntityTemplate.class.getName().equals(entityClassName)) {
             entityClass = Class.forName(entityClassName);

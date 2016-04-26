@@ -973,7 +973,7 @@
 											dataModel="#{configIssuesReportingBean.scriptInstanceWithErrorList}"
 											exportToXml="false">
 											<hftl:column label="#{messages['businessEntity.code']}"
-												field="code" />
+												field="code" noLinkToView="true"/>
 											<hftl:column
 												label="#{messages['businessEntity.description']}"
 												field="description" />
@@ -981,50 +981,27 @@
 												<f:facet name="header">
 													<h:outputText value="Actions" />
 												</f:facet>
-												<p:button id="scriptInstancesButton"
-													rendered="#{entity.discriminatorValue eq 'ScriptInstance'}"
-													outcome="scriptInstanceDetail" icon="ui-icon-search">
-													<f:param name="objectId" value="#{entity.id}" />
-													<f:param name="edit" value="true" />
-												</p:button>
-												<!-- 												<p:commandButton icon="ui-icon-trash" rendered="#{entity.discriminatorValue eq 'ScriptInstance'}" -->
-												<!-- 													action="#{scriptInstanceBean.deleteInlist}" -->
-												<!-- 													update=":#{p:component('accordionTax')}" -->
-												<!-- 													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}"> -->
-												<!-- 													<f:setPropertyActionListener -->
-												<!-- 														target="#{scriptInstanceBean.entity}" value="#{entity}"></f:setPropertyActionListener> -->
-												<!-- 												</p:commandButton> -->
-
-												<p:button id="offerModelButton"
-													rendered="#{entity.discriminatorValue eq 'OfferModel'}"
-													outcome="businessOfferModelDetail" icon="ui-icon-search">
-													<f:param name="objectId"
-														value="#{entity.businessOfferModel.id}" />
-													<f:param name="edit" value="true" />
-												</p:button>
-												<!-- 												<p:commandButton icon="ui-icon-trash" rendered="#{entity.discriminatorValue eq 'OfferModel'}" -->
-												<!-- 													action="#{offerModelScriptBean.deleteInlist}" -->
-												<!-- 													update=":#{p:component('accordionTax')}" -->
-												<!-- 													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}"> -->
-												<!-- 													<f:setPropertyActionListener -->
-												<!-- 														target="#{offerModelScriptBean.entity}" value="#{entity}"></f:setPropertyActionListener> -->
-												<!-- 												</p:commandButton> -->
-
-												<p:button id="serviceModelButton"
-													rendered="#{entity.discriminatorValue eq 'ServiceModel'}"
-													outcome="businessServiceModelDetail" icon="ui-icon-search">
-													<f:param name="objectId"
-														value="#{entity.businessServiceModel.id}" />
-													<f:param name="edit" value="true" />
-												</p:button>
-												<!-- 												<p:commandButton icon="ui-icon-trash" rendered="#{entity.discriminatorValue eq 'ServiceModel'}" -->
-												<!-- 													action="#{serviceModelScriptBean.deleteInlist}" -->
-												<!-- 													update=":#{p:component('accordionTax')}" -->
-												<!-- 													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}"> -->
-												<!-- 													<f:setPropertyActionListener -->
-												<!-- 														target="#{serviceModelScriptBean.entity}" value="#{entity}"></f:setPropertyActionListener> -->
-												<!-- 												</p:commandButton> -->
-											</p:column>
+                                                <p:button id="scriptInstancesButton" rendered="#{entity.discriminatorValue eq 'ScriptInstance'}" outcome="scriptInstanceDetail"
+                                                    icon="ui-icon-search">
+                                                    <f:param name="objectId" value="#{entity.id}" />
+                                                    <f:param name="backView" value="home" />
+                                                </p:button>
+                                                <p:button id="offerModelScriptButton" rendered="#{entity.discriminatorValue eq 'OfferModel'}" outcome="businessOfferModelDetail"
+                                                    icon="ui-icon-search">
+                                                    <f:param name="objectId" value="#{entity.businessOfferModel.id}" />
+                                                    <f:param name="backView" value="home" />
+                                                </p:button>
+                                                <p:button id="serviceModelScriptButton" rendered="#{entity.discriminatorValue eq 'ServiceModel'}"
+                                                    outcome="businessServiceModelDetail" icon="ui-icon-search">
+                                                    <f:param name="objectId" value="#{entity.businessServiceModel.id}" />
+                                                    <f:param name="backView" value="home" />
+                                                </p:button>
+                                                <p:button id="entityActionScriptButton" rendered="#{entity.discriminatorValue eq 'EntityAction'}" outcome="customizedEntity"
+                                                    icon="ui-icon-search">
+                                                    <f:param name="appliesTo" value="#{entity.appliesTo}" />
+                                                    <f:param name="backView" value="home" />
+                                                </p:button>
+                                            </p:column>
 										</hftl:dataList>
 									</h:panelGrid>
 								</p:tab>
