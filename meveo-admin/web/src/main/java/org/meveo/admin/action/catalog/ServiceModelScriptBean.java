@@ -23,115 +23,115 @@ import org.omnifaces.cdi.ViewScoped;
 @ViewScoped
 public class ServiceModelScriptBean extends BaseBean<ServiceModelScript> {
 
-    private static final long serialVersionUID = -4034706786961656074L;
+	private static final long serialVersionUID = -4034706786961656074L;
 
-    @Inject
-    private ServiceModelScriptService serviceModelScriptService;
+	@Inject
+	private ServiceModelScriptService serviceModelScriptService;
 
-    @Inject
-    private BusinessServiceModelService businessServiceModelService;
+	@Inject
+	private BusinessServiceModelService businessServiceModelService;
 
-    private Long somId;
+	private Long somId;
 
-    public ServiceModelScriptBean() {
-        super(ServiceModelScript.class);
-    }
+	public ServiceModelScriptBean() {
+		super(ServiceModelScript.class);
+	}
 
-    @Override
-    public ServiceModelScript initEntity() {
-        if (somId != null) {
-            return super.initEntity();
-        } else {
-            return null;
-        }
-    }
+	@Override
+	public ServiceModelScript initEntity() {
+		if (somId != null) {
+			return super.initEntity();
+		} else {
+			return null;
+		}
+	}
 
-    @Override
-    public ServiceModelScript initEntity(Long id) {
-        super.initEntity(id);
+	@Override
+	public ServiceModelScript initEntity(Long id) {
+		super.initEntity(id);
 
-        if (entity.isError()) {
-            serviceModelScriptService.compileScript(entity, true);
-        }
+		if (entity.isError()) {
+			serviceModelScriptService.compileScript(entity, true);
+		}
 
-        return entity;
-    }
+		return entity;
+	}
 
-    @Override
-    protected IPersistenceService<ServiceModelScript> getPersistenceService() {
-        return serviceModelScriptService;
-    }
+	@Override
+	protected IPersistenceService<ServiceModelScript> getPersistenceService() {
+		return serviceModelScriptService;
+	}
 
-    @Override
-    protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider");
-    }
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
 
-    public void testCompilation() {
-        serviceModelScriptService.compileScript(entity, true);
-        if (!entity.isError()) {
-            messages.info(new BundleKey("messages", "scriptInstance.compilationSuccessfull"));
-        }
-    }
+	public void testCompilation() {
+		serviceModelScriptService.compileScript(entity, true);
+		if (!entity.isError()) {
+			messages.info(new BundleKey("messages", "scriptInstance.compilationSuccessfull"));
+		}
+	}
 
-    @Override
-    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+	@Override
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        entity.setCode(serviceModelScriptService.getFullClassname(entity.getScript()));
+		entity.setCode(serviceModelScriptService.getFullClassname(entity.getScript()));
 
-        ServiceModelScript actionDuplicate = serviceModelScriptService.findByCode(entity.getCode(), getCurrentProvider());
-        if (actionDuplicate != null && !actionDuplicate.getId().equals(entity.getId())) {
-            messages.error(new BundleKey("messages", "serviceModelScript.actionAlreadyExists"));
-            return null;
-        }
-        
+		ServiceModelScript actionDuplicate = serviceModelScriptService.findByCode(entity.getCode(), getCurrentProvider());
+		if (actionDuplicate != null && !actionDuplicate.getId().equals(entity.getId())) {
+			messages.error(new BundleKey("messages", "serviceModelScript.actionAlreadyExists"));
+			return null;
+		}
+
 		// check duplicate script
 		if (entity.isTransient() && serviceModelScriptService.isExistsCode(entity.getCode(), getCurrentProvider())) {
 			messages.error(new BundleKey("messages", "javax.persistence.EntityExistsException"));
 			return null;
 		}
 
-        try {
-            String result = super.saveOrUpdate(killConversation);
+		try {
+			String result = super.saveOrUpdate(killConversation);
 
-            if (entity.isError()) {
-                return null;
-            }
+			// find bom
+			BusinessServiceModel businessServiceModel = businessServiceModelService.findById(somId);
+			businessServiceModel.setScript(entity);
+			businessServiceModelService.update(businessServiceModel, getCurrentUser());
 
-            // find bom
-            BusinessServiceModel businessServiceModel = businessServiceModelService.findById(somId);
-            businessServiceModel.setScript(entity);
-            businessServiceModelService.update(businessServiceModel, getCurrentUser());
+			if (entity.isError()) {
+				return null;
+			}
 
-            return result;
-        } catch (Exception e) {
-            messages.error(e.getMessage());
-            return null;
-        }
-    }
+			return result;
+		} catch (Exception e) {
+			messages.error(e.getMessage());
+			return null;
+		}
+	}
 
-    @Override
-    public void deleteInlist() {
-        // delete in bom
-        List<BusinessServiceModel> businessServiceModels = businessServiceModelService.findByScriptId(entity.getId());
-        for (BusinessServiceModel bsm : businessServiceModels) {
-            bsm.setScript(null);
-            try {
-                businessServiceModelService.update(bsm, getCurrentUser());
-            } catch (BusinessException e) {
-                messages.error(e.getMessage());
-            }
-        }
+	@Override
+	public void deleteInlist() {
+		// delete in bom
+		List<BusinessServiceModel> businessServiceModels = businessServiceModelService.findByScriptId(entity.getId());
+		for (BusinessServiceModel bsm : businessServiceModels) {
+			bsm.setScript(null);
+			try {
+				businessServiceModelService.update(bsm, getCurrentUser());
+			} catch (BusinessException e) {
+				messages.error(e.getMessage());
+			}
+		}
 
-        super.deleteInlist();
-    }
+		super.deleteInlist();
+	}
 
-    public Long getSomId() {
-        return somId;
-    }
+	public Long getSomId() {
+		return somId;
+	}
 
-    public void setSomId(Long somId) {
-        this.somId = somId;
-    }
+	public void setSomId(Long somId) {
+		this.somId = somId;
+	}
 
 }

@@ -96,14 +96,14 @@ public class OfferModelScriptBean extends BaseBean<OfferModelScript> {
 		try {
 			String result = super.saveOrUpdate(killConversation);
 
-			if (entity.isError()) {
-				return null;
-			}
-
 			// find bom
 			BusinessOfferModel businessOfferModel = businessOfferModelService.findById(bomId);
 			businessOfferModel.setScript(entity);
 			businessOfferModelService.update(businessOfferModel, getCurrentUser());
+
+			if (entity.isError()) {
+				return null;
+			}
 
 			return result;
 		} catch (Exception e) {
