@@ -1144,7 +1144,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     	log.info("canUserUpdateEntity path:"+path);
     	String pages = org.meveo.commons.utils.StringUtils.patternMacher("/pages/(.*/.*)/", path);  
     	log.info("canUserUpdateEntity pages:"+pages);
-    	if(getCurrentUser().hasRole("administrateur")){
+    	if(getCurrentUser().hasRole("administrateur") || getCurrentUser().hasRole("superAdministrateur")){
     		return true; 
     	}    	
     	if(pages != null && pages.contains("/")){    
