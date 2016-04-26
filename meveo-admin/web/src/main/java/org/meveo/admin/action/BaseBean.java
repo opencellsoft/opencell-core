@@ -1141,9 +1141,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     * 
     */
     public boolean canUserUpdateEntity(String path){
-    	log.info("canUserUpdateEntity path:"+path);
+    	log.trace("canUserUpdateEntity path:"+path);
     	String pages = org.meveo.commons.utils.StringUtils.patternMacher("/pages/(.*/.*)/", path);  
-    	log.info("canUserUpdateEntity pages:"+pages);
+    	log.trace("canUserUpdateEntity pages:"+pages);
     	if(getCurrentUser().hasRole("administrateur") || getCurrentUser().hasRole("superAdministrateur")){
     		return true; 
     	}    	
@@ -1152,12 +1152,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     		cat = cat.length()>3?cat.substring(0, 3):cat;
     		String entity = pages.split("/")[1];
     		entity = entity.length()>3?entity.substring(0, 3):entity;
-    		log.info("canUserUpdateEntity ist not admin try with cat:"+cat);        	       	
+    		log.trace("canUserUpdateEntity ist not admin try with cat:"+cat);        	       	
         	String resource = permissionService.getResourceByPath(cat);        	
         	if(getCurrentUser().hasPermission(resource,resource+"Management")){
         		return true;
         	}           
-        	log.info("canUserUpdateEntity ist not admin try with entity:"+entity); 
+        	log.trace("canUserUpdateEntity ist not admin try with entity:"+entity); 
         	resource = permissionService.getResourceByPath(entity);        	
         	if(getCurrentUser().hasPermission(resource,resource+"Management")){
         		return true;        	
