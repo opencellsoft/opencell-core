@@ -113,7 +113,7 @@ public class CatMessagesApi extends BaseApi {
 		handleMissingParameters();
 
 		// retrieve entity
-		BusinessEntity entity = fetchBusinessEntity(postData.getEntityClass(), postData.getCode());
+		BusinessEntity entity = fetchBusinessEntity(postData.getEntityClass(), postData.getCode(), currentUser);
 
 		// update default description only if it is not blank
 		if (!StringUtils.isBlank(postData.getDefaultDescription())) {
@@ -125,13 +125,13 @@ public class CatMessagesApi extends BaseApi {
 
 	}
 	
-	private BusinessEntity fetchBusinessEntity(String className, String code) throws MeveoApiException {
+	private BusinessEntity fetchBusinessEntity(String className, String code, User currentUser) throws MeveoApiException {
 		// check if entities exist
 		Class<?> entityClass = getEntityClass(className);
 		BusinessEntity entity = null;
 		
 		if (entityClass != null) {
-			QueryBuilder qb = new QueryBuilder(entityClass, "c");
+			QueryBuilder qb = new QueryBuilder(entityClass, "c", null, currentUser.getProvider());
 			qb.addCriterion("code", "=", code, false);
 			entity = (BusinessEntity) qb.getQuery(catMessagesService.getEntityManager()).getSingleResult();
 			if (entity == null) {
