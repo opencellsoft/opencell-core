@@ -1151,13 +1151,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     		String cat = pages.split("/")[0];
     		cat = cat.length()>3?cat.substring(0, 3):cat;
     		String entity = pages.split("/")[1];
-    		entity = entity.length()>3?entity.substring(0, 3):entity;
-    		log.trace("canUserUpdateEntity ist not admin try with cat:"+cat);        	       	
+    		entity = entity.length()>3?entity.substring(0, 3):entity;    		     	       
         	String resource = permissionService.getResourceByPath(cat);        	
         	if(getCurrentUser().hasPermission(resource,resource+"Management")){
         		return true;
-        	}           
-        	log.trace("canUserUpdateEntity ist not admin try with entity:"+entity); 
+        	}                   	
         	resource = permissionService.getResourceByPath(entity);        	
         	if(getCurrentUser().hasPermission(resource,resource+"Management")){
         		return true;        	
