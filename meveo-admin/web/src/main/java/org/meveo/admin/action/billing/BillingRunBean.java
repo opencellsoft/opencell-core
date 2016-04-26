@@ -210,6 +210,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
 	public String validateInvoicing() {
 		try {
+			entity=billingRunService.refreshOrRetrieve(entity);
 			entity.setStatus(BillingRunStatusEnum.POSTVALIDATED);
 			billingRunService.update(entity, getCurrentUser());
 			if (launchInvoicingRejectedBA) {
@@ -242,6 +243,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
 	public String cancelConfirmedInvoicing() {
 		try {
+			entity=billingRunService.refreshOrRetrieve(entity);
 			entity.setStatus(BillingRunStatusEnum.CANCELED);
 			billingRunService.cleanBillingRun(entity);
 			billingRunService.update(entity, getCurrentUser());

@@ -98,7 +98,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @SuppressWarnings("unchecked")
     public List<ServiceInstance> findByCodeSubscriptionAndStatus(String code, Subscription subscription, InstanceStatusEnum... statuses) {
-        List<ServiceInstance> chargeInstances = null;
+        List<ServiceInstance> serviceInstances = null;
         try {
             log.debug("start of find {} by code (code={}) ..", "ServiceInstance", code);
             QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
@@ -112,15 +112,15 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             }
             qb.endOrClause();
 
-            chargeInstances = (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
-            log.debug("end of find {} by code (code={}). Result found={}.", new Object[] { "ServiceInstance", code, chargeInstances != null });
+            serviceInstances = (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
+            log.debug("end of find {} by code (code={}). Result found={}.", "ServiceInstance", code, serviceInstances != null && !serviceInstances.isEmpty());
         } catch (NoResultException nre) {
             log.debug("findByCodeAndSubscription : no service has been found");
         } catch (Exception e) {
             log.error("findByCodeAndSubscription error={} ", e);
         }
 
-        return chargeInstances;
+        return serviceInstances;
     }
 
     public void serviceInstanciation(ServiceInstance serviceInstance, User creator) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {

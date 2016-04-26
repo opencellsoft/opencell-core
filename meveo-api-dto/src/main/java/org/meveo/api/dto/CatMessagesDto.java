@@ -1,8 +1,11 @@
 package org.meveo.api.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "CatMessages")
@@ -11,68 +14,52 @@ public class CatMessagesDto extends BaseDto {
 
 	private static final long serialVersionUID = 1L;
 	
-	@XmlAttribute(required = true)
-	private String objectType;
+	@XmlElement(required = true)
+	private String entityClass;
 	
-	@XmlAttribute(required = true)
-	private String languageCode;
+	@XmlElement(required = true)
+	private String code;
 	
-	@XmlAttribute(required = true)
-	private String entityCode;
+	@XmlElement(required = true)
+	private String defaultDescription;
 	
-	@XmlAttribute(required = true)
-	private String descriptionTranslation;
-	
-	private String basicDescription;
-	
-	private String catMessagesCode;
-	
-	public String getObjectType() {
-		return objectType;
-	}
-	
-	public void setObjectType(String objectType) {
-		this.objectType = objectType;
+	@XmlElement
+	private List<LanguageDescriptionDto> translatedDescriptions;
+
+	public CatMessagesDto() {
+		translatedDescriptions = new ArrayList<>();
 	}
 
-	public String getLanguageCode() {
-		return languageCode;
+	public String getEntityClass() {
+		return entityClass;
 	}
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
+	public void setEntityClass(String entityClass) {
+		this.entityClass = entityClass;
 	}
 
-	public String getEntityCode() {
-		return entityCode;
+	public String getCode() {
+		return code;
 	}
 
-	public void setEntityCode(String entityCode) {
-		this.entityCode = entityCode;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
-	public String getDescriptionTranslation() {
-		return descriptionTranslation;
+	public String getDefaultDescription() {
+		return defaultDescription;
 	}
 
-	public void setDescriptionTranslation(String descriptionTranslation) {
-		this.descriptionTranslation = descriptionTranslation;
+	public void setDefaultDescription(String defaultDescription) {
+		this.defaultDescription = defaultDescription;
 	}
 
-	public String getBasicDescription() {
-		return basicDescription;
+	public List<LanguageDescriptionDto> getTranslatedDescriptions() {
+		return translatedDescriptions;
 	}
 
-	public void setBasicDescription(String basicDescription) {
-		this.basicDescription = basicDescription;
-	}
-
-	public String getCatMessagesCode() {
-		return catMessagesCode;
-	}
-
-	public void setCatMessagesCode(String catMessagesCode) {
-		this.catMessagesCode = catMessagesCode;
+	public void setTranslatedDescriptions(List<LanguageDescriptionDto> translatedDescriptions) {
+		this.translatedDescriptions = translatedDescriptions;
 	}
 
 }

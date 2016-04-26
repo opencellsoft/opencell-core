@@ -1,332 +1,321 @@
 package org.meveo.api;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CatMessagesDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.response.CatMessagesListDto;
-import org.meveo.api.exception.BusinessApiException;
-import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.AuditableEntity;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.IAuditable;
+import org.meveo.model.IProvider;
+import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
-import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.shared.Title;
-import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.catalog.impl.CatMessagesService;
-import org.meveo.service.catalog.impl.InvoiceCategoryService;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.meveo.service.catalog.impl.PricePlanMatrixService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
-import org.meveo.service.catalog.impl.TaxService;
-import org.meveo.service.catalog.impl.TitleService;
-import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.reflections.Reflections;
 
 public class CatMessagesApi extends BaseApi {
 
-    @Inject
-    private CatMessagesService catMessagesService;
-    @Inject
-    private TitleService titleService;
-    @Inject
-    private TaxService taxService;
-    @Inject
-    private InvoiceCategoryService invoiceCategoryService;
-    @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
-    @Inject
-    private UsageChargeTemplateService usageChargeTemplateService;
-    @Inject
-    private OneShotChargeTemplateService oneShotChargeTemplateService;
-    @Inject
-    private RecurringChargeTemplateService recurringChargeTemplateService;
-    @Inject
-    private PricePlanMatrixService pricePlanMatrixService;
-    @Inject
-    private TradingLanguageService tradingLanguageService;
+	@Inject
+	private CatMessagesService catMessagesService;
 
-    private Map<String, String> result = new HashMap<String, String>();
+	/**
+	 Retrieves a CatMessages by code.
+	 
+	 @param catMessagesCode
+	 @param languageCode
+	 @param provider
+	 @return
+	 @throws MeveoApiException
+	 */
+	public CatMessagesDto find(String catMessagesCode, String languageCode, Provider provider)
+			throws MeveoApiException {
 
-    /**
-     * Creates new CatMessages.
-     * 
-     * @param postData
-     * @param currentUser
-     * @throws MeveoApiException
-     * @throws BusinessException
-     */
-    public void create(CatMessagesDto postData, User currentUser) throws MeveoApiException, BusinessException {
+		if (StringUtils.isBlank(catMessagesCode)) {
+			missingParameters.add("catMessagesCode");
+		}
 
-        if (StringUtils.isBlank(postData.getObjectType())) {
-            missingParameters.add("objectType");
-        }
-        if (StringUtils.isBlank(postData.getLanguageCode())) {
-            missingParameters.add("languageCode");
-        }
-        if (StringUtils.isBlank(postData.getEntityCode())) {
-            missingParameters.add("entityCode");
-        }
-        if (StringUtils.isBlank(postData.getDescriptionTranslation())) {
-            missingParameters.add("descriptionTranslation");
-        }
-        
-        handleMissingParameters();
-        
+		if (StringUtils.isBlank(languageCode)) {
+			missingParameters.add("languageCode");
+		}
 
-        String objectType = postData.getObjectType();
-        String languageCode = postData.getLanguageCode();
-        String descriptionTranslation = postData.getDescriptionTranslation();
-        String messageCode = null;
+		handleMissingParameters();
 
-        // check if object type is supported
-        if (!getObjectTypes().keySet().contains(objectType)) {
-            throw new BusinessApiException("Objectype " + objectType + " is not currently supported");
-        }
+		CatMessages translation = catMessagesService.findByCodeAndLanguage(catMessagesCode, languageCode, provider);
+		if(translation == null){
+			throw new EntityDoesNotExistsException(CatMessages.class, catMessagesCode);
+		}
+		
+		CatMessagesDto messageDto = null;
+		BusinessEntity entity = getEntityByMessageCode(catMessagesCode);
+		if (entity != null) {
+			messageDto = new CatMessagesDto();
+			messageDto.setCode(entity.getCode());
+			messageDto.setDefaultDescription(entity.getDescription());
+			messageDto.setEntityClass(entity.getClass().getSimpleName());
+			List<CatMessages> messages = new ArrayList<>();
+			messages.add(translation);
+			List<LanguageDescriptionDto> translations = getTranslations(messages);
+			messageDto.setTranslatedDescriptions(translations);
+		} else {
+			throw new EntityDoesNotExistsException(BusinessEntity.class, catMessagesCode);
+		}
 
-        String objectTypeCode = postData.getEntityCode();
+		return messageDto;
+	}
 
-        // check if language code is existing
-        if (tradingLanguageService.findByTradingLanguageCode(languageCode, currentUser.getProvider()) == null) {
-            throw new EntityDoesNotExistsException(TradingLanguage.class, languageCode);
-        }
+	public void remove(String catMessagesCode, String languageCode, Provider provider) throws MeveoApiException {
 
-        // check if businessEntity exist
-        if (objectType.equals("Price plans")) {
-            PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(objectTypeCode, currentUser.getProvider());
-            if (pricePlanMatrix != null) {
-                messageCode = pricePlanMatrix.getClass().getSimpleName() + "_" + pricePlanMatrix.getId();
-            } else {
-                throw new EntityDoesNotExistsException(PricePlanMatrix.class, objectTypeCode);
-            }
-        }
+		if (StringUtils.isBlank(catMessagesCode)) {
+			missingParameters.add("catMessagesCode");
+		}
 
-        if (objectType.equals("Charges")) {
-            UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findByCode(objectTypeCode, currentUser.getProvider());
-            if (usageChargeTemplate != null) {
-                messageCode = usageChargeTemplate.getClass().getSimpleName() + "_" + usageChargeTemplate.getId();
-            }
+		if (StringUtils.isBlank(languageCode)) {
+			missingParameters.add("languageCode");
+		}
 
-            RecurringChargeTemplate recurringChargeTemplate = recurringChargeTemplateService.findByCode(objectTypeCode, currentUser.getProvider());
-            if (recurringChargeTemplate != null) {
-                messageCode = recurringChargeTemplate.getClass().getSimpleName() + "_" + recurringChargeTemplate.getId();
-            }
-            OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(objectTypeCode, currentUser.getProvider());
-            if (oneShotChargeTemplate != null) {
-                messageCode = oneShotChargeTemplate.getClass().getSimpleName() + "_" + oneShotChargeTemplate.getId();
-            }
+		handleMissingParameters();
 
-            if (messageCode == null) {
-                throw new EntityDoesNotExistsException(ChargeTemplate.class, objectTypeCode);
-            }
-        }
-        if (objectType.equals("Titles and civilities")) {
-            Title title = titleService.findByCode(currentUser.getProvider(), objectTypeCode);
-            if (title != null) {
-                messageCode = title.getClass().getSimpleName() + "_" + title.getId();
-            } else {
-                throw new EntityDoesNotExistsException(Title.class, objectTypeCode);
-            }
-        }
-        if (objectType.equals("Taxes")) {
-            Tax tax = taxService.findByCode(objectTypeCode, currentUser.getProvider());
-            if (tax != null) {
-                messageCode = tax.getClass().getSimpleName() + "_" + tax.getId();
-            } else {
-                throw new EntityDoesNotExistsException(Tax.class, objectTypeCode);
-            }
-        }
-        if (objectType.equals("Invoice categories")) {
-            InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(objectTypeCode, currentUser.getProvider());
-            if (invoiceCategory != null) {
-                messageCode = invoiceCategory.getClass().getSimpleName() + "_" + invoiceCategory.getId();
-            } else {
-                throw new EntityDoesNotExistsException(InvoiceCategory.class, objectTypeCode);
-            }
-        }
-        if (objectType.equals("Invoice subcategories")) {
-            InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(objectTypeCode, currentUser.getProvider());
-            if (invoiceSubCategory != null) {
-                messageCode = invoiceSubCategory.getClass().getSimpleName() + "_" + invoiceSubCategory.getId();
-            } else {
-                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, objectTypeCode);
-            }
-        }
+		CatMessages catMessages = catMessagesService.findByCodeAndLanguage(catMessagesCode, languageCode, provider);
 
-        if (messageCode != null) {
-            CatMessages existingEntity = catMessagesService.findByCodeAndLanguage(messageCode, languageCode, currentUser.getProvider());
-            if (existingEntity != null) {
-                throw new EntityAlreadyExistsException(CatMessages.class, messageCode);
-            } else {
-                CatMessages catMessages = new CatMessages();
-                catMessages.setMessageCode(messageCode);
-                catMessages.setLanguageCode(languageCode);
-                catMessages.setDescription(descriptionTranslation);
-                catMessagesService.create(catMessages, currentUser);
-            }
-        }
-    }
+		if (catMessages == null) {
+			throw new EntityDoesNotExistsException(CatMessages.class, catMessagesCode);
+		}
 
-    /**
-     * Retrieves a CatMessages by code.
-     * 
-     * @param catMessagesCode
-     * @param languageCode
-     * @param provider
-     * @return
-     * @throws MeveoApiException
-     */
-    public CatMessagesDto find(String catMessagesCode, String languageCode, Provider provider) throws MeveoApiException {
+		catMessagesService.remove(catMessages);
+		 
+	}
 
-        if (StringUtils.isBlank(catMessagesCode)) {
-            missingParameters.add("catMessagesCode");
-        }
+	public void createOrUpdate(CatMessagesDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(languageCode)) {
-            missingParameters.add("languageCode");
-        }
-        
-        handleMissingParameters();
-        
+		if (StringUtils.isBlank(postData.getEntityClass())) {
+			missingParameters.add("entityClass");
+		}
+		if (StringUtils.isBlank(postData.getCode())) {
+			missingParameters.add("code");
+		}
 
-        CatMessagesDto catMessagesDto = null;
+		handleMissingParameters();
 
-        CatMessages catMessages = catMessagesService.findByCodeAndLanguage(catMessagesCode, languageCode, provider);
+		// retrieve entity
+		BusinessEntity entity = fetchBusinessEntity(postData.getEntityClass(), postData.getCode());
 
-        if (catMessages == null) {
-            throw new EntityDoesNotExistsException(CatMessages.class, catMessagesCode);
-        }
+		// update default description only if it is not blank
+		if (!StringUtils.isBlank(postData.getDefaultDescription())) {
+			entity.setDescription(postData.getDefaultDescription());
+			update(entity, currentUser);
+		}
+		// save translations
+		saveTranslations(entity, postData.getTranslatedDescriptions(), currentUser);
 
-        catMessagesDto = new CatMessagesDto();
-        catMessagesDto.setCatMessagesCode(catMessages.getMessageCode());
-        catMessagesDto.setObjectType(catMessages.getObjectType());
-        catMessagesDto.setLanguageCode(catMessages.getLanguageCode());
-        catMessagesDto.setEntityCode(catMessages.getEntityCode());
-        catMessagesDto.setBasicDescription(catMessages.getEntityDescription());
-        catMessagesDto.setDescriptionTranslation(catMessages.getDescription());
+	}
+	
+	private BusinessEntity fetchBusinessEntity(String className, String code) throws MeveoApiException {
+		// check if entities exist
+		Class<?> entityClass = getEntityClass(className);
+		BusinessEntity entity = null;
+		
+		if (entityClass != null) {
+			QueryBuilder qb = new QueryBuilder(entityClass, "c");
+			qb.addCriterion("code", "=", code, false);
+			entity = (BusinessEntity) qb.getQuery(catMessagesService.getEntityManager()).getSingleResult();
+			if (entity == null) {
+				throw new EntityDoesNotExistsException(BusinessEntity.class, code);
+			}
+		} else {
+			throw new EntityDoesNotExistsException(className, code);
+		}
+		
+		return entity;
+	}
 
-        return catMessagesDto;
-    }
+	private void saveTranslations(BusinessEntity entity, List<LanguageDescriptionDto> translations, User currentUser)
+			throws MeveoApiException, BusinessException {
+		
+		// loop over translations
+		CatMessages message = null;
+		boolean isBlankDescription = false;
+		String messageCode = catMessagesService.getMessageCode(entity);
+		
+		for (LanguageDescriptionDto translation : translations) {
+			isBlankDescription = StringUtils.isBlank(translation.getDescription());
+			// check if translation exists
+			message = null;
+			message = catMessagesService.findByCodeAndLanguage(messageCode, translation.getLanguageCode(),
+					currentUser.getProvider());
+			// create/update/delete translations
+			if (message != null && !isBlankDescription) { // message exists and description is not blank
+				message.setDescription(translation.getDescription());
+				update(message, currentUser);
+			} else if (message != null && isBlankDescription) { // message exists and description is blank
+				remove(message, currentUser);
+			} else if (message == null && !isBlankDescription) { // message does not exist and description is not blank
+				message = new CatMessages();
+				message.setMessageCode(messageCode);
+				message.setLanguageCode(translation.getLanguageCode());
+				message.setDescription(translation.getDescription());
+				create(message, currentUser);
+			}
+		}
+	}
 
-    public void update(CatMessagesDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public CatMessagesListDto list(Provider provider) {
+		CatMessagesListDto catMessagesListDto = new CatMessagesListDto();
+		List<CatMessages> catMessagesList = catMessagesService.list();
 
-        if (StringUtils.isBlank(postData.getObjectType())) {
-            missingParameters.add("objectType");
-        }
-        if (StringUtils.isBlank(postData.getLanguageCode())) {
-            missingParameters.add("languageCode");
-        }
-        if (StringUtils.isBlank(postData.getEntityCode())) {
-            missingParameters.add("entityCode");
-        }
-        if (StringUtils.isBlank(postData.getDescriptionTranslation())) {
-            missingParameters.add("descriptionTranslation");
-        }
-        
-        handleMissingParameters();
-        
+		if (catMessagesList != null && !catMessagesList.isEmpty()) {
+			
+			CatMessagesDto messageDto = null;
+			BusinessEntity entity = null;
+			Map<String, List<CatMessages>> entities = parseEntities(catMessagesList);
+			List<CatMessages> messageList = null;
+			List<LanguageDescriptionDto> translations = null;
 
-        CatMessages catMessages = catMessagesService.findByCodeAndLanguage(postData.getCatMessagesCode(), postData.getLanguageCode(), currentUser.getProvider());
+			for (String messageCode : entities.keySet()) {
+				messageList = entities.get(messageCode);
+				entity = getEntityByMessageCode(messageCode);
+				if (entity != null) {
+					messageDto = new CatMessagesDto();
+					messageDto.setCode(entity.getCode());
+					messageDto.setDefaultDescription(entity.getDescription());
+					messageDto.setEntityClass(entity.getClass().getSimpleName());
+					translations = getTranslations(messageList);
+					messageDto.setTranslatedDescriptions(translations);
+					catMessagesListDto.getCatMessage().add(messageDto);
+				}
+			}
+		}
+		return catMessagesListDto;
+	}
 
-        if (catMessages == null) {
-            throw new EntityDoesNotExistsException(CatMessages.class, postData.getCatMessagesCode());
-        }
+	private void create(AuditableEntity entity, User currentUser) throws MeveoApiException, BusinessException {
+		log.trace("start of create {} entity={}", entity.getClass().getSimpleName(), entity);
+		if (entity instanceof IAuditable) {
+			((IAuditable) entity).updateAudit(currentUser);
+		}
+		if (entity instanceof IProvider && (((IProvider) entity).getProvider() == null)) {
+			((BaseEntity) entity).setProvider(currentUser.getProvider());
+		}
+		catMessagesService.getEntityManager().persist(entity);
+		log.debug("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
+	}
 
-        catMessages.setDescription(postData.getDescriptionTranslation());
+	private void update(AuditableEntity entity, User currentUser) throws MeveoApiException, BusinessException {
+		log.trace("start of update {} entity (id={}) ..", entity.getClass().getSimpleName(), entity.getId());
 
-        catMessagesService.update(catMessages, currentUser);
-    }
+		if (entity instanceof IAuditable) {
+			((IAuditable) entity).updateAudit(currentUser);
+		}
+		if (entity instanceof IProvider && (((IProvider) entity).getProvider() == null)) {
+			((BaseEntity) entity).setProvider(currentUser.getProvider());
+		}
+		entity = catMessagesService.getEntityManager().merge(entity);
+		log.debug("end of update {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
+	}
 
-    public void remove(String catMessagesCode, String languageCode, Provider provider) throws MeveoApiException {
+	private void remove(AuditableEntity entity, User currentUser) {
+		log.trace("start of remove {} entity (id={}) ..", entity.getClass().getSimpleName(), entity.getId());
+		if (entity instanceof IProvider && (((IProvider) entity).getProvider() == null)) {
+			((BaseEntity) entity).setProvider(currentUser.getProvider());
+		}
+		catMessagesService.getEntityManager().remove(entity);
+		log.debug("end of remove {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
+	}
 
-        if (StringUtils.isBlank(catMessagesCode)) {
-            missingParameters.add("catMessagesCode");
-        }
+	private BusinessEntity getEntityByMessageCode(String messageCode) {
+		BusinessEntity entity = null;
+		if (!StringUtils.isBlank(messageCode) && messageCode.contains("_")) {
+			try {
+				String[] classAndId = messageCode.split("_");
+				String className = classAndId[0];
+				long entityId = Long.parseLong(classAndId[1]);
+				entity = getEntityByClassNameAndId(className, entityId);
+			} catch (NumberFormatException e) {
+				log.warn("Invalid Entity Id.  Will return null entity.", e);
+			}
+		}
+		return entity;
+	}
 
-        if (StringUtils.isBlank(languageCode)) {
-            missingParameters.add("languageCode");
-        }
-        
-        handleMissingParameters();
-        
+	private BusinessEntity getEntityByClassNameAndId(String className, long entityId) {
+		Class<?> entityClass = getEntityClass(className);
+		BusinessEntity entity = null;
+		if (entityClass != null) {
+			try {
+				log.trace("start of find {} by id (id={}) ..", entityClass.getSimpleName(), entityId);
+				entity = (BusinessEntity) catMessagesService.getEntityManager().find(entityClass, entityId);
+				log.debug("end of find {} by id (id={}). Result found={}.", entityClass.getSimpleName(), entityId,
+						entity != null);
+			} catch (NoResultException e) {
+				log.warn("Error encountered while retrieving business entity.  Will return null.", e);
+			}
+		}
+		return entity;
+	}
 
-        CatMessages catMessages = catMessagesService.findByCodeAndLanguage(catMessagesCode, languageCode, provider);
+	private Class<?> getEntityClass(String className) {
+		Class<?> entityClass = null;
+		if (!StringUtils.isBlank(className)) {
+			Reflections reflections = new Reflections("org.meveo.model");
+			Set<Class<?>> multiLanguageClasses = reflections.getTypesAnnotatedWith(MultilanguageEntity.class);
+			for (Class<?> multiLanguageClass : multiLanguageClasses) {
+				if (className.equals(multiLanguageClass.getSimpleName())) {
+					entityClass = multiLanguageClass;
+					break;
+				}
+			}
+		}
+		return entityClass;
+	}
 
-        if (catMessages == null) {
-            throw new EntityDoesNotExistsException(CatMessages.class, catMessagesCode);
-        }
+	private Map<String, List<CatMessages>> parseEntities(List<CatMessages> messageList) {
+		Map<String, List<CatMessages>> messageMap = null;
+		String messageCode = null;
+		List<CatMessages> list = null;
+		for (CatMessages message : messageList) {
+			if (messageMap == null) {
+				messageMap = new HashMap<>();
+			}
+			messageCode = message.getMessageCode();
+			if (!StringUtils.isBlank(messageCode)) {
+				list = messageMap.get(messageCode);
+				if (list == null) {
+					list = new ArrayList<>();
+					messageMap.put(messageCode, list);
+				}
+				list.add(message);
+			}
+		}
+		return messageMap;
+	}
 
-        catMessagesService.remove(catMessages);
-    }
-
-    public void createOrUpdate(CatMessagesDto postData, User currentUser) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(postData.getCatMessagesCode())) {
-            missingParameters.add("catMessagesCode");
-        }
-        if (StringUtils.isBlank(postData.getLanguageCode())) {
-            missingParameters.add("languageCode");
-        }
-                
-        handleMissingParameters();
-        
-
-        String catMessagesCode = postData.getCatMessagesCode();
-        String languageCode = postData.getLanguageCode();
-
-        CatMessages c = catMessagesService.findByCodeAndLanguage(catMessagesCode, languageCode, currentUser.getProvider());
-
-        if (c == null) {
-            create(postData, currentUser);
-        } else {
-            update(postData, currentUser);
-        }
-    }
-
-    public CatMessagesListDto list(Provider provider) {
-        CatMessagesListDto catMessagesListDto = new CatMessagesListDto();
-        List<CatMessages> catMessagesList = catMessagesService.list();
-
-        if (catMessagesList != null && !catMessagesList.isEmpty()) {
-            for (CatMessages cm : catMessagesList) {
-                CatMessagesDto cmd = new CatMessagesDto();
-                cmd.setBasicDescription(cm.getDescription());
-                cmd.setCatMessagesCode(cm.getMessageCode());
-                cmd.setDescriptionTranslation(cm.getEntityDescription());
-                cmd.setEntityCode(cm.getEntityCode());
-                cmd.setLanguageCode(cm.getLanguageCode());
-                cmd.setObjectType(cm.getObjectType());
-                catMessagesListDto.getCatMessage().add(cmd);
-            }
-        }
-
-        return catMessagesListDto;
-    }
-
-    protected Map<String, String> getObjectTypes() {
-        if (result.isEmpty()) {
-            result.put("Titles and civilities", "Title_*");
-            result.put("Taxes", "Tax_*");
-            result.put("Invoice categories", "InvoiceCategory_*");
-            result.put("Invoice subcategories", "InvoiceSubCategory_*");
-            result.put("Charges", "*ChargeTemplate_*");
-            result.put("Price plans", "PricePlanMatrix_*");
-        }
-        return result;
-    }
+	private List<LanguageDescriptionDto> getTranslations(List<CatMessages> messageList) {
+		List<LanguageDescriptionDto> translations = null;
+		LanguageDescriptionDto translation = null;
+		for (CatMessages message : messageList) {
+			if (translations == null) {
+				translations = new ArrayList<>();
+			}
+			translation = new LanguageDescriptionDto();
+			translation.setLanguageCode(message.getLanguageCode());
+			translation.setDescription(message.getDescription());
+			translations.add(translation);
+		}
+		return translations;
+	}	
 }

@@ -14,7 +14,7 @@ public interface IFileParser {
 	public void setDataName(String dataName);
 	public void parsing()throws  Exception;
 	public boolean hasNext()throws Exception;
-	public Object getNextRecord() throws RecordRejectedException;
+	public RecordContext getNextRecord() throws RecordRejectedException;
 	public void close();
 	//TODO : add more stuff like line context, errors....
 }
