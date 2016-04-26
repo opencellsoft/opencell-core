@@ -130,13 +130,13 @@
 			</c:if>
 		</p:commandButton>
 		<p:commandButton id="#{resultsId}enablelink" icon="ui-icon-circle-check"
-			rendered="#{renderEnableLink and entity.disabled}"
+			rendered="#{renderEnableLink and entity.disabled and backingBean.canUserUpdateEntity(request.requestURL)}"
 			oncomplete="PF('#{resultsId}confirmEnableWidget').show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"/>
 		</p:commandButton>
 		<p:commandButton id="#{resultsId}disablelink" icon="ui-icon-circle-close"
-			rendered="#{renderEnableLink and not entity.disabled}"
+			rendered="#{renderEnableLink and not entity.disabled and backingBean.canUserUpdateEntity(request.requestURL)}"
 			oncomplete="PF('#{resultsId}confirmDisableWidget').show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"/>
@@ -188,12 +188,12 @@
 		</script>	
 		<p:remoteCommand id="remoteDeleteButton" actionListener="#{backingBean.deleteInlist}"
 			 name="#{resultsId}doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form"
-			 rendered="#{renderDeleteLink}"/>
+			 rendered="#{renderDeleteLink and backingBean.canUserUpdateEntity(request.requestURL)}"/>
 		<p:tooltip for="#{resultsId}deletelink" rendered="#{renderDeleteLink}"
 			value="#{messages['commons.delete']}" showEffect="slide"
 			hideEffect="slide"  />
 		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
-			oncomplete="PF('#{resultsId}confirmDeleteWidget').show()" rendered="#{renderDeleteLink}">
+			oncomplete="PF('#{resultsId}confirmDeleteWidget').show()" rendered="#{renderDeleteLink and backingBean.canUserUpdateEntity(request.requestURL)}">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"></f:setPropertyActionListener>
 		</p:commandButton>

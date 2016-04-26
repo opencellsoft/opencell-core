@@ -18,6 +18,7 @@
  */
 package org.meveo.service.admin.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -27,6 +28,7 @@ import javax.persistence.NonUniqueResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
@@ -97,5 +99,22 @@ public class PermissionService extends PersistenceService<Permission> {
         }
 
         return permissionEntity;
+    }
+    
+    
+    //TODO rethink all permission strategy
+    public String getResourceByPath(String path){
+    	List<Permission> listPermissions = new ArrayList<Permission>();
+    	try {
+    		QueryBuilder qb = new QueryBuilder("from Permission p ");
+    		qb.like("resource", path, QueryLikeStyleEnum.MATCH_ANYWHERE, false);
+    		listPermissions =  qb.getQuery(getEntityManager()).getResultList();
+    	} catch (Exception e) {
+    		log.trace("No permission was found. Reason {}", e.getMessage());            
+    	}
+    	if(!listPermissions.isEmpty()){
+    		return listPermissions.get(0).getResource();
+    	}
+    	return null;
     }
 }

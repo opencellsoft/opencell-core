@@ -57,6 +57,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.scripts.EntityActionScript;
+import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
@@ -98,9 +99,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @Inject
     @CurrentUser
     protected User currentUser;
-
+    
     @Inject
     protected Conversation conversation;
+
+    @Inject
+    protected PermissionService permissionService;
 
     @Inject
     protected CustomFieldTemplateService customFieldTemplateService;
@@ -1128,5 +1132,37 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         PaginationConfiguration config = new PaginationConfiguration(filters);
 
         return getPersistenceService().list(config);
+    }
+    
+   
+   /**
+    *     crm/customers
+    * 
+    * 
+    */
+    public boolean canUserUpdateEntity(String path){
+    	log.info("canUserUpdateEntity path:"+path);
+    	String pages = org.meveo.commons.utils.StringUtils.patternMacher("/pages/(.*/.*)/", path);  
+    	log.info("canUserUpdateEntity pages:"+pages);
+    	if(getCurrentUser().hasRole("administrateur")){
+    		return true; 
+    	}    	
+    	if(pages != null && pages.contains("/")){    
+    		String cat = pages.split("/")[0];
+    		cat = cat.length()>3?cat.substring(0, 3):cat;
+    		String entity = pages.split("/")[1];
+    		entity = entity.length()>3?entity.substring(0, 3):entity;
+    		log.info("canUserUpdateEntity ist not admin try with cat:"+cat);        	       	
+        	String resource = permissionService.getResourceByPath(cat);        	
+        	if(getCurrentUser().hasPermission(resource,resource+"Management")){
+        		return true;
+        	}           
+        	log.info("canUserUpdateEntity ist not admin try with entity:"+entity); 
+        	resource = permissionService.getResourceByPath(entity);        	
+        	if(getCurrentUser().hasPermission(resource,resource+"Management")){
+        		return true;        	
+        	}
+    	}    	 			
+    	return false;
     }
 }
