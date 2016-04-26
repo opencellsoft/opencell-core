@@ -37,7 +37,6 @@ import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingWalletTypeEnum;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -65,16 +64,15 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 	@Rejected
 	Event<Serializable> rejectededChargeProducer;
 
-	public ChargeInstance findByCodeAndService(String code, Long subscriptionId) {
-		ChargeInstance chargeInstance = null;
+	public RecurringChargeInstance findByCodeAndService(String code, Long serviceInstanceId) {
+	    RecurringChargeInstance chargeInstance = null;
 		try {
-			log.debug("start of find {} by code (code={}) ..", "ChargeInstance", code);
-			QueryBuilder qb = new QueryBuilder(ChargeInstance.class, "c");
+			log.debug("start of find {} by code {} on service instance {}", "RecurringChargeInstance", code, serviceInstanceId);
+			QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
 			qb.addCriterion("c.code", "=", code, true);
-			qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
-			chargeInstance = (ChargeInstance) qb.getQuery(getEntityManager()).getSingleResult();
-			log.debug("end of find {} by code (code={}). Result found={}.", new Object[] { "ChargeInstance", code,
-					chargeInstance != null });
+			qb.addCriterion("c.serviceInstance.id", "=", serviceInstanceId, true);
+			chargeInstance = (RecurringChargeInstance) qb.getQuery(getEntityManager()).getSingleResult();
+            log.debug("end of find {} by code (code={}). Result found={}.", "RecurringChargeInstance", code, chargeInstance != null);
 
 		} catch (NoResultException nre) {
 			log.warn("findByCodeAndService : no charges have been found");
