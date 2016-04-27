@@ -16,7 +16,7 @@
                 </p:breadCrumb>
             </h:form>
         </p:panel>
-        <hftl:formPanel formId="moduleFormId" ajaxSubmit="true" buttons="true" label="#{messages['meveoModule.title']}" showEnableDisableButton="true"
+        <hftl:formPanel ajaxSubmit="true" buttons="true" label="#{messages['meveoModule.title']}" showEnableDisableButton="true"
             backingBean="#{meveoModuleBean}">
             <hftl:formField label="#{messages['businessEntity.code']}" field="code" maxlength="35" required="true" validateUnique="true" />
             <hftl:formField label="#{messages['businessEntity.description']}" field="description" required="true" id="description" maxlength="100" />
@@ -61,7 +61,7 @@
                 </ui:define>
                 <ui:define name="buttons">
                     <p:commandButton id="confirmOk" value="#{messages['commons.yes']}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('meveoModuleDialog').hide()"
-                        action="#{meveoModuleBean.publishModule}" update=":module:messages :#{p:component('moduleFormId')}">
+                        action="#{meveoModuleBean.publishModule}" update=":module:messages :#{p:component('formId')}">
                     </p:commandButton>
                     <p:commandButton id="confirmKo" value="#{messages['commons.no']}" onclick="PF('meveoModuleDialog').hide()" type="button" />
                 </ui:define>
@@ -87,7 +87,7 @@
                     <p:graphicImage url="${pictureDestUrl2}" cache="false" rendered="#{not empty meveoModuleBean.entity.logoPicture}" />
                 </h:panelGrid>
                 <div class="clearLeft">
-                    <p:commandButton id="cropButton" value="#{messages['meveoModule.crop']}" action="#{meveoModuleBean.cropLogo}" update="uploadPictureForm moduleFormId:logo"
+                    <p:commandButton id="cropButton" value="#{messages['meveoModule.crop']}" action="#{meveoModuleBean.cropLogo}" update="uploadPictureForm formId:logo"
                         icon="ui-icon-scissors" />
                     <p:commandButton id="closeButton" value="#{messages['commons.close']}" onclick="PF('uploadPictureDialog').hide()" type="button" />
                 </div>
