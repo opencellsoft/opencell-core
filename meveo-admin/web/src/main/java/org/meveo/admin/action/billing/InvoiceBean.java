@@ -131,6 +131,8 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 	private List<SubCategoryInvoiceAgregate> uiSubCategoryInvoiceAgregates;
 	private List<RatedTransaction> uiRatedTransactions;
+	
+	private long billingAccountId;
     
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -159,15 +161,14 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			if (invoice.getAdjustedInvoice() == null) {
 				Invoice adjustedInvoice = invoiceService.findById(adjustedInvoiceIdParam.get());
 				invoice.setAdjustedInvoice(adjustedInvoice);
-				invoice.setBillingAccount(adjustedInvoice.getBillingAccount());
 				invoice.setBillingRun(adjustedInvoice.getBillingRun());
 				invoice.setDueDate(new Date());
 				invoice.setInvoiceDate(new Date());				
 				invoice.setPaymentMethod(adjustedInvoice.getPaymentMethod());
-				invoice.setInvoiceNumber(null);
 				invoice.setInvoiceTypeEnum(InvoiceTypeEnum.CREDIT_NOTE_ADJUST);
-				invoice.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(invoice, getCurrentUser()));	                
-
+				if(adjustedInvoice.getBillingAccount()!=null){
+				billingAccountId=adjustedInvoice.getBillingAccount().getId();
+				}
 
 				// duplicate rated transaction for detailed
 				// invoice adjustment
@@ -682,7 +683,13 @@ public class InvoiceBean extends BaseBean<Invoice> {
 				for (RatedTransaction rt : uiRatedTransactions) {
 					ratedTransactionService.create(rt, getCurrentUser());
 				}
-			}			
+			} 
+			if(billingAccountId!=0){
+				BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
+				entity.setBillingAccount(billingAccount);
+				String invoiceNumber=invoiceService.getInvoiceAdjustmentNumber(entity, getCurrentUser());
+				entity.setInvoiceNumber(invoiceNumber);
+			} 	 
 		}
 		if (isDetailed()) {
 			super.saveOrUpdate(false);
@@ -761,5 +768,10 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	public List<Invoice> findInvoiceAdjustmentByInvoice(Invoice adjustedInvoice) {
 		return invoiceService.findInvoiceAdjustmentByInvoice(adjustedInvoice);
 	}
+
+	public long getBillingAccountId() {
+		return billingAccountId;
+	}
+	
 
 }
