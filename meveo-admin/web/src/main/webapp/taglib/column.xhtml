@@ -25,6 +25,7 @@
         width - column width e.g 20% 
         style - style to apply to the p:column
         styleClass - style class to apply to the p:column
+        noLinkToView - should field (in case of code field) not be displayed as a link to a detail view
         
     Additional attributes for text type fields
         showTruncated - show truncated text in column and show full text when clicking on the text "..."  
@@ -134,7 +135,7 @@
     <c:if test="${empty edit}">
         <c:set var="edit" value="true" />
     </c:if>
-    <c:if test="#{field eq 'code'}">
+    <c:if test="#{field eq 'code' and empty(noLinkToView)}">
         <c:set var="entityView" value="#{editView}" />
         <c:set var="valueIdField" value="id" />
     </c:if>

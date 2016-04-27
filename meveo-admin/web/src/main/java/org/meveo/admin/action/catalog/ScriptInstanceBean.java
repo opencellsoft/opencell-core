@@ -154,7 +154,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
         String result = getListViewName();
         try {
 			// check duplicate script
-			if (scriptInstanceService.isExistsCode(scriptInstanceService.getFullClassname(entity.getScript()), getCurrentProvider())) {
+			if (entity.isTransient() && scriptInstanceService.isExistsCode(scriptInstanceService.getFullClassname(entity.getScript()), getCurrentProvider())) {
 				messages.error(new BundleKey("messages", "javax.persistence.EntityExistsException"));
 				return null;
 			}

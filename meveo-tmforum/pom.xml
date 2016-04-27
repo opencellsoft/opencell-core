@@ -8,7 +8,11 @@
 		<groupId>org.meveo</groupId>
 		<artifactId>meveo</artifactId>
 		<relativePath>../pom.xml</relativePath>
+<<<<<<< HEAD
 		<version>4.2.1.snapshot</version>
+=======
+		<version>4.2.1-SNAPSHOT</version>
+>>>>>>> integration
 	</parent>
 	<artifactId>meveo-tmforum</artifactId>
 	<name>MEVEO tmforum API</name>

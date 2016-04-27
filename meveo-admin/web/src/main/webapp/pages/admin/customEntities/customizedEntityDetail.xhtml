@@ -6,6 +6,7 @@
         <f:metadata>
             <f:viewParam name="entityClass" value="#{customEntityTemplateBean.entityClassName}" />
             <f:viewParam name="cetId" value="#{customEntityTemplateBean.objectIdFromSet}" />
+            <f:viewParam name="appliesTo" value="#{customEntityTemplateBean.appliesTo}" />
         </f:metadata>
     </ui:define>
 
@@ -14,6 +15,15 @@
     </ui:define>
 
     <ui:define name="body">
+
+        <p:panel>
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                    <p:menuitem outcome="customizedEntities" value="#{messages['menu.customizedEntities']}" />
+                </p:breadCrumb>
+            </h:form>
+        </p:panel>
 
         <o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
 
@@ -238,7 +248,9 @@
 
 
                 <p:button id="backButton" value="#{messages['action.back']}" outcome="#{customEntityTemplateBean.back()}" includeViewParams="true">
-                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                    <c:if test="#{javax.enterprise.context.conversation.id != null}">
+                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                    </c:if>
                 </p:button>
 
                 <!--  Field related confirmation widgets -->
@@ -467,7 +479,7 @@
                         <hftl:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="10" />
                         <hftl:formField label="#{messages['customFieldTemplate.hideOnNew']}" field="hideOnNew" isMessage="true" componentWidth="8" />
                         <hftl:formField label="#{messages['customFieldTemplate.allowEdit']}" field="allowEdit" isMessage="true" componentWidth="7" />
-                        <hftl:formField label="#{messages['customFieldTemplate.applicableOnEl']}" field="applicableOnEl"  textArea="true" maxlength="2000" rows="1"/>
+                        <hftl:formField label="#{messages['customFieldTemplate.applicableOnEl']}" field="applicableOnEl" textArea="true" maxlength="2000" rows="1" />
                         <hftl:formField label="#{messages['customFieldTemplate.minValue']}" field="minValue" negativeValue="true" componentWidth="15"
                             rendered="#{customFieldTemplateBean.entity.fieldType == 'LONG' or customFieldTemplateBean.entity.fieldType == 'DOUBLE'}" />
                         <hftl:formField label="#{messages[customFieldTemplateBean.entity.fieldType == 'STRING'?'customFieldTemplate.maxValueTxt':'customFieldTemplate.maxValue']}"
@@ -475,8 +487,8 @@
                             negativeValue="#{customFieldTemplateBean.entity.fieldType != 'STRING'}"
                             rendered="#{customFieldTemplateBean.entity.fieldType == 'LONG' or customFieldTemplateBean.entity.fieldType == 'DOUBLE' or customFieldTemplateBean.entity.fieldType == 'STRING'}"
                             componentWidth="15" />
-                        <hftl:formField label="#{messages['customFieldTemplate.regExp']}" field="regExp" rendered="#{customFieldTemplateBean.entity.fieldType == 'STRING'}" size="29"
-                            componentWidth="19" />
+                        <hftl:formField label="#{messages['customFieldTemplate.regExp']}" field="regExp" rendered="#{customFieldTemplateBean.entity.fieldType == 'STRING'}"
+                            size="29" componentWidth="19" />
                     </p:fieldset>
                     <p:fieldset legend="#{messages['customFieldTemplate.versioningAndCaching']}" styleClass="clearLeft">
                         <hftl:formField label="#{messages['customFieldTemplate.cacheValue']}" field="cacheValue" isMessage="true" componentWidth="15" />
@@ -541,7 +553,8 @@
                     <hftl:formField label="#{messages['BusinessEntity.code']}" field="localCode" required="true" allowEdit="false" componentWidth="15" />
                     <hftl:formField label="#{messages['customizedEntities.actionLabel']}" field="label" required="true" useConverter="false" maxlength="50" componentWidth="20" />
                     <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" maxlength="50" componentWidth="35" />
-                    <hftl:formField label="#{messages['customizedEntities.actionApplicableOnEl']}" field="applicableOnEl" componentWidth="50" textArea="true" maxlength="2000" rows="1"/>
+                    <hftl:formField label="#{messages['customizedEntities.actionApplicableOnEl']}" field="applicableOnEl" componentWidth="50" textArea="true" maxlength="2000"
+                        rows="1" />
                     <hftl:formField label="#{messages['scriptInstance.sourceTypeEnum']}" field="sourceTypeEnum" />
                     <hftl:decorateFormField fieldId="codeMirror" label="#{messages['customizedEntities.actionScriptSrc']}" newLine="true" componentWidth="100">
                         <pe:codeMirror id="codeMirror" theme="eclipse" mode="text/x-java" value="#{entityActionScriptBean.entity.script}" lineNumbers="true" required="true" />
@@ -574,7 +587,8 @@
                                 rendered="#{not empty entityActionScriptBean.entity.id and entityActionScriptBean.entity.disabled}"
                                 actionListener="#{customEntityTemplateBean.refreshActions}" action="#{entityActionScriptBean.enable}" update="@form :fieldsForm:entityActions" />
 
-                            <p:commandButton value="#{messages['commons.close']}" onclick="PF('actionDialog').hide()" type="button" />
+                            <p:commandButton value="#{messages['commons.close']}" onclick="PF('actionDialog').hide()" actionListener="#{customEntityTemplateBean.refreshActions}"
+                                update=":fieldsForm:entityActions" />
                         </hf:formButtons>
                     </ui:define>
                 </hftl:formPanel>

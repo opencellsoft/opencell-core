@@ -17,6 +17,7 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
+import org.meveo.util.EntityCustomizationUtils;
 import org.reflections.Reflections;
 
 public class CustomizedEntityService implements Serializable {
@@ -104,5 +105,44 @@ public class CustomizedEntityService implements Serializable {
         });
 
         return entities;
+    }
+
+    /**
+     * Get a customized/customizable entity that matched a given appliesTo value as it is used in customFieldtemplate or EntityActionScript
+     * 
+     * @param appliesTo appliesTo value as it is used in customFieldtemplate or EntityActionScript
+     * @param currentProvider Current provider
+     * @return A customized/customizable entity
+     */
+    public CustomizedEntity getCustomizedEntity(String appliesTo, Provider currentProvider) {
+
+        // Find standard entities that implement ICustomFieldEntity interface except JobInstance
+        Reflections reflections = new Reflections("org.meveo.model");
+        Set<Class<? extends ICustomFieldEntity>> cfClasses = reflections.getSubTypesOf(ICustomFieldEntity.class);
+
+        for (Class<? extends ICustomFieldEntity> cfClass : cfClasses) {
+
+            if (JobInstance.class.isAssignableFrom(cfClass) || Modifier.isAbstract(cfClass.getModifiers())) {
+                continue;
+            }
+
+            if (appliesTo.equals(EntityCustomizationUtils.getAppliesTo(cfClass))) {
+                return new CustomizedEntity(cfClass);
+            }
+        }
+
+        // Find Jobs
+        for (Job job : jobInstanceService.getJobs()) {
+            if (appliesTo.equals(EntityCustomizationUtils.getAppliesTo(job.getClass()))) {
+                return new CustomizedEntity(job.getClass());
+            }
+        }
+
+        for (CustomEntityTemplate cet : customEntityTemplateService.list(currentProvider)) {
+            if (appliesTo.equals(cet.getAppliesTo())) {
+                return new CustomizedEntity(cet.getCode(), CustomEntityTemplate.class, cet.getId(), cet.getDescription());
+            }
+        }
+        return null;
     }
 }

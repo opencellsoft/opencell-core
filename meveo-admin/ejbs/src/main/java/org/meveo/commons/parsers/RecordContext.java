@@ -4,6 +4,8 @@ public class RecordContext {
 	int lineNumber = -1;
 	String lineContent = null;
 	Object record = null;
+	//When line rejected, reason of reject
+	String reason = null;
 
 	public RecordContext() {
 
@@ -53,5 +55,14 @@ public class RecordContext {
 	public void setRecord(Object record) {
 		this.record = record;
 	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+	
 
 }
