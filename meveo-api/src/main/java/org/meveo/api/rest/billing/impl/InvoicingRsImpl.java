@@ -29,10 +29,10 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
     @Override
     public ActionStatus createBillingRun(CreateBillingRunDto createBillingRunDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        log.info("createBillingRun request={}", createBillingRunDto);
         try {
-
-            invoicingApi.createBillingRun(createBillingRunDto, getCurrentUser());
-
+        	long billingRunId=invoicingApi.createBillingRun(createBillingRunDto, getCurrentUser());
+        	result.setMessage(billingRunId + "");
         } catch (MeveoApiException mpe) {
             result.setErrorCode(mpe.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -46,7 +46,7 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
 
         return result;
     }
-
+    
     @Override
     public GetBillingRunInfoResponseDto getBillingRunInfo(Long billingRunId) {
         GetBillingRunInfoResponseDto result = new GetBillingRunInfoResponseDto();
