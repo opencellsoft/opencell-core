@@ -20,7 +20,7 @@ public class FileParserFlatworm implements IFileParser {
     private String mappingDescriptor = null;    
     private String recordName = null;
     private BufferedReader bufferedReader = null;
-    private RecordContext recordContext = null;
+    private RecordContext recordContext = new RecordContext();
     private RecordRejectedException recordRejectedException=null;
     
     
