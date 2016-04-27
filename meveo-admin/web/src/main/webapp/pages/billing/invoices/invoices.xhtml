@@ -26,10 +26,15 @@
 			searchField1="code" 
 			searchField2Label="#{messages['invoiceSubCategory.description']}"
 			searchField2="description"
+			searchField3Label="#{messages['name.lastName']}"
+			searchField3="name.lastName"
+			
 			column1Label="#{messages['billingAccount.code']}"
 			column1="code"
 			column2Label="#{messages['invoiceSubCategory.description']}"
-			column2="description" 
+			column2="description"
+            column3Label="#{messages['name.lastName']}"
+			column3="name" column3Child="lastName"			
 			selection="#{invoiceBean.filters['billingAccount']}"
             updateField=":searchForm:billingAccountId">
 		</hftl:entityPopup>
