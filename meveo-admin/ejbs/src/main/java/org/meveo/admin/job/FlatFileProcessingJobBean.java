@@ -133,9 +133,10 @@ public class FlatFileProcessingJobBean {
                         outputRecord(recordContext);
                         result.registerSucces();
                     } catch (Throwable e) {
-                        log.warn("error on reject record ", e);
-                        result.registerError("file=" + fileName + ", line=" + cpLines + ": " + recordContext.getReason());
-                        rejectRecord(recordContext, e.getMessage());
+                    	String erreur =  recordContext.getReason() == null  ? e.getMessage() : recordContext.getReason();
+                    	log.warn("error on reject record ", e);
+                        result.registerError("file=" + fileName + ", line=" + cpLines + ": " + erreur);
+                        rejectRecord(recordContext, erreur);
                         if(!continueAfterError){
                             break;
                         }
