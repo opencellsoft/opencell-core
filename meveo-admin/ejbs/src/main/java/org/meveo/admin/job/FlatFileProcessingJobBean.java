@@ -44,7 +44,7 @@ public class FlatFileProcessingJobBean {
     String outputDir;
     PrintWriter outputFileWriter;
     String rejectDir;
-    String saveDir;
+    String archiveDir;
     PrintWriter rejectFileWriter;
     String report;
     String username;
@@ -57,7 +57,7 @@ public class FlatFileProcessingJobBean {
 
         outputDir = inputDir + File.separator + "output";
         rejectDir = inputDir + File.separator + "reject";
-        saveDir = inputDir + File.separator + "save";
+        archiveDir = inputDir + File.separator + "archive";
 
         File f = new File(outputDir);
         if (!f.exists()) {
@@ -71,15 +71,13 @@ public class FlatFileProcessingJobBean {
             f.mkdirs();
             log.debug("rejectDir {} creation ok", rejectDir);
         }
-        f = new File(saveDir);
+        f = new File(archiveDir);
         if (!f.exists()) {
-            log.debug("saveDir {} not exist", saveDir);
+            log.debug("saveDir {} not exist", archiveDir);
             f.mkdirs();
-            log.debug("saveDir {} creation ok", saveDir);
+            log.debug("saveDir {} creation ok", archiveDir);
         }
         report = "";
-        long processed = 0;
-        long rejected = 0;
         long cpLines = 0;
 
         if (file != null) {
@@ -94,13 +92,11 @@ public class FlatFileProcessingJobBean {
                 	isCsvFromExcel = true;
                     ExcelToCsv excelToCsv = new ExcelToCsv();
                     excelToCsv.convertExcelToCSV(file.getAbsolutePath(), file.getParent(), ";");
-                    FileUtils.moveFile(saveDir, file, fileName);                   
+                    FileUtils.moveFile(archiveDir, file, fileName);                   
                     file = new File(inputDir + File.separator + fileName.replaceAll(".xlsx", ".csv").replaceAll(".xls", ".csv") );
                 }
                 currentFile = FileUtils.addExtension(file, ".processing");
 
-                result.setNbItemsToProcess(1);
-                
                 script = scriptInstanceService.getScriptInstance(provider, scriptInstanceFlowCode);
                 
 
@@ -136,12 +132,11 @@ public class FlatFileProcessingJobBean {
                         script.execute(executeParams, currentUser);
                         outputRecord(recordContext);
                         result.registerSucces();
-                        processed++;
                     } catch (Throwable e) {
-                        rejected++;
-                        log.warn("error on reject record ", e);
-                        result.registerError("file=" + fileName + ", line=" + cpLines + ": " + recordContext.getReason());
-                        rejectRecord(recordContext, recordContext.getReason());
+                    	String erreur =  recordContext.getReason() == null  ? e.getMessage() : recordContext.getReason();
+                    	log.warn("error on reject record ", e);
+                        result.registerError("file=" + fileName + ", line=" + cpLines + ": " + erreur);
+                        rejectRecord(recordContext, erreur);
                         if(!continueAfterError){
                             break;
                         }
@@ -172,10 +167,12 @@ public class FlatFileProcessingJobBean {
                 try {
                     if (currentFile != null) {
                         // Move current CSV file to save directory, if his origin from an Excel transformation, else CSV file was deleted.
-                        if(isCsvFromExcel == false)
-                        	FileUtils.moveFile(saveDir, currentFile, fileName);
-                        else
-                        	currentFile.delete();
+						if (isCsvFromExcel == false) {
+							FileUtils.moveFile(archiveDir, currentFile,
+									fileName);
+						} else {
+							currentFile.delete();
+						}
                     }
                 } catch (Exception e) {
                     report += "\r\n cannot move file to save directory " + fileName;
@@ -199,11 +196,7 @@ public class FlatFileProcessingJobBean {
                     log.error("Failed to close output file writer for file {}", fileName, e);
                 }
             }
-            result.setReport(report);
-            result.setNbItemsCorrectlyProcessed(processed);
-            result.setNbItemsProcessedWithError(rejected);
-            result.setNbItemsToProcess(cpLines);
-
+            result.addReport(report);
         } else {
             log.info("no file to process");
         }
