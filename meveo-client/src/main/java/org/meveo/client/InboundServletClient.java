@@ -24,9 +24,9 @@ public class InboundServletClient {
 			inboundServlet = new URL("http://192.168.0.120:8080/meveo/inbound/demo/");
 			HttpURLConnection servletConnection = (HttpURLConnection) inboundServlet.openConnection();
 
-			String userCredentials = "meveo.admin:meveo.admin";
-			String basicAuth = "Basic " + new String(Base64.encodeBytes(userCredentials.getBytes()));
-			servletConnection.setRequestProperty("Authorization", basicAuth);
+//			String userCredentials = "meveo.admin:meveo.admin";
+//			String basicAuth = "Basic " + new String(Base64.encodeBytes(userCredentials.getBytes()));
+//			servletConnection.setRequestProperty("Authorization", basicAuth);
 
 			servletConnection.setRequestMethod("POST");
 			servletConnection.setRequestProperty("Accept-Language", "en-US,en;q=0.5");

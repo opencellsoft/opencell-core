@@ -54,6 +54,7 @@ public class InboundServlet extends HttpServlet {
 	@InboundRequestReceived
 	protected Event<InboundRequest> eventProducer;
 
+	@SuppressWarnings("unused")
 	private User currentUser;
 
 	public static int readInputStreamWithTimeout(InputStream is, byte[] b, int timeoutMillis) throws IOException {
@@ -70,7 +71,8 @@ public class InboundServlet extends HttpServlet {
 		return bufferOffset;
 	}
 
-	private void doService(HttpServletRequest req, HttpServletResponse res) {
+	@SuppressWarnings("unused")
+	private void authenticateRequest(HttpServletRequest req, HttpServletResponse res) {
 		final String authorization = req.getHeader("Authorization");
 
 		// If no authorization information present; block access
@@ -117,7 +119,9 @@ public class InboundServlet extends HttpServlet {
 			res.setStatus(401);
 			return;
 		}
+	}
 
+	private void doService(HttpServletRequest req, HttpServletResponse res) {
 		log.debug("received request for method {} ", req.getMethod());
 		Provider provider = null;
 		String path = req.getPathInfo();
@@ -210,11 +214,11 @@ public class InboundServlet extends HttpServlet {
 			for (String cookieName : inReq.getResponseCoockies().keySet()) {
 				res.addCookie(new Cookie(cookieName, inReq.getResponseCoockies().get(cookieName)));
 			}
-			
+
 			for (String headerName : inReq.getResponseHeaders().keySet()) {
 				res.addHeader(headerName, inReq.getResponseHeaders().get(headerName));
 			}
-			
+
 			if (inReq.getResponseBody() != null) {
 				try (PrintWriter out = res.getWriter()) {
 					out.print(inReq.getResponseBody());
@@ -227,11 +231,11 @@ public class InboundServlet extends HttpServlet {
 		}
 
 		try {
-			inboundRequestService.create(inReq, currentUser);
+			inboundRequestService.create(inReq, null);
 		} catch (BusinessException e1) {
 			log.error("Failed to create InboundRequest ", e1);
 		}
-		
+
 		log.debug("exit with status {}", res.getStatus());
 	}
 
