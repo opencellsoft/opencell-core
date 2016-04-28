@@ -4,11 +4,7 @@
     <parent>
         <artifactId>meveo-admin</artifactId>
         <groupId>org.meveo</groupId>
-<<<<<<< HEAD
-        <version>4.2.1.snapshot</version>
-=======
         <version>4.2.1-SNAPSHOT</version>
->>>>>>> integration
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>meveo-admin-ejbs</artifactId>
