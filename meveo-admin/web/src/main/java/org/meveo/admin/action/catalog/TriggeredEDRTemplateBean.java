@@ -94,5 +94,23 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(entity);
 		return result;
 	}
+	
+	public void duplicate() {
+		if (entity != null && entity.getId() != null) {
+			entity = triggeredEdrService.refreshOrRetrieve(entity);
+
+			// Detach and clear ids of entity and related entities
+			triggeredEdrService.detach(entity);
+			entity.setId(null);
+			entity.setCode(entity.getCode() + "_copy");
+
+			try {
+				triggeredEdrService.create(entity, getCurrentUser());
+
+			} catch (BusinessException e) {
+				log.error("error when duplicate offer#{0}:#{1}", entity.getCode(), e);
+			}
+		}
+	}
 
 }
