@@ -109,7 +109,7 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
 
     public void deleteDiscountPlan(DiscountPlanItem discountPlanItem) {
         getEntity().getDiscountPlanItems().remove(discountPlanItem);
-        discountPlanItemService.remove(discountPlanItem);
+        discountPlanItemService.remove(discountPlanItem.getId());
         messages.info(new BundleKey("messages", "delete.successful"));
     }
 
