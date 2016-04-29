@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
@@ -17,6 +18,7 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -37,10 +39,17 @@ public class FlatFileProcessingJob extends Job {
     
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
+    
+    @Override
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void execute(JobInstance jobInstance, User currentUser) {
+        super.execute(jobInstance, currentUser);
+    }
 
 	@SuppressWarnings("unchecked")
 	@Override
-	@TransactionAttribute(TransactionAttributeType.NEVER)
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
 		try {
 			String mappingConf = null;
@@ -139,7 +148,7 @@ public class FlatFileProcessingJob extends Job {
 		scriptFlowCF.setFieldType(CustomFieldTypeEnum.STRING);
 		scriptFlowCF.setDefaultValue(null);
 		scriptFlowCF.setValueRequired(true);
-		scriptFlowCF.setMaxValue(50L);
+		scriptFlowCF.setMaxValue(100L);
 		result.put("FlatFileProcessingJob_scriptsFlow", scriptFlowCF);
 
 		CustomFieldTemplate variablesCF = new CustomFieldTemplate();
@@ -150,7 +159,8 @@ public class FlatFileProcessingJob extends Job {
 		variablesCF.setFieldType(CustomFieldTypeEnum.STRING);
 		variablesCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
 		variablesCF.setValueRequired(false);
-		variablesCF.setMaxValue(50L);
+		variablesCF.setMaxValue(100L);
+		variablesCF.setMapKeyType(CustomFieldMapKeyEnum.STRING);
 		result.put("FlatFileProcessingJob_variables", variablesCF);
 
 		CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
