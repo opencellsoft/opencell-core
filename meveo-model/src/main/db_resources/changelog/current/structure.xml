@@ -1606,4 +1606,10 @@
     <changeSet id="#1649_20160427" author="AndriusKarpavicius">
         <sql>update crm_custom_field_tmpl tm set provider_id = (select provider_id from adm_user where id = tm.creator_id) where tm.provider_id is null;</sql>    
     </changeSet>
+    
+    <changeSet id="#1611_20160429" author="EdwardLegaspi">
+    	<addColumn tableName="adm_inbound_request">
+    		<column name="body" type="VARCHAR(1000)"></column>
+    	</addColumn>
+    </changeSet>
 </databaseChangeLog>
