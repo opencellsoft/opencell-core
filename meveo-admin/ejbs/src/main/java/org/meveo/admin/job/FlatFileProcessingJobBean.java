@@ -50,7 +50,7 @@ public class FlatFileProcessingJobBean {
     String username;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String inputDir, User currentUser, File file, String mappingConf, String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String originFilename, String formatTransfo) {
         log.debug("Running for user={}, inputDir={}, scriptInstanceFlowCode={},formatTransfo={}", currentUser, inputDir, scriptInstanceFlowCode, formatTransfo);
         Provider provider = currentUser.getProvider();
