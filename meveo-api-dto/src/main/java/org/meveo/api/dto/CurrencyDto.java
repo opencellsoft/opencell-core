@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.TradingCurrency;
 
 /**
@@ -28,6 +29,10 @@ public class CurrencyDto extends BaseDto {
 	public CurrencyDto(TradingCurrency e) {
 		code = e.getCurrencyCode();
 		description = e.getPrDescription();
+	}
+	public CurrencyDto(Currency e) {
+		code = e.getCurrencyCode();
+		description = e.getDescriptionEn();
 	}
 
 	public String getCode() {

@@ -5,35 +5,35 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.CurrencyApi;
+import org.meveo.api.LanguageApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.TradingCurrencyApi;
+import org.meveo.api.TradingLanguageApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.CurrencyDto;
-import org.meveo.api.dto.response.GetCurrencyResponse;
-import org.meveo.api.dto.response.GetTradingCurrencyResponse;
+import org.meveo.api.dto.LanguageDto;
+import org.meveo.api.dto.response.GetLanguageResponse;
+import org.meveo.api.dto.response.GetTradingLanguageResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.rest.CurrencyRs;
-import org.meveo.api.rest.TradingCurrencyRs;
+import org.meveo.api.rest.LanguageRs;
+import org.meveo.api.rest.TradingLanguageRs;
 
 /**
  * @author Edward P. Legaspi
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
-public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
+public class TradingLanguageRsImpl extends BaseRs implements TradingLanguageRs {
 
     @Inject
-    private CurrencyApi currencyApi;
+    private TradingLanguageApi tradingCurrencyApi;
 
     @Override
-    public ActionStatus create(CurrencyDto postData) {
+    public ActionStatus create(LanguageDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyApi.create(postData, getCurrentUser());
+            tradingCurrencyApi.create(postData, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -49,11 +49,11 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
     }
 
     @Override
-    public GetCurrencyResponse find(String languageCode) {
-    	GetCurrencyResponse result = new GetCurrencyResponse();
+    public GetTradingLanguageResponse find(String languageCode) {
+    	GetTradingLanguageResponse result = new GetTradingLanguageResponse();
 
         try {
-            result.setCurrency(currencyApi.find(languageCode, getCurrentUser().getProvider()));
+            result.setLanguage(tradingCurrencyApi.find(languageCode, getCurrentUser().getProvider()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -73,7 +73,7 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyApi.remove(languageCode, getCurrentUser().getProvider());
+            tradingCurrencyApi.remove(languageCode, getCurrentUser().getProvider());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -89,11 +89,11 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
     }
 
     @Override
-    public ActionStatus update(CurrencyDto postData) {
+    public ActionStatus update(LanguageDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyApi.update(postData, getCurrentUser());
+            tradingCurrencyApi.update(postData, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -109,11 +109,11 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
     }
 
     @Override
-    public ActionStatus createOrUpdate(CurrencyDto postData) {
+    public ActionStatus createOrUpdate(LanguageDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyApi.createOrUpdate(postData, getCurrentUser());
+            tradingCurrencyApi.createOrUpdate(postData, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

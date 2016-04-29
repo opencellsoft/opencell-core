@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingLanguage;
 
 /**
@@ -27,6 +28,10 @@ public class LanguageDto extends BaseDto {
 	public LanguageDto(TradingLanguage e) {
 		code = e.getLanguageCode();
 		description = e.getPrDescription();
+	}
+	public LanguageDto(Language e) {
+		code = e.getLanguageCode();
+		description = e.getDescriptionEn();
 	}
 
 	public String getCode() {

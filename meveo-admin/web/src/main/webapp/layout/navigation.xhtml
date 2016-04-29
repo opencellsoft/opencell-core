@@ -10,6 +10,9 @@
 	<p:tooltip for="tradingLanguages">#{help['menu.tradingLanguages']}</p:tooltip>
 	<p:tooltip for="tradingCurrencies">#{help['menu.tradingCurrencies']}</p:tooltip>
 	<p:tooltip for="tradingCountries">#{help['menu.tradingCountries']}</p:tooltip>
+	<p:tooltip for="countries">#{help['menu.countries']}</p:tooltip>
+	<p:tooltip for="currencies">#{help['menu.currencies']}</p:tooltip>
+	<p:tooltip for="languages">#{help['menu.languages']}</p:tooltip>
 	<p:tooltip for="calendars">#{help['menu.calendars']}</p:tooltip>
 	<p:tooltip for="billingCycles">#{help['menu.billingCycles']}</p:tooltip>
 	<p:tooltip for="taxes">#{help['menu.taxes']}</p:tooltip>
@@ -144,6 +147,21 @@
 					rendered="#{identity.hasPermission('administration','administrationVisualization')}"
 					outcome="terminationReasons"
 					value="#{messages['menu.terminationReason']}" />
+			
+			<p:menuitem id="currencies"
+					rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}"
+					outcome="currencies"
+					value="#{messages['menu.currencies']}" />
+			
+			<p:menuitem id="languages"
+					rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}"
+					outcome="languages"
+					value="#{messages['menu.languages']}" />
+					
+			<p:menuitem id="countries"
+					rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}"
+					outcome="countries"
+					value="#{messages['menu.countries']}" />
 					
 			
 			<p:menuitem id="meveoProperties"

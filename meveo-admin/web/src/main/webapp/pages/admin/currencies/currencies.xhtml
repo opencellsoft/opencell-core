@@ -28,10 +28,8 @@
 				field="descriptionEn" />
 		</hftl:searchPanel>
 
-		<hftl:dataList label="#{messages['currency.title']}"
-			backingBean="#{currencyListBean}">
-			<hftl:column label="#{messages['currency.code']}"
-				field="currencyCode" />
+		<hftl:dataList label="#{messages['currency.title']}"    backingBean="#{currencyListBean}">
+			<hftl:column label="#{messages['currency.code']}"	field="currencyCode" width="10%" entityView="currencyDetail" valueIdField="id"/>
 			<hftl:column label="#{messages['currency.name']}"
 				field="descriptionEn" />
 			<hftl:actionsColumn

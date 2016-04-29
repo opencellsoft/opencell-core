@@ -18,6 +18,9 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -68,5 +71,16 @@ public class CountryBean extends BaseBean<Country> {
 	protected String getDefaultSort() {
 		return "descriptionEn";
 	}
-	
+	@Override
+	protected String getListViewName() {
+		return "countries";
+	}
+	@Override
+	public String getNewViewName() {
+		return "countryDetail";
+	}
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("language","currency");
+	}
 }

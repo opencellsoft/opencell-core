@@ -3,37 +3,46 @@ package org.meveo.api.rest.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.CurrencyApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.TradingCurrencyApi;
+import org.meveo.api.TradingCountryApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.CurrencyDto;
-import org.meveo.api.dto.response.GetCurrencyResponse;
-import org.meveo.api.dto.response.GetTradingCurrencyResponse;
+import org.meveo.api.dto.CountryDto;
+import org.meveo.api.dto.response.GetCountryResponse;
+import org.meveo.api.dto.response.GetTradingCountryResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.rest.CurrencyRs;
-import org.meveo.api.rest.TradingCurrencyRs;
+import org.meveo.api.rest.CountryRs;
+import org.meveo.api.rest.TradingCountryRs;
 
 /**
+ * @see {@link org.meveo.api.rest.CountryWs}.
+ * 
  * @author Edward P. Legaspi
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
-public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
+public class TradingCountryRsImpl extends BaseRs implements TradingCountryRs {
 
     @Inject
-    private CurrencyApi currencyApi;
+    private TradingCountryApi tradingCountryApi;
 
+    /***
+     * Creates an instance of @see TradingCountry base on @see Country.
+     * 
+     * @param countryDto
+     * @return @see ActionStatus
+     */
     @Override
-    public ActionStatus create(CurrencyDto postData) {
+    public ActionStatus create(CountryDto countryDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyApi.create(postData, getCurrentUser());
+            tradingCountryApi.create(countryDto, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -49,11 +58,12 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
     }
 
     @Override
-    public GetCurrencyResponse find(String languageCode) {
-    	GetCurrencyResponse result = new GetCurrencyResponse();
+    public GetTradingCountryResponse find(@QueryParam("countryCode") String countryCode) {
+    	GetTradingCountryResponse result = new GetTradingCountryResponse();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCurrency(currencyApi.find(languageCode, getCurrentUser().getProvider()));
+            result.setCountry(tradingCountryApi.find(countryCode, getCurrentUser().getProvider()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -69,11 +79,11 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
     }
 
     @Override
-    public ActionStatus remove(String languageCode) {
+    public ActionStatus remove(@PathParam("countryCode") String countryCode, @PathParam("currencyCode") String currencyCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyApi.remove(languageCode, getCurrentUser().getProvider());
+            tradingCountryApi.remove(countryCode, currencyCode, getCurrentUser().getProvider());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -89,11 +99,11 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
     }
 
     @Override
-    public ActionStatus update(CurrencyDto postData) {
+    public ActionStatus update(CountryDto countryDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyApi.update(postData, getCurrentUser());
+            tradingCountryApi.update(countryDto, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -109,11 +119,11 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
     }
 
     @Override
-    public ActionStatus createOrUpdate(CurrencyDto postData) {
+    public ActionStatus createOrUpdate(CountryDto countryDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyApi.createOrUpdate(postData, getCurrentUser());
+            tradingCountryApi.createOrUpdate(countryDto, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
