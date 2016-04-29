@@ -39,7 +39,8 @@
 			<hftl:column label="#{messages['triggeredEdrTemplate.param2El']}"
 				field="param2El" />
 			<hftl:actionsColumn
-				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+				permission="#{identity.hasPermission('catalog','catalogManagement')}"
+				renderDuplicateLink="true" />
 		</hftl:dataList>
 
 	</ui:define>

@@ -1560,10 +1560,7 @@
             <column name="EXONERATION_REASON" type="VARCHAR(255)" />          
         </addColumn>   
         <dropColumn columnName="EXONERATION_TAX_EL" tableName="CRM_PROVIDER" />
-    </changeSet>      
-<<<<<<< HEAD
-    
-=======
+    </changeSet>    
     <changeSet id="#1588_20160412" author="AndriusKarpavicius">
         <dropNotNullConstraint tableName="adm_notif_webhooks" columnName="HTTP_PORT"/>  
 
@@ -1571,7 +1568,6 @@
         <modifyDataType tableName="ADM_NOTIF_EMAIL" columnName="EMAIL_HTML_BODY" newDataType="TEXT"/>
     </changeSet>   
          
->>>>>>> integration
     <changeSet id="#1640_20160413" author="anasseh">	
         <addColumn tableName="AR_DDREQUEST_ITEM">	
             <column name="ERROR_MSG" type="VARCHAR(1000)" />             
@@ -1593,10 +1589,7 @@
 			baseTableName="AR_DDREQUEST_ITEM" constraintName="fk_ar_occ_dd_item"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />                   
-    </changeSet> 
-<<<<<<< HEAD
-            
-=======
+    </changeSet>
     
     <changeSet id="#1548_20160421" author="AndriusKarpavicius">
         <modifyDataType tableName="MEVEO_SCRIPT_INSTANCE" columnName="APPLICABLE_ON_EL" newDataType="varchar(2000)"/>
@@ -1608,15 +1601,15 @@
     <changeSet id="#1651-20160421" author="Mbarek">
 	<modifyDataType columnName="APPLICABLE_ON_EL"
 		newDataType="VARCHAR(2000)" tableName="CRM_CUSTOM_FIELD_TMPL" />
-    </changeSet>	
-<<<<<<< HEAD
-    
- 
->>>>>>> integration
-=======
+    </changeSet>
 
     <changeSet id="#1649_20160427" author="AndriusKarpavicius">
         <sql>update crm_custom_field_tmpl tm set provider_id = (select provider_id from adm_user where id = tm.creator_id) where tm.provider_id is null;</sql>    
     </changeSet>
->>>>>>> integration
+    
+    <changeSet id="#1611_20160429" author="EdwardLegaspi">
+    	<addColumn tableName="adm_inbound_request">
+    		<column name="body" type="VARCHAR(1000)"></column>
+    	</addColumn>
+    </changeSet>
 </databaseChangeLog>

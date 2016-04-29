@@ -15,6 +15,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -38,6 +39,7 @@ public class ScriptingJob extends Job {
 		super.execute(jobInstance, currentUser);
 	}
 
+	
 	@SuppressWarnings("unchecked")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
@@ -90,6 +92,7 @@ public class ScriptingJob extends Job {
 		variablesCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
 		variablesCF.setValueRequired(false);
 		variablesCF.setMaxValue(100L);
+		variablesCF.setMapKeyType(CustomFieldMapKeyEnum.STRING);
 		result.put("ScriptingJob_variables", variablesCF); 
 		
 		return result;

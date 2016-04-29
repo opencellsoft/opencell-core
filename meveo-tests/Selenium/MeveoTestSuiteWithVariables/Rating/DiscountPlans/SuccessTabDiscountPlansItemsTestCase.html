@@ -12,24 +12,59 @@
 <tr><td rowspan="1" colspan="3">SuccessTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${DpCode}')]</td>
+	<td>${DpCode}</td>
+</tr>
+<tr>
 	<td>verifyText</td>
-	<td>link=Discount plan items</td>
+	<td>//a[contains(text(),'${DpCode}')]</td>
+	<td>${DpCode}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[contains(text(),'${DpCode}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>${DiscountPlanItems}</td>
 	<td>Discount plan items</td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>link=Discount plan items</td>
+	<td>${DiscountPlanItems}</td>
+	<td>Discount plan items</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>${DiscountPlanItems}</td>
 	<td>Discount plan items</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>link=Discount plan items</td>
+	<td>${DiscountPlanItems}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ItemCode}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${ItemCode}</td>
-	<td>ic_01</td>
+	<td>${ItemCodeValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCategory}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -37,9 +72,29 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForText</td>
+	<td>id=searchInvoiceCategoryPopup_title</td>
+	<td>Invoice category</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=searchInvoiceCategoryPopup_title</td>
+	<td>Invoice category</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=searchInvoiceCategoryPopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>id=searchInvoiceCategoryPopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
-	<td>//*[contains(@id, 'code_text')]</td>
-	<td>CONSUMPTION</td>
+	<td>id=searchInvoiceCategoryPopuppopupForm:searchField1</td>
+	<td>${CategorieValue}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -47,8 +102,73 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='searchInvoiceCategoryPopuppopupForm:searchInvoiceCategoryPopupdatatable_data']/tr/td</td>
+	<td>${CategorieValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//tbody[@id='searchInvoiceCategoryPopuppopupForm:searchInvoiceCategoryPopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>${CategorieValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>${CategorieValue}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
-	<td>css=td</td>
+	<td>id=searchInvoiceCategoryPopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='searchInvoiceCategoryPopuppopupForm:searchInvoiceCategoryPopupdatatable_data']/tr/td</td>
+	<td>${CategorieValue}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='searchInvoiceCategoryPopuppopupForm:searchInvoiceCategoryPopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=searchInvoiceCategoryPopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectCategory}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='searchInvoiceCategoryPopuppopupForm:searchInvoiceCategoryPopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='searchInvoiceCategoryPopuppopupForm:searchInvoiceCategoryPopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=tabView:formDiscountPlanItem:categorySelectId_text</td>
+	<td>${CategorieValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${SubCategorieBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectSubcategory}</td>
 	<td></td>
 </tr>
 <tr>
@@ -58,23 +178,113 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;CMP_DATA&quot;)</td>
+	<td>css=li:contains(&quot;${SubCategorieValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${AccountingCodeBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${AccountingCode}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${AccountingCode}</td>
-	<td>ac_01</td>
+	<td>${AccountingCodeValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${PercentageBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Percentage}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Percentage}</td>
-	<td>12</td>
+	<td>${PercentageValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ELExpressionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ExpressionEL}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${ExpressionEL}</td>
+	<td>${ELExpressionValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>${AddThisDiscountPlanItem}</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='tabView:datatable_results_data']/tr/td[2]</td>
+	<td>Item code${ItemCodeValue}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//tbody[@id='tabView:datatable_results_data']/tr/td[2]</td>
+	<td>Item code${ItemCodeValue}</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//tbody[@id='tabView:datatable_results_data']/tr/td[2]</td>
+	<td>Item code${ItemCodeValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${DpCode}')]</td>
+	<td>${DpCode}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//tbody[@id='datatable_results_data']/tr/td[4]</td>
+	<td>Discount Plan Items${ItemCodeValue}</td>
 </tr>
 </tbody></table>
 </body>
