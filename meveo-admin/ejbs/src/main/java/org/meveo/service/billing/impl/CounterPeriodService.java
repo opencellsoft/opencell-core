@@ -18,11 +18,30 @@
  */
 package org.meveo.service.billing.impl;
 
-import javax.ejb.Stateless;
+import java.util.Date;
 
+import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class CounterPeriodService extends PersistenceService<CounterPeriod> {
+	
+	public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date) throws BusinessException {
+		Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
+		query.setParameter("counterInstance", counterInstance);
+		query.setParameter("date", date, TemporalType.TIMESTAMP);
+		try {
+			return (CounterPeriod) query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+ 
 }
