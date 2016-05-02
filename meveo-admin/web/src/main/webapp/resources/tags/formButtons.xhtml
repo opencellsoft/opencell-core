@@ -77,7 +77,7 @@
 		</p:button>
 
         <p:commandButton value="#{messages['commons.disable']}"
-            rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.active}"
+            rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.active and cc.attrs.backingBean.canUserUpdateEntity(request.requestURL)}"
             action="#{cc.attrs.backingBean.disable}" update="@form"/>
             
         <p:commandButton value="#{messages['commons.enable']}"
@@ -205,7 +205,7 @@
 		</script>	
 		<p:remoteCommand id="remoteDeleteButton" action="#{cc.attrs.backingBean.deleteWithBack}" name="#{cc.attrs.formId}doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" />
 		<p:commandButton id="deletelink" icon="ui-icon-trash" value="#{messages['commons.delete']}"
-			onclick="PF('#{cc.attrs.formId}confirmDeleteWidget').show()" type="button" rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null}">
+			onclick="PF('#{cc.attrs.formId}confirmDeleteWidget').show()" type="button" rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null and cc.attrs.backingBean.canUserUpdateEntity(request.requestURL)}">
 			<f:setPropertyActionListener target="#{cc.attrs.backingBean.entity}"
 				value="#{entity}"></f:setPropertyActionListener>
 		</p:commandButton>

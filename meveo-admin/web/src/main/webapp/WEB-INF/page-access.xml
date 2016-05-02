@@ -1,17 +1,14 @@
 <page-access>
 
 	<page view-id="/admin/catMessages/catMessagesDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/admin/meveoInstance/meveoInstanceDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/admin/module/moduleDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
 	</page>
 	
@@ -24,257 +21,206 @@
 	</page>
 	
 	<page view-id="/admin/scriptInstances/scriptInstanceDetail" >
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/admin/sellers/sellerDetail" >
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/admin/taxes/taxDetail" >
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/admin/taxes/taxDetail" >
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/admin/title/titleDetail" >
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/admin/tradingCountries/tradingCountryDetail" >
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/admin/tradingCurrencies/tradingCurrencyDetail" >
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/admin/tradingLanguages/tradingLanguagesDetail" >
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
 	</page>
 
 	<page view-id="/billing/billingAccounts/billingAccountDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('account','accountManagement') or (!edit and currentUser.hasPermission('account','accountVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/billing/billingCycles/billingCycleDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/billing/invoices/invoiceDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/billing/invoiceTasks/invoiceTaskDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/billing/invoicing/recurringInvoicing">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/billing/ratedTransactions/ratedTransactionDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/billing/subscriptions/subscriptionDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('account','accountManagement') or (!edit and currentUser.hasPermission('account','accountVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/billing/userAccounts/userAccountDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('account','accountManagement') or (!edit and currentUser.hasPermission('account','accountVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/billing/walletOperations/walletOperationDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/billing/wallets/walletDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('billing','billingManagement')}</constraint>
 	</page>
 	
 	<page view-id="/catalog/calendars/calendarDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('catalog','catalogVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/catalog/counterTemplates/counterTemplateDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('catalog','catalogVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/catalog/discountPlanMatrixes/discountPlanMatrixDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('catalog','catalogVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/catalog/discountPlans/discountPlanDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('catalog','catalogVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/catalog/invoiceCategories/invoiceCategoryDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('catalog','catalogVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/catalog/invoiceSubCategories/invoiceSubCategoryDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('catalog','catalogVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/catalog/offerTemplateCategories/offerTemplateCategoryDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('catalog','catalogVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/catalog/offerTemplates/offerTemplateDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('catalog','catalogVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('catalog','catalogVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/catalog/pricePlanMatrixes/pricePlanMatrixDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('catalog','catalogVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/catalog/recurringChargeTemplates/recurringChargeTemplateDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('catalog','catalogVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/catalog/serviceTemplates/serviceTemplateDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('catalog','catalogVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/catalog/serviceUsageChargeTemplates/serviceUsageChargeTemplateDetail" >
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/catalog/usageChargeTemplates/usageChargeTemplateDetail" >
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/catalog/walletTemplates/walletTemplateDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('catalog','catalogVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/crm/customerBrands/customerBrandDetail" >
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/crm/customerCategories/customerCategoryDetail" >
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/crm/providerContacts/providerContactDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/crm/syntheseClients/syntheseClientDetail" >
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('customerSummary','customerSummaryVisualization') or currentUser.hasPermission('account','accountManagement') or (!edit and currentUser.hasPermission('account','accountVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/medina/access/accessDetail" >
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('billing','billingManagement'))}</constraint>
 	</page>
 	
 	<page view-id="/medina/importedFile/importedFileDetail" >
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('billing','billingManagement'))}</constraint>
 	</page>
 	
 	<page view-id="/payments/customerAccounts/customerAccountDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('account','accountManagement') or (!edit and currentUser.hasPermission('account','accountVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/payments/ddrequestLot/ddrequestLotDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/payments/ddrequestLotOp/ddrequestLotOpDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/payments/dunning/dunningPlanDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/payments/matchingCode/matchingCodeDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/payments/occTemplates/occTemplateDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('billing','billingManagement')}</constraint>
 	</page>
 	
 	<page view-id="/rating/matrixEntries/matrixEntryDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/rating/matrixes/matrixDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/rating/usageTypes/usageTypeDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/reporting/jobs/jobDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('reporting','reportingManagement') or (!edit and currentUser.hasPermission('reporting','reportingVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/reporting/reports/bordereauRemiseCheque">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('reporting','reportingManagement') or (!edit and currentUser.hasPermission('reporting','reportingVisualization'))}</constraint>
 	</page>
 	
 	<page view-id="/reporting/reports/reportDetail">
-		<param name="edit" />
 		<constraint>#{currentUser.hasPermission('reporting','reportingManagement') or (!edit and currentUser.hasPermission('reporting','reportingVisualization'))}</constraint>
 	</page>
 	

@@ -34,6 +34,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.international.status.Messages;
@@ -65,6 +66,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.filter.FilterService;
+import org.meveo.util.view.PagePermission;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -1142,25 +1144,27 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     */
     public boolean canUserUpdateEntity(String path){
     	log.trace("canUserUpdateEntity path:"+path);
-    	String pages = org.meveo.commons.utils.StringUtils.patternMacher("/pages/(.*/.*)/", path);  
-    	log.trace("canUserUpdateEntity pages:"+pages);
-    	if(getCurrentUser().hasRole("administrateur") || getCurrentUser().hasRole("superAdministrateur")){
-    		return true; 
-    	}    	
-    	if(pages != null && pages.contains("/")){    
-    		String cat = pages.split("/")[0];
-    		cat = cat.length()>3?cat.substring(0, 3):cat;
-    		String entity = pages.split("/")[1];
-    		entity = entity.length()>3?entity.substring(0, 3):entity;    		     	       
-        	String resource = permissionService.getResourceByPath(cat);        	
-        	if(getCurrentUser().hasPermission(resource,resource+"Management")){
-        		return true;
-        	}                   	
-        	resource = permissionService.getResourceByPath(entity);        	
-        	if(getCurrentUser().hasPermission(resource,resource+"Management")){
-        		return true;        	
-        	}
-    	}    	 			
-    	return false;
+    	HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+    	return PagePermission.getInstance().hasWriteAccess(request, getCurrentUser());
+//    	String pages = org.meveo.commons.utils.StringUtils.patternMacher("/pages/(.*/.*)/", path);  
+//    	log.trace("canUserUpdateEntity pages:"+pages);
+//    	if(getCurrentUser().hasRole("administrateur") || getCurrentUser().hasRole("superAdministrateur")){
+//    		return true; 
+//    	}    	
+//    	if(pages != null && pages.contains("/")){    
+//    		String cat = pages.split("/")[0];
+//    		cat = cat.length()>3?cat.substring(0, 3):cat;
+//    		String entity = pages.split("/")[1];
+//    		entity = entity.length()>3?entity.substring(0, 3):entity;    		     	       
+//        	String resource = permissionService.getResourceByPath(cat);        	
+//        	if(getCurrentUser().hasPermission(resource,resource+"Management")){
+//        		return true;
+//        	}                   	
+//        	resource = permissionService.getResourceByPath(entity);        	
+//        	if(getCurrentUser().hasPermission(resource,resource+"Management")){
+//        		return true;        	
+//        	}
+//    	}    	 			
+//    	return false;
     }
 }
