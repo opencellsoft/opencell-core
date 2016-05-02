@@ -26,14 +26,16 @@ import javax.persistence.Query;
 
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.base.MultilanguageEntityService;
 
 /**
  * Charge Template service implementation.
  * 
  */
 @Stateless
-public class RecurringChargeTemplateService extends
-		ChargeTemplateService<RecurringChargeTemplate> {
+public class RecurringChargeTemplateService extends MultilanguageEntityService<RecurringChargeTemplate> {
+
+	private static final String CHARGES = "Charges";
 
 	public void removeByCode(EntityManager em, String code, Provider provider) {
 		Query query = em
@@ -62,5 +64,10 @@ public class RecurringChargeTemplateService extends
 		return (List<RecurringChargeTemplate>)getEntityManager().createNamedQuery("recurringChargeTemplate.getRecurringChrgNotAssociated",RecurringChargeTemplate.class)
 				.setParameter("provider", provider).getResultList();
 		}
+
+	@Override
+	public String getObjectType() {
+		return CHARGES;
+	}
 
 }

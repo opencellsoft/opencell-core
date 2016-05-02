@@ -583,7 +583,7 @@ public class ImportCustomersJobBean {
 				createCustomerError(sell, cust, "name.lastName is null");
 			}
 
-			if (titleService.findByCode(provider, cust.getName().getTitle()) == null) {
+			if (titleService.findByCode(cust.getName().getTitle(), provider) == null) {
 				createCustomerError(sell, cust, "Title with code=" + cust.getName().getTitle() + " does not exists");
 				return true;
 			}

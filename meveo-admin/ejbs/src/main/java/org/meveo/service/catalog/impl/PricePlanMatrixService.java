@@ -52,12 +52,14 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.MultilanguageEntityService;
 
 @Stateless
-public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> {
+public class PricePlanMatrixService extends MultilanguageEntityService<PricePlanMatrix>{
 
-    @Inject
+    private static final String PRICE_PLANS = "Price plans";
+
+	@Inject
     private RatingCacheContainerProvider ratingCacheContainerProvider;
 
     ParamBean param = ParamBean.getInstance();
@@ -496,6 +498,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
         }
     }
 
+    @Override
     public PricePlanMatrix findByCode(String code, Provider provider) {
         QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "m", null, provider);
         qb.addCriterion("code", "=", code, true);
@@ -698,4 +701,9 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
         }
         return obj1 != null ? obj1.equals(obj2) : (obj2 != null ? false : true);
     }
+
+	@Override
+	public String getObjectType() {
+		return PRICE_PLANS;
+	}
 }

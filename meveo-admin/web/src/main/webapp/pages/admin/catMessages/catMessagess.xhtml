@@ -9,8 +9,7 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{catMessagesListBean.preRenderView}" />
+			<f:event type="preRenderView" listener="#{catMessagesListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -42,7 +41,13 @@
 				<f:facet name="header">
 					<h:outputText value="#{messages['catMessages.messageCode']}" />
 				</f:facet>
-				<h:outputText value="#{entity.entityCode}" />
+<!-- 				<h:outputText value="#{entity.entityCode}" /> -->
+				<h:link value="#{entity.entityCode}" outcome="#{catMessagesListBean.getEditViewName()}">
+					<f:param name="objectType" value="#{entity.objectType}" />
+					<f:param name="messageCode" value="#{entity.messageCode}" />
+					<f:param name="edit" value="true" />
+					<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+				</h:link>
 			</p:column>
 			<p:column exportable="true" width="30%">
 				<f:facet name="header">

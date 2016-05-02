@@ -51,7 +51,7 @@ public class AccountApi extends BaseApi {
             name.setFirstName(postData.getName().getFirstName());
             name.setLastName(postData.getName().getLastName());
             if (!StringUtils.isBlank(postData.getName().getTitle())) {
-                Title title = titleService.findByCode(currentUser.getProvider(), postData.getName().getTitle());
+                Title title = titleService.findByCode(postData.getName().getTitle(), currentUser.getProvider());
                 if (title == null) {
                     throw new EntityDoesNotExistsException(Title.class, postData.getName().getTitle());
                 } else {
@@ -115,7 +115,7 @@ public class AccountApi extends BaseApi {
                 name.setLastName(postData.getName().getLastName());
             }
             if (!StringUtils.isBlank(postData.getName().getTitle())) {
-                Title title = titleService.findByCode(currentUser.getProvider(), postData.getName().getTitle());
+                Title title = titleService.findByCode(postData.getName().getTitle(), currentUser.getProvider());
                 if (title == null) {
                     throw new EntityDoesNotExistsException(Title.class, postData.getName().getTitle());
                 } else {

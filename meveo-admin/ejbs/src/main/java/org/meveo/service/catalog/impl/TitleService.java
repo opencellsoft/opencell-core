@@ -24,15 +24,18 @@ import javax.persistence.EntityManager;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.Title;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.MultilanguageEntityService;
 
 /**
  * Title service implementation.
  */
 @Stateless
-public class TitleService extends PersistenceService<Title> {
+public class TitleService extends MultilanguageEntityService<Title>{
 
-	public Title findByCode(Provider provider, String code) {
+	private static final String TITLES_AND_CIVILITIES = "Titles and civilities";
+
+	@Override
+	public Title findByCode(String code, Provider provider) {
 		Title title = null;
 		if (StringUtils.isBlank(code)) {
 			return null;
@@ -49,7 +52,8 @@ public class TitleService extends PersistenceService<Title> {
 		return title;
 	}
 
-	public Title findByCode(EntityManager em, Provider provider, String code) {
+	@Override
+	public Title findByCode(EntityManager em, String code, Provider provider) {
 		Title title = null;
 		if (StringUtils.isBlank(code)) {
 			return null;
@@ -64,6 +68,11 @@ public class TitleService extends PersistenceService<Title> {
 			return null;
 		}
 		return title;
+	}
+
+	@Override
+	public String getObjectType() {
+		return TITLES_AND_CIVILITIES;
 	}
 
 }

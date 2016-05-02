@@ -28,15 +28,16 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.MultilanguageEntityService;
 
 /**
  * InvoiceSubCategory service implementation.
  * 
  */
 @Stateless
-public class InvoiceSubCategoryService extends
-		PersistenceService<InvoiceSubCategory> {
+public class InvoiceSubCategoryService extends MultilanguageEntityService<InvoiceSubCategory> {
+
+	private static final String INVOICE_SUBCATEGORIES = "Invoice subcategories";
 
 	public InvoiceSubCategory findByCode(EntityManager em, String code) {
 		QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc");
@@ -57,10 +58,12 @@ public class InvoiceSubCategoryService extends
 		}
 	}
 
+	@Override
 	public InvoiceSubCategory findByCode(String code, Provider provider) {
 		return findByCode(code, provider, null);
 	}
 
+	@Override
 	public InvoiceSubCategory findByCode(String code, Provider provider,
 			List<String> fetchFields) {
 		QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc",
@@ -99,5 +102,10 @@ public class InvoiceSubCategoryService extends
 		return null;
 		}
 		}
+
+	@Override
+	public String getObjectType() {
+		return INVOICE_SUBCATEGORIES;
+	}
 
 }

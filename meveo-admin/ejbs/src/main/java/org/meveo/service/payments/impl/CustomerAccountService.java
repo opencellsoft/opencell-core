@@ -266,7 +266,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		customerAccount.setCustomer(customer);
 		customerAccount.setCode(code);
 		customerAccount.setName(new org.meveo.model.shared.Name());
-		customerAccount.getName().setTitle(titleService.findByCode(customer.getProvider(), title));
+		customerAccount.getName().setTitle(titleService.findByCode(title, customer.getProvider()));
 		customerAccount.getName().setFirstName(firstName);
 		customerAccount.getName().setLastName(lastName);
 		customerAccount.setAddress(new Address());
@@ -321,7 +321,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
 		if (customerAccount.getName() == null)
 			customerAccount.setName(new org.meveo.model.shared.Name());
-		customerAccount.getName().setTitle(titleService.findByCode(customerAccount.getProvider(), code));
+		customerAccount.getName().setTitle(titleService.findByCode(code, customerAccount.getProvider()));
 		customerAccount.getName().setFirstName(firstName);
 		customerAccount.getName().setLastName(lastName);
 		if (customerAccount.getAddress() == null)

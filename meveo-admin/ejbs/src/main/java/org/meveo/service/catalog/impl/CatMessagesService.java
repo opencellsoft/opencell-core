@@ -19,14 +19,21 @@
 package org.meveo.service.catalog.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
@@ -34,9 +41,13 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.MultilanguageEntityService;
 import org.meveo.service.base.PersistenceService;
+import org.reflections.Reflections;
 
 /**
  * CatMessagesService service implementation.
@@ -44,27 +55,29 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class CatMessagesService extends PersistenceService<CatMessages> {
 
-    @Inject
-    private TitleService titleService;
-    @Inject
-    private TaxService taxService;
-    @Inject
-    private InvoiceCategoryService invoiceCategoryService;
-    @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
-    @Inject
-    private UsageChargeTemplateService usageChargeTemplateService;
-    @Inject
-    private OneShotChargeTemplateService oneShotChargeTemplateService;
-    @Inject
-    private RecurringChargeTemplateService recurringChargeTemplateService;
-    @Inject
-    private PricePlanMatrixService pricePlanMatrixService;
-
+    private static final String INVALID_CLASS_TYPE = "Invalid class type!";
+	
+    private Map<String, List<MultilanguageEntityService<?>>> services;
+    
     @PostConstruct
     private void init() {
 
     }
+    
+    @Inject
+	private void initServiceList(@Any Instance<MultilanguageEntityService<?>> entityServices) {
+		if (services == null) {
+			services = Collections.synchronizedMap(new HashMap<String, List<MultilanguageEntityService<?>>>());
+		}
+		if (services.isEmpty()) {
+			for (MultilanguageEntityService<?> entityService : entityServices) {
+				if(services.get(entityService.getObjectType()) == null){
+					services.put(entityService.getObjectType(), new ArrayList<MultilanguageEntityService<?>>());
+				}
+				services.get(entityService.getObjectType()).add(entityService);
+			}
+		}
+	}
 
     public String getMessageDescription(BusinessEntity businessEntity, String languageCode) {
         String result = getMessageDescription(getMessageCode(businessEntity), languageCode, businessEntity.getDescription());
@@ -194,39 +207,107 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
         return catMessages;
     }
 
-    private BusinessEntity getObject(CatMessages catMessages) {
-        if (catMessages == null) {
-            return null;
-        }
-        String messagesCode = catMessages.getMessageCode();
-        String[] codes = messagesCode.split("_");
+	private BusinessEntity getObject(CatMessages catMessages) {
+		BusinessEntity entity = null;
+		if (catMessages != null) {
+			String messagesCode = catMessages.getMessageCode();
+			String[] codes = messagesCode.split("_");
 
-        if (codes != null && codes.length == 2) {
-            Long id = null;
-            try {
-                id = Long.valueOf(codes[1]);
-            } catch (Exception e) {
-                return null;
-            }
-            if ("Title".equals(codes[0])) {
-                return titleService.findById(id);
-            } else if ("Tax".equals(codes[0])) {
-                return taxService.findById(id);
-            } else if ("InvoiceCategory".equals(codes[0])) {
-                return invoiceCategoryService.findById(id);
-            } else if ("InvoiceSubCategory".equals(codes[0])) {
-                return invoiceSubCategoryService.findById(id);
-            } else if ("UsageChargeTemplate".equals(codes[0])) {
-                return usageChargeTemplateService.findById(id);
-            } else if ("OneShotChargeTemplate".equals(codes[0])) {
-                return oneShotChargeTemplateService.findById(id);
-            } else if ("RecurringChargeTemplate".equals(codes[0])) {
-                return recurringChargeTemplateService.findById(id);
-            } else if ("PricePlanMatrix".equals(codes[0])) {
-                return pricePlanMatrixService.findById(id);
-            }
-        }
+			if (codes != null && codes.length == 2) {
+				Long id = null;
+				try {
+					id = Long.valueOf(codes[1]);
+					BusinessService<?> service = getMultilanguageEntityService(codes[0]);
+					if (service != null) {
+						entity = (BusinessEntity) service.findById(id);
+					}
+				} catch (NumberFormatException e) {
+					log.warn("Failed to parse id. Returning null entity.");
+				} catch (BusinessException e) {
+					log.warn("Failed to retrieve entity. Returning null.");
+				}
+			}
+		}
+		return entity;
+	}
+     
+	public MultilanguageEntityService<?> getMultilanguageEntityService(String entityClassName)
+			throws BusinessException {
+		MultilanguageEntityService<?> persistenceService = null;
+		List<MultilanguageEntityService<?>> serviceList = null;
+		if (entityClassName != null) {
+			outerLoop: for (String key : services.keySet()) {
+				serviceList = services.get(key);
+				for (MultilanguageEntityService<?> businessService : serviceList) {
+					if (businessService.getEntityClass().getSimpleName().equals(entityClassName)) {
+						persistenceService = businessService;
+						break outerLoop;
+					}
+				}
+			}
+		}
+		if (persistenceService == null) {
+			throw new BusinessException(INVALID_CLASS_TYPE);
+		}
+		return persistenceService;
+	}
+	
+	public List<MultilanguageEntityService<?>> getMultilanguageEntityServiceList(String objectName)
+			throws BusinessException {
+		List<MultilanguageEntityService<?>> serviceList = null;
+		if (objectName != null) {
+			serviceList = services.get(objectName);
+		}
+		if (serviceList == null) {
+			throw new BusinessException(INVALID_CLASS_TYPE);
+		}
+		return serviceList;
+	}
+	
+	public BusinessEntity getEntityByMessageCode(String messageCode) {
+		BusinessEntity entity = null;
+		if (!StringUtils.isBlank(messageCode) && messageCode.contains("_")) {
+			try {
+				String[] classAndId = messageCode.split("_");
+				String className = classAndId[0];
+				long entityId = Long.parseLong(classAndId[1]);
+				entity = getEntityByClassNameAndId(className, entityId);
+			} catch (NumberFormatException e) {
+				log.warn("Invalid Entity Id.  Will return null entity.", e);
+			}
+		}
+		return entity;
+	}
 
-        return null;
-    }
+	private BusinessEntity getEntityByClassNameAndId(String className, long entityId) {
+		Class<?> entityClass = getEntityClass(className);
+		BusinessEntity entity = null;
+		if (entityClass != null) {
+			try {
+				log.trace("start of find {} by id (id={}) ..", entityClass.getSimpleName(), entityId);
+				entity = (BusinessEntity) getEntityManager().find(entityClass, entityId);
+				log.debug("end of find {} by id (id={}). Result found={}.", entityClass.getSimpleName(), entityId,
+						entity != null);
+			} catch (NoResultException e) {
+				log.warn("Error encountered while retrieving business entity.  Will return null.", e);
+			}
+		}
+		return entity;
+	}
+	
+	public Class<?> getEntityClass(String className) {
+		Class<?> entityClass = null;
+		if (!StringUtils.isBlank(className)) {
+			Reflections reflections = new Reflections("org.meveo.model");
+			Set<Class<?>> multiLanguageClasses = reflections.getTypesAnnotatedWith(MultilanguageEntity.class);
+			for (Class<?> multiLanguageClass : multiLanguageClasses) {
+				if (className.equals(multiLanguageClass.getSimpleName())) {
+					entityClass = multiLanguageClass;
+					break;
+				}
+			}
+		}
+		return entityClass;
+	}
+
 }

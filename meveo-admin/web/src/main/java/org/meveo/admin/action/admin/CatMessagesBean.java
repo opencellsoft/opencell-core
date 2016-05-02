@@ -24,8 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -35,25 +37,10 @@ import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.CatMessages;
-import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.model.shared.Title;
+import org.meveo.service.base.MultilanguageEntityService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
-import org.meveo.service.catalog.impl.InvoiceCategoryService;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.meveo.service.catalog.impl.PricePlanMatrixService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
-import org.meveo.service.catalog.impl.TaxService;
-import org.meveo.service.catalog.impl.TitleService;
-import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
@@ -68,6 +55,8 @@ import org.primefaces.model.UploadedFile;
 @ViewScoped
 public class CatMessagesBean extends BaseBean<CatMessages> {
 
+	private static final String INVALID_CLASS_TYPE = "Invalid class type!";
+
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -77,28 +66,11 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 	@Inject
 	private CatMessagesService catMessagesService;
 
-	// inject services
-	@Inject
-	private TitleService titleService;
-	@Inject
-	private TaxService taxService;
-	@Inject
-	private InvoiceCategoryService invoiceCategoryService;
-	@Inject
-	private InvoiceSubCategoryService invoiceSubCategoryService;
-	@Inject 
-	private UsageChargeTemplateService usageChargeTemplateService;
-	@Inject
-	private OneShotChargeTemplateService oneShotChargeTemplateService;
-	@Inject
-	private RecurringChargeTemplateService recurringChargeTemplateService;
-	@Inject
-	private PricePlanMatrixService pricePlanMatrixService;
-	
 	private BusinessEntity businessEntity;
 	private String popupId;
 	private final String MESSAGE_CODE="%s_%d";
 	private String objectType;
+	private Map<String, String> objectTypeMap;
 	
 	CsvReader csvReader = null;
 	private UploadedFile file;
@@ -113,6 +85,13 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 	 */
 	public CatMessagesBean() {
 		super(CatMessages.class);
+		objectTypeMap = new HashMap<>();
+		objectTypeMap.put("Title_*","Titles");
+		objectTypeMap.put("Tax_*","Taxes");
+		objectTypeMap.put("InvoiceCategory_*","Invoice categories");
+		objectTypeMap.put("InvoiceSubCategory_*","Invoice subcategories");
+		objectTypeMap.put("*ChargeTemplate_*","Charges");
+		objectTypeMap.put("PricePlanMatrix_*","Price plans");
 	}
 
 	/**
@@ -128,14 +107,40 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 		return "catMessagess";
 	}
 	
+	@Override
+	public void preRenderView() {
+		super.preRenderView();
+		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
+				.getRequest();
+		String messageCode = request.getParameter("messageCode");
+		String objectType = request.getParameter("objectType");
+		try {
+			if (objectType != null) {
+				this.objectType = getObjectTypeValue(objectType);
+			}
+			if (messageCode != null) {
+				BusinessEntity businessEntity = catMessagesService.getEntityByMessageCode(messageCode);
+				setBusinessEntity(businessEntity);
+			}
+		} catch (BusinessException e) {
+			log.warn("Unable to retrieve entity with messageCode: %s", messageCode);
+		}
+	}
+	
 	protected Map<String,String> getObjectTypes(){
-		Map<String,String> result=new HashMap<String,String>();
-		result.put("Title_*","Titles and civilities");
-		result.put("Tax_*","Taxes");
-		result.put("InvoiceCategory_*","Invoice categories");
-		result.put("InvoiceSubCategory_*","Invoice subcategories");
-		result.put("*ChargeTemplate_*","Charges");
-		result.put("PricePlanMatrix_*","Price plans");
+		return this.objectTypeMap;
+	}
+	
+	private String getObjectTypeValue(String objectType) {
+		String value = null;
+		String result = null;
+		for (String key : objectTypeMap.keySet()) {
+			value = objectTypeMap.get(key);
+			if (value.equalsIgnoreCase(objectType)) {
+				result = key;
+				break;
+			}
+		}
 		return result;
 	}
 
@@ -159,65 +164,33 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
         }
         csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
         csvReader.readHeaders();
+        String messageCode = null;
+        String[] values = null;
+        List<MultilanguageEntityService<?>> serviceList = null;
+        BusinessEntity entity = null;
+        CatMessages existingDescription = null;
+        CatMessages newDescription = null;
         while (csvReader.readRecord()) {
-            String messageCode = null;
-            String[] values = csvReader.getValues();
-            if (values[OBJECT_TYPE].equals("Price plans")) {
-                PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(values[CODE], getCurrentProvider());
-                if (pricePlanMatrix != null) {
-                    messageCode = pricePlanMatrix.getClass().getSimpleName() + "_" + pricePlanMatrix.getId();
+            values = csvReader.getValues();
+            serviceList = catMessagesService.getMultilanguageEntityServiceList(values[OBJECT_TYPE]);
+            messageCode = null;
+            for(MultilanguageEntityService<?> service : serviceList){
+            	entity = service.findByCode(values[CODE], getCurrentUser().getProvider());
+                if(entity != null){
+                	messageCode = entity.getClass().getSimpleName() + "_" + entity.getId();
                 }
             }
-            if (values[OBJECT_TYPE].equals("Charges")) {
-                UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findByCode(values[CODE], getCurrentProvider());
-                if (usageChargeTemplate != null) {
-                    messageCode = usageChargeTemplate.getClass().getSimpleName() + "_" + usageChargeTemplate.getId();
-                }
-                RecurringChargeTemplate recurringChargeTemplate = recurringChargeTemplateService.findByCode(values[CODE], getCurrentProvider());
-                if (recurringChargeTemplate != null) {
-                    messageCode = recurringChargeTemplate.getClass().getSimpleName() + "_" + recurringChargeTemplate.getId();
-                }
-                OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(values[CODE], getCurrentProvider());
-                if (oneShotChargeTemplate != null) {
-                    messageCode = oneShotChargeTemplate.getClass().getSimpleName() + "_" + oneShotChargeTemplate.getId();
-                }
-            }
-            if (values[OBJECT_TYPE].equals("Titles and civilities")) {
-                Title title = titleService.findByCode(getCurrentProvider(), values[CODE]);
-                if (title != null) {
-                    messageCode = title.getClass().getSimpleName() + "_" + title.getId();
-                }
-            }
-            if (values[OBJECT_TYPE].equals("Taxes")) {
-                Tax tax = taxService.findByCode(values[CODE], getCurrentProvider());
-                if (tax != null) {
-                    messageCode = tax.getClass().getSimpleName() + "_" + tax.getId();
-                }
-            }
-            if (values[OBJECT_TYPE].equals("Invoice categories")) {
-                InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(values[CODE], getCurrentProvider());
-                if (invoiceCategory != null) {
-                    messageCode = invoiceCategory.getClass().getSimpleName() + "_" + invoiceCategory.getId();
-                }
-            }
-            if (values[OBJECT_TYPE].equals("Invoice subcategories")) {
-                InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(values[CODE], getCurrentProvider());
-                if (invoiceSubCategory != null) {
-                    messageCode = invoiceSubCategory.getClass().getSimpleName() + "_" + invoiceSubCategory.getId();
-                }
-            }
-
             if (messageCode != null) {
-                CatMessages existingEntity = catMessagesService.findByCodeAndLanguage(messageCode, values[LANGUAGE_CODE], getCurrentProvider());
-                if (existingEntity != null) {
-                    existingEntity.setDescription(values[DESCRIPTION_TRANSLATION]);
-                    catMessagesService.update(existingEntity, getCurrentUser());
+                existingDescription = catMessagesService.findByCodeAndLanguage(messageCode, values[LANGUAGE_CODE], getCurrentUser().getProvider());
+                if (existingDescription != null) {
+                    existingDescription.setDescription(values[DESCRIPTION_TRANSLATION]);
+                    catMessagesService.update(existingDescription, getCurrentUser());
                 } else {
-                    CatMessages catMessages = new CatMessages();
-                    catMessages.setMessageCode(messageCode);
-                    catMessages.setLanguageCode(values[LANGUAGE_CODE]);
-                    catMessages.setDescription(values[DESCRIPTION_TRANSLATION]);
-                    catMessagesService.create(catMessages, getCurrentUser());
+                    newDescription = new CatMessages();
+                    newDescription.setMessageCode(messageCode);
+                    newDescription.setLanguageCode(values[LANGUAGE_CODE]);
+                    newDescription.setDescription(values[DESCRIPTION_TRANSLATION]);
+                    catMessagesService.create(newDescription, getCurrentUser());
                 }
             }
         }
@@ -228,17 +201,20 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 		return businessEntity;
 	}
 
-	public void setBusinessEntity(BusinessEntity businessEntity) throws BusinessException{
+	public void setBusinessEntity(BusinessEntity businessEntity) throws BusinessException {
 		this.businessEntity = businessEntity;
-		if(businessEntity!=null){
-			List<CatMessages> catMessagesList = catMessagesService.getCatMessagesList(String.format(MESSAGE_CODE, getEntityClass().getSimpleName(),businessEntity.getId()));
+		if (businessEntity != null) {
+			List<CatMessages> catMessagesList = catMessagesService.getCatMessagesList(
+					String.format(MESSAGE_CODE, getEntityClass().getSimpleName(), businessEntity.getId()));
 			this.getLanguageMessagesMap().clear();
 			for (CatMessages catMessages : catMessagesList) {
 				this.getLanguageMessagesMap().put(catMessages.getLanguageCode(), catMessages.getDescription());
 			}
-			if(entity.getLanguageCode() != null){
-				CatMessages temp=catMessagesService.findByCodeAndLanguage(String.format(MESSAGE_CODE, getEntityClass().getSimpleName(),businessEntity.getId()), entity.getLanguageCode(), getCurrentProvider());
-				if(temp!=null){
+			if (entity.getLanguageCode() != null) {
+				CatMessages temp = catMessagesService.findByCodeAndLanguage(
+						String.format(MESSAGE_CODE, getEntityClass().getSimpleName(), businessEntity.getId()),
+						entity.getLanguageCode(), getCurrentProvider());
+				if (temp != null) {
 					this.setObjectId(temp.getId());
 					initEntity();
 				}
@@ -271,24 +247,24 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 	@SuppressWarnings("unchecked")
 	@Override
 	@ActionMethod
-    public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		if(entity.getLanguageCode() == null){ // multilanguage
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		if (entity.getLanguageCode() == null) { // multilanguage
 			String statusKey = null;
 			String description = null;
 			CatMessages catMsg = null;
-			if (businessEntity.getId() != null) {
+			if (businessEntity != null && businessEntity.getId() != null) {
 				statusKey = "update.successful";
 				for (String key : languageMessagesMap.keySet()) {
 					description = languageMessagesMap.get(key);
 					catMsg = catMessagesService.getCatMessages(businessEntity, key);
 					if (catMsg != null) {
-						if(StringUtils.isBlank(description)){
+						if (StringUtils.isBlank(description)) {
 							catMessagesService.remove(catMsg);
 						} else {
 							catMsg.setDescription(description);
 							catMessagesService.update(catMsg, getCurrentUser());
 						}
-					} else if(!StringUtils.isBlank(description)){
+					} else if (!StringUtils.isBlank(description)) {
 						catMsg = new CatMessages(businessEntity, key, description);
 						catMessagesService.create(catMsg, getCurrentUser());
 					}
@@ -297,77 +273,50 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 				statusKey = "save.successful";
 				for (String key : languageMessagesMap.keySet()) {
 					description = languageMessagesMap.get(key);
-					if(!StringUtils.isBlank(description)){
+					if (!StringUtils.isBlank(description)) {
 						catMsg = new CatMessages(businessEntity, key, description);
 						catMessagesService.create(catMsg, getCurrentUser());
 					}
 				}
 			}
-			
-			if(businessEntity.isTransient()){
-				getEntityService().create(businessEntity, getCurrentUser());
-			} else {
-				getEntityService().update(businessEntity, getCurrentUser());
+
+			if(businessEntity.getDescription() != null){
+				if (businessEntity.isTransient()) {
+					getEntityService().create(businessEntity, getCurrentUser());
+				} else {
+					getEntityService().update(businessEntity, getCurrentUser());
+				}
 			}
 			messages.info(new BundleKey("messages", statusKey));
 			return back();
 		} else { // single entity
-			if(entity.isTransient()){
-				entity.setMessageCode(String.format(MESSAGE_CODE,getEntityClass().getSimpleName(),businessEntity.getId()));
+			if (entity.isTransient()) {
+				entity.setMessageCode(
+						String.format(MESSAGE_CODE, getEntityClass().getSimpleName(), businessEntity.getId()));
 			}
 			return super.saveOrUpdate(killConversation);
 		}
 	}
 	
+	
 	@SuppressWarnings("rawtypes")
-	private IPersistenceService getEntityService() throws BusinessException{
-		IPersistenceService service=null;
-		if(businessEntity instanceof Title){
-			service=titleService;
-		}else if(businessEntity instanceof RecurringChargeTemplate){
-			service=recurringChargeTemplateService;
-		}else if(businessEntity instanceof OneShotChargeTemplate){
-			service=oneShotChargeTemplateService;
-		}else if(businessEntity instanceof UsageChargeTemplate){
-			service=usageChargeTemplateService;
-		}else if(businessEntity instanceof PricePlanMatrix){
-			service=pricePlanMatrixService;
-		}else if(businessEntity instanceof InvoiceCategory){
-			service=invoiceCategoryService;
-		}else if(businessEntity instanceof InvoiceSubCategory){
-			service=invoiceSubCategoryService;
-		}else if(businessEntity instanceof Tax){
-			service=taxService;
+	private IPersistenceService getEntityService() throws BusinessException {
+		MultilanguageEntityService<?> service = null;
+		if (businessEntity != null) {
+			service = catMessagesService.getMultilanguageEntityService(businessEntity.getClass().getSimpleName());
 		}
-		if(service==null){
-			throw new BusinessException("Invalid class type!");
+		if (service == null) {
+			throw new BusinessException(INVALID_CLASS_TYPE);
 		}
 		return service;
 	}
 	
-	@SuppressWarnings("rawtypes")
-	private Class getEntityClass() throws BusinessException{
-		Class clazz=null;
-		if(businessEntity instanceof Title){
-			clazz=Title.class;
-		}else if(businessEntity instanceof RecurringChargeTemplate){
-			clazz=RecurringChargeTemplate.class;
-		}else if(businessEntity instanceof OneShotChargeTemplate){
-			clazz=OneShotChargeTemplate.class;
-		}else if(businessEntity instanceof UsageChargeTemplate){
-			clazz=UsageChargeTemplate.class;
-		}else if(businessEntity instanceof PricePlanMatrix){
-			clazz=PricePlanMatrix.class;
-		}else if(businessEntity instanceof InvoiceCategory){
-			clazz=InvoiceCategory.class;
-		}else if(businessEntity instanceof InvoiceSubCategory){
-			clazz=InvoiceSubCategory.class;
-		}else if(businessEntity instanceof Tax){
-			clazz=Tax.class;
+	private Class<?> getEntityClass() throws BusinessException {
+		if (businessEntity == null) {
+			throw new BusinessException(INVALID_CLASS_TYPE);
 		}
-		if(clazz==null){
-			throw new BusinessException("Invalid class type!");
-		}
-		return clazz;
+		return businessEntity.getClass();
 	}
+	
+	
 }
