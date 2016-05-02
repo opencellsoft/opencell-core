@@ -51,8 +51,9 @@
 			<hftl:searchField label="#{messages['invoice.dueDate']}"
 				field="dueDate" /> 
 			<hftl:searchField label="#{messages['invoice.amountWithoutTax']}"
-				field="amountWithoutTax" /> 
-				
+				field="amountWithoutTax" />
+			<hftl:searchField label="#{messages['invoice.amountWithTax']}"
+				field="amountWithTax" rendered="#{!invoiceBean.entity.provider.entreprise}" />  	
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['invoices.title']}"
