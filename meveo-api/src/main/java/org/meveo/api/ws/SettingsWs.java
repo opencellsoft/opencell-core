@@ -127,7 +127,7 @@ public interface SettingsWs extends IBaseWs {
     @WebMethod
     public ActionStatus createOrUpdateSeller(@WebParam(name = "seller") SellerDto postData);
 
-    // traingLanguage
+    // tradingLanguage
 
     @WebMethod
     public ActionStatus createTradingLanguage(@WebParam(name = "language") LanguageDto postData);
@@ -153,7 +153,7 @@ public interface SettingsWs extends IBaseWs {
     GetTradingCountryResponse findTradingCountry(@WebParam(name = "countryCode") String countryCode);
 
     @WebMethod
-    ActionStatus removeTradingCountry(@WebParam(name = "countryCode") String countryCode, @WebParam(name = "currencyCode") String currencyCode);
+    ActionStatus removeTradingCountry(@WebParam(name = "countryCode") String countryCode);
 
     @WebMethod
     ActionStatus updateTradingCountry(@WebParam(name = "country") CountryDto countryDto);

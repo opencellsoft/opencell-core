@@ -64,7 +64,7 @@ public class CountryService extends PersistenceService<Country> {
 	public List<Country> list() {
 		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null,
 				getCurrentProvider());
-		queryBuilder.addOrderCriterion("a.descriptionEn", true);
+		queryBuilder.addOrderCriterion("a.description", true);
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}

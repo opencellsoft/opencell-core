@@ -135,30 +135,22 @@ public class TradingCountryApi extends BaseApi {
         throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
     }
 
-    public void remove(String countryCode, String currencyCode, Provider provider) throws MeveoApiException {
+    public void remove(String countryCode, Provider provider) throws MeveoApiException {
 
         if (StringUtils.isBlank(countryCode)) {
             missingParameters.add("countryCode");
         }
-        if (StringUtils.isBlank(currencyCode)) {
-            missingParameters.add("currencyCode");
-        }
+        
 
         handleMissingParameters();
         
 
         TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode, provider);
-        Currency currency = currencyService.findByCode(currencyCode);
-        if (tradingCountry != null && currency != null) {
-            if (tradingCountry != null) {
+        
+        if (tradingCountry != null) {
                 tradingCountryService.remove(tradingCountry);
-            }
         } else {
-            if (tradingCountry == null) {
-                throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
-            } else {
-                throw new EntityDoesNotExistsException(Currency.class, currencyCode);
-            }
+             throw new EntityDoesNotExistsException(TradingCountry.class, countryCode); 
         }
     }
 

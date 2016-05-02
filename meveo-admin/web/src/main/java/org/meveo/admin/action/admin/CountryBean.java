@@ -30,7 +30,6 @@ import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link Country} (extends {@link BaseBean} that
@@ -69,7 +68,7 @@ public class CountryBean extends BaseBean<Country> {
 
 	@Override
 	protected String getDefaultSort() {
-		return "descriptionEn";
+		return "description";
 	}
 	@Override
 	protected String getListViewName() {

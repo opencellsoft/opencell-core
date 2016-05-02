@@ -79,11 +79,11 @@ public class TradingCountryRsImpl extends BaseRs implements TradingCountryRs {
     }
 
     @Override
-    public ActionStatus remove(@PathParam("countryCode") String countryCode, @PathParam("currencyCode") String currencyCode) {
+    public ActionStatus remove(@PathParam("countryCode") String countryCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            tradingCountryApi.remove(countryCode, currencyCode, getCurrentUser().getProvider());
+            tradingCountryApi.remove(countryCode, getCurrentUser().getProvider());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

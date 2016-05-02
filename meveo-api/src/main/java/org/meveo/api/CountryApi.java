@@ -90,9 +90,6 @@ public class CountryApi extends BaseApi {
 
         handleMissingParameters();
 
-
-        Provider provider = currentUser.getProvider();
-
         Country country = countryService.findByCode(postData.getCountryCode());
 
         if (country == null) {
@@ -118,7 +115,7 @@ public class CountryApi extends BaseApi {
         countryService.update(country, currentUser);
     }
 
-    public CountryDto find(String countryCode, Provider provider) throws MeveoApiException {
+    public CountryDto find(String countryCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(countryCode)) {
             missingParameters.add("countryCode");
@@ -137,7 +134,7 @@ public class CountryApi extends BaseApi {
         return result;
     }
 
-    public void remove(String countryCode, Provider provider) throws MeveoApiException {
+    public void remove(String countryCode) throws MeveoApiException {
         if (StringUtils.isBlank(countryCode)) {
             missingParameters.add("countryCode");
             handleMissingParameters();

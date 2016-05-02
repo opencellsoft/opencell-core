@@ -154,7 +154,7 @@ public class CountryRsTest extends BaseRsTest {
 	@InSequence(106)
 	public void testRemove(
 			@ArquillianResteasyResource("api/rest") CountryRs resource) {
-		ActionStatus result = resource.remove("PH", "PHP");
+		ActionStatus result = resource.remove("PH");
 		log.info("response=" + result);
 		Assert.assertEquals(result.getStatus(), ActionStatusEnum.SUCCESS);
 	}
@@ -164,7 +164,7 @@ public class CountryRsTest extends BaseRsTest {
 	@InSequence(107)
 	public void testRemoveDoesNotExists(
 			@ArquillianResteasyResource("api/rest") CountryRs resource) {
-		ActionStatus result = resource.remove("PH-NONE", "PHP-NONE");
+		ActionStatus result = resource.remove("PH-NONE");
 		log.info("response=" + result);
 		Assert.assertEquals(result.getStatus(), ActionStatusEnum.FAIL);
 	}

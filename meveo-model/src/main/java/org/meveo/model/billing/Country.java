@@ -18,6 +18,7 @@
  */
 package org.meveo.model.billing;
 
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,11 +28,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ProviderlessEntity;
 import org.meveo.model.admin.Currency;
 
 @Entity
+@CustomFieldEntity(cftCodeFields = "description")
 @ExportIdentifier("countryCode")
 @Table(name = "ADM_COUNTRY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_COUNTRY_SEQ")
@@ -44,7 +47,7 @@ public class Country extends ProviderlessEntity {
 
 	@Column(name = "DESCRIPTION_EN", length = 100)
 	@Size(max = 100)
-	private String descriptionEn;
+	private String description;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CURRENCY_ID")
@@ -63,11 +66,20 @@ public class Country extends ProviderlessEntity {
 	}
 
 	public String getDescriptionEn() {
-		return descriptionEn;
+		return description;
 	}
 
 	public void setDescriptionEn(String descriptionEn) {
-		this.descriptionEn = descriptionEn;
+		this.description = descriptionEn;
+	}
+
+	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public Currency getCurrency() {

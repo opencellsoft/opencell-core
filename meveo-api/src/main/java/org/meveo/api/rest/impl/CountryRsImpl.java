@@ -64,7 +64,7 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCountry(countryApi.find(countryCode, getCurrentUser().getProvider()));
+            result.setCountry(countryApi.find(countryCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -80,11 +80,11 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
     }
 
     @Override
-    public ActionStatus remove(@PathParam("countryCode") String countryCode, @PathParam("currencyCode") String currencyCode) {
+    public ActionStatus remove(@PathParam("countryCode") String countryCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            countryApi.remove(countryCode, getCurrentUser().getProvider());
+            countryApi.remove(countryCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
