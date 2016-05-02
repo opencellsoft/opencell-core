@@ -134,7 +134,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	private static String DEFAULT_DATE_PATTERN = "dd/MM/yyyy";
 	private static String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
-	private static String DEFAULT_COUNTER_PERIOD_DATE_PATTERN = "yyyy-MM-dd";
 	
 	public void createXMLInvoiceAdjustment(Long invoiceId, File billingRundir) throws BusinessException {
 		createXMLInvoice(invoiceId, billingRundir, true);
@@ -936,25 +935,28 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						if (ratedTransaction.getWalletOperationId() != null) {
 							walletOperation = getEntityManager().find(WalletOperation.class,
 									ratedTransaction.getWalletOperationId());
-							code = walletOperation.getCode();
-							description = walletOperation.getDescription();
-							
-							ChargeInstance chargeInstance=(ChargeInstance) chargeInstanceService.findById(walletOperation.getChargeInstance().getId(),true); 
-							ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
-							
-							// get periodStartDate and periodEndDate for recurrents
-							if( chargeTemplate instanceof RecurringChargeTemplate){
-								periodStartDate=walletOperation.getStartDate();
-								periodEndDate=walletOperation.getEndDate();
+							if(walletOperation!=null){	
+								code = walletOperation.getCode();
+								description = walletOperation.getDescription();
+
+								if(walletOperation.getProvider().getInvoiceConfiguration().getDisplayChargesPeriods()){
+									ChargeInstance chargeInstance=(ChargeInstance) chargeInstanceService.findById(walletOperation.getChargeInstance().getId(),true); 
+									ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
+
+									// get periodStartDate and periodEndDate for recurrents
+									if( chargeTemplate instanceof RecurringChargeTemplate){
+										periodStartDate=walletOperation.getStartDate();
+										periodEndDate=walletOperation.getEndDate();
+									}
+									// get periodStartDate and periodEndDate for usages
+									// instanceof is not used in this control because chargeTemplate can never be instance of usageChargeTemplate according to model structure
+									else if(usageChargeTemplateService.findById(chargeTemplate.getId())!=null && walletOperation.getOperationDate()!=null){
+										CounterPeriod counterPeriod = counterPeriodService.getCounterPeriod(walletOperation.getCounter(), walletOperation.getOperationDate());
+										periodStartDate=counterPeriod.getPeriodStartDate();
+										periodEndDate=counterPeriod.getPeriodEndDate();
+									}
+								}
 							}
-							// get periodStartDate and periodEndDate for usages
-							// instanceof is not used in this control because chargeTemplate can never be instance of usageChargeTemplate according to model structure
-							else if(usageChargeTemplateService.findById(chargeTemplate.getId())!=null && walletOperation.getOperationDate()!=null){
-								CounterPeriod counterPeriod = counterPeriodService.getCounterPeriod(walletOperation.getCounter(), walletOperation.getOperationDate());
-								periodStartDate=counterPeriod.getPeriodStartDate();
-								periodEndDate=counterPeriod.getPeriodEndDate();
-							}	
-							
 						} else {
 							code = ratedTransaction.getCode();
 							description = ratedTransaction.getDescription();
@@ -962,9 +964,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 										
 						line.setAttribute("code", code != null ? code : "");
 						line.setAttribute("periodStartDate", periodStartDate != null ? 
-								 DateUtils.formatDateWithPattern(periodStartDate, paramBean.getProperty("counterPeriod.dateFormat", DEFAULT_COUNTER_PERIOD_DATE_PATTERN)) + "" : "");
+								 DateUtils.formatDateWithPattern(periodStartDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
 						line.setAttribute("periodEndDate", periodEndDate != null ? 
-								 DateUtils.formatDateWithPattern(periodEndDate, paramBean.getProperty("counterPeriod.dateFormat", DEFAULT_COUNTER_PERIOD_DATE_PATTERN)) + "" : "");
+								 DateUtils.formatDateWithPattern(periodEndDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
 
 						if (ratedTransaction.getParameter1() != null) {
 							line.setAttribute("param1", ratedTransaction.getParameter1());

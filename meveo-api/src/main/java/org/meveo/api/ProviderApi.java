@@ -208,6 +208,7 @@ public class ProviderApi extends BaseApi {
         invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
         invoiceConfiguration.setDisplayPricePlans(postData.getDisplayPricePlans());
         invoiceConfiguration.setDisplayCfAsXML(postData.getDisplayCfAsXML());
+        invoiceConfiguration.setDisplayChargesPeriods(postData.getDisplayChargesPeriods());
         invoiceConfiguration.setProvider(provider);
 
         provider.setInvoiceConfiguration(invoiceConfiguration);
@@ -335,6 +336,7 @@ public class ProviderApi extends BaseApi {
         invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
         invoiceConfiguration.setDisplayPricePlans(postData.getDisplayPricePlans());
         invoiceConfiguration.setDisplayCfAsXML(postData.getDisplayCfAsXML());
+        invoiceConfiguration.setDisplayChargesPeriods(postData.getDisplayChargesPeriods());
 
         if (postData.getInvoiceSequenceSize() != null) {
             provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
