@@ -7,13 +7,16 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.CurrencyApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.TradingCurrencyApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.dto.response.GetCurrencyResponse;
+import org.meveo.api.dto.response.GetTradingCurrencyResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CurrencyRs;
+import org.meveo.api.rest.TradingCurrencyRs;
 
 /**
  * @author Edward P. Legaspi
@@ -47,7 +50,7 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
 
     @Override
     public GetCurrencyResponse find(String languageCode) {
-        GetCurrencyResponse result = new GetCurrencyResponse();
+    	GetCurrencyResponse result = new GetCurrencyResponse();
 
         try {
             result.setCurrency(currencyApi.find(languageCode, getCurrentUser().getProvider()));

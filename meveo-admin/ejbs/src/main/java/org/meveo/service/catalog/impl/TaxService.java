@@ -29,18 +29,22 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.MultilanguageEntityService;
 
 /**
  * Tax service implementation.
  */
 @Stateless
-public class TaxService extends PersistenceService<Tax> {
+public class TaxService extends MultilanguageEntityService<Tax> {
 
+	private static final String TAXES = "Taxes";
+
+	@Override
 	public Tax findByCode(String code, Provider provider) {
 		return findByCode(getEntityManager(), code, provider);
 	}
 
+	@Override
 	public Tax findByCode(EntityManager em, String code, Provider provider) {
 		QueryBuilder qb = new QueryBuilder(Tax.class, "t");
 		qb.addCriterion("t.code", "=", code, false);
@@ -77,4 +81,9 @@ public class TaxService extends PersistenceService<Tax> {
 	public  List<Tax> getTaxesNotAssociated(Provider provider) { 
 		return (List<Tax>)getEntityManager().createNamedQuery("tax.getTaxesNotAssociated",Tax.class).setParameter("provider", provider).getResultList();
 		}
+
+	@Override
+	public String getObjectType() {
+		return TAXES;
+	}
 }

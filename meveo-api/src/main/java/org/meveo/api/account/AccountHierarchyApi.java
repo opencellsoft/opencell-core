@@ -389,7 +389,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		Title title = null;
 		if (!StringUtils.isBlank(postData.getTitleCode())) {
-			title = titleService.findByCode(provider, StringUtils.normalizeHierarchyCode(postData.getTitleCode()));
+			title = titleService.findByCode(StringUtils.normalizeHierarchyCode(postData.getTitleCode()), provider);
 		}
 
 		String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId());
@@ -697,7 +697,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		Title title = null;
 		if (!StringUtils.isBlank(postData.getTitleCode())) {
-			title = titleService.findByCode(provider, StringUtils.normalizeHierarchyCode(postData.getTitleCode()));
+			title = titleService.findByCode(StringUtils.normalizeHierarchyCode(postData.getTitleCode()), provider);
 		}
 
 		customer.getName().setLastName(postData.getLastName());
@@ -2511,7 +2511,7 @@ public class AccountHierarchyApi extends BaseApi {
 				accountEntity.getName().setLastName(accountDto.getName().getLastName());
 			}
 			if (!StringUtils.isBlank(accountDto.getName().getTitle())) {
-				Title title = titleService.findByCode(currentUser.getProvider(), accountDto.getName().getTitle());
+				Title title = titleService.findByCode(accountDto.getName().getTitle(), currentUser.getProvider());
 				if (title != null) {
 					accountEntity.getName().setTitle(title);
 				}

@@ -58,6 +58,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 	@Inject
 	private AccountOperationService accountOperationService;
 
+	//first call from gui
 	public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long operationIdForPartialMatching, User user) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
 		return matchOperations(customerAccountId, customerAccountCode, operationIds, operationIdForPartialMatching, MatchingTypeEnum.M, user);
 	}
@@ -66,24 +67,26 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 		MatchingCode matchingCode = new MatchingCode();		
 		BigDecimal amountToMatch = BigDecimal.ZERO;
 		for (AccountOperation accountOperation : listOcc) {
+			MatchingAmount matchingAmount = new MatchingAmount();
 			if (partialOcc != null && accountOperation.getId().equals(partialOcc.getId())) {				
 				accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amount));
 				accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amount));
 				accountOperation.setMatchingStatus(MatchingStatusEnum.P);
+				matchingAmount.setMatchingAmount(amount);
 			} else {
 				amountToMatch = accountOperation.getUnMatchingAmount();
 				accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
 				accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
 				accountOperation.setMatchingStatus(MatchingStatusEnum.L);
-
+				matchingAmount.setMatchingAmount(amountToMatch);
 			}
 			accountOperationService.update(accountOperation, user);
-			MatchingAmount matchingAmount = new MatchingAmount();
+			
 			matchingAmount.setProvider(accountOperation.getProvider());
 			((AuditableEntity) matchingAmount).updateAudit(user);
 			matchingAmount.setAccountOperation(accountOperation);
 			matchingAmount.setMatchingCode(matchingCode);
-			matchingAmount.setMatchingAmount(amountToMatch);
+			
 			accountOperation.getMatchingAmounts().add(matchingAmount);
 			matchingCode.getMatchingAmounts().add(matchingAmount);			
 		}
@@ -194,10 +197,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 		if( matchedAmount.compareTo(amoutCredit)>0){
 			matchedAmount = amoutCredit;
 		}
-		
 
-
-		if (balance.compareTo(BigDecimal.ZERO) != 0 && operationIdForPartialMatching != null) {
+		if (operationIdForPartialMatching != null) {
 			matching(listOcc, matchedAmount, accountOperationService.findById(operationIdForPartialMatching), matchingTypeEnum, user);
 			matchingReturnObject.setOk(true);
 			log.info("matchOperations successful :  partial ok (idPartial recu)");
@@ -209,28 +210,26 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 			p.setAccountOperation(accountOperation);
 			p.setPartialMatchingAllowed(false);
 			if (amoutCredit.compareTo(amoutDebit) > 0) {
-				if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
+				if (OperationCategoryEnum.CREDIT.name().equals(accountOperation.getTransactionCategory().name()) ) {
 					if (balance.compareTo(accountOperation.getUnMatchingAmount()) < 0) {
 						p.setPartialMatchingAllowed(true);
 						cptPartialAllowed++;
 						accountOperationForPartialMatching = accountOperation;
 					}
 				}
-			}
-			if (amoutDebit.compareTo(amoutCredit) > 0) {
+			}else {
 				if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
 					if (balance.compareTo(accountOperation.getUnMatchingAmount()) < 0) {
 						p.setPartialMatchingAllowed(true);
 						cptPartialAllowed++;
 						accountOperationForPartialMatching = accountOperation;
-
 					}
 				}
 			}
 			matchingReturnObject.getPartialMatchingOcc().add(p);
 		}
 
-		if (balance.compareTo(BigDecimal.ZERO) != 0 && cptPartialAllowed == 1) {
+		if (cptPartialAllowed == 1) {
 			matching(listOcc, matchedAmount, accountOperationForPartialMatching, matchingTypeEnum, user);
 			matchingReturnObject.setOk(true);
 			log.info("matchOperations successful :  partial ok (un idPartial possible)");

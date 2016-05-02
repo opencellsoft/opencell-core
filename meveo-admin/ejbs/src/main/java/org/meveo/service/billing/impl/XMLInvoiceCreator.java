@@ -25,6 +25,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -54,6 +55,8 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
@@ -68,9 +71,11 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.XMLInvoiceHeaderCategoryDTO;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
@@ -81,6 +86,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -110,6 +116,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
     @Inject	
     private BillingAccountService billingAccountService;
+    
+    @Inject	
+    private CounterPeriodService counterPeriodService;
+    
+    @Inject	
+    private ChargeInstanceService chargeInstanceService;
+    
+    @Inject
+    private UsageChargeTemplateService usageChargeTemplateService;
 
 	TransformerFactory transfac = TransformerFactory.newInstance();
 
@@ -431,7 +446,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	}
 
 	public void addUserAccounts(Invoice invoice, Document doc, Element parent, boolean enterprise, Element invoiceTag,
-			boolean displayDetail) {
+			boolean displayDetail) throws BusinessException {
 		// log.debug("add user account");
 
 		Element userAccountsTag = null;
@@ -810,7 +825,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	}
 
 	public void addCategories(UserAccount userAccount, Invoice invoice, Document doc, Element invoiceTag,Element parent,
-			boolean generateSubCat, boolean enterprise) {
+			boolean generateSubCat, boolean enterprise) throws BusinessException {
 
 		log.debug("add categories");
 
@@ -915,19 +930,44 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						}
 
 						Element line = doc.createElement("line");
-						String code = "", description = "";
+						String code = "", description = ""; Date periodStartDate=null;Date periodEndDate=null;
 						WalletOperation walletOperation = null;
 						if (ratedTransaction.getWalletOperationId() != null) {
 							walletOperation = getEntityManager().find(WalletOperation.class,
 									ratedTransaction.getWalletOperationId());
-							code = walletOperation.getCode();
-							description = walletOperation.getDescription();
+							if(walletOperation!=null){	
+								code = walletOperation.getCode();
+								description = walletOperation.getDescription();
+
+								if(walletOperation.getProvider().getInvoiceConfiguration().getDisplayChargesPeriods()){
+									ChargeInstance chargeInstance=(ChargeInstance) chargeInstanceService.findById(walletOperation.getChargeInstance().getId(),true); 
+									ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
+
+									// get periodStartDate and periodEndDate for recurrents
+									if( chargeTemplate instanceof RecurringChargeTemplate){
+										periodStartDate=walletOperation.getStartDate();
+										periodEndDate=walletOperation.getEndDate();
+									}
+									// get periodStartDate and periodEndDate for usages
+									// instanceof is not used in this control because chargeTemplate can never be instance of usageChargeTemplate according to model structure
+									else if(usageChargeTemplateService.findById(chargeTemplate.getId())!=null && walletOperation.getOperationDate()!=null){
+										CounterPeriod counterPeriod = counterPeriodService.getCounterPeriod(walletOperation.getCounter(), walletOperation.getOperationDate());
+										periodStartDate=counterPeriod.getPeriodStartDate();
+										periodEndDate=counterPeriod.getPeriodEndDate();
+									}
+									line.setAttribute("periodStartDate", periodStartDate != null ? 
+											 DateUtils.formatDateWithPattern(periodStartDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
+									line.setAttribute("periodEndDate", periodEndDate != null ? 
+											 DateUtils.formatDateWithPattern(periodEndDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
+								}
+							}
 						} else {
 							code = ratedTransaction.getCode();
 							description = ratedTransaction.getDescription();
-						}
-
+						} 
+										
 						line.setAttribute("code", code != null ? code : "");
+					
 
 						if (ratedTransaction.getParameter1() != null) {
 							line.setAttribute("param1", ratedTransaction.getParameter1());

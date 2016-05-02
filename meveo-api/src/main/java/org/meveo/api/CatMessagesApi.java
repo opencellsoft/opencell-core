@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CatMessagesDto;
@@ -22,12 +20,10 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IAuditable;
 import org.meveo.model.IProvider;
-import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.CatMessagesService;
-import org.reflections.Reflections;
 
 public class CatMessagesApi extends BaseApi {
 
@@ -62,7 +58,7 @@ public class CatMessagesApi extends BaseApi {
 		}
 		
 		CatMessagesDto messageDto = null;
-		BusinessEntity entity = getEntityByMessageCode(catMessagesCode);
+		BusinessEntity entity = catMessagesService.getEntityByMessageCode(catMessagesCode);
 		if (entity != null) {
 			messageDto = new CatMessagesDto();
 			messageDto.setCode(entity.getCode());
@@ -127,7 +123,7 @@ public class CatMessagesApi extends BaseApi {
 	
 	private BusinessEntity fetchBusinessEntity(String className, String code, User currentUser) throws MeveoApiException {
 		// check if entities exist
-		Class<?> entityClass = getEntityClass(className);
+		Class<?> entityClass = catMessagesService.getEntityClass(className);
 		BusinessEntity entity = null;
 		
 		if (entityClass != null) {
@@ -161,15 +157,15 @@ public class CatMessagesApi extends BaseApi {
 			// create/update/delete translations
 			if (message != null && !isBlankDescription) { // message exists and description is not blank
 				message.setDescription(translation.getDescription());
-				update(message, currentUser);
+				catMessagesService.update(message, currentUser);
 			} else if (message != null && isBlankDescription) { // message exists and description is blank
-				remove(message, currentUser);
+				catMessagesService.remove(message);
 			} else if (message == null && !isBlankDescription) { // message does not exist and description is not blank
 				message = new CatMessages();
 				message.setMessageCode(messageCode);
 				message.setLanguageCode(translation.getLanguageCode());
 				message.setDescription(translation.getDescription());
-				create(message, currentUser);
+				catMessagesService.create(message, currentUser);
 			}
 		}
 	}
@@ -188,7 +184,7 @@ public class CatMessagesApi extends BaseApi {
 
 			for (String messageCode : entities.keySet()) {
 				messageList = entities.get(messageCode);
-				entity = getEntityByMessageCode(messageCode);
+				entity = catMessagesService.getEntityByMessageCode(messageCode);
 				if (entity != null) {
 					messageDto = new CatMessagesDto();
 					messageDto.setCode(entity.getCode());
@@ -203,18 +199,6 @@ public class CatMessagesApi extends BaseApi {
 		return catMessagesListDto;
 	}
 
-	private void create(AuditableEntity entity, User currentUser) throws MeveoApiException, BusinessException {
-		log.trace("start of create {} entity={}", entity.getClass().getSimpleName(), entity);
-		if (entity instanceof IAuditable) {
-			((IAuditable) entity).updateAudit(currentUser);
-		}
-		if (entity instanceof IProvider && (((IProvider) entity).getProvider() == null)) {
-			((BaseEntity) entity).setProvider(currentUser.getProvider());
-		}
-		catMessagesService.getEntityManager().persist(entity);
-		log.debug("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
-	}
-
 	private void update(AuditableEntity entity, User currentUser) throws MeveoApiException, BusinessException {
 		log.trace("start of update {} entity (id={}) ..", entity.getClass().getSimpleName(), entity.getId());
 
@@ -227,62 +211,7 @@ public class CatMessagesApi extends BaseApi {
 		entity = catMessagesService.getEntityManager().merge(entity);
 		log.debug("end of update {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
 	}
-
-	private void remove(AuditableEntity entity, User currentUser) {
-		log.trace("start of remove {} entity (id={}) ..", entity.getClass().getSimpleName(), entity.getId());
-		if (entity instanceof IProvider && (((IProvider) entity).getProvider() == null)) {
-			((BaseEntity) entity).setProvider(currentUser.getProvider());
-		}
-		catMessagesService.getEntityManager().remove(entity);
-		log.debug("end of remove {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
-	}
-
-	private BusinessEntity getEntityByMessageCode(String messageCode) {
-		BusinessEntity entity = null;
-		if (!StringUtils.isBlank(messageCode) && messageCode.contains("_")) {
-			try {
-				String[] classAndId = messageCode.split("_");
-				String className = classAndId[0];
-				long entityId = Long.parseLong(classAndId[1]);
-				entity = getEntityByClassNameAndId(className, entityId);
-			} catch (NumberFormatException e) {
-				log.warn("Invalid Entity Id.  Will return null entity.", e);
-			}
-		}
-		return entity;
-	}
-
-	private BusinessEntity getEntityByClassNameAndId(String className, long entityId) {
-		Class<?> entityClass = getEntityClass(className);
-		BusinessEntity entity = null;
-		if (entityClass != null) {
-			try {
-				log.trace("start of find {} by id (id={}) ..", entityClass.getSimpleName(), entityId);
-				entity = (BusinessEntity) catMessagesService.getEntityManager().find(entityClass, entityId);
-				log.debug("end of find {} by id (id={}). Result found={}.", entityClass.getSimpleName(), entityId,
-						entity != null);
-			} catch (NoResultException e) {
-				log.warn("Error encountered while retrieving business entity.  Will return null.", e);
-			}
-		}
-		return entity;
-	}
-
-	private Class<?> getEntityClass(String className) {
-		Class<?> entityClass = null;
-		if (!StringUtils.isBlank(className)) {
-			Reflections reflections = new Reflections("org.meveo.model");
-			Set<Class<?>> multiLanguageClasses = reflections.getTypesAnnotatedWith(MultilanguageEntity.class);
-			for (Class<?> multiLanguageClass : multiLanguageClasses) {
-				if (className.equals(multiLanguageClass.getSimpleName())) {
-					entityClass = multiLanguageClass;
-					break;
-				}
-			}
-		}
-		return entityClass;
-	}
-
+	
 	private Map<String, List<CatMessages>> parseEntities(List<CatMessages> messageList) {
 		Map<String, List<CatMessages>> messageMap = null;
 		String messageCode = null;

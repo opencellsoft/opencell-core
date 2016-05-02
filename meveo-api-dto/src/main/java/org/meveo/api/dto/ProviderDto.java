@@ -48,6 +48,7 @@ public class ProviderDto extends BaseDto {
 	private Boolean displayPricePlans = false;
 	private boolean displayFreeTransacInInvoice;
 	private Boolean displayDetail = true;
+	private Boolean displayChargesPeriods = false;
 	private String invoiceAdjustmentPrefix;
 	private Long currentInvoiceAdjustmentNb;
 	private Integer invoiceAdjustmentSequenceSize;
@@ -98,6 +99,7 @@ public class ProviderDto extends BaseDto {
 			this.setDisplayDetail(invoiceConfiguration.getDisplayDetail());
 			this.setDisplayPricePlans(invoiceConfiguration.getDisplayPricePlans());
 			this.setDisplayCfAsXML(invoiceConfiguration.getDisplayCfAsXML());
+			this.setDisplayChargesPeriods(invoiceConfiguration.getDisplayChargesPeriods());
 		}
 		
 		if (e.getInvoiceAdjustmentPrefix() != null) {
@@ -357,6 +359,15 @@ public class ProviderDto extends BaseDto {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+
+	public Boolean getDisplayChargesPeriods() {
+		return displayChargesPeriods;
+	}
+
+	public void setDisplayChargesPeriods(Boolean displayChargesPeriods) {
+		this.displayChargesPeriods = displayChargesPeriods;
+	}
 
 	@Override
 	public String toString() {
@@ -375,7 +386,7 @@ public class ProviderDto extends BaseDto {
 				+ ", displayProvider=" + displayProvider
 				+ ", displayFreeTransacInInvoice="
 				+ displayFreeTransacInInvoice + ", displayDetail="
-				+ displayDetail + ", invoiceAdjustmentPrefix="
+				+ displayDetail + ", displayCharges="+displayChargesPeriods + ", displayCharges="
 				+ invoiceAdjustmentPrefix + ", currentInvoiceAdjustmentNb="
 				+ currentInvoiceAdjustmentNb
 				+ ", invoiceAdjustmentSequenceSize="

@@ -43,6 +43,9 @@ public class InvoiceConfiguration extends BaseEntity {
 
     @Column(name = "DISPLAY_CF_AS_XML")
     private Boolean displayCfAsXML = false;
+    
+    @Column(name = "DISPLAY_CHARGES_PERIODS")
+    private Boolean displayChargesPeriods = false;
 
     public Boolean getDisplaySubscriptions() {
         return displaySubscriptions;
@@ -107,5 +110,15 @@ public class InvoiceConfiguration extends BaseEntity {
 	public void setDisplayCfAsXML(Boolean displayCfAsXML) {
 		this.displayCfAsXML = displayCfAsXML;
 	}
+
+	public Boolean getDisplayChargesPeriods() {
+		return displayChargesPeriods;
+	}
+
+	public void setDisplayChargesPeriods(Boolean displayChargesPeriods) {
+		this.displayChargesPeriods = displayChargesPeriods;
+	}
+	
+	
 
 }

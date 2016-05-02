@@ -522,6 +522,44 @@
 			</to-view-id>
 			<redirect />
 		</navigation-case>
+		<!-- BEGIN TICKET #1666 -->
+		<navigation-case>
+			<from-outcome>countries</from-outcome>
+			<to-view-id>/pages/admin/countries/countries.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>countryDetail</from-outcome>
+			<to-view-id>/pages/admin/countries/countryDetail.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>currencies</from-outcome>
+			<to-view-id>/pages/admin/currencies/currencies.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>currencyDetail</from-outcome>
+			<to-view-id>/pages/admin/currencies/currencyDetail.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>languages</from-outcome>
+			<to-view-id>/pages/admin/languages/languages.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>languageDetail</from-outcome>
+			<to-view-id>/pages/admin/languages/languageDetail.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<!-- END TICKET #1666 -->
 		<!-- Billing -->
 		<navigation-case>
 			<from-outcome>invoiceAdjustmentDetail</from-outcome>

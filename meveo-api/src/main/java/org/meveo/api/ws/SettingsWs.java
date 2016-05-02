@@ -44,6 +44,9 @@ import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTaxesResponse;
 import org.meveo.api.dto.response.GetTerminationReasonResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
+import org.meveo.api.dto.response.GetTradingCountryResponse;
+import org.meveo.api.dto.response.GetTradingCurrencyResponse;
+import org.meveo.api.dto.response.GetTradingLanguageResponse;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.PermissionResponseDto;
@@ -124,56 +127,56 @@ public interface SettingsWs extends IBaseWs {
     @WebMethod
     public ActionStatus createOrUpdateSeller(@WebParam(name = "seller") SellerDto postData);
 
-    // language
+    // traingLanguage
 
     @WebMethod
-    public ActionStatus createLanguage(@WebParam(name = "language") LanguageDto postData);
+    public ActionStatus createTradingLanguage(@WebParam(name = "language") LanguageDto postData);
 
     @WebMethod
-    public GetLanguageResponse findLanguage(@WebParam(name = "languageCode") String languageCode);
+    public GetTradingLanguageResponse findTradingLanguage(@WebParam(name = "languageCode") String languageCode);
 
     @WebMethod
-    public ActionStatus removeLanguage(@WebParam(name = "languageCode") String languageCode);
+    public ActionStatus removeTradingLanguage(@WebParam(name = "languageCode") String languageCode);
 
     @WebMethod
-    public ActionStatus updateLanguage(@WebParam(name = "language") LanguageDto postData);
+    public ActionStatus updateTradingLanguage(@WebParam(name = "language") LanguageDto postData);
 
     @WebMethod
-    public ActionStatus createOrUpdateLanguage(@WebParam(name = "language") LanguageDto postData);
+    public ActionStatus createOrUpdateTradingLanguage(@WebParam(name = "language") LanguageDto postData);
 
-    // country
-
-    @WebMethod
-    ActionStatus createCountry(@WebParam(name = "country") CountryDto countryDto);
+    // tradingCountry
 
     @WebMethod
-    GetCountryResponse findCountry(@WebParam(name = "countryCode") String countryCode);
+    ActionStatus createTradingCountry(@WebParam(name = "country") CountryDto countryDto);
 
     @WebMethod
-    ActionStatus removeCountry(@WebParam(name = "countryCode") String countryCode, @WebParam(name = "currencyCode") String currencyCode);
+    GetTradingCountryResponse findTradingCountry(@WebParam(name = "countryCode") String countryCode);
 
     @WebMethod
-    ActionStatus updateCountry(@WebParam(name = "country") CountryDto countryDto);
+    ActionStatus removeTradingCountry(@WebParam(name = "countryCode") String countryCode, @WebParam(name = "currencyCode") String currencyCode);
 
     @WebMethod
-    ActionStatus createOrUpdateCountry(@WebParam(name = "country") CountryDto countryDto);
-
-    // currency
+    ActionStatus updateTradingCountry(@WebParam(name = "country") CountryDto countryDto);
 
     @WebMethod
-    ActionStatus createCurrency(@WebParam(name = "currency") CurrencyDto postData);
+    ActionStatus createOrUpdateTradingCountry(@WebParam(name = "country") CountryDto countryDto);
+
+    // traingCurrency
 
     @WebMethod
-    GetCurrencyResponse findCurrency(@WebParam(name = "currencyCode") String currencyCode);
+    ActionStatus createTradingCurrency(@WebParam(name = "currency") CurrencyDto postData);
 
     @WebMethod
-    ActionStatus removeCurrency(@WebParam(name = "currencyCode") String currencyCode);
+    GetTradingCurrencyResponse findTradingCurrency(@WebParam(name = "currencyCode") String currencyCode);
 
     @WebMethod
-    ActionStatus updateCurrency(@WebParam(name = "currency") CurrencyDto postData);
+    ActionStatus removeTradingCurrency(@WebParam(name = "currencyCode") String currencyCode);
 
     @WebMethod
-    ActionStatus createOrUpdateCurrency(@WebParam(name = "currency") CurrencyDto postData);
+    ActionStatus updateTradingCurrency(@WebParam(name = "currency") CurrencyDto postData);
+
+    @WebMethod
+    ActionStatus createOrUpdateTradingCurrency(@WebParam(name = "currency") CurrencyDto postData);
 
     // tax
 
@@ -380,4 +383,55 @@ public interface SettingsWs extends IBaseWs {
     
     @WebMethod
     public GetTerminationReasonResponse listTerminationReason();
+    
+ // language
+
+    @WebMethod
+    public ActionStatus createLanguage(@WebParam(name = "language") LanguageDto postData);
+
+    @WebMethod
+    public GetLanguageResponse findLanguage(@WebParam(name = "languageCode") String languageCode);
+
+    @WebMethod
+    public ActionStatus removeLanguage(@WebParam(name = "languageCode") String languageCode);
+
+    @WebMethod
+    public ActionStatus updateLanguage(@WebParam(name = "language") LanguageDto postData);
+
+    @WebMethod
+    public ActionStatus createOrUpdateLanguage(@WebParam(name = "language") LanguageDto postData);
+
+    // country
+
+    @WebMethod
+    ActionStatus createCountry(@WebParam(name = "country") CountryDto countryDto);
+
+    @WebMethod
+    GetCountryResponse findCountry(@WebParam(name = "countryCode") String countryCode);
+
+    @WebMethod
+    ActionStatus removeCountry(@WebParam(name = "countryCode") String countryCode);
+
+    @WebMethod
+    ActionStatus updateCountry(@WebParam(name = "country") CountryDto countryDto);
+
+    @WebMethod
+    ActionStatus createOrUpdateCountry(@WebParam(name = "country") CountryDto countryDto);
+
+    // currency
+
+    @WebMethod
+    ActionStatus createCurrency(@WebParam(name = "currency") CurrencyDto postData);
+
+    @WebMethod
+    GetCurrencyResponse findCurrency(@WebParam(name = "currencyCode") String currencyCode);
+
+    @WebMethod
+    ActionStatus removeCurrency(@WebParam(name = "currencyCode") String currencyCode);
+
+    @WebMethod
+    ActionStatus updateCurrency(@WebParam(name = "currency") CurrencyDto postData);
+
+    @WebMethod
+    ActionStatus createOrUpdateCurrency(@WebParam(name = "currency") CurrencyDto postData);
 }

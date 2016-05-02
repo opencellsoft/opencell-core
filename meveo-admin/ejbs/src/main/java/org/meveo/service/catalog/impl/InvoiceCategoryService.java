@@ -27,14 +27,17 @@ import javax.persistence.NoResultException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.MultilanguageEntityService;
 
 /**
  * InvoiceCategory service implementation.
  */
 @Stateless
-public class InvoiceCategoryService extends PersistenceService<InvoiceCategory> {
+public class InvoiceCategoryService extends MultilanguageEntityService<InvoiceCategory>{
 
+	private static final String INVOICE_CATEGORIES = "Invoice categories";
+
+	@Override
 	public InvoiceCategory findByCode(String code, Provider provider) {
 		if (code == null) {
 			return null;
@@ -74,5 +77,10 @@ public class InvoiceCategoryService extends PersistenceService<InvoiceCategory> 
 	public  List<InvoiceCategory> getInvoiceCatNotAssociated(Provider provider) { 
 		return (List<InvoiceCategory>)getEntityManager().createNamedQuery("invoiceCategory.getInvoiceCatNotAssociated",InvoiceCategory.class).setParameter("provider", provider).getResultList();
 		}
+
+	@Override
+	public String getObjectType() {
+		return INVOICE_CATEGORIES;
+	}
 
 }

@@ -9,13 +9,16 @@ import javax.ws.rs.QueryParam;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.CountryApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.TradingCountryApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.response.GetCountryResponse;
+import org.meveo.api.dto.response.GetTradingCountryResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CountryRs;
+import org.meveo.api.rest.TradingCountryRs;
 
 /**
  * @see {@link org.meveo.api.rest.CountryWs}.
@@ -57,7 +60,7 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
 
     @Override
     public GetCountryResponse find(@QueryParam("countryCode") String countryCode) {
-        GetCountryResponse result = new GetCountryResponse();
+    	GetCountryResponse result = new GetCountryResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
@@ -81,7 +84,7 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            countryApi.remove(countryCode, currencyCode, getCurrentUser().getProvider());
+            countryApi.remove(countryCode, getCurrentUser().getProvider());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

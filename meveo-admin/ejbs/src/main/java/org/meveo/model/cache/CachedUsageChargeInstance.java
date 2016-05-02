@@ -1,6 +1,7 @@
 package org.meveo.model.cache;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 import org.meveo.admin.exception.BusinessException;
@@ -128,7 +129,7 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
     }
 
     public BigDecimal getInEDRUnit(BigDecimal chargeUnitValue) {
-        return chargeUnitValue.divide(unityMultiplicator, roundingEdrNbDecimal,NumberUtil.getRoundingMode(roundingModeEnum));
+        return chargeUnitValue.divide(unityMultiplicator, roundingEdrNbDecimal,RoundingMode.HALF_UP);
     }
 
     public void populateFromUsageChargeInstance(UsageChargeInstance usageChargeInstance, UsageChargeTemplate usageChargeTemplate, CachedUsageChargeTemplate cachedTemplate,

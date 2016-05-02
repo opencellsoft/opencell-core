@@ -73,7 +73,7 @@ public class CustomerImportService extends ImportService {
             customer.setProvider(provider);
 
             org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
-            Title title = titleService.findByCode(provider, cust.getName().getTitle());
+            Title title = titleService.findByCode(cust.getName().getTitle(), provider);
             name.setTitle(title);
             name.setFirstName(cust.getName().getFirstName());
             name.setLastName(cust.getName().getLastName());
@@ -135,7 +135,7 @@ public class CustomerImportService extends ImportService {
             name.setFirstName(custAcc.getName().getFirstName());
             name.setLastName(custAcc.getName().getLastName());
             if (!StringUtils.isBlank(custAcc.getName().getTitle())) {
-                Title title = titleService.findByCode(provider, custAcc.getName().getTitle().trim());
+                Title title = titleService.findByCode(custAcc.getName().getTitle().trim(), provider);
                 name.setTitle(title);
             }
             customerAccount.setName(name);
@@ -163,7 +163,7 @@ public class CustomerImportService extends ImportService {
         customer.setSeller(seller);
 
         org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
-        Title title = titleService.findByCode(provider, cust.getName().getTitle());
+        Title title = titleService.findByCode(cust.getName().getTitle(), provider);
         name.setTitle(title);
         name.setFirstName(cust.getName().getFirstName());
         name.setLastName(cust.getName().getLastName());
@@ -228,7 +228,7 @@ public class CustomerImportService extends ImportService {
             name.setFirstName(custAcc.getName().getFirstName());
             name.setLastName(custAcc.getName().getLastName());
             if (!StringUtils.isBlank(custAcc.getName().getTitle())) {
-                Title title = titleService.findByCode(provider, custAcc.getName().getTitle().trim());
+                Title title = titleService.findByCode(custAcc.getName().getTitle().trim(), provider);
                 name.setTitle(title);
             }
             customerAccount.setName(name);

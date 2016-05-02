@@ -1,0 +1,34 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hftl:formPanel label="#{messages['country.countryPanel']}"	backingBean="#{countryBean}">
+		
+			<hftl:formField label="#{messages['country.code']}"		field="countryCode" required="true" maxlength="3" />
+			
+			<hftl:formField label="#{messages['country.name']}" 	field="descriptionEn" required="true" />
+			
+			<hftl:formField id="currencySelectId" label="#{messages['currency.currencyCode']}" field="currency" 
+			    valueLabelField="currencyCode"  listBean="#{currencyBean}" required="true"/>
+			    
+			<hftl:formField id="languageSelectId" label="#{messages['language.languageCode']}" field="language" 
+			    valueLabelField="languageCode"  listBean="#{languageBean}" required="true"/>
+			
+			
+			    
+		</hftl:formPanel>
+
+	</ui:define>
+
+</ui:composition>

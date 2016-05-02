@@ -34,7 +34,7 @@ public class TitleApi extends BaseApi {
         String titleCode = postData.getCode();
 
         if (!StringUtils.isBlank(titleCode)) {
-            Title title = titleService.findByCode(currentUser.getProvider(), titleCode);
+            Title title = titleService.findByCode(titleCode, currentUser.getProvider());
 
             if (title != null) {
                 throw new EntityAlreadyExistsException(Title.class, titleCode);
@@ -66,7 +66,7 @@ public class TitleApi extends BaseApi {
         }
         handleMissingParameters();
 
-        Title title = titleService.findByCode(provider, titleCode);
+        Title title = titleService.findByCode(titleCode, provider);
         if (title != null) {
             TitleDto titleDto = new TitleDto();
             titleDto.setCode(title.getCode());
@@ -92,7 +92,7 @@ public class TitleApi extends BaseApi {
         }
         handleMissingParameters();
 
-        Title title = titleService.findByCode(currentUser.getProvider(), titleCode);
+        Title title = titleService.findByCode(titleCode, currentUser.getProvider());
         if (title != null) {
             title.setDescription(postData.getDescription());
             title.setIsCompany(postData.getIsCompany());
@@ -117,7 +117,7 @@ public class TitleApi extends BaseApi {
 
         handleMissingParameters();
 
-        Title title = titleService.findByCode(currentUser.getProvider(), titleCode);
+        Title title = titleService.findByCode(titleCode, currentUser.getProvider());
         if (title != null) {
             titleService.remove(title);
         } else {
@@ -126,7 +126,7 @@ public class TitleApi extends BaseApi {
     }
 
     public void createOrUpdate(TitleDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        Title title = titleService.findByCode(currentUser.getProvider(), postData.getCode());
+        Title title = titleService.findByCode(postData.getCode(), currentUser.getProvider());
 
         if (title == null) {
             // create

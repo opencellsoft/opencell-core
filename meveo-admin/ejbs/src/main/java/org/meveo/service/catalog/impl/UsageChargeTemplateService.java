@@ -32,16 +32,17 @@ import org.meveo.model.admin.User;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.base.MultilanguageEntityService;
 
 /**
  * Charge Template service implementation.
  * 
  */
 @Stateless
-public class UsageChargeTemplateService extends
-		ChargeTemplateService<UsageChargeTemplate> {
+public class UsageChargeTemplateService extends MultilanguageEntityService<UsageChargeTemplate> {
 
-    @Inject
+    private static final String CHARGES = "Charges";
+	@Inject
     private RatingCacheContainerProvider ratingCacheContainerProvider;
 
     @Override
@@ -92,6 +93,11 @@ public class UsageChargeTemplateService extends
 			return (List<UsageChargeTemplate>)getEntityManager().createNamedQuery("usageChargeTemplate.getUsagesChrgNotAssociated",UsageChargeTemplate.class)
 					.setParameter("provider", provider).getResultList();
 			}
+
+		@Override
+		public String getObjectType() {
+			return CHARGES;
+		}
 	
     
     
