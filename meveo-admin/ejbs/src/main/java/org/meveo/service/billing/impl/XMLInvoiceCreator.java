@@ -955,6 +955,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 										periodStartDate=counterPeriod.getPeriodStartDate();
 										periodEndDate=counterPeriod.getPeriodEndDate();
 									}
+									line.setAttribute("periodStartDate", periodStartDate != null ? 
+											 DateUtils.formatDateWithPattern(periodStartDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
+									line.setAttribute("periodEndDate", periodEndDate != null ? 
+											 DateUtils.formatDateWithPattern(periodEndDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
 								}
 							}
 						} else {
@@ -963,10 +967,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						} 
 										
 						line.setAttribute("code", code != null ? code : "");
-						line.setAttribute("periodStartDate", periodStartDate != null ? 
-								 DateUtils.formatDateWithPattern(periodStartDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
-						line.setAttribute("periodEndDate", periodEndDate != null ? 
-								 DateUtils.formatDateWithPattern(periodEndDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
+					
 
 						if (ratedTransaction.getParameter1() != null) {
 							line.setAttribute("param1", ratedTransaction.getParameter1());
