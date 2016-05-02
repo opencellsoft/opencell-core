@@ -335,7 +335,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 				baIds.add(ba.getId());
 			}
 			billingRunService.launchExceptionalInvoicing(baIds, exceptionalInvoicingDate, exceptionalLastTransactionDate,BillingProcessTypesEnum.MANUAL,getCurrentUser()); 
-			return "/pages/billing/invoicing/billingRuns.xhtml?edit=true";
+			return "/pages/billing/invoicing/billingRuns.xhtml?edit=true&faces-redirect=true";
 		} catch (Exception e) {
 			log.error("launchExceptionelInvoicing", e);
 			messages.error(e.getMessage());
