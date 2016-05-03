@@ -1843,12 +1843,12 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public GetDescriptionsResponse findDescriptions(String descriptionsCode, String languageCode) {
+    public GetDescriptionsResponse findDescriptions(String entityClass, String code, String languageCode) {
         GetDescriptionsResponse result = new GetDescriptionsResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCatMessagesDto(catMessagesApi.find(descriptionsCode, languageCode, getCurrentUser().getProvider()));
+            result.setCatMessagesDto(catMessagesApi.find(entityClass, code, languageCode, getCurrentUser().getProvider()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1864,11 +1864,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public ActionStatus removeDescriptions(String descriptionsCode, String languageCode) {
+    public ActionStatus removeDescriptions(String entityClass, String code, String languageCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            catMessagesApi.remove(descriptionsCode, languageCode, getCurrentUser().getProvider());
+            catMessagesApi.remove(entityClass, code, languageCode, getCurrentUser().getProvider());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

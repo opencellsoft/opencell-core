@@ -353,10 +353,10 @@ public interface SettingsWs extends IBaseWs {
     public ActionStatus updateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
 
     @WebMethod
-    public GetDescriptionsResponse findDescriptions(@WebParam(name = "descriptionsCode") String descriptionsCode, @WebParam(name = "languageCode") String languageCode);
+    public GetDescriptionsResponse findDescriptions(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code, @WebParam(name = "languageCode") String languageCode);
 
     @WebMethod
-    public ActionStatus removeDescriptions(@WebParam(name = "descriptionsCode") String descriptionsCode, @WebParam(name = "languageCode") String languageCode);
+    public ActionStatus removeDescriptions(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code, @WebParam(name = "languageCode") String languageCode);
 
     @WebMethod
     public ActionStatus createOrUpdateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
