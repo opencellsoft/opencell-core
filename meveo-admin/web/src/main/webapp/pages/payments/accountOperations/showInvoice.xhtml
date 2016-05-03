@@ -40,14 +40,14 @@
 			   <p:commandButton action="#{recordedInvoiceBean.addLitigation()}" id="addLitigation"
 					value="#{messages['accountOperation_I.buttonAddLitigation']}"
 					rendered="#{recordedInvoice.matchingStatus.toString() == 'O'}" update="@all">
-                        <p:confirm header="#{messages['message.confirmation']}"
+                        <p:confirm header="#{messages['commons.confirmationHeader']}"
 						message="#{messages['message.confirm.litigation']}"
 						icon="ui-icon-alert"/>
 					</p:commandButton> 					
 				<p:commandButton action="#{recordedInvoiceBean.cancelLitigation()}"
 					value="#{messages['accountOperation_I.buttonCancelLitigation']}"
 					rendered="#{recordedInvoice.matchingStatus.toString() == 'I'}" update="@all">
-					<p:confirm header="#{messages['message.confirmation']}"
+					<p:confirm header="#{messages['commons.confirmationHeader']}"
 						message="#{messages['message.confirm.cancelLitigation']}"
 						icon="ui-icon-alert"/>
 				</p:commandButton> 
@@ -56,12 +56,6 @@
                     <f:param name="edit" value="false" />
                     <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                 </p:button> 
-			<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
-			<p:commandButton value="#{messages['commons.yes']}" type="button"
-				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-			<p:commandButton value="#{messages['commons.no']}" type="button"
-				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-		   </p:confirmDialog>
 			</ui:define>
 		</hftl:formPanel>
 	</ui:define>

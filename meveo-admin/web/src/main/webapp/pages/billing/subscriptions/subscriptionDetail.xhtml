@@ -261,7 +261,7 @@
 									<p:commandButton rendered="#{entity.status eq 'INACTIVE'}"
 										action="#{subscriptionBean.deleteServiceInstance(entity)}"
 										icon="ui-icon-trash" update=":#{p:component('serviceTab')}">
-										<p:confirm header="#{messages['message.confirmation']}"
+										<p:confirm header="#{messages['commons.confirmationHeader']}"
 											message="#{messages['commons.confirmDelete']}"
 											icon="ui-icon-alert" />
 									</p:commandButton>
@@ -275,19 +275,10 @@
 										value="#{messages['button.activateButton']}"
 										update=":subscriptionTab:srvInstansFrm :subscriptionTab:operationFrm :subscriptionTab:headerInfo1:messages"
 										disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status!='INACTIVE'}">
-										<p:confirm header="#{messages['message.confirmation']}"
+										<p:confirm header="#{messages['commons.confirmationHeader']}"
 											message="#{messages['confirmationMessage.confirmActivation']}"
 											icon="ui-icon-alert" />
 									</p:commandButton>
-									<p:confirmDialog global="true" showEffect="fade"
-										hideEffect="explode">
-										<p:commandButton value="#{messages['commons.yes']}"
-											type="button" styleClass="ui-confirmdialog-yes"
-											icon="ui-icon-check" />
-										<p:commandButton value="#{messages['commons.no']}"
-											type="button" styleClass="ui-confirmdialog-no"
-											icon="ui-icon-close" />
-									</p:confirmDialog>
 									<p:commandButton value="#{messages['button.terminateButton']}"
 										onclick="PF('dlg_serviceTerminationPopup').show();"
 										type="button"

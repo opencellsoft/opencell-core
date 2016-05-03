@@ -190,7 +190,7 @@
 				<p:commandButton id="updateWallet" icon="ui-icon-play"
 					actionListener="#{walletOperationBean.updatedToRerate(entity)}"
 					update="@all">
-					<p:confirm header="#{messages['message.confirmation']}"
+					<p:confirm header="#{messages['commons.confirmationHeader']}"
 						message="#{messages['message.confirm.walletOperation.update']}"
 						icon="ui-icon-alert" />
 				</p:commandButton>
@@ -201,17 +201,11 @@
             value="#{messages['action.massRerate']}"
             action="#{walletOperationBean.massToRerate()}" 
             icon="ui-icon-check">
-			<p:confirm header="#{messages['message.confirmation']}"
+			<p:confirm header="#{messages['commons.confirmationHeader']}"
 				message="#{messages['message.confirm.walletOperation.update']}"
 				icon="ui-icon-alert" />
            </p:commandButton> 
 			</p:panel>
-		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
-			<p:commandButton value="#{messages['commons.yes']}" type="button"
-				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-			<p:commandButton value="#{messages['commons.no']}" type="button"
-				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-		</p:confirmDialog>
 
 	</ui:define>
 

@@ -78,11 +78,15 @@
 
         <p:commandButton value="#{messages['commons.disable']}"
             rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.active and cc.attrs.backingBean.canUserUpdateEntity(request.requestURL)}"
-            action="#{cc.attrs.backingBean.disable}" update="@form"/>
+            action="#{cc.attrs.backingBean.disable}" update="@form">
+            <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
+        </p:commandButton>
             
         <p:commandButton value="#{messages['commons.enable']}"
             rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.disabled}"
-            action="#{cc.attrs.backingBean.enable}" update="@form"/>
+            action="#{cc.attrs.backingBean.enable}" update="@form">
+            <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
+        </p:commandButton>
 
 		<p:commandButton id="saveButton"
 			rendered="#{cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and !cc.attrs.ajaxSubmit and cc.attrs.backingBean.canUserUpdateEntity(request.requestURL)}"
@@ -128,37 +132,13 @@
 		<p:commandButton id="saveButtonWithMessage"
 			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId) and !empty(cc.attrs.updateConfirmationMessage)}"
 			value="#{messages['action.save']}" icon="ui-icon-check"
-			onclick="PF('#{cc.attrs.formId}saveButtonWithMessageDialog').show()" type="button">
+			oncomplete="#{cc.attrs.formId}#{cc.attrs.submitPartialProcess==null?'updateWithMessage()':'updateWithMessagePartialSubmit()'}" >
 			<c:if test="#{cc.attrs.submitActionListener}">
-            	<f:actionListener binding="#{cc.attrs.backingBean.submitActionListener()}"></f:actionListener>
+            	<f:actionListener binding="#{cc.attrs.backingBean.submitActionListener()}"/>
             </c:if>
+            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{(cc.attrs.updateConfirmationMessage eq '') ? messages['confirmationMessage.confirmUpdate'] : cc.attrs.updateConfirmationMessage}" icon="ui-icon-alert" />
 		</p:commandButton>
         
-		<!-- Update the message handling when  -->
-		<p:confirmDialog id="confirmUpdateWithMessage" appendTo="@(body)"
-			widgetVar="#{cc.attrs.formId}saveButtonWithMessageDialog" showEffect="fade"
-			hideEffect="fade" severity="alert"
-			message="#{(cc.attrs.updateConfirmationMessage eq '') ? messages['confirmationMessage.confirmUpdate'] : cc.attrs.updateConfirmationMessage}">
-			<p:commandButton id="updateOk" value="#{messages['commons.yes']}" rendered="#{cc.attrs.submitPartialProcess==null}"
-				styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
-				oncomplete="#{cc.attrs.formId}updateWithMessage()"
-				onclick="PF('#{cc.attrs.formId}saveButtonWithMessageDialog').hide()">
-				<f:param name="edit" value="#{cc.attrs.edit}" />
-			</p:commandButton>
-            
-            <p:commandButton id="updateOkPartialSubmit" value="#{messages['commons.yes']}" rendered="#{cc.attrs.submitPartialProcess!=null}"
-                styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
-                oncomplete="#{cc.attrs.formId}updateWithMessagePartialSubmit()"
-                onclick="PF('#{cc.attrs.formId}saveButtonWithMessageDialog').hide()">
-                <f:param name="edit" value="#{cc.attrs.edit}" />
-            </p:commandButton>            
-
-            <p:commandButton id="updateKO" value="#{messages['commons.no']}"
-				type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"
-				onclick="PF('#{cc.attrs.formId}saveButtonWithMessageDialog').hide()" />
-		</p:confirmDialog>
-		<!-- Update with message -->
-
 		<cc:insertChildren />
 
 		<hf:clearButton id="resetButton" label="#{messages['action.reset']}"
@@ -191,7 +171,7 @@
 				function handleDeleteComplete(xhr, status, args) {
 					var result = args.result;
 					if(typeof(result)!="undefined" && !result){
-						
+						PF('#{cc.attrs.formId}confirmCanotDeleteWidget').show();
 					}
 				}
 
@@ -205,22 +185,12 @@
 		</script>	
 		<p:remoteCommand id="remoteDeleteButton" action="#{cc.attrs.backingBean.deleteWithBack}" name="#{cc.attrs.formId}doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" />
 		<p:commandButton id="deletelink" icon="ui-icon-trash" value="#{messages['commons.delete']}"
-			onclick="PF('#{cc.attrs.formId}confirmDeleteWidget').show()" type="button" rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null and cc.attrs.backingBean.canUserUpdateEntity(request.requestURL)}">
-			<f:setPropertyActionListener target="#{cc.attrs.backingBean.entity}"
-				value="#{entity}"></f:setPropertyActionListener>
+			oncomplete="#{cc.attrs.formId}doDelete()" rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null and cc.attrs.backingBean.canUserUpdateEntity(request.requestURL)}">
+            <f:setPropertyActionListener target="#{cc.attrs.backingBean.entity}" value="#{entity}" />
+            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
 		</p:commandButton>
-		<p:confirmDialog id="confirmDeleteDialog" styleClass="confirm-dialog"
-			message="#{messages['commons.confirmDelete']}" header=""
-			severity="alert" widgetVar="#{cc.attrs.formId}confirmDeleteWidget" appendTo="@(body)">
-			<p:panel styleClass="confirm-dialog-content">
-				<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
-					oncomplete="#{cc.attrs.formId}doDelete()" onclick="PF('#{cc.attrs.formId}confirmDeleteWidget').hide()"/>
-				<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
-					onclick="PF('#{cc.attrs.formId}confirmDeleteWidget').hide()" type="button" />
-			</p:panel>
-		</p:confirmDialog>
 		<p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog"
-			message="#{messages['commons.confirmCanotDelete']}" header=""
+			message="#{messages['commons.confirmCanotDelete']}" header="#{messages['commons.confirmCanotDeleteHeader']}"
 			severity="alert" widgetVar="#{cc.attrs.formId}confirmCanotDeleteWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}"

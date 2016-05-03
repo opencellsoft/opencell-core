@@ -95,8 +95,10 @@
                             </p:commandButton>
 
                             <p:tooltip for="deleteTablink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-                            <p:commandButton id="deleteTablink" icon="ui-icon-trash" oncomplete="PF('tabConfirmDeleteWidget').show()" rendered="#{node.parent.childCount &gt; 1}">
+                            <p:commandButton id="deleteTablink" icon="ui-icon-trash" action="#{customEntityTemplateBean.removeFieldGrouping()}" update=":fieldsForm:fields"
+                                rendered="#{node.parent.childCount &gt; 1}">
                                 <f:setPropertyActionListener target="#{customEntityTemplateBean.selectedFieldGrouping}" value="#{node}" />
+                                <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['customizedEntities.confirmDeleteTab']}" icon="ui-icon-alert" />
                             </p:commandButton>
 
 
@@ -124,8 +126,10 @@
                             </p:commandButton>
 
                             <p:tooltip for="deleteFieldGrouplink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-                            <p:commandButton id="deleteFieldGrouplink" icon="ui-icon-trash" oncomplete="PF('fieldGroupConfirmDeleteWidget').show()">
+                            <p:commandButton id="deleteFieldGrouplink" icon="ui-icon-trash" action="#{customEntityTemplateBean.removeFieldGrouping()}" update=":fieldsForm:fields">
                                 <f:setPropertyActionListener target="#{customEntityTemplateBean.selectedFieldGrouping}" value="#{node}" />
+                                <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['customizedEntities.confirmDeleteFieldGroup']}"
+                                    icon="ui-icon-alert" />
                             </p:commandButton>
 
                             <p:tooltip for="moveUpFgBtn" value="#{messages['action.moveUp']}" showEffect="slide" hideEffect="slide" />
@@ -146,11 +150,15 @@
                             </p:commandButton>
 
 
-                            <p:commandButton id="enablelink" icon="ui-icon-circle-check" rendered="#{entity.disabled}" oncomplete="PF('confirmEnableWidget').show()">
+                            <p:commandButton id="enablelink" icon="ui-icon-circle-check" rendered="#{entity.disabled}" actionListener="#{customEntityTemplateBean.refreshFields}"
+                                action="#{customFieldTemplateBean.enable()}" update="@form">
                                 <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
+                                <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
                             </p:commandButton>
-                            <p:commandButton id="disablelink" icon="ui-icon-circle-close" rendered="#{not entity.disabled}" oncomplete="PF('confirmDisableWidget').show()">
+                            <p:commandButton id="disablelink" icon="ui-icon-circle-close" rendered="#{not entity.disabled}"
+                                actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.disable()}" update="@form">
                                 <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
+                                <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
                             </p:commandButton>
 
                             <p:tooltip for="enablelink" value="#{messages['commons.enable']}" showEffect="slide" hideEffect="slide" />
@@ -162,8 +170,9 @@
                             <p:remoteCommand id="remoteDeleteButton" actionListener="#{customFieldTemplateBean.deleteInlist}" action="#{customEntityTemplateBean.refreshFields}"
                                 name="fieldsDoDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form" />
                             <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-                            <p:commandButton id="deletelink" icon="ui-icon-trash" oncomplete="PF('confirmDeleteFieldsWidget').show()">
-                                <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+                            <p:commandButton id="deletelink" icon="ui-icon-trash" oncomplete="fieldsDoDelete()">
+                                <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
+                                <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
                             </p:commandButton>
 
 
@@ -219,19 +228,24 @@
                             <f:setPropertyActionListener target="#{entityActionScriptBean.backViewSave}" value="customizedEntity" />
                         </p:commandButton>
 
-                        <p:commandButton id="enableActionlink" icon="ui-icon-circle-check" rendered="#{entity.disabled}" oncomplete="PF('confirmEnableActionWidget').show()">
+                        <p:commandButton id="enableActionlink" icon="ui-icon-circle-check" rendered="#{entity.disabled}" actionListener="#{customEntityTemplateBean.refreshActions}"
+                            action="#{entityActionScriptBean.enable()}" update="@form">
                             <f:setPropertyActionListener target="#{entityActionScriptBean.entity}" value="#{entity}" />
+                            <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
                         </p:commandButton>
-                        <p:commandButton id="disableActionlink" icon="ui-icon-circle-close" rendered="#{not entity.disabled}" oncomplete="PF('confirmDisableActionWidget').show()">
+                        <p:commandButton id="disableActionlink" icon="ui-icon-circle-close" rendered="#{not entity.disabled}"
+                            actionListener="#{customEntityTemplateBean.refreshActions}" action="#{entityActionScriptBean.disable()}" update="@form">
                             <f:setPropertyActionListener target="#{entityActionScriptBean.entity}" value="#{entity}" />
+                            <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
                         </p:commandButton>
 
                         <p:tooltip for="enableActionlink" value="#{messages['commons.enable']}" showEffect="slide" hideEffect="slide" />
                         <p:tooltip for="disableActionlink" value="#{messages['commons.disable']}" showEffect="slide" hideEffect="slide" />
 
                         <p:tooltip for="deleteActionlink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-                        <p:commandButton id="deleteActionlink" icon="ui-icon-trash" oncomplete="PF('confirmDeleteActionsWidget').show()">
+                        <p:commandButton id="deleteActionlink" icon="ui-icon-trash" oncomplete="actionsDoDelete()">
                             <f:setPropertyActionListener target="#{entityActionScriptBean.entity}" value="#{entity}" />
+                            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
                         </p:commandButton>
 
                     </p:column>
@@ -254,49 +268,7 @@
                 </p:button>
 
                 <!--  Field related confirmation widgets -->
-                <p:confirmDialog id="confirmDeleteTabDialog" styleClass="confirm-dialog" message="#{messages['customizedEntities.confirmDeleteTab']}" header="" severity="alert"
-                    widgetVar="tabConfirmDeleteWidget" appendTo="@(body)">
-                    <p:panel styleClass="confirm-dialog-content">
-                        <p:commandButton id="confirmDeleteTabOk" value="#{messages['commons.yes']}" action="#{customEntityTemplateBean.removeFieldGrouping()}"
-                            update=":fieldsForm:fields" onclick="PF('tabConfirmDeleteWidget').hide()" process="@this" />
-                        <p:commandButton value="#{messages['commons.no']}" onclick="PF('tabConfirmDeleteWidget').hide()" type="button" />
-                    </p:panel>
-                </p:confirmDialog>
 
-
-                <p:confirmDialog id="confirmDeleteFieldGroupDialog" styleClass="confirm-dialog" message="#{messages['customizedEntities.confirmDeleteFieldGroup']}" header=""
-                    severity="alert" widgetVar="fieldGroupConfirmDeleteWidget" appendTo="@(body)">
-                    <p:panel styleClass="confirm-dialog-content">
-                        <p:commandButton id="confirmDeleteFieldGroupOk" value="#{messages['commons.yes']}" action="#{customEntityTemplateBean.removeFieldGrouping()}"
-                            update=":fieldsForm:fields" onclick="PF('fieldGroupConfirmDeleteWidget').hide()" process="@this" />
-                        <p:commandButton value="#{messages['commons.no']}" onclick="PF('fieldGroupConfirmDeleteWidget').hide()" type="button" />
-                    </p:panel>
-                </p:confirmDialog>
-
-                <p:confirmDialog id="confirmEnableDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmEnable']}" header="#{messages['commons.enable']}"
-                    severity="alert" widgetVar="confirmEnableWidget" appendTo="@(body)">
-                    <p:panel styleClass="confirm-dialog-content">
-                        <p:commandButton id="enableOk" value="#{messages['commons.yes']}" oncomplete="PF('confirmEnableWidget').hide()" process="@this"
-                            actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.enable()}" update="@form" />
-                        <p:commandButton id="enableKo" value="#{messages['commons.no']}" onclick="PF('confirmEnableWidget').hide()" type="button" />
-                    </p:panel>
-                </p:confirmDialog>
-                <p:confirmDialog id="confirmDisableDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmDisable']}" header="#{messages['commons.disable']}"
-                    severity="alert" widgetVar="confirmDisableWidget" appendTo="@(body)">
-                    <p:panel styleClass="confirm-dialog-content">
-                        <p:commandButton id="disableOk" value="#{messages['commons.yes']}" oncomplete="PF('confirmEnableWidget').hide()" process="@this"
-                            actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.disable()}" update="@form" />
-                        <p:commandButton id="disableKo" value="#{messages['commons.no']}" onclick="PF('confirmDisableWidget').hide()" type="button" />
-                    </p:panel>
-                </p:confirmDialog>
-
-                <p:confirmDialog id="confirmDeleteDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmDelete']}" header="" severity="alert"
-                    widgetVar="confirmDeleteFieldsWidget" appendTo="@(body)">
-                    <p:panel styleClass="confirm-dialog-content">
-                        <p:commandButton id="deleteOk" value="#{messages['commons.yes']}" oncomplete="fieldsDoDelete()" onclick="PF('confirmDeleteFieldsWidget').hide()" />
-                        <p:commandButton id="deleteKo" value="#{messages['commons.no']}" onclick="PF('confirmDeleteFieldsWidget').hide()" type="button" />
-                    </p:panel>
-                </p:confirmDialog>
                 <p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmCanotDelete']}" header="" severity="alert"
                     widgetVar="fieldsConfirmCanotDeleteWidget" appendTo="@(body)">
                     <p:panel styleClass="confirm-dialog-content">
@@ -307,35 +279,9 @@
 
 
                 <!-- Action related widgets -->
-                <p:confirmDialog id="confirmEnableActionDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmEnable']}" header="#{messages['commons.enable']}"
-                    severity="alert" widgetVar="confirmEnableActionWidget" appendTo="@(body)">
-                    <p:panel styleClass="confirm-dialog-content">
-                        <p:commandButton value="#{messages['commons.yes']}" oncomplete="PF('confirmEnableActionWidget').hide()" process="@this"
-                            actionListener="#{customEntityTemplateBean.refreshActions}" action="#{entityActionScriptBean.enable()}" update="@form" />
-                        <p:commandButton value="#{messages['commons.no']}" onclick="PF('confirmEnableActionWidget').hide()" type="button" />
-                    </p:panel>
-                </p:confirmDialog>
-                <p:confirmDialog id="confirmDisableActionDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmDisable']}" header="#{messages['commons.disable']}"
-                    severity="alert" widgetVar="confirmDisableActionWidget" appendTo="@(body)">
-                    <p:panel styleClass="confirm-dialog-content">
-                        <p:commandButton value="#{messages['commons.yes']}" oncomplete="PF('confirmEnableActionWidget').hide()" process="@this"
-                            actionListener="#{customEntityTemplateBean.refreshActions}" action="#{entityActionScriptBean.disable()}" update="@form" />
-                        <p:commandButton value="#{messages['commons.no']}" onclick="PF('confirmDisableActionWidget').hide()" type="button" />
-                    </p:panel>
-                </p:confirmDialog>
 
                 <p:remoteCommand id="remoteDeleteActionButton" actionListener="#{entityActionScriptBean.deleteInlist}" action="#{customEntityTemplateBean.refreshActions}"
                     name="actionsDoDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form" />
-
-                <p:confirmDialog id="confirmDeleteActionsDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmDelete']}" header="" severity="alert"
-                    widgetVar="confirmDeleteActionsWidget" appendTo="@(body)">
-                    <p:panel styleClass="confirm-dialog-content">
-                        <p:commandButton value="#{messages['commons.yes']}" oncomplete="actionsDoDelete()" onclick="PF('confirmDeleteActionsWidget').hide()" />
-                        <p:commandButton value="#{messages['commons.no']}" onclick="PF('confirmDeleteActionsWidget').hide()" type="button" />
-                    </p:panel>
-                </p:confirmDialog>
-
-
 
                 <script type="text/javascript">
 																	//<![CDATA[
@@ -516,11 +462,15 @@
                             killConversationOnSave="false">
                             <p:commandButton value="#{messages['commons.disable']}"
                                 rendered="#{not empty customFieldTemplateBean.entity.id and customFieldTemplateBean.entity.active}"
-                                actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.disable}" update="@form :fieldsForm:fields" />
+                                actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.disable}" update="@form :fieldsForm:fields">
+                                <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
+                            </p:commandButton>
 
                             <p:commandButton value="#{messages['commons.enable']}"
                                 rendered="#{not empty customFieldTemplateBean.entity.id and customFieldTemplateBean.entity.disabled}"
-                                actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.enable}" update="@form :fieldsForm:fields" />
+                                actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.enable}" update="@form :fieldsForm:fields">
+                                <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
+                            </p:commandButton>
 
                             <p:commandButton value="#{messages['commons.close']}" onclick="PF('cftDialog').hide()" type="button" />
                         </hf:formButtons>
@@ -581,11 +531,15 @@
                             <p:commandButton value="#{messages['scriptInstance.testCompilation']}" action="#{entityActionScriptBean.testCompilation}" update="@form" />
                             <p:commandButton value="#{messages['commons.disable']}"
                                 rendered="#{not empty entityActionScriptBean.entity.id and entityActionScriptBean.entity.active}"
-                                actionListener="#{customEntityTemplateBean.refreshActions}" action="#{entityActionScriptBean.disable}" update="@form :fieldsForm:entityActions" />
+                                actionListener="#{customEntityTemplateBean.refreshActions}" action="#{entityActionScriptBean.disable}" update="@form :fieldsForm:entityActions">
+                                <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
+                            </p:commandButton>
 
                             <p:commandButton value="#{messages['commons.enable']}"
                                 rendered="#{not empty entityActionScriptBean.entity.id and entityActionScriptBean.entity.disabled}"
-                                actionListener="#{customEntityTemplateBean.refreshActions}" action="#{entityActionScriptBean.enable}" update="@form :fieldsForm:entityActions" />
+                                actionListener="#{customEntityTemplateBean.refreshActions}" action="#{entityActionScriptBean.enable}" update="@form :fieldsForm:entityActions">
+                                <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
+                            </p:commandButton>
 
                             <p:commandButton value="#{messages['commons.close']}" onclick="PF('actionDialog').hide()" actionListener="#{customEntityTemplateBean.refreshActions}"
                                 update=":fieldsForm:entityActions" />
