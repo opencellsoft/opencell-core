@@ -19,7 +19,6 @@ import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
-import org.meveo.api.dto.account.AccountHierarchyTypeEnum;
 import org.meveo.api.dto.account.AddressDto;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.account.BillingAccountDto;
@@ -65,6 +64,8 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.AccountHierarchyTypeEnum;
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
@@ -94,6 +95,8 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.TitleService;
+import org.meveo.service.crm.impl.AccountModelScriptService;
+import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.CustomerBrandService;
@@ -118,6 +121,9 @@ import org.meveo.util.MeveoParamBean;
 
 @Stateless
 public class AccountHierarchyApi extends BaseApi {
+
+	@Inject
+	private AccountModelScriptService accountModelScriptService;
 
 	@Inject
 	private CustomFieldTemplateService customFieldTemplateService;
@@ -207,6 +213,9 @@ public class AccountHierarchyApi extends BaseApi {
 	protected CustomFieldInstanceService customFieldInstanceService;
 
 	@Inject
+	private BusinessAccountModelService businessAccountModelService;
+
+	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
 
@@ -275,8 +284,7 @@ public class AccountHierarchyApi extends BaseApi {
 		auditableTrading.setCreated(new Date());
 		auditableTrading.setCreator(currentUser);
 
-		TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode(),
-				provider);
+		TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode(), provider);
 
 		if (tradingCountry == null) {
 			Country country = countryService.findByCode(postData.getCountryCode());
@@ -294,8 +302,7 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 		}
 
-		TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode(),
-				provider);
+		TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode(), provider);
 		if (tradingCurrency == null) {
 			Currency currency = currencyService.findByCode(postData.getCurrencyCode());
 
@@ -314,8 +321,7 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 		}
 
-		TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguageCode(),
-				provider);
+		TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguageCode(), provider);
 		if (tradingLanguage == null) {
 			Language language = languageService.findByCode(postData.getLanguageCode());
 
@@ -346,8 +352,7 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 		}
 
-		CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategoryCode(),
-				currentUser.getProvider());
+		CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategoryCode(), currentUser.getProvider());
 
 		if (customerCategory == null) {
 			customerCategory = new CustomerCategory();
@@ -442,8 +447,7 @@ public class AccountHierarchyApi extends BaseApi {
 		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 		billingAccount.setCustomerAccount(customerAccount);
 		billingAccount.setPaymentMethod(PaymentMethodEnum.getValue(baPaymentMethod));
-		billingAccount.setElectronicBilling(Boolean.valueOf(paramBean.getProperty(
-				"api.customerHeirarchy.billingAccount.electronicBilling", "true")));
+		billingAccount.setElectronicBilling(Boolean.valueOf(paramBean.getProperty("api.customerHeirarchy.billingAccount.electronicBilling", "true")));
 		billingAccount.setTradingCountry(tradingCountry);
 		billingAccount.setTradingLanguage(tradingLanguage);
 		billingAccount.setBillingCycle(billingCycle);
@@ -525,8 +529,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		boolean needToUpdate = false;
 
-		TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode(),
-				provider);
+		TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode(), provider);
 
 		if (tradingCountry == null) {
 			tradingCountry = new TradingCountry();
@@ -556,9 +559,7 @@ public class AccountHierarchyApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Currency.class, postData.getCurrencyCode());
 		}
 
-		
-		TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode(),
-				provider);
+		TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode(), provider);
 
 		if (tradingCurrency == null) {
 			// create tradingCountry
@@ -567,11 +568,8 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		needToUpdate = !tradingCurrency.getCurrencyCode().equals(postData.getCurrencyCode())
-				|| !tradingCurrency.getCurrency().getCurrencyCode().equals(currency.getCurrencyCode())
-				|| !tradingCurrency.getProvider().equals(provider) || !tradingCurrency.isActive()
-				|| !tradingCurrency.getPrDescription().equals(currency.getDescriptionEn());
-
-		
+				|| !tradingCurrency.getCurrency().getCurrencyCode().equals(currency.getCurrencyCode()) || !tradingCurrency.getProvider().equals(provider)
+				|| !tradingCurrency.isActive() || !tradingCurrency.getPrDescription().equals(currency.getDescriptionEn());
 
 		tradingCurrency.setCurrency(currency);
 		tradingCurrency.setProvider(provider);
@@ -593,8 +591,7 @@ public class AccountHierarchyApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Language.class, postData.getLanguageCode());
 		}
 
-		TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguageCode(),
-				provider);
+		TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguageCode(), provider);
 
 		if (tradingLanguage == null) {
 			tradingLanguage = new TradingLanguage();
@@ -602,9 +599,8 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		needToUpdate = !tradingLanguage.getLanguageCode().equals(postData.getLanguageCode())
-				|| !tradingLanguage.getLanguage().getLanguageCode().equals(language.getLanguageCode())
-				|| !tradingLanguage.getProvider().equals(provider) || !tradingLanguage.isActive()
-				|| !tradingLanguage.getPrDescription().equals(language.getDescriptionEn());
+				|| !tradingLanguage.getLanguage().getLanguageCode().equals(language.getLanguageCode()) || !tradingLanguage.getProvider().equals(provider)
+				|| !tradingLanguage.isActive() || !tradingLanguage.getPrDescription().equals(language.getDescriptionEn());
 
 		tradingLanguage.setLanguageCode(postData.getLanguageCode());
 		tradingLanguage.setLanguage(language);
@@ -629,8 +625,7 @@ public class AccountHierarchyApi extends BaseApi {
 				customerBrand = new CustomerBrand();
 			}
 
-			needToUpdate = !customerBrand.getCode().equals(
-					StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode()))
+			needToUpdate = !customerBrand.getCode().equals(StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode()))
 					|| !customerBrand.getDescription().equals(postData.getCustomerBrandCode());
 
 			customerBrand.setCode(StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode()));
@@ -644,14 +639,12 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 		}
 
-		CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategoryCode(),
-				currentUser.getProvider());
+		CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategoryCode(), currentUser.getProvider());
 		if (customerCategory == null) {
 			customerCategory = new CustomerCategory();
 		}
 
-		needToUpdate = !customerCategory.getCode().equals(
-				StringUtils.normalizeHierarchyCode(postData.getCustomerCategoryCode()))
+		needToUpdate = !customerCategory.getCode().equals(StringUtils.normalizeHierarchyCode(postData.getCustomerCategoryCode()))
 				|| !customerCategory.getDescription().equals(postData.getCustomerCategoryCode());
 
 		customerCategory.setCode(StringUtils.normalizeHierarchyCode(postData.getCustomerCategoryCode()));
@@ -711,12 +704,10 @@ public class AccountHierarchyApi extends BaseApi {
 
 		customerService.update(customer, currentUser);
 
-		CustomerAccount customerAccount = customerAccountService.findByCode(
-				CUSTOMER_ACCOUNT_PREFIX + postData.getCustomerId(), provider);
+		CustomerAccount customerAccount = customerAccountService.findByCode(CUSTOMER_ACCOUNT_PREFIX + postData.getCustomerId(), provider);
 		if (customerAccount == null) {
 			customerAccount = new CustomerAccount();
-			customerAccount.setCode(CUSTOMER_ACCOUNT_PREFIX
-					+ StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
+			customerAccount.setCode(CUSTOMER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
 		}
 		customerAccount.setCustomer(customer);
 
@@ -746,13 +737,11 @@ public class AccountHierarchyApi extends BaseApi {
 			throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
 		}
 
-		BillingAccount billingAccount = billingAccountService.findByCode(
-				BILLING_ACCOUNT_PREFIX + postData.getCustomerId(), provider);
+		BillingAccount billingAccount = billingAccountService.findByCode(BILLING_ACCOUNT_PREFIX + postData.getCustomerId(), provider);
 
 		if (billingAccount == null) {
 			billingAccount = new BillingAccount();
-			billingAccount.setCode(BILLING_ACCOUNT_PREFIX
-					+ StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
+			billingAccount.setCode(BILLING_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
 		}
 
 		billingAccount.setEmail(postData.getEmail());
@@ -760,8 +749,7 @@ public class AccountHierarchyApi extends BaseApi {
 		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 		billingAccount.setCustomerAccount(customerAccount);
 		billingAccount.setPaymentMethod(PaymentMethodEnum.getValue(baPaymentMethod));
-		billingAccount.setElectronicBilling(Boolean.valueOf(paramBean.getProperty(
-				"api.customerHeirarchy.billingAccount.electronicBilling", "true")));
+		billingAccount.setElectronicBilling(Boolean.valueOf(paramBean.getProperty("api.customerHeirarchy.billingAccount.electronicBilling", "true")));
 		billingAccount.setTradingCountry(tradingCountry);
 		billingAccount.setTradingLanguage(tradingLanguage);
 		billingAccount.setBillingCycle(billingCycle);
@@ -772,8 +760,7 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccountService.update(billingAccount, currentUser);
 		}
 
-		UserAccount userAccount = userAccountService.findByCode(USER_ACCOUNT_PREFIX + postData.getCustomerId(),
-				provider);
+		UserAccount userAccount = userAccountService.findByCode(USER_ACCOUNT_PREFIX + postData.getCustomerId(), provider);
 		if (userAccount == null) {
 			userAccount = new UserAccount();
 		}
@@ -805,11 +792,11 @@ public class AccountHierarchyApi extends BaseApi {
 
 		CustomersDto result = new CustomersDto();
 
-		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(postData.getIndex(),
-				postData.getLimit(), null, null, postData.getSortField(), null);
+		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(postData.getIndex(), postData.getLimit(), null, null,
+				postData.getSortField(), null);
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c", null, currentUser.getProvider());
 
-		String customerCodeOrId = CUSTOMER_PREFIX +  postData.getCustomerCode();
+		String customerCodeOrId = CUSTOMER_PREFIX + postData.getCustomerCode();
 		if (!StringUtils.isBlank(postData.getCustomerId())) {
 			customerCodeOrId = CUSTOMER_PREFIX + postData.getCustomerId();
 		}
@@ -825,24 +812,21 @@ public class AccountHierarchyApi extends BaseApi {
 			qb.addCriterionEntity("c.seller", seller);
 		}
 		if (!StringUtils.isBlank(postData.getCustomerBrandCode())) {
-			CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCustomerBrandCode(),
-					currentUser.getProvider());
+			CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCustomerBrandCode(), currentUser.getProvider());
 			if (customerBrand == null) {
 				throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCustomerBrandCode());
 			}
 			qb.addCriterionEntity("c.customerBrand", customerBrand);
 		}
 		if (!StringUtils.isBlank(postData.getCustomerCategoryCode())) {
-			CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategoryCode(),
-					currentUser.getProvider());
+			CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategoryCode(), currentUser.getProvider());
 			if (customerCategory == null) {
 				throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategoryCode());
 			}
 			qb.addCriterionEntity("c.customerCategory", customerCategory);
 		}
 		if (!StringUtils.isBlank(postData.getCountryCode())) {
-			TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode(),
-					currentUser.getProvider());
+			TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode(), currentUser.getProvider());
 			if (tradingCountry == null) {
 				throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountryCode());
 			}
@@ -915,8 +899,7 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	public void customerHierarchyUpdate(CustomerHierarchyDto postData, User currentUser) throws MeveoApiException,
-			BusinessException {
+	public void customerHierarchyUpdate(CustomerHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		if (postData.getSellers() == null || postData.getSellers().getSeller().isEmpty()) {
 			missingParameters.add("sellers");
 			handleMissingParameters();
@@ -948,24 +931,21 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			if (!StringUtils.isBlank(sellerDto.getCurrencyCode())) {
-				TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(
-						sellerDto.getCurrencyCode(), provider);
+				TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(sellerDto.getCurrencyCode(), provider);
 				if (tradingCurrency != null) {
 					seller.setTradingCurrency(tradingCurrency);
 				}
 			}
 
 			if (!StringUtils.isBlank(sellerDto.getCountryCode())) {
-				TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(
-						sellerDto.getCountryCode(), provider);
+				TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(sellerDto.getCountryCode(), provider);
 				if (tradingCountry != null) {
 					seller.setTradingCountry(tradingCountry);
 				}
 			}
 
 			if (!StringUtils.isBlank(sellerDto.getLanguageCode())) {
-				TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(
-						sellerDto.getLanguageCode(), provider);
+				TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(sellerDto.getLanguageCode(), provider);
 				if (tradingLanguage != null) {
 					seller.setTradingLanguage(tradingLanguage);
 				}
@@ -984,8 +964,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				log.error("Failed to associate custom field instance to a seller {}", sellerDto.getCode(), e);
-				throw new MeveoApiException("Failed to associate custom field instance to a seller "
-						+ sellerDto.getCode());
+				throw new MeveoApiException("Failed to associate custom field instance to a seller " + sellerDto.getCode());
 			}
 
 			// customers
@@ -1003,16 +982,14 @@ public class AccountHierarchyApi extends BaseApi {
 						customer.setCode(customerDto.getCode());
 
 						if (!StringUtils.isBlank(customerDto.getCustomerBrand())) {
-							CustomerBrand customerBrand = customerBrandService.findByCode(
-									customerDto.getCustomerBrand(), provider);
+							CustomerBrand customerBrand = customerBrandService.findByCode(customerDto.getCustomerBrand(), provider);
 							customer.setCustomerBrand(customerBrand);
 						} else {
 							customer.setCustomerBrand(null);
 						}
 
 						if (!StringUtils.isBlank(customerDto.getCustomerCategory())) {
-							CustomerCategory customerCategory = customerCategoryService.findByCode(
-									customerDto.getCustomerCategory(), provider);
+							CustomerCategory customerCategory = customerCategoryService.findByCode(customerDto.getCustomerCategory(), provider);
 							if (customerCategory != null) {
 								customer.setCustomerCategory(customerCategory);
 							}
@@ -1027,16 +1004,14 @@ public class AccountHierarchyApi extends BaseApi {
 						customer.setProvider(provider);
 					} else {
 						if (!StringUtils.isBlank(customerDto.getCustomerBrand())) {
-							CustomerBrand customerBrand = customerBrandService.findByCode(
-									customerDto.getCustomerBrand(), provider);
+							CustomerBrand customerBrand = customerBrandService.findByCode(customerDto.getCustomerBrand(), provider);
 							if (customerBrand != null) {
 								customer.setCustomerBrand(customerBrand);
 							}
 						}
 
 						if (!StringUtils.isBlank(customerDto.getCustomerCategory())) {
-							CustomerCategory customerCategory = customerCategoryService.findByCode(
-									customerDto.getCustomerCategory(), provider);
+							CustomerCategory customerCategory = customerCategoryService.findByCode(customerDto.getCustomerCategory(), provider);
 							if (customerCategory != null) {
 								customer.setCustomerCategory(customerCategory);
 							}
@@ -1081,23 +1056,19 @@ public class AccountHierarchyApi extends BaseApi {
 						populateCustomFields(customerDto.getCustomFields(), customer, isNewCustomer, currentUser);
 
 					} catch (IllegalArgumentException | IllegalAccessException e) {
-						log.error("Failed to associate custom field instance to a customer {}", customerDto.getCode(),
-								e);
-						throw new MeveoApiException("Failed to associate custom field instance to a customer "
-								+ customerDto.getCode());
+						log.error("Failed to associate custom field instance to a customer {}", customerDto.getCode(), e);
+						throw new MeveoApiException("Failed to associate custom field instance to a customer " + customerDto.getCode());
 					}
 
 					// customerAccounts
 					if (customerDto.getCustomerAccounts() != null) {
-						for (CustomerAccountDto customerAccountDto : customerDto.getCustomerAccounts()
-								.getCustomerAccount()) {
+						for (CustomerAccountDto customerAccountDto : customerDto.getCustomerAccounts().getCustomerAccount()) {
 							if (StringUtils.isBlank(customerAccountDto.getCode())) {
 								log.warn("code is null={}", customerAccountDto);
 								continue;
 							}
 
-							CustomerAccount customerAccount = customerAccountService.findByCode(
-									customerAccountDto.getCode(), provider);
+							CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountDto.getCode(), provider);
 							if (customerAccount == null) {
 
 								customerAccount = new CustomerAccount();
@@ -1105,11 +1076,10 @@ public class AccountHierarchyApi extends BaseApi {
 								customerAccount.setCode(customerAccountDto.getCode());
 
 								if (!StringUtils.isBlank(customerAccountDto.getCurrency())) {
-									TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(
-											customerAccountDto.getCurrency(), provider);
+									TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(customerAccountDto.getCurrency(),
+											provider);
 									if (tradingCurrency == null) {
-										throw new EntityDoesNotExistsException(TradingCurrency.class,
-												customerAccountDto.getCurrency());
+										throw new EntityDoesNotExistsException(TradingCurrency.class, customerAccountDto.getCurrency());
 									}
 
 									customerAccount.setTradingCurrency(tradingCurrency);
@@ -1119,11 +1089,10 @@ public class AccountHierarchyApi extends BaseApi {
 								}
 
 								if (!StringUtils.isBlank(customerAccountDto.getLanguage())) {
-									TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(
-											customerAccountDto.getLanguage(), provider);
+									TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(customerAccountDto.getLanguage(),
+											provider);
 									if (tradingLanguage == null) {
-										throw new EntityDoesNotExistsException(TradingLanguage.class,
-												customerAccountDto.getLanguage());
+										throw new EntityDoesNotExistsException(TradingLanguage.class, customerAccountDto.getLanguage());
 									}
 
 									customerAccount.setTradingLanguage(tradingLanguage);
@@ -1145,29 +1114,27 @@ public class AccountHierarchyApi extends BaseApi {
 										try {
 											customerAccountService.closeCustomerAccount(customerAccount, currentUser);
 										} catch (Exception e) {
-											throw new MeveoApiException("Failed closing customerAccount with code="
-													+ customerAccountDto.getCode() + ". " + e.getMessage());
+											throw new MeveoApiException(
+													"Failed closing customerAccount with code=" + customerAccountDto.getCode() + ". " + e.getMessage());
 										}
 									}
 
 								} else {
 									if (!StringUtils.isBlank(customerAccountDto.getCurrency())) {
-										TradingCurrency tradingCurrency = tradingCurrencyService
-												.findByTradingCurrencyCode(customerAccountDto.getCurrency(), provider);
+										TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(customerAccountDto.getCurrency(),
+												provider);
 										if (tradingCurrency == null) {
-											throw new EntityDoesNotExistsException(TradingCurrency.class,
-													customerAccountDto.getCurrency());
+											throw new EntityDoesNotExistsException(TradingCurrency.class, customerAccountDto.getCurrency());
 										}
 
 										customerAccount.setTradingCurrency(tradingCurrency);
 									}
 
 									if (!StringUtils.isBlank(customerAccountDto.getLanguage())) {
-										TradingLanguage tradingLanguage = tradingLanguageService
-												.findByTradingLanguageCode(customerAccountDto.getLanguage(), provider);
+										TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(customerAccountDto.getLanguage(),
+												provider);
 										if (tradingLanguage == null) {
-											throw new EntityDoesNotExistsException(TradingLanguage.class,
-													customerAccountDto.getLanguage());
+											throw new EntityDoesNotExistsException(TradingLanguage.class, customerAccountDto.getLanguage());
 										}
 
 										customerAccount.setTradingLanguage(tradingLanguage);
@@ -1183,8 +1150,7 @@ public class AccountHierarchyApi extends BaseApi {
 										customerAccount.setMandateDate(customerAccountDto.getMandateDate());
 									}
 									if (!StringUtils.isBlank(customerAccountDto.getMandateIdentification())) {
-										customerAccount.setMandateIdentification(customerAccountDto
-												.getMandateIdentification());
+										customerAccount.setMandateIdentification(customerAccountDto.getMandateIdentification());
 									}
 								}
 							}
@@ -1198,8 +1164,7 @@ public class AccountHierarchyApi extends BaseApi {
 								customerAccount.setPaymentMethod(customerAccountDto.getPaymentMethod());
 							}
 							if (!StringUtils.isBlank(customerAccountDto.getCreditCategory())) {
-								customerAccount.setCreditCategory(creditCategoryService.findByCode(
-										customerAccountDto.getCreditCategory(), provider));
+								customerAccount.setCreditCategory(creditCategoryService.findByCode(customerAccountDto.getCreditCategory(), provider));
 							}
 							if (customerAccountDto.getDunningLevel() != null) {
 								customerAccount.setDunningLevel(customerAccountDto.getDunningLevel());
@@ -1207,20 +1172,16 @@ public class AccountHierarchyApi extends BaseApi {
 
 							if (customerAccountDto.getContactInformation() != null) {
 								if (!StringUtils.isBlank(customerAccountDto.getContactInformation().getEmail())) {
-									customerAccount.getContactInformation().setEmail(
-											customerAccountDto.getContactInformation().getEmail());
+									customerAccount.getContactInformation().setEmail(customerAccountDto.getContactInformation().getEmail());
 								}
 								if (!StringUtils.isBlank(customerAccountDto.getContactInformation().getPhone())) {
-									customerAccount.getContactInformation().setPhone(
-											customerAccountDto.getContactInformation().getPhone());
+									customerAccount.getContactInformation().setPhone(customerAccountDto.getContactInformation().getPhone());
 								}
 								if (!StringUtils.isBlank(customerAccountDto.getContactInformation().getMobile())) {
-									customerAccount.getContactInformation().setMobile(
-											customerAccountDto.getContactInformation().getMobile());
+									customerAccount.getContactInformation().setMobile(customerAccountDto.getContactInformation().getMobile());
 								}
 								if (!StringUtils.isBlank(customerAccountDto.getContactInformation().getFax())) {
-									customerAccount.getContactInformation().setFax(
-											customerAccountDto.getContactInformation().getFax());
+									customerAccount.getContactInformation().setFax(customerAccountDto.getContactInformation().getFax());
 								}
 							}
 
@@ -1235,28 +1196,22 @@ public class AccountHierarchyApi extends BaseApi {
 
 							// Validate and populate customFields
 							try {
-								populateCustomFields(customerAccountDto.getCustomFields(), customerAccount, isNewCA,
-										currentUser);
+								populateCustomFields(customerAccountDto.getCustomFields(), customerAccount, isNewCA, currentUser);
 
 							} catch (IllegalArgumentException | IllegalAccessException e) {
-								log.error("Failed to associate custom field instance to a customer account {}",
-										customerAccountDto.getCode(), e);
-								throw new MeveoApiException(
-										"Failed to associate custom field instance to a customer account "
-												+ customerAccountDto.getCode());
+								log.error("Failed to associate custom field instance to a customer account {}", customerAccountDto.getCode(), e);
+								throw new MeveoApiException("Failed to associate custom field instance to a customer account " + customerAccountDto.getCode());
 							}
 
 							// billing accounts
 							if (customerAccountDto.getBillingAccounts() != null) {
-								for (BillingAccountDto billingAccountDto : customerAccountDto.getBillingAccounts()
-										.getBillingAccount()) {
+								for (BillingAccountDto billingAccountDto : customerAccountDto.getBillingAccounts().getBillingAccount()) {
 									if (StringUtils.isBlank(billingAccountDto.getCode())) {
 										log.warn("code is null={}", billingAccountDto);
 										continue;
 									}
 
-									BillingAccount billingAccount = billingAccountService.findByCode(
-											billingAccountDto.getCode(), provider);
+									BillingAccount billingAccount = billingAccountService.findByCode(billingAccountDto.getCode(), provider);
 									if (billingAccount == null) {
 
 										billingAccount = new BillingAccount();
@@ -1264,13 +1219,12 @@ public class AccountHierarchyApi extends BaseApi {
 										billingAccount.setCode(billingAccountDto.getCode());
 
 										if (!StringUtils.isBlank(billingAccountDto.getBillingCycle())) {
-											BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(
-													billingAccountDto.getBillingCycle(), provider);
+											BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingAccountDto.getBillingCycle(),
+													provider);
 											if (billingCycle != null) {
 												billingAccount.setBillingCycle(billingCycle);
 											} else {
-												throw new EntityDoesNotExistsException(BillingCycle.class,
-														billingAccountDto.getBillingCycle());
+												throw new EntityDoesNotExistsException(BillingCycle.class, billingAccountDto.getBillingCycle());
 											}
 										} else {
 											missingParameters.add("billingAccount.billingCycle");
@@ -1278,8 +1232,8 @@ public class AccountHierarchyApi extends BaseApi {
 										}
 
 										if (!StringUtils.isBlank(billingAccountDto.getCountry())) {
-											TradingCountry tradingCountry = tradingCountryService
-													.findByTradingCountryCode(billingAccountDto.getCountry(), provider);
+											TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(billingAccountDto.getCountry(),
+													provider);
 											if (tradingCountry != null) {
 												billingAccount.setTradingCountry(tradingCountry);
 											}
@@ -1289,9 +1243,8 @@ public class AccountHierarchyApi extends BaseApi {
 										}
 
 										if (!StringUtils.isBlank(billingAccountDto.getLanguage())) {
-											TradingLanguage tradingLanguage = tradingLanguageService
-													.findByTradingLanguageCode(billingAccountDto.getLanguage(),
-															provider);
+											TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(billingAccountDto.getLanguage(),
+													provider);
 											if (tradingLanguage != null) {
 												billingAccount.setTradingLanguage(tradingLanguage);
 											}
@@ -1311,33 +1264,29 @@ public class AccountHierarchyApi extends BaseApi {
 											SubscriptionTerminationReason terminationReason = terminationReasonService
 													.findByCode(billingAccountDto.getTerminationReason(), provider);
 											if (terminationReason == null) {
-												throw new EntityDoesNotExistsException(
-														SubscriptionTerminationReason.class,
+												throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class,
 														billingAccountDto.getTerminationReason());
 											}
 
 											try {
-												billingAccountService.billingAccountTermination(billingAccount,
-														billingAccountDto.getTerminationDate(), terminationReason,
-														currentUser);
+												billingAccountService.billingAccountTermination(billingAccount, billingAccountDto.getTerminationDate(),
+														terminationReason, currentUser);
 												continue;
 											} catch (BusinessException e) {
-												throw new MeveoApiException("Failed terminating billingAccount. "
-														+ e.getMessage());
+												throw new MeveoApiException("Failed terminating billingAccount. " + e.getMessage());
 											}
 										} else {
 											if (!StringUtils.isBlank(billingAccountDto.getBillingCycle())) {
-												BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(
-														billingAccountDto.getBillingCycle(), provider);
+												BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingAccountDto.getBillingCycle(),
+														provider);
 												if (billingCycle != null) {
 													billingAccount.setBillingCycle(billingCycle);
 												}
 											}
 
 											if (!StringUtils.isBlank(billingAccountDto.getCountry())) {
-												TradingCountry tradingCountry = tradingCountryService
-														.findByTradingCountryCode(billingAccountDto.getCountry(),
-																provider);
+												TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(billingAccountDto.getCountry(),
+														provider);
 												if (tradingCountry != null) {
 													billingAccount.setTradingCountry(tradingCountry);
 												}
@@ -1345,8 +1294,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 											if (!StringUtils.isBlank(billingAccountDto.getLanguage())) {
 												TradingLanguage tradingLanguage = tradingLanguageService
-														.findByTradingLanguageCode(billingAccountDto.getLanguage(),
-																provider);
+														.findByTradingLanguageCode(billingAccountDto.getLanguage(), provider);
 												if (tradingLanguage != null) {
 													billingAccount.setTradingLanguage(tradingLanguage);
 												}
@@ -1390,28 +1338,23 @@ public class AccountHierarchyApi extends BaseApi {
 
 									// Validate and populate customFields
 									try {
-										populateCustomFields(billingAccountDto.getCustomFields(), billingAccount,
-												isNewBA, currentUser);
+										populateCustomFields(billingAccountDto.getCustomFields(), billingAccount, isNewBA, currentUser);
 
 									} catch (IllegalArgumentException | IllegalAccessException e) {
-										log.error("Failed to associate custom field instance to a billing account {}",
-												billingAccountDto.getCode(), e);
+										log.error("Failed to associate custom field instance to a billing account {}", billingAccountDto.getCode(), e);
 										throw new MeveoApiException(
-												"Failed to associate custom field instance to a billing account "
-														+ billingAccountDto.getCode());
+												"Failed to associate custom field instance to a billing account " + billingAccountDto.getCode());
 									}
 
 									// user accounts
 									if (billingAccountDto.getUserAccounts() != null) {
-										for (UserAccountDto userAccountDto : billingAccountDto.getUserAccounts()
-												.getUserAccount()) {
+										for (UserAccountDto userAccountDto : billingAccountDto.getUserAccounts().getUserAccount()) {
 											if (StringUtils.isBlank(userAccountDto.getCode())) {
 												log.warn("code is null={}", userAccountDto);
 												continue;
 											}
 
-											UserAccount userAccount = userAccountService.findByCode(
-													userAccountDto.getCode(), provider);
+											UserAccount userAccount = userAccountService.findByCode(userAccountDto.getCode(), provider);
 											if (userAccount == null) {
 
 												userAccount = new UserAccount();
@@ -1428,19 +1371,16 @@ public class AccountHierarchyApi extends BaseApi {
 													SubscriptionTerminationReason terminationReason = terminationReasonService
 															.findByCode(userAccountDto.getTerminationReason(), provider);
 													if (terminationReason == null) {
-														throw new EntityDoesNotExistsException(
-																SubscriptionTerminationReason.class,
+														throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class,
 																userAccountDto.getTerminationReason());
 													}
 
 													try {
-														userAccountService.userAccountTermination(userAccount,
-																userAccountDto.getTerminationDate(), terminationReason,
-																currentUser);
+														userAccountService.userAccountTermination(userAccount, userAccountDto.getTerminationDate(),
+																terminationReason, currentUser);
 														continue;
 													} catch (BusinessException e) {
-														throw new MeveoApiException(
-																"Failed terminating billingAccount. " + e.getMessage());
+														throw new MeveoApiException("Failed terminating billingAccount. " + e.getMessage());
 													}
 												}
 											}
@@ -1463,8 +1403,7 @@ public class AccountHierarchyApi extends BaseApi {
 											boolean isNewUA = userAccount.isTransient();
 											if (isNewUA) {
 												try {
-													userAccountService.createUserAccount(billingAccount, userAccount,
-															currentUser);
+													userAccountService.createUserAccount(billingAccount, userAccount, currentUser);
 												} catch (AccountAlreadyExistsException e) {
 													throw new MeveoApiException(e.getMessage());
 												}
@@ -1475,91 +1414,72 @@ public class AccountHierarchyApi extends BaseApi {
 											// Validate and populate
 											// customFields
 											try {
-												populateCustomFields(userAccountDto.getCustomFields(), userAccount,
-														isNewUA, currentUser);
+												populateCustomFields(userAccountDto.getCustomFields(), userAccount, isNewUA, currentUser);
 
 											} catch (IllegalArgumentException | IllegalAccessException e) {
-												log.error(
-														"Failed to associate custom field instance to a user account {}",
-														userAccountDto.getCode(), e);
+												log.error("Failed to associate custom field instance to a user account {}", userAccountDto.getCode(), e);
 												throw new MeveoApiException(
-														"Failed to associate custom field instance to a user account "
-																+ userAccountDto.getCode());
+														"Failed to associate custom field instance to a user account " + userAccountDto.getCode());
 											}
 
 											// subscriptions
 											if (userAccountDto.getSubscriptions() != null) {
-												for (SubscriptionDto subscriptionDto : userAccountDto
-														.getSubscriptions().getSubscription()) {
+												for (SubscriptionDto subscriptionDto : userAccountDto.getSubscriptions().getSubscription()) {
 													if (StringUtils.isBlank(subscriptionDto.getCode())) {
 														log.warn("code is null={}", subscriptionDto);
 														continue;
 													}
 
-													Subscription subscription = subscriptionService.findByCode(
-															subscriptionDto.getCode(), provider);
+													Subscription subscription = subscriptionService.findByCode(subscriptionDto.getCode(), provider);
 													if (subscription == null) {
 
 														subscription = new Subscription();
 														subscription.setCode(subscriptionDto.getCode());
 
 														if (!StringUtils.isBlank(subscriptionDto.getOfferTemplate())) {
-															OfferTemplate offerTemplate = offerTemplateService
-																	.findByCode(subscriptionDto.getOfferTemplate(),
-																			provider);
+															OfferTemplate offerTemplate = offerTemplateService.findByCode(subscriptionDto.getOfferTemplate(),
+																	provider);
 															if (offerTemplate == null) {
-																throw new EntityDoesNotExistsException(
-																		OfferTemplate.class,
-																		subscriptionDto.getOfferTemplate());
+																throw new EntityDoesNotExistsException(OfferTemplate.class, subscriptionDto.getOfferTemplate());
 															}
 
 															subscription.setOffer(offerTemplate);
 														} else {
-															throw new MeveoApiException(
-																	"Subscription.offerTemplate cannot be null.");
+															throw new MeveoApiException("Subscription.offerTemplate cannot be null.");
 														}
 
 														subscription.setProvider(provider);
 													} else {
 														if (subscriptionDto.getTerminationDate() != null) {
-															if (StringUtils.isBlank(subscriptionDto
-																	.getTerminationReason())) {
+															if (StringUtils.isBlank(subscriptionDto.getTerminationReason())) {
 																missingParameters.add("subscription.terminationReason");
 																handleMissingParameters();
 															}
 
 															SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService
-																	.findByCode(subscriptionDto.getTerminationReason(),
-																			provider);
+																	.findByCode(subscriptionDto.getTerminationReason(), provider);
 
 															if (subscriptionTerminationReason == null) {
-																throw new EntityDoesNotExistsException(
-																		SubscriptionTerminationReason.class,
+																throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class,
 																		subscriptionDto.getTerminationReason());
 															}
 
 															try {
-																subscriptionService.terminateSubscription(subscription,
-																		subscriptionDto.getTerminationDate(),
+																subscriptionService.terminateSubscription(subscription, subscriptionDto.getTerminationDate(),
 																		subscriptionTerminationReason, currentUser);
 															} catch (BusinessException e) {
-																log.error("Error terminating subscription with code="
-																		+ subscriptionDto.getCode());
+																log.error("Error terminating subscription with code=" + subscriptionDto.getCode());
 																throw new MeveoApiException(
-																		"Error terminating subscription with code="
-																				+ subscriptionDto.getCode());
+																		"Error terminating subscription with code=" + subscriptionDto.getCode());
 															}
 
 															continue;
 														} else {
-															if (!StringUtils
-																	.isBlank(subscriptionDto.getOfferTemplate())) {
+															if (!StringUtils.isBlank(subscriptionDto.getOfferTemplate())) {
 																OfferTemplate offerTemplate = offerTemplateService
-																		.findByCode(subscriptionDto.getOfferTemplate(),
-																				provider);
+																		.findByCode(subscriptionDto.getOfferTemplate(), provider);
 																if (offerTemplate == null) {
-																	throw new EntityDoesNotExistsException(
-																			OfferTemplate.class,
+																	throw new EntityDoesNotExistsException(OfferTemplate.class,
 																			subscriptionDto.getOfferTemplate());
 																}
 
@@ -1574,16 +1494,13 @@ public class AccountHierarchyApi extends BaseApi {
 														subscription.setDescription(subscriptionDto.getDescription());
 													}
 													if (!StringUtils.isBlank(subscriptionDto.getSubscriptionDate())) {
-														subscription.setSubscriptionDate(subscriptionDto
-																.getSubscriptionDate());
+														subscription.setSubscriptionDate(subscriptionDto.getSubscriptionDate());
 													}
 													if (!StringUtils.isBlank(subscriptionDto.getTerminationDate())) {
-														subscription.setTerminationDate(subscriptionDto
-																.getTerminationDate());
+														subscription.setTerminationDate(subscriptionDto.getTerminationDate());
 													}
 													if (!StringUtils.isBlank(subscriptionDto.getEndAgreementDate())) {
-														subscription.setEndAgreementDate(subscriptionDto
-																.getEndAgreementDate());
+														subscription.setEndAgreementDate(subscriptionDto.getEndAgreementDate());
 													}
 
 													boolean isNewSubscription = subscription.isTransient();
@@ -1596,28 +1513,23 @@ public class AccountHierarchyApi extends BaseApi {
 													// populate
 													// customFields
 													try {
-														populateCustomFields(subscriptionDto.getCustomFields(),
-																subscription, isNewSubscription, currentUser);
+														populateCustomFields(subscriptionDto.getCustomFields(), subscription, isNewSubscription, currentUser);
 													} catch (IllegalArgumentException | IllegalAccessException e) {
-														log.error(
-																"Failed to associate custom field instance to a subscription {}",
-																subscriptionDto.getCode(), e);
+														log.error("Failed to associate custom field instance to a subscription {}", subscriptionDto.getCode(),
+																e);
 														throw new MeveoApiException(
-																"Failed to associate custom field instance to a subscription "
-																		+ subscriptionDto.getCode());
+																"Failed to associate custom field instance to a subscription " + subscriptionDto.getCode());
 													}
 
 													// accesses
 													if (subscriptionDto.getAccesses() != null) {
-														for (AccessDto accessDto : subscriptionDto.getAccesses()
-																.getAccess()) {
+														for (AccessDto accessDto : subscriptionDto.getAccesses().getAccess()) {
 															if (StringUtils.isBlank(accessDto.getCode())) {
 																log.warn("code is null={}", accessDto);
 																continue;
 															}
 
-															Access access = accessService.findByUserIdAndSubscription(
-																	accessDto.getCode(), subscription);
+															Access access = accessService.findByUserIdAndSubscription(accessDto.getCode(), subscription);
 															if (access == null) {
 																access = new Access();
 																access.setAccessUserId(accessDto.getCode());
@@ -1644,23 +1556,19 @@ public class AccountHierarchyApi extends BaseApi {
 															// populate
 															// customFields
 															try {
-																populateCustomFields(accessDto.getCustomFields(),
-																		access, isNewAccess, currentUser);
+																populateCustomFields(accessDto.getCustomFields(), access, isNewAccess, currentUser);
 															} catch (IllegalArgumentException | IllegalAccessException e) {
-																log.error(
-																		"Failed to associate custom field instance to an access {}",
+																log.error("Failed to associate custom field instance to an access {}",
 																		subscriptionDto.getCode(), e);
 																throw new MeveoApiException(
-																		"Failed to associate custom field instance to an access "
-																				+ subscriptionDto.getCode());
+																		"Failed to associate custom field instance to an access " + subscriptionDto.getCode());
 															}
 														}
 													}
 
 													// service instances
 													if (subscriptionDto.getServices() != null) {
-														for (ServiceInstanceDto serviceInstanceDto : subscriptionDto
-																.getServices().getServiceInstance()) {
+														for (ServiceInstanceDto serviceInstanceDto : subscriptionDto.getServices().getServiceInstance()) {
 															if (StringUtils.isBlank(serviceInstanceDto.getCode())) {
 																log.warn("code is null={}", serviceInstanceDto);
 																continue;
@@ -1669,27 +1577,18 @@ public class AccountHierarchyApi extends BaseApi {
 															if (serviceInstanceDto.getTerminationDate() != null) {
 																// terminate
 																ServiceInstance serviceInstance = serviceInstanceService
-																		.findActivatedByCodeAndSubscription(
-																				serviceInstanceDto.getCode(),
-																				subscription);
+																		.findActivatedByCodeAndSubscription(serviceInstanceDto.getCode(), subscription);
 																if (serviceInstance != null) {
-																	if (!StringUtils.isBlank(serviceInstanceDto
-																			.getTerminationReason())) {
+																	if (!StringUtils.isBlank(serviceInstanceDto.getTerminationReason())) {
 																		SubscriptionTerminationReason serviceTerminationReason = terminationReasonService
-																				.findByCode(serviceInstanceDto
-																						.getTerminationReason(),
-																						provider);
+																				.findByCode(serviceInstanceDto.getTerminationReason(), provider);
 																		if (serviceTerminationReason == null) {
-																			throw new EntityDoesNotExistsException(
-																					SubscriptionTerminationReason.class,
-																					serviceInstanceDto
-																							.getTerminationReason());
+																			throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class,
+																					serviceInstanceDto.getTerminationReason());
 																		}
 																		try {
-																			serviceInstanceService.terminateService(
-																					serviceInstance, serviceInstanceDto
-																							.getTerminationDate(),
-																					serviceTerminationReason,
+																			serviceInstanceService.terminateService(serviceInstance,
+																					serviceInstanceDto.getTerminationDate(), serviceTerminationReason,
 																					currentUser);
 																		} catch (BusinessException e) {
 																			log.error("service termination={}", e);
@@ -1697,15 +1596,12 @@ public class AccountHierarchyApi extends BaseApi {
 																		}
 
 																	} else {
-																		missingParameters
-																				.add("serviceInstance.terminationReason");
+																		missingParameters.add("serviceInstance.terminationReason");
 																		handleMissingParameters();
 																	}
 																} else {
 																	throw new MeveoApiException(
-																			"ServiceInstance with code="
-																					+ subscriptionDto.getCode()
-																					+ " must be ACTIVE.");
+																			"ServiceInstance with code=" + subscriptionDto.getCode() + " must be ACTIVE.");
 																}
 															} else {
 																if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
@@ -1713,64 +1609,46 @@ public class AccountHierarchyApi extends BaseApi {
 																			"Failed activating a service. Subscription is already RESILIATED.");
 																}
 																ServiceTemplate serviceTemplate = serviceTemplateService
-																		.findByCode(serviceInstanceDto.getCode(),
-																				provider);
+																		.findByCode(serviceInstanceDto.getCode(), provider);
 																if (serviceTemplate == null) {
-																	throw new EntityDoesNotExistsException(
-																			ServiceTemplate.class,
-																			serviceInstanceDto.getCode());
+																	throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceInstanceDto.getCode());
 																}
 																boolean alreadyActiveOrSuspended = false;
 																ServiceInstance serviceInstance = null;
 																List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService
-																		.findByCodeSubscriptionAndStatus(
-																				serviceTemplate.getCode(), subscription);
+																		.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription);
 
 																for (ServiceInstance subscriptionServiceInstance : subscriptionServiceInstances) {
 																	if (subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CANCELED
 																			&& subscriptionServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED
 																			&& subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CLOSED) {
-																		if (subscriptionServiceInstance.getStatus()
-																				.equals(InstanceStatusEnum.INACTIVE)) {
+																		if (subscriptionServiceInstance.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
 																			alreadyActiveOrSuspended = false;
 																		} else {
-																			throw new MeveoApiException(
-																					"ServiceInstance with code="
-																							+ serviceInstanceDto
-																									.getCode()
-																							+ " must not be ACTIVE or SUSPENDED.");
+																			throw new MeveoApiException("ServiceInstance with code="
+																					+ serviceInstanceDto.getCode() + " must not be ACTIVE or SUSPENDED.");
 																		}
 																		break;
 																	}
 																}
 
 																if (!alreadyActiveOrSuspended) {
-																	log.debug(
-																			"instanciateService id={} checked, quantity={}",
-																			serviceTemplate.getId(), 1);
+																	log.debug("instanciateService id={} checked, quantity={}", serviceTemplate.getId(), 1);
 																	serviceInstance = new ServiceInstance();
-																	serviceInstance.setProvider(serviceTemplate
-																			.getProvider());
+																	serviceInstance.setProvider(serviceTemplate.getProvider());
 																	serviceInstance.setCode(serviceTemplate.getCode());
-																	serviceInstance.setDescription(serviceTemplate
-																			.getDescription());
+																	serviceInstance.setDescription(serviceTemplate.getDescription());
 																	serviceInstance.setServiceTemplate(serviceTemplate);
 																	serviceInstance.setSubscription(subscription);
-																	serviceInstance
-																			.setSubscriptionDate(serviceInstanceDto
-																					.getSubscriptionDate());
-																	serviceInstance
-																			.setEndAgreementDate(serviceInstanceDto
-																					.getEndAgreementDate());
-																	serviceInstance.setQuantity(serviceInstanceDto
-																			.getQuantity() == null ? BigDecimal.ONE
+																	serviceInstance.setSubscriptionDate(serviceInstanceDto.getSubscriptionDate());
+																	serviceInstance.setEndAgreementDate(serviceInstanceDto.getEndAgreementDate());
+																	serviceInstance.setQuantity(serviceInstanceDto.getQuantity() == null ? BigDecimal.ONE
 																			: serviceInstanceDto.getQuantity());
 																}
 
 																try {
 																	// instantiate
-																	serviceInstanceService.serviceInstanciation(
-																			serviceInstance, currentUser);
+																	serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
 																} catch (BusinessException e) {
 																	throw new MeveoApiException(e.getMessage());
 																}
@@ -1778,13 +1656,10 @@ public class AccountHierarchyApi extends BaseApi {
 																// populate
 																// customFields
 																try {
-																	populateCustomFields(
-																			serviceInstanceDto.getCustomFields(),
-																			serviceInstance, true, currentUser);
-																} catch (IllegalArgumentException
-																		| IllegalAccessException e) {
-																	log.error(
-																			"Failed to associate custom field instance to a service instance {}",
+																	populateCustomFields(serviceInstanceDto.getCustomFields(), serviceInstance, true,
+																			currentUser);
+																} catch (IllegalArgumentException | IllegalAccessException e) {
+																	log.error("Failed to associate custom field instance to a service instance {}",
 																			serviceInstanceDto.getCode(), e);
 																	throw new MeveoApiException(
 																			"Failed to associate custom field instance to a service instance "
@@ -1794,9 +1669,7 @@ public class AccountHierarchyApi extends BaseApi {
 																if (serviceInstanceDto.getSubscriptionDate() != null) {
 																	// activate
 																	try {
-																		serviceInstanceService.serviceActivation(
-																				serviceInstance, null, null,
-																				currentUser);
+																		serviceInstanceService.serviceActivation(serviceInstance, null, null, currentUser);
 																	} catch (BusinessException e) {
 																		throw new MeveoApiException(e.getMessage());
 																	}
@@ -1825,8 +1698,7 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @return
 	 * @throws MeveoApiException
 	 */
-	public GetAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData, User currentUser)
-			throws MeveoApiException {
+	public GetAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData, User currentUser) throws MeveoApiException {
 
 		GetAccountHierarchyResponseDto result = new GetAccountHierarchyResponseDto();
 		Name name = null;
@@ -1868,8 +1740,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		if ((postData.getLevel() & CA) != 0) {
 			validLevel = true;
-			List<CustomerAccount> customerAccounts = customerAccountService.findByNameAndAddress(name, address,
-					currentUser.getProvider());
+			List<CustomerAccount> customerAccounts = customerAccountService.findByNameAndAddress(name, address, currentUser.getProvider());
 			if (customerAccounts != null) {
 				for (CustomerAccount customerAccount : customerAccounts) {
 					addCustomerAccount(result, customerAccount);
@@ -1878,8 +1749,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 		if ((postData.getLevel() & BA) != 0) {
 			validLevel = true;
-			List<BillingAccount> billingAccounts = billingAccountService.findByNameAndAddress(name, address,
-					currentUser.getProvider());
+			List<BillingAccount> billingAccounts = billingAccountService.findByNameAndAddress(name, address, currentUser.getProvider());
 			if (billingAccounts != null) {
 				for (BillingAccount billingAccount : billingAccounts) {
 					addBillingAccount(result, billingAccount);
@@ -1888,8 +1758,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 		if ((postData.getLevel() & UA) != 0) {
 			validLevel = true;
-			List<UserAccount> userAccounts = userAccountService.findByNameAndAddress(name, address,
-					currentUser.getProvider());
+			List<UserAccount> userAccounts = userAccountService.findByNameAndAddress(name, address, currentUser.getProvider());
 			if (userAccounts != null) {
 				for (UserAccount userAccount : userAccounts) {
 					addUserAccount(result, userAccount);
@@ -1911,8 +1780,7 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException,
-			BusinessException {
+	public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {
 			missingParameters.add("crmAccountType");
@@ -1944,7 +1812,21 @@ public class AccountHierarchyApi extends BaseApi {
 			contactInformation.setPhone(postData.getContactInformation().getPhone());
 		}
 
-		AccountHierarchyTypeEnum accountHierarchyTypeEnum = postData.getCrmAccountType();
+		String accountType = postData.getCrmAccountType();
+		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
+		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(accountType, currentUser.getProvider());
+		if (businessAccountModel != null) {
+			accountHierarchyTypeEnum = businessAccountModel.getType();
+		} else {
+			try {
+				accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(accountType);
+			} catch (Exception e) {
+				throw new MeveoApiException("Account type does not match any BAM or AccountHierarchyTypeEnum");
+			}
+		}
+
+		Seller seller = null;
+		AccountEntity accountEntity = null;
 
 		if (accountHierarchyTypeEnum.getHighLevel() == 4) {
 			// create seller
@@ -1963,8 +1845,8 @@ public class AccountHierarchyApi extends BaseApi {
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
-				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Seller.class
-						.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService
+						.findByAppliesTo(Seller.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
 				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
 					if (cfts.containsKey(cfDto.getCode())) {
 						cfsDto.getCustomField().add(cfDto);
@@ -1974,7 +1856,7 @@ public class AccountHierarchyApi extends BaseApi {
 				sellerDto.setCustomFields(cfsDto);
 			}
 
-			sellerApi.create(sellerDto, currentUser, true);
+			seller = sellerApi.create(sellerDto, currentUser, true);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
@@ -2001,8 +1883,8 @@ public class AccountHierarchyApi extends BaseApi {
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
-				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Customer.class
-						.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService
+						.findByAppliesTo(Customer.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
 				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
 					if (cfts.containsKey(cfDto.getCode())) {
 						cfsDto.getCustomField().add(cfDto);
@@ -2012,7 +1894,7 @@ public class AccountHierarchyApi extends BaseApi {
 				customerDto.setCustomFields(cfsDto);
 			}
 
-			customerApi.create(customerDto, currentUser, true);
+			accountEntity = customerApi.create(customerDto, currentUser, true);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
@@ -2046,9 +1928,8 @@ public class AccountHierarchyApi extends BaseApi {
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
-				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(
-						CustomerAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix(),
-						currentUser.getProvider());
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService
+						.findByAppliesTo(CustomerAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
 				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
 					if (cfts.containsKey(cfDto.getCode())) {
 						cfsDto.getCustomField().add(cfDto);
@@ -2058,7 +1939,7 @@ public class AccountHierarchyApi extends BaseApi {
 				customerAccountDto.setCustomFields(cfsDto);
 			}
 
-			customerAccountApi.create(customerAccountDto, currentUser, true);
+			accountEntity = customerAccountApi.create(customerAccountDto, currentUser, true);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
@@ -2079,7 +1960,6 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccountDto.setPaymentMethod(postData.getPaymentMethod());
 			billingAccountDto.setNextInvoiceDate(postData.getNextInvoiceDate());
 			billingAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
-			billingAccountDto.setTerminationDate(postData.getTerminationDate());
 			billingAccountDto.setPaymentTerms(postData.getPaymentTerms());
 			billingAccountDto.setElectronicBilling(postData.getElectronicBilling());
 			billingAccountDto.setStatus(postData.getBaStatus());
@@ -2108,8 +1988,8 @@ public class AccountHierarchyApi extends BaseApi {
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
-				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(BillingAccount.class
-						.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService
+						.findByAppliesTo(BillingAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
 				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
 					if (cfts.containsKey(cfDto.getCode())) {
 						cfsDto.getCustomField().add(cfDto);
@@ -2119,7 +1999,7 @@ public class AccountHierarchyApi extends BaseApi {
 				billingAccountDto.setCustomFields(cfsDto);
 			}
 
-			billingAccountApi.create(billingAccountDto, currentUser, true);
+			accountEntity = billingAccountApi.create(billingAccountDto, currentUser, true);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 0 && accountHierarchyTypeEnum.getLowLevel() <= 0) {
@@ -2135,7 +2015,6 @@ public class AccountHierarchyApi extends BaseApi {
 				userAccountDto.setBillingAccount(postData.getCode());
 			}
 			userAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
-			userAccountDto.setTerminationDate(postData.getTerminationDate());
 			userAccountDto.setTerminationReason(postData.getTerminationReason());
 			userAccountDto.setStatus(postData.getUaStatus());
 			userAccountDto.setName(name);
@@ -2145,8 +2024,8 @@ public class AccountHierarchyApi extends BaseApi {
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
-				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(UserAccount.class
-						.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService
+						.findByAppliesTo(UserAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
 				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
 					if (cfts.containsKey(cfDto.getCode())) {
 						cfsDto.getCustomField().add(cfDto);
@@ -2156,7 +2035,15 @@ public class AccountHierarchyApi extends BaseApi {
 				userAccountDto.setCustomFields(cfsDto);
 			}
 
-			userAccountApi.create(userAccountDto, currentUser, true);
+			accountEntity = userAccountApi.create(userAccountDto, currentUser, true);
+		}
+
+		if (businessAccountModel != null && businessAccountModel.getScript() != null) {
+			try {
+				accountModelScriptService.createAccount(businessAccountModel.getScript().getCode(), seller, accountEntity, currentUser);
+			} catch (BusinessException e) {
+				log.error("Failed to execute a script {}. {}", businessAccountModel.getScript().getCode(), e);
+			}
 		}
 	}
 
@@ -2167,8 +2054,7 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	public void updateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException,
-			BusinessException {
+	public void updateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {
 			missingParameters.add("crmAccountType");
@@ -2200,7 +2086,21 @@ public class AccountHierarchyApi extends BaseApi {
 			contactInformation.setPhone(postData.getContactInformation().getPhone());
 		}
 
-		AccountHierarchyTypeEnum accountHierarchyTypeEnum = postData.getCrmAccountType();
+		String accountType = postData.getCrmAccountType();
+		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
+		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(accountType, currentUser.getProvider());
+		if (businessAccountModel != null) {
+			accountHierarchyTypeEnum = businessAccountModel.getType();
+		} else {
+			try {
+				accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(accountType);
+			} catch (Exception e) {
+				throw new MeveoApiException("Account type does not match any BAM or AccountHierarchyTypeEnum");
+			}
+		}
+
+		Seller seller = null;
+		AccountEntity accountEntity = null;
 
 		if (accountHierarchyTypeEnum.getHighLevel() == 4) {
 			// update seller
@@ -2219,8 +2119,8 @@ public class AccountHierarchyApi extends BaseApi {
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
-				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Seller.class
-						.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService
+						.findByAppliesTo(Seller.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
 				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
 					if (cfts.containsKey(cfDto.getCode())) {
 						cfsDto.getCustomField().add(cfDto);
@@ -2230,7 +2130,7 @@ public class AccountHierarchyApi extends BaseApi {
 				sellerDto.setCustomFields(cfsDto);
 			}
 
-			sellerApi.update(sellerDto, currentUser, true);
+			seller = sellerApi.update(sellerDto, currentUser, true);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
@@ -2257,8 +2157,8 @@ public class AccountHierarchyApi extends BaseApi {
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
-				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Customer.class
-						.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService
+						.findByAppliesTo(Customer.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
 				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
 					if (cfts.containsKey(cfDto.getCode())) {
 						cfsDto.getCustomField().add(cfDto);
@@ -2268,7 +2168,7 @@ public class AccountHierarchyApi extends BaseApi {
 				customerDto.setCustomFields(cfsDto);
 			}
 
-			customerApi.update(customerDto, currentUser, true);
+			accountEntity = customerApi.update(customerDto, currentUser, true);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
@@ -2302,9 +2202,8 @@ public class AccountHierarchyApi extends BaseApi {
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
-				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(
-						CustomerAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix(),
-						currentUser.getProvider());
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService
+						.findByAppliesTo(CustomerAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
 				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
 					if (cfts.containsKey(cfDto.getCode())) {
 						cfsDto.getCustomField().add(cfDto);
@@ -2314,7 +2213,7 @@ public class AccountHierarchyApi extends BaseApi {
 				customerAccountDto.setCustomFields(cfsDto);
 			}
 
-			customerAccountApi.update(customerAccountDto, currentUser, true);
+			accountEntity = customerAccountApi.update(customerAccountDto, currentUser, true);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
@@ -2335,7 +2234,6 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccountDto.setPaymentMethod(postData.getPaymentMethod());
 			billingAccountDto.setNextInvoiceDate(postData.getNextInvoiceDate());
 			billingAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
-			billingAccountDto.setTerminationDate(postData.getTerminationDate());
 			billingAccountDto.setPaymentTerms(postData.getPaymentTerms());
 			billingAccountDto.setElectronicBilling(postData.getElectronicBilling());
 			billingAccountDto.setStatus(postData.getBaStatus());
@@ -2364,8 +2262,8 @@ public class AccountHierarchyApi extends BaseApi {
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
-				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(BillingAccount.class
-						.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService
+						.findByAppliesTo(BillingAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
 				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
 					if (cfts.containsKey(cfDto.getCode())) {
 						cfsDto.getCustomField().add(cfDto);
@@ -2375,7 +2273,7 @@ public class AccountHierarchyApi extends BaseApi {
 				billingAccountDto.setCustomFields(cfsDto);
 			}
 
-			billingAccountApi.update(billingAccountDto, currentUser, true);
+			accountEntity = billingAccountApi.update(billingAccountDto, currentUser, true);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 0 && accountHierarchyTypeEnum.getLowLevel() <= 0) {
@@ -2391,7 +2289,6 @@ public class AccountHierarchyApi extends BaseApi {
 				userAccountDto.setBillingAccount(postData.getCode());
 			}
 			userAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
-			userAccountDto.setTerminationDate(postData.getTerminationDate());
 			userAccountDto.setTerminationReason(postData.getTerminationReason());
 			userAccountDto.setStatus(postData.getUaStatus());
 			userAccountDto.setName(name);
@@ -2401,8 +2298,8 @@ public class AccountHierarchyApi extends BaseApi {
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
-				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(UserAccount.class
-						.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService
+						.findByAppliesTo(UserAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
 				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
 					if (cfts.containsKey(cfDto.getCode())) {
 						cfsDto.getCustomField().add(cfDto);
@@ -2412,7 +2309,15 @@ public class AccountHierarchyApi extends BaseApi {
 				userAccountDto.setCustomFields(cfsDto);
 			}
 
-			userAccountApi.update(userAccountDto, currentUser, true);
+			accountEntity = userAccountApi.update(userAccountDto, currentUser, true);
+		}
+
+		if (businessAccountModel != null && businessAccountModel.getScript() != null) {
+			try {
+				accountModelScriptService.createAccount(businessAccountModel.getScript().getCode(), seller, accountEntity, currentUser);
+			} catch (BusinessException e) {
+				log.error("Failed to execute a script {}. {}", businessAccountModel.getScript().getCode(), e);
+			}
 		}
 	}
 
@@ -2424,8 +2329,7 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	public void createOrUpdate(AccountHierarchyDto postData, User currentUser) throws MeveoApiException,
-			BusinessException {
+	public void createOrUpdate(AccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (customerService.findByCode(CUSTOMER_PREFIX + postData.getCustomerId(), currentUser.getProvider()) == null) {
 			create(postData, currentUser);
@@ -2441,8 +2345,7 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	public void createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser)
-			throws MeveoApiException, BusinessException {
+	public void createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {
 			missingParameters.add("crmAccountType");
@@ -2450,7 +2353,18 @@ public class AccountHierarchyApi extends BaseApi {
 
 		handleMissingParameters();
 
-		AccountHierarchyTypeEnum accountHierarchyTypeEnum = postData.getCrmAccountType();
+		String accountType = postData.getCrmAccountType();
+		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
+		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(accountType, currentUser.getProvider());
+		if (businessAccountModel != null) {
+			accountHierarchyTypeEnum = businessAccountModel.getType();
+		} else {
+			try {
+				accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(accountType);
+			} catch (Exception e) {
+				throw new MeveoApiException("Account type does not match any BAM or AccountHierarchyTypeEnum");
+			}
+		}
 
 		boolean accountExist = false;
 
@@ -2465,14 +2379,12 @@ public class AccountHierarchyApi extends BaseApi {
 				accountExist = true;
 			}
 		} else if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
-			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode(),
-					currentUser.getProvider());
+			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode(), currentUser.getProvider());
 			if (customerAccount != null) {
 				accountExist = true;
 			}
 		} else if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
-			BillingAccount billingAccount = billingAccountService.findByCode(postData.getCode(),
-					currentUser.getProvider());
+			BillingAccount billingAccount = billingAccountService.findByCode(postData.getCode(), currentUser.getProvider());
 			if (billingAccount != null) {
 				accountExist = true;
 			}
@@ -2490,8 +2402,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 	}
 
-	private void populateNameAddress(AccountEntity accountEntity, AccountDto accountDto, User currentUser)
-			throws MeveoApiException {
+	private void populateNameAddress(AccountEntity accountEntity, AccountDto accountDto, User currentUser) throws MeveoApiException {
 
 		if (!StringUtils.isBlank(accountDto.getDescription())) {
 			accountEntity.setDescription(accountDto.getDescription());
@@ -2553,8 +2464,7 @@ public class AccountHierarchyApi extends BaseApi {
 			for (CustomerAccountDto customerAccountDto : customerDto.getCustomerAccounts().getCustomerAccount()) {
 				for (BillingAccountDto billingAccountDto : customerAccountDto.getBillingAccounts().getBillingAccount()) {
 					if (billingAccountDto.getCode().equals(billingAccount.getCode())) {
-						if (billingAccountDto.getUserAccounts() != null
-								&& billingAccountDto.getUserAccounts().getUserAccount().size() > 0) {
+						if (billingAccountDto.getUserAccounts() != null && billingAccountDto.getUserAccounts().getUserAccount().size() > 0) {
 							UserAccountDto userAccountDto = userAccountToDto(userAccount);
 							if (!billingAccountDto.getUserAccounts().getUserAccount().contains(userAccountDto)) {
 								billingAccountDto.getUserAccounts().getUserAccount().add(userAccountDto);
@@ -2578,15 +2488,13 @@ public class AccountHierarchyApi extends BaseApi {
 		for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
 			for (CustomerAccountDto customerAccountDto : customerDto.getCustomerAccounts().getCustomerAccount()) {
 				if (customerAccountDto.getCode().equals(customerAccount.getCode())) {
-					if (customerAccountDto.getBillingAccounts() != null
-							&& customerAccountDto.getBillingAccounts().getBillingAccount().size() > 0) {
+					if (customerAccountDto.getBillingAccounts() != null && customerAccountDto.getBillingAccounts().getBillingAccount().size() > 0) {
 						BillingAccountDto billingAccountDto = billingAccountToDto(billingAccount);
 						if (!customerAccountDto.getBillingAccounts().getBillingAccount().contains(billingAccountDto)) {
 							customerAccountDto.getBillingAccounts().getBillingAccount().add(billingAccountDto);
 						}
 					} else {
-						customerAccountDto.getBillingAccounts().getBillingAccount()
-								.add(billingAccountToDto(billingAccount));
+						customerAccountDto.getBillingAccounts().getBillingAccount().add(billingAccountToDto(billingAccount));
 					}
 				}
 			}
@@ -2620,8 +2528,7 @@ public class AccountHierarchyApi extends BaseApi {
 			for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
 				if (customerDto.getCode().equals(customer.getCode())) {
 					if (!customerDto.isLoaded()) {
-						customerDto.initFromEntity(customer,
-								customFieldInstanceService.getCustomFieldInstances(customer));
+						customerDto.initFromEntity(customer, customFieldInstanceService.getCustomFieldInstances(customer));
 					}
 
 					found = true;
@@ -2785,4 +2692,78 @@ public class AccountHierarchyApi extends BaseApi {
 
 		return dto;
 	}
+
+	public void terminateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
+		String accountType = postData.getCrmAccountType();
+		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
+		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(accountType, currentUser.getProvider());
+		if (businessAccountModel != null) {
+			accountHierarchyTypeEnum = businessAccountModel.getType();
+		} else {
+			try {
+				accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(accountType);
+			} catch (Exception e) {
+				throw new MeveoApiException("Account type does not match any BAM or AccountHierarchyTypeEnum");
+			}
+		}
+
+		AccountEntity accountEntity1 = null;
+		AccountEntity accountEntity2 = null;
+		if (accountHierarchyTypeEnum.getHighLevel() >= 0 && accountHierarchyTypeEnum.getLowLevel() <= 0) {
+			UserAccountDto userAccountDto = new UserAccountDto();
+			userAccountDto.setCode(postData.getCode());
+			userAccountDto.setTerminationDate(postData.getTerminationDate());
+			userAccountDto.setTerminationReason(postData.getTerminationReason());
+			accountEntity1 = userAccountApi.terminate(userAccountDto, currentUser);
+		}
+
+		if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
+			// terminate ba
+			BillingAccountDto billingAccountDto = new BillingAccountDto();
+			billingAccountDto.setCode(postData.getCode());
+			billingAccountDto.setTerminationDate(postData.getTerminationDate());
+			accountEntity2 = billingAccountApi.terminate(billingAccountDto, currentUser);
+		}
+
+		if (businessAccountModel != null && businessAccountModel.getScript() != null) {
+			try {
+				accountModelScriptService.terminateAccount(businessAccountModel.getScript().getCode(), null,
+						(accountEntity1 != null ? accountEntity1 : accountEntity2), currentUser);
+			} catch (BusinessException e) {
+				log.error("Failed to execute a script {}. {}", businessAccountModel.getScript().getCode(), e);
+			}
+		}
+	}
+
+	public void closeCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
+		String accountType = postData.getCrmAccountType();
+		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
+		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(accountType, currentUser.getProvider());
+		if (businessAccountModel != null) {
+			accountHierarchyTypeEnum = businessAccountModel.getType();
+		} else {
+			try {
+				accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(accountType);
+			} catch (Exception e) {
+				throw new MeveoApiException("Account type does not match any BAM or AccountHierarchyTypeEnum");
+			}
+		}
+
+		CustomerAccount customerAccount = null;
+		if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
+			// close customer account
+			CustomerAccountDto customerAccountDto = new CustomerAccountDto();
+			customerAccountDto.setCode(postData.getCode());
+			customerAccount = customerAccountApi.closeAccount(customerAccountDto, currentUser);
+		}
+
+		if (businessAccountModel != null && businessAccountModel.getScript() != null && customerAccount != null) {
+			try {
+				accountModelScriptService.closeAccount(businessAccountModel.getScript().getCode(), null, customerAccount, currentUser);
+			} catch (BusinessException e) {
+				log.error("Failed to execute a script {}. {}", businessAccountModel.getScript().getCode(), e);
+			}
+		}
+	}
+
 }

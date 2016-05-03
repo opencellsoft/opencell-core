@@ -8,6 +8,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.account.BillingAccountDto;
+import org.meveo.api.dto.account.BusinessAccountModelDto;
 import org.meveo.api.dto.account.CRMAccountHierarchyDto;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
@@ -26,6 +27,8 @@ import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
+import org.meveo.api.dto.response.account.BusinessAccountModelResponseDto;
+import org.meveo.api.dto.response.account.BusinessAccountModelsResponseDto;
 import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetAccessResponseDto;
@@ -275,5 +278,22 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	TitlesResponseDto listTitle();
+
+	// Business account model
+
+	@WebMethod
+	ActionStatus createBusinessAccountModel(@WebParam(name = "businessAccountModelDto") BusinessAccountModelDto postData);
+
+	@WebMethod
+	ActionStatus updateBusinessAccountModel(@WebParam(name = "businessAccountModelDto") BusinessAccountModelDto postData);
+
+	@WebMethod
+	BusinessAccountModelResponseDto findBusinessAccountModel(@WebParam(name = "bamCode") String bamCode);
+
+	@WebMethod
+	ActionStatus removeBusinessAccountModel(@WebParam(name = "bamCode") String bamCode);
+
+	@WebMethod
+	BusinessAccountModelsResponseDto listBusinessAccountModel();
 
 }

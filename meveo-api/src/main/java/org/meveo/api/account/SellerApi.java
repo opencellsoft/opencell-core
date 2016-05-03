@@ -50,7 +50,7 @@ public class SellerApi extends BaseApi {
         create(postData, currentUser, true);
     }
 
-    public void create(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException, BusinessException {
+    public Seller create(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -122,13 +122,15 @@ public class SellerApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
+        
+        return seller;
     }
 
     public void update(SellerDto postData, User currentUser) throws MeveoApiException, BusinessException {
         update(postData, currentUser, true);
     }
 
-    public void update(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException, BusinessException {
+    public Seller update(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -208,6 +210,7 @@ public class SellerApi extends BaseApi {
             throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
 
+        return seller;
     }
 
     public SellerDto find(String sellerCode, Provider provider) throws MeveoApiException {

@@ -1,4 +1,4 @@
-package org.meveo.api.dto.account;
+package org.meveo.model.crm;
 
 /**
  * @author Edward P. Legaspi
