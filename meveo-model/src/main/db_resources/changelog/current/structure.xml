@@ -1619,4 +1619,10 @@
 			<column name="DISPLAY_CHARGES_PERIODS" type="BOOL" defaultValueBoolean="false"></column> 
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="#1666_20160503" author="mhammam">
+		<addColumn tableName="ADM_COUNTRY">
+			<column name="DESCRIPTION_FR" type="VARCHAR(100)" /> 
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

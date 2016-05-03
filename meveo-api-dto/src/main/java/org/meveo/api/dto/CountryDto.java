@@ -23,11 +23,15 @@ public class CountryDto extends BaseDto {
 	private String countryCode;
 
 	@XmlAttribute()
-	private String name;
+	private String nameEn;
+	
+	@XmlAttribute()
+	private String nameFr;
 
 	@XmlElement(required = true)
 	private String currencyCode;
-
+	
+	@XmlElement(required = true)
 	private String languageCode;
 
 	public CountryDto() {
@@ -36,7 +40,8 @@ public class CountryDto extends BaseDto {
 
 	public CountryDto(Country e) {
 		countryCode = e.getCountryCode();
-		name = e.getDescriptionEn();
+		nameEn = e.getDescriptionEn();
+		nameFr = e.getDescriptionFr();
 		currencyCode = e.getCurrency().getCurrencyCode();
 
 		if (e.getLanguage() != null) {
@@ -46,7 +51,7 @@ public class CountryDto extends BaseDto {
 
 	public CountryDto(TradingCountry e) {
 		countryCode = e.getCountryCode();
-		name = e.getPrDescription();
+		nameEn = e.getPrDescription();
 
 		if (e.getCountry() != null && e.getCountry().getCurrency() != null) {
 			currencyCode = e.getCountry().getCurrency().getCurrencyCode();
@@ -59,7 +64,7 @@ public class CountryDto extends BaseDto {
 
 	public CountryDto(TradingCountry e, Country c) {
 		countryCode = e.getCountryCode();
-		name = e.getPrDescription();
+		nameEn = e.getPrDescription();
 
 		currencyCode = c.getCurrency().getCurrencyCode();
 
@@ -76,12 +81,20 @@ public class CountryDto extends BaseDto {
 		this.countryCode = countryCode;
 	}
 
-	public String getName() {
-		return name;
+	public String getNameEn() {
+		return nameEn;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setNameEn(String nameEn) {
+		this.nameEn = nameEn;
+	}
+
+	public String getNameFr() {
+		return nameFr;
+	}
+
+	public void setNameFr(String nameFr) {
+		this.nameFr = nameFr;
 	}
 
 	public String getCurrencyCode() {
@@ -100,10 +113,12 @@ public class CountryDto extends BaseDto {
 		this.languageCode = languageCode;
 	}
 
-	@Override
 	public String toString() {
-		return "CountryDto [countryCode=" + countryCode + ", name=" + name + ", currencyCode=" + currencyCode
-				+ ", languageCode=" + languageCode + "]";
+		return "CountryDto [countryCode=" + countryCode + 
+				", nameEn=" + nameEn + 
+				", nameFr=" + nameFr + 
+				", currencyCode=" + currencyCode +
+				", languageCode=" + languageCode + "]";
 	}
 
 }

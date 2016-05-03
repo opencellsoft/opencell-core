@@ -72,7 +72,7 @@ public class CountryRsTest extends BaseRsTest {
 		countryDto.setCountryCode("PH");
 		countryDto.setCurrencyCode("PHP");
 		countryDto.setLanguageCode("ENG");
-		countryDto.setName("Philippines");
+		countryDto.setNameEn("Philippines");
 
 		ActionStatus result = resource.create(countryDto);
 		log.info("response=" + result);
@@ -88,7 +88,7 @@ public class CountryRsTest extends BaseRsTest {
 		countryDto.setCountryCode("PH");
 		countryDto.setCurrencyCode("PHP");
 		countryDto.setLanguageCode("ENG");
-		countryDto.setName("Philippines");
+		countryDto.setNameEn("Philippines");
 
 		ActionStatus result = resource.create(countryDto);
 		log.info("response=" + result);
@@ -126,7 +126,7 @@ public class CountryRsTest extends BaseRsTest {
 		countryDto.setCountryCode("PH");
 		countryDto.setCurrencyCode("PHP");
 		countryDto.setLanguageCode("ENG");
-		countryDto.setName("Philippines-Updated");
+		countryDto.setNameEn("Philippines-Updated");
 
 		ActionStatus result = resource.update(countryDto);
 		log.info("response=" + result);
@@ -142,7 +142,7 @@ public class CountryRsTest extends BaseRsTest {
 		countryDto.setCountryCode("PH-NONE");
 		countryDto.setCurrencyCode("PHP-NONE");
 		countryDto.setLanguageCode("ENG");
-		countryDto.setName("Philippines-Updated");
+		countryDto.setNameEn("Philippines-Updated");
 
 		ActionStatus result = resource.update(countryDto);
 		log.info("response=" + result);

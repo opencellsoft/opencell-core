@@ -65,7 +65,8 @@ public class CountryApi extends BaseApi {
 
         Country country = new Country();
         country.setCountryCode(postData.getCountryCode());
-        country.setDescriptionEn(postData.getName());
+        country.setDescriptionEn(postData.getNameEn());
+        country.setDescriptionFr(postData.getNameFr());
         country.setLanguage(language);
         country.setCurrency(currency);
 
@@ -78,8 +79,8 @@ public class CountryApi extends BaseApi {
     	 if (StringUtils.isBlank(postData.getCountryCode())) {
              missingParameters.add("code");
          }
-    	 if (StringUtils.isBlank(postData.getName())) {
-             missingParameters.add("name");
+    	 if (StringUtils.isBlank(postData.getNameEn())) {
+             missingParameters.add("nameEn");
          }
          if (StringUtils.isBlank(postData.getLanguageCode())) {
              missingParameters.add("languageCode");
@@ -108,7 +109,8 @@ public class CountryApi extends BaseApi {
 
         
         country.setCountryCode(postData.getCountryCode());
-        country.setDescriptionEn(postData.getName());
+        country.setDescriptionEn(postData.getNameEn());
+        country.setDescriptionFr(postData.getNameFr());
         country.setLanguage(language);
         country.setCurrency(currency);
 

@@ -65,7 +65,8 @@ public class TradingCountryApi extends BaseApi {
         // If country code doesn't exist in the reference table, create the country in this table ("adm_country") with the currency code for the default provider.
         if (country == null) {
             country = new Country();
-            country.setDescriptionEn(postData.getName());
+            country.setDescriptionEn(postData.getNameEn());
+            country.setDescriptionFr(postData.getNameFr());
             country.setCountryCode(postData.getCountryCode());
         }
         if (!StringUtils.isBlank(postData.getLanguageCode())) {
@@ -103,7 +104,7 @@ public class TradingCountryApi extends BaseApi {
         tradingCountry.setCountry(country);
         tradingCountry.setProvider(provider);
         tradingCountry.setActive(true);
-        tradingCountry.setPrDescription(postData.getName());
+        tradingCountry.setPrDescription(postData.getNameEn());
         tradingCountryService.create(tradingCountry, currentUser);
 
         // If currencyCode exist in reference table ("adm_currency") and don't exist in the trading currency table, create the currency in the trading currency table
@@ -188,10 +189,10 @@ public class TradingCountryApi extends BaseApi {
             }
         }
 
-        if (!StringUtils.isBlank(postData.getName()) && (!postData.getName().equals(country.getDescriptionEn()) || !postData.getName().equals(tradingCountry.getPrDescription()))) {
-            tradingCountry.setPrDescription(postData.getName());
+        if (!StringUtils.isBlank(postData.getNameEn()) && (!postData.getNameEn().equals(country.getDescriptionEn()) || !postData.getNameEn().equals(tradingCountry.getPrDescription()))) {
+            tradingCountry.setPrDescription(postData.getNameEn());
             country.setCurrency(currency);
-            country.setDescriptionEn(postData.getName());
+            country.setDescriptionEn(postData.getNameEn());
 
             if (language != null) {
                 country.setLanguage(language);

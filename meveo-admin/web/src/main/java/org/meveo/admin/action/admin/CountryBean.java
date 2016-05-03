@@ -68,7 +68,7 @@ public class CountryBean extends BaseBean<Country> {
 
 	@Override
 	protected String getDefaultSort() {
-		return "description";
+		return "descriptionEn";
 	}
 	@Override
 	protected String getListViewName() {
