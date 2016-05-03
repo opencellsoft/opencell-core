@@ -49,11 +49,11 @@ public class TradingCurrencyRsImpl extends BaseRs implements TradingCurrencyRs {
     }
 
     @Override
-    public GetTradingCurrencyResponse find(String languageCode) {
+    public GetTradingCurrencyResponse find(String currencyCode) {
     	GetTradingCurrencyResponse result = new GetTradingCurrencyResponse();
 
         try {
-            result.setCurrency(tradingCurrencyApi.find(languageCode, getCurrentUser().getProvider()));
+            result.setCurrency(tradingCurrencyApi.find(currencyCode, getCurrentUser().getProvider()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -69,11 +69,11 @@ public class TradingCurrencyRsImpl extends BaseRs implements TradingCurrencyRs {
     }
 
     @Override
-    public ActionStatus remove(String languageCode) {
+    public ActionStatus remove(String currencyCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            tradingCurrencyApi.remove(languageCode, getCurrentUser().getProvider());
+            tradingCurrencyApi.remove(currencyCode, getCurrentUser().getProvider());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

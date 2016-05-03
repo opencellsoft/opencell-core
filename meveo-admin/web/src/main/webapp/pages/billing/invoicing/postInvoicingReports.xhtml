@@ -170,21 +170,11 @@
 				value="#{messages['postInvoicingReport.excludeBillingAccounts']}"
 				update=":results_form :messages" action="#{invoiceBean.excludeBillingAccounts(billingRunBean.entity)}" 
 				rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED' and billingRunBean.entity.getInvoices().size()>0}">
-				<p:confirm header="#{messages['message.confirmation']}"
+				<p:confirm header="#{messages['commons.confirmationHeader']}"
 					message="#{messages['commons.excludeBillingAccounts']}"
 					icon="ui-icon-alert" />
 			</p:commandButton>
 		</p:panel>
-
-		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
-			<p:commandButton value="#{messages['commons.yes']}" type="button"
-				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-			<p:commandButton value="#{messages['commons.no']}" type="button"
-				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-		</p:confirmDialog>
-		
-		
-
 
 		<h:outputText
 			value="#{messages['postInvoicingReport.rejectedBillingAccounts']}"

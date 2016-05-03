@@ -192,11 +192,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public ActionStatus removeTradingCountry(String countryCode, String currencyCode) {
+    public ActionStatus removeTradingCountry(String countryCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            tradingCountryApi.remove(countryCode, currencyCode, getCurrentUser().getProvider());
+            tradingCountryApi.remove(countryCode, getCurrentUser().getProvider());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -1843,12 +1843,12 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public GetDescriptionsResponse findDescriptions(String descriptionsCode, String languageCode) {
+    public GetDescriptionsResponse findDescriptions(String entityClass, String code, String languageCode) {
         GetDescriptionsResponse result = new GetDescriptionsResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCatMessagesDto(catMessagesApi.find(descriptionsCode, languageCode, getCurrentUser().getProvider()));
+            result.setCatMessagesDto(catMessagesApi.find(entityClass, code, languageCode, getCurrentUser().getProvider()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1864,11 +1864,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public ActionStatus removeDescriptions(String descriptionsCode, String languageCode) {
+    public ActionStatus removeDescriptions(String entityClass, String code, String languageCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            catMessagesApi.remove(descriptionsCode, languageCode, getCurrentUser().getProvider());
+            catMessagesApi.remove(entityClass, code, languageCode, getCurrentUser().getProvider());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -2068,7 +2068,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		GetLanguageResponse result = new GetLanguageResponse();
 
         try {
-            result.setLanguage(languageApi.find(languageCode, getCurrentUser().getProvider()));
+            result.setLanguage(languageApi.find(languageCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -2088,7 +2088,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            languageApi.remove(languageCode, getCurrentUser().getProvider());
+            languageApi.remove(languageCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -2168,7 +2168,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		GetCountryResponse result = new GetCountryResponse();
 
         try {
-            result.setCountry(countryApi.find(countryCode, getCurrentUser().getProvider()));
+            result.setCountry(countryApi.find(countryCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -2188,7 +2188,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            countryApi.remove(countryCode, getCurrentUser().getProvider());
+            countryApi.remove(countryCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -2268,7 +2268,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		GetCurrencyResponse result = new GetCurrencyResponse();
 
         try {
-            result.setCurrency(currencyApi.find(currencyCode, getCurrentUser().getProvider()));
+            result.setCurrency(currencyApi.find(currencyCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -2288,7 +2288,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyApi.remove(currencyCode, getCurrentUser().getProvider());
+            currencyApi.remove(currencyCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

@@ -53,7 +53,7 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
     	GetCurrencyResponse result = new GetCurrencyResponse();
 
         try {
-            result.setCurrency(currencyApi.find(languageCode, getCurrentUser().getProvider()));
+            result.setCurrency(currencyApi.find(languageCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -73,7 +73,7 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyApi.remove(languageCode, getCurrentUser().getProvider());
+            currencyApi.remove(languageCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

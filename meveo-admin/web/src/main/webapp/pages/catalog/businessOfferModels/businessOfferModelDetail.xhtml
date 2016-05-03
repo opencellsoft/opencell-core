@@ -140,15 +140,12 @@
 								value="#{businessOfferModelBean.entity.id}" />
 						</p:commandButton>
 
-						<p:tooltip for="deleteActionlink"
-							value="#{messages['commons.delete']}" showEffect="slide"
-							hideEffect="slide" />
-						<p:commandButton id="deleteActionlink" icon="ui-icon-trash"
-							oncomplete="PF('confirmDeleteActionsWidget').show()">
-							<f:setPropertyActionListener
-								target="#{offerModelScriptBean.entity}" value="#{entity}" />
-						</p:commandButton>
-					</p:column>
+                        <p:tooltip for="deleteActionlink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="deleteActionlink" icon="ui-icon-trash" oncomplete="actionsDoDelete()">
+                            <f:setPropertyActionListener target="#{offerModelScriptBean.entity}" value="#{entity}" />
+                            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
 
 					<f:facet name="footer">
 						<p:commandButton id="addScript"
@@ -175,19 +172,6 @@
 				oncomplete="handleDeleteComplete(xhr,status,args)"
 				update="@form :scriptMainForm:offerModelScript" />
 
-			<p:confirmDialog id="confirmDeleteActionsDialog"
-				styleClass="confirm-dialog"
-				message="#{messages['commons.confirmDelete']}" header=""
-				severity="alert" widgetVar="confirmDeleteActionsWidget"
-				appendTo="@(body)">
-				<p:panel styleClass="confirm-dialog-content">
-					<p:commandButton value="#{messages['commons.yes']}"
-						oncomplete="actionsDoDelete()"
-						onclick="PF('confirmDeleteActionsWidget').hide()" />
-					<p:commandButton value="#{messages['commons.no']}"
-						onclick="PF('confirmDeleteActionsWidget').hide()" type="button" />
-				</p:panel>
-			</p:confirmDialog>
 
 			<p:confirmDialog id="confirmCanDeleteDialog"
 				styleClass="confirm-dialog"
@@ -297,11 +281,15 @@
 							<p:commandButton value="#{messages['commons.disable']}"
 								rendered="#{not empty offerModelScriptBean.entity.id and offerModelScriptBean.entity.active}"
 								actionListener="#{businessOfferModelBean.refreshScript}"
-								action="#{offerModelScriptBean.disable}" update="@form" />
+								action="#{offerModelScriptBean.disable}" update="@form" >
+                                <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
+                            </p:commandButton>
 							<p:commandButton value="#{messages['commons.enable']}"
 								rendered="#{not empty offerModelScriptBean.entity.id and offerModelScriptBean.entity.disabled}"
 								actionListener="#{businessOfferModelBean.refreshScript}"
-								action="#{offerModelScriptBean.enable}" update="@form" />
+								action="#{offerModelScriptBean.enable}" update="@form" >
+                                <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
+                            </p:commandButton>
 
 							<p:commandButton value="#{messages['commons.close']}"
 								oncomplete="PF('scriptDialog').hide()"

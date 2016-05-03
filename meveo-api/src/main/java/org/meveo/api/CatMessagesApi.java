@@ -23,6 +23,7 @@ import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.base.MultilanguageEntityService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 
 public class CatMessagesApi extends BaseApi {
@@ -39,62 +40,106 @@ public class CatMessagesApi extends BaseApi {
 	 @return
 	 @throws MeveoApiException
 	 */
-	public CatMessagesDto find(String catMessagesCode, String languageCode, Provider provider)
+	public CatMessagesDto find(String entityClass, String code, String languageCode, Provider provider)
 			throws MeveoApiException {
 
-		if (StringUtils.isBlank(catMessagesCode)) {
-			missingParameters.add("catMessagesCode");
+		if (StringUtils.isBlank(entityClass)) {
+			missingParameters.add("entityClass");
 		}
-
-		if (StringUtils.isBlank(languageCode)) {
-			missingParameters.add("languageCode");
+		if (StringUtils.isBlank(code)) {
+			missingParameters.add("code");
 		}
 
 		handleMissingParameters();
 
-		CatMessages translation = catMessagesService.findByCodeAndLanguage(catMessagesCode, languageCode, provider);
-		if(translation == null){
-			throw new EntityDoesNotExistsException(CatMessages.class, catMessagesCode);
-		}
-		
-		CatMessagesDto messageDto = null;
-		BusinessEntity entity = catMessagesService.getEntityByMessageCode(catMessagesCode);
-		if (entity != null) {
-			messageDto = new CatMessagesDto();
-			messageDto.setCode(entity.getCode());
-			messageDto.setDefaultDescription(entity.getDescription());
-			messageDto.setEntityClass(entity.getClass().getSimpleName());
-			List<CatMessages> messages = new ArrayList<>();
-			messages.add(translation);
-			List<LanguageDescriptionDto> translations = getTranslations(messages);
-			messageDto.setTranslatedDescriptions(translations);
-		} else {
-			throw new EntityDoesNotExistsException(BusinessEntity.class, catMessagesCode);
+		MultilanguageEntityService<?> entityService = null;
+		try {
+			entityService = catMessagesService.getMultilanguageEntityService(entityClass);
+		} catch (BusinessException e) {
+			throw new EntityDoesNotExistsException(CatMessages.class, code);
 		}
 
+		BusinessEntity entity = entityService.findByCode(code, provider);
+
+		if (entity == null) {
+			throw new EntityDoesNotExistsException(CatMessages.class, code);
+		}
+
+		String messageCode = catMessagesService.getMessageCode(entity);
+
+		List<CatMessages> messages = new ArrayList<>();
+		CatMessages translation = null;
+		if(!StringUtils.isBlank(languageCode)){
+			translation = catMessagesService.findByCodeAndLanguage(messageCode, languageCode, provider);
+			if (translation != null) {
+				messages.add(translation);
+			} else {
+				throw new EntityDoesNotExistsException(CatMessages.class, code);
+			}
+		} else {
+			List<CatMessages> messageList = catMessagesService.findByCode(messageCode, provider);
+			if (messageList != null && !messageList.isEmpty()) {
+				messages.addAll(messageList);
+			}
+		}
+
+		CatMessagesDto messageDto = null;
+
+		messageDto = new CatMessagesDto();
+		messageDto.setCode(entity.getCode());
+		messageDto.setDefaultDescription(entity.getDescription());
+		messageDto.setEntityClass(entity.getClass().getSimpleName());
+		List<LanguageDescriptionDto> translations = catMessagesToDto(messages);
+		messageDto.setTranslatedDescriptions(translations);
 		return messageDto;
 	}
 
-	public void remove(String catMessagesCode, String languageCode, Provider provider) throws MeveoApiException {
+	public void remove(String entityClass, String code, String languageCode, Provider provider)
+			throws MeveoApiException {
 
-		if (StringUtils.isBlank(catMessagesCode)) {
-			missingParameters.add("catMessagesCode");
+		if (StringUtils.isBlank(entityClass)) {
+			missingParameters.add("entityClass");
 		}
-
-		if (StringUtils.isBlank(languageCode)) {
-			missingParameters.add("languageCode");
+		if (StringUtils.isBlank(code)) {
+			missingParameters.add("code");
 		}
 
 		handleMissingParameters();
 
-		CatMessages catMessages = catMessagesService.findByCodeAndLanguage(catMessagesCode, languageCode, provider);
-
-		if (catMessages == null) {
-			throw new EntityDoesNotExistsException(CatMessages.class, catMessagesCode);
+		MultilanguageEntityService<?> entityService;
+		try {
+			entityService = catMessagesService.getMultilanguageEntityService(entityClass);
+		} catch (BusinessException e) {
+			throw new EntityDoesNotExistsException(CatMessages.class, code);
 		}
 
-		catMessagesService.remove(catMessages);
-		 
+		BusinessEntity entity = entityService.findByCode(code, provider);
+
+		if (entity == null) {
+			throw new EntityDoesNotExistsException(CatMessages.class, code);
+		}
+
+		String messageCode = catMessagesService.getMessageCode(entity);
+		
+		List<CatMessages> messages = new ArrayList<>();
+		CatMessages translation = null;
+		if (!StringUtils.isBlank(languageCode)) {
+			translation = catMessagesService.findByCodeAndLanguage(messageCode, languageCode, provider);
+			if (translation != null) {
+				messages.add(translation);
+			} else {
+				throw new EntityDoesNotExistsException(CatMessages.class, code);
+			}
+		} else {
+			List<CatMessages> messageList = catMessagesService.findByCode(messageCode, provider);
+			if(messageList != null && !messageList.isEmpty()){
+				messages.addAll(messageList);
+			}
+		}
+		
+		for (CatMessages message : messages) {
+			catMessagesService.remove(message);
+		}
 	}
 
 	public void createOrUpdate(CatMessagesDto postData, User currentUser) throws MeveoApiException, BusinessException {
@@ -178,7 +223,7 @@ public class CatMessagesApi extends BaseApi {
 			
 			CatMessagesDto messageDto = null;
 			BusinessEntity entity = null;
-			Map<String, List<CatMessages>> entities = parseEntities(catMessagesList);
+			Map<String, List<CatMessages>> entities = catMessagesToMap(catMessagesList);
 			List<CatMessages> messageList = null;
 			List<LanguageDescriptionDto> translations = null;
 
@@ -190,7 +235,7 @@ public class CatMessagesApi extends BaseApi {
 					messageDto.setCode(entity.getCode());
 					messageDto.setDefaultDescription(entity.getDescription());
 					messageDto.setEntityClass(entity.getClass().getSimpleName());
-					translations = getTranslations(messageList);
+					translations = catMessagesToDto(messageList);
 					messageDto.setTranslatedDescriptions(translations);
 					catMessagesListDto.getCatMessage().add(messageDto);
 				}
@@ -212,7 +257,7 @@ public class CatMessagesApi extends BaseApi {
 		log.debug("end of update {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
 	}
 	
-	private Map<String, List<CatMessages>> parseEntities(List<CatMessages> messageList) {
+	private Map<String, List<CatMessages>> catMessagesToMap(List<CatMessages> messageList) {
 		Map<String, List<CatMessages>> messageMap = null;
 		String messageCode = null;
 		List<CatMessages> list = null;
@@ -233,13 +278,10 @@ public class CatMessagesApi extends BaseApi {
 		return messageMap;
 	}
 
-	private List<LanguageDescriptionDto> getTranslations(List<CatMessages> messageList) {
-		List<LanguageDescriptionDto> translations = null;
+	private List<LanguageDescriptionDto> catMessagesToDto(List<CatMessages> messageList) {
+		List<LanguageDescriptionDto> translations = new ArrayList<>();
 		LanguageDescriptionDto translation = null;
 		for (CatMessages message : messageList) {
-			if (translations == null) {
-				translations = new ArrayList<>();
-			}
 			translation = new LanguageDescriptionDto();
 			translation.setLanguageCode(message.getLanguageCode());
 			translation.setDescription(message.getDescription());

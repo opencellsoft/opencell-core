@@ -95,7 +95,7 @@
 				<p:tab title="#{messages['serviceUsageChargeTemplate.info']}">
 					<hftl:formPanel backingBean="#{serviceTemplateBean}" 
 						showEnableDisableButton="true" 
-						updateConfirmationMessage="#{serviceTemplateBean.usedInSubscription ? 'confirmationMessage.confirmUpdate' : ''}" 
+						updateConfirmationMessage="#{serviceTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}" 
 						ajaxSubmit="true" 
 						submitPartialProcess=":tabView:formId">
 						<hftl:formField label="#{messages['serviceTemplate.code']}"

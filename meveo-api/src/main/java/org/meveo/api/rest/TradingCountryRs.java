@@ -56,8 +56,8 @@ public interface TradingCountryRs extends IBaseRs {
      * @return
      */
     @DELETE
-    @Path("/{countryCode}/{currencyCode}")
-    public ActionStatus remove(@PathParam("countryCode") String countryCode, @PathParam("currencyCode") String currencyCode);
+    @Path("/")
+    public ActionStatus remove(@PathParam("countryCode") String countryCode);
 
     /**
      * Modify a country. Same input parameter as create. The country and tradingCountry are created if they don't exists. The operation fails if the tradingCountry is null.

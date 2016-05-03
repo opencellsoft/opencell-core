@@ -127,7 +127,7 @@ public interface SettingsWs extends IBaseWs {
     @WebMethod
     public ActionStatus createOrUpdateSeller(@WebParam(name = "seller") SellerDto postData);
 
-    // traingLanguage
+    // tradingLanguage
 
     @WebMethod
     public ActionStatus createTradingLanguage(@WebParam(name = "language") LanguageDto postData);
@@ -153,7 +153,7 @@ public interface SettingsWs extends IBaseWs {
     GetTradingCountryResponse findTradingCountry(@WebParam(name = "countryCode") String countryCode);
 
     @WebMethod
-    ActionStatus removeTradingCountry(@WebParam(name = "countryCode") String countryCode, @WebParam(name = "currencyCode") String currencyCode);
+    ActionStatus removeTradingCountry(@WebParam(name = "countryCode") String countryCode);
 
     @WebMethod
     ActionStatus updateTradingCountry(@WebParam(name = "country") CountryDto countryDto);
@@ -353,10 +353,10 @@ public interface SettingsWs extends IBaseWs {
     public ActionStatus updateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
 
     @WebMethod
-    public GetDescriptionsResponse findDescriptions(@WebParam(name = "descriptionsCode") String descriptionsCode, @WebParam(name = "languageCode") String languageCode);
+    public GetDescriptionsResponse findDescriptions(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code, @WebParam(name = "languageCode") String languageCode);
 
     @WebMethod
-    public ActionStatus removeDescriptions(@WebParam(name = "descriptionsCode") String descriptionsCode, @WebParam(name = "languageCode") String languageCode);
+    public ActionStatus removeDescriptions(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code, @WebParam(name = "languageCode") String languageCode);
 
     @WebMethod
     public ActionStatus createOrUpdateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);

@@ -28,13 +28,6 @@
 			<p:graphicImage value="/img/ajaxloadingbar.gif" />
 		</p:dialog>
 
-		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-			<p:commandButton value="Yes" type="button"
-				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-			<p:commandButton value="No" type="button"
-				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-		</p:confirmDialog>
-
 		<p:panel id="fileExplorer">
 			
 			<f:facet name="header">
@@ -88,7 +81,7 @@
 					<p:commandButton value="#{messages['fileExplorer.delete']}"
 						icon="ui-icon-trash" action="#{userBean.deleteSelectedFile()}"
 						update=":#{p:component('fileExplorer')}">
-						<p:confirm header="Confirmation"
+						<p:confirm header="#{messages['commons.confirmationHeader']}"
 							message="#{messages['fileExplorer.deleteConfirm']}"
 							icon="ui-icon-alert" />
 						<f:param name="cid"

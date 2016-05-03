@@ -61,7 +61,7 @@ public class CurrencyApi extends BaseApi {
         currencyService.update(currency, currentUser);
     }
 
-    public CurrencyDto find(String currencyCode, Provider provider) throws MeveoApiException {
+    public CurrencyDto find(String currencyCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(currencyCode)) {
             missingParameters.add("currencyCode");
@@ -80,7 +80,7 @@ public class CurrencyApi extends BaseApi {
         return result;
     }
 
-    public void remove(String currencyCode, Provider provider) throws MeveoApiException {
+    public void remove(String currencyCode) throws MeveoApiException {
         if (StringUtils.isBlank(currencyCode)) {
             missingParameters.add("currencyCode");
             handleMissingParameters();

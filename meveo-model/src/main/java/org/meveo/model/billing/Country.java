@@ -18,6 +18,10 @@
  */
 package org.meveo.model.billing;
 
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,7 +30,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ProviderlessEntity;
 import org.meveo.model.admin.Currency;
@@ -45,6 +48,10 @@ public class Country extends ProviderlessEntity {
 	@Column(name = "DESCRIPTION_EN", length = 100)
 	@Size(max = 100)
 	private String descriptionEn;
+	
+	@Column(name = "DESCRIPTION_FR", length = 100)
+	@Size(max = 100)
+	private String descriptionFr;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CURRENCY_ID")
@@ -62,6 +69,11 @@ public class Country extends ProviderlessEntity {
 		this.countryCode = countryCode;
 	}
 
+	
+	public String getDescription_EN() {
+		return getDescription("EN");
+	}
+	
 	public String getDescriptionEn() {
 		return descriptionEn;
 	}
@@ -70,6 +82,34 @@ public class Country extends ProviderlessEntity {
 		this.descriptionEn = descriptionEn;
 	}
 
+	public String getDescription_FR() {
+		return descriptionFr;
+	}
+	
+	public String getDescriptionFr() {
+		return getDescription("FR");
+	}
+
+	public void setDescriptionFr(String descriptionFr) {
+		this.descriptionFr = descriptionFr;
+	}
+	
+	public String getDescription(String languageCode)  {
+		
+		Method method = null;
+		try {
+			method = this.getClass().getMethod("getDescription_"+languageCode);
+			String description = (String)method.invoke(this);
+			return description;
+		} catch (NoSuchMethodException | SecurityException e) {
+			return descriptionEn;
+		} catch (IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			return descriptionEn;
+		} 
+		
+	}
+	
 	public Currency getCurrency() {
 		return currency;
 	}

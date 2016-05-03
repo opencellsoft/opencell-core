@@ -61,7 +61,7 @@ public class LanguageApi extends BaseApi {
         languageService.update(language, currentUser);
     }
 
-    public LanguageDto find(String languageCode, Provider provider) throws MeveoApiException {
+    public LanguageDto find(String languageCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(languageCode)) {
             missingParameters.add("languageCode");
@@ -80,7 +80,7 @@ public class LanguageApi extends BaseApi {
         return result;
     }
 
-    public void remove(String languageCode, Provider provider) throws MeveoApiException {
+    public void remove(String languageCode) throws MeveoApiException {
         if (StringUtils.isBlank(languageCode)) {
             missingParameters.add("languageCode");
             handleMissingParameters();

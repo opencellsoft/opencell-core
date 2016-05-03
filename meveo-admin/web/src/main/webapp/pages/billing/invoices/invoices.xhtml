@@ -51,8 +51,9 @@
 			<hftl:searchField label="#{messages['invoice.dueDate']}"
 				field="dueDate" /> 
 			<hftl:searchField label="#{messages['invoice.amountWithoutTax']}"
-				field="amountWithoutTax" /> 
-				
+				field="amountWithoutTax" />
+			<hftl:searchField label="#{messages['invoice.amountWithTax']}"
+				field="amountWithTax" rendered="#{!invoiceBean.entity.provider.entreprise}" />  	
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['invoices.title']}"
@@ -63,8 +64,8 @@
 			<hftl:column label="#{messages['invoice.invoiceDate']}" field="invoiceDate" isDate="true" />
 			<hftl:column label="#{messages['invoice.dueDate']}" field="dueDate" isDate="true" /> 
 			<hftl:column label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" converterParam="4digits" wrapHeader="true"  />
-			<hftl:column label="#{messages['invoice.amountTax']}" field="amountTax" converterParam="4digits" wrapHeader="true"  />
-			<hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax" converterParam="4digits" wrapHeader="true"  />
+			<hftl:column label="#{messages['invoice.amountTax']}" field="amountTax" converterParam="4digits" wrapHeader="true"   />
+			<hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax" converterParam="4digits" wrapHeader="true" rendered="#{!invoiceBean.entity.provider.entreprise}"   />
 			<hftl:column label="#{messages['invoice.netToPay']}" field="netToPay" converterParam="4digits" wrapHeader="true" />
 		</hftl:dataList>
 

@@ -72,7 +72,7 @@ public class CountryRsTest extends BaseRsTest {
 		countryDto.setCountryCode("PH");
 		countryDto.setCurrencyCode("PHP");
 		countryDto.setLanguageCode("ENG");
-		countryDto.setName("Philippines");
+		countryDto.setNameEn("Philippines");
 
 		ActionStatus result = resource.create(countryDto);
 		log.info("response=" + result);
@@ -88,7 +88,7 @@ public class CountryRsTest extends BaseRsTest {
 		countryDto.setCountryCode("PH");
 		countryDto.setCurrencyCode("PHP");
 		countryDto.setLanguageCode("ENG");
-		countryDto.setName("Philippines");
+		countryDto.setNameEn("Philippines");
 
 		ActionStatus result = resource.create(countryDto);
 		log.info("response=" + result);
@@ -126,7 +126,7 @@ public class CountryRsTest extends BaseRsTest {
 		countryDto.setCountryCode("PH");
 		countryDto.setCurrencyCode("PHP");
 		countryDto.setLanguageCode("ENG");
-		countryDto.setName("Philippines-Updated");
+		countryDto.setNameEn("Philippines-Updated");
 
 		ActionStatus result = resource.update(countryDto);
 		log.info("response=" + result);
@@ -142,7 +142,7 @@ public class CountryRsTest extends BaseRsTest {
 		countryDto.setCountryCode("PH-NONE");
 		countryDto.setCurrencyCode("PHP-NONE");
 		countryDto.setLanguageCode("ENG");
-		countryDto.setName("Philippines-Updated");
+		countryDto.setNameEn("Philippines-Updated");
 
 		ActionStatus result = resource.update(countryDto);
 		log.info("response=" + result);
@@ -154,7 +154,7 @@ public class CountryRsTest extends BaseRsTest {
 	@InSequence(106)
 	public void testRemove(
 			@ArquillianResteasyResource("api/rest") CountryRs resource) {
-		ActionStatus result = resource.remove("PH", "PHP");
+		ActionStatus result = resource.remove("PH");
 		log.info("response=" + result);
 		Assert.assertEquals(result.getStatus(), ActionStatusEnum.SUCCESS);
 	}
@@ -164,7 +164,7 @@ public class CountryRsTest extends BaseRsTest {
 	@InSequence(107)
 	public void testRemoveDoesNotExists(
 			@ArquillianResteasyResource("api/rest") CountryRs resource) {
-		ActionStatus result = resource.remove("PH-NONE", "PHP-NONE");
+		ActionStatus result = resource.remove("PH-NONE");
 		log.info("response=" + result);
 		Assert.assertEquals(result.getStatus(), ActionStatusEnum.FAIL);
 	}

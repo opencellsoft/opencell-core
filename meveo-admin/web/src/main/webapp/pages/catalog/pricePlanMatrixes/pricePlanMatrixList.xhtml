@@ -401,16 +401,10 @@
 			 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
            </p:button> 
 			 <p:commandButton update="@form" icon="ui-icon-trash" action="#{pricePlanMatrixBean.delete(entity.id)}"> 
-			<p:confirm header="#{messages['message.confirmation']}"
+			<p:confirm header="#{messages['commons.confirmationHeader']}"
 				message="#{messages['commons.confirmDelete']}"
 				icon="ui-icon-alert" />
 		    </p:commandButton> 
-			<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
-			<p:commandButton value="#{messages['commons.yes']}" type="button"
-				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-			<p:commandButton value="#{messages['commons.no']}" type="button"
-				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-		   </p:confirmDialog> 
 			</p:column>
 		</p:dataTable>
 		 <p:button id="buttonNew" outcome="pricePlanMatrixDetail" value="#{messages['commons.new']}">

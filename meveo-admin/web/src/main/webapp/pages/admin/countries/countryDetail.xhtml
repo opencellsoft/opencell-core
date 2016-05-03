@@ -17,15 +17,15 @@
 		
 			<hftl:formField label="#{messages['country.code']}"		field="countryCode" required="true" maxlength="3" />
 			
-			<hftl:formField label="#{messages['country.name']}" 	field="descriptionEn" required="true" />
+			<hftl:formField label="#{messages['country.nameEn']}" 	field="descriptionEn" required="true" />
+			
+			<hftl:formField label="#{messages['country.nameFr']}" 	field="descriptionFr" required="true" />
 			
 			<hftl:formField id="currencySelectId" label="#{messages['currency.currencyCode']}" field="currency" 
 			    valueLabelField="currencyCode"  listBean="#{currencyBean}" required="true"/>
 			    
 			<hftl:formField id="languageSelectId" label="#{messages['language.languageCode']}" field="language" 
 			    valueLabelField="languageCode"  listBean="#{languageBean}" required="true"/>
-			
-			
 			    
 		</hftl:formPanel>
 

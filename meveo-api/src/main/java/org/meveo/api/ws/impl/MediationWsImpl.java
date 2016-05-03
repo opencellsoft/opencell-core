@@ -19,6 +19,7 @@ import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.MediationWs;
+import org.meveo.commons.utils.StringUtils;
 
 /**
  * @author Edward P. Legaspi
@@ -41,7 +42,9 @@ public class MediationWsImpl extends BaseWs implements MediationWs {
             MessageContext mc = wsContext.getMessageContext();
             HttpServletRequest req = (HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST);
 
-            postData.setIpAddress(req.getRemoteAddr());
+            String ip = StringUtils.isBlank(req.getHeader("x-forwarded-for")) ? 
+            		req.getRemoteAddr() : req.getHeader("x-forwarded-for");
+            postData.setIpAddress(ip);
             mediationApi.registerCdrList(postData, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
