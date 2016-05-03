@@ -93,6 +93,7 @@ public class MEVEOCdrParser implements CSVCDRParser {
 	@Override
 	public void init(File CDRFile) {
 		batchName = "CDR_" + CDRFile.getName();
+		originBatch = "";
 	}
 
 	@Override
