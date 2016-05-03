@@ -61,5 +61,11 @@ public class CatMessagesDto extends BaseDto {
 	public void setTranslatedDescriptions(List<LanguageDescriptionDto> translatedDescriptions) {
 		this.translatedDescriptions = translatedDescriptions;
 	}
+	
+	@Override
+	public String toString() {
+		return "CatMessagesDto [entityClass=" + entityClass + ", code=" + code + ", defaultDescription="
+				+ defaultDescription + ", translatedDescriptions=" + translatedDescriptions + "]";
+	}
 
 }

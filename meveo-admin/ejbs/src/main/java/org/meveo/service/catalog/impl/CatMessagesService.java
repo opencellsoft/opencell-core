@@ -193,6 +193,17 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
             return null;
         }
     }
+    
+    @SuppressWarnings("unchecked")
+	public List<CatMessages> findByCode(String messageCode, Provider provider) {
+        QueryBuilder qb = new QueryBuilder(CatMessages.class, "c", null, provider);
+        qb.addCriterionWildcard("c.messageCode", messageCode, true);
+        try {
+            return (List<CatMessages>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
     @Override
     public List<CatMessages> list(PaginationConfiguration config) {
