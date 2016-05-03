@@ -12,7 +12,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -22,7 +21,6 @@ import org.slf4j.LoggerFactory;
 public class ExportTest {
 
     @Test
-    @Ignore
     public void testExportTransformation() {
 
         Logger log = LoggerFactory.getLogger(this.getClass());
