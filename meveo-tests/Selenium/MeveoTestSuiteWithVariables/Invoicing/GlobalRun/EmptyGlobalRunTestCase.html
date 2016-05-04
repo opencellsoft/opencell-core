@@ -4,12 +4,12 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SuccessTestCase</title>
+<title>EmptyFieldsTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SuccessTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">EmptyFieldsTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>click</td>
@@ -17,18 +17,23 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>//*[contains(@id, 'code_text')]</td>
-	<td>CYC_INV_MT_1</td>
+	<td>waitForText</td>
+	<td>id=billingCyclePopup_title</td>
+	<td>Billing cycle</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=billingCyclePopup_title</td>
+	<td>Billing cycle</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>id=billingCyclePopup_title</td>
+	<td>Billing cycle</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=billingCyclePopuppopupForm:buttonSearch</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=td</td>
+	<td>xpath=/html/body/div[1]/div/div[1]/a/span</td>
 	<td></td>
 </tr>
 <tr>
@@ -38,28 +43,28 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;Manual&quot;)</td>
+	<td>css=li:contains(&quot;&quot;)</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${StartDate}</td>
-	<td>17/09/2015</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${EndDate}</td>
-	<td>30/09/2015</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${InvoiceDate}</td>
-	<td>18/09/2015</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${LastTransactionDate}</td>
-	<td>28/09/2015</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
