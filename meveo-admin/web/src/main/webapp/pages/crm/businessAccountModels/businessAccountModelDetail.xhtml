@@ -1,0 +1,133 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="objectId"
+				value="#{businessAccountModelBean.objectId}" />
+			<f:viewParam name="tab" value="#{businessAccountModelBean.activeTab}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<hftl:entityPopup id="creationScriptPopup"
+			header="#{messages['businessAccountModel.search']}"
+			backingBean="#{scriptInstanceListBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['BusinessEntity.description']}"
+			searchField2="description"
+			column1Label="#{messages['BusinessEntity.code']}" column1="code"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			selection="#{businessAccountModelBean.entity.creationScript}"
+			updateField=":formId:tabView:creationScriptId :formId:tabView:creationScriptId_text">
+		</hftl:entityPopup>
+
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.account']}" disabled="true" />
+					<p:menuitem outcome="businessAccountModels"
+						value="#{messages['menu.businessAccountModel']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+
+		<hftl:formPanel ajaxSubmit="true"
+			submitPartialProcess=":formId:tabView"
+			label="#{messages['businessAccountModel.title']}"
+			backingBean="#{businessAccountModelBean}"
+			showEnableDisableButton="true">
+
+			<p:tabView id="tabView"
+				activeIndex="#{businessAccountModelBean.activeTab}">
+				<p:tab title="#{messages['commons.information']}">
+					<hftl:formField label="#{messages['BusinessEntity.code']}"
+						field="code" required="true" validateUnique="true" />
+					<hftl:formField label="#{messages['BusinessEntity.description']}"
+						field="description" useConverter="false" id="description" />
+					<hftl:formField id="creationScriptId"
+						label="#{messages['businessAccount.creationScript']}"
+						field="creationScript" valueLabelField="code" required="false"
+						popup="true" popupId="creationScriptPopup" newLine="true" />
+				</p:tab>
+			</p:tabView>
+
+			<ui:include src="../../admin/module/moduleTree.xhtml">
+				<ui:param name="backingBean" value="#{businessAccountModelBean}" />
+			</ui:include>
+
+		</hftl:formPanel>
+
+		<h:form id="scriptMainForm">
+			<p:panel width="100" header="#{messages['accountModelScript']}"
+				rendered="#{!businessAccountModelBean.entity.transient}">
+				<p:dataTable id="accountModelScript" var="entity"
+					value="#{businessAccountModelBean.accountModelScripts}"
+					paginator="true" rows="10" sortBy="#{entity.code}"
+					paginatorAlwaysVisible="false"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid"
+					reflow="true">
+					<p:column headerText="#{messages['BusinessEntity.description']}">
+						<h:outputText value="#{entity.descriptionOrCode}" />
+					</p:column>
+					<hftl:column label="#{messages['scriptInstance.error']}"
+						field="error" isMessage="true" width="15%" />
+					<p:column headerText="#{messages['enableEntity.active']}"
+						width="10%">
+						<h:outputText value="#{messages['commons.yes']}"
+							rendered="#{entity.active != null and entity.active.toString() == 'true'}" />
+						<h:outputText value="#{messages['commons.no']}"
+							rendered="#{entity.active != null and entity.active.toString() == 'false'}" />
+					</p:column>
+
+					<p:column headerText="#{messages['commons.actions']}" width="10%">
+						<p:commandButton id="editActionBtn" icon="ui-icon-document"
+							oncomplete="PF('scriptDialog').show()"
+							action="#{accountModelScriptBean.initEntity(entity.id)}"
+							update=":scriptForm">
+							<f:setPropertyActionListener
+								target="#{accountModelScriptBean.backViewSave}"
+								value="businessAccountModelDetail" />
+							<f:setPropertyActionListener
+								target="#{accountModelScriptBean.bomId}"
+								value="#{businessAccountModelBean.entity.id}" />
+						</p:commandButton>
+
+                        <p:tooltip for="deleteActionlink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="deleteActionlink" icon="ui-icon-trash" oncomplete="actionsDoDelete()">
+                            <f:setPropertyActionListener target="#{accountModelScriptBean.entity}" value="#{entity}" />
+                            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+
+					<f:facet name="footer">
+						<p:commandButton id="addScript"
+							value="#{messages['businessAccountModel.addScript']}"
+							oncomplete="PF('scriptDialog').show()"
+							actionListener="#{accountModelScriptBean.newEntity()}"
+							update=":scriptForm"
+							rendered="#{(businessAccountModelBean.accountModelScripts eq null or businessAccountModelBean.accountModelScripts.size() eq 0) and not businessAccountModelBean.entity.transient}">
+							<f:setPropertyActionListener
+								target="#{accountModelScriptBean.bomId}"
+								value="#{businessAccountModelBean.entity.id}" />
+							<f:setPropertyActionListener
+								target="#{accountModelScriptBean.backViewSave}"
+								value="businessAccountModelDetail" />
+						</p:commandButton>
+					</f:facet>
+				</p:dataTable>
+			</p:panel>
+	</ui:define>
+</ui:composition>

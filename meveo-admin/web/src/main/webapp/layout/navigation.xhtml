@@ -255,6 +255,10 @@
 			<p:menuitem id="accessPoints"
 				rendered="#{identity.hasPermission('account','accountVisualization')}"
 				outcome="access" value="#{messages['menu.accessPoints']}" />
+				
+			<p:menuitem id="businessAccountModels"
+				rendered="#{identity.hasPermission('account','accountVisualization')}"
+				outcome="access" value="#{messages['menu.businessAccountModels']}" />
 		</p:submenu>
 
 		<p:submenu id="mediation" label="#{messages['menu.mediation']}"
