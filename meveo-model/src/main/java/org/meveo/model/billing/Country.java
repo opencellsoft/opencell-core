@@ -70,8 +70,8 @@ public class Country extends ProviderlessEntity {
 	}
 
 	
-	public String getDescription_EN() {
-		return getDescription("EN");
+	public String getDescription_ENG() {
+		return getDescription("ENG");
 	}
 	
 	public String getDescriptionEn() {
@@ -82,12 +82,12 @@ public class Country extends ProviderlessEntity {
 		this.descriptionEn = descriptionEn;
 	}
 
-	public String getDescription_FR() {
+	public String getDescription_FRA() {
 		return descriptionFr;
 	}
 	
 	public String getDescriptionFr() {
-		return getDescription("FR");
+		return getDescription("FRA");
 	}
 
 	public void setDescriptionFr(String descriptionFr) {
