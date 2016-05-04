@@ -4,37 +4,35 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.CountryDto;
+import org.meveo.api.dto.CountryIsoDto;
 
 /**
  * @author Edward P. Legaspi
  * @since Oct 7, 2013
- * 
- * @deprecated will be renammed to GettTradingCountryResponse
  **/
-@XmlRootElement(name = "GetCountryResponse")
+@XmlRootElement(name = "GetCountryIsoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetCountryResponse extends BaseResponse {
+public class GetCountryIsoResponse extends BaseResponse {
 
 	private static final long serialVersionUID = -7308813550235264178L;
 
-	private CountryDto country;
+	private CountryIsoDto country;
 
-	public GetCountryResponse() {
+	public GetCountryIsoResponse() {
 		super();
 	}
 
-	public CountryDto getCountry() {
+	public CountryIsoDto getCountry() {
 		return country;
 	}
 
-	public void setCountry(CountryDto country) {
+	public void setCountry(CountryIsoDto country) {
 		this.country = country;
 	}
 
 	@Override
 	public String toString() {
-		return "GetCountryResponse [country=" + country + ", toString()=" + super.toString() + "]";
+		return "GetCountryIsoResponse [country=" + country + ", toString()=" + super.toString() + "]";
 	}
 
 }

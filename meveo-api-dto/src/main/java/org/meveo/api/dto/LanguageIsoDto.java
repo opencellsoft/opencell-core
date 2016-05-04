@@ -10,12 +10,10 @@ import org.meveo.model.billing.TradingLanguage;
 
 /**
  * @author Edward P. Legaspi
- * 
- * @deprecated will be renammed to TradingLanguageDto
  **/
-@XmlRootElement(name = "Language")
+@XmlRootElement(name = "LanguageIso")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LanguageDto extends BaseDto {
+public class LanguageIsoDto extends BaseDto {
 
 	private static final long serialVersionUID = 725968016559888810L;
 
@@ -23,15 +21,12 @@ public class LanguageDto extends BaseDto {
 	private String code;
 	private String description;
 
-	public LanguageDto() {
+	public LanguageIsoDto() {
 
 	}
 
-	public LanguageDto(TradingLanguage e) {
-		code = e.getLanguageCode();
-		description = e.getPrDescription();
-	}
-	public LanguageDto(Language e) {
+
+	public LanguageIsoDto(Language e) {
 		code = e.getLanguageCode();
 		description = e.getDescriptionEn();
 	}
@@ -54,7 +49,7 @@ public class LanguageDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "LanguageDto [code=" + code + ", description=" + description + "]";
+		return "LanguageIsoDto [code=" + code + ", description=" + description + "]";
 	}
 
 }

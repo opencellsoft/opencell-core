@@ -12,21 +12,20 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.CountryDto;
+import org.meveo.api.dto.CountryIsoDto;
 import org.meveo.api.dto.response.GetCountryIsoResponse;
-import org.meveo.api.dto.response.GetTradingCountryResponse;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
- * Web service for managing {@link org.meveo.model.billing.Country} and {@link org.meveo.model.billing.TradingCountry}.
+ * Web service for managing {@link org.meveo.model.billing.Country}
  * 
  * @author Edward P. Legaspi
  **/
-@Path("/country")
+@Path("/countryIso")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured
-public interface TradingCountryRs extends IBaseRs {
+public interface CountryIsoRs extends IBaseRs {
 
     /**
      * Creates a tradingCountry base from the supplied country code. If the country code does not exists, a country and tradingCountry records are created
@@ -36,7 +35,7 @@ public interface TradingCountryRs extends IBaseRs {
      */
     @POST
     @Path("/")
-    public ActionStatus create(CountryDto countryDto);
+    public ActionStatus create(CountryIsoDto countryIsoDto);
 
     /**
      * Search country with a given country code.
@@ -46,7 +45,7 @@ public interface TradingCountryRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    public GetTradingCountryResponse find(@QueryParam("countryCode") String countryCode);
+    public GetCountryIsoResponse find(@QueryParam("countryCode") String countryCode);
 
     /**
      * Does not delete a country but the tradingCountry associated to it.
@@ -67,10 +66,10 @@ public interface TradingCountryRs extends IBaseRs {
      */
     @PUT
     @Path("/")
-    public ActionStatus update(CountryDto countryDto);
+    public ActionStatus update(CountryIsoDto countryIsoDto);
 
     @POST
     @Path("/createOrUpdate")
-    public ActionStatus createOrUpdate(CountryDto countryDto);
+    public ActionStatus createOrUpdate(CountryIsoDto countryIsoDto);
 
 }

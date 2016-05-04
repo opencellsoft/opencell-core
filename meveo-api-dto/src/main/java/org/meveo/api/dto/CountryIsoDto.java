@@ -7,17 +7,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.Country;
-import org.meveo.model.billing.TradingCountry;
 
 /**
  * @author Edward P. Legaspi
  * @since Oct 4, 2013
- * 
- * @deprecated will be renammed to TradingCountryDto
  **/
-@XmlRootElement(name = "Country")
+@XmlRootElement(name = "CountryIso")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CountryDto extends BaseDto {
+public class CountryIsoDto extends BaseDto {
 
 	private static final long serialVersionUID = -4175660113940481232L;
 
@@ -25,20 +22,25 @@ public class CountryDto extends BaseDto {
 	private String countryCode;
 
 	@XmlAttribute()
-	private String name;
+	private String nameEn;
+	
+	@XmlAttribute()
+	private String nameFr;
 
 	@XmlElement(required = true)
 	private String currencyCode;
-
+	
+	@XmlElement(required = true)
 	private String languageCode;
 
-	public CountryDto() {
+	public CountryIsoDto() {
 
 	}
 
-	public CountryDto(Country e) {
+	public CountryIsoDto(Country e) {
 		countryCode = e.getCountryCode();
-		name = e.getDescriptionEn();
+		nameEn = e.getDescriptionEn();
+		nameFr = e.getDescriptionFr();
 		currencyCode = e.getCurrency().getCurrencyCode();
 
 		if (e.getLanguage() != null) {
@@ -46,29 +48,6 @@ public class CountryDto extends BaseDto {
 		}
 	}
 
-	public CountryDto(TradingCountry e) {
-		countryCode = e.getCountryCode();
-		name = e.getPrDescription();
-
-		if (e.getCountry() != null && e.getCountry().getCurrency() != null) {
-			currencyCode = e.getCountry().getCurrency().getCurrencyCode();
-		}
-
-		if (e.getCountry() != null && e.getCountry().getLanguage() != null) {
-			languageCode = e.getCountry().getLanguage().getLanguageCode();
-		}
-	}
-
-	public CountryDto(TradingCountry e, Country c) {
-		countryCode = e.getCountryCode();
-		name = e.getPrDescription();
-
-		currencyCode = c.getCurrency().getCurrencyCode();
-
-		if (c.getLanguage() != null) {
-			languageCode = c.getLanguage().getLanguageCode();
-		}
-	}
 
 	public String getCountryCode() {
 		return countryCode;
@@ -78,12 +57,20 @@ public class CountryDto extends BaseDto {
 		this.countryCode = countryCode;
 	}
 
-	public String getName() {
-		return name;
+	public String getNameEn() {
+		return nameEn;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setNameEn(String nameEn) {
+		this.nameEn = nameEn;
+	}
+
+	public String getNameFr() {
+		return nameFr;
+	}
+
+	public void setNameFr(String nameFr) {
+		this.nameFr = nameFr;
 	}
 
 	public String getCurrencyCode() {
@@ -102,10 +89,12 @@ public class CountryDto extends BaseDto {
 		this.languageCode = languageCode;
 	}
 
-	@Override
 	public String toString() {
-		return "CountryDto [countryCode=" + countryCode + ", name=" + name + ", currencyCode=" + currencyCode
-				+ ", languageCode=" + languageCode + "]";
+		return "CountryIsoDto [countryCode=" + countryCode + 
+				", nameEn=" + nameEn + 
+				", nameFr=" + nameFr + 
+				", currencyCode=" + currencyCode +
+				", languageCode=" + languageCode + "]";
 	}
 
 }

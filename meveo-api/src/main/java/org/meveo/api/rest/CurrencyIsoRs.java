@@ -12,21 +12,20 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.CurrencyDto;
-import org.meveo.api.dto.response.GetCurrencyResponse;
+import org.meveo.api.dto.CurrencyIsoDto;
+import org.meveo.api.dto.response.GetCurrencyIsoResponse;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
- * Web service for managing {@link org.meveo.model.billing.Currency} and {@link org.meveo.model.billing.TradingCurrency}.
+ * Web service for managing {@link org.meveo.model.billing.Currency} 
  * 
  * @author Edward P. Legaspi
- *  @deprecated will be renammed to  TradingCurrencyRs
  **/
-@Path("/currency")
+@Path("/currencyIso")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured
-public interface CurrencyRs extends IBaseRs {
+public interface CurrencyIsoRs extends IBaseRs {
 
     /**
      * Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created
@@ -36,7 +35,7 @@ public interface CurrencyRs extends IBaseRs {
      */
     @POST
     @Path("/")
-    public ActionStatus create(CurrencyDto postData);
+    public ActionStatus create(CurrencyIsoDto currencyIsoDto);
 
     /**
      * Search currency with a given currency code.
@@ -46,7 +45,7 @@ public interface CurrencyRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    public GetCurrencyResponse find(@QueryParam("currencyCode") String currencyCode);
+    public GetCurrencyIsoResponse find(@QueryParam("currencyCode") String currencyCode);
 
     /**
      * Remove currency with a given currency code.
@@ -67,10 +66,10 @@ public interface CurrencyRs extends IBaseRs {
      */
     @PUT
     @Path("/")
-    public ActionStatus update(CurrencyDto postData);
+    public ActionStatus update(CurrencyIsoDto currencyIsoDto);
 
     @POST
     @Path("/createOrUpdate")
-    public ActionStatus createOrUpdate(CurrencyDto postData);
+    public ActionStatus createOrUpdate(CurrencyIsoDto currencyIsoDto);
 
 }

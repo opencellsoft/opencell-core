@@ -5,34 +5,30 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.billing.Language;
-import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.TradingCurrency;
 
 /**
  * @author Edward P. Legaspi
- * 
- * @deprecated will be renammed to TradingLanguageDto
  **/
-@XmlRootElement(name = "Language")
+@XmlRootElement(name = "CurrencyIso")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LanguageDto extends BaseDto {
+public class CurrencyIsoDto extends BaseDto {
 
-	private static final long serialVersionUID = 725968016559888810L;
+	private static final long serialVersionUID = 9143645109603442839L;
 
 	@XmlAttribute(required = true)
 	private String code;
+
 	private String description;
 
-	public LanguageDto() {
+	public CurrencyIsoDto() {
 
 	}
 
-	public LanguageDto(TradingLanguage e) {
-		code = e.getLanguageCode();
-		description = e.getPrDescription();
-	}
-	public LanguageDto(Language e) {
-		code = e.getLanguageCode();
+
+	public CurrencyIsoDto(Currency e) {
+		code = e.getCurrencyCode();
 		description = e.getDescriptionEn();
 	}
 
@@ -54,7 +50,7 @@ public class LanguageDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "LanguageDto [code=" + code + ", description=" + description + "]";
+		return "CurrencyIsoDto [code=" + code + ", description=" + description + "]";
 	}
 
 }

@@ -3,37 +3,45 @@ package org.meveo.api.rest.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.LanguageApi;
+import org.meveo.api.CountryIsoApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.TradingLanguageApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.LanguageDto;
-import org.meveo.api.dto.response.GetLanguageResponse;
-import org.meveo.api.dto.response.GetTradingLanguageResponse;
+import org.meveo.api.dto.CountryIsoDto;
+import org.meveo.api.dto.response.GetCountryIsoResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.rest.LanguageRs;
-import org.meveo.api.rest.TradingLanguageRs;
+import org.meveo.api.rest.CountryIsoRs;
 
 /**
+ * @see {@link org.meveo.api.rest.CountryIsoWs}.
+ * 
  * @author Edward P. Legaspi
+ * 
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
-public class TradingLanguageRsImpl extends BaseRs implements TradingLanguageRs {
+public class CountryIsoRsImpl extends BaseRs implements CountryIsoRs {
 
     @Inject
-    private TradingLanguageApi tradingCurrencyApi;
+    private CountryIsoApi countryIsoApi;
 
+    /***
+     * Creates an instance of @see Country.
+     * 
+     * @param countryDto
+     * @return @see ActionStatus
+     */
     @Override
-    public ActionStatus create(LanguageDto postData) {
+    public ActionStatus create(CountryIsoDto countryDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            tradingCurrencyApi.create(postData, getCurrentUser());
+            countryIsoApi.create(countryDto, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -49,11 +57,12 @@ public class TradingLanguageRsImpl extends BaseRs implements TradingLanguageRs {
     }
 
     @Override
-    public GetTradingLanguageResponse find(String languageCode) {
-    	GetTradingLanguageResponse result = new GetTradingLanguageResponse();
+    public GetCountryIsoResponse find(@QueryParam("countryCode") String countryCode) {
+    	GetCountryIsoResponse result = new GetCountryIsoResponse();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setLanguage(tradingCurrencyApi.find(languageCode, getCurrentUser().getProvider()));
+            result.setCountry(countryIsoApi.find(countryCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -69,11 +78,11 @@ public class TradingLanguageRsImpl extends BaseRs implements TradingLanguageRs {
     }
 
     @Override
-    public ActionStatus remove(String languageCode) {
+    public ActionStatus remove(@PathParam("countryCode") String countryCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            tradingCurrencyApi.remove(languageCode, getCurrentUser().getProvider());
+            countryIsoApi.remove(countryCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -89,11 +98,11 @@ public class TradingLanguageRsImpl extends BaseRs implements TradingLanguageRs {
     }
 
     @Override
-    public ActionStatus update(LanguageDto postData) {
+    public ActionStatus update(CountryIsoDto countryDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            tradingCurrencyApi.update(postData, getCurrentUser());
+            countryIsoApi.update(countryDto, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -109,11 +118,11 @@ public class TradingLanguageRsImpl extends BaseRs implements TradingLanguageRs {
     }
 
     @Override
-    public ActionStatus createOrUpdate(LanguageDto postData) {
+    public ActionStatus createOrUpdate(CountryIsoDto countryDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            tradingCurrencyApi.createOrUpdate(postData, getCurrentUser());
+            countryIsoApi.createOrUpdate(countryDto, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

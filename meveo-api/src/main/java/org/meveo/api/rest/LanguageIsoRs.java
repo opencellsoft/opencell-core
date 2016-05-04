@@ -12,22 +12,20 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.LanguageDto;
-import org.meveo.api.dto.response.GetLanguageResponse;
+import org.meveo.api.dto.LanguageIsoDto;
+import org.meveo.api.dto.response.GetLanguageIsoResponse;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
- * * Web service for managing {@link org.meveo.model.billing.Language} and {@link org.meveo.model.billing.TradingLanguage}.
+ * * Web service for managing {@link org.meveo.model.billing.Language}
  * 
  * @author Edward P. Legaspi
- * 
- * @deprecated will be rennamed to  TradingLanguageRs
  **/
-@Path("/language")
+@Path("/languageIso")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured
-public interface LanguageRs extends IBaseRs {
+public interface LanguageIsoRs extends IBaseRs {
 
     /**
      * Creates tradingLanguage base on language code. If the language code does not exists, a language record is created.
@@ -37,7 +35,7 @@ public interface LanguageRs extends IBaseRs {
      */
     @POST
     @Path("/")
-    public ActionStatus create(LanguageDto postData);
+    public ActionStatus create(LanguageIsoDto languageIsoDto);
 
     /**
      * Search language given a code.
@@ -47,7 +45,7 @@ public interface LanguageRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    public GetLanguageResponse find(@QueryParam("languageCode") String languageCode);
+    public GetLanguageIsoResponse find(@QueryParam("languageCode") String languageCode);
 
     /**
      * Does not delete a language but the tradingLanguage associated to it.
@@ -67,7 +65,7 @@ public interface LanguageRs extends IBaseRs {
      */
     @PUT
     @Path("/")
-    public ActionStatus update(LanguageDto postData);
+    public ActionStatus update(LanguageIsoDto languageIsoDto);
 
     /**
      * Create or update a language if it doesn't exists
@@ -77,5 +75,5 @@ public interface LanguageRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
-    public ActionStatus createOrUpdate(LanguageDto postData);
+    public ActionStatus createOrUpdate(LanguageIsoDto languageIsoDto);
 }

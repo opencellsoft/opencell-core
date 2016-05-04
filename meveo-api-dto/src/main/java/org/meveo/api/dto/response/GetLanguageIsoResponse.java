@@ -4,37 +4,35 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.LanguageDto;
+import org.meveo.api.dto.LanguageIsoDto;
 
 /**
  * @author Edward P. Legaspi
  * @since Oct 7, 2013
- * 
- * @deprecated will be renammed to GetTradingLanguageResponse
  **/
-@XmlRootElement(name = "GetLanguageResponse")
+@XmlRootElement(name = "GetLanguageIsoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetLanguageResponse extends BaseResponse {
+public class GetLanguageIsoResponse extends BaseResponse {
 
 	private static final long serialVersionUID = -1697478352703038101L;
 
-	private LanguageDto language;
+	private LanguageIsoDto language;
 
-	public GetLanguageResponse() {
+	public GetLanguageIsoResponse() {
 		super();
 	}
 
-	public LanguageDto getLanguage() {
+	public LanguageIsoDto getLanguage() {
 		return language;
 	}
 
-	public void setLanguage(LanguageDto language) {
+	public void setLanguage(LanguageIsoDto language) {
 		this.language = language;
 	}
 
 	@Override
 	public String toString() {
-		return "GetLanguageResponse [language=" + language + "]";
+		return "GetLanguageIsoResponse [language=" + language + "]";
 	}
 
 }
