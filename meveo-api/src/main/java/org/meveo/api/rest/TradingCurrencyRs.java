@@ -12,8 +12,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.CurrencyDto;
-import org.meveo.api.dto.response.GetCurrencyResponse;
+import org.meveo.api.dto.CurrencyIsoDto;
+import org.meveo.api.dto.response.GetCurrencyIsoResponse;
 import org.meveo.api.dto.response.GetTradingCurrencyResponse;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -36,7 +36,7 @@ public interface TradingCurrencyRs extends IBaseRs {
      */
     @POST
     @Path("/")
-    public ActionStatus create(CurrencyDto postData);
+    public ActionStatus create(CurrencyIsoDto postData);
 
     /**
      * Search currency with a given currency code.
@@ -67,10 +67,10 @@ public interface TradingCurrencyRs extends IBaseRs {
      */
     @PUT
     @Path("/")
-    public ActionStatus update(CurrencyDto postData);
+    public ActionStatus update(CurrencyIsoDto postData);
 
     @POST
     @Path("/createOrUpdate")
-    public ActionStatus createOrUpdate(CurrencyDto postData);
+    public ActionStatus createOrUpdate(CurrencyIsoDto postData);
 
 }

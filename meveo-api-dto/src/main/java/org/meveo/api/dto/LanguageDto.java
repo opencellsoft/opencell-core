@@ -10,6 +10,8 @@ import org.meveo.model.billing.TradingLanguage;
 
 /**
  * @author Edward P. Legaspi
+ * 
+ * @deprecated will be renammed to TradingLanguageDto
  **/
 @XmlRootElement(name = "Language")
 @XmlAccessorType(XmlAccessType.FIELD)

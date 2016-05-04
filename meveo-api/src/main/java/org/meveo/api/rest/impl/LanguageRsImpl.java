@@ -17,6 +17,8 @@ import org.meveo.api.rest.LanguageRs;
 
 /**
  * @author Edward P. Legaspi
+ * 
+ * @deprecated will be renammed to TradingLanguageRsImpl
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -50,7 +52,7 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
         GetLanguageResponse result = new GetLanguageResponse();
 
         try {
-            result.setLanguage(languageApi.find(languageCode));
+            result.setLanguage(languageApi.find(languageCode,getCurrentUser().getProvider()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -70,7 +72,7 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            languageApi.remove(languageCode);
+            languageApi.remove(languageCode,getCurrentUser().getProvider());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CountryDto;
-import org.meveo.api.dto.response.GetCountryResponse;
+import org.meveo.api.dto.response.GetCountryIsoResponse;
 import org.meveo.api.dto.response.GetTradingCountryResponse;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -42,7 +42,7 @@ public interface TradingCountryRs extends IBaseRs {
      * Search country with a given country code.
      * 
      * @param countryCode
-     * @return {@link org.meveo.api.dto.response.GetCountryResponse}.
+     * @return {@link org.meveo.api.dto.response.GetCountryIsoResponse}.
      */
     @GET
     @Path("/")
