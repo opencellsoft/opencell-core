@@ -58,7 +58,7 @@ public class MediationJobBean {
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, String parameter, User currentUser,File file) {
 		log.debug("Running for user={}, parameter={}", currentUser, parameter);
-		
+		report="";
 		Provider provider = currentUser.getProvider();
 
 		ParamBean parambean = ParamBean.getInstance();
@@ -76,18 +76,18 @@ public class MediationJobBean {
 		if (!f.exists()) {
 			f.mkdirs();
 		}
-		report = "";
 
 		if (file != null) {
+			
 			cdrFileName = file.getAbsolutePath();
 			result.setNbItemsToProcess(1);
-
 			log.info("InputFiles job {} in progress...", file.getName());
 
 			cdrFileName = file.getName();
 			File currentFile = FileUtils.addExtension(file, ".processing");
 			BufferedReader cdrReader = null;
 			try {
+				addReport("File = " + file.getName() );
 				cdrReader = new BufferedReader(new InputStreamReader(new FileInputStream(currentFile)));
 				cdrParser.init(file);
 				String line = null;
@@ -100,10 +100,12 @@ public class MediationJobBean {
 						outputCDR(line);
 						result.registerSucces();
                     } catch (CDRParsingException e) {
+                    	addReport("Line=" + processed ,e.getClass().getSimpleName(),e.getMessage());
                         log.warn("error while parsing cdr {} {}", e.getClass().getSimpleName(), e.getMessage());
 						result.registerError("file=" + file.getName() + ", line=" + processed + ": " + e.getRejectionCause().name());
 						rejectCDR(e.getCdr(), e.getRejectionCause());
 					} catch (Exception e) {
+						addReport("Line=" + processed ,e.getMessage());
 						log.warn("error on reject cdr ",e);
 						result.registerError("file=" + file.getName() + ", line=" + processed + ": " + e.getMessage());
 						rejectCDR(line, CDRRejectionCauseEnum.TECH_ERR);
@@ -111,7 +113,7 @@ public class MediationJobBean {
 				}
 
 				if (processed == 0) {
-					report += "\r\n file is empty ";
+					addReport("file is empty ");
 				}
 
 				log.info("InputFiles job {} done.", file.getName());
@@ -135,7 +137,7 @@ public class MediationJobBean {
 						currentFile.delete();
 					}
 				} catch (Exception e) {
-					report += "\r\n cannot delete " + cdrFileName;
+					addReport("cannot delete " + cdrFileName);
 				}
 
 				try {
@@ -158,11 +160,18 @@ public class MediationJobBean {
 			}
 
 
-			result.setReport(report);
+			result.addReport(report);
 		} else {
 			log.info("no file to process");
 		}
 
+	}
+
+	private void addReport(String... strings) {
+		report+= "\r\n";
+		for(String smallReport : strings){
+	        report+= smallReport+". ";
+	    }	
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
