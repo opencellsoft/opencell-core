@@ -44,9 +44,6 @@ import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTaxesResponse;
 import org.meveo.api.dto.response.GetTerminationReasonResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
-import org.meveo.api.dto.response.GetTradingCountryResponse;
-import org.meveo.api.dto.response.GetTradingCurrencyResponse;
-import org.meveo.api.dto.response.GetTradingLanguageResponse;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.PermissionResponseDto;
@@ -56,20 +53,25 @@ import org.meveo.api.dto.response.SellerResponseDto;
 /**
  * @author Edward P. Legaspi
  **/
+@SuppressWarnings("deprecation")
 @WebService
 public interface SettingsWs extends IBaseWs {
 
     // provider
 
+	@Deprecated
     @WebMethod
     public ActionStatus createProvider(@WebParam(name = "provider") ProviderDto postData);
 
+	@Deprecated
     @WebMethod
     public GetProviderResponse findProvider(@WebParam(name = "providerCode") String providerCode);
 
+	@Deprecated
     @WebMethod
     public ActionStatus updateProvider(@WebParam(name = "provider") ProviderDto postData);
 
+	@Deprecated
     @WebMethod
     public ActionStatus createOrUpdateProvider(@WebParam(name = "provider") ProviderDto postData);
 

@@ -11,15 +11,12 @@ import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.CurrencyDto;
-import org.meveo.api.dto.CurrencyIsoDto;
 import org.meveo.api.dto.InvoiceCategoryDto;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.LanguageDto;
-import org.meveo.api.dto.LanguageIsoDto;
 import org.meveo.api.dto.ProviderDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
-import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
@@ -76,6 +73,7 @@ import org.meveo.service.payments.impl.CreditCategoryService;
 /**
  * @author Edward P. Legaspi
  **/
+@SuppressWarnings("deprecation")
 @Stateless
 public class ProviderApi extends BaseApi {
 

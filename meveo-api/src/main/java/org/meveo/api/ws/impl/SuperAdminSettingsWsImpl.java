@@ -4,11 +4,9 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.CountryIsoApi;
 import org.meveo.api.CurrencyIsoApi;
 import org.meveo.api.LanguageIsoApi;
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.ProviderApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -20,7 +18,6 @@ import org.meveo.api.dto.response.GetCountryIsoResponse;
 import org.meveo.api.dto.response.GetCurrencyIsoResponse;
 import org.meveo.api.dto.response.GetLanguageIsoResponse;
 import org.meveo.api.dto.response.GetProviderResponse;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SuperAdminSettingsWs;
 
@@ -31,402 +28,262 @@ import org.meveo.api.ws.SuperAdminSettingsWs;
 @Interceptors({ WsRestApiInterceptor.class })
 public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettingsWs {
 
-    
-    @Inject
-    private CountryIsoApi countryIsoApi;
+	@Inject
+	private CountryIsoApi countryIsoApi;
 
-    @Inject
-    private LanguageIsoApi languageApi;
-    
-    @Inject
-    private CurrencyIsoApi currencyApi;
+	@Inject
+	private LanguageIsoApi languageIsoApi;
 
-   
-    @Inject
-    private ProviderApi providerApi;
+	@Inject
+	private CurrencyIsoApi currencyIsoApi;
 
+	@Inject
+	private ProviderApi providerApi;
 
+	@Override
+	public ActionStatus createProvider(ProviderDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-   
-    @Override
-    public ActionStatus createProvider(ProviderDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			providerApi.create(postData, getCurrentUser());
 
-        try {
-            providerApi.create(postData, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    @Override
-    public GetProviderResponse findProvider(String providerCode) {
-        GetProviderResponse result = new GetProviderResponse();
+	@Override
+	public GetProviderResponse findProvider(String providerCode) {
+		GetProviderResponse result = new GetProviderResponse();
 
-        try {
-            result.setProvider(providerApi.find(providerCode, getCurrentUser()));
+		try {
+			result.setProvider(providerApi.find(providerCode, getCurrentUser()));
 
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        }
+		} catch (Exception e) {
+			super.processException(e, result.getActionStatus());
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    @Override
-    public ActionStatus updateProvider(ProviderDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	@Override
+	public ActionStatus updateProvider(ProviderDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            providerApi.update(postData, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		try {
+			providerApi.update(postData, getCurrentUser());
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    @Override
-    public ActionStatus createOrUpdateProvider(ProviderDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	@Override
+	public ActionStatus createOrUpdateProvider(ProviderDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            providerApi.createOrUpdate(postData, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		try {
+			providerApi.createOrUpdate(postData, getCurrentUser());
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
 
-        return result;
-    }
+		return result;
+	}
 
- 
 	@Override
 	public ActionStatus createLanguage(LanguageIsoDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            languageApi.create(postData, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		try {
+			languageIsoApi.create(postData, getCurrentUser());
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
 
-        return result;
+		return result;
 	}
 
 	@Override
 	public GetLanguageIsoResponse findLanguage(String languageCode) {
 		GetLanguageIsoResponse result = new GetLanguageIsoResponse();
 
-        try {
-            result.setLanguage(languageApi.find(languageCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        }
-
-        return result;
+		try {
+			result.setLanguage(languageIsoApi.find(languageCode));
+		} catch (Exception e) {
+			super.processException(e, result.getActionStatus());
+		}
+		return result;
 	}
 
 	@Override
 	public ActionStatus removeLanguage(String languageCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            languageApi.remove(languageCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		try {
+			languageIsoApi.remove(languageCode);
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
 
-        return result;
+		return result;
 	}
 
 	@Override
 	public ActionStatus updateLanguage(LanguageIsoDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            languageApi.update(postData, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
-
-        return result;
+		try {
+			languageIsoApi.update(postData, getCurrentUser());
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
+		return result;
 	}
 
 	@Override
 	public ActionStatus createOrUpdateLanguage(LanguageIsoDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            languageApi.createOrUpdate(postData, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		try {
+			languageIsoApi.createOrUpdate(postData, getCurrentUser());
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
 
-        return result;
+		return result;
 	}
 
 	@Override
 	public ActionStatus createCountry(CountryIsoDto countryIsoDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            countryIsoApi.create(countryIsoDto, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		try {
+			countryIsoApi.create(countryIsoDto, getCurrentUser());
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
 
-        return result;
+		return result;
 	}
 
 	@Override
 	public GetCountryIsoResponse findCountry(String countryCode) {
 		GetCountryIsoResponse result = new GetCountryIsoResponse();
 
-        try {
-            result.setCountry(countryIsoApi.find(countryCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        }
+		try {
+			result.setCountry(countryIsoApi.find(countryCode));
+		} catch (Exception e) {
+			super.processException(e, result.getActionStatus());
+		}
 
-        return result;
+		return result;
 	}
 
 	@Override
 	public ActionStatus removeCountry(String countryCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            countryIsoApi.remove(countryCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		try {
+			countryIsoApi.remove(countryCode);
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
 
-        return result;
+		return result;
 	}
 
 	@Override
 	public ActionStatus updateCountry(CountryIsoDto countryIsoDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            countryIsoApi.update(countryIsoDto, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		try {
+			countryIsoApi.update(countryIsoDto, getCurrentUser());
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
 
-        return result;
+		return result;
 	}
 
 	@Override
 	public ActionStatus createOrUpdateCountry(CountryIsoDto countryIsoDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            countryIsoApi.createOrUpdate(countryIsoDto, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		try {
+			countryIsoApi.createOrUpdate(countryIsoDto, getCurrentUser());
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
 
-        return result;
+		return result;
 	}
 
 	@Override
 	public ActionStatus createCurrency(CurrencyIsoDto currencyIsoDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            currencyApi.create(currencyIsoDto, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		try {
+			currencyIsoApi.create(currencyIsoDto, getCurrentUser());
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
 
-        return result;
+		return result;
 	}
 
 	@Override
 	public GetCurrencyIsoResponse findCurrency(String currencyCode) {
 		GetCurrencyIsoResponse result = new GetCurrencyIsoResponse();
 
-        try {
-            result.setCurrency(currencyApi.find(currencyCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        }
+		try {
+			result.setCurrency(currencyIsoApi.find(currencyCode));
+		} catch (Exception e) {
+			super.processException(e, result.getActionStatus());
+		}
 
-        return result;
+		return result;
 	}
 
 	@Override
 	public ActionStatus removeCurrency(String currencyCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            currencyApi.remove(currencyCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		try {
+			currencyIsoApi.remove(currencyCode);
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
 
-        return result;
+		return result;
 	}
 
 	@Override
 	public ActionStatus updateCurrency(CurrencyIsoDto currencyIsoDto) {
-		 ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	        try {
-	            currencyApi.update(currencyIsoDto, getCurrentUser());
-	        } catch (MeveoApiException e) {
-	            result.setErrorCode(e.getErrorCode());
-	            result.setStatus(ActionStatusEnum.FAIL);
-	            result.setMessage(e.getMessage());
-	        } catch (Exception e) {
-	            log.error("Failed to execute API", e);
-	            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-	            result.setStatus(ActionStatusEnum.FAIL);
-	            result.setMessage(e.getMessage());
-	        }
+		try {
+			currencyIsoApi.update(currencyIsoDto, getCurrentUser());
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
 
-	        return result;
+		return result;
 	}
 
 	@Override
 	public ActionStatus createOrUpdateCurrency(CurrencyIsoDto currencyIsoDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            currencyApi.createOrUpdate(currencyIsoDto, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		try {
+			currencyIsoApi.createOrUpdate(currencyIsoDto, getCurrentUser());
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
 
-        return result;
+		return result;
 	}
 }

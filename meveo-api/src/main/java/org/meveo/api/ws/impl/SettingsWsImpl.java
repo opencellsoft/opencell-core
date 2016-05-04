@@ -78,6 +78,7 @@ import org.meveo.api.ws.SettingsWs;
 /**
  * @author Edward P. Legaspi
  **/
+@SuppressWarnings("deprecation")
 @WebService(serviceName = "SettingsWs", endpointInterface = "org.meveo.api.ws.SettingsWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class SettingsWsImpl extends BaseWs implements SettingsWs {
@@ -138,6 +139,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     @Inject
     private TerminationReasonApi terminationReasonApi;
 
+    @Deprecated
     @Override
     public ActionStatus createCountry(CountryDto countryDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -158,6 +160,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
+    @Deprecated
     @Override
     public GetCountryResponse findCountry(String countryCode) {
     	GetCountryResponse result = new GetCountryResponse();
@@ -179,6 +182,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
+    @Deprecated
     @Override
     public ActionStatus removeCountry(String countryCode,String currencyCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -199,6 +203,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
+    @Deprecated
     @Override
     public ActionStatus updateCountry(CountryDto countryDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -219,6 +224,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
+    @Deprecated
     @Override
     public ActionStatus createCurrency(CurrencyDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -239,6 +245,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
+    @Deprecated
     @Override
     public GetCurrencyResponse findCurrency(String currencyCode) {
     	GetCurrencyResponse result = new GetCurrencyResponse();
@@ -259,6 +266,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
+    @Deprecated
     @Override
     public ActionStatus removeCurrency(String currencyCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -279,6 +287,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
+    @Deprecated
     @Override
     public ActionStatus updateCurrency(CurrencyDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -299,6 +308,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
+    @Deprecated
     @Override
     public ActionStatus createOrUpdateCurrency(CurrencyDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -319,6 +329,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
+    
     @Override
     public ActionStatus createInvoiceCategory(InvoiceCategoryDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -639,6 +650,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
+    @Deprecated
     @Override
     public ActionStatus createProvider(ProviderDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -659,6 +671,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
+    @Deprecated
     @Override
     public GetProviderResponse findProvider(String providerCode) {
         GetProviderResponse result = new GetProviderResponse();
@@ -680,6 +693,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
+    @Deprecated
     @Override
     public ActionStatus updateProvider(ProviderDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -1603,6 +1617,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
+    @Deprecated
     @Override
     public ActionStatus createOrUpdateProvider(ProviderDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -2013,6 +2028,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
+    @Deprecated
 	@Override
 	public ActionStatus createOrUpdateLanguage(LanguageDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
