@@ -37,6 +37,7 @@ public class ProviderDto extends BaseDto {
 	private Integer invoiceSequenceSize;
 	
 	private boolean enterprise;
+	private boolean levelDuplication;
 	private String invoicePrefix;
 	private Long currentInvoiceNb;
 	private Boolean displaySubscriptions = false;
@@ -53,6 +54,8 @@ public class ProviderDto extends BaseDto {
 	private Long currentInvoiceAdjustmentNb;
 	private Integer invoiceAdjustmentSequenceSize;
 	private Integer rounding=2;
+	private Long prepaidReservationExpirationDelayinMillisec ;
+	private String discountAccountingCode;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
 	
@@ -81,11 +84,14 @@ public class ProviderDto extends BaseDto {
 		multiCountry = e.getMulticountryFlag();
 		multiLanguage = e.getMultilanguageFlag();
 		rounding=e.getRounding();
+		prepaidReservationExpirationDelayinMillisec = e.getPrepaidReservationExpirationDelayinMillisec();
+		discountAccountingCode = e.getDiscountAccountingCode();
 		email = e.getEmail();
 		
 		customFields = CustomFieldsDto.toDTO(customFieldInstances);
 		
 		this.setEnterprise(e.isEntreprise());
+		this.setLevelDuplication(e.isLevelDuplication());
 		this.setInvoicePrefix(e.getInvoicePrefix());
 		this.setCurrentInvoiceNb(e.getCurrentInvoiceNb());
 		this.setDisplayFreeTransacInInvoice(e.isDisplayFreeTransacInInvoice());
@@ -212,6 +218,14 @@ public class ProviderDto extends BaseDto {
 
 	public void setEnterprise(boolean enterprise) {
 		this.enterprise = enterprise;
+	}
+	
+	public boolean isLevelDuplication() {
+		return levelDuplication;
+	}
+	
+	public void setLevelDuplication(boolean levelDuplication) {
+		this.levelDuplication = levelDuplication;
 	}
 
 	public String getInvoicePrefix() {
@@ -344,7 +358,21 @@ public class ProviderDto extends BaseDto {
 		this.rounding = rounding;
 	}
 	
+	public Long getPrepaidReservationExpirationDelayinMillisec() {
+		return prepaidReservationExpirationDelayinMillisec;
+	}
 	
+	public void setPrepaidReservationExpirationDelayinMillisec(Long prepaidReservationExpirationDelayinMillisec) {
+		this.prepaidReservationExpirationDelayinMillisec = prepaidReservationExpirationDelayinMillisec;
+	}
+	
+	public String getDiscountAccountingCode() {
+		return discountAccountingCode;
+	}
+	
+	public void setDiscountAccountingCode(String discountAccountingCode) {
+		this.discountAccountingCode = discountAccountingCode;
+	}
 	
 	/**
 	 * @return the email
@@ -377,7 +405,7 @@ public class ProviderDto extends BaseDto {
 				+ ", multiCountry=" + multiCountry + ", multiLanguage="
 				+ multiLanguage + ", userAccount=" + userAccount
 				+ ", invoiceSequenceSize=" + invoiceSequenceSize
-				+ ", enterprise=" + enterprise + ", invoicePrefix="
+				+ ", enterprise=" + enterprise + ", levelDuplication=" + levelDuplication + ", invoicePrefix="
 				+ invoicePrefix + ", currentInvoiceNb=" + currentInvoiceNb
 				+ ", displaySubscriptions=" + displaySubscriptions
 				+ ", displayServices=" + displayServices + ", displayOffers="
@@ -390,7 +418,10 @@ public class ProviderDto extends BaseDto {
 				+ invoiceAdjustmentPrefix + ", currentInvoiceAdjustmentNb="
 				+ currentInvoiceAdjustmentNb
 				+ ", invoiceAdjustmentSequenceSize="
-				+ invoiceAdjustmentSequenceSize + ", bankCoordinates="+ bankCoordinates+", rounding="+ rounding+", email="+ email+ ", customFields="
+				+ invoiceAdjustmentSequenceSize + ", bankCoordinates="+ bankCoordinates 
+				+ ", prepaidReservationExpirationDelayinMillisec=" + prepaidReservationExpirationDelayinMillisec
+				+ ", discountAccountingCode=" + discountAccountingCode
+				+ ", rounding="+ rounding+", email="+ email+ ", customFields="
 				+ customFields + "]";
 	}
 
