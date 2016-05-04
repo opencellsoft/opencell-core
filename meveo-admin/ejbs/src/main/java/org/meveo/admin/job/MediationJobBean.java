@@ -167,7 +167,7 @@ public class MediationJobBean {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	private void createEdr(String line, User currentUser) throws CDRParsingException, BusinessException {
-		List<EDR> edrs = cdrParser.getEDRList(line, currentUser.getProvider());
+		List<EDR> edrs = cdrParser.getEDRList(line, currentUser.getProvider(), CDRParsingService.CDR_ORIGIN_JOB);
 		if (edrs != null && edrs.size() > 0) {
 			for (EDR edr : edrs) {
 				createEdr(edr, currentUser);
