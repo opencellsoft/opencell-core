@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.account.BankCoordinatesDto;
-import org.meveo.model.billing.InvoiceConfiguration;
+import org.meveo.api.dto.invoice.InvoiceConfigurationDto;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 
@@ -40,16 +40,16 @@ public class ProviderDto extends BaseDto {
 	private boolean levelDuplication;
 	private String invoicePrefix;
 	private Long currentInvoiceNb;
-	private Boolean displaySubscriptions = false;
-	private Boolean displayServices = false;
-	private Boolean displayOffers = false;
-	private Boolean displayEdrs = false;
-	private Boolean displayProvider = false;
-	private Boolean displayCfAsXML = false;
-	private Boolean displayPricePlans = false;
+	//private Boolean displaySubscriptions = false;
+	//private Boolean displayServices = false;
+	//private Boolean displayOffers = false;
+	//private Boolean displayEdrs = false;
+	//private Boolean displayProvider = false;
+	//private Boolean displayCfAsXML = false;
+	//private Boolean displayPricePlans = false;
 	private boolean displayFreeTransacInInvoice;
-	private Boolean displayDetail = true;
-	private Boolean displayChargesPeriods = false;
+	//private Boolean displayDetail = true;
+	//private Boolean displayChargesPeriods = false;
 	private String invoiceAdjustmentPrefix;
 	private Long currentInvoiceAdjustmentNb;
 	private Integer invoiceAdjustmentSequenceSize;
@@ -58,6 +58,7 @@ public class ProviderDto extends BaseDto {
 	private String discountAccountingCode;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
+	private InvoiceConfigurationDto invoiceConfiguration = new InvoiceConfigurationDto();
 	
 	
 	@XmlElement(required = false)
@@ -95,7 +96,7 @@ public class ProviderDto extends BaseDto {
 		this.setInvoicePrefix(e.getInvoicePrefix());
 		this.setCurrentInvoiceNb(e.getCurrentInvoiceNb());
 		this.setDisplayFreeTransacInInvoice(e.isDisplayFreeTransacInInvoice());
-		InvoiceConfiguration invoiceConfiguration = e.getInvoiceConfiguration();
+		/*InvoiceConfiguration invoiceConfiguration = e.getInvoiceConfiguration();
 		if (invoiceConfiguration != null) {
 			this.setDisplaySubscriptions(invoiceConfiguration.getDisplaySubscriptions());
 			this.setDisplayServices(invoiceConfiguration.getDisplayServices());
@@ -106,7 +107,7 @@ public class ProviderDto extends BaseDto {
 			this.setDisplayPricePlans(invoiceConfiguration.getDisplayPricePlans());
 			this.setDisplayCfAsXML(invoiceConfiguration.getDisplayCfAsXML());
 			this.setDisplayChargesPeriods(invoiceConfiguration.getDisplayChargesPeriods());
-		}
+		}*/
 		
 		if (e.getInvoiceAdjustmentPrefix() != null) {
 			this.setInvoiceAdjustmentPrefix(e.getInvoiceAdjustmentPrefix());
@@ -120,8 +121,11 @@ public class ProviderDto extends BaseDto {
 			this.setInvoiceAdjustmentSequenceSize(e.getInvoiceAdjustmentSequenceSize());
 		}
 		if (e.getBankCoordinates() != null) {
-	         this.setBankCoordinates(new BankCoordinatesDto(e.getBankCoordinates()));
-	        }
+	        this.setBankCoordinates(new BankCoordinatesDto(e.getBankCoordinates()));
+	    }
+		if(e.getInvoiceConfiguration() != null) {
+			this.setInvoiceConfiguration(new InvoiceConfigurationDto(e.getInvoiceConfiguration()));
+		}
 	}
 
 	public String getCode() {
@@ -244,46 +248,6 @@ public class ProviderDto extends BaseDto {
 		this.currentInvoiceNb = currentInvoiceNb;
 	}
 
-	public Boolean getDisplaySubscriptions() {
-		return displaySubscriptions;
-	}
-
-	public void setDisplaySubscriptions(Boolean displaySubscriptions) {
-		this.displaySubscriptions = displaySubscriptions;
-	}
-
-	public Boolean getDisplayServices() {
-		return displayServices;
-	}
-
-	public void setDisplayServices(Boolean displayServices) {
-		this.displayServices = displayServices;
-	}
-
-	public Boolean getDisplayOffers() {
-		return displayOffers;
-	}
-
-	public void setDisplayOffers(Boolean displayOffers) {
-		this.displayOffers = displayOffers;
-	}
-
-	public Boolean getDisplayEdrs() {
-		return displayEdrs;
-	}
-
-	public void setDisplayEdrs(Boolean displayEdrs) {
-		this.displayEdrs = displayEdrs;
-	}
-
-	public Boolean getDisplayProvider() {
-		return displayProvider;
-	}
-
-	public void setDisplayProvider(Boolean displayProvider) {
-		this.displayProvider = displayProvider;
-	}
-
 	public boolean isDisplayFreeTransacInInvoice() {
 		return displayFreeTransacInInvoice;
 	}
@@ -291,7 +255,7 @@ public class ProviderDto extends BaseDto {
 	public void setDisplayFreeTransacInInvoice(boolean displayFreeTransacInInvoice) {
 		this.displayFreeTransacInInvoice = displayFreeTransacInInvoice;
 	}
-
+	
 	public String getInvoiceAdjustmentPrefix() {
 		return invoiceAdjustmentPrefix;
 	}
@@ -317,37 +281,20 @@ public class ProviderDto extends BaseDto {
 		this.invoiceAdjustmentSequenceSize = invoiceAdjustmentSequenceSize;
 	}
 
-	public Boolean getDisplayDetail() {
-		return displayDetail;
-	}
-
-	public void setDisplayDetail(Boolean displayDetail) {
-		this.displayDetail = displayDetail;
-	}
-
-	public Boolean getDisplayCfAsXML() {
-		return displayCfAsXML;
-	}
-
-	public void setDisplayCfAsXML(Boolean displayCfAsXML) {
-		this.displayCfAsXML = displayCfAsXML;
-	}
-
-	public Boolean getDisplayPricePlans() {
-		return displayPricePlans;
-	}
-
-	public void setDisplayPricePlans(Boolean displayPricePlans) {
-		this.displayPricePlans = displayPricePlans;
-	}
-	
-
 	public BankCoordinatesDto getBankCoordinates() {
 		return bankCoordinates;
 	}
 
 	public void setBankCoordinates(BankCoordinatesDto bankCoordinates) {
 		this.bankCoordinates = bankCoordinates;
+	}
+	
+	public InvoiceConfigurationDto getInvoiceConfiguration() {
+		return invoiceConfiguration;
+	}
+	
+	public void setInvoiceConfiguration(InvoiceConfigurationDto invoiceConfiguration) {
+		this.invoiceConfiguration = invoiceConfiguration;
 	}
 
 	public Integer getRounding() {
@@ -388,15 +335,6 @@ public class ProviderDto extends BaseDto {
 		this.email = email;
 	}
 	
-
-	public Boolean getDisplayChargesPeriods() {
-		return displayChargesPeriods;
-	}
-
-	public void setDisplayChargesPeriods(Boolean displayChargesPeriods) {
-		this.displayChargesPeriods = displayChargesPeriods;
-	}
-
 	@Override
 	public String toString() {
 		return "ProviderDto [code=" + code + ", description=" + description
@@ -406,19 +344,12 @@ public class ProviderDto extends BaseDto {
 				+ multiLanguage + ", userAccount=" + userAccount
 				+ ", invoiceSequenceSize=" + invoiceSequenceSize
 				+ ", enterprise=" + enterprise + ", levelDuplication=" + levelDuplication + ", invoicePrefix="
-				+ invoicePrefix + ", currentInvoiceNb=" + currentInvoiceNb
-				+ ", displaySubscriptions=" + displaySubscriptions
-				+ ", displayServices=" + displayServices + ", displayOffers="
-				+ displayOffers + ", displayEdrs=" + displayEdrs+ ", displayPricePlans=" + displayPricePlans
-				+ ", displayCfAsXML=" + displayCfAsXML
-				+ ", displayProvider=" + displayProvider
-				+ ", displayFreeTransacInInvoice="
-				+ displayFreeTransacInInvoice + ", displayDetail="
-				+ displayDetail + ", displayCharges="+displayChargesPeriods + ", displayCharges="
+				+ invoicePrefix + ", currentInvoiceNb=" + currentInvoiceNb + ", invoiceAdjustmentPrefix="
 				+ invoiceAdjustmentPrefix + ", currentInvoiceAdjustmentNb="
-				+ currentInvoiceAdjustmentNb
+				+ currentInvoiceAdjustmentNb + ", displayFreeTransacInInvoice=" + displayFreeTransacInInvoice 
 				+ ", invoiceAdjustmentSequenceSize="
 				+ invoiceAdjustmentSequenceSize + ", bankCoordinates="+ bankCoordinates 
+				+ ", invoiceConfiguration=" + invoiceConfiguration
 				+ ", prepaidReservationExpirationDelayinMillisec=" + prepaidReservationExpirationDelayinMillisec
 				+ ", discountAccountingCode=" + discountAccountingCode
 				+ ", rounding="+ rounding+", email="+ email+ ", customFields="
