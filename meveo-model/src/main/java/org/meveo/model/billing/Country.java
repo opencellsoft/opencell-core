@@ -83,11 +83,11 @@ public class Country extends ProviderlessEntity {
 	}
 
 	public String getDescription_FRA() {
-		return descriptionFr;
+		return getDescription("FRA");
 	}
 	
 	public String getDescriptionFr() {
-		return getDescription("FRA");
+		return descriptionFr;
 	}
 
 	public void setDescriptionFr(String descriptionFr) {
