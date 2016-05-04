@@ -9,6 +9,8 @@ import org.meveo.api.dto.LanguageDto;
 /**
  * @author Edward P. Legaspi
  * @since Oct 7, 2013
+ * 
+ * @deprecated will be renammed to GetTradingLanguageResponse
  **/
 @XmlRootElement(name = "GetLanguageResponse")
 @XmlAccessorType(XmlAccessType.FIELD)

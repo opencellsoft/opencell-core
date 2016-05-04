@@ -12,8 +12,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.LanguageDto;
-import org.meveo.api.dto.response.GetLanguageResponse;
+import org.meveo.api.dto.LanguageIsoDto;
+import org.meveo.api.dto.response.GetLanguageIsoResponse;
 import org.meveo.api.dto.response.GetTradingLanguageResponse;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -36,7 +36,7 @@ public interface TradingLanguageRs extends IBaseRs {
      */
     @POST
     @Path("/")
-    public ActionStatus create(LanguageDto postData);
+    public ActionStatus create(LanguageIsoDto postData);
 
     /**
      * Search language given a code.
@@ -66,7 +66,7 @@ public interface TradingLanguageRs extends IBaseRs {
      */
     @PUT
     @Path("/")
-    public ActionStatus update(LanguageDto postData);
+    public ActionStatus update(LanguageIsoDto postData);
 
     /**
      * Create or update a language if it doesn't exists
@@ -76,5 +76,5 @@ public interface TradingLanguageRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
-    public ActionStatus createOrUpdate(LanguageDto postData);
+    public ActionStatus createOrUpdate(LanguageIsoDto postData);
 }

@@ -63,7 +63,7 @@ public class MediationApi extends BaseApi {
 
 			try {
 				for (String line : postData.getCdr()) {
-					List<EDR> edrs = cdrParsingService.getEDRList(line, currentUser.getProvider());
+					List<EDR> edrs = cdrParsingService.getEDRList(line, currentUser.getProvider(), CDRParsingService.CDR_ORIGIN_API);
 					for (EDR edr : edrs) {
 						log.debug("edr={}", edr);
 						edrService.create(edr, currentUser);
@@ -92,7 +92,7 @@ public class MediationApi extends BaseApi {
 			}
 			List<EDR> edrs;
 			try {
-				edrs = cdrParsingService.getEDRList(cdr, user.getProvider());
+				edrs = cdrParsingService.getEDRList(cdr, user.getProvider(), CDRParsingService.CDR_ORIGIN_API);
 				for (EDR edr : edrs) {
 					log.debug("edr={}", edr);
 					edrService.create(edr, user);
@@ -148,7 +148,7 @@ public class MediationApi extends BaseApi {
 			}
 			List<EDR> edrs;
 			try {
-				edrs = cdrParsingService.getEDRList(cdr, user.getProvider());
+				edrs = cdrParsingService.getEDRList(cdr, user.getProvider(), CDRParsingService.CDR_ORIGIN_API);
 				for (EDR edr : edrs) {
 					log.debug("edr={}", edr);
 					edrService.create(edr, user);

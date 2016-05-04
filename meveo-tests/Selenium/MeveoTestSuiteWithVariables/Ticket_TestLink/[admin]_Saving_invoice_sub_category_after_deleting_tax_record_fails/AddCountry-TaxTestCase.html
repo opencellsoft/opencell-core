@@ -12,6 +12,11 @@
 <tr><td rowspan="1" colspan="3">UpdateTabTaxTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>waitForText</td>
+	<td>${TaxTab}</td>
+	<td>Tax</td>
+</tr>
+<tr>
 	<td>assertText</td>
 	<td>${TaxTab}</td>
 	<td>Tax</td>
@@ -113,22 +118,22 @@
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>//tbody[@id='tabView:datatable_invoiceSubCategoryCountries_results_data']/tr/td[2]</td>
+	<td>//tbody[@id='tabView:datatable_invoiceSubCategoryCountries_results_data']/tr[3]/td[2]</td>
 	<td>Country code${CountryValue}</td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>//tbody[@id='tabView:datatable_invoiceSubCategoryCountries_results_data']/tr/td[2]</td>
+	<td>//tbody[@id='tabView:datatable_invoiceSubCategoryCountries_results_data']/tr[3]/td[2]</td>
 	<td>Country code${CountryValue}</td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>//tbody[@id='tabView:datatable_invoiceSubCategoryCountries_results_data']/tr/td[3]</td>
+	<td>//tbody[@id='tabView:datatable_invoiceSubCategoryCountries_results_data']/tr[3]/td[3]</td>
 	<td>Tax${TaxValue}</td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>//tbody[@id='tabView:datatable_invoiceSubCategoryCountries_results_data']/tr/td[3]</td>
+	<td>//tbody[@id='tabView:datatable_invoiceSubCategoryCountries_results_data']/tr[3]/td[3]</td>
 	<td>Tax${TaxValue}</td>
 </tr>
 </tbody></table>

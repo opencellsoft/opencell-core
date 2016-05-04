@@ -86,8 +86,6 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
     public synchronized void registerError(String error) {
         errors.add(error);
         nbItemsProcessedWithError++;
-        String errorTxt = getErrorsAString();
-        setReport(errorTxt == null ? "" : errorTxt.substring(0, errorTxt.length() < 256 ? errorTxt.length() : 255));
     }
 
     public void close(String report) {

@@ -17,7 +17,6 @@ import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.ProviderDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
-import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
@@ -74,6 +73,7 @@ import org.meveo.service.payments.impl.CreditCategoryService;
 /**
  * @author Edward P. Legaspi
  **/
+@SuppressWarnings("deprecation")
 @Stateless
 public class ProviderApi extends BaseApi {
 
@@ -199,16 +199,18 @@ public class ProviderApi extends BaseApi {
         }
 
         InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
-        invoiceConfiguration.setDisplayEdrs(postData.getDisplayEdrs());
-        invoiceConfiguration.setDisplayOffers(postData.getDisplayOffers());
-        invoiceConfiguration.setDisplayServices(postData.getDisplayServices());
-        invoiceConfiguration.setDisplaySubscriptions(postData.getDisplaySubscriptions());
-        invoiceConfiguration.setDisplayProvider(postData.getDisplayProvider());
-        invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
-        invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
-        invoiceConfiguration.setDisplayPricePlans(postData.getDisplayPricePlans());
-        invoiceConfiguration.setDisplayCfAsXML(postData.getDisplayCfAsXML());
-        invoiceConfiguration.setDisplayChargesPeriods(postData.getDisplayChargesPeriods());
+        if(postData.getInvoiceConfiguration() != null) {
+        	invoiceConfiguration.setDisplayEdrs(postData.getInvoiceConfiguration().getDisplayEdrs());
+        	invoiceConfiguration.setDisplayOffers(postData.getInvoiceConfiguration().getDisplayOffers());
+        	invoiceConfiguration.setDisplayServices(postData.getInvoiceConfiguration().getDisplayServices());
+        	invoiceConfiguration.setDisplaySubscriptions(postData.getInvoiceConfiguration().getDisplaySubscriptions());
+        	invoiceConfiguration.setDisplayProvider(postData.getInvoiceConfiguration().getDisplayProvider());
+        	invoiceConfiguration.setDisplayDetail(postData.getInvoiceConfiguration().getDisplayDetail());
+        	invoiceConfiguration.setDisplayPricePlans(postData.getInvoiceConfiguration().getDisplayPricePlans());
+        	invoiceConfiguration.setDisplayCfAsXML(postData.getInvoiceConfiguration().getDisplayCfAsXML());
+        	invoiceConfiguration.setDisplayChargesPeriods(postData.getInvoiceConfiguration().getDisplayChargesPeriods());
+        }
+
         invoiceConfiguration.setProvider(provider);
 
         provider.setInvoiceConfiguration(invoiceConfiguration);
@@ -322,22 +324,6 @@ public class ProviderApi extends BaseApi {
         provider.setInvoicePrefix(postData.getInvoicePrefix());
         provider.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
 
-        InvoiceConfiguration invoiceConfiguration = provider.getInvoiceConfiguration();
-        if (invoiceConfiguration == null) {
-            invoiceConfiguration = new InvoiceConfiguration();
-            invoiceConfiguration.setProvider(provider);
-            provider.setInvoiceConfiguration(invoiceConfiguration);
-        }
-        invoiceConfiguration.setDisplaySubscriptions(postData.getDisplaySubscriptions());
-        invoiceConfiguration.setDisplayServices(postData.getDisplayServices());
-        invoiceConfiguration.setDisplayOffers(postData.getDisplayOffers());
-        invoiceConfiguration.setDisplayEdrs(postData.getDisplayEdrs());
-        invoiceConfiguration.setDisplayProvider(postData.getDisplayProvider());
-        invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
-        invoiceConfiguration.setDisplayPricePlans(postData.getDisplayPricePlans());
-        invoiceConfiguration.setDisplayCfAsXML(postData.getDisplayCfAsXML());
-        invoiceConfiguration.setDisplayChargesPeriods(postData.getDisplayChargesPeriods());
-
         if (postData.getInvoiceSequenceSize() != null) {
             provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
         }
@@ -393,6 +379,26 @@ public class ProviderApi extends BaseApi {
             }
             provider.setBankCoordinates(bankCoordinates);
         }
+        
+        InvoiceConfiguration invoiceConfiguration = provider.getInvoiceConfiguration();
+        if (invoiceConfiguration == null) {
+            invoiceConfiguration = new InvoiceConfiguration();
+        }
+        
+    	invoiceConfiguration.setDisplaySubscriptions(postData.getInvoiceConfiguration().getDisplaySubscriptions());
+        invoiceConfiguration.setDisplayServices(postData.getInvoiceConfiguration().getDisplayServices());
+        invoiceConfiguration.setDisplayOffers(postData.getInvoiceConfiguration().getDisplayOffers());
+        invoiceConfiguration.setDisplayEdrs(postData.getInvoiceConfiguration().getDisplayEdrs());
+        invoiceConfiguration.setDisplayProvider(postData.getInvoiceConfiguration().getDisplayProvider());
+        invoiceConfiguration.setDisplayDetail(postData.getInvoiceConfiguration().getDisplayDetail());
+        invoiceConfiguration.setDisplayPricePlans(postData.getInvoiceConfiguration().getDisplayPricePlans());
+        invoiceConfiguration.setDisplayCfAsXML(postData.getInvoiceConfiguration().getDisplayCfAsXML());
+        invoiceConfiguration.setDisplayChargesPeriods(postData.getInvoiceConfiguration().getDisplayChargesPeriods());
+        
+        invoiceConfiguration.setProvider(provider);
+        provider.setInvoiceConfiguration(invoiceConfiguration);
+        
+        
 
         provider = providerService.update(provider, currentUser);
 
