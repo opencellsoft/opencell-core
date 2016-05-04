@@ -39,6 +39,9 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	
 	@Inject
 	private CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider;
+	
+	public static final String CDR_ORIGIN_API = "API";
+	public static final String CDR_ORIGIN_JOB = "JOB";
 
 	public void init(File CDRFile) throws BusinessException {
 		cdrParser = cdrParserProducer.getParser();
@@ -48,6 +51,10 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	public void initByApi(String username, String ip) throws BusinessException {
 		cdrParser = cdrParserProducer.getParser();
 		cdrParser.initByApi(username, ip);
+	}
+	
+	public String getOriginBatch(String origin) {
+		return cdrParser.getOriginBatch().get(origin);
 	}
 
 	/*public void resetAccessPointCache(Access access) {
@@ -76,14 +83,14 @@ public class CDRParsingService extends PersistenceService<EDR> {
 		}
 	}*/
 
-	public List<EDR> getEDRList(String line,Provider provider) throws CDRParsingException {
+	public List<EDR> getEDRList(String line,Provider provider, String origin) throws CDRParsingException {
 		List<EDR> result = new ArrayList<EDR>();
 		Serializable cdr = cdrParser.getCDR(line);
 		deduplicate(cdr, provider);
 		List<Access> accessPoints = accessPointLookup(cdr,provider);
 		boolean foundMatchingAccess = false;
 		for (Access accessPoint : accessPoints) {
-			EDRDAO edrDAO = cdrParser.getEDR(cdr);
+			EDRDAO edrDAO = cdrParser.getEDR(cdr, origin);
 			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= edrDAO.getEventDate()
 					.getTime())
 					&& (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > edrDAO.getEventDate()
@@ -130,7 +137,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	}
 
 	private void deduplicate(Serializable cdr, Provider provider) throws DuplicateException {
-		if (edrService.duplicateFound(provider, cdrParser.getOriginBatch(), cdrParser.getOriginRecord(cdr))) {
+		if (edrService.duplicateFound(provider, cdrParser.getOriginBatch().get(CDR_ORIGIN_JOB), cdrParser.getOriginRecord(cdr, CDR_ORIGIN_JOB))) {
 			throw new DuplicateException(cdr);
 		}
 	}

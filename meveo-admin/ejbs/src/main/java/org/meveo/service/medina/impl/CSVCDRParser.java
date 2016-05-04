@@ -20,6 +20,7 @@ package org.meveo.service.medina.impl;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Map;
 
 
 /**
@@ -37,7 +38,7 @@ public interface CSVCDRParser {
 	 * 
 	 * @return a unique identifier from the batch
 	 */	
-	String getOriginBatch();
+	Map<String, String> getOriginBatch();
 	
 	/**
 	 * Verify that the format of the CDR is correct and
@@ -55,7 +56,7 @@ public interface CSVCDRParser {
 	 * @param cdr : CDR returned by the getCDR method
 	 * @return CDR's unique key
 	 */
-	String getOriginRecord(Serializable cdr);
+	String getOriginRecord(Serializable cdr, String origin);
 
 	/**
 	 * Return in the form of an AccessDAO object the user id and sercice id 
@@ -72,7 +73,7 @@ public interface CSVCDRParser {
 	 * @return  EDR Data Access Object
 	 * @throws CDRParsingException
 	 */
-	EDRDAO getEDR(Serializable cdr);
+	EDRDAO getEDR(Serializable cdr, String origin);
 
 	/**
 	 * Construct a csv record for the rejected CDR with given rejection reason
@@ -83,5 +84,5 @@ public interface CSVCDRParser {
 	String getCDRLine(Serializable cdr, String reason);
 
 	void initByApi(String username, String ip);
-
+	
 }
