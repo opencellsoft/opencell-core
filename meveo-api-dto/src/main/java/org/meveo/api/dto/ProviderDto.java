@@ -40,16 +40,7 @@ public class ProviderDto extends BaseDto {
 	private boolean levelDuplication;
 	private String invoicePrefix;
 	private Long currentInvoiceNb;
-	//private Boolean displaySubscriptions = false;
-	//private Boolean displayServices = false;
-	//private Boolean displayOffers = false;
-	//private Boolean displayEdrs = false;
-	//private Boolean displayProvider = false;
-	//private Boolean displayCfAsXML = false;
-	//private Boolean displayPricePlans = false;
 	private boolean displayFreeTransacInInvoice;
-	//private Boolean displayDetail = true;
-	//private Boolean displayChargesPeriods = false;
 	private String invoiceAdjustmentPrefix;
 	private Long currentInvoiceAdjustmentNb;
 	private Integer invoiceAdjustmentSequenceSize;
@@ -96,18 +87,6 @@ public class ProviderDto extends BaseDto {
 		this.setInvoicePrefix(e.getInvoicePrefix());
 		this.setCurrentInvoiceNb(e.getCurrentInvoiceNb());
 		this.setDisplayFreeTransacInInvoice(e.isDisplayFreeTransacInInvoice());
-		/*InvoiceConfiguration invoiceConfiguration = e.getInvoiceConfiguration();
-		if (invoiceConfiguration != null) {
-			this.setDisplaySubscriptions(invoiceConfiguration.getDisplaySubscriptions());
-			this.setDisplayServices(invoiceConfiguration.getDisplayServices());
-			this.setDisplayOffers(invoiceConfiguration.getDisplayOffers());
-			this.setDisplayEdrs(invoiceConfiguration.getDisplayEdrs());
-			this.setDisplayProvider(invoiceConfiguration.getDisplayProvider());
-			this.setDisplayDetail(invoiceConfiguration.getDisplayDetail());
-			this.setDisplayPricePlans(invoiceConfiguration.getDisplayPricePlans());
-			this.setDisplayCfAsXML(invoiceConfiguration.getDisplayCfAsXML());
-			this.setDisplayChargesPeriods(invoiceConfiguration.getDisplayChargesPeriods());
-		}*/
 		
 		if (e.getInvoiceAdjustmentPrefix() != null) {
 			this.setInvoiceAdjustmentPrefix(e.getInvoiceAdjustmentPrefix());
