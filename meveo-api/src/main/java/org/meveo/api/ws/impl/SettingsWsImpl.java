@@ -1623,7 +1623,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerApi.createOrUpdate(postData, getCurrentUser("superAdminManagement","superAdmin"));
+            providerApi.createOrUpdate(postData, getCurrentUser("superAdmin", "superAdminManagement"));
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
