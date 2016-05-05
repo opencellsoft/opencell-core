@@ -97,9 +97,9 @@ public class RatedTransactionBean extends BaseBean<RatedTransaction> {
 	 * @author mhammam
 	 * @return true if RatedTransaction STATUS equal BILLED
 	 */
-	public boolean isDesabled(){
+	public boolean isDisabled(){
 		RatedTransaction entity = getEntity();
-		if(entity.getStatus()==RatedTransactionStatusEnum.BILLED){
+		if(entity != null && entity.getStatus()==RatedTransactionStatusEnum.BILLED){
 			return true;
 		}
 		return false;
