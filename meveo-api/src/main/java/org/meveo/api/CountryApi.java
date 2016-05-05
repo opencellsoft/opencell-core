@@ -51,12 +51,6 @@ public class CountryApi extends BaseApi {
         if (StringUtils.isBlank(postData.getCountryCode())) {
             missingParameters.add("countryCode");
         }
-        if (StringUtils.isBlank(postData.getCurrencyCode())) {
-            missingParameters.add("currencyCode");
-        }
-        if (StringUtils.isBlank(postData.getLanguageCode())) {
-            missingParameters.add("anguageCode");
-        }        
 
         handleMissingParameters();
         
@@ -70,21 +64,41 @@ public class CountryApi extends BaseApi {
 
         Country country = countryService.findByCode(postData.getCountryCode());
 
-       
+        // If country code doesn't exist in the reference table, create the country in this table ("adm_country") with the currency code for the default provider.
         if (country == null) {
-        	throw new EntityDoesNotExistsException(Country.class, postData.getLanguageCode());
+            country = new Country();
+            country.setDescriptionEn(postData.getName());
+            country.setCountryCode(postData.getCountryCode());
         }
-        
-        Language language = languageService.findByCode(postData.getLanguageCode());
-        if (language == null) {
-            throw new EntityDoesNotExistsException(Language.class, postData.getLanguageCode());
+        if (!StringUtils.isBlank(postData.getLanguageCode())) {
+            Language language = languageService.findByCode(postData.getLanguageCode());
+            if (language == null) {
+                throw new EntityDoesNotExistsException(Language.class, postData.getLanguageCode());
+            }
+
+            country.setLanguage(language);
         }
-        
-        Currency   currency = currencyService.findByCode(postData.getCurrencyCode());
+
+        Currency currency = null;
+        if (postData.getCurrencyCode() != null) { //
+            currency = currencyService.findByCode(postData.getCurrencyCode());
             // If currencyCode don't exist in reference table ("adm_currency"), return error.
             if (currency == null) {
                 throw new EntityDoesNotExistsException(Currency.class, postData.getCurrencyCode());
-            }            
+            }
+            country.setCurrency(currency);
+
+        } else {
+            if (provider.getCurrency() != null) {
+                currency = provider.getCurrency();
+                country.setCurrency(currency);
+            }
+        }
+        if (country.isTransient()) {
+            countryService.create(country, currentUser);
+        } else {
+            countryService.update(country, currentUser);
+        }
 
         // If country don't exist in the trading country table, create the country in this table ("billing_trading_country").
         tradingCountry = new TradingCountry();

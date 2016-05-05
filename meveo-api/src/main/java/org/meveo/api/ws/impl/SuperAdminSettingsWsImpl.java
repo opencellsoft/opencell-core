@@ -8,6 +8,7 @@ import org.meveo.api.CountryIsoApi;
 import org.meveo.api.CurrencyIsoApi;
 import org.meveo.api.LanguageIsoApi;
 import org.meveo.api.ProviderApi;
+import org.meveo.api.SuperAdminPermission;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CountryIsoDto;
@@ -26,6 +27,7 @@ import org.meveo.api.ws.SuperAdminSettingsWs;
  **/
 @WebService(serviceName = "SuperAdminSettingsWs", endpointInterface = "org.meveo.api.ws.SuperAdminSettingsWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@SuperAdminPermission
 public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettingsWs {
 
 	@Inject
