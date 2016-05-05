@@ -24,6 +24,7 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -90,5 +91,17 @@ public class RatedTransactionBean extends BaseBean<RatedTransaction> {
 			log.error("failed to get wallet operation",e);
 			return null;
 		}
+	}
+	/**
+	 * #1661 [GUI](#349) ratedTransactionDetail ; make all fields on readOnly if status == BILLED;
+	 * @author mhammam
+	 * @return true if RatedTransaction STATUS equal BILLED
+	 */
+	public boolean isDesabled(){
+		RatedTransaction entity = getEntity();
+		if(entity.getStatus()==RatedTransactionStatusEnum.BILLED){
+			return true;
+		}
+		return false;
 	}
 }
