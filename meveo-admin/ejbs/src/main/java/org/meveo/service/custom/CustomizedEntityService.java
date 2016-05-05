@@ -126,14 +126,14 @@ public class CustomizedEntityService implements Serializable {
                 continue;
             }
 
-            if (appliesTo.equals(EntityCustomizationUtils.getAppliesTo(cfClass))) {
+            if (appliesTo.equals(EntityCustomizationUtils.getAppliesTo(cfClass, null))) {
                 return new CustomizedEntity(cfClass);
             }
         }
 
         // Find Jobs
         for (Job job : jobInstanceService.getJobs()) {
-            if (appliesTo.equals(EntityCustomizationUtils.getAppliesTo(job.getClass()))) {
+            if (appliesTo.equals(EntityCustomizationUtils.getAppliesTo(job.getClass(), null))) {
                 return new CustomizedEntity(job.getClass());
             }
         }

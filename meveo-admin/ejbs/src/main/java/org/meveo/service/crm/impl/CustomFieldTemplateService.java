@@ -169,12 +169,25 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     @Override
-    public void remove(Long id) {
-        CustomFieldTemplate cft = findById(id);
+    public void remove(CustomFieldTemplate cft) {
         super.remove(cft);
         customFieldsCache.removeCustomFieldTemplate(cft);
     }
 
+    @Override
+    public CustomFieldTemplate enable(CustomFieldTemplate cft) {
+        cft = super.enable(cft);
+        customFieldsCache.addUpdateCustomFieldTemplate(cft);
+        return cft;
+    }
+    
+    @Override
+    public CustomFieldTemplate disable(CustomFieldTemplate cft) {
+        cft =  super.disable(cft);
+        customFieldsCache.removeCustomFieldTemplate(cft);
+        return cft;
+    }
+    
     /**
      * Get a list of custom field templates for cache
      * 

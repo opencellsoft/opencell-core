@@ -168,7 +168,7 @@ public class OrderApi extends BaseApi {
 
         CustomFieldsDto customFieldsDto = new CustomFieldsDto();
 
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(EntityCustomizationUtils.getAppliesTo(appliesToClass), provider);
+        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(EntityCustomizationUtils.getAppliesTo(appliesToClass, null), provider);
 
         for (ProductCharacteristic characteristic : product.getProductCharacteristic()) {
             if (characteristic.getName() != null && cfts.containsKey(characteristic.getName())) {

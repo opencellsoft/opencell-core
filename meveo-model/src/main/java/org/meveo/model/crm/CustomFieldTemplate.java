@@ -34,6 +34,7 @@ import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,8 @@ public class CustomFieldTemplate extends BusinessEntity {
     public static String POSITION_FIELD = "field";
 
     public static long DEFAULT_MAX_LENGTH_STRING = 50L;
+
+    public static String ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR = " - ";
 
     @Column(name = "FIELD_TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -94,6 +97,9 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Size(max = 50)
     private String defaultValue;
 
+    /**
+     * Reference to an entity. A classname. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - <CustomEntityTemplate code>"
+     */
     @Column(name = "ENTITY_CLAZZ", length = 255)
     @Size(max = 255)
     private String entityClazz;
@@ -268,6 +274,20 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     public void setEntityClazz(String entityClazz) {
         this.entityClazz = entityClazz;
+    }
+
+    /**
+     * Retrieve a cet code from classname and code as it is stored in entityClazz field.
+     * 
+     * @param entityClazz
+     * @return
+     */
+    public static String retrieveCetCode(String entityClazz) {
+        if (entityClazz.startsWith(CustomEntityTemplate.class.getName())) {
+            String cetCode = entityClazz.substring(entityClazz.indexOf(ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR) + ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR.length());
+            return cetCode;
+        }
+        return null;
     }
 
     public Object getDefaultValueConverted() {

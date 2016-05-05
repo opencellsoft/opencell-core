@@ -11,11 +11,9 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
@@ -82,17 +80,19 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         return Arrays.asList("provider");
     }
 
+    /**
+     * Autocomplete method for selecting a class/custom entity template for entity reference type Custom field template
+     * 
+     * @param query Partial value entered
+     * @return A list of matching values
+     */
     public List<String> autocompleteClassNames(String query) {
         List<String> clazzNames = new ArrayList<String>();
 
         List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, null, null, getCurrentProvider());
 
         for (CustomizedEntity customizedEntity : entities) {
-            String classNameToDisplay = ReflectionUtils.getCleanClassName(customizedEntity.getEntityClass().getName());
-            if (!customizedEntity.isStandardEntity()) {
-                classNameToDisplay = classNameToDisplay + CustomFieldInstanceService.ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR + customizedEntity.getEntityName();
-            }
-            clazzNames.add(classNameToDisplay);
+            clazzNames.add(customizedEntity.getClassnameToDisplay());
         }
 
         return clazzNames;
@@ -104,11 +104,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, null, null, getCurrentProvider());
 
         for (CustomizedEntity customizedEntity : entities) {
-            String classNameToDisplay = ReflectionUtils.getHumanClassName(customizedEntity.getEntityClass().getSimpleName());
-            if (!customizedEntity.isStandardEntity()) {
-                classNameToDisplay = classNameToDisplay + CustomFieldInstanceService.ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR + customizedEntity.getEntityName();
-            }
-            clazzNames.add(classNameToDisplay);
+            clazzNames.add(customizedEntity.getClassnameToDisplayHuman());
         }
 
         return clazzNames;

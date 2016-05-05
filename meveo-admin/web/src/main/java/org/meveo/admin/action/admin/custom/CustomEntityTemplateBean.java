@@ -141,7 +141,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         if (customizedEntity == null && entityClassName != null && !CustomEntityTemplate.class.getName().equals(entityClassName)) {
             entityClass = Class.forName(entityClassName);
             customizedEntity = new CustomizedEntity(entityClass.getSimpleName(), entityClass, null, null);
-            cetPrefix = EntityCustomizationUtils.getAppliesTo(entityClass);
+            cetPrefix = EntityCustomizationUtils.getAppliesTo(entityClass, null);
 
             if (Job.class.isAssignableFrom(entityClass)) {
 

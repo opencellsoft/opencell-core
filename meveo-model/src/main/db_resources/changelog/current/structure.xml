@@ -1625,6 +1625,12 @@
 			<column name="DESCRIPTION_FR" type="VARCHAR(100)" /> 
 		</addColumn>
 	</changeSet>
+    
+    <changeSet id="#1487_20160503" author="AndriusKarpavicius">
+        <addColumn tableName="CUST_CEI">
+            <column name="PARENT_UUID" type="VARCHAR(60)"/>
+        </addColumn>
+    </changeSet>
 
     <changeSet id="#1671_20150504" author="AndriusKarpavicius">
         <sql>

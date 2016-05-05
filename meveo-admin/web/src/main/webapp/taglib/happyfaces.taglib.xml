@@ -54,6 +54,10 @@
         <source>customFieldListTable.xhtml</source>
     </tag>
     <tag>
+        <tag-name>customFieldCHEListTable</tag-name>
+        <source>customFieldCHEListTable.xhtml</source>
+    </tag>
+    <tag>
         <tag-name>exportToXmlDialogs</tag-name>
         <source>exportToXmlDialogs.xhtml</source>
     </tag>
@@ -61,6 +65,14 @@
         <tag-name>customFields</tag-name>
         <source>customFields.xhtml</source>
     </tag>
+    <tag>
+        <tag-name>customFieldPeriods</tag-name>
+        <source>customFieldPeriods.xhtml</source>
+    </tag>    
+    <tag>
+        <tag-name>customFieldsCHE</tag-name>
+        <source>customFieldsCHE.xhtml</source>
+    </tag>    
     <tag>
         <tag-name>searchPanel</tag-name>
         <source>searchPanel.xhtml</source>

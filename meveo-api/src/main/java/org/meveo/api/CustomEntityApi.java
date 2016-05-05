@@ -307,7 +307,7 @@ public class CustomEntityApi extends BaseApi {
             throw new EntityDoesNotExistsException("Customizable entity of class " + dto.getClassname() + " not found");
         }
 
-        String appliesTo = EntityCustomizationUtils.getAppliesTo(clazz);
+        String appliesTo = EntityCustomizationUtils.getAppliesTo(clazz, null);
 
         synchronizeCustomFieldsAndActions(appliesTo, dto.getFields(), dto.getActions(), currentUser);
     }
@@ -397,7 +397,7 @@ public class CustomEntityApi extends BaseApi {
             throw new EntityDoesNotExistsException("Customizable entity of class " + customizedEntityClass + " not found");
         }
 
-        String appliesTo = EntityCustomizationUtils.getAppliesTo(clazz);
+        String appliesTo = EntityCustomizationUtils.getAppliesTo(clazz, null);
 
         Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo, currentUser.getProvider());
 

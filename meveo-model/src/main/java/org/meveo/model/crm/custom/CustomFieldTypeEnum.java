@@ -43,7 +43,7 @@ public enum CustomFieldTypeEnum {
     /**
      * An embedded entity data
      */
-    CHILD_ENTITY("customFieldTypeEnum.childEntity", true, ChildEntityValueWrapper.class);
+    CHILD_ENTITY("customFieldTypeEnum.childEntity", true, EntityReferenceWrapper.class);
 
     /**
      * Label for display in GUI
@@ -56,7 +56,7 @@ public enum CustomFieldTypeEnum {
     private boolean storedSerialized;
 
     /**
-     * Corresponding class of field type
+     * Corresponding class to field type for conversion to json
      */
     @SuppressWarnings("rawtypes")
     private Class dataClass;
