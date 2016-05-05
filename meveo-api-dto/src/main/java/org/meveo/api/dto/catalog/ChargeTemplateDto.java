@@ -73,6 +73,11 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
         }
         roundingModeDtoEnum = e.getRoundingMode();
         customFields = CustomFieldsDto.toDTO(customFieldInstances);
+        
+        inputUnitDescription = e.getInputUnitDescription();
+        ratingUnitDescription = e.getRatingUnitDescription();
+        unitNbDecimal = e.getUnitNbDecimal();
+        unitMultiplicator = e.getUnitMultiplicator();
     }
 
     public String getCode() {
