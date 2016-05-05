@@ -95,22 +95,22 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 		return result;
 	}
 	
-	public void duplicate() {
-		if (entity != null && entity.getId() != null) {
-			entity = triggeredEdrService.refreshOrRetrieve(entity);
+    public void duplicate() {
+        if (entity == null || entity.getId() == null) {
+            return;
+        }
+        entity = triggeredEdrService.refreshOrRetrieve(entity);
 
-			// Detach and clear ids of entity and related entities
-			triggeredEdrService.detach(entity);
-			entity.setId(null);
-			entity.setCode(entity.getCode() + "_copy");
+        // Detach and clear ids of entity and related entities
+        triggeredEdrService.detach(entity);
+        entity.setId(null);
+        entity.setCode(entity.getCode() + "_copy");
 
-			try {
-				triggeredEdrService.create(entity, getCurrentUser());
+        try {
+            triggeredEdrService.create(entity, getCurrentUser());
 
-			} catch (BusinessException e) {
-				log.error("error when duplicate offer#{0}:#{1}", entity.getCode(), e);
-			}
-		}
-	}
-
+        } catch (BusinessException e) {
+            log.error("error when duplicate offer#{0}:#{1}", entity.getCode(), e);
+        }
+    }
 }

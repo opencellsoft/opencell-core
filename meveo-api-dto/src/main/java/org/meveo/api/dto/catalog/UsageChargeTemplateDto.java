@@ -1,5 +1,6 @@
 package org.meveo.api.dto.catalog;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +50,7 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
 		filterParam3 = e.getFilterParam3();
 		filterParam4 = e.getFilterParam4();
 		filterExpression = e.getFilterExpression();
-		priority = e.getPriority();
+		priority = e.getPriority(); 
 	}
 
 	public String getFilterParam1() {
