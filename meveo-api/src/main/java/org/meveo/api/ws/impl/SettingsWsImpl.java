@@ -656,7 +656,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerApi.create(postData, getCurrentUser());
+            providerApi.create(postData, getCurrentUser("superAdmin", "superAdminManagement"));
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -677,7 +677,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         GetProviderResponse result = new GetProviderResponse();
 
         try {
-            result.setProvider(providerApi.find(providerCode, getCurrentUser()));
+            result.setProvider(providerApi.find(providerCode, getCurrentUser("superAdmin", "superAdminManagement")));
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -699,7 +699,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerApi.update(postData, getCurrentUser());
+            providerApi.update(postData, getCurrentUser("superAdmin", "superAdminManagement"));
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -1623,7 +1623,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerApi.createOrUpdate(postData, getCurrentUser());
+            providerApi.createOrUpdate(postData, getCurrentUser("superAdminManagement","superAdmin"));
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
