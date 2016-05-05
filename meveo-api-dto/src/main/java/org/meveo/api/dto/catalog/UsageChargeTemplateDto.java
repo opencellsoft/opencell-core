@@ -50,7 +50,7 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
 		filterParam4 = e.getFilterParam4();
 		filterExpression = e.getFilterExpression();
 		priority = e.getPriority();
-		super.setUnitNbDecimal(e.getUnitNbDecimal());
+		super.setUnitNbDecimal(e.getUnitNbDecimal()); 
 	}
 
 	public String getFilterParam1() {
