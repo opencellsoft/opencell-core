@@ -62,6 +62,13 @@ public interface AccountWs extends IBaseWs {
 	@WebMethod
 	ActionStatus createOrUpdateCustomer(@WebParam(name = "customer") CustomerDto postData);
 
+	/**
+	 * Retrieves a list of Customers filtered by code, customerCategory, seller,
+	 * or customerBrand.
+	 * 
+	 * @param postData Contains filter parameters code, customerCategory, seller or customerBrand.
+	 * @return
+	 */
 	@WebMethod
 	CustomersResponseDto listCustomerWithFilter(@WebParam(name = "customer") CustomerDto postData);
 
