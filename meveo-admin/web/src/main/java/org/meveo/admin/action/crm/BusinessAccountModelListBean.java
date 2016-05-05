@@ -11,5 +11,10 @@ import javax.inject.Named;
 public class BusinessAccountModelListBean extends BusinessAccountModelBean {
 
 	private static final long serialVersionUID = 3574716066981246932L;
+	
+	@Override
+	public String getEditViewName() {
+		return "businessAccountModelDetail";
+	}
 
 }

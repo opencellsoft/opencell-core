@@ -1619,4 +1619,16 @@
 			<column name="DISPLAY_CHARGES_PERIODS" type="BOOL" defaultValueBoolean="false"></column> 
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="#1679_20160504" author="EdwardLegaspi">
+		<createTable tableName="crm_business_account_model">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="script_instance_id" type="BIGINT" />
+			<column name="type" type="VARCHAR(20)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>

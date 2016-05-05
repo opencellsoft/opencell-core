@@ -36,9 +36,9 @@
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.account']}" disabled="true" />
+					<p:menuitem value="#{messages['menu.crm']}" disabled="true" />
 					<p:menuitem outcome="businessAccountModels"
-						value="#{messages['menu.businessAccountModel']}" />
+						value="#{messages['businessAccountModel.title']}" />
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
@@ -56,6 +56,8 @@
 						field="code" required="true" validateUnique="true" />
 					<hftl:formField label="#{messages['BusinessEntity.description']}"
 						field="description" useConverter="false" id="description" />
+					<hftl:formField label="#{messages['businessAccountModel.type']}"
+						field="type" id="type" />
 					<hftl:formField id="creationScriptId"
 						label="#{messages['businessAccount.creationScript']}"
 						field="creationScript" valueLabelField="code" required="false"
@@ -101,16 +103,22 @@
 								target="#{accountModelScriptBean.backViewSave}"
 								value="businessAccountModelDetail" />
 							<f:setPropertyActionListener
-								target="#{accountModelScriptBean.bomId}"
+								target="#{accountModelScriptBean.bamId}"
 								value="#{businessAccountModelBean.entity.id}" />
 						</p:commandButton>
 
-                        <p:tooltip for="deleteActionlink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-                        <p:commandButton id="deleteActionlink" icon="ui-icon-trash" oncomplete="actionsDoDelete()">
-                            <f:setPropertyActionListener target="#{accountModelScriptBean.entity}" value="#{entity}" />
-                            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
-                        </p:commandButton>
-                    </p:column>
+						<p:tooltip for="deleteActionlink"
+							value="#{messages['commons.delete']}" showEffect="slide"
+							hideEffect="slide" />
+						<p:commandButton id="deleteActionlink" icon="ui-icon-trash"
+							oncomplete="actionsDoDelete()">
+							<f:setPropertyActionListener
+								target="#{accountModelScriptBean.entity}" value="#{entity}" />
+							<p:confirm header="#{messages['commons.confirmationHeader']}"
+								message="#{messages['commons.confirmDelete']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:column>
 
 					<f:facet name="footer">
 						<p:commandButton id="addScript"
@@ -120,7 +128,7 @@
 							update=":scriptForm"
 							rendered="#{(businessAccountModelBean.accountModelScripts eq null or businessAccountModelBean.accountModelScripts.size() eq 0) and not businessAccountModelBean.entity.transient}">
 							<f:setPropertyActionListener
-								target="#{accountModelScriptBean.bomId}"
+								target="#{accountModelScriptBean.bamId}"
 								value="#{businessAccountModelBean.entity.id}" />
 							<f:setPropertyActionListener
 								target="#{accountModelScriptBean.backViewSave}"
@@ -129,5 +137,145 @@
 					</f:facet>
 				</p:dataTable>
 			</p:panel>
+
+			<p:remoteCommand id="remoteDeleteActionButton"
+				actionListener="#{accountModelScriptBean.deleteInlist}"
+				action="#{businessAccountModelBean.refreshScript()}"
+				name="actionsDoDelete"
+				oncomplete="handleDeleteComplete(xhr,status,args)"
+				update="@form :scriptMainForm:accountModelScript" />
+
+
+			<p:confirmDialog id="confirmCanDeleteDialog"
+				styleClass="confirm-dialog"
+				message="#{messages['commons.confirmCanotDelete']}" header=""
+				severity="alert" widgetVar="fieldsConfirmCanotDeleteWidget"
+				appendTo="@(body)">
+				<p:panel styleClass="confirm-dialog-content">
+					<p:commandButton id="canotdeleteOk"
+						value="#{messages['commons.ok']}"
+						oncomplete="PF('fieldsConfirmCanotDeleteWidget').hide()"
+						update="@this" />
+				</p:panel>
+			</p:confirmDialog>
+
+			<script type="text/javascript">
+													//<![CDATA[
+													function handleDeleteComplete(
+															xhr, status, args) {
+														var result = args.result;
+														if (typeof (result) != "undefined"
+																&& !result) {
+															PF(
+																	'fieldsConfirmCanotDeleteWidget')
+																	.show();
+														}
+													}
+													//]]>
+												</script>
+		</h:form>
+
+		<p:dialog id="scriptDialog"
+			header="#{messages['businessAccountModel.scriptHeader']}" modal="true"
+			closeOnEscape="false" maximizable="true" closable="false"
+			widgetVar="scriptDialog" width="90%" height="550px">
+
+			<p:scrollPanel mode="native" style="max-height:550px">
+				<hftl:formPanel formId="scriptForm"
+					label="#{messages['businessAccountModel.scriptHeader']}"
+					backingBean="#{accountModelScriptBean}" showFormButtons="false">
+					<h:panelGroup rendered="#{accountModelScriptBean.entity.isError()}">
+						<div class="ui-messages ui-widget">
+							<div class="ui-messages-error ui-corner-all">
+								<span class="ui-messages-error-icon"></span>
+								<ul>
+									<li><h:outputText
+											value="#{messages['scriptInstance.compilationFailed']}"
+											styleClass="ui-messages-error-summary" /></li>
+								</ul>
+							</div>
+						</div>
+					</h:panelGroup>
+
+					<hftl:formField label="#{messages['BusinessEntity.code']}"
+						disabled="true" field="code" required="true" allowEdit="false"
+						componentWidth="15" />
+					<hftl:formField label="#{messages['BusinessEntity.description']}"
+						field="description" required="false" componentWidth="15" />
+					<hftl:formField
+						label="#{messages['scriptInstance.sourceTypeEnum']}"
+						field="sourceTypeEnum" />
+					<hftl:decorateFormField fieldId="codeMirror"
+						label="#{messages['customizedEntities.actionScriptSrc']}"
+						newLine="true" componentWidth="100">
+						<pe:codeMirror id="codeMirror" theme="eclipse" mode="text/x-java"
+							value="#{accountModelScriptBean.entity.script}"
+							lineNumbers="true" required="true" />
+					</hftl:decorateFormField>
+					<hftl:formField label="#{messages['enableEntity.disabled']}"
+						doNotShowOnNew="true" allowEdit="false" field="disabled"
+						isMessage="true" newLine="true" />
+
+					<h:panelGroup id="scriptErrors"
+						rendered="#{accountModelScriptBean.entity.isError()}">
+						<hftl:decorateFormField
+							label="#{messages['scriptInstance.compilationErrors']}"
+							componentWidth="100" newLine="true"
+							rendered="#{accountModelScriptBean.entity.isError()}">
+							<p:dataTable id="entityScripts" var="entity"
+								value="#{accountModelScriptBean.entity.scriptErrors}"
+								paginator="true" rows="10" sortBy="#{entity.lineNumber}"
+								sortField="lineNumber" paginatorAlwaysVisible="false"
+								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+								rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid"
+								reflow="true">
+								<hftl:column
+									label="#{messages['scriptInstance.compilation.lineNumber']}"
+									field="lineNumber" width="10%" />
+								<hftl:column
+									label="#{messages['scriptInstance.compilation.columnNumber']}"
+									field="columnNumber" width="15%" />
+								<hftl:column
+									label="#{messages['scriptInstance.compilation.message']}"
+									field="message" />
+							</p:dataTable>
+						</hftl:decorateFormField>
+					</h:panelGroup>
+
+					<ui:param name="buttons" value="true" />
+					<ui:define name="buttons">
+						<hf:formButtons backingBean="#{accountModelScriptBean}"
+							showBackButton="false" ajaxSubmit="true"
+							submitUpdate="@form :scriptMainForm:accountModelScript"
+							edit="true" killConversationOnSave="false">
+							<p:commandButton
+								value="#{messages['scriptInstance.testCompilation']}"
+								action="#{accountModelScriptBean.testCompilation}"
+								update="@form" />
+							<p:commandButton value="#{messages['commons.disable']}"
+								rendered="#{not empty accountModelScriptBean.entity.id and accountModelScriptBean.entity.active}"
+								actionListener="#{businessAccountModelBean.refreshScript()}"
+								action="#{accountModelScriptBean.disable}" update="@form">
+								<p:confirm header="#{messages['commons.disable']}"
+									message="#{messages['commons.confirmDisable']}" />
+							</p:commandButton>
+							<p:commandButton value="#{messages['commons.enable']}"
+								rendered="#{not empty accountModelScriptBean.entity.id and accountModelScriptBean.entity.disabled}"
+								actionListener="#{businessAccountModelBean.refreshScript()}"
+								action="#{accountModelScriptBean.enable}" update="@form">
+								<p:confirm header="#{messages['commons.enable']}"
+									message="#{messages['commons.confirmEnable']}" />
+							</p:commandButton>
+
+							<p:commandButton value="#{messages['commons.close']}"
+								oncomplete="PF('scriptDialog').hide()"
+								actionListener="#{businessAccountModelBean.refreshScript()}"
+								update=":scriptMainForm" />
+						</hf:formButtons>
+					</ui:define>
+				</hftl:formPanel>
+			</p:scrollPanel>
+		</p:dialog>
+
 	</ui:define>
 </ui:composition>

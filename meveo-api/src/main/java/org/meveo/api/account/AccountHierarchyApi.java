@@ -2722,6 +2722,7 @@ public class AccountHierarchyApi extends BaseApi {
 			BillingAccountDto billingAccountDto = new BillingAccountDto();
 			billingAccountDto.setCode(postData.getCode());
 			billingAccountDto.setTerminationDate(postData.getTerminationDate());
+			billingAccountDto.setTerminationReason(postData.getTerminationReason());
 			accountEntity2 = billingAccountApi.terminate(billingAccountDto, currentUser);
 		}
 

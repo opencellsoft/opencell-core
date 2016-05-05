@@ -5,8 +5,11 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.response.account.AccountModelScriptResponseDto;
+import org.meveo.api.dto.response.account.GetAccountModelScriptsResponseDto;
 import org.meveo.api.dto.response.script.OfferModelScriptResponseDto;
 import org.meveo.api.dto.response.script.ServiceModelScriptResponseDto;
+import org.meveo.api.dto.script.AccountModelScriptDto;
 import org.meveo.api.dto.script.OfferModelScriptDto;
 import org.meveo.api.dto.script.ServiceModelScriptDto;
 
@@ -49,5 +52,25 @@ public interface ScriptWs extends IBaseWs {
 
 	@WebMethod
 	ServiceModelScriptResponseDto findServiceModelScript(@WebParam(name = "serviceModelScriptCode") String code);
+
+	// Account Model Script
+
+	@WebMethod
+	ActionStatus createAccountModelScript(@WebParam(name = "accountModelScript") AccountModelScriptDto postData);
+
+	@WebMethod
+	ActionStatus updateAccountModelScript(@WebParam(name = "accountModelScript") AccountModelScriptDto postData);
+	
+	@WebMethod
+	ActionStatus createOrUpdateAccountModelScript(@WebParam(name = "accountModelScript") AccountModelScriptDto postData);
+
+	@WebMethod
+	AccountModelScriptResponseDto findAccountModelScript(@WebParam(name = "accountModelScriptCode") String accountModelScriptCode);
+
+	@WebMethod
+	ActionStatus removeAccountModelScript(@WebParam(name = "accountModelScriptCode") String accountModelScriptCode);
+
+	@WebMethod
+	GetAccountModelScriptsResponseDto listAccountModelScript();
 
 }

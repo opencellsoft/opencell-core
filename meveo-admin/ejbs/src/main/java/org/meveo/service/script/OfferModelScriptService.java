@@ -18,8 +18,6 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.crm.Provider;
-import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.OfferModelScript;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.service.script.offer.OfferScript;
@@ -67,10 +65,13 @@ public class OfferModelScriptService extends CustomScriptService<OfferModelScrip
      * @param provider
      * @return
      */
-    public List<CustomScript> getOfferModelScriptsWithError(Provider provider) {
-        return ((List<CustomScript>) getEntityManager().createNamedQuery("CustomScript.getOfferModelScriptOnError", CustomScript.class).setParameter("isError", Boolean.TRUE)
-            .setParameter("provider", provider).getResultList());
-    }
+	// public List<CustomScript> getOfferModelScriptsWithError(Provider
+	// provider) {
+	// return ((List<CustomScript>)
+	// getEntityManager().createNamedQuery("CustomScript.getOfferModelScriptOnError",
+	// CustomScript.class).setParameter("isError", Boolean.TRUE)
+	// .setParameter("provider", provider).getResultList());
+	// }
 
     /**
      * Compile all OfferModelScripts

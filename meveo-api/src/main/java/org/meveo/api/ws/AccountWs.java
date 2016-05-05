@@ -179,12 +179,10 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus updateAccess(@WebParam(name = "access") AccessDto postData);
 
 	@WebMethod
-	GetAccessResponseDto findAccess(@WebParam(name = "accessCode") String accessCode,
-			@WebParam(name = "subscriptionCode") String subscriptionCode);
+	GetAccessResponseDto findAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode);
 
 	@WebMethod
-	ActionStatus removeAccess(@WebParam(name = "accessCode") String accessCode,
-			@WebParam(name = "subscriptionCode") String subscriptionCode);
+	ActionStatus removeAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode);
 
 	@WebMethod
 	AccessesResponseDto listAccess(@WebParam(name = "subscriptionCode") String subscriptionCode);
@@ -198,12 +196,10 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus createAccountHierarchy(@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
 
 	@WebMethod
-	CustomerListResponse findAccountHierarchy(
-			@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
+	CustomerListResponse findAccountHierarchy(@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
 
 	@WebMethod
-	GetAccountHierarchyResponseDto findAccountHierarchy2(
-			@WebParam(name = "findAccountHierachyRequest") FindAccountHierachyRequestDto postData);
+	GetAccountHierarchyResponseDto findAccountHierarchy2(@WebParam(name = "findAccountHierachyRequest") FindAccountHierachyRequestDto postData);
 
 	@WebMethod
 	ActionStatus updateAccountHierarchy(@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
@@ -217,12 +213,10 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus updateCRMAccountHierarchy(@WebParam(name = "crmAccountHierarchy") CRMAccountHierarchyDto postData);
 
 	@WebMethod
-	ActionStatus createOrUpdateCRMAccountHierarchy(
-			@WebParam(name = "crmAccountHierarchy") CRMAccountHierarchyDto postData);
+	ActionStatus createOrUpdateCRMAccountHierarchy(@WebParam(name = "crmAccountHierarchy") CRMAccountHierarchyDto postData);
 
 	@WebMethod
-	ActionStatus createOrUpdateAccountHierarchy(
-			@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
+	ActionStatus createOrUpdateAccountHierarchy(@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
 
 	// customer hierarchy
 
@@ -235,29 +229,24 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus createAccountOperation(@WebParam(name = "accountOperation") AccountOperationDto postData);
 
 	@WebMethod
-	AccountOperationsResponseDto listAccountOperations(
-			@WebParam(name = "customerAccountCode") String customerAccountCode);
+	AccountOperationsResponseDto listAccountOperations(@WebParam(name = "customerAccountCode") String customerAccountCode);
 
 	@WebMethod
 	ActionStatus matchOperations(@WebParam(name = "matchOperationRequest") MatchOperationRequestDto postData);
 
 	@WebMethod
-	ActionStatus unMatchingOperations(
-			@WebParam(name = "unMatchingOperationRequest") UnMatchingOperationRequestDto postData);
-	
+	ActionStatus unMatchingOperations(@WebParam(name = "unMatchingOperationRequest") UnMatchingOperationRequestDto postData);
+
 	@WebMethod
-	ActionStatus addLitigation(
-			@WebParam(name = "addLitigationRequest") LitigationRequestDto postData);
-	
+	ActionStatus addLitigation(@WebParam(name = "addLitigationRequest") LitigationRequestDto postData);
+
 	@WebMethod
-	ActionStatus cancelLitigation(
-			@WebParam(name = "cancelLitigationRequest") LitigationRequestDto postData);
+	ActionStatus cancelLitigation(@WebParam(name = "cancelLitigationRequest") LitigationRequestDto postData);
 
 	// dunning
 
 	@WebMethod
-	ActionStatus dunningInclusionExclusion(
-			@WebParam(name = "dunningInclusionExclusion") DunningInclusionExclusionDto dunningDto);
+	ActionStatus dunningInclusionExclusion(@WebParam(name = "dunningInclusionExclusion") DunningInclusionExclusionDto dunningDto);
 
 	// title
 
@@ -295,5 +284,13 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	BusinessAccountModelsResponseDto listBusinessAccountModel();
+	
+	// Account Hierarchy	
+	
+	@WebMethod
+	ActionStatus terminateCRMAccountHierarchy(@WebParam(name = "crmAccountHierarchy") CRMAccountHierarchyDto postData);
+	
+	@WebMethod
+	ActionStatus closeCRMAccountHierarchy(@WebParam(name = "crmAccountHierarchy") CRMAccountHierarchyDto postData);
 
 }

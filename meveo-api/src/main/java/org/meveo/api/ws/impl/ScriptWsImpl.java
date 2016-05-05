@@ -6,10 +6,14 @@ import javax.jws.WebService;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.catalog.AccountModelScriptApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.response.account.AccountModelScriptResponseDto;
+import org.meveo.api.dto.response.account.GetAccountModelScriptsResponseDto;
 import org.meveo.api.dto.response.script.OfferModelScriptResponseDto;
 import org.meveo.api.dto.response.script.ServiceModelScriptResponseDto;
+import org.meveo.api.dto.script.AccountModelScriptDto;
 import org.meveo.api.dto.script.OfferModelScriptDto;
 import org.meveo.api.dto.script.ServiceModelScriptDto;
 import org.meveo.api.exception.MeveoApiException;
@@ -30,6 +34,9 @@ public class ScriptWsImpl extends BaseWs implements ScriptWs {
 
     @Inject
     private ServiceModelScriptApi serviceModelScriptApi;
+    
+    @Inject
+    private AccountModelScriptApi accountModelScriptApi;
 
     @Override
     public ActionStatus createOfferModelScript(OfferModelScriptDto postData) {
@@ -226,5 +233,124 @@ public class ScriptWsImpl extends BaseWs implements ScriptWs {
 
         return result;
     }
+
+	@Override
+	public ActionStatus createAccountModelScript(AccountModelScriptDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+        	accountModelScriptApi.create(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+	}
+
+	@Override
+	public ActionStatus updateAccountModelScript(AccountModelScriptDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+        	accountModelScriptApi.update(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+	}	
+	
+	@Override
+	public ActionStatus createOrUpdateAccountModelScript(AccountModelScriptDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+        	accountModelScriptApi.createOrUpdate(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+	}
+
+	@Override
+	public ActionStatus removeAccountModelScript(String accountModelScriptCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+        	accountModelScriptApi.delete(accountModelScriptCode, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+	}
+	
+	@Override
+	public AccountModelScriptResponseDto findAccountModelScript(String accountModelScriptCode) {
+		AccountModelScriptResponseDto result = new AccountModelScriptResponseDto();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+
+        try {
+            result.setAccountModelScript(accountModelScriptApi.get(accountModelScriptCode, getCurrentUser().getProvider()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+        
+        return result;
+	}
+
+	@Override
+	public GetAccountModelScriptsResponseDto listAccountModelScript() {
+		GetAccountModelScriptsResponseDto result = new GetAccountModelScriptsResponseDto();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+
+        try {
+            result.setAccountModelScripts(accountModelScriptApi.list(getCurrentUser().getProvider()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+        
+        return result;
+	}	
 
 }

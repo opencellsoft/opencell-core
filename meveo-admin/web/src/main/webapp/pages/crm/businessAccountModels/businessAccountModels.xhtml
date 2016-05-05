@@ -26,12 +26,12 @@
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['businessAccountModel.title']}"
-			backingBean="#{businessOfferModelListBean}" sortBy="code">
+			backingBean="#{businessAccountModelListBean}" sortBy="code">
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['BusinessEntity.description']}"
 				field="description" />
-			<hftl:column label="#{messages['offerTemplate.title']}"
-				field="offerTemplate.code" />			
+			<hftl:column label="#{messages['businessAccountModel.type']}"
+				field="type" />			
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('account','accountManagement')}" />

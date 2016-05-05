@@ -1767,7 +1767,7 @@
 		<navigation-case>
 			<from-outcome>businessAccountModelDetail</from-outcome>
 			<to-view-id>/pages/crm/businessAccountModels/businessAccountModelDetail.xhtml</to-view-id>
-			<redirect />
+			<redirect include-view-params="true"/>
 		</navigation-case>
 	</navigation-rule>
 	

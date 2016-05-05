@@ -1,5 +1,8 @@
 package org.meveo.api.script;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -22,102 +25,115 @@ import org.meveo.service.script.OfferModelScriptService;
 @Stateless
 public class OfferModelScriptApi extends BaseApi {
 
-    @Inject
-    private OfferModelScriptService offerModelScriptService;
+	@Inject
+	private OfferModelScriptService offerModelScriptService;
 
-    public void create(OfferModelScriptDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
-        if (StringUtils.isBlank(postData.getScript())) {
-            missingParameters.add("script");
-        }
+	public void create(OfferModelScriptDto postData, User currentUser) throws MeveoApiException, BusinessException {
+		if (StringUtils.isBlank(postData.getCode())) {
+			missingParameters.add("code");
+		}
+		if (StringUtils.isBlank(postData.getScript())) {
+			missingParameters.add("script");
+		}
 
-        handleMissingParameters();
+		handleMissingParameters();
 
-        String derivedCode = offerModelScriptService.getFullClassname(postData.getScript());
+		String derivedCode = offerModelScriptService.getFullClassname(postData.getScript());
 
-        if (offerModelScriptService.findByCode(derivedCode, currentUser.getProvider()) != null) {
-            throw new EntityAlreadyExistsException(OfferModelScript.class, postData.getCode());
-        }
+		if (offerModelScriptService.findByCode(derivedCode, currentUser.getProvider()) != null) {
+			throw new EntityAlreadyExistsException(OfferModelScript.class, postData.getCode());
+		}
 
-        OfferModelScript offerModelScript = new OfferModelScript();
-        offerModelScript.setCode(postData.getCode());
-        offerModelScript.setDescription(postData.getDescription());
+		OfferModelScript offerModelScript = new OfferModelScript();
+		offerModelScript.setCode(postData.getCode());
+		offerModelScript.setDescription(postData.getDescription());
 
-        if (postData.getType() != null) {
-            offerModelScript.setSourceTypeEnum(postData.getType());
-        } else {
-            offerModelScript.setSourceTypeEnum(ScriptSourceTypeEnum.JAVA);
-        }
-        offerModelScript.setScript(postData.getScript());
+		if (postData.getType() != null) {
+			offerModelScript.setSourceTypeEnum(postData.getType());
+		} else {
+			offerModelScript.setSourceTypeEnum(ScriptSourceTypeEnum.JAVA);
+		}
+		offerModelScript.setScript(postData.getScript());
 
-        offerModelScriptService.create(offerModelScript, currentUser);
-    }
+		offerModelScriptService.create(offerModelScript, currentUser);
+	}
 
-    public void update(OfferModelScriptDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
-        if (StringUtils.isBlank(postData.getScript())) {
-            missingParameters.add("script");
-        }
+	public void update(OfferModelScriptDto postData, User currentUser) throws MeveoApiException, BusinessException {
+		if (StringUtils.isBlank(postData.getCode())) {
+			missingParameters.add("code");
+		}
+		if (StringUtils.isBlank(postData.getScript())) {
+			missingParameters.add("script");
+		}
 
-        handleMissingParameters();
+		handleMissingParameters();
 
-        String derivedCode = offerModelScriptService.getFullClassname(postData.getScript());
+		String derivedCode = offerModelScriptService.getFullClassname(postData.getScript());
 
-        OfferModelScript offerModelScript = offerModelScriptService.findByCode(derivedCode, currentUser.getProvider());
-        if (offerModelScript == null) {
-            throw new EntityDoesNotExistsException(OfferModelScript.class, postData.getCode());
-        }
+		OfferModelScript offerModelScript = offerModelScriptService.findByCode(derivedCode, currentUser.getProvider());
+		if (offerModelScript == null) {
+			throw new EntityDoesNotExistsException(OfferModelScript.class, postData.getCode());
+		}
 
-        offerModelScript.setDescription(postData.getDescription());
+		offerModelScript.setDescription(postData.getDescription());
 
-        if (postData.getType() != null) {
-            offerModelScript.setSourceTypeEnum(postData.getType());
-        } else {
-            offerModelScript.setSourceTypeEnum(ScriptSourceTypeEnum.JAVA);
-        }
-        offerModelScript.setScript(postData.getScript());
+		if (postData.getType() != null) {
+			offerModelScript.setSourceTypeEnum(postData.getType());
+		} else {
+			offerModelScript.setSourceTypeEnum(ScriptSourceTypeEnum.JAVA);
+		}
+		offerModelScript.setScript(postData.getScript());
 
-        offerModelScriptService.update(offerModelScript, currentUser);
-    }
+		offerModelScriptService.update(offerModelScript, currentUser);
+	}
 
-    public void createOrUpdate(OfferModelScriptDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        String derivedCode = offerModelScriptService.getFullClassname(postData.getScript());
-        OfferModelScript offerModelScript = offerModelScriptService.findByCode(derivedCode, currentUser.getProvider());
-        if (offerModelScript == null) {
-            // create
-            create(postData, currentUser);
-        } else {
-            // update
-            update(postData, currentUser);
-        }
-    }
+	public void createOrUpdate(OfferModelScriptDto postData, User currentUser) throws MeveoApiException, BusinessException {
+		String derivedCode = offerModelScriptService.getFullClassname(postData.getScript());
+		OfferModelScript offerModelScript = offerModelScriptService.findByCode(derivedCode, currentUser.getProvider());
+		if (offerModelScript == null) {
+			// create
+			create(postData, currentUser);
+		} else {
+			// update
+			update(postData, currentUser);
+		}
+	}
 
-    public void delete(String code, User currentUser) throws EntityDoesNotExistsException {
-        OfferModelScript offerModelScript = offerModelScriptService.findByCode(code, currentUser.getProvider());
-        if (offerModelScript == null) {
-            throw new EntityDoesNotExistsException(OfferModelScript.class, code);
-        }
+	public void delete(String code, User currentUser) throws EntityDoesNotExistsException {
+		OfferModelScript offerModelScript = offerModelScriptService.findByCode(code, currentUser.getProvider());
+		if (offerModelScript == null) {
+			throw new EntityDoesNotExistsException(OfferModelScript.class, code);
+		}
 
-        offerModelScriptService.remove(offerModelScript);
-    }
+		offerModelScriptService.remove(offerModelScript);
+	}
 
-    public OfferModelScriptDto get(String code, Provider provider) throws MeveoApiException {
-        if (StringUtils.isBlank(code)) {
-            missingParameters.add("code");
-        }
+	public OfferModelScriptDto get(String code, Provider provider) throws MeveoApiException {
+		if (StringUtils.isBlank(code)) {
+			missingParameters.add("code");
+		}
 
-        handleMissingParameters();
+		handleMissingParameters();
 
-        OfferModelScript offerModelScript = offerModelScriptService.findByCode(code, provider);
-        if (offerModelScript == null) {
-            throw new EntityDoesNotExistsException(OfferModelScript.class, code);
-        }
+		OfferModelScript offerModelScript = offerModelScriptService.findByCode(code, provider);
+		if (offerModelScript == null) {
+			throw new EntityDoesNotExistsException(OfferModelScript.class, code);
+		}
 
-        return new OfferModelScriptDto(offerModelScript);
-    }
+		return new OfferModelScriptDto(offerModelScript);
+	}
+
+	public List<OfferModelScriptDto> list(User currentUser) {
+		List<OfferModelScriptDto> result = new ArrayList<>();
+
+		List<OfferModelScript> offerModelScripts = offerModelScriptService.list(currentUser.getProvider());
+		if (offerModelScripts != null) {
+			for (OfferModelScript e : offerModelScripts) {
+				result.add(new OfferModelScriptDto(e));
+			}
+		}
+
+		return result;
+	}
 
 }
