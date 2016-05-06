@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -23,55 +25,52 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.job.Job;
-import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.ScriptInterface;
 
 @Startup
 @Singleton
 public class ScriptingJob extends Job {
-	
+
 	@Inject
-	ScriptInstanceService scriptInstanceService;
-	
+	ScriptingJobBean scriptingJobBean;
+
 	@Override
 	@Asynchronous
+	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobInstance jobInstance, User currentUser) {
 		super.execute(jobInstance, currentUser);
 	}
 
-	
+
 	@SuppressWarnings("unchecked")
+	@Override
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+	@TransactionAttribute(TransactionAttributeType.NEVER)
+	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+		String scriptCode = null;
+		try { 
+			scriptCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "ScriptingJob_script", currentUser)).getCode();
+			Map<String, Object> context = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "ScriptingJob_variables", currentUser);
+			if (context == null) {
+				context = new HashMap<String, Object>();
+			}
+			scriptingJobBean.init( result, currentUser,scriptCode,context);
+			scriptingJobBean.execute( result, currentUser,scriptCode,context);
+			scriptingJobBean.finalize( result, currentUser,scriptCode,context);
 
-        String scriptCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "ScriptingJob_script", currentUser)).getCode();
-        Map<String, Object> context = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "ScriptingJob_variables", currentUser);
-        if (context == null) {
-            context = new HashMap<String, Object>();
-        }
-        ScriptInterface script = null;
-        script = scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
-        try {        	
-        	script.init(context, currentUser);        	
-        	script.execute(context, currentUser);                      
-        } catch (Exception e) {
-        	log.error("Exception on init/execute script",e);
-            result.registerError("Error in " + scriptCode + " execution :" + e.getMessage());
-        }finally{
-        	log.debug("calling script.finalize ....");
-        	script.finalize(context, currentUser);
-        }
-    }
+		} catch (Exception e) {
+			log.error("Exception on init/execute script",e);
+			result.registerError("Error in " + scriptCode + " execution :" + e.getMessage());
+		}
+	}
 
-    @Override
-    public JobCategoryEnum getJobCategory() {
-        return JobCategoryEnum.MEDIATION;
-    }
+	@Override
+	public JobCategoryEnum getJobCategory() {
+		return JobCategoryEnum.MEDIATION;
+	}
 
-    @Override
-    public Map<String, CustomFieldTemplate> getCustomFields() {
-        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
+	@Override
+	public Map<String, CustomFieldTemplate> getCustomFields() {
+		Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
 		CustomFieldTemplate scriptCF = new CustomFieldTemplate();
 		scriptCF.setCode("ScriptingJob_script");
@@ -82,7 +81,7 @@ public class ScriptingJob extends Job {
 		scriptCF.setEntityClazz(ScriptInstance.class.getName());
 		scriptCF.setValueRequired(true);
 		result.put("ScriptingJob_script", scriptCF);
-		
+
 		CustomFieldTemplate variablesCF = new CustomFieldTemplate();
 		variablesCF.setCode("ScriptingJob_variables");
 		variablesCF.setAppliesTo("JOB_ScriptingJob");
@@ -94,7 +93,7 @@ public class ScriptingJob extends Job {
 		variablesCF.setMaxValue(100L);
 		variablesCF.setMapKeyType(CustomFieldMapKeyEnum.STRING);
 		result.put("ScriptingJob_variables", variablesCF); 
-		
+
 		return result;
-    }
+	}
 }
