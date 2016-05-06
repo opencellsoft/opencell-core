@@ -18,6 +18,8 @@
  */
 package org.meveo.admin.action;
 
+import java.util.Date;
+
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Model;
 import javax.inject.Inject;
@@ -167,6 +169,10 @@ public class Authenticator extends BaseAuthenticator {
 		if (user == null) {
 			setStatus(AuthenticationStatus.FAILURE);
 		} else {
+			long daysToExpiration = userService.checkPasswordExpirationNotification(user);
+			if(daysToExpiration != -1 ){
+				messages.warn(new BundleKey("messages", "user.password.expiration.notif"),daysToExpiration);
+			}
 
             // homeMessage = "application.home.message";
 

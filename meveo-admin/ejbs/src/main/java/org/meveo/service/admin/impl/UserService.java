@@ -44,6 +44,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Title;
 import org.meveo.security.authorization.UserCreate;
 import org.meveo.security.authorization.UserDelete;
@@ -238,7 +239,7 @@ public class UserService extends PersistenceService<User> {
 			log.info("The user " + user.getId() + " is not active.");
 			throw new InactiveUserException("The user " + user.getId() + " is not active.");
 		}
-
+		
 		// Check if the user password has expired
 		String passwordExpiracy = paramBean.getProperty("password.Expiracy", "180");
 
@@ -246,7 +247,6 @@ public class UserService extends PersistenceService<User> {
 			log.info("The password of user with id=" + user.getId() + " has expired.");
 			throw new PasswordExpiredException("The password of user with id=" + user.getId() + " has expired.");
 		}
-
 		// Check the roles
 		if (user.getRoles() == null || user.getRoles().isEmpty()) {
 			log.info("The user with id=" + user.getId() + " has no role!");
@@ -357,6 +357,32 @@ public class UserService extends PersistenceService<User> {
 			return (User) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
 			return null;
+		}
+	}
+	/**
+	 * check and calculate number of days before password expiration
+	 * @author mhammam
+	 * @param user
+	 * @return number of days before password expiration
+	 */
+	public long checkPasswordExpirationNotification(User user) {
+		
+		// Check if the user password has expired
+		String passwordExpiracy = paramBean.getProperty("password.Expiracy", "180");
+		
+		// check if the system should send password expiration notification before :
+		String pwdNotifExpiracy = paramBean.getProperty("password.expiration.Notification", "7");
+
+		if(user.isPasswordExpirationNotification(Integer.parseInt(passwordExpiracy),Integer.parseInt(pwdNotifExpiracy))==true){
+
+			Date daysToExpiration = DateUtils.addDaysToDate(user.getLastPasswordModification(),Integer.parseInt(passwordExpiracy));
+			
+			long diff = (daysToExpiration.getTime() - System.currentTimeMillis())/ 1000 / 60 / 60 / 24;
+	        
+	        return diff;
+		}
+		else {
+			return -1;
 		}
 	}
 
