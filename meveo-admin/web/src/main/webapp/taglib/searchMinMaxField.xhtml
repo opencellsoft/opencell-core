@@ -3,7 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
     xmlns:p="http://primefaces.org/ui" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:s="http://jboss.org/seam/faces"
-    xmlns:cc="http://java.sun.com/jsf/composite" xmlns:hftl="http://hftl.org">
+    xmlns:cc="http://java.sun.com/jsf/composite" xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org">
 
 
 <!--
@@ -31,6 +31,7 @@
 -->
 
 <ui:composition>
+    <o:importConstants type="org.meveo.util.view.FieldInformation.FieldTypeEnum" />
 
     <c:if test="${empty(id)}">
         <c:set var="id" value="#{minField.concat('_').concat(maxField).concat('_minmaxRange')}" />
