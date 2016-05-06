@@ -373,7 +373,7 @@ public class UserService extends PersistenceService<User> {
 		// check if the system should send password expiration notification before :
 		String pwdNotifExpiracy = paramBean.getProperty("password.expiration.Notification", "7");
 
-		if(user.isPasswordExpirationNotification(Integer.parseInt(passwordExpiracy),Integer.parseInt(pwdNotifExpiracy))==true){
+		if(isPasswordExpirationNotification(user,Integer.parseInt(passwordExpiracy),Integer.parseInt(pwdNotifExpiracy))==true){
 
 			Date daysToExpiration = DateUtils.addDaysToDate(user.getLastPasswordModification(),Integer.parseInt(passwordExpiracy));
 			
@@ -384,6 +384,26 @@ public class UserService extends PersistenceService<User> {
 		else {
 			return -1;
 		}
+	}
+    /**
+     * Is the system should notify the user of the expiration of his password x day before the expiration date.
+     * 
+     * @param user
+     * @param expirationDelay
+     * @param notificationDelai
+     * @return true/false
+     */
+
+	public boolean isPasswordExpirationNotification(User user,int expirationDelay,int notificationDelai) {
+		boolean result = false;
+		
+		if ( user.getLastPasswordModification() != null) {
+			Date startNotif = DateUtils.addDaysToDate(user.getLastPasswordModification(), (expirationDelay-notificationDelai));
+			if(System.currentTimeMillis()>=startNotif.getTime()){
+				result = true;
+			}
+		}
+		return result;
 	}
 
 }

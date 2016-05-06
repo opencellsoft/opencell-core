@@ -297,23 +297,4 @@ public class User extends AuditableEntity {
     	
     	return isAllowed;
     }
-    /**
-     * Is the system should notify the user of the expiration of his password x day before the expiration date.
-     * 
-     * @param expirationDelay
-     * @param notificationDelai
-     * @return true/false
-     */
-
-	public boolean isPasswordExpirationNotification(int expirationDelay,int notificationDelai) {
-		boolean result = false;
-		
-		if (lastPasswordModification != null) {
-			Date startNotif = DateUtils.addDaysToDate(lastPasswordModification, (expirationDelay-notificationDelai));
-			if(System.currentTimeMillis()>=startNotif.getTime()){
-				result = true;
-			}
-		}
-		return result;
-	}
 }
