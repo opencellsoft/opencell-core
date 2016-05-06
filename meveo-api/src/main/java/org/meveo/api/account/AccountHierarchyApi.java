@@ -809,7 +809,10 @@ public class AccountHierarchyApi extends BaseApi {
 				postData.getLimit(), null, null, postData.getSortField(), null);
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c", null, currentUser.getProvider());
 
-		String customerCodeOrId = CUSTOMER_PREFIX +  postData.getCustomerCode();
+		String customerCodeOrId = null;
+		if (!StringUtils.isBlank(postData.getCustomerCode())) {
+			customerCodeOrId = CUSTOMER_PREFIX + postData.getCustomerCode();
+		}
 		if (!StringUtils.isBlank(postData.getCustomerId())) {
 			customerCodeOrId = CUSTOMER_PREFIX + postData.getCustomerId();
 		}
