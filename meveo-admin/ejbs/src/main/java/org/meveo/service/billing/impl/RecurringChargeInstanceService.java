@@ -270,6 +270,18 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 			//} else {
 			//	applicationDate = activeRecurringChargeInstance.getChargeDate();
 			//}
+				
+			//If we recognize revenue we first delete all SCHEDULED wallet operations
+			if(user.getProvider().isRecognizeRevenue()){
+			  try {
+				getEntityManager().createNamedQuery("WalletOperation.deleteScheduled")
+				  .setParameter("chargeInstance", activeRecurringChargeInstance).setParameter("provider", user.getProvider())
+							.executeUpdate();
+			  }catch (Exception e) {
+				e.printStackTrace();
+				log.error("error while trying to delete scheduled charges applications on chargeInstance {}", chargeInstanceId);
+			  }
+			}
 
 			while (nbRating<MaxRecurringRatingHistory && (applicationDate.getTime() <= maxDate.getTime())) {
 				nbRating++;
@@ -279,7 +291,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 					walletOperationService
 							.applyNotAppliedinAdvanceReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate, user);
 				} else {
-					walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate, user);
+					walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate,false, user);
 				}
 				log.debug("nextChargeDate {}, chargeDate {}.",activeRecurringChargeInstance.getChargeDate(),activeRecurringChargeInstance.getNextChargeDate());
 				//if (recurringChargeTemplate.getApplyInAdvance()) {
@@ -292,6 +304,50 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				activeRecurringChargeInstance.updateAudit(user);
 				updateNoCheck(activeRecurringChargeInstance);
 			}
+			//If we recognize revenue we create SCHEDULED wallet op until the end of the contract
+			if(user.getProvider().isRecognizeRevenue()){
+				Date endContractDate = activeRecurringChargeInstance.getSubscription().getEndAgreementDate();
+				if(endContractDate==null){
+					log.error("error while trying to schedule revenue for chargeInstance {},"
+							+ " the subscription has no end agreeement date",chargeInstanceId);
+				} else {
+					RecurringChargeInstance scheduledCharge = new RecurringChargeInstance();
+					scheduledCharge.setAmountWithoutTax(activeRecurringChargeInstance.getAmountWithoutTax());
+					scheduledCharge.setAmountWithTax(activeRecurringChargeInstance.getAmountWithTax());
+					scheduledCharge.setChargeDate(activeRecurringChargeInstance.getChargeDate());
+					scheduledCharge.setChargeTemplate(recurringChargeTemplate);
+					scheduledCharge.setCode(activeRecurringChargeInstance.getCode());
+					scheduledCharge.setCriteria1(activeRecurringChargeInstance.getCriteria1());
+					scheduledCharge.setCriteria2(activeRecurringChargeInstance.getCriteria2());
+					scheduledCharge.setCriteria3(activeRecurringChargeInstance.getCriteria3());
+					scheduledCharge.setCurrency(activeRecurringChargeInstance.getCurrency());
+					scheduledCharge.setDescription(activeRecurringChargeInstance.getDescription());
+					scheduledCharge.setNextChargeDate(activeRecurringChargeInstance.getNextChargeDate());
+					scheduledCharge.setProvider(activeRecurringChargeInstance.getProvider());
+					scheduledCharge.setSeller(activeRecurringChargeInstance.getSeller());
+					scheduledCharge.setServiceInstance(activeRecurringChargeInstance.getServiceInstance());
+					scheduledCharge.setInvoicingCalendar(activeRecurringChargeInstance.getInvoicingCalendar());
+					scheduledCharge.setSubscription(activeRecurringChargeInstance.getSubscription());
+					scheduledCharge.setSubscriptionDate(activeRecurringChargeInstance.getSubscriptionDate());
+					scheduledCharge.setTerminationDate(activeRecurringChargeInstance.getTerminationDate());
+					scheduledCharge.setWalletInstances(activeRecurringChargeInstance.getWalletInstances());
+					scheduledCharge.setWalletOperations(activeRecurringChargeInstance.getWalletOperations());
+					while (applicationDate.getTime() <= endContractDate.getTime()) {
+						log.info("Schedule applicationDate={}", applicationDate);
+						applicationDate = DateUtils.setTimeToZero(applicationDate);
+						if (!recurringChargeTemplate.getApplyInAdvance()) {
+							walletOperationService
+									.applyNotAppliedinAdvanceReccuringCharge(scheduledCharge, false,recurringChargeTemplate, user);
+						} else {
+							walletOperationService.applyReccuringCharge(scheduledCharge, false,recurringChargeTemplate,true, user);
+						}
+						log.debug("cheduke nextChargeDate {}, chargeDate {}.",scheduledCharge.getChargeDate(),scheduledCharge.getNextChargeDate());
+						applicationDate = scheduledCharge.getNextChargeDate();
+						
+					} 
+				}
+			}
+			
 		} catch (Exception e) {
             rejectededChargeProducer.fire("RecurringCharge " + chargeInstanceId);
             throw new BusinessException(e);

@@ -247,7 +247,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 	public WalletOperation rateChargeApplication(String code, Subscription subscription, ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate,
 			BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantity, TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent,
 			BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, Date startdate,
-			Date endDate, ChargeApplicationModeEnum mode) throws BusinessException {
+			Date endDate, ChargeApplicationModeEnum mode,boolean forSchedule) throws BusinessException {
 		Date subscriptionDate = null;
 
 		if (chargeInstance instanceof RecurringChargeInstance) {
@@ -270,7 +270,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		result.setDescription(chargeInstnceLabel != null ? chargeInstnceLabel : chargeInstance.getDescription());
 
 		List<TriggeredEDRTemplate> triggeredEDRTemplates = chargeInstance.getChargeTemplate().getEdrTemplates();
-		if (triggeredEDRTemplates.size() > 0) {
+		if (!forSchedule && triggeredEDRTemplates.size() > 0) {
 			for (TriggeredEDRTemplate triggeredEDRTemplate : triggeredEDRTemplates) {
 
 				boolean conditionCheck = triggeredEDRTemplate.getConditionEl() == null

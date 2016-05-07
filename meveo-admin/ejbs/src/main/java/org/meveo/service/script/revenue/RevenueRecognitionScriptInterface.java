@@ -6,7 +6,6 @@ import java.util.List;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.payments.RevenueSchedule;
 import org.meveo.service.script.ScriptInterface;
 
 public interface RevenueRecognitionScriptInterface extends ScriptInterface {
@@ -20,6 +19,6 @@ public interface RevenueRecognitionScriptInterface extends ScriptInterface {
      * @param currentUser Current user
      * @throws BusinessException
      */
-    public List<RevenueSchedule> scheduleRevenue(ChargeInstance chargeInstance,Date startDate,Date endDate, User currentUser) throws BusinessException;
+    public List<String> scheduleRevenue(ChargeInstance chargeInstance,Date startDate,Date endDate, User currentUser) throws BusinessException;
 
 }
