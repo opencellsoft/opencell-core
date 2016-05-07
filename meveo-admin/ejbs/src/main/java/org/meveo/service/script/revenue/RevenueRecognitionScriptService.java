@@ -14,10 +14,8 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.payments.RevenueSchedule;
 import org.meveo.model.scripts.RevenueRecognitionScript;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
-import org.meveo.service.payments.impl.RevenueScheduleService;
 import org.meveo.service.script.CustomScriptService;
 
 @Singleton
@@ -28,8 +26,6 @@ public class RevenueRecognitionScriptService
 	@Inject
 	private ResourceBundle resourceMessages;
 
-	@Inject
-	private RevenueScheduleService revenueScheduleService;
 
 	@Override
 	public void create(RevenueRecognitionScript revenueRecognitionScript, User creator) throws BusinessException {
