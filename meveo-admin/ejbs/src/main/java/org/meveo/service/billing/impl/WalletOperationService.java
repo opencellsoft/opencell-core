@@ -1156,7 +1156,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	public List<WalletOperation> chargeWalletOperation(WalletOperation op, User creator, Provider provider) throws BusinessException {
 		List<WalletOperation> result = new ArrayList<>();
 		log.debug("chargeWalletOperation on chargeInstanceId:{}", op.getChargeInstance().getId());
-		if (walletCacheContainerProvider.isWalletIdsCached(op.getChargeInstance().getId())) {
+		//case of scheduled operation (for revenue recognition)
+		if(op.getChargeInstance().getId()==null){
+			op.setWallet(op.getChargeInstance().getSubscription().getUserAccount().getWallet());
+			log.debug("chargeWalletOperation is create schedule on wallet {}", op.getWallet());
+			result.add(op);
+			create(op, creator);
+		} else if (walletCacheContainerProvider.isWalletIdsCached(op.getChargeInstance().getId())) {
 			List<Long> walletIds = walletCacheContainerProvider.getWallets(op.getChargeInstance().getId());
 			log.debug("chargeWalletOperation chargeInstanceId found in usageCache with {} wallet ids", walletIds.size());
 			result = chargeOnWalletIds(walletIds, op, creator, provider);

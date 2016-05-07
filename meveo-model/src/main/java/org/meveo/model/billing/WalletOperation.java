@@ -104,7 +104,7 @@ import org.meveo.model.rating.EDR;
 	query = "SELECT o FROM WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "
 					+ " AND o.provider=:provider"),							
 	@NamedQuery(name = "WalletOperation.deleteScheduled", 
-		query = "DELETE o FROM WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "
+		query = "DELETE WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "
 				+ " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"
 				+ " AND o.provider=:provider"),
 })
