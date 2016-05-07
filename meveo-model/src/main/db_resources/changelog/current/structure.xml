@@ -1633,50 +1633,44 @@
 	</changeSet>
 	
 	  <changeSet author="smichea" id="financeModule_2016_05_05">
-        <!--  <createSequence sequenceName="ar_revenue_schedule_seq" />
-        <createTable tableName="ar_revenue_schedule">
+        <createSequence sequenceName="ar_revenue_recog_rule_seq" />
+        <createTable tableName="ar_revenue_recog_rule">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" />
             </column>
             <column name="version" type="INT4" />
+            <column name="disabled" type="BOOL" defaultValueBoolean="false"/> 
             <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
                 <constraints nullable="false" />
             </column>
-            <column name="charge_instance_id" type="BIGINT">
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+            <column name="script_instance_id" type="BIGINT">
                 <constraints nullable="false" />
             </column>
-            <column name="charge_code" type="VARCHAR(60)"/>
-            <column name="subscription_code" type="VARCHAR(60)"/>
-            <column name="user_account_code" type="VARCHAR(60)"/>
-            <column name="billing_account_code" type="VARCHAR(60)"/>
-            <column name="customer_account_code" type="VARCHAR(60)"/>
-            <column name="customer_code" type="VARCHAR(60)"/>
-            <column name="service_code" type="VARCHAR(100)" />
-            <column name="offer_code" type="VARCHAR(100)" />
-            <column name="revenue_date" type="date">
-                <constraints nullable="false" />
-            </column>
-            <column name="recognized_amount" type="numeric(23, 12)"/>
-            <column name="invoiced_amount" type="numeric(23, 12)"/>
-            <column name="accrued_amount" type="numeric(23, 12)"/>
-            <column name="deffered_amount" type="numeric(23, 12)"/>
-            <column name="provider_id" type="BIGINT" />
-            <column name="creator_id" type="BIGINT" />
+            <column name="start_delay" type="BIGINT"/>
+            <column name="start_unit" type="VARCHAR(20)"/>
+            <column name="start_event" type="VARCHAR(20)"/>
+            <column name="stop_delay" type="BIGINT"/>
+            <column name="stop_unit" type="VARCHAR(20)"/>
+            <column name="stop_event" type="VARCHAR(20)"/>
         </createTable>
-        <addPrimaryKey columnNames="id" constraintName="ar_revenue_schedule_pkey" tableName="ar_revenue_schedule" />
-        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ar_revenue_schedule" constraintName="fk_ar_revenue_schedule_provider"
+        <addPrimaryKey columnNames="id" constraintName="ar_revenue_recog_rule_pkey" tableName="ar_revenue_recog_rule" />
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ar_revenue_recog_rule" constraintName="fk_ar_revenue_recog_rule_provider"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
-        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="ar_revenue_schedule" constraintName="fk_ar_revenue_schedule_creator"
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="ar_revenue_recog_rule" constraintName="fk_ar_revenue_recog_rule_creator"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-        <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="ar_revenue_schedule" constraintName="fk_ar_revenue_schedule_chrginst"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
-        <addUniqueConstraint columnNames="charge_instance_id,revenue_date, provider_id" constraintName="uk_ar_revenue_schedule" deferrable="false" disabled="false"
-            initiallyDeferred="false" tableName="ar_revenue_schedule" />-->
+        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="ar_revenue_recog_rule" constraintName="fk_ar_revenue_recog_rule_updator"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_revenue_recog_rule" constraintName="fk_ar_revenue_recog_rule_script"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
         <addColumn tableName="CAT_CHARGE_TEMPLATE">
 	            <column name="REVENUE_RECOG_RULE_ID" type="BIGINT" />
 	    </addColumn>
 	    <addForeignKeyConstraint baseColumnNames="REVENUE_RECOG_RULE_ID" baseTableName="CAT_CHARGE_TEMPLATE" constraintName="fk_CAT_CHARGE_TEMPLATE_RECOG_RULE"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="MEVEO_SCRIPT_INSTANCE" />
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="AR_REVENUE_RECOG_RULE" />
         <addColumn tableName="CRM_PROVIDER">
 	            <column name="RECOGNIZE_REVENUE"  type="BOOL" defaultValueBoolean="false"/>
 	    </addColumn>

@@ -8,17 +8,34 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.response.account.AccountModelScriptResponseDto;
 import org.meveo.api.dto.response.account.GetAccountModelScriptsResponseDto;
 import org.meveo.api.dto.response.script.OfferModelScriptResponseDto;
+import org.meveo.api.dto.response.script.RevenueRecognitionScriptResponseDto;
 import org.meveo.api.dto.response.script.ServiceModelScriptResponseDto;
 import org.meveo.api.dto.script.AccountModelScriptDto;
 import org.meveo.api.dto.script.OfferModelScriptDto;
+import org.meveo.api.dto.script.RevenueRecognitionScriptDto;
 import org.meveo.api.dto.script.ServiceModelScriptDto;
 
-/**
- * @author Edward P. Legaspi
- **/
+
 @WebService
 public interface ScriptWs extends IBaseWs {
 
+	// Revenue Recognition Script
+
+	@WebMethod
+	ActionStatus createRevenueRecognitionScript(@WebParam(name = "revenueRecognitionScript") RevenueRecognitionScriptDto postData);
+
+	@WebMethod
+	ActionStatus updateRevenueRecognitionScript(@WebParam(name = "revenueRecognitionScript") RevenueRecognitionScriptDto postData);
+
+	@WebMethod
+	ActionStatus createOrUpdateRevenueRecognitionScript(@WebParam(name = "revenueRecognitionScript") RevenueRecognitionScriptDto postData);
+
+	@WebMethod
+	ActionStatus removeRevenueRecognitionScript(@WebParam(name = "revenueRecognitionScriptCode") String code);
+
+	@WebMethod
+	RevenueRecognitionScriptResponseDto findRevenueRecognitionScript(@WebParam(name = "revenueRecognitionScriptCode") String code);
+	
 	// Offer Model Script
 
 	@WebMethod

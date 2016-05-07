@@ -12,13 +12,16 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.account.AccountModelScriptResponseDto;
 import org.meveo.api.dto.response.account.GetAccountModelScriptsResponseDto;
 import org.meveo.api.dto.response.script.OfferModelScriptResponseDto;
+import org.meveo.api.dto.response.script.RevenueRecognitionScriptResponseDto;
 import org.meveo.api.dto.response.script.ServiceModelScriptResponseDto;
 import org.meveo.api.dto.script.AccountModelScriptDto;
 import org.meveo.api.dto.script.OfferModelScriptDto;
+import org.meveo.api.dto.script.RevenueRecognitionScriptDto;
 import org.meveo.api.dto.script.ServiceModelScriptDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.script.OfferModelScriptApi;
+import org.meveo.api.script.RevenueRecognitionScriptApi;
 import org.meveo.api.script.ServiceModelScriptApi;
 import org.meveo.api.ws.ScriptWs;
 
@@ -30,6 +33,9 @@ import org.meveo.api.ws.ScriptWs;
 public class ScriptWsImpl extends BaseWs implements ScriptWs {
 
     @Inject
+    private RevenueRecognitionScriptApi revenueRecognitionScriptApi;
+
+    @Inject
     private OfferModelScriptApi offerModelScriptApi;
 
     @Inject
@@ -38,6 +44,103 @@ public class ScriptWsImpl extends BaseWs implements ScriptWs {
     @Inject
     private AccountModelScriptApi accountModelScriptApi;
 
+	@Override
+	public ActionStatus createRevenueRecognitionScript(RevenueRecognitionScriptDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+        	revenueRecognitionScriptApi.create(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+	}
+
+	@Override
+	public ActionStatus updateRevenueRecognitionScript(RevenueRecognitionScriptDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+        	revenueRecognitionScriptApi.update(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+	}
+
+	@Override
+	public ActionStatus createOrUpdateRevenueRecognitionScript(RevenueRecognitionScriptDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+        	revenueRecognitionScriptApi.createOrUpdate(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+	}
+
+	@Override
+	public ActionStatus removeRevenueRecognitionScript(String code) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+        	revenueRecognitionScriptApi.delete(code, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+	}
+
+	@Override
+	public RevenueRecognitionScriptResponseDto findRevenueRecognitionScript(String code) {
+		RevenueRecognitionScriptResponseDto result = new RevenueRecognitionScriptResponseDto();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+
+        try {
+            result.setRevenueRecognitionScript(revenueRecognitionScriptApi.get(code, getCurrentUser().getProvider()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        return result;
+	}	
+    
     @Override
     public ActionStatus createOfferModelScript(OfferModelScriptDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -351,6 +454,6 @@ public class ScriptWsImpl extends BaseWs implements ScriptWs {
         }
         
         return result;
-	}	
+	}
 
 }

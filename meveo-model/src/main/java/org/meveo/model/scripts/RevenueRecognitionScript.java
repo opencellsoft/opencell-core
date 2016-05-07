@@ -10,9 +10,6 @@ import org.meveo.model.ExportIdentifier;
 @DiscriminatorValue("RevenueRecognition")
 public class RevenueRecognitionScript extends CustomScript {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4421247873127057237L;
 	
 
