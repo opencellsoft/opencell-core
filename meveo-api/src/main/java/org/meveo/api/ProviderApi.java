@@ -233,6 +233,8 @@ public class ProviderApi extends BaseApi {
             provider.getBankCoordinates().setIcs(postData.getBankCoordinates().getIcs());
         }
 
+        provider.setRecognizeRevenue(postData.isRecognizeRevenue());
+        
         providerService.create(provider, currentUser);
 
         // populate customFields
@@ -394,6 +396,8 @@ public class ProviderApi extends BaseApi {
             provider.setBankCoordinates(bankCoordinates);
         }
 
+        provider.setRecognizeRevenue(postData.isRecognizeRevenue());
+        
         provider = providerService.update(provider, currentUser);
 
         // populate customFields

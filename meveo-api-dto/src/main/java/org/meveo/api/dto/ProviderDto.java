@@ -55,7 +55,7 @@ public class ProviderDto extends BaseDto {
 	private Integer rounding=2;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
-	
+	private boolean recognizeRevenue;
 	
 	@XmlElement(required = false)
     private CustomFieldsDto customFields;
@@ -116,6 +116,7 @@ public class ProviderDto extends BaseDto {
 		if (e.getBankCoordinates() != null) {
 	         this.setBankCoordinates(new BankCoordinatesDto(e.getBankCoordinates()));
 	        }
+		this.setRecognizeRevenue(e.isRecognizeRevenue());
 	}
 
 	public String getCode() {
@@ -369,6 +370,14 @@ public class ProviderDto extends BaseDto {
 		this.displayChargesPeriods = displayChargesPeriods;
 	}
 
+	public boolean isRecognizeRevenue() {
+		return recognizeRevenue;
+	}
+
+	public void setRecognizeRevenue(boolean recognizeRevenue) {
+		this.recognizeRevenue = recognizeRevenue;
+	}
+
 	@Override
 	public String toString() {
 		return "ProviderDto [code=" + code + ", description=" + description
@@ -389,8 +398,9 @@ public class ProviderDto extends BaseDto {
 				+ displayDetail + ", displayCharges="+displayChargesPeriods + ", displayCharges="
 				+ invoiceAdjustmentPrefix + ", currentInvoiceAdjustmentNb="
 				+ currentInvoiceAdjustmentNb
-				+ ", invoiceAdjustmentSequenceSize="
-				+ invoiceAdjustmentSequenceSize + ", bankCoordinates="+ bankCoordinates+", rounding="+ rounding+", email="+ email+ ", customFields="
+				+ ", invoiceAdjustmentSequenceSize="+ invoiceAdjustmentSequenceSize 
+				+", recognizeRevenue="+recognizeRevenue+", bankCoordinates="+ bankCoordinates
+				+", rounding="+ rounding+", email="+ email+ ", customFields="
 				+ customFields + "]";
 	}
 

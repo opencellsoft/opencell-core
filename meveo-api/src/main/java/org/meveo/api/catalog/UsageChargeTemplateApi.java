@@ -25,10 +25,12 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.scripts.RevenueRecognitionScript;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
 
 /**
  * @author Edward P. Legaspi
@@ -47,6 +49,10 @@ public class UsageChargeTemplateApi extends BaseApi {
 
     @Inject
     private TriggeredEDRTemplateService triggeredEDRTemplateService;
+
+    @Inject
+    RevenueRecognitionScriptService revenueRecognitionScriptService;
+    
 
     public void create(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -119,6 +125,12 @@ public class UsageChargeTemplateApi extends BaseApi {
             chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
         }
 
+        
+        if(postData.getRevenueRecognitionScriptCode()!=null){
+        	RevenueRecognitionScript revenueRecognitionScript = revenueRecognitionScriptService.findByCode(postData.getRevenueRecognitionScriptCode(), provider);
+        	chargeTemplate.setRevenueRecognitionScript(revenueRecognitionScript);
+        }
+        
         if (postData.getTriggeredEdrs() != null) {
             List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
 
@@ -222,6 +234,11 @@ public class UsageChargeTemplateApi extends BaseApi {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
             chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
+        }
+        
+        if(postData.getRevenueRecognitionScriptCode()!=null){
+        	RevenueRecognitionScript revenueRecognitionScript = revenueRecognitionScriptService.findByCode(postData.getRevenueRecognitionScriptCode(), provider);
+        	chargeTemplate.setRevenueRecognitionScript(revenueRecognitionScript);
         }
 
         if (provider.getTradingLanguages() != null) {

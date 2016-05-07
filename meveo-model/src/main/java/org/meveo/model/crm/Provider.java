@@ -217,6 +217,9 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 	
 	@Column(name = "INVOICE_SEQUENCE_SIZE")
 	private Integer invoiceSequenceSize=9;	
+	
+	@Column(name = "RECOGNIZE_REVENUE")
+	private boolean recognizeRevenue;
 
     public String getCode() {
         return code;
@@ -615,6 +618,14 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 
 	public void setInvoiceSequenceSize(Integer invoiceSequenceSize) {
 		this.invoiceSequenceSize = invoiceSequenceSize;
+	}
+
+	public boolean isRecognizeRevenue() {
+		return recognizeRevenue;
+	}
+
+	public void setRecognizeRevenue(boolean recognizeRevenue) {
+		this.recognizeRevenue = recognizeRevenue;
 	}
 
 	@Override

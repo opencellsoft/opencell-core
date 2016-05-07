@@ -20,9 +20,6 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.CustomFieldInstance;
 
-/**
- * @author Edward P. Legaspi
- **/
 @XmlRootElement(name = "ChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChargeTemplateDto extends BaseDto implements Serializable {
@@ -49,10 +46,12 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
     private BigDecimal unitMultiplicator;
     private int unitNbDecimal=BaseEntity.NB_DECIMALS;
     private RoundingModeEnum roundingModeDtoEnum;
+    private String revenueRecognitionScriptCode;
     private CustomFieldsDto customFields = new CustomFieldsDto();
 
     private TriggeredEdrTemplatesDto triggeredEdrs = new TriggeredEdrTemplatesDto();
 
+    
     public ChargeTemplateDto() {
 
     }
@@ -72,6 +71,7 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
             }
         }
         roundingModeDtoEnum = e.getRoundingMode();
+        revenueRecognitionScriptCode = e.getRevenueRecognitionScript()==null?null:e.getRevenueRecognitionScript().getCode();
         customFields = CustomFieldsDto.toDTO(customFieldInstances);
     }
 
@@ -186,4 +186,13 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
     public void setRoundingModeDtoEnum(RoundingModeEnum roundingModeDtoEnum) {
         this.roundingModeDtoEnum = roundingModeDtoEnum;
     }
+
+	public String getRevenueRecognitionScriptCode() {
+		return revenueRecognitionScriptCode;
+	}
+
+	public void setRevenueRecognitionScriptCode(String revenueRecognitionScriptCode) {
+		this.revenueRecognitionScriptCode = revenueRecognitionScriptCode;
+	}
+    
 }
