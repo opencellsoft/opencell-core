@@ -307,6 +307,13 @@
 			<p:menuitem id="ddrequestLots" outcome="ddrequestLots"
 				value="#{messages['menu.ddrequestLot']}" />
 		</p:submenu>
+
+		<p:submenu id="finance" label="#{messages['menu.finance']}"
+			rendered="#{identity.hasPermission('billing','billingManagement')}">
+
+			<p:menuitem id="revenueRecognitionRules" outcome="revenueRecognitionRules"
+				value=#{messages['menu.revenueRecognitionRules']}" />
+		</p:submenu>
 		
 		<p:submenu id="reporting" label="#{messages['menu.reporting']}"
 			 rendered="#{identity.hasPermission('reporting','reportingVisualization')}">

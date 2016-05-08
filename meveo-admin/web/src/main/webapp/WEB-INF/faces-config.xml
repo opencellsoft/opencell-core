@@ -1841,6 +1841,21 @@
 			</to-view-id>
 			<redirect include-view-params="true"/>
 		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>revenueRecognitionRules</from-outcome>
+			<to-view-id>/pages/finance/revenueRecognitionRules/revenueRecognitionRules.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>revenueRecognitionRuleDetail</from-outcome>
+			<to-view-id>/pages/finance/revenueRecognitionRules/revenueRecognitionRuleDetail.xhtml
+			</to-view-id>
+			<redirect include-view-params="true"/>
+		</navigation-case>
+		
+		
 	</navigation-rule>
 
 
