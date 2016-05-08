@@ -2,12 +2,13 @@ package org.meveo.api.dto.response.payment;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.payment.RevenueRecognitionRuleDto;
 import org.meveo.api.dto.response.BaseResponse;
 
-@XmlRootElement(name = "AccountOperationsResponse")
+@XmlRootElement(name = "RevenueRecognitionRuleResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RevenueRecognitionRuleDtoResponse extends BaseResponse {
 
@@ -18,6 +19,7 @@ public class RevenueRecognitionRuleDtoResponse extends BaseResponse {
 	private static final long serialVersionUID = -2160634983966387377L;
 	
 
+	@XmlElement(name="revenueRecognitionRule")
 	private RevenueRecognitionRuleDto revenueRecognitionRuleDto;
 
 

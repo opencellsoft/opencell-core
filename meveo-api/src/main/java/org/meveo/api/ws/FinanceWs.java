@@ -28,5 +28,5 @@ public interface FinanceWs extends IBaseWs {
 	RevenueRecognitionRuleDtoResponse getRevenueRecognitionRule(@WebParam(name = "code") String code);
 
 	@WebMethod
-	ActionStatus createOrUpdateRevenueRecognitionRule(@WebParam(name = "module") RevenueRecognitionRuleDto moduleDto);
+	ActionStatus createOrUpdateRevenueRecognitionRule(@WebParam(name = "revenueRecognitionRule") RevenueRecognitionRuleDto moduleDto);
 }

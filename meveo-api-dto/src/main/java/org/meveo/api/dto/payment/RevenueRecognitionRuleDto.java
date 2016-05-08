@@ -30,6 +30,8 @@ public class RevenueRecognitionRuleDto {
 	}
 	
 	public RevenueRecognitionRuleDto(RevenueRecognitionRule rrr){
+		code=rrr.getCode();
+		description=rrr.getDescription();
 		scriptCode=rrr.getScript().getCode();
 		startDelay=rrr.getStartDelay();
 		startUnit=rrr.getStartUnit();
@@ -38,7 +40,8 @@ public class RevenueRecognitionRuleDto {
 		stopUnit=rrr.getStopUnit();
 		stopEvent=rrr.getStopEvent();
 	}
-
+	
+	
 	public String getDescription() {
 		return description;
 	}
@@ -53,6 +56,10 @@ public class RevenueRecognitionRuleDto {
 
 	public void setDisabled(boolean disabled) {
 		this.disabled = disabled;
+	}
+
+	public String getCode() {
+		return code;
 	}
 
 	public void setCode(String code) {
@@ -116,7 +123,8 @@ public class RevenueRecognitionRuleDto {
 	}
 	
 	public String toString(){
-		return "RevenueRecognitionRuleDto [scriptCode="+scriptCode
+		return "RevenueRecognitionRuleDto [code="+code
+				+",scriptCode="+scriptCode
 				+",startDelay="+startDelay
 				+",startUnit="+startUnit
 				+",startEvent="+startEvent
@@ -125,8 +133,4 @@ public class RevenueRecognitionRuleDto {
 				+",stopEvent="+stopEvent;
 	}
 
-	public String getCode() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
