@@ -1647,13 +1647,15 @@
 			<column name="provider_id" type="BIGINT" />
 			<column name="creator_id" type="BIGINT" />
 			<column name="updater_id" type="BIGINT" />
+            <column name="code" type="VARCHAR(60)"/>
+            <column name="description" type="VARCHAR(100)"/>
             <column name="script_instance_id" type="BIGINT">
                 <constraints nullable="false" />
             </column>
-            <column name="start_delay" type="BIGINT"/>
+            <column name="start_delay" type="INT4"/>
             <column name="start_unit" type="VARCHAR(20)"/>
             <column name="start_event" type="VARCHAR(20)"/>
-            <column name="stop_delay" type="BIGINT"/>
+            <column name="stop_delay" type="INT4"/>
             <column name="stop_unit" type="VARCHAR(20)"/>
             <column name="stop_event" type="VARCHAR(20)"/>
         </createTable>

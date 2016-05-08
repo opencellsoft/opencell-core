@@ -17,7 +17,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.RevenueRecognitionScript;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
-import org.meveo.service.script.RevenueRecognitionScriptService;
+import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
 
 @Stateless
 public class RevenueRecognitionScriptApi extends BaseApi {

@@ -10,7 +10,7 @@ import org.meveo.api.dto.response.payment.RevenueRecognitionRuleDtoResponse;
 import org.meveo.api.dto.response.payment.RevenueRecognitionRuleDtosResponse;
 
 @WebService
-public interface FinanceWS extends IBaseWs {
+public interface FinanceWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus createRevenueRecognitionRule(@WebParam(name = "revenueRecognitionRule") RevenueRecognitionRuleDto moduleDto);

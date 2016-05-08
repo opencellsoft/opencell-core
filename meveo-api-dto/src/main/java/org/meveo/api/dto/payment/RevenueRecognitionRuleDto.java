@@ -25,6 +25,10 @@ public class RevenueRecognitionRuleDto {
 	private RevenueRecognitionDelayUnitEnum stopUnit;
 	private RevenueRecognitionEventEnum stopEvent;
 	
+	public RevenueRecognitionRuleDto(){
+		
+	}
+	
 	public RevenueRecognitionRuleDto(RevenueRecognitionRule rrr){
 		scriptCode=rrr.getScript().getCode();
 		startDelay=rrr.getStartDelay();

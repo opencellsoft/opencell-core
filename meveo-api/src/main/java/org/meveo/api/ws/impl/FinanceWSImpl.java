@@ -18,11 +18,11 @@ import org.meveo.api.dto.response.script.RevenueRecognitionScriptResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.RevenueRecognitionRuleApi;
-import org.meveo.api.ws.FinanceWS;
+import org.meveo.api.ws.FinanceWs;
 
 @WebService(serviceName = "FinanceWs", endpointInterface = "org.meveo.api.ws.FinanceWs")
 @Interceptors({ WsRestApiInterceptor.class })
-public class FinanceWSImpl extends BaseWs implements FinanceWS{
+public class FinanceWSImpl extends BaseWs implements FinanceWs{
 
 	@Inject
 	RevenueRecognitionRuleApi rrrApi;
