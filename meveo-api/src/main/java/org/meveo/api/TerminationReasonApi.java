@@ -164,7 +164,7 @@ public class TerminationReasonApi extends BaseApi {
     public List<TerminationReasonDto> list(Provider provider) throws MeveoApiException {
         List<TerminationReasonDto> terminationReasonDtos = new ArrayList<TerminationReasonDto>();
 
-        List<SubscriptionTerminationReason> subscriptionTerminationReasons = terminationReasonService.list();
+        List<SubscriptionTerminationReason> subscriptionTerminationReasons = terminationReasonService.list(provider);
 
         if (subscriptionTerminationReasons != null && !subscriptionTerminationReasons.isEmpty()) {
             for (SubscriptionTerminationReason subscriptionTerminationReason : subscriptionTerminationReasons) {
