@@ -49,8 +49,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 
 	@Inject
 	private WalletService walletService;
-
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	
 	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount, User creator)
 			throws BusinessException {
 
