@@ -99,7 +99,7 @@
 			
 
 				<p:submenu id="trading" label="#{messages['menu.trading']}"
-					rendered="#{identity.hasPermission('administration','administrationVisualization')}">
+					rendered="#{identity.hasPermission('administration','administrationVisualization') and !identity.hasPermission('superAdmin','superAdminManagement')}">
 					<p:menuitem id="tradingLanguages" outcome="tradingLanguages"
 						value="#{messages['menu.comLanguages']}" />
 
