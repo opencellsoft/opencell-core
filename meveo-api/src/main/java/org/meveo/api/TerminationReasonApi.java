@@ -140,7 +140,7 @@ public class TerminationReasonApi extends BaseApi {
         TerminationReasonDto terminationReasonDto = null;
 
         if (StringUtils.isBlank(code)) {
-            missingParameters.add("code");
+            missingParameters.add("terminationReasonCode");
             handleMissingParameters();
         }
         SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(code, currentUser.getProvider());
