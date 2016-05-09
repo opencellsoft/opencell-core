@@ -287,7 +287,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
             throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, code);
         }
 
-        RecurringChargeTemplateDto result = new RecurringChargeTemplateDto(chargeTemplate, customFieldInstanceService.getCustomFieldInstances(chargeTemplate));
+        RecurringChargeTemplateDto result = new RecurringChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
         for (CatMessages msg : catMessagesService.getCatMessagesList(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId())) {

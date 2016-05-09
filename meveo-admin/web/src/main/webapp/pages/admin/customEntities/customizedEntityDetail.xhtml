@@ -26,6 +26,7 @@
         </p:panel>
 
         <o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
+        <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
 
         <h:panelGroup rendered="#{customEntityTemplateBean.customEntityTemplate}">
             <hftl:formPanel formId="cetForm"
@@ -59,19 +60,19 @@
                     <p:column headerText="#{messages['customFieldTemplate.storageType']}">
                         <h:outputText value="#{messages[entity.storageType.label]}" rendered="#{node.type == 'field'}" />
                     </p:column>
-                    <p:column headerText="#{messages['customFieldTemplate.fieldRequired']}">
+                    <p:column headerText="#{messages['customFieldTemplate.fieldRequired']}" style="width: 10%">
                         <h:outputText value="#{messages['commons.yes']}"
                             rendered="#{node.type == 'field' and entity.valueRequired != null and entity.valueRequired.toString() == 'true'}" />
                         <h:outputText value="#{messages['commons.no']}"
                             rendered="#{node.type == 'field' and entity.valueRequired != null and entity.valueRequired.toString() == 'false'}" />
                     </p:column>
-                    <p:column headerText="#{messages['customFieldTemplate.versionable']}">
+                    <p:column headerText="#{messages['customFieldTemplate.versionable']}" style="width: 10%">
                         <h:outputText value="#{messages['commons.yes']}"
                             rendered="#{node.type == 'field' and entity.versionable != null and entity.versionable.toString() == 'true'}" />
                         <h:outputText value="#{messages['commons.no']}"
                             rendered="#{node.type == 'field' and entity.versionable != null and entity.versionable.toString() == 'false'}" />
                     </p:column>
-                    <p:column headerText="#{messages['enableEntity.active']}">
+                    <p:column headerText="#{messages['enableEntity.active']}" style="width: 10%">
                         <h:outputText value="#{messages['commons.yes']}" rendered="#{node.type == 'field' and entity.active != null and entity.active.toString() == 'true'}" />
                         <h:outputText value="#{messages['commons.no']}" rendered="#{node.type == 'field' and entity.active != null and entity.active.toString() == 'false'}" />
                     </p:column>
@@ -338,11 +339,13 @@
                     <hftl:formField label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" useConverter="false" id="description"
                         componentWidth="35" />
                     <hftl:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" componentWidth="10"
-                        listenerUpdate=":cftForm:listValuesField :cftForm:defaultValueField :cftForm:entityClazzField validations" />
+                        listenerUpdate=":cftForm:listValuesField :cftForm:defaultValueField :cftForm:entityClazzField validations versioning storageType_enum"
+                        actionListenerBean="#{customFieldTemplateBean}" actionListenerMethod="updateDefaultValues" />
                     <!--                 <hftl:formField label="#{messages['customFieldTemplate.appliesTo']}" field="appliesTo" componentWidth="20" edit="false" /> -->
                     <!--                 <hftl:formField label="#{messages['customFieldTemplate.guipos']}" field="guiPosition" componentWidth="20" edit="false" /> -->
-                    <hftl:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType"
-                        listenerUpdate=":cftForm:defaultValueField :cftForm:mapKeyTypeField :cftForm:matrixColumns" required="true" componentWidth="10" />
+                    <hftl:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType" required="true" componentWidth="10"
+                        listenerUpdate="@this defaultValueField mapKeyTypeField matrixColumns" actionListenerBean="#{customFieldTemplateBean}"
+                        actionListenerMethod="updateDefaultValues" />
 
                     <h:panelGroup id="mapKeyTypeField">
                         <hftl:formField label="#{messages['customFieldTemplate.mapKeyType']}" field="mapKeyType" required="true" componentWidth="10"
@@ -355,7 +358,7 @@
                     </h:panelGroup>
                     <h:panelGroup id="entityClazzField">
                         <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="90" maxlength="255"
-                            autocompleteBean="#{customFieldTemplateBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" newLine="true" componentWidth="50"
+                            autocompleteBean="#{customFieldTemplateBean}" autocompleteMethod="#{customFieldTemplateBean.entity.fieldType == 'CHILD_ENTITY'?'autocompleteClassNamesCEIOnly':'autocompleteClassNames'}" isAutocomplete="true" newLine="true" componentWidth="50"
                             rendered="#{customFieldTemplateBean.entity.fieldType == 'ENTITY' or customFieldTemplateBean.entity.fieldType == 'CHILD_ENTITY'}" />
                     </h:panelGroup>
 
@@ -438,15 +441,17 @@
                     </p:fieldset>
                     <p:fieldset legend="#{messages['customFieldTemplate.versioningAndCaching']}" styleClass="clearLeft">
                         <hftl:formField label="#{messages['customFieldTemplate.cacheValue']}" field="cacheValue" isMessage="true" componentWidth="15" />
-                        <hftl:formField label="#{messages['customFieldTemplate.versionable']}" field="versionable" isMessage="true" allowEdit="true" componentWidth="15"
-                            listenerUpdate=":cftForm:versionableFields" />
-                        <h:panelGroup id="versionableFields">
-                            <hftl:formField label="#{messages['customFieldTemplate.calendar']}" field="calendar" valueLabelField="code" listBean="#{calendarBean}"
-                                rendered="#{customFieldTemplateBean.entity.versionable}" />
-                            <hftl:formField label="#{messages['customFieldTemplate.cacheTimeperiod']}" field="cacheValueTimeperiod"
-                                rendered="#{customFieldTemplateBean.entity.versionable}" />
-                            <hftl:formField label="#{messages['customFieldTemplate.triggerEndPeriodEvent']}" field="triggerEndPeriodEvent"
-                                rendered="#{customFieldTemplateBean.entity.versionable}" componentWidth="15" />
+                        <h:panelGroup id="versioning">
+                            <hftl:formField label="#{messages['customFieldTemplate.versionable']}" field="versionable" isMessage="true" allowEdit="true" componentWidth="15"
+                                listenerUpdate=":cftForm:versionableFields" rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY}" />
+                            <h:panelGroup id="versionableFields" rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY}">
+                                <hftl:formField label="#{messages['customFieldTemplate.calendar']}" field="calendar" valueLabelField="code" listBean="#{calendarBean}"
+                                    rendered="#{customFieldTemplateBean.entity.versionable}" />
+                                <hftl:formField label="#{messages['customFieldTemplate.cacheTimeperiod']}" field="cacheValueTimeperiod"
+                                    rendered="#{customFieldTemplateBean.entity.versionable}" />
+                                <hftl:formField label="#{messages['customFieldTemplate.triggerEndPeriodEvent']}" field="triggerEndPeriodEvent"
+                                    rendered="#{customFieldTemplateBean.entity.versionable}" componentWidth="15" />
+                            </h:panelGroup>
                         </h:panelGroup>
                     </p:fieldset>
                     <h:panelGroup id="listValuesField">

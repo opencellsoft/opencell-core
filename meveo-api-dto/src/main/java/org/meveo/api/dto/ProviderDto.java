@@ -1,8 +1,5 @@
 package org.meveo.api.dto;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -11,7 +8,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.invoice.InvoiceConfigurationDto;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 
 /**
@@ -59,7 +55,7 @@ public class ProviderDto extends BaseDto {
 
 	}
 
-	public ProviderDto(Provider e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
+	public ProviderDto(Provider e, CustomFieldsDto customFieldInstances) {
 		code = e.getCode();
 		description = e.getDescription();
 		invoiceSequenceSize=e.getInvoiceSequenceSize();
@@ -80,7 +76,7 @@ public class ProviderDto extends BaseDto {
 		discountAccountingCode = e.getDiscountAccountingCode();
 		email = e.getEmail();
 		
-		customFields = CustomFieldsDto.toDTO(customFieldInstances);
+		customFields = customFieldInstances;
 		
 		this.setEnterprise(e.isEntreprise());
 		this.setLevelDuplication(e.isLevelDuplication());

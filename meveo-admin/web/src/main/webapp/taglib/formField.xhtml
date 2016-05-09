@@ -76,6 +76,7 @@
      Additional attributes applicable to Enum type fields             
         listValues - a map of value (key) and label (value) pairs for picklist 
         listenerUpdate - components (ids) to update when value changes 
+        actionListenerBean and actionListenerMethod - action listener bean and method to execute when value changes
         
      Additional attributes applicable to Entity type fields    
         size - a size attribute of inputText control
@@ -323,7 +324,7 @@
                 required="${required}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}"
                 labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}"
                 inputWidth="${inputWidth}" listValues="${empty(listValues)? fieldInfo.enumListValues:listValues}" enumClassname="#{fieldInfo.enumClassname}"
-                listenerUpdate="${listenerUpdate}" edit="#{edit}" />
+                listenerUpdate="${listenerUpdate}" actionListenerBean="${actionListenerBean}" actionListenerMethod="${actionListenerMethod}" edit="#{edit}" />
         </c:if>
 
         <!--  If the value binding is a List, display a panel with list of entities. -->

@@ -11,6 +11,7 @@ import org.meveo.api.dto.CustomFieldMatrixColumnDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.admin.User;
@@ -56,6 +57,9 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (postData.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && (postData.getMatrixColumns() == null || postData.getMatrixColumns().isEmpty())) {
             missingParameters.add("matrixColumns");
         }
+        if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (postData.getStorageType() != CustomFieldStorageTypeEnum.LIST || postData.isVersionable())) {
+            throw new InvalidParameterException("Custom field of type CHILD_ENTITY only supports unversioned values and storage type of LIST");
+        }
 
         handleMissingParameters();
 
@@ -100,6 +104,9 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
         if (postData.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && (postData.getMatrixColumns() == null || postData.getMatrixColumns().isEmpty())) {
             missingParameters.add("matrixColumns");
+        }
+        if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (postData.getStorageType() != CustomFieldStorageTypeEnum.LIST || postData.isVersionable())) {
+            throw new InvalidParameterException("Custom field of type CHILD_ENTITY only supports unversioned values and storage type of LIST");
         }
 
         handleMissingParameters();
@@ -255,7 +262,11 @@ public class CustomFieldTemplateApi extends BaseApi {
             for (CustomFieldMatrixColumnDto columnDto : dto.getMatrixColumns()) {
                 cft.getMatrixColumns().add(CustomFieldMatrixColumnDto.fromDto(columnDto));
             }
+        }
 
+        if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
+            cft.setStorageType(CustomFieldStorageTypeEnum.LIST);
+            cft.setVersionable(false);
         }
 
         if (!StringUtils.isBlank(dto.getCalendar())) {

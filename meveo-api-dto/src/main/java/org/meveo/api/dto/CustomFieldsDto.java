@@ -3,13 +3,10 @@ package org.meveo.api.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.model.crm.CustomFieldInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -24,19 +21,6 @@ public class CustomFieldsDto implements Serializable {
 
     public CustomFieldsDto() {
 
-    }
-
-    public static CustomFieldsDto toDTO(Map<String, List<CustomFieldInstance>> customFields) {
-        if (customFields == null || customFields.isEmpty()) {
-            return null;
-        }
-        CustomFieldsDto dto = new CustomFieldsDto();
-        for (List<CustomFieldInstance> cfis : customFields.values()) {
-            for (CustomFieldInstance cfi : cfis) {
-                dto.getCustomField().add(CustomFieldDto.toDTO(cfi));
-            }
-        }
-        return dto;
     }
 
     public List<CustomFieldDto> getCustomField() {

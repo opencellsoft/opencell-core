@@ -12,6 +12,9 @@ import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -98,6 +101,30 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         return clazzNames;
     }
 
+    /**
+     * Autocomplete method for selecting a custom entity template for child entity reference type Custom field template
+     * 
+     * @param query Partial value entered
+     * @return A list of matching values
+     */
+    public List<String> autocompleteClassNamesCEIOnly(String query) {
+        List<String> clazzNames = new ArrayList<String>();
+
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, true, null, null, getCurrentProvider());
+
+        for (CustomizedEntity customizedEntity : entities) {
+            clazzNames.add(customizedEntity.getClassnameToDisplay());
+        }
+
+        return clazzNames;
+    }
+    
+    /**
+     * Autocomplete method for selecting a class that implement ICustomFieldEntity. Return a human readable class name. Used in conjunction with CustomFieldAppliesToConverter
+     * 
+     * @param query Partial class name to match
+     * @return
+     */
     public List<String> autocompleteClassNamesHuman(String query) {
         List<String> clazzNames = new ArrayList<String>();
 
@@ -108,5 +135,19 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         }
 
         return clazzNames;
+    }
+
+    public void updateDefaultValues() {
+
+        if (entity.getFieldType() == CustomFieldTypeEnum.STRING && entity.getMaxValue() == null) {
+            entity.setMaxValue(CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING);
+        }
+        if (entity.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
+            entity.setStorageType(CustomFieldStorageTypeEnum.LIST);
+            entity.setVersionable(false);
+        }
+        if (entity.getStorageType() == CustomFieldStorageTypeEnum.MAP && entity.getMapKeyType() == null) {
+            entity.setMapKeyType(CustomFieldMapKeyEnum.STRING);
+        }
     }
 }

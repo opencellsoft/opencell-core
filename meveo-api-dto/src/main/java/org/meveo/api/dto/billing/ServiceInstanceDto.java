@@ -2,8 +2,6 @@ package org.meveo.api.dto.billing;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -14,7 +12,6 @@ import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.crm.CustomFieldInstance;
 
 @XmlType(name = "ServiceInstance")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -48,7 +45,7 @@ public class ServiceInstanceDto extends BaseDto {
 
     }
 
-    public ServiceInstanceDto(ServiceInstance e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
+    public ServiceInstanceDto(ServiceInstance e, CustomFieldsDto customFieldInstances) {
         code = e.getCode();
         description = e.getDescription();
         status = e.getStatus();
@@ -61,7 +58,7 @@ public class ServiceInstanceDto extends BaseDto {
         }
         endAgreementDate = e.getEndAgreementDate();
 
-        customFields = CustomFieldsDto.toDTO(customFieldInstances);
+        customFields = customFieldInstances;
     }
 
     public String getCode() {

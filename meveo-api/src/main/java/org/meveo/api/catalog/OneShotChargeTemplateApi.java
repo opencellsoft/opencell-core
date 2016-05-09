@@ -42,7 +42,6 @@ import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -76,9 +75,6 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
     @Inject
     private TriggeredEDRTemplateService triggeredEDRTemplateService;
-
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
 
     public void create(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -297,7 +293,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
             throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, code);
         }
 
-        result = new OneShotChargeTemplateDto(chargeTemplate, customFieldInstanceService.getCustomFieldInstances(chargeTemplate));
+        result = new OneShotChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
         for (CatMessages msg : catMessagesService.getCatMessagesList(OneShotChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId())) {

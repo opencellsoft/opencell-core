@@ -164,7 +164,6 @@ public class CustomFieldDataEntryBean implements Serializable {
         return fieldsValues.get(entityUuid);
     }
 
-
     /**
      * Load applicable custom actions for a given entity
      * 
@@ -454,7 +453,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * 
      * @param entity Entity, to which custom fields are related to
      */
-    public void validateCustomFields(ICustomFieldEntity entity) {
+    public boolean validateCustomFields(ICustomFieldEntity entity) {
         boolean valid = true;
         boolean isNewEntity = ((IEntity) entity).isTransient();
 
@@ -488,6 +487,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             fc.validationFailed();
             fc.renderResponse();
         }
+        return valid;
     }
 
     /**
@@ -656,6 +656,19 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param childEntityFieldDefinition Custom field template of child entity type, definition, corresponding to cfv
      */
     public void saveChildEntity(CustomFieldValueHolder mainEntityValueHolder, CustomFieldValue mainEntityCfv, CustomFieldTemplate childEntityFieldDefinition) {
+
+        CustomEntityInstance cei = (CustomEntityInstance) mainEntityValueHolder.getSelectedChildEntity().getEntity();
+        if (!validateCustomFields(cei)) {
+            return;
+        }
+
+        // check that CEI code is unique
+        CustomEntityInstance ceiSameCode = customEntityInstanceService.findByCodeByCet(cei.getCetCode(), cei.getCode(), cei.getProvider());
+        if ((cei.isTransient() && ceiSameCode != null) || (!cei.isTransient() && cei.getId().longValue() != ceiSameCode.getId().longValue())) {
+            messages.error(new BundleKey("messages", "commons.uniqueField.code"));
+            FacesContext.getCurrentInstance().validationFailed();
+            return;
+        }
 
         // try {
         String message = "customFieldInstance.childEntity.save.successful";

@@ -16,6 +16,7 @@ import org.meveo.api.dto.EntityActionScriptDto;
 import org.meveo.api.dto.EntityCustomizationDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.admin.User;
@@ -23,7 +24,6 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.scripts.EntityActionScript;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
@@ -50,9 +50,6 @@ public class CustomEntityApi extends BaseApi {
 
     @Inject
     private EntityActionScriptService entityActionScriptService;
-
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private ScriptInstanceApi scriptInstanceApi;
@@ -257,10 +254,11 @@ public class CustomEntityApi extends BaseApi {
         if (cei == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
         }
-        return CustomEntityInstanceDto.toDTO(cei, customFieldInstanceService.getCustomFieldInstances(cei));
+        return CustomEntityInstanceDto.toDTO(cei, entityToDtoConverter.getCustomFieldsDTO(cei));
     }
 
     public void createOrUpdateEntityInstance(CustomEntityInstanceDto dto, User currentUser) throws MeveoApiException, BusinessException {
+        
         CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(dto.getCetCode(), dto.getCode(), currentUser.getProvider());
         if (cei == null) {
             createEntityInstance(dto, currentUser);
@@ -404,5 +402,35 @@ public class CustomEntityApi extends BaseApi {
         Map<String, EntityActionScript> cetActions = entityActionScriptService.findByAppliesTo(appliesTo, currentUser.getProvider());
 
         return EntityCustomizationDto.toDTO(clazz, cetFields.values(), cetActions.values());
+    }
+
+    /**
+     * Validate CustomEntityInstance DTO without saving it
+     * 
+     * @param ceiDto CustomEntityInstance DTO to validate
+     * @param currentUser Current user
+     * @throws MissingParameterException 
+     * @throws InvalidParameterException 
+     */
+    public void validateEntityInstanceDto(CustomEntityInstanceDto ceiDto, User currentUser) throws InvalidParameterException, MissingParameterException {
+
+        if (StringUtils.isBlank(ceiDto.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(ceiDto.getCetCode())) {
+            missingParameters.add("cetCode");
+        }
+        handleMissingParameters();
+
+        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(ceiDto.getCetCode(), ceiDto.getCode(), currentUser.getProvider());
+        boolean isNew = cei == null;
+        if (cei == null) {
+            cei = new CustomEntityInstance();
+            cei.setCetCode(ceiDto.getCetCode());
+        }
+
+        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(cei, currentUser.getProvider());
+
+        validateAndConvertCustomFields(customFieldTemplates, ceiDto.getCustomFields().getCustomField(), true, isNew, cei, currentUser);
     }
 }

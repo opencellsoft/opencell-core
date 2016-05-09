@@ -899,7 +899,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 						if (!cfDto.isEmpty()) {
 							Object cfValue = customFieldInstanceService.getCFValue(cust, cfDto.getCode(), currentUser);
-							if (cfDto.getValueConverted().equals(cfValue)) {
+							if (getValueConverted(cfDto).equals(cfValue)) {
 								result.getCustomer().add(customerToDto(cust));
 							}
 						}
@@ -2623,8 +2623,7 @@ public class AccountHierarchyApi extends BaseApi {
 			for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
 				if (customerDto.getCode().equals(customer.getCode())) {
 					if (!customerDto.isLoaded()) {
-						customerDto.initFromEntity(customer,
-								customFieldInstanceService.getCustomFieldInstances(customer));
+                        customerDto.initFromEntity(customer, entityToDtoConverter.getCustomFieldsDTO(customer));
 					}
 
 					found = true;
@@ -2646,7 +2645,7 @@ public class AccountHierarchyApi extends BaseApi {
 		dto.setName(new NameDto(account.getName()));
 		dto.setAddress(new AddressDto(account.getAddress()));
 
-		dto.setCustomFields(CustomFieldsDto.toDTO(customFieldInstanceService.getCustomFieldInstances(account)));
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(account));
 
 	}
 

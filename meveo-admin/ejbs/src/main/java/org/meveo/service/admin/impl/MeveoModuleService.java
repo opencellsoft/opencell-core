@@ -69,7 +69,6 @@ import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.communication.MeveoInstance;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityTemplate;
@@ -85,8 +84,8 @@ import org.meveo.model.notification.ScriptNotification;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.script.EntityActionScriptService;
 import org.meveocrm.model.dwh.BarChart;
@@ -101,8 +100,8 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
     private CustomFieldTemplateService customFieldTemplateService;
 
     @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-
+    protected EntityToDtoConverter entityToDtoConverter;
+    
     @Inject
     private EntityActionScriptService entityActionScriptService;
 
@@ -297,8 +296,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
                 moduleDto.addModuleItem(timerDto);
             }
         }
-        Map<String, List<CustomFieldInstance>> cfis = customFieldInstanceService.getCustomFieldInstances(jobInstance);
-        JobInstanceDto dto = new JobInstanceDto(jobInstance, cfis);
+        JobInstanceDto dto = new JobInstanceDto(jobInstance, entityToDtoConverter.getCustomFieldsDTO(jobInstance));
         moduleDto.addModuleItem(dto);
     }
 

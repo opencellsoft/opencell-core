@@ -164,7 +164,6 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         return entities;
     }
 
-
     /**
      * Return a value from either a custom field value or a settings/configuration parameter if CF value was not set yet by optionally setting custom field value.
      * 
@@ -680,8 +679,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     @SuppressWarnings("unchecked")
     public Object getInheritedOnlyCFValueCumulative(ICustomFieldEntity entity, String code, User currentUser) {
 
-        if (entity == null){
-            return null; 
+        if (entity == null) {
+            return null;
         }
         ICustomFieldEntity parentEntity = entity.getParentCFEntity();
         List<Object> cfValues = new ArrayList<>();
@@ -1314,5 +1313,4 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
         return false;
     }
-
 }
