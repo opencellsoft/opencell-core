@@ -47,6 +47,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>if</td>
+	<td>${LanguageBool}==true</td>
+	<td></td>
+</tr>
+<tr>
 	<td>assertElementPresent</td>
 	<td>${Language}</td>
 	<td></td>
@@ -64,6 +69,11 @@
 <tr>
 	<td>click</td>
 	<td>css=li:contains(&quot;${LanguageValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 <tr>
@@ -162,6 +172,11 @@
 	<td>${CodeValue}</td>
 </tr>
 <tr>
+	<td>if</td>
+	<td>${DescriptionTranslationBool}==true</td>
+	<td></td>
+</tr>
+<tr>
 	<td>assertElementPresent</td>
 	<td>${descriptionTranslation}</td>
 	<td></td>
@@ -170,6 +185,11 @@
 	<td>type</td>
 	<td>${descriptionTranslation}</td>
 	<td>${DescriptionTranslationValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
