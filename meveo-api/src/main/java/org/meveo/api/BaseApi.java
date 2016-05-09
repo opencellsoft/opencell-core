@@ -374,8 +374,8 @@ public abstract class BaseApi {
                 }
             }
 
-            // Add keys to matrix if not provided in DTO
-            if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+            // Add keys to matrix if not provided in DTO and it is not empty (gets converted to null if map has no values)
+            if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && valueConverted != null) {
 
                 boolean matrixColumnsPresent = false;
                 for (Entry<String, Object> mapEntry : ((Map<String, Object>) valueConverted).entrySet()) {

@@ -625,8 +625,20 @@ public class CustomFieldValue implements Serializable {
             sValue = "entity" + SERIALIZATION_SEPARATOR + gson.toJson(entityReferenceValue);
 
         } else if (listValue != null && !listValue.isEmpty()) {
-            Class itemClass = listValue.get(0).getClass();
-            sValue = "list_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + gson.toJson(listValue);
+
+            // Find the first not null value to determine item class.
+            Iterator iterator = listValue.iterator();
+            Object item = iterator.next();
+            while (item == null && iterator.hasNext()) {
+                item = iterator.next();
+            }
+            // If non found - don't save any value
+            if (item != null) {
+                Class itemClass = item.getClass();
+                sValue = "list_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + gson.toJson(listValue);
+            } else {
+                sValue = null;
+            }
 
         } else if (mapValue != null && !mapValue.isEmpty()) {
 
@@ -646,13 +658,36 @@ public class CustomFieldValue implements Serializable {
                     columnNamesString = StringUtils.concatenate(MATRIX_COLUMN_NAME_SEPARATOR, (Collection) columnNames);
                 }
 
-                Class itemClass = mapCopy.values().iterator().next().getClass();
-                sValue = "matrix_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + columnNamesString + SERIALIZATION_SEPARATOR + gson.toJson(mapCopy);
+                // Find the first not null value to determine item class.
+                Iterator iterator = mapCopy.values().iterator();
+                Object item = iterator.next();
+                while (item == null && iterator.hasNext()) {
+                    item = iterator.next();
+                }
+                // If non found - don't save any value
+                if (item != null) {
+                    Class itemClass = item.getClass();
+                    sValue = "matrix_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + columnNamesString + SERIALIZATION_SEPARATOR + gson.toJson(mapCopy);
+                } else {
+                    sValue = null;
+                }
 
                 // A regular map
             } else {
-                Class itemClass = mapValue.values().iterator().next().getClass();
-                sValue = "map_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + gson.toJson(mapValue);
+
+                // Find the first not null value to determine item class.
+                Iterator iterator = mapValue.values().iterator();
+                Object item = iterator.next();
+                while (item == null && iterator.hasNext()) {
+                    item = iterator.next();
+                }
+                // If non found - don't save any value
+                if (item != null) {
+                    Class itemClass = item.getClass();
+                    sValue = "map_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + gson.toJson(mapValue);
+                } else {
+                    sValue = null;
+                }
             }
         }
         Logger log = LoggerFactory.getLogger(getClass());

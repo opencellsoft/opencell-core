@@ -21021,7 +21021,220 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>\r
       <ws:removeEntityTemplate code="${#Project#baseEntityPrefix}_CET_VALIDATION"/>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="13d554e6-377b-44e2-a9e0-1a6b52623bfb"/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="abb76448-b057-486b-b954-1f6d80c24d20" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customization" searchProperties="true"><con:settings/><con:testStep type="request" name="Clear PurgeJob customizations" id="08736227-fdad-4e12-bc98-e9f3a1419e0d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>customizeEntity</con:operation><con:request name="Clear PurgeJob customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="13d554e6-377b-44e2-a9e0-1a6b52623bfb"/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Test Customer map value with a first Null value" id="5cca663b-eb99-46ed-a13a-e049ed961198"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Test Customer map value with a first Null value" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomer>\r
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST_MAP_FV_NULL" description="CUST">\r
+            <customerCategory>CLIENT</customerCategory>\r
+            <customerBrand>DEFAULT</customerBrand>\r
+            <seller>SELLER_FR</seller>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_MAP_NV">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>COURT|0&lt;50</key>\r
+                        <value>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|50&lt;100</key>\r
+                        <value>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|100&lt;150</key>\r
+                        <value>\r
+                           <doubleValue>3000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+            </customFields>\r
+         </customer>\r
+      </ws:createCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Customer map value with a first Null value" id="5cd7c2af-1482-4b3f-860a-0b23a766347e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomer</con:operation><con:request name="Find Customer map value with a first Null value" id="c86136db-6ca0-4125-9817-87936ab06776"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>
+         <customerCode>${#TestSuite#ticket}_${#TestSuite#index}_CUST_MAP_FV_NULL</customerCode>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="9a80037d-6912-4535-9956-a09d5a2a8da8" name="Contains 1"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_MAP_NV">
+                     <mapValue>
+                        <entry>
+                           <key>COURT|100&lt;150</key>
+                           <value>
+                              <doubleValue>3000.0</doubleValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Test Customer matrix value with a first Null value" id="a06a3f89-d4d2-4224-84d1-b9888910b54c"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Test Customer matrix value with a first Null value" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomer>\r
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST_MATRIX_FV_NULL" description="CUST">\r
+            <customerCategory>CLIENT</customerCategory>\r
+            <customerBrand>DEFAULT</customerBrand>\r
+            <seller>SELLER_FR</seller>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_MATRIX_NV">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>COURT|0&lt;50</key>\r
+                        <value>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|50&lt;100</key>\r
+                        <value>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>COURT|100&lt;150</key>\r
+                        <value>\r
+                           <doubleValue>3000</doubleValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+            </customFields>\r
+         </customer>\r
+      </ws:createCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Customer matrix value with a first Null value" id="3b6d0391-3a3b-48eb-87ea-6d3f492e40d5"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomer</con:operation><con:request name="Find Customer matrix value with a first Null value" id="c86136db-6ca0-4125-9817-87936ab06776"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>
+         <customerCode>${#TestSuite#ticket}_${#TestSuite#index}_CUST_MATRIX_FV_NULL</customerCode>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="9a80037d-6912-4535-9956-a09d5a2a8da8" name="Contains 1"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_MATRIX_NV">
+                     <mapValue>
+                        <entry>
+                           <key>COURT|100&lt;150</key>
+                           <value>
+                              <doubleValue>3000.0</doubleValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Test Customer list value with a first Null value" id="21945a02-cc6c-4ca3-8e5f-3a15155f43f3"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Test Customer list value with a first Null value" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomer>\r
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST_LIST_FV_NULL" description="CUST">\r
+            <customerCategory>CLIENT</customerCategory>\r
+            <customerBrand>DEFAULT</customerBrand>\r
+            <seller>SELLER_FR</seller>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_LIST_NV">\r
+                  <listValue>\r
+                     <value></value>\r
+                     <value></value>\r
+                     <value>\r
+                        <doubleValue>3000</doubleValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+            </customFields>\r
+         </customer>\r
+      </ws:createCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Customer list value with a first Null value" id="1be41204-b060-49a8-a2c2-50c0a3bbee69"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomer</con:operation><con:request name="Find Customer list value with a first Null value" id="c86136db-6ca0-4125-9817-87936ab06776"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>
+         <customerCode>${#TestSuite#ticket}_${#TestSuite#index}_CUST_LIST_FV_NULL</customerCode>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="9a80037d-6912-4535-9956-a09d5a2a8da8" name="Contains 1"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_LIST_NV">
+                     <listValue>
+                        <value/>
+                        <value/>
+                        <value>
+                           <doubleValue>3000.0</doubleValue>
+                        </value>
+                     </listValue>
+                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Test Customer empty map" id="2e200105-aae7-4c02-967b-fa78b211f254"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Test Customer empty map" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomer>\r
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST_MAP_EMPTY" description="CUST">\r
+            <customerCategory>CLIENT</customerCategory>\r
+            <customerBrand>DEFAULT</customerBrand>\r
+            <seller>SELLER_FR</seller>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_MAP_NV">\r
+                  <mapValue></mapValue>\r
+               </customField>\r
+            </customFields>\r
+         </customer>\r
+      </ws:createCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Customer empty map value" id="481035cf-ac34-42e5-8f72-c1197416927f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomer</con:operation><con:request name="Find Customer empty map value" id="c86136db-6ca0-4125-9817-87936ab06776"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>
+         <customerCode>${#TestSuite#ticket}_${#TestSuite#index}_CUST_MAP_EMPTY</customerCode>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple NotContains" id="faab3e16-bdc9-421e-86e2-41c8564b2652" name="Not Contains"><con:configuration><token>&lt;customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_MAP_NV"></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Test Customer empty matrix" id="a5dc2375-853f-4ee6-8e42-5425a9d32d07"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Test Customer empty matrix" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomer>\r
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST_MATRIX_EMPTY" description="CUST">\r
+            <customerCategory>CLIENT</customerCategory>\r
+            <customerBrand>DEFAULT</customerBrand>\r
+            <seller>SELLER_FR</seller>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_MATRIX_NV">\r
+                  <mapValue></mapValue>\r
+               </customField>\r
+            </customFields>\r
+         </customer>\r
+      </ws:createCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Customer empty matrix value" id="02c4132e-dc5e-4c3c-960f-fa99c3e0f558"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomer</con:operation><con:request name="Find Customer empty matrix value" id="c86136db-6ca0-4125-9817-87936ab06776"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>
+         <customerCode>${#TestSuite#ticket}_${#TestSuite#index}_CUST_MATRIX_EMPTY</customerCode>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple NotContains" id="faab3e16-bdc9-421e-86e2-41c8564b2652" name="Not Contains"><con:configuration><token>&lt;customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_MATRIX_NV"></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Test Customer empty list" id="fe25f363-d826-4078-bc8e-0fdeccef9f2d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Test Customer empty list" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomer>\r
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST_LIST_EMPTY" description="CUST">\r
+            <customerCategory>CLIENT</customerCategory>\r
+            <customerBrand>DEFAULT</customerBrand>\r
+            <seller>SELLER_FR</seller>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_LIST_NV">\r
+                  <listValue></listValue>\r
+               </customField>\r
+            </customFields>\r
+         </customer>\r
+      </ws:createCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Customer empty list value" id="98a16c7a-93ba-4f16-978b-dea5b1c3d596"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomer</con:operation><con:request name="Find Customer empty list value" id="c86136db-6ca0-4125-9817-87936ab06776"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>
+         <customerCode>${#TestSuite#ticket}_${#TestSuite#index}_CUST_LIST_EMPTY</customerCode>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple NotContains" id="faab3e16-bdc9-421e-86e2-41c8564b2652" name="Not Contains"><con:configuration><token>&lt;customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_LIST_NV">
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="abb76448-b057-486b-b954-1f6d80c24d20" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customization" searchProperties="true"><con:settings/><con:testStep type="request" name="Clear PurgeJob customizations" id="08736227-fdad-4e12-bc98-e9f3a1419e0d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>customizeEntity</con:operation><con:request name="Clear PurgeJob customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:customizeEntity>\r
@@ -21315,7 +21528,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </ws:findEntityCustomizations>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a0d930a4-fcda-4758-bc4d-f90c5778b278"/><con:assertion type="Simple Contains" id="0e570331-b92b-4421-99d2-1fed729e547c" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple NotContains" id="3071f92b-9fe4-44e6-b8f4-ef54c178116b" name="Not Contains"><con:configuration><token>${#TestSuite#ticket}_${#TestSuite#index}_PurgeJob_ACTION4</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>202</con:value></con:property></con:properties><con:setupScript>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple NotContains" id="3071f92b-9fe4-44e6-b8f4-ef54c178116b" name="Not Contains"><con:configuration><token>${#TestSuite#ticket}_${#TestSuite#index}_PurgeJob_ACTION4</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>204</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript><con:reportParameters/></con:testSuite><con:testSuite id="9b9a3a43-4576-4cb5-a078-379d65785ca4" name="CRM Account Hierarchy"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="c28a1e28-09b3-4a00-855f-1c675813d8d0" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create" searchProperties="true"><con:settings/><con:testStep type="request" name="S" id="2efb24c3-af43-4d4c-9c3b-75851733a639"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCRMAccountHierarchy</con:operation><con:request name="S" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
