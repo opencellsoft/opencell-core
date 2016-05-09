@@ -1,4 +1,4 @@
-package org.meveo.model.payments;
+package org.meveo.model.finance;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.scripts.RevenueRecognitionScript;
+import org.meveo.model.scripts.RevenueRecognitionScriptEntity;
 import org.meveo.model.scripts.RevenueRecognitionDelayUnitEnum;
 import org.meveo.model.scripts.RevenueRecognitionEventEnum;
 
@@ -28,7 +28,7 @@ public class RevenueRecognitionRule extends BusinessEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "SCRIPT_INSTANCE_ID")
-	private RevenueRecognitionScript script;
+	private RevenueRecognitionScriptEntity script;
 	
 	@Column(name="START_DELAY")
 	private Integer startDelay =0;
@@ -52,11 +52,11 @@ public class RevenueRecognitionRule extends BusinessEntity {
 	@Column(name="STOP_EVENT")
 	private RevenueRecognitionEventEnum stopEvent;
 
-	public RevenueRecognitionScript getScript() {
+	public RevenueRecognitionScriptEntity getScript() {
 		return script;
 	}
 
-	public void setScript(RevenueRecognitionScript script) {
+	public void setScript(RevenueRecognitionScriptEntity script) {
 		this.script = script;
 	}
 

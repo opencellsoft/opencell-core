@@ -14,19 +14,19 @@ import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.scripts.RevenueRecognitionScript;
+import org.meveo.model.scripts.RevenueRecognitionScriptEntity;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.service.script.CustomScriptService;
 
 @Singleton
 @Startup
-public class RevenueRecognitionScriptService extends CustomScriptService<RevenueRecognitionScript, RevenueRecognitionScriptInterface> {
+public class RevenueRecognitionScriptService extends CustomScriptService<RevenueRecognitionScriptEntity, RevenueRecognitionScriptInterface> {
 
     @Inject
     private ResourceBundle resourceMessages;
 
     @Override
-    public void create(RevenueRecognitionScript revenueRecognitionScript, User creator) throws BusinessException {
+    public void create(RevenueRecognitionScriptEntity revenueRecognitionScript, User creator) throws BusinessException {
 
         String className = getClassName(revenueRecognitionScript.getScript());
         if (className == null) {
@@ -38,7 +38,7 @@ public class RevenueRecognitionScriptService extends CustomScriptService<Revenue
     }
 
     @Override
-    public RevenueRecognitionScript update(RevenueRecognitionScript revenueRecognitionScript, User updater) throws BusinessException {
+    public RevenueRecognitionScriptEntity update(RevenueRecognitionScriptEntity revenueRecognitionScript, User updater) throws BusinessException {
 
         String className = getClassName(revenueRecognitionScript.getScript());
         if (className == null) {
@@ -57,15 +57,14 @@ public class RevenueRecognitionScriptService extends CustomScriptService<Revenue
      */
     @PostConstruct
     void compileAll() {
-        List<RevenueRecognitionScript> revenueRecognitionScripts = findByType(ScriptSourceTypeEnum.JAVA);
+        List<RevenueRecognitionScriptEntity> revenueRecognitionScripts = findByType(ScriptSourceTypeEnum.JAVA);
         compile(revenueRecognitionScripts);
     }
 
     // Interface methods
-
-    public List<String> scheduleRevenue(String scriptCode,ChargeInstance chargeInstance,Date startDate,Date endDate, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+    public void createRevenueSchedule(String scriptCode,ChargeInstance chargeInstance, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
     	RevenueRecognitionScriptInterface scriptInterface = getScriptInstance(currentUser.getProvider(), scriptCode);
-        return scriptInterface.scheduleRevenue(chargeInstance,startDate,endDate, currentUser);
+        scriptInterface.createRevenueSchedule(chargeInstance, currentUser);
     }
 
 }

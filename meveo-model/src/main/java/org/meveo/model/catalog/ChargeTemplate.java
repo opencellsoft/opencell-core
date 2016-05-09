@@ -49,7 +49,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OperationTypeEnum;
-import org.meveo.model.payments.RevenueRecognitionRule;
+import org.meveo.model.finance.RevenueRecognitionRule;
 
 @Entity
 @ObservableEntity

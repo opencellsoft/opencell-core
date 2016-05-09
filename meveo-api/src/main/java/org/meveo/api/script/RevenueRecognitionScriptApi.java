@@ -15,7 +15,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.scripts.RevenueRecognitionScript;
+import org.meveo.model.scripts.RevenueRecognitionScriptEntity;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
 
@@ -38,10 +38,10 @@ public class RevenueRecognitionScriptApi extends BaseApi {
 		String derivedCode = revenueRecognitionScriptService.getFullClassname(postData.getScript());
 
 		if (revenueRecognitionScriptService.findByCode(derivedCode, currentUser.getProvider()) != null) {
-			throw new EntityAlreadyExistsException(RevenueRecognitionScript.class, postData.getCode());
+			throw new EntityAlreadyExistsException(RevenueRecognitionScriptEntity.class, postData.getCode());
 		}
 
-		RevenueRecognitionScript RevenueRecognitionScript = new RevenueRecognitionScript();
+		RevenueRecognitionScriptEntity RevenueRecognitionScript = new RevenueRecognitionScriptEntity();
 		RevenueRecognitionScript.setCode(postData.getCode());
 		RevenueRecognitionScript.setDescription(postData.getDescription());
 
@@ -67,9 +67,9 @@ public class RevenueRecognitionScriptApi extends BaseApi {
 
 		String derivedCode = revenueRecognitionScriptService.getFullClassname(postData.getScript());
 
-		RevenueRecognitionScript RevenueRecognitionScript = revenueRecognitionScriptService.findByCode(derivedCode, currentUser.getProvider());
+		RevenueRecognitionScriptEntity RevenueRecognitionScript = revenueRecognitionScriptService.findByCode(derivedCode, currentUser.getProvider());
 		if (RevenueRecognitionScript == null) {
-			throw new EntityDoesNotExistsException(RevenueRecognitionScript.class, postData.getCode());
+			throw new EntityDoesNotExistsException(RevenueRecognitionScriptEntity.class, postData.getCode());
 		}
 
 		RevenueRecognitionScript.setDescription(postData.getDescription());
@@ -86,7 +86,7 @@ public class RevenueRecognitionScriptApi extends BaseApi {
 
 	public void createOrUpdate(RevenueRecognitionScriptDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		String derivedCode = revenueRecognitionScriptService.getFullClassname(postData.getScript());
-		RevenueRecognitionScript RevenueRecognitionScript = revenueRecognitionScriptService.findByCode(derivedCode, currentUser.getProvider());
+		RevenueRecognitionScriptEntity RevenueRecognitionScript = revenueRecognitionScriptService.findByCode(derivedCode, currentUser.getProvider());
 		if (RevenueRecognitionScript == null) {
 			// create
 			create(postData, currentUser);
@@ -97,9 +97,9 @@ public class RevenueRecognitionScriptApi extends BaseApi {
 	}
 
 	public void delete(String code, User currentUser) throws EntityDoesNotExistsException {
-		RevenueRecognitionScript RevenueRecognitionScript = revenueRecognitionScriptService.findByCode(code, currentUser.getProvider());
+		RevenueRecognitionScriptEntity RevenueRecognitionScript = revenueRecognitionScriptService.findByCode(code, currentUser.getProvider());
 		if (RevenueRecognitionScript == null) {
-			throw new EntityDoesNotExistsException(RevenueRecognitionScript.class, code);
+			throw new EntityDoesNotExistsException(RevenueRecognitionScriptEntity.class, code);
 		}
 
 		revenueRecognitionScriptService.remove(RevenueRecognitionScript);
@@ -112,9 +112,9 @@ public class RevenueRecognitionScriptApi extends BaseApi {
 
 		handleMissingParameters();
 
-		RevenueRecognitionScript RevenueRecognitionScript = revenueRecognitionScriptService.findByCode(code, provider);
+		RevenueRecognitionScriptEntity RevenueRecognitionScript = revenueRecognitionScriptService.findByCode(code, provider);
 		if (RevenueRecognitionScript == null) {
-			throw new EntityDoesNotExistsException(RevenueRecognitionScript.class, code);
+			throw new EntityDoesNotExistsException(RevenueRecognitionScriptEntity.class, code);
 		}
 
 		return new RevenueRecognitionScriptDto(RevenueRecognitionScript);
@@ -123,9 +123,9 @@ public class RevenueRecognitionScriptApi extends BaseApi {
 	public List<RevenueRecognitionScriptDto> list(User currentUser) {
 		List<RevenueRecognitionScriptDto> result = new ArrayList<>();
 
-		List<RevenueRecognitionScript> RevenueRecognitionScripts = revenueRecognitionScriptService.list(currentUser.getProvider());
+		List<RevenueRecognitionScriptEntity> RevenueRecognitionScripts = revenueRecognitionScriptService.list(currentUser.getProvider());
 		if (RevenueRecognitionScripts != null) {
-			for (RevenueRecognitionScript e : RevenueRecognitionScripts) {
+			for (RevenueRecognitionScriptEntity e : RevenueRecognitionScripts) {
 				result.add(new RevenueRecognitionScriptDto(e));
 			}
 		}

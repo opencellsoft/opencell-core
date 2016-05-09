@@ -49,6 +49,7 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
 
 @Stateless
 public class RecurringChargeInstanceService extends BusinessService<RecurringChargeInstance> {
@@ -59,6 +60,8 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 	@Inject
 	private WalletOperationService walletOperationService;
 	
+	@Inject
+	private RevenueRecognitionScriptService revenueRecognitionScriptService;
 
 	@Inject
 	@Rejected
@@ -331,6 +334,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 					activeRecurringChargeInstance.setChargeDate(chargeDate);
 					activeRecurringChargeInstance.setNextChargeDate(nextChargeDate);
 				}
+				revenueRecognitionScriptService.createRevenueSchedule(activeRecurringChargeInstance.getChargeTemplate().getRevenueRecognitionRule().getScript().getScript(), activeRecurringChargeInstance, user);
 			}
 			
 		} catch (Exception e) {

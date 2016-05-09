@@ -6,9 +6,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.payments.RevenueRecognitionRule;
+import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.impl.RevenueRecognitionRuleService;
+import org.meveo.service.finance.RevenueRecognitionRuleService;
 
 public class RevenueRecognitionRuleBean extends BaseBean<RevenueRecognitionRule>{
 

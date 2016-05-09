@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.scripts.RevenueRecognitionScript;
+import org.meveo.model.scripts.RevenueRecognitionScriptEntity;
 
 
 @XmlRootElement(name = "RevenueRecognitionScript")
@@ -17,7 +17,7 @@ public class RevenueRecognitionScriptDto extends CustomScriptDto {
 
 	}
 
-	public RevenueRecognitionScriptDto(RevenueRecognitionScript e) {
+	public RevenueRecognitionScriptDto(RevenueRecognitionScriptEntity e) {
 		super(e.getCode(), e.getDescription(), e.getSourceTypeEnum(), e.getScript());
 	}
 

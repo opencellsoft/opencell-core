@@ -8,16 +8,16 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.payment.RevenueRecognitionRuleDto;
+import org.meveo.api.dto.finance.RevenueRecognitionRuleDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.payments.RevenueRecognitionRule;
-import org.meveo.model.scripts.RevenueRecognitionScript;
-import org.meveo.service.payments.impl.RevenueRecognitionRuleService;
+import org.meveo.model.finance.RevenueRecognitionRule;
+import org.meveo.model.scripts.RevenueRecognitionScriptEntity;
+import org.meveo.service.finance.RevenueRecognitionRuleService;
 import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
 
 @Stateless
@@ -45,10 +45,10 @@ public class RevenueRecognitionRuleApi extends BaseApi {
 		RevenueRecognitionRule rrr = new RevenueRecognitionRule();
 		rrr.setCode(postData.getCode());
 		
-		RevenueRecognitionScript scriptInstance = 
+		RevenueRecognitionScriptEntity scriptInstance = 
 				revenueRecognitionScriptService.findByCode(postData.getScriptCode(), currentUser.getProvider());
 		if (scriptInstance == null) {
-			throw new EntityDoesNotExistsException(RevenueRecognitionScript.class, postData.getScriptCode());
+			throw new EntityDoesNotExistsException(RevenueRecognitionScriptEntity.class, postData.getScriptCode());
 		}
 		rrr.setScript(scriptInstance);
 		
@@ -80,10 +80,10 @@ public class RevenueRecognitionRuleApi extends BaseApi {
 
 		rrr.setCode(postData.getCode());
 		
-		RevenueRecognitionScript scriptInstance = 
+		RevenueRecognitionScriptEntity scriptInstance = 
 				revenueRecognitionScriptService.findByCode(postData.getScriptCode(), currentUser.getProvider());
 		if (scriptInstance == null) {
-			throw new EntityDoesNotExistsException(RevenueRecognitionScript.class, postData.getScriptCode());
+			throw new EntityDoesNotExistsException(RevenueRecognitionScriptEntity.class, postData.getScriptCode());
 		}
 		rrr.setScript(scriptInstance);
 		

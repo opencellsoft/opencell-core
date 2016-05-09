@@ -46,7 +46,7 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
     private BigDecimal unitMultiplicator;
     private int unitNbDecimal=BaseEntity.NB_DECIMALS;
     private RoundingModeEnum roundingModeDtoEnum;
-    private String revenueRecognitionScriptCode;
+    private String revenueRecognitionRuleCode;
     private CustomFieldsDto customFields = new CustomFieldsDto();
 
     private TriggeredEdrTemplatesDto triggeredEdrs = new TriggeredEdrTemplatesDto();
@@ -71,7 +71,7 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
             }
         }
         roundingModeDtoEnum = e.getRoundingMode();
-        revenueRecognitionScriptCode = e.getRevenueRecognitionScript()==null?null:e.getRevenueRecognitionScript().getCode();
+        revenueRecognitionRuleCode = e.getRevenueRecognitionRule()==null?null:e.getRevenueRecognitionRule().getCode();
         customFields = CustomFieldsDto.toDTO(customFieldInstances);
     }
 
@@ -187,12 +187,12 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
         this.roundingModeDtoEnum = roundingModeDtoEnum;
     }
 
-	public String getRevenueRecognitionScriptCode() {
-		return revenueRecognitionScriptCode;
+	public String getRevenueRecognitionRuleCode() {
+		return revenueRecognitionRuleCode;
 	}
 
-	public void setRevenueRecognitionScriptCode(String revenueRecognitionScriptCode) {
-		this.revenueRecognitionScriptCode = revenueRecognitionScriptCode;
+	public void setRevenueRecognitionRuleCode(String revenueRecognitionRuleCode) {
+		this.revenueRecognitionRuleCode = revenueRecognitionRuleCode;
 	}
     
 }

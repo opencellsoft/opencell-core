@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.payment.RevenueRecognitionRuleDto;
+import org.meveo.api.dto.finance.RevenueRecognitionRuleDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 @XmlRootElement(name = "AccountOperationsResponse")

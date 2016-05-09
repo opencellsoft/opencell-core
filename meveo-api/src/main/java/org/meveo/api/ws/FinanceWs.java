@@ -5,7 +5,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.payment.RevenueRecognitionRuleDto;
+import org.meveo.api.dto.finance.RevenueRecognitionRuleDto;
 import org.meveo.api.dto.response.payment.RevenueRecognitionRuleDtoResponse;
 import org.meveo.api.dto.response.payment.RevenueRecognitionRuleDtosResponse;
 

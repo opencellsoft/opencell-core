@@ -33,7 +33,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.scripts.RevenueRecognitionScript;
+import org.meveo.model.scripts.RevenueRecognitionScriptEntity;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
@@ -148,7 +148,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
         }
         
         if(postData.getRevenueRecognitionScriptCode()!=null){
-        	RevenueRecognitionScript revenueRecognitionScript = revenueRecognitionScriptService.findByCode(postData.getRevenueRecognitionScriptCode(), provider);
+        	RevenueRecognitionScriptEntity revenueRecognitionScript = revenueRecognitionScriptService.findByCode(postData.getRevenueRecognitionScriptCode(), provider);
         	chargeTemplate.setRevenueRecognitionScript(revenueRecognitionScript);
         }
         
@@ -265,7 +265,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
         }
         
         if(postData.getRevenueRecognitionScriptCode()!=null){
-        	RevenueRecognitionScript revenueRecognitionScript = revenueRecognitionScriptService.findByCode(postData.getRevenueRecognitionScriptCode(), provider);
+        	RevenueRecognitionScriptEntity revenueRecognitionScript = revenueRecognitionScriptService.findByCode(postData.getRevenueRecognitionScriptCode(), provider);
         	chargeTemplate.setRevenueRecognitionScript(revenueRecognitionScript);
         }
 

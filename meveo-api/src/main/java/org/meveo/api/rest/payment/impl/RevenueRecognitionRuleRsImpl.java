@@ -7,7 +7,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.payment.RevenueRecognitionRuleDto;
+import org.meveo.api.dto.finance.RevenueRecognitionRuleDto;
 import org.meveo.api.dto.response.payment.RevenueRecognitionRuleDtoResponse;
 import org.meveo.api.dto.response.payment.RevenueRecognitionRuleDtosResponse;
 import org.meveo.api.exception.MeveoApiException;
