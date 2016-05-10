@@ -18,16 +18,19 @@
  */
 package org.meveo.admin.action;
 
-import java.util.Date;
+import java.util.Locale;
 
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Model;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
+import org.jboss.seam.international.Alter;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.seam.security.BaseAuthenticator;
 import org.jboss.seam.security.Credentials;
+import org.jboss.solder.core.Client;
 import org.meveo.admin.exception.InactiveUserException;
 import org.meveo.admin.exception.LoginException;
 import org.meveo.admin.exception.NoRoleException;
@@ -53,6 +56,11 @@ public class Authenticator extends BaseAuthenticator {
 
 	@Inject @LoggedIn
 	protected Event<User> userEventProducer;
+	
+	@Inject  
+    @Alter  
+    @Client  
+    private Event<Locale> localeEvent; 
 	
 	private static final Logger log = LoggerFactory.getLogger(Authenticator.class);
 
@@ -129,8 +137,9 @@ public class Authenticator extends BaseAuthenticator {
 		inactiveUserError = false;
 		noRoleError = false;
 		passwordExpired = false;
-
 		User user = null;
+		//set the langauge
+		localeEvent.fire(FacesContext.getCurrentInstance().getViewRoot().getLocale());  
 		try {
 
 			/* Authentication check */

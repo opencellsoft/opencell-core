@@ -19,10 +19,7 @@ public class LocaleSelector implements Serializable {
 	private static final long serialVersionUID = -4072480474117257543L;
 
 	private Locale currentLocale;
-	@Inject  
-    @Alter  
-    @Client  
-    private Event<Locale> localeEvent;  
+	 
 
 	/**
 	 * Change user locale
@@ -45,7 +42,6 @@ public class LocaleSelector implements Serializable {
 	public void setCurrentLocale(Locale currentLocale) {
 		FacesContext.getCurrentInstance().getViewRoot().setLocale(currentLocale);
 		this.currentLocale = currentLocale;
-		localeEvent.fire(FacesContext.getCurrentInstance().getViewRoot().getLocale());  
 	}
 
 }
