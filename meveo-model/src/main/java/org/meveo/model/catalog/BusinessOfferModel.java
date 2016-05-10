@@ -5,12 +5,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.meveo.model.ObservableEntity;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.scripts.OfferModelScript;
 
 @Entity
-@ObservableEntity
 @Table(name = "CAT_BUSINESS_OFFER_MODEL")
 public class BusinessOfferModel extends MeveoModule {
 
