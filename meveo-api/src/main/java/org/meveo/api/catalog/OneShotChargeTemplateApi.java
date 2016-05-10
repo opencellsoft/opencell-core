@@ -33,6 +33,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.RevenueRecognitionScriptEntity;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
@@ -44,6 +45,7 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.finance.RevenueRecognitionRuleService;
 import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
 
 
@@ -79,9 +81,9 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
-    
+
     @Inject
-    RevenueRecognitionScriptService revenueRecognitionScriptService;
+    private RevenueRecognitionRuleService revenueRecognitionRuleService;
 
     public void create(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -147,9 +149,9 @@ public class OneShotChargeTemplateApi extends BaseApi {
             chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
         }
         
-        if(postData.getRevenueRecognitionScriptCode()!=null){
-        	RevenueRecognitionScriptEntity revenueRecognitionScript = revenueRecognitionScriptService.findByCode(postData.getRevenueRecognitionScriptCode(), provider);
-        	chargeTemplate.setRevenueRecognitionScript(revenueRecognitionScript);
+        if(postData.getRevenueRecognitionRuleCode()!=null){
+        	RevenueRecognitionRule revenueRecognitionScript = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode(), provider);
+        	chargeTemplate.setRevenueRecognitionRule(revenueRecognitionScript);
         }
         
         if (postData.getTriggeredEdrs() != null) {
@@ -264,9 +266,9 @@ public class OneShotChargeTemplateApi extends BaseApi {
             chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
         }
         
-        if(postData.getRevenueRecognitionScriptCode()!=null){
-        	RevenueRecognitionScriptEntity revenueRecognitionScript = revenueRecognitionScriptService.findByCode(postData.getRevenueRecognitionScriptCode(), provider);
-        	chargeTemplate.setRevenueRecognitionScript(revenueRecognitionScript);
+        if(postData.getRevenueRecognitionRuleCode()!=null){
+        	RevenueRecognitionRule revenueRecognitionScript = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode(), provider);
+        	chargeTemplate.setRevenueRecognitionRule(revenueRecognitionScript);
         }
 
         if (postData.getTriggeredEdrs() != null) {
