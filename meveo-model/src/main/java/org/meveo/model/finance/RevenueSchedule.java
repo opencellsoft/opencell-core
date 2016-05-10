@@ -13,11 +13,10 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.ChargeInstance;
 
 @Entity
-@Table(name = "AR_REVENUE_SCHEDULE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@Table(name = "AR_REVENUE_SCHEDULE", uniqueConstraints = @UniqueConstraint(columnNames = { "CHARGE_INSTANCE_ID", "REVENUE_DATE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_REVENUE_SCHEDULE_SEQ")
 public class RevenueSchedule extends BaseEntity {
 

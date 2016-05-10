@@ -1677,4 +1677,27 @@
 	            <column name="RECOGNIZE_REVENUE"  type="BOOL" defaultValueBoolean="false"/>
 	    </addColumn>
     </changeSet>
+    <changeSet author="smichea" id="financeModule_2016_05_10">
+        <createSequence sequenceName="ar_revenue_schedule_seq" />
+        <createTable tableName="ar_revenue_schedule">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+            <column name="charge_instance_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+			<column name="revenue_date" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="recognized_revenue" type="numeric(23, 12)"/>
+            <column name="invoiced_revenue" type="numeric(23, 12)"/>
+            <column name="accrued_revenue" type="numeric(23, 12)"/>
+            <column name="deffered_revenue" type="numeric(23, 12)"/>
+        </createTable>
+        <addPrimaryKey columnNames="id" constraintName="ar_revenue_schedule_pkey" tableName="ar_revenue_schedule" />
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ar_revenue_schedule" constraintName="fk_ar_revenue_schedule_provider"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+        <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="ar_revenue_schedule" constraintName="fk_ar_revenue_schedule_charge"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
+    </changeSet>
 </databaseChangeLog>
