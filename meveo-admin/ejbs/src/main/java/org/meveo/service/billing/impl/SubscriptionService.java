@@ -162,12 +162,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
         if (terminationDate == null) {
             terminationDate = new Date();
         }
-        subscription=refreshOrRetrieve(subscription);
-        // execute termination script
-        if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
-            offerModelScriptService.terminateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), terminationDate, terminationReason,
-                user);
-        }
+        
+		subscription = refreshOrRetrieve(subscription);
 
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         for (ServiceInstance serviceInstance : serviceInstances) {
@@ -189,6 +185,12 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.setTerminationDate(terminationDate);
         subscription.setStatus(SubscriptionStatusEnum.RESILIATED);
         update(subscription, user);
+        
+        // execute termination script
+        if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
+            offerModelScriptService.terminateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), terminationDate, terminationReason,
+                user);
+        }
     }
 
     @SuppressWarnings("unchecked")
