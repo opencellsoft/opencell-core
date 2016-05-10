@@ -56452,7 +56452,7 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
          <pricePlan code="PP_CH_REC_VIDAL_HOPTIMAL" description="Plan tarifaire Hoptimal">
             <eventCode>CH_REC_VIDAL_HOPTIMAL</eventCode>
             <!--Optional:-->
-            <amountWithoutTax>1000</amountWithoutTax>
+            <amountWithoutTax>5000</amountWithoutTax>
             <priority>1</priority>
          </pricePlan>
       </ws:createOrUpdatePricePlan>
@@ -56479,4 +56479,155 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
          </offerTemplate>
       </ws:createOrUpdateOfferTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c7c79097-e452-4901-93a5-9d3312311741"/><con:assertion type="Simple Contains" id="0e5a0378-395f-4390-9f8e-ccc8e0703bd6" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>provider</con:name><con:value>DEMO</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c7c79097-e452-4901-93a5-9d3312311741"/><con:assertion type="Simple Contains" id="0e5a0378-395f-4390-9f8e-ccc8e0703bd6" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="94e8a648-1563-4b03-a4e1-14ebe0788196" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer to Subscription" searchProperties="true"><con:settings/><con:testStep type="request" name="Hierarchy" id="67a07140-d7ac-4a7d-8765-adebe36c6355"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Hierarchy" id="6dbd4fe8-3082-4c18-a36f-3dd00bc55e9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+            <seller code="DEFAULT" description="DEFAULT">
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#CUST}" description="cust">
+                        <!--Optional:-->
+                        <externalRef1>e1</externalRef1>
+                        <!--Optional:-->
+                        <externalRef2>e2</externalRef2>
+                        <!--Optional:-->
+                        <name>
+                           <!--Optional:-->
+                           <title>Mr</title>
+                           <!--Optional:-->
+                           <firstName>Jean</firstName>
+                           <lastName>VIDAL</lastName>
+                        </name>
+                        <!--Optional:-->
+                        <address>
+                           <!--Optional:-->
+                           <address1>20 rue de la medecine</address1>
+                           <!--Optional:-->
+                           <address2></address2>
+                           <!--Optional:-->
+                           <address3></address3>
+                           <!--Optional:-->
+                           <zipCode>75005</zipCode>
+                           <!--Optional:-->
+                           <city>Paris</city>
+                           <!--Optional:-->
+                           <country>FR</country>                          
+                        </address>
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>Brand</customerBrand>
+                        <seller>Brand</seller>
+                        <customFields>                            
+	                 </customFields>
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="${#TestSuite#CUST}_CA" description="CA">
+                              <!--Optional:-->
+                              <externalRef1>e1</externalRef1>
+                              <!--Optional:-->
+                              <externalRef2>e2</externalRef2>
+                              <!--Optional:-->
+                              <name>
+                                 <!--Optional:-->
+                                 <title>Mr</title>
+                                 <!--Optional:-->
+                                 <firstName>Jean</firstName>
+                                 <lastName>VIDAL</lastName>
+                              </name>
+                              <!--Optional:-->
+                              <address>
+                                 <!--Optional:-->
+                                 <address1>20 rue de medecine</address1>
+                                 <!--Optional:-->
+                                 <address2></address2>
+                                 <!--Optional:-->
+                                 <address3></address3>
+                                 <!--Optional:-->
+                                 <zipCode>75005</zipCode>
+                                 <!--Optional:-->
+                                 <city>Paris</city>
+                                 <!--Optional:-->
+                                 <country>FR</country>
+                              </address>
+                              <customer>${#TestSuite#CUST}</customer>
+                              <currency>EUR</currency>
+                              <language>FRA</language>
+
+                              <billingAccounts>
+                                 <!--Zero or more repetitions:-->
+                                 <billingAccount code="${#TestSuite#CUST}_BA" description="BA">
+                                    <!--Optional:-->
+                                    <externalRef1>e1</externalRef1>
+                                    <!--Optional:-->
+                                    <externalRef2>e2</externalRef2>
+                                    <!--Optional:-->
+                                    <name>
+                                        <!--Optional:-->
+                                       <title>Mr</title>
+                                       <!--Optional:-->
+                                       <firstName>Jean</firstName>
+                                       <lastName>VIDAL</lastName>
+                                    </name>
+                                    <!--Optional:-->
+                                    <address>
+                                       <!--Optional:-->
+                                       <address1>20 rue de la medecine</address1>
+                                       <!--Optional:-->
+                                       <address2></address2>
+                                       <!--Optional:-->
+                                       <address3></address3>
+                                       <!--Optional:-->
+                                       <zipCode>75005</zipCode>
+                                       <!--Optional:-->
+                                       <city>Paris</city>
+                                       <!--Optional:-->
+                                       <country>FR</country>
+                                    </address>
+                                    
+                                    <customerAccount>${#TestSuite#CUST}_CA</customerAccount>
+                                    <billingCycle>BILLCYCLE1</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <paymentMethod>CHECK</paymentMethod>
+                                    
+                                    <userAccounts>
+                                       <!--Zero or more repetitions:-->
+                                       <userAccount code="${#TestSuite#CUST}_UA" description="Mr VIDAL">                                          
+                                          <billingAccount>${#TestSuite#CUST}_BA</billingAccount>
+                                          <!--Optional:-->
+                                          <subscriptionDate>2016-03-01</subscriptionDate>
+                                          <subscriptions>
+                                             <!--Zero or more repetitions:-->
+                                             <subscription code="${#TestSuite#CUST}_SUB" description="SUB">
+                                                <userAccount>${#TestSuite#CUST}_UA</userAccount>
+                                                <offerTemplate>OFF_VIDAL_HOPTIMAL</offerTemplate>
+                                                <subscriptionDate>2016-03-01</subscriptionDate>
+                                                <!--Optional:-->
+                                                <services>
+                                                   <!--Zero or more repetitions:-->
+                                                   <serviceInstance code="PACK HOPTIMAL_REC" description="PACK HOPTIMAL">
+                                                      <!--Optional:-->
+                                                      <subscriptionDate>2014-12-01</subscriptionDate>
+                                                      <endAgreementDate>2018-06-30</endAgreementDate>
+                                                      <quantity>1</quantity>
+                                                   </serviceInstance>
+                                                </services>
+                                             </subscription>
+                                          </subscriptions>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8572c8e2-41d0-426a-b196-aa491d7abfee"/><con:assertion type="Simple Contains" name="Contains" id="38fd1305-ba77-49e2-849b-5c7f2d7ae6df"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>provider</con:name><con:value>DEMO</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>
