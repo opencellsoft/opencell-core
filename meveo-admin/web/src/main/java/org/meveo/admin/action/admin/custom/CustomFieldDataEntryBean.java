@@ -48,6 +48,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
+import org.meveo.service.script.CustomScriptService;
 import org.meveo.service.script.EntityActionScriptService;
 import org.meveo.service.script.Script;
 import org.meveo.util.EntityCustomizationUtils;
@@ -570,6 +571,47 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
+     * Execute custom action on a child entity
+     * 
+     * @param parentEntity Parent entity, entity is related to
+     * @param childEntity Entity to execute action on
+     * @param action Action to execute
+     * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
+     * @return A script execution result value from Script.RESULT_GUI_OUTCOME variable
+     */
+    public String executeCustomActionOnChildEntity(ICustomFieldEntity parentEntity, ICustomFieldEntity childEntity, EntityActionScript action, String encodedParameters) {
+
+        try {
+
+            Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
+            context.put(Script.CONTEXT_PARENT_ENTITY, parentEntity);
+
+            Map<String, Object> result = entityActionScriptService.execute((IEntity) childEntity, action.getCode(), context, currentUser);
+
+            // Display a message accordingly on what is set in result
+            if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
+                messages.info(new BundleKey("messages", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY)));
+
+            } else if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
+                messages.info((String) result.get(Script.RESULT_GUI_MESSAGE));
+
+            } else {
+                messages.info(new BundleKey("messages", "scriptInstance.actionExecutionSuccessfull"), action.getLabel());
+            }
+
+            if (result.containsKey(Script.RESULT_GUI_OUTCOME)) {
+                return (String) result.get(Script.RESULT_GUI_OUTCOME);
+            }
+
+        } catch (BusinessException e) {
+            log.error("Failed to execute a script {} on entity {}", action.getCode(), childEntity, e);
+            messages.error(new BundleKey("messages", "scriptInstance.actionExecutionFailed"), action.getLabel(), e.getMessage());
+        }
+
+        return null;
+    }
+
+    /**
      * Save custom fields for a given entity
      * 
      * @param entity Entity, the fields relate to
@@ -614,18 +656,19 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Get a list of columns to display in a list of child entities for a given field
+     * Get a child entity column corresponding to a given code
      * 
-     * @param childEntityFieldDefinition Field definition
+     * @param childEntityTypeFieldDefinition Child entity type field definition
+     * @param childFieldCode Child entity field code
      * @return
      */
-    public Collection<CustomFieldTemplate> getChildEntityColumns(CustomFieldTemplate childEntityFieldDefinition) {
+    public CustomFieldTemplate getChildEntityField(CustomFieldTemplate childEntityTypeFieldDefinition, String childFieldCode) {
 
-        Map<String, CustomFieldTemplate> result = customFieldTemplateService.findByAppliesTo(
-            EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(childEntityFieldDefinition.getEntityClazz())), currentProvider);
+        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(
+            EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(childEntityTypeFieldDefinition.getEntityClazz())),
+            currentProvider);
 
-        return result.values();
-
+        return cfts.get(childFieldCode);
     }
 
     /**

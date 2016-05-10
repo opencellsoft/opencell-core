@@ -102,20 +102,20 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         return result;
     }
 
-	public boolean isExistsCode(String code, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(CustomScript.class, "t", null, provider);
-		qb.addCriterion("code", "=", code, true);
+    public boolean isExistsCode(String code, Provider provider) {
+        QueryBuilder qb = new QueryBuilder(CustomScript.class, "t", null, provider);
+        qb.addCriterion("code", "=", code, true);
 
-		try {
-			if (qb.getQuery(getEntityManager()).getSingleResult() != null) {
-				return true;
-			}
-		} catch (NoResultException e) {
+        try {
+            if (qb.getQuery(getEntityManager()).getSingleResult() != null) {
+                return true;
+            }
+        } catch (NoResultException e) {
 
-		}
+        }
 
-		return false;
-	}
+        return false;
+    }
 
     @Override
     public void create(T script, User creator) throws BusinessException {
@@ -431,22 +431,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     public Map<String, Object> execute(IEntity entity, String scriptCode, String encodedParameters, User currentUser) throws InvalidPermissionException, ElementNotFoundException,
             BusinessException {
 
-        Map<String, Object> parameters = new HashMap<String, Object>();
-
-        if (!StringUtils.isBlank(encodedParameters)) {
-            StringTokenizer tokenizer = new StringTokenizer(encodedParameters, "&");
-            while (tokenizer.hasMoreElements()) {
-                String paramValue = tokenizer.nextToken();
-                String[] paramValueSplit = paramValue.split("=");
-                if (paramValueSplit.length == 2) {
-                    parameters.put(paramValueSplit[0], paramValueSplit[1]);
-                } else {
-                    parameters.put(paramValueSplit[0], null);
-                }
-            }
-
-        }
-        return execute(entity, scriptCode, parameters, currentUser);
+        return execute(entity, scriptCode, CustomScriptService.parseParameters(encodedParameters), currentUser);
     }
 
     /**
@@ -515,5 +500,30 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
         compiledScript.execute(context, currentUser);
         return context;
+    }
+
+    /**
+     * Parse parameters encoded in URL like style param=value&param=value
+     * 
+     * @param encodedParameters Parameters encoded in URL like style param=value&param=value
+     * @return A map of parameter keys and values
+     */
+    public static Map<String, Object> parseParameters(String encodedParameters) {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+
+        if (!StringUtils.isBlank(encodedParameters)) {
+            StringTokenizer tokenizer = new StringTokenizer(encodedParameters, "&");
+            while (tokenizer.hasMoreElements()) {
+                String paramValue = tokenizer.nextToken();
+                String[] paramValueSplit = paramValue.split("=");
+                if (paramValueSplit.length == 2) {
+                    parameters.put(paramValueSplit[0], paramValueSplit[1]);
+                } else {
+                    parameters.put(paramValueSplit[0], null);
+                }
+            }
+
+        }
+        return parameters;
     }
 }
