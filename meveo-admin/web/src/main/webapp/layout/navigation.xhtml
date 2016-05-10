@@ -18,6 +18,7 @@
 	<p:tooltip for="taxes">#{help['menu.taxes']}</p:tooltip>
 	<p:tooltip for="invoiceCategories">#{help['menu.invoiceCategories']}</p:tooltip>
 	<p:tooltip for="invoiceSubCategories">#{help['menu.invoiceSubCategories']}</p:tooltip>
+	<p:tooltip for="invoiceTypes">#{help['menu.invoiceTypes']}</p:tooltip>
 	<p:tooltip for="providerContacts">#{help['menu.providerContacts']}</p:tooltip>
 	<p:tooltip for="customerBrands">#{help['menu.customerBrands']}</p:tooltip>
 	<p:tooltip for="customerCategories">#{help['menu.customerCategories']}</p:tooltip>
@@ -141,6 +142,10 @@
 					rendered="#{identity.hasPermission('catalog','catalogVisualization')}"
 					outcome="invoiceSubCategories"
 					value="#{messages['menu.invoiceSubCategories']}" />
+				<p:menuitem id="invoiceTypes"
+					rendered="#{identity.hasPermission('billing','billingVisualization')}"
+					outcome="invoiceTypes"
+					value="#{messages['menu.invoiceTypes']}" />					
 			</p:submenu>
 			
 			<p:menuitem id="terminationReasons"

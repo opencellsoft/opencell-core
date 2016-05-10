@@ -14,6 +14,7 @@ import org.meveo.api.CustomFieldTemplateApi;
 import org.meveo.api.InvoiceCategoryApi;
 import org.meveo.api.InvoiceSubCategoryApi;
 import org.meveo.api.InvoiceSubCategoryCountryApi;
+import org.meveo.api.InvoiceTypeApi;
 import org.meveo.api.LanguageApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.OccTemplateApi;
@@ -47,6 +48,8 @@ import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
 import org.meveo.api.dto.UserDto;
+import org.meveo.api.dto.billing.InvoiceTypeDto;
+import org.meveo.api.dto.billing.InvoiceTypesDto;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
@@ -59,6 +62,8 @@ import org.meveo.api.dto.response.GetDescriptionsResponse;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryCountryResponse;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
+import org.meveo.api.dto.response.GetInvoiceTypeResponse;
+import org.meveo.api.dto.response.GetInvoiceTypesResponse;
 import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetLanguageResponse;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
@@ -77,6 +82,7 @@ import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.PermissionResponseDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
+import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SettingsWs;
@@ -149,6 +155,9 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Inject
     private TerminationReasonApi terminationReasonApi;
+    
+    @Inject
+    private InvoiceTypeApi invoiceTypeApi;
 
     @Override
     public ActionStatus createTradingCountry(CountryDto countryDto) {
@@ -2341,5 +2350,73 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
+	}
+
+	@Override
+	public ActionStatus createInvoiceType(InvoiceTypeDto invoiceTypeDto) {
+	    ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	    try {
+			invoiceTypeApi.create(invoiceTypeDto, getCurrentUser());
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
+	    return result;
+	}
+
+	@Override
+	public ActionStatus updateInvoiceType(InvoiceTypeDto invoiceTypeDto) {
+	    ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	    try {
+			invoiceTypeApi.update(invoiceTypeDto, getCurrentUser());
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
+	    return result;
+	}
+
+	@Override
+	public GetInvoiceTypeResponse findInvoiceType(String invoiceTypeCode) {
+		GetInvoiceTypeResponse result = new GetInvoiceTypeResponse();
+		result.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+	    try {
+	    	result.setInvoiceTypeDto(invoiceTypeApi.find(invoiceTypeCode, getCurrentUser().getProvider()));
+		} catch (Exception e) {
+			super.processException(e, result.getActionStatus());
+		}
+	    return result;
+	}
+
+	@Override
+	public ActionStatus removeInvoiceType(String invoiceTypeCode) {
+	    ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	    try {
+			invoiceTypeApi.remove(invoiceTypeCode, getCurrentUser().getProvider());
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
+	    return result;
+	}
+
+	@Override
+	public ActionStatus createOrUpdateInvoiceType(InvoiceTypeDto invoiceTypeDto) {
+	    ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	    try {
+			invoiceTypeApi.createOrUpdate(invoiceTypeDto, getCurrentUser());
+		} catch (Exception e) {
+			super.processException(e, result);
+		}
+	    return result;
+	}
+
+	@Override
+	public GetInvoiceTypesResponse listInvoiceTypes() {
+		GetInvoiceTypesResponse result = new GetInvoiceTypesResponse();
+		result.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+	    try {
+	    	result.setInvoiceTypesDto(invoiceTypeApi.list(getCurrentUser().getProvider()));
+		} catch (Exception e) {
+			super.processException(e, result.getActionStatus());
+		}
+	    return result;
 	}
 }
