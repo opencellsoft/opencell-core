@@ -3,6 +3,7 @@ package org.meveo.admin.action.crm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -13,14 +14,18 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
+import org.meveo.util.EntityCustomizationUtils;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.model.DualListModel;
 
 @Named
 @ViewScoped
@@ -36,6 +41,8 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
     @Inject
     private CustomizedEntityService customizedEntityService;
+
+    private DualListModel<CustomFieldMatrixColumn> childEntityFieldDM;
 
     public CustomFieldTemplateBean() {
         super(CustomFieldTemplate.class);
@@ -60,6 +67,17 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         if (cfDuplicate != null && !cfDuplicate.getId().equals(entity.getId())) {
             messages.error(new BundleKey("messages", "customFieldTemplate.alreadyExists"));
             return null;
+        }
+
+        // Update childEntityCcolums
+        if (getEntity().getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
+            List<String> cheColumns = new ArrayList<>();
+            for (CustomFieldMatrixColumn cheColumn : childEntityFieldDM.getTarget()) {
+                cheColumns.add(cheColumn.getCode());
+            }
+            getEntity().setChildEntityFieldsAsList(cheColumns);
+        } else {
+            getEntity().setChildEntityFields(null);
         }
 
         if (entity.getCalendar() != null) {
@@ -118,7 +136,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
         return clazzNames;
     }
-    
+
     /**
      * Autocomplete method for selecting a class that implement ICustomFieldEntity. Return a human readable class name. Used in conjunction with CustomFieldAppliesToConverter
      * 
@@ -149,5 +167,47 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         if (entity.getStorageType() == CustomFieldStorageTypeEnum.MAP && entity.getMapKeyType() == null) {
             entity.setMapKeyType(CustomFieldMapKeyEnum.STRING);
         }
+    }
+
+    public void resetChildEntityFields() {
+        childEntityFieldDM = null;
+    }
+
+    public DualListModel<CustomFieldMatrixColumn> getChildEntityFieldListModel() {
+        if (childEntityFieldDM == null && CustomFieldTemplate.retrieveCetCode(entity.getEntityClazz()) != null) {
+
+            List<CustomFieldMatrixColumn> perksSource = new ArrayList<>();
+            perksSource.add(new CustomFieldMatrixColumn("code", "Code"));
+            perksSource.add(new CustomFieldMatrixColumn("description", "Description"));
+
+            Map<String, CustomFieldTemplate> cfts = cftService.findByAppliesTo(
+                EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(entity.getEntityClazz())), getCurrentProvider());
+
+            for (CustomFieldTemplate cft : cfts.values()) {
+                perksSource.add(new CustomFieldMatrixColumn(cft.getCode(), cft.getDescription()));
+            }
+
+            // Custom field template stores selected fields as a comma separated string of field codes.
+            List<CustomFieldMatrixColumn> perksTarget = new ArrayList<CustomFieldMatrixColumn>();
+            if (getEntity().getChildEntityFields() != null) {
+                for (String fieldCode : getEntity().getChildEntityFieldsAsList()) {
+                    if (fieldCode.equals("code")) {
+                        perksTarget.add(new CustomFieldMatrixColumn("code", "Code"));
+                    } else if (fieldCode.equals("description")) {
+                        perksTarget.add(new CustomFieldMatrixColumn("description", "Description"));
+                    } else if (cfts.containsKey(fieldCode)) {
+                        CustomFieldTemplate cft = cfts.get(fieldCode);
+                        perksTarget.add(new CustomFieldMatrixColumn(cft.getCode(), cft.getDescription()));
+                    }
+                }
+            }
+            perksSource.removeAll(perksTarget);
+            childEntityFieldDM = new DualListModel<CustomFieldMatrixColumn>(perksSource, perksTarget);
+        }
+        return childEntityFieldDM;
+    }
+
+    public void setChildEntityFieldListModel(DualListModel<CustomFieldMatrixColumn> childEntityFieldDM) {
+        this.childEntityFieldDM = childEntityFieldDM;
     }
 }

@@ -59,6 +59,9 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
         if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (postData.getStorageType() != CustomFieldStorageTypeEnum.LIST || postData.isVersionable())) {
             throw new InvalidParameterException("Custom field of type CHILD_ENTITY only supports unversioned values and storage type of LIST");
+        }        
+        if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (postData.getChildEntityFieldsForSummary() == null || postData.getChildEntityFieldsForSummary().isEmpty())) {
+            missingParameters.add("childEntityFieldsForSummary");
         }
 
         handleMissingParameters();
@@ -107,6 +110,9 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
         if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (postData.getStorageType() != CustomFieldStorageTypeEnum.LIST || postData.isVersionable())) {
             throw new InvalidParameterException("Custom field of type CHILD_ENTITY only supports unversioned values and storage type of LIST");
+        }      
+        if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (postData.getChildEntityFieldsForSummary() == null || postData.getChildEntityFieldsForSummary().isEmpty())) {
+            missingParameters.add("childEntityFieldsForSummary");
         }
 
         handleMissingParameters();
@@ -267,6 +273,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
             cft.setStorageType(CustomFieldStorageTypeEnum.LIST);
             cft.setVersionable(false);
+            cft.setChildEntityFieldsAsList(dto.getChildEntityFieldsForSummary());
         }
 
         if (!StringUtils.isBlank(dto.getCalendar())) {

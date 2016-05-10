@@ -28,6 +28,15 @@ public class CustomFieldMatrixColumn implements Serializable, Comparable<CustomF
     @NotNull
     private CustomFieldMapKeyEnum keyType;
 
+    public CustomFieldMatrixColumn() {
+
+    }
+
+    public CustomFieldMatrixColumn(String code, String label) {
+        this.code = code;
+        this.label = label;
+    }
+
     public int getPosition() {
         return position;
     }

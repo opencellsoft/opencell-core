@@ -26,6 +26,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.catalog.Calendar;
@@ -145,6 +146,13 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Column(name = "CACHE_VALUE")
     @NotNull
     private boolean cacheValue;
+
+    /**
+     * Child entity fields to display as summary. Field names are separated by a comma.
+     */
+    @Column(name = "CHE_FIELDS", length = 500)
+    @Size(max = 500)
+    private String childEntityFields;
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -276,6 +284,10 @@ public class CustomFieldTemplate extends BusinessEntity {
         this.entityClazz = entityClazz;
     }
 
+    public String getEntityClazzCetCode() {
+        return CustomFieldTemplate.retrieveCetCode(entityClazz);
+    }
+
     /**
      * Retrieve a cet code from classname and code as it is stored in entityClazz field.
      * 
@@ -283,6 +295,9 @@ public class CustomFieldTemplate extends BusinessEntity {
      * @return
      */
     public static String retrieveCetCode(String entityClazz) {
+        if (entityClazz == null) {
+            return null;
+        }
         if (entityClazz.startsWith(CustomEntityTemplate.class.getName())) {
             String cetCode = entityClazz.substring(entityClazz.indexOf(ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR) + ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR.length());
             return cetCode;
@@ -499,6 +514,25 @@ public class CustomFieldTemplate extends BusinessEntity {
             return false;
         }
         return true;
+    }
+
+    public String getChildEntityFields() {
+        return childEntityFields;
+    }
+
+    public String[] getChildEntityFieldsAsList() {
+        if (childEntityFields != null) {
+            return childEntityFields.split("\\|");
+        }
+        return new String[0];
+    }
+
+    public void setChildEntityFields(String childEntityFields) {
+        this.childEntityFields = childEntityFields;
+    }
+
+    public void setChildEntityFieldsAsList(List<String> cheFields) {
+        this.childEntityFields = StringUtils.concatenate("|", cheFields);
     }
 
     @Override
