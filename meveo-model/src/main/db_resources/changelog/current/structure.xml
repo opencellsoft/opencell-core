@@ -1700,4 +1700,11 @@
         <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="ar_revenue_schedule" constraintName="fk_ar_revenue_schedule_charge"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
     </changeSet>
+
+	<changeSet id="#1679_20160509" author="EdwardLegaspi">
+		<addForeignKeyConstraint constraintName="fk_crm_business_account_model_accountmodel"
+			referencedTableName="meveo_script_instance" baseColumnNames="script_instance_id"
+			baseTableName="crm_business_account_model" referencedColumnNames="id" />
+	</changeSet>
+	
 </databaseChangeLog>
