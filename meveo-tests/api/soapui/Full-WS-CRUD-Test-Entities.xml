@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="63d882e4-12ba-48cb-9cf8-b557b7f5787f" activeEnvironment="Default" name="Full WS Test Entities" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="63d882e4-12ba-48cb-9cf8-b557b7f5787f" activeEnvironment="Default" name="Full WS Test Entities" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
   <con:entry key="TestSuite" value="&lt;all>"/>
@@ -16503,7 +16503,1069 @@
       <wsdl:output message="ns1:findChartResponse" name="findChartResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://192.168.10.14:8080/meveo/ReportingWs</con:endpoint></con:endpoints><con:operation id="f8a3bab9-a28e-4778-b116-953476120ce2" isOneWay="false" action="" name="createBarChart" bindingOperationName="createBarChart" type="Request-Response" outputName="createBarChartResponse" inputName="createBarChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="0f3b9fdb-1dd9-446f-93cc-97266be6a22d" isOneWay="false" action="" name="createChart" bindingOperationName="createChart" type="Request-Response" outputName="createChartResponse" inputName="createChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="72ac9aaa-68d3-4371-a54b-7de8c51d6026" isOneWay="false" action="" name="createLineChart" bindingOperationName="createLineChart" type="Request-Response" outputName="createLineChartResponse" inputName="createLineChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="b4f3ec6e-1931-4aa2-9910-26eb5412f26e" isOneWay="false" action="" name="createMeasurableQuantity" bindingOperationName="createMeasurableQuantity" type="Request-Response" outputName="createMeasurableQuantityResponse" inputName="createMeasurableQuantity" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="44783f01-04f1-46f2-acc1-eba78e1170ce" isOneWay="false" action="" name="createOrUpdateChart" bindingOperationName="createOrUpdateChart" type="Request-Response" outputName="createOrUpdateChartResponse" inputName="createOrUpdateChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="46449bbe-4d34-417f-b086-0d697751e819" isOneWay="false" action="" name="createPieChart" bindingOperationName="createPieChart" type="Request-Response" outputName="createPieChartResponse" inputName="createPieChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="26a7f5e1-f37f-41cb-8d22-77b4682932ed" isOneWay="false" action="" name="findChart" bindingOperationName="findChart" type="Request-Response" outputName="findChartResponse" inputName="findChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="da148ff9-7395-4d2f-8d78-50e767fc5a79" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="31a32570-2b6e-487f-ba6e-2a6e63b51424" isOneWay="false" action="" name="removeChart" bindingOperationName="removeChart" type="Request-Response" outputName="removeChartResponse" inputName="removeChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="8664049c-9756-4d9c-91bf-014d8bb700bb" isOneWay="false" action="" name="updateBarChart" bindingOperationName="updateBarChart" type="Request-Response" outputName="updateBarChartResponse" inputName="updateBarChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="57dd74dd-cc6a-4894-bff4-139d50f196fa" isOneWay="false" action="" name="updateChart" bindingOperationName="updateChart" type="Request-Response" outputName="updateChartResponse" inputName="updateChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="87539181-9795-4dd9-99ff-6b95200ea232" isOneWay="false" action="" name="updateLineChart" bindingOperationName="updateLineChart" type="Request-Response" outputName="updateLineChartResponse" inputName="updateLineChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="5f70fb18-db03-4d59-aa32-10a8ffc8e675" isOneWay="false" action="" name="updatePieChart" bindingOperationName="updatePieChart" type="Request-Response" outputName="updatePieChartResponse" inputName="updatePieChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation></con:interface><con:testSuite id="7ac4d3d1-236f-4d01-a647-b086f07ebe6a" name="Setup Authorization"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="30a58b44-a165-4a27-a889-fe1585a451c8" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="setAllHeaders" searchProperties="true"><con:settings/><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://192.168.10.14:8080/meveo/ReportingWs</con:endpoint></con:endpoints><con:operation id="f8a3bab9-a28e-4778-b116-953476120ce2" isOneWay="false" action="" name="createBarChart" bindingOperationName="createBarChart" type="Request-Response" outputName="createBarChartResponse" inputName="createBarChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="0f3b9fdb-1dd9-446f-93cc-97266be6a22d" isOneWay="false" action="" name="createChart" bindingOperationName="createChart" type="Request-Response" outputName="createChartResponse" inputName="createChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="72ac9aaa-68d3-4371-a54b-7de8c51d6026" isOneWay="false" action="" name="createLineChart" bindingOperationName="createLineChart" type="Request-Response" outputName="createLineChartResponse" inputName="createLineChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="b4f3ec6e-1931-4aa2-9910-26eb5412f26e" isOneWay="false" action="" name="createMeasurableQuantity" bindingOperationName="createMeasurableQuantity" type="Request-Response" outputName="createMeasurableQuantityResponse" inputName="createMeasurableQuantity" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="44783f01-04f1-46f2-acc1-eba78e1170ce" isOneWay="false" action="" name="createOrUpdateChart" bindingOperationName="createOrUpdateChart" type="Request-Response" outputName="createOrUpdateChartResponse" inputName="createOrUpdateChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="46449bbe-4d34-417f-b086-0d697751e819" isOneWay="false" action="" name="createPieChart" bindingOperationName="createPieChart" type="Request-Response" outputName="createPieChartResponse" inputName="createPieChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="26a7f5e1-f37f-41cb-8d22-77b4682932ed" isOneWay="false" action="" name="findChart" bindingOperationName="findChart" type="Request-Response" outputName="findChartResponse" inputName="findChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="da148ff9-7395-4d2f-8d78-50e767fc5a79" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="31a32570-2b6e-487f-ba6e-2a6e63b51424" isOneWay="false" action="" name="removeChart" bindingOperationName="removeChart" type="Request-Response" outputName="removeChartResponse" inputName="removeChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="8664049c-9756-4d9c-91bf-014d8bb700bb" isOneWay="false" action="" name="updateBarChart" bindingOperationName="updateBarChart" type="Request-Response" outputName="updateBarChartResponse" inputName="updateBarChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="57dd74dd-cc6a-4894-bff4-139d50f196fa" isOneWay="false" action="" name="updateChart" bindingOperationName="updateChart" type="Request-Response" outputName="updateChartResponse" inputName="updateChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="87539181-9795-4dd9-99ff-6b95200ea232" isOneWay="false" action="" name="updateLineChart" bindingOperationName="updateLineChart" type="Request-Response" outputName="updateLineChartResponse" inputName="updateLineChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="5f70fb18-db03-4d59-aa32-10a8ffc8e675" isOneWay="false" action="" name="updatePieChart" bindingOperationName="updatePieChart" type="Request-Response" outputName="updatePieChartResponse" inputName="updatePieChart" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="405f4de6-2366-460c-88cd-c0e25de8ef4c" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/EntityCustomizationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/EntityCustomizationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="EntityCustomizationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:import location="http://localhost:8080/meveo/EntityCustomizationWs?wsdl=EntityCustomizationWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
+  <wsdl:binding name="EntityCustomizationWsSoapBinding" type="ns1:EntityCustomizationWs">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="customizeEntity">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="customizeEntity">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="customizeEntityResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findEntityTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findEntityTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findEntityTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCustomEntityInstance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateCustomEntityInstance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateCustomEntityInstanceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateAction">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateAction">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateActionResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findField">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findField">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findFieldResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateField">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateField">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateFieldResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateEntityTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateEntityTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateEntityTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateField">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateField">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateFieldResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findEntityCustomizations">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findEntityCustomizations">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findEntityCustomizationsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeCustomEntityInstance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeCustomEntityInstance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeCustomEntityInstanceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findCustomEntityInstance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findCustomEntityInstance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findCustomEntityInstanceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="index">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="indexResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createAction">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createAction">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createActionResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findAction">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findAction">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findActionResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createCustomEntityInstance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createCustomEntityInstance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createCustomEntityInstanceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createEntityTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createEntityTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createEntityTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createField">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createField">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createFieldResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateAction">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateAction">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateActionResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeField">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeField">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeFieldResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeAction">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeAction">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeActionResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeEntityTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeEntityTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeEntityTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomEntityInstance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateCustomEntityInstance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateCustomEntityInstanceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateEntityTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateEntityTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateEntityTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EntityCustomizationWs">
+    <wsdl:port binding="tns:EntityCustomizationWsSoapBinding" name="EntityCustomizationWsImplPort">
+      <soap:address location="http://localhost:8080/meveo/EntityCustomizationWs"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/EntityCustomizationWs?wsdl=EntityCustomizationWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="EntityCustomizationWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
+      <xs:element name="ActionStatus" type="tns:ActionStatus"/>
+      <xs:element name="CustomEntityInstance" type="tns:customEntityInstanceDto"/>
+      <xs:element name="CustomEntityTemplate" type="tns:customEntityTemplateDto"/>
+      <xs:element name="CustomEntityTemplateResponseDto" type="tns:customEntityTemplateResponseDto"/>
+      <xs:element name="CustomField" type="tns:customFieldDto"/>
+      <xs:element name="CustomFieldMatrixColumn" type="tns:customFieldMatrixColumnDto"/>
+      <xs:element name="CustomFieldTemplate" type="tns:customFieldTemplateDto"/>
+      <xs:element name="CustomFieldValue" type="tns:customFieldValueDto"/>
+      <xs:element name="CustomFields" type="tns:customFieldsDto"/>
+      <xs:element name="EntityActionScript" type="tns:entityActionScriptDto"/>
+      <xs:element name="EntityActionScriptResponse" type="tns:entityActionScriptResponseDto"/>
+      <xs:element name="EntityCustomization" type="tns:entityCustomizationDto"/>
+      <xs:element name="EntityCustomizationResponseDto" type="tns:entityCustomizationResponseDto"/>
+      <xs:element name="EntityReference" type="tns:entityReferenceDto"/>
+      <xs:element name="GetCustomEntityInstanceResponse" type="tns:customEntityInstanceResponseDto"/>
+      <xs:element name="GetCustomFieldTemplateReponse" type="tns:getCustomFieldTemplateReponseDto"/>
+      <xs:element name="createAction" type="tns:createAction"/>
+      <xs:element name="createActionResponse" type="tns:createActionResponse"/>
+      <xs:element name="createCustomEntityInstance" type="tns:createCustomEntityInstance"/>
+      <xs:element name="createCustomEntityInstanceResponse" type="tns:createCustomEntityInstanceResponse"/>
+      <xs:element name="createEntityTemplate" type="tns:createEntityTemplate"/>
+      <xs:element name="createEntityTemplateResponse" type="tns:createEntityTemplateResponse"/>
+      <xs:element name="createField" type="tns:createField"/>
+      <xs:element name="createFieldResponse" type="tns:createFieldResponse"/>
+      <xs:element name="createOrUpdateAction" type="tns:createOrUpdateAction"/>
+      <xs:element name="createOrUpdateActionResponse" type="tns:createOrUpdateActionResponse"/>
+      <xs:element name="createOrUpdateCustomEntityInstance" type="tns:createOrUpdateCustomEntityInstance"/>
+      <xs:element name="createOrUpdateCustomEntityInstanceResponse" type="tns:createOrUpdateCustomEntityInstanceResponse"/>
+      <xs:element name="createOrUpdateEntityTemplate" type="tns:createOrUpdateEntityTemplate"/>
+      <xs:element name="createOrUpdateEntityTemplateResponse" type="tns:createOrUpdateEntityTemplateResponse"/>
+      <xs:element name="createOrUpdateField" type="tns:createOrUpdateField"/>
+      <xs:element name="createOrUpdateFieldResponse" type="tns:createOrUpdateFieldResponse"/>
+      <xs:element name="customizeEntity" type="tns:customizeEntity"/>
+      <xs:element name="customizeEntityResponse" type="tns:customizeEntityResponse"/>
+      <xs:element name="findAction" type="tns:findAction"/>
+      <xs:element name="findActionResponse" type="tns:findActionResponse"/>
+      <xs:element name="findCustomEntityInstance" type="tns:findCustomEntityInstance"/>
+      <xs:element name="findCustomEntityInstanceResponse" type="tns:findCustomEntityInstanceResponse"/>
+      <xs:element name="findEntityCustomizations" type="tns:findEntityCustomizations"/>
+      <xs:element name="findEntityCustomizationsResponse" type="tns:findEntityCustomizationsResponse"/>
+      <xs:element name="findEntityTemplate" type="tns:findEntityTemplate"/>
+      <xs:element name="findEntityTemplateResponse" type="tns:findEntityTemplateResponse"/>
+      <xs:element name="findField" type="tns:findField"/>
+      <xs:element name="findFieldResponse" type="tns:findFieldResponse"/>
+      <xs:element name="index" type="tns:index"/>
+      <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:element name="removeAction" type="tns:removeAction"/>
+      <xs:element name="removeActionResponse" type="tns:removeActionResponse"/>
+      <xs:element name="removeCustomEntityInstance" type="tns:removeCustomEntityInstance"/>
+      <xs:element name="removeCustomEntityInstanceResponse" type="tns:removeCustomEntityInstanceResponse"/>
+      <xs:element name="removeEntityTemplate" type="tns:removeEntityTemplate"/>
+      <xs:element name="removeEntityTemplateResponse" type="tns:removeEntityTemplateResponse"/>
+      <xs:element name="removeField" type="tns:removeField"/>
+      <xs:element name="removeFieldResponse" type="tns:removeFieldResponse"/>
+      <xs:element name="updateAction" type="tns:updateAction"/>
+      <xs:element name="updateActionResponse" type="tns:updateActionResponse"/>
+      <xs:element name="updateCustomEntityInstance" type="tns:updateCustomEntityInstance"/>
+      <xs:element name="updateCustomEntityInstanceResponse" type="tns:updateCustomEntityInstanceResponse"/>
+      <xs:element name="updateEntityTemplate" type="tns:updateEntityTemplate"/>
+      <xs:element name="updateEntityTemplateResponse" type="tns:updateEntityTemplateResponse"/>
+      <xs:element name="updateField" type="tns:updateField"/>
+      <xs:element name="updateFieldResponse" type="tns:updateFieldResponse"/>
+      <xs:complexType name="updateCustomEntityInstance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customEntityInstance" type="tns:customEntityInstanceDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customEntityInstanceDto">
+        <xs:sequence>
+          <xs:element name="disabled" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
+        <xs:attribute name="cetCode" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="customFieldsDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="customField" nillable="true" type="tns:customFieldDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customFieldDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="stringValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="dateValue" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="longValue" type="xs:long"/>
+          <xs:element minOccurs="0" name="doubleValue" type="xs:double"/>
+          <xs:element minOccurs="0" name="listValue">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="value" type="tns:customFieldValueDto"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="mapValue">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" name="key" type="xs:string"/>
+                      <xs:element minOccurs="0" name="value" type="tns:customFieldValueDto"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" name="entityReferenceValue" type="tns:entityReferenceDto"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="valueDate" type="xs:dateTime"/>
+        <xs:attribute name="valuePeriodStartDate" type="xs:dateTime"/>
+        <xs:attribute name="valuePeriodEndDate" type="xs:dateTime"/>
+        <xs:attribute name="valuePeriodPriority" type="xs:int"/>
+      </xs:complexType>
+      <xs:complexType name="customFieldValueDto">
+        <xs:sequence>
+          <xs:choice minOccurs="0">
+            <xs:element name="dateValue" type="xs:dateTime"/>
+            <xs:element name="doubleValue" type="xs:double"/>
+            <xs:element name="longValue" type="xs:long"/>
+            <xs:element name="stringValue" type="xs:string"/>
+            <xs:element name="entityReferenceValue" type="tns:entityReferenceDto"/>
+          </xs:choice>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="entityReferenceDto">
+        <xs:sequence/>
+        <xs:attribute name="classname" type="xs:string" use="required"/>
+        <xs:attribute name="classnameCode" type="xs:string"/>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="updateCustomEntityInstanceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ActionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element minOccurs="0" name="errorCode" type="tns:meveoApiErrorCodeEnum"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findEntityTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findEntityTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:customEntityTemplateResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customEntityTemplateResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="customEntityTemplate" type="tns:customEntityTemplateDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customEntityTemplateDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="fields">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="field" type="tns:customFieldTemplateDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="actions">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="action" type="tns:entityActionScriptDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="customFieldTemplateDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="fieldType" type="tns:customFieldTypeEnum"/>
+              <xs:element minOccurs="0" name="accountLevel" type="xs:string"/>
+              <xs:element minOccurs="0" name="appliesTo" type="xs:string"/>
+              <xs:element minOccurs="0" name="defaultValue" type="xs:string"/>
+              <xs:element name="storageType" type="tns:customFieldStorageTypeEnum"/>
+              <xs:element name="valueRequired" type="xs:boolean"/>
+              <xs:element name="versionable" type="xs:boolean"/>
+              <xs:element name="triggerEndPeriodEvent" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="calendar" type="xs:string"/>
+              <xs:element minOccurs="0" name="cacheValueTimeperiod" type="xs:int"/>
+              <xs:element minOccurs="0" name="entityClazz" type="xs:string"/>
+              <xs:element name="listValues">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element minOccurs="0" name="key" type="xs:string"/>
+                          <xs:element minOccurs="0" name="value" type="xs:string"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="allowEdit" type="xs:boolean"/>
+              <xs:element name="hideOnNew" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="maxValue" type="xs:long"/>
+              <xs:element minOccurs="0" name="minValue" type="xs:long"/>
+              <xs:element minOccurs="0" name="regExp" type="xs:string"/>
+              <xs:element name="cacheValue" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="guiPosition" type="xs:string"/>
+              <xs:element minOccurs="0" name="mapKeyType" type="tns:customFieldMapKeyEnum"/>
+              <xs:element minOccurs="0" name="applicableOnEl" type="xs:string"/>
+              <xs:element minOccurs="0" name="matrixColumns">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="matrixColumn" type="tns:customFieldMatrixColumnDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customFieldMatrixColumnDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence/>
+            <xs:attribute name="position" type="xs:int" use="required"/>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="label" type="xs:string" use="required"/>
+            <xs:attribute name="keyType" type="tns:customFieldMapKeyEnum" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="entityActionScriptDto">
+        <xs:complexContent>
+          <xs:extension base="tns:customScriptDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="applicableOnEl" type="xs:string"/>
+              <xs:element minOccurs="0" name="label" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="appliesTo" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="customScriptDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="type" type="tns:scriptSourceTypeEnum"/>
+              <xs:element name="script" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customizeEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="entityCustomization" type="tns:entityCustomizationDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="entityCustomizationDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="fields">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="field" type="tns:customFieldTemplateDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="actions">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="action" type="tns:entityActionScriptDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="classname" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customizeEntityResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateAction">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="entityAction" type="tns:entityActionScriptDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateActionResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findField">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customFieldTemplateCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="appliesTo" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findFieldResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getCustomFieldTemplateReponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getCustomFieldTemplateReponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="customFieldTemplate" type="tns:customFieldTemplateDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateField">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customField" type="tns:customFieldTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateFieldResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateField">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customField" type="tns:customFieldTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateFieldResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateEntityTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customEntityTemplate" type="tns:customEntityTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateEntityTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findEntityCustomizations">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customizedEntityClass" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findEntityCustomizationsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:entityCustomizationResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="entityCustomizationResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="entityCustomization" type="tns:entityCustomizationDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="removeCustomEntityInstance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="cetCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeCustomEntityInstanceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="index">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="indexResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findCustomEntityInstance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="cetCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findCustomEntityInstanceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:customEntityInstanceResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customEntityInstanceResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="customEntityInstance" type="tns:customEntityInstanceDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createAction">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="entityAction" type="tns:entityActionScriptDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createActionResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findAction">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="actionCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="appliesTo" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findActionResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:entityActionScriptResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="entityActionScriptResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="entityAction" type="tns:entityActionScriptDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createEntityTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customEntityTemplate" type="tns:customEntityTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createEntityTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createCustomEntityInstance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customEntityInstance" type="tns:customEntityInstanceDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createCustomEntityInstanceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeField">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customFieldTemplateCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="appliesTo" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeFieldResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateAction">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="entityAction" type="tns:entityActionScriptDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateActionResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createField">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customField" type="tns:customFieldTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createFieldResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeAction">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="actionCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="appliesTo" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeActionResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeEntityTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeEntityTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomEntityInstance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customEntityInstance" type="tns:customEntityInstanceDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomEntityInstanceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateEntityTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customEntityTemplate" type="tns:customEntityTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateEntityTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="actionStatusEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SUCCESS"/>
+          <xs:enumeration value="FAIL"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="meveoApiErrorCodeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ENTITY_DOES_NOT_EXISTS_EXCEPTION"/>
+          <xs:enumeration value="ENTITY_ALREADY_EXISTS_EXCEPTION"/>
+          <xs:enumeration value="DELETE_REFERENCED_ENTITY_EXCEPTION"/>
+          <xs:enumeration value="MISSING_PARAMETER"/>
+          <xs:enumeration value="INVALID_PARAMETER"/>
+          <xs:enumeration value="INVALID_ENUM_VALUE"/>
+          <xs:enumeration value="DUPLICATE_ACCESS"/>
+          <xs:enumeration value="INSUFFICIENT_BALANCE"/>
+          <xs:enumeration value="GENERIC_API_EXCEPTION"/>
+          <xs:enumeration value="BUSINESS_API_EXCEPTION"/>
+          <xs:enumeration value="AUTHENTICATION_AUTHORIZATION_EXCEPTION"/>
+          <xs:enumeration value="ACTION_FORBIDDEN"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="customFieldTypeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="STRING"/>
+          <xs:enumeration value="DATE"/>
+          <xs:enumeration value="LONG"/>
+          <xs:enumeration value="DOUBLE"/>
+          <xs:enumeration value="LIST"/>
+          <xs:enumeration value="ENTITY"/>
+          <xs:enumeration value="TEXT_AREA"/>
+          <xs:enumeration value="CHILD_ENTITY"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="customFieldStorageTypeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SINGLE"/>
+          <xs:enumeration value="LIST"/>
+          <xs:enumeration value="MAP"/>
+          <xs:enumeration value="MATRIX"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="customFieldMapKeyEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="STRING"/>
+          <xs:enumeration value="RON"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="scriptSourceTypeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="JAVA"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="findEntityCustomizationsResponse">
+    <wsdl:part element="ns1:findEntityCustomizationsResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createAction">
+    <wsdl:part element="ns1:createAction" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findField">
+    <wsdl:part element="ns1:findField" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="customizeEntity">
+    <wsdl:part element="ns1:customizeEntity" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCustomEntityInstanceResponse">
+    <wsdl:part element="ns1:removeCustomEntityInstanceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateField">
+    <wsdl:part element="ns1:updateField" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateActionResponse">
+    <wsdl:part element="ns1:createOrUpdateActionResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findFieldResponse">
+    <wsdl:part element="ns1:findFieldResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findEntityTemplateResponse">
+    <wsdl:part element="ns1:findEntityTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeField">
+    <wsdl:part element="ns1:removeField" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createField">
+    <wsdl:part element="ns1:createField" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeFieldResponse">
+    <wsdl:part element="ns1:removeFieldResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateAction">
+    <wsdl:part element="ns1:updateAction" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCustomEntityInstance">
+    <wsdl:part element="ns1:updateCustomEntityInstance" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCustomEntityInstanceResponse">
+    <wsdl:part element="ns1:createOrUpdateCustomEntityInstanceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateAction">
+    <wsdl:part element="ns1:createOrUpdateAction" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateField">
+    <wsdl:part element="ns1:createOrUpdateField" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findEntityCustomizations">
+    <wsdl:part element="ns1:findEntityCustomizations" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCustomEntityInstance">
+    <wsdl:part element="ns1:createOrUpdateCustomEntityInstance" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createCustomEntityInstance">
+    <wsdl:part element="ns1:createCustomEntityInstance" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCustomEntityInstance">
+    <wsdl:part element="ns1:removeCustomEntityInstance" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createActionResponse">
+    <wsdl:part element="ns1:createActionResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateFieldResponse">
+    <wsdl:part element="ns1:createOrUpdateFieldResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findAction">
+    <wsdl:part element="ns1:findAction" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createFieldResponse">
+    <wsdl:part element="ns1:createFieldResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findEntityTemplate">
+    <wsdl:part element="ns1:findEntityTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateEntityTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateEntityTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="customizeEntityResponse">
+    <wsdl:part element="ns1:customizeEntityResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findActionResponse">
+    <wsdl:part element="ns1:findActionResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeAction">
+    <wsdl:part element="ns1:removeAction" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateEntityTemplate">
+    <wsdl:part element="ns1:updateEntityTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="indexResponse">
+    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateEntityTemplate">
+    <wsdl:part element="ns1:createOrUpdateEntityTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createEntityTemplate">
+    <wsdl:part element="ns1:createEntityTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateFieldResponse">
+    <wsdl:part element="ns1:updateFieldResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createCustomEntityInstanceResponse">
+    <wsdl:part element="ns1:createCustomEntityInstanceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findCustomEntityInstance">
+    <wsdl:part element="ns1:findCustomEntityInstance" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeEntityTemplateResponse">
+    <wsdl:part element="ns1:removeEntityTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateActionResponse">
+    <wsdl:part element="ns1:updateActionResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeActionResponse">
+    <wsdl:part element="ns1:removeActionResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createEntityTemplateResponse">
+    <wsdl:part element="ns1:createEntityTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCustomEntityInstanceResponse">
+    <wsdl:part element="ns1:updateCustomEntityInstanceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findCustomEntityInstanceResponse">
+    <wsdl:part element="ns1:findCustomEntityInstanceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateEntityTemplateResponse">
+    <wsdl:part element="ns1:updateEntityTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeEntityTemplate">
+    <wsdl:part element="ns1:removeEntityTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="EntityCustomizationWs">
+    <wsdl:operation name="updateCustomEntityInstance">
+      <wsdl:input message="ns1:updateCustomEntityInstance" name="updateCustomEntityInstance"></wsdl:input>
+      <wsdl:output message="ns1:updateCustomEntityInstanceResponse" name="updateCustomEntityInstanceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findEntityTemplate">
+      <wsdl:input message="ns1:findEntityTemplate" name="findEntityTemplate"></wsdl:input>
+      <wsdl:output message="ns1:findEntityTemplateResponse" name="findEntityTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="customizeEntity">
+      <wsdl:input message="ns1:customizeEntity" name="customizeEntity"></wsdl:input>
+      <wsdl:output message="ns1:customizeEntityResponse" name="customizeEntityResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateAction">
+      <wsdl:input message="ns1:updateAction" name="updateAction"></wsdl:input>
+      <wsdl:output message="ns1:updateActionResponse" name="updateActionResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findField">
+      <wsdl:input message="ns1:findField" name="findField"></wsdl:input>
+      <wsdl:output message="ns1:findFieldResponse" name="findFieldResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateField">
+      <wsdl:input message="ns1:createOrUpdateField" name="createOrUpdateField"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateFieldResponse" name="createOrUpdateFieldResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateField">
+      <wsdl:input message="ns1:updateField" name="updateField"></wsdl:input>
+      <wsdl:output message="ns1:updateFieldResponse" name="updateFieldResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateEntityTemplate">
+      <wsdl:input message="ns1:updateEntityTemplate" name="updateEntityTemplate"></wsdl:input>
+      <wsdl:output message="ns1:updateEntityTemplateResponse" name="updateEntityTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findEntityCustomizations">
+      <wsdl:input message="ns1:findEntityCustomizations" name="findEntityCustomizations"></wsdl:input>
+      <wsdl:output message="ns1:findEntityCustomizationsResponse" name="findEntityCustomizationsResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeCustomEntityInstance">
+      <wsdl:input message="ns1:removeCustomEntityInstance" name="removeCustomEntityInstance"></wsdl:input>
+      <wsdl:output message="ns1:removeCustomEntityInstanceResponse" name="removeCustomEntityInstanceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <wsdl:input message="ns1:index" name="index"></wsdl:input>
+      <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findCustomEntityInstance">
+      <wsdl:input message="ns1:findCustomEntityInstance" name="findCustomEntityInstance"></wsdl:input>
+      <wsdl:output message="ns1:findCustomEntityInstanceResponse" name="findCustomEntityInstanceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createAction">
+      <wsdl:input message="ns1:createAction" name="createAction"></wsdl:input>
+      <wsdl:output message="ns1:createActionResponse" name="createActionResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findAction">
+      <wsdl:input message="ns1:findAction" name="findAction"></wsdl:input>
+      <wsdl:output message="ns1:findActionResponse" name="findActionResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createEntityTemplate">
+      <wsdl:input message="ns1:createEntityTemplate" name="createEntityTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createEntityTemplateResponse" name="createEntityTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createCustomEntityInstance">
+      <wsdl:input message="ns1:createCustomEntityInstance" name="createCustomEntityInstance"></wsdl:input>
+      <wsdl:output message="ns1:createCustomEntityInstanceResponse" name="createCustomEntityInstanceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeField">
+      <wsdl:input message="ns1:removeField" name="removeField"></wsdl:input>
+      <wsdl:output message="ns1:removeFieldResponse" name="removeFieldResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateAction">
+      <wsdl:input message="ns1:createOrUpdateAction" name="createOrUpdateAction"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateActionResponse" name="createOrUpdateActionResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createField">
+      <wsdl:input message="ns1:createField" name="createField"></wsdl:input>
+      <wsdl:output message="ns1:createFieldResponse" name="createFieldResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeAction">
+      <wsdl:input message="ns1:removeAction" name="removeAction"></wsdl:input>
+      <wsdl:output message="ns1:removeActionResponse" name="removeActionResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeEntityTemplate">
+      <wsdl:input message="ns1:removeEntityTemplate" name="removeEntityTemplate"></wsdl:input>
+      <wsdl:output message="ns1:removeEntityTemplateResponse" name="removeEntityTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomEntityInstance">
+      <wsdl:input message="ns1:createOrUpdateCustomEntityInstance" name="createOrUpdateCustomEntityInstance"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateCustomEntityInstanceResponse" name="createOrUpdateCustomEntityInstanceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateEntityTemplate">
+      <wsdl:input message="ns1:createOrUpdateEntityTemplate" name="createOrUpdateEntityTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateEntityTemplateResponse" name="createOrUpdateEntityTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint></con:endpoints><con:operation id="b924835f-f5bc-4eee-a684-a8b4439b1a87" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="bf35f866-da7e-4014-8595-8675c8dd39a2" isOneWay="false" action="" name="createCustomEntityInstance" bindingOperationName="createCustomEntityInstance" type="Request-Response" outputName="createCustomEntityInstanceResponse" inputName="createCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="daecd67e-6f99-4df2-9a0d-4b1fcbccd667" isOneWay="false" action="" name="createEntityTemplate" bindingOperationName="createEntityTemplate" type="Request-Response" outputName="createEntityTemplateResponse" inputName="createEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="2020f66e-1440-4742-8270-4402f8fd5bf3" isOneWay="false" action="" name="createField" bindingOperationName="createField" type="Request-Response" outputName="createFieldResponse" inputName="createField" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="4ab5d6b0-379c-436c-900e-d1ebadefb2c5" isOneWay="false" action="" name="createOrUpdateAction" bindingOperationName="createOrUpdateAction" type="Request-Response" outputName="createOrUpdateActionResponse" inputName="createOrUpdateAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="895cddac-c8ed-46a2-b244-85099695fbf2" isOneWay="false" action="" name="createOrUpdateCustomEntityInstance" bindingOperationName="createOrUpdateCustomEntityInstance" type="Request-Response" outputName="createOrUpdateCustomEntityInstanceResponse" inputName="createOrUpdateCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="cb1731cd-631c-4e0d-b8b7-6fc81260f7e0" isOneWay="false" action="" name="createOrUpdateEntityTemplate" bindingOperationName="createOrUpdateEntityTemplate" type="Request-Response" outputName="createOrUpdateEntityTemplateResponse" inputName="createOrUpdateEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="3bdb730b-f58f-4f25-a523-802988e244ab" isOneWay="false" action="" name="createOrUpdateField" bindingOperationName="createOrUpdateField" type="Request-Response" outputName="createOrUpdateFieldResponse" inputName="createOrUpdateField" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="2c51944f-c8bc-427a-be67-0cbade8d32bd" isOneWay="false" action="" name="customizeEntity" bindingOperationName="customizeEntity" type="Request-Response" outputName="customizeEntityResponse" inputName="customizeEntity" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="72a39246-38e6-43aa-a951-a52f9ff87df1" isOneWay="false" action="" name="findAction" bindingOperationName="findAction" type="Request-Response" outputName="findActionResponse" inputName="findAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="d59f8d36-30d0-46bd-9b72-473a92ebb279" isOneWay="false" action="" name="findCustomEntityInstance" bindingOperationName="findCustomEntityInstance" type="Request-Response" outputName="findCustomEntityInstanceResponse" inputName="findCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="d4ffeac3-dab8-4a0c-aff1-f87ff04b264b" isOneWay="false" action="" name="findEntityCustomizations" bindingOperationName="findEntityCustomizations" type="Request-Response" outputName="findEntityCustomizationsResponse" inputName="findEntityCustomizations" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="6d8200b2-a8a0-42de-a0fb-4f00d49ea7f9" isOneWay="false" action="" name="findEntityTemplate" bindingOperationName="findEntityTemplate" type="Request-Response" outputName="findEntityTemplateResponse" inputName="findEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="c4aba43a-ec1f-4b8b-9617-214c7a16057e" isOneWay="false" action="" name="findField" bindingOperationName="findField" type="Request-Response" outputName="findFieldResponse" inputName="findField" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="50d4aa73-308b-4af9-8b44-302df699ddea" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="beea4dee-f2e0-4849-912f-da09ced4f6b5" isOneWay="false" action="" name="removeAction" bindingOperationName="removeAction" type="Request-Response" outputName="removeActionResponse" inputName="removeAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="77a387df-3c0b-4308-8dcf-adcc61fef6cb" isOneWay="false" action="" name="removeCustomEntityInstance" bindingOperationName="removeCustomEntityInstance" type="Request-Response" outputName="removeCustomEntityInstanceResponse" inputName="removeCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="a832d283-0d45-4066-bbcd-75ff72bf5bb1" isOneWay="false" action="" name="removeEntityTemplate" bindingOperationName="removeEntityTemplate" type="Request-Response" outputName="removeEntityTemplateResponse" inputName="removeEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="4dab7128-7b12-4ec2-94ad-a51e5f0170e8" isOneWay="false" action="" name="removeField" bindingOperationName="removeField" type="Request-Response" outputName="removeFieldResponse" inputName="removeField" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="99f24dc6-69dc-4998-a306-73d1f34cec14" isOneWay="false" action="" name="updateAction" bindingOperationName="updateAction" type="Request-Response" outputName="updateActionResponse" inputName="updateAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="3e3502f9-c594-4b73-bca6-bcd7a5e3080d" isOneWay="false" action="" name="updateCustomEntityInstance" bindingOperationName="updateCustomEntityInstance" type="Request-Response" outputName="updateCustomEntityInstanceResponse" inputName="updateCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="6e041ec5-b8aa-451d-b7f3-a46a2640cbcc" isOneWay="false" action="" name="updateEntityTemplate" bindingOperationName="updateEntityTemplate" type="Request-Response" outputName="updateEntityTemplateResponse" inputName="updateEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="2e94ef65-c5aa-4c6d-bb88-d05c03b361ec" isOneWay="false" action="" name="updateField" bindingOperationName="updateField" type="Request-Response" outputName="updateFieldResponse" inputName="updateField" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation></con:interface><con:testSuite id="7ac4d3d1-236f-4d01-a647-b086f07ebe6a" name="Setup Authorization"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="30a58b44-a165-4a27-a889-fe1585a451c8" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="setAllHeaders" searchProperties="true"><con:settings/><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
 import com.eviware.soapui.support.types.*;
 
 StringToStringMap headers = new StringToStringMap();
@@ -28124,4 +29186,69 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <customerCode>${#Project#baseEntityPrefix}_CUST</customerCode>
       </ws:removeCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="d573a663-eaa6-41bc-9547-bc88757ba262" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeCustomer"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:setupScript/><con:properties/></con:testCase><con:properties/><con:setupScript/></con:testSuite><con:properties><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUserName</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoSuperUserName</con:name><con:value>meveo.superadmin</con:value></con:property><con:property><con:name>meveoSuperPassword</con:name><con:value>meveo.superadmin</con:value></con:property><con:property><con:name>entityPrefix</con:name><con:value>WS_FULL</con:value></con:property><con:property><con:name>baseEntityPrefix</con:name><con:value>WS_BASE</con:value></con:property><con:property><con:name>timezone</con:name><con:value>+01</con:value></con:property><con:property><con:name>timezone2</con:name><con:value>+02</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="d573a663-eaa6-41bc-9547-bc88757ba262" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeCustomer"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:setupScript/><con:properties/></con:testCase><con:properties/><con:setupScript/></con:testSuite><con:testSuite id="4a33b9a1-45fd-4452-9fcd-88f7d37d3709" name="EL expression tests"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="736c2a5f-b7ab-48a6-9b5c-cfc551aab050" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Calling script from EL" searchProperties="true"><con:settings/><con:testStep type="request" name="Create script" id="caeffcad-4151-4ecf-8e26-5aecf4a2c4ff"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptInstanceWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create script" id="8bc39b95-9e34-42c4-b335-a27ce494eb10"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdate>
+         	<createOrUpdateScriptInstanceRequest code="org.meveo.service.script.The${#Project#baseEntityPrefix}_ScriptEL">
+            <type>JAVA</type>
+            <script>
+            <![CDATA[
+			package org.meveo.service.script;			
+			import java.util.Map;
+			import java.math.BigDecimal;
+			import org.meveo.admin.exception.BusinessException;
+			import org.meveo.model.admin.User;
+			import org.meveo.model.crm.Provider;
+			import org.meveo.model.BusinessEntity;
+			import org.slf4j.Logger;
+			import org.slf4j.LoggerFactory;
+			public class The${#Project#baseEntityPrefix}_ScriptEL extends Script {
+			  	private static final Logger log = LoggerFactory.getLogger(The${#Project#baseEntityPrefix}_ScriptEL.class);
+				public void execute(Map<String,Object> context, User user) throws BusinessException{
+					log.debug("The${#Project#baseEntityPrefix}_ScriptEL called");
+					context.put(Script.RESULT_VALUE, ((BusinessEntity)context.get(Script.CONTEXT_ENTITY)).getCode().startsWith("EL_"));					
+				}
+			}
+		   ]]]]>><![CDATA[
+            </script>
+         </createOrUpdateScriptInstanceRequest>
+      </ws:createOrUpdate>
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="21abe68e-81c0-4569-8050-3cd97d268070" name="SOAP Response"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create CFT on Charge" id="e65b38b1-eaa1-4429-ab1b-99d8e325d363"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>createField</con:operation><con:request name="Create CFT on Charge" id="3753bce2-3fec-40e6-a41f-454620694710"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_CFT_EL_SCRIPT" description="Field visible on entities with code starting 'EL_'">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CHARGE</appliesTo>\r
+            <defaultValue>KUKU</defaultValue>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <applicableOnEl>#{mv:executeScript(entity,'org.meveo.service.script.The${#Project#baseEntityPrefix}_ScriptEL', null, entity.auditable.creator)}</applicableOnEl>>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/><con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Recuring Charge KO" id="704e91ee-0a5e-468e-9565-1494e2a8f1d4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOrUpdateRecurringChargeTemplate</con:operation><con:request name="Create Recuring Charge KO" id="e7e822cf-28a8-4719-add7-b603e34b3a5c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateRecurringChargeTemplate>
+         <recurringChargeTemplate code="EL_${#Project#baseEntityPrefix}_REC1">
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+            <calendar>MONTHLY</calendar>
+         </recurringChargeTemplate>
+      </ws:createOrUpdateRecurringChargeTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="77009aab-f6cc-40a8-a2d2-e01330090264"/><con:assertion type="SOAP Fault Assertion" id="7b40c11f-5568-48e0-b176-6c7c3f6640b4"/><con:assertion type="Simple Contains" name="Contains" id="9c125173-7f38-4392-b8d0-adedad43637b"><con:configuration><token>&lt;status>FAIL&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="647ab482-a825-48fd-92d5-d3e75b8b09b2" name="Contains 1"><con:configuration><token>&lt;message>The following parameters are required or contain invalid values: ${#Project#baseEntityPrefix}_CFT_EL_SCRIPT.&lt;/message>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Recuring Charge OK" id="0e537a8d-f5a7-48f1-968c-18e5b2346f94"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOrUpdateRecurringChargeTemplate</con:operation><con:request name="Create Recuring Charge OK" id="e7e822cf-28a8-4719-add7-b603e34b3a5c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateRecurringChargeTemplate>
+         <recurringChargeTemplate code="${#Project#baseEntityPrefix}_REC1">
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+            <calendar>MONTHLY</calendar>
+         </recurringChargeTemplate>
+      </ws:createOrUpdateRecurringChargeTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="77009aab-f6cc-40a8-a2d2-e01330090264"/><con:assertion type="SOAP Fault Assertion" id="7b40c11f-5568-48e0-b176-6c7c3f6640b4"/><con:assertion type="Simple Contains" name="Contains" id="9c125173-7f38-4392-b8d0-adedad43637b"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUserName</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoSuperUserName</con:name><con:value>meveo.superadmin</con:value></con:property><con:property><con:name>meveoSuperPassword</con:name><con:value>meveo.superadmin</con:value></con:property><con:property><con:name>entityPrefix</con:name><con:value>WS_FULL</con:value></con:property><con:property><con:name>baseEntityPrefix</con:name><con:value>WS_BASE</con:value></con:property><con:property><con:name>timezone</con:name><con:value>+01</con:value></con:property><con:property><con:name>timezone2</con:name><con:value>+02</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
