@@ -240,7 +240,7 @@ public class CustomFieldValueHolder implements Serializable {
 
     public CustomFieldInstance getFirstValue(String cftCode) {
         List<CustomFieldInstance> cfis = values.get(cftCode);
-        if (!cfis.isEmpty()) {
+        if (cfis != null && !cfis.isEmpty()) {
             return cfis.get(0);
         }
         log.error("No custom field instance found for {} when it should", cftCode);
