@@ -9,14 +9,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.meveo.model.ObservableEntity;
 import org.meveo.model.module.MeveoModule;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Entity
-@ObservableEntity
 @Table(name = "CRM_BUSINESS_ACCOUNT_MODEL")
 public class BusinessAccountModel extends MeveoModule {
 

@@ -6,12 +6,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.meveo.model.ObservableEntity;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.scripts.ServiceModelScript;
 
 @Entity
-@ObservableEntity
 @Table(name = "CAT_BUSINESS_SERV_MODEL")
 public class BusinessServiceModel extends MeveoModule {
 
