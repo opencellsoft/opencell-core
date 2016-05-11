@@ -81,9 +81,9 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
 		        	revenueSchedule.setInvoicedRevenue(invoicedRevenue);
 		        	if(recognizedRevenue.compareTo(invoicedRevenue)<=0){
 		          		revenueSchedule.setAccruedRevenue(BigDecimal.ZERO);
-		        		revenueSchedule.setDefferedRevenue((recognizedRevenue.subtract(invoicedRevenue)).multiply(negativeOne));
+		        		revenueSchedule.setDefferedRevenue((recognizedRevenue.subtract(invoicedRevenue)));
 		        	} else {
-		          		revenueSchedule.setAccruedRevenue(invoicedRevenue.subtract(recognizedRevenue));
+		          		revenueSchedule.setAccruedRevenue((invoicedRevenue.subtract(recognizedRevenue)).multiply(negativeOne));
 		        		revenueSchedule.setDefferedRevenue(BigDecimal.ZERO);
 		        	}
 		        	revenueScheduleService.create(revenueSchedule, currentUser);
