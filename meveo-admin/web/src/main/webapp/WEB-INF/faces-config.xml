@@ -1861,6 +1861,19 @@
 			<redirect include-view-params="true"/>
 		</navigation-case>
 		
+		<navigation-case>
+			<from-outcome>revenueSchedules</from-outcome>
+			<to-view-id>/pages/finance/revenueSchedules/revenueSchedules.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>revenueScheduleDetail</from-outcome>
+			<to-view-id>/pages/finance/revenueSchedules/revenueScheduleDetail.xhtml
+			</to-view-id>
+			<redirect include-view-params="true"/>
+		</navigation-case>
+		
 		
 	</navigation-rule>
 

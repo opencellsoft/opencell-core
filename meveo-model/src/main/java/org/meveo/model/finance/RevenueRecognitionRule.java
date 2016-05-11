@@ -11,45 +11,41 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.scripts.RevenueRecognitionScriptEntity;
 import org.meveo.model.scripts.RevenueRecognitionDelayUnitEnum;
 import org.meveo.model.scripts.RevenueRecognitionEventEnum;
+import org.meveo.model.scripts.RevenueRecognitionScriptEntity;
 
 @Entity
 @Table(name = "AR_REVENUE_RECOG_RULE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_REVENUE_RECOG_RULE_SEQ")
 public class RevenueRecognitionRule extends BusinessEntity {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7793758853731725829L;
-
 
 	@ManyToOne
 	@JoinColumn(name = "SCRIPT_INSTANCE_ID")
 	private RevenueRecognitionScriptEntity script;
-	
-	@Column(name="START_DELAY")
-	private Integer startDelay =0;
+
+	@Column(name = "START_DELAY")
+	private Integer startDelay = 0;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name="START_UNIT")
+	@Column(name = "START_UNIT")
 	private RevenueRecognitionDelayUnitEnum startUnit;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name="START_EVENT")
+	@Column(name = "START_EVENT")
 	private RevenueRecognitionEventEnum startEvent;
 
-	@Column(name="STOP_DELAY")
-	private Integer stopDelay =0;
+	@Column(name = "STOP_DELAY")
+	private Integer stopDelay = 0;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name="STOP_UNIT")
+	@Column(name = "STOP_UNIT")
 	private RevenueRecognitionDelayUnitEnum stopUnit;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name="STOP_EVENT")
+	@Column(name = "STOP_EVENT")
 	private RevenueRecognitionEventEnum stopEvent;
 
 	public RevenueRecognitionScriptEntity getScript() {

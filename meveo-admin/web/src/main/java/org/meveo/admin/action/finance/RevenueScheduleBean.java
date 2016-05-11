@@ -3,36 +3,37 @@ package org.meveo.admin.action.finance;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.finance.RevenueRecognitionRule;
+import org.meveo.model.finance.RevenueSchedule;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.finance.RevenueRecognitionRuleService;
-import org.omnifaces.cdi.ViewScoped;
+import org.meveo.service.finance.RevenueScheduleService;
 
 @Named
 @ViewScoped
-public class RevenueRecognitionRuleBean extends BaseBean<RevenueRecognitionRule> {
+public class RevenueScheduleBean extends BaseBean<RevenueSchedule> {
 
 	private static final long serialVersionUID = 1L;
 
 	@Inject
-	RevenueRecognitionRuleService revenueRecognitionRuleService;
+	RevenueScheduleService revenueScheduleService;
 
-	public RevenueRecognitionRuleBean() {
-		super(RevenueRecognitionRule.class);
+	public RevenueScheduleBean() {
+		super(RevenueSchedule.class);
 	}
 
 	@Override
-	protected IPersistenceService<RevenueRecognitionRule> getPersistenceService() {
-		return revenueRecognitionRuleService;
+	protected IPersistenceService<RevenueSchedule> getPersistenceService() {
+		// TODO Auto-generated method stub
+		return revenueScheduleService;
 	}
 
 	@Override
 	protected String getDefaultSort() {
-		return "code";
+		return "chargeInstance.code";
 	}
 
 	@Override
