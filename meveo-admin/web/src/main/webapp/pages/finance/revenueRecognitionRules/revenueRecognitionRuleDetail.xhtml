@@ -2,8 +2,7 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -20,10 +19,19 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-	
-		<hftl:formPanel label="#{messages['revenueRecognitionRule.panel']}" backingBean="#{revenueRecognitionRuleBean}" >
-			<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
-			<hftl:formField label="#{messages['businessEntity.description']}" id="description" field="description" useConverter="false" maxlength="50" />
+
+		<hftl:formPanel label="#{messages['revenueRecognitionRule.panel']}"
+			backingBean="#{revenueRecognitionRuleBean}">
+			<hftl:formField label="#{messages['businessEntity.code']}"
+				field="code" validateUnique="true" required="true" />
+			<hftl:formField label="#{messages['businessEntity.description']}"
+				id="description" field="description" useConverter="false"
+				maxlength="50" />
+			<hftl:formField id="rrScriptId"
+				label="#{messages['revenueRecognitionRule.script']}" field="script"
+				valueLabelField="code"
+				listElements="#{revenueRecognitionScriptBean.listActive}" />
+
 		</hftl:formPanel>
 	</ui:define>
 
