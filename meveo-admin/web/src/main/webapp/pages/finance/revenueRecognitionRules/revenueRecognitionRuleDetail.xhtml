@@ -22,33 +22,60 @@
 
 		<hftl:formPanel label="#{messages['revenueRecognitionRule.panel']}"
 			backingBean="#{revenueRecognitionRuleBean}">
-			<hftl:formField label="#{messages['businessEntity.code']}"
-				field="code" validateUnique="true" required="true" />
-			<hftl:formField label="#{messages['businessEntity.description']}"
-				id="description" field="description" useConverter="false"
-				maxlength="50" />
-			<hftl:formField id="rrScriptId"
-				label="#{messages['revenueRecognitionRule.script']}" field="script"
-				valueLabelField="code"
-				listElements="#{revenueRecognitionScriptBean.listActive}" />
-			<hftl:formField
-				label="#{messages['revenueRecognitionRule.startDelay']}"
-				id="startDelay" field="startDelay" />
-			<hftl:formField
-				label="#{messages['revenueRecognitionRule.startUnit']}"
-				id="startUnit" field="startUnit" />
-			<hftl:formField
-				label="#{messages['revenueRecognitionRule.startEvent']}"
-				id="startEvent" field="startEvent" />
-			<hftl:formField
-				label="#{messages['revenueRecognitionRule.stopDelay']}"
-				id="stopDelay" field="stopDelay" />
-			<hftl:formField
-				label="#{messages['revenueRecognitionRule.stopUnit']}" id="stopUnit"
-				field="stopUnit" />
-			<hftl:formField
-				label="#{messages['revenueRecognitionRule.stopEvent']}"
-				id="stopEvent" field="stopEvent" />
+			<h2>#{messages['revenueRecognitionRule.label.create']}</h2>
+			<p:fieldset
+				legend="#{messages['revenueRecognitionRule.label.basicInformation']}">
+				<hftl:formField label="#{messages['businessEntity.code']}"
+					field="code" validateUnique="true" required="true" />
+				<hftl:formField label="#{messages['businessEntity.description']}"
+					id="description" field="description" useConverter="false"
+					maxlength="50" />
+				<hftl:formField id="rrScriptId"
+					label="#{messages['revenueRecognitionRule.script']}" field="script"
+					valueLabelField="code"
+					listElements="#{revenueRecognitionScriptBean.listActive}" />
+			</p:fieldset>
+			<p:fieldset
+				legend="#{messages['revenueRecognitionRule.label.recognitionTerm']}">
+				#{messages['revenueRecognitionRule.label.recognitionTerm.message']}
+				<br />
+				<br />
+				<div style="width: 100%; text-align: left;">
+					<h:outputLabel style="font-weight: bold"
+						value="#{messages['revenueRecognitionRule.label.recognitionTerm.startDate']}" />
+				</div>
+				<h:panelGroup>
+					<hftl:formField
+						label="#{messages['revenueRecognitionRule.startDelay']}"
+						id="startDelay" field="startDelay" />
+					<hftl:formField
+						label="#{messages['revenueRecognitionRule.startUnit']}"
+						id="startUnit" field="startUnit" />
+					<hftl:formField
+						label="#{messages['revenueRecognitionRule.startEvent']}"
+						id="startEvent" field="startEvent" />
+				</h:panelGroup>
+				<div style="clear: both"></div>
+
+				<br />
+				<div style="width: 100%; text-align: left;">
+					<h:outputLabel style="font-weight: bold"
+						value="#{messages['revenueRecognitionRule.label.recognitionTerm.stopDate']}" />
+				</div>
+				<h:panelGroup>
+					<hftl:formField
+						label="#{messages['revenueRecognitionRule.stopDelay']}"
+						id="stopDelay" field="stopDelay" />
+					<hftl:formField
+						label="#{messages['revenueRecognitionRule.stopUnit']}"
+						id="stopUnit" field="stopUnit" />
+					<hftl:formField
+						label="#{messages['revenueRecognitionRule.stopEvent']}"
+						id="stopEvent" field="stopEvent" />
+				</h:panelGroup>
+				<div style="clear: both"></div>
+			</p:fieldset>
+
 		</hftl:formPanel>
 	</ui:define>
 
