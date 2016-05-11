@@ -56,6 +56,7 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
 					initCalendarDate=billingAccount.getAuditable().getCreated();
 				}
 		        Date invoicingDate = new Date(startDate.getTime());
+		        invoicingDate = billingCycle.getNextCalendarDate(initCalendarDate,invoicingDate);
 		        while(!billingCycle.getNextCalendarDate(initCalendarDate,invoicingDate).after(endDate)){
 		        	invoicingDates.add(invoicingDate);
 		        	log.debug("added invoicingDate "+invoicingDate);
@@ -65,6 +66,7 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
 		        BigDecimal chargedRevenue=BigDecimal.ZERO;
 		        int chargeIndex=0;
 		        BigDecimal invoicedRevenue=BigDecimal.ZERO;
+		        BigDecimal negativeOne = new BigDecimal(-1);
 		        int invoiceIndex=0;
 		        for(RevenueSchedule revenueSchedule : schedule){
 		        	recognizedRevenue=recognizedRevenue.add(revenueSchedule.getRecognizedRevenue());
@@ -75,13 +77,14 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
 		        	if(invoiceIndex<invoicingDates.size() && !invoicingDates.get(invoiceIndex).after(revenueSchedule.getRevenueDate())){
 		        		invoicedRevenue=chargedRevenue.add(BigDecimal.ZERO);
 		        	}
+		        	revenueSchedule.setRecognizedRevenue(revenueSchedule.getRecognizedRevenue().multiply(negativeOne));
 		        	revenueSchedule.setInvoicedRevenue(invoicedRevenue);
 		        	if(recognizedRevenue.compareTo(invoicedRevenue)<=0){
-		        		revenueSchedule.setAccruedRevenue(invoicedRevenue.subtract(recognizedRevenue));
-		        		revenueSchedule.setDefferedRevenue(BigDecimal.ZERO);
-		        	} else {
-		        		revenueSchedule.setAccruedRevenue(BigDecimal.ZERO);
+		          		revenueSchedule.setAccruedRevenue(BigDecimal.ZERO);
 		        		revenueSchedule.setDefferedRevenue(recognizedRevenue.subtract(invoicedRevenue));
+		        	} else {
+		          		revenueSchedule.setAccruedRevenue(invoicedRevenue.subtract(recognizedRevenue));
+		        		revenueSchedule.setDefferedRevenue(BigDecimal.ZERO);
 		        	}
 		        	revenueScheduleService.create(revenueSchedule, currentUser);
 		        }
