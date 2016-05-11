@@ -22,7 +22,7 @@
 		</p:panel>
 	
 		<hftl:formPanel label="#{messages['revenueSchedule.panel']}" backingBean="#{revenueScheduleBean}" >
-			<hftl:formField label="#{messages['revenueSchedule.chargeInstance.code']}" field="chargeInstance"/>
+			<hftl:formEntityField label="#{messages['revenueSchedule.chargeInstance']}" id="chargeInstance" fieldItem="chargeInstance"/>
 			<hftl:formField label="#{messages['revenueSchedule.revenueDate']}" id="revenueDate" field="revenueDate" useConverter="false" maxlength="50" />
 			<hftl:formField label="#{messages['revenueSchedule.recognizedRevenue']}" id="recognizedRevenue" field="recognizedRevenue" useConverter="false" maxlength="50" />
 			<hftl:formField label="#{messages['revenueSchedule.invoicedRevenue']}" id="invoicedRevenue" field="invoicedRevenue" useConverter="false" maxlength="50" />

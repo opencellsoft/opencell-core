@@ -14,9 +14,12 @@
 	<ui:define name="body">
 
 		<hftl:searchPanel label="#{messages['revenueSchedule.search']}" backingBean="#{revenueScheduleListBean}" renderNewButton="false">
-			<hftl:searchEntityField label="#{messages['revenueSchedule.billingAccount']}" id="billingAccount" field="chargeInstance.subscription.userAccount.billingAccount" />
-			<hftl:searchEntityField label="#{messages['revenueSchedule.subscription']}" id="subscription" field="chargeInstance.subscription" />
-			<hftl:searchEntityField label="#{messages['revenueSchedule.chargeInstance']}" id="chargeInstance" field="chargeInstance" />
+			<hftl:searchEntityField label="#{messages['revenueSchedule.billingAccount']}" id="billingAccount" field="chargeInstance.subscription.userAccount.billingAccount" valueLabelField="descriptionOrCode"
+                listBean="#{billingAccountListBean}"/>
+			<hftl:searchEntityField label="#{messages['revenueSchedule.subscription']}" id="subscription" field="chargeInstance.subscription" valueLabelField="descriptionOrCode"
+                listBean="#{subscriptionListBean}"/>
+			<hftl:searchEntityField label="#{messages['revenueSchedule.chargeInstance']}" id="chargeInstance" field="chargeInstance" valueLabelField="descriptionOrCode"
+                listBean="#{chargeInstanceListBean}"/>
 			<hftl:searchField label="#{messages['revenueSchedule.revenueDate']}" id="revenueDate" field="revenueDate" />
 		</hftl:searchPanel>
 
