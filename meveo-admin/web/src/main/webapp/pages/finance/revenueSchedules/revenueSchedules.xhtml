@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:hftl="http://hftl.org"
+	xmlns:f="http://java.sun.com/jsf/core" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{revenueScheduleListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hftl:searchPanel label="#{messages['revenueSchedule.search']}" backingBean="#{revenueScheduleListBean}">
+			<hftl:searchField label="#{messages['revenueSchedule.chargeInstance.code']}" field="chargeInstance.code" />
+			<hftl:searchField label="#{messages['revenueSchedule.revenueDate']}" id="revenueDate" field="revenueDate" />
+		</hftl:searchPanel>
+
+		<hftl:dataList backingBean="#{revenueScheduleListBean}" label="#{messages['revenueSchedule.title']}" sortBy="code">
+			<hftl:column label="#{messages['revenueSchedule.chargeInstance.code']}" field="chargeInstance.code" />
+			<hftl:column label="#{messages['revenueSchedule.revenueDate']}" field="revenueDate" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>
