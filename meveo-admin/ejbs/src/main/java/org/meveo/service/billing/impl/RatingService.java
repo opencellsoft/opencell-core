@@ -23,6 +23,7 @@ import org.meveo.admin.util.NumberUtil;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ApplicationTypeEnum;
@@ -190,6 +191,10 @@ public class RatingService extends BusinessService<WalletOperation>{
 			String criteria3, Date startdate, Date endDate, ChargeApplicationModeEnum mode) throws BusinessException {
 
 		WalletOperation result = new WalletOperation();
+		Auditable auditable=new Auditable();
+		auditable.setCreated(new Date());
+		auditable.setCreator(chargeInstance.getAuditable().getCreator());
+		result.setAuditable(auditable);
 		//TODO do this in the right place (one time by userAccount)				
 	    boolean  isExonerated = billingAccountService.isExonerated(chargeInstance.getSubscription().getUserAccount().getBillingAccount()); 
 
@@ -238,7 +243,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		}
 
 		rateBareWalletOperation(result, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency, provider);
-
+        log.debug(" wo amountWithoutTax =",result.getAmountWithoutTax());
 		return result;
 
 	}
@@ -258,6 +263,8 @@ public class RatingService extends BusinessService<WalletOperation>{
 				amountWithoutTax, amountWithTax, inputQuantity, quantity, tCurrency, countryId, taxPercent, discountPercent, nextApplicationDate, invoiceSubCategory, criteria1,
 				criteria2, criteria3, startdate, endDate, mode);
 
+		chargeInstance.getWalletOperations().add(result);
+		
 		String chargeInstnceLabel = null;
 		UserAccount ua = subscription.getUserAccount();
 		try {

@@ -28,18 +28,21 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
     	
 	public void createRevenueSchedule(ChargeInstance chargeInstance,User currentUser) throws BusinessException{
 		List<WalletOperation> woList = new ArrayList<WalletOperation>(chargeInstance.getWalletOperations());
+		log.debug("woList {}",woList.size());
         Collections.sort(woList, new Comparator<WalletOperation>() {
              public int compare(WalletOperation c0, WalletOperation c1) {
                  return c0.getOperationDate().compareTo(c1.getOperationDate());
              }
         });
-		if(woList==null || woList.size()==0){
+        //log.debug("sorted woList {}",woList);
+        if(woList==null || woList.size()==0){
 			log.warn("createRevenueSchedule list of wallet operations is empty for charge instance {}",chargeInstance.getId());
 		} else {
 			BigDecimal contractAmount = BigDecimal.ZERO;
 			for(WalletOperation wo:woList){
+				log.debug("wo getAmountWithoutTax={}",wo.getAmountWithoutTax());
 				if(wo.getAmountWithoutTax()!=null){
-					contractAmount.add(wo.getAmountWithoutTax());
+					contractAmount=contractAmount.add(wo.getAmountWithoutTax());
 				}
 			}
 			log.debug("createRevenueSchedule contractAmount={}",contractAmount);
@@ -52,7 +55,6 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
 		                 return c0.getRevenueDate().compareTo(c1.getRevenueDate());
 		             }
 		        });
-				log.debug("createRevenueSchedule schedule={}",schedule);
 				BillingAccount billingAccount= chargeInstance.getSubscription().getUserAccount()
 						.getBillingAccount();
 				BillingCycle billingCycle = billingAccount.getBillingCycle();

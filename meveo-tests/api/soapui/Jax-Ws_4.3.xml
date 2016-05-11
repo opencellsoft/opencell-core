@@ -56296,10 +56296,10 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
 			User currentUser) throws BusinessException {
 		BigDecimal totalContractValue = BigDecimal.ZERO;
 		for(WalletOperation wo:woList){
-			totalContractValue.add(wo.getAmountWithoutTax());
+			totalContractValue=totalContractValue.add(wo.getAmountWithoutTax());
 		}
 		double delay = DateUtils.daysBetween(startDate, endDate);
-		BigDecimal dailyValue = totalContractValue.divide(new BigDecimal(delay));
+		BigDecimal dailyValue = totalContractValue.divide(new BigDecimal(delay),12, RoundingMode.HALF_UP);
 		List<RevenueSchedule> result = new ArrayList<RevenueSchedule>();
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(startDate);
@@ -56313,13 +56313,14 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
 			revenueSchedule.setRevenueDate(lastDate);
 			revenueSchedule.setChargeInstance(chargeInstance);
 			revenueSchedule.setRecognizedRevenue(dailyValue.multiply(new BigDecimal(nbDays)));
+			log.debug("revenueSchedule "+revenueSchedule.getRevenueDate()+ " recognizedRevenue ="+revenueSchedule.getRecognizedRevenue());
 			result.add(revenueSchedule);
 		}
 		return result;
 	}
 
 }
-    
+        
             ]]]]>><![CDATA[
             </script>\r
          </revenueRecognitionScript>\r
@@ -56599,4 +56600,4 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
          </customerHierarchy>
       </ws:customerHierarchyUpdate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8572c8e2-41d0-426a-b196-aa491d7abfee"/><con:assertion type="Simple Contains" name="Contains" id="38fd1305-ba77-49e2-849b-5c7f2d7ae6df"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>CUST</con:name><con:value>CUST_HOP8</con:value></con:property></con:properties></con:testSuite><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>provider</con:name><con:value>DEMO</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8572c8e2-41d0-426a-b196-aa491d7abfee"/><con:assertion type="Simple Contains" name="Contains" id="38fd1305-ba77-49e2-849b-5c7f2d7ae6df"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>CUST</con:name><con:value>CUST_HOP23</con:value></con:property></con:properties></con:testSuite><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>provider</con:name><con:value>DEMO</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>

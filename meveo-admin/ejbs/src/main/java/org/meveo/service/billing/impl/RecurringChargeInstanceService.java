@@ -297,7 +297,8 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				} else {
 					walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate,false, user);
 				}
-				log.debug("nextChargeDate {}, chargeDate {}.",activeRecurringChargeInstance.getChargeDate(),activeRecurringChargeInstance.getNextChargeDate());
+				log.debug("chargeDate {}, nextChargeDate {}, wo size {}",activeRecurringChargeInstance.getChargeDate()
+						,activeRecurringChargeInstance.getNextChargeDate(),activeRecurringChargeInstance.getWalletOperations().size());
 				//if (recurringChargeTemplate.getApplyInAdvance()) {
 					applicationDate = activeRecurringChargeInstance.getNextChargeDate();
 				//} else {
@@ -327,9 +328,10 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 						} else {
 							walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate,true, user);
 						}
-						log.debug("schedule nextChargeDate {}, chargeDate {}.",activeRecurringChargeInstance.getChargeDate(),activeRecurringChargeInstance.getNextChargeDate());
+						log.debug("chargeDate {},nextChargeDate {},  wo size {}",activeRecurringChargeInstance.getChargeDate()
+								,activeRecurringChargeInstance.getNextChargeDate(),activeRecurringChargeInstance.getWalletOperations().size());
 						applicationDate = activeRecurringChargeInstance.getNextChargeDate();
-						
+								
 					} 
 					activeRecurringChargeInstance.setChargeDate(chargeDate);
 					activeRecurringChargeInstance.setNextChargeDate(nextChargeDate);

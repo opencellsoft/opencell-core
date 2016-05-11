@@ -296,6 +296,7 @@ public class DefaultObserver {
     }
 
     public void businesException(@Observes BusinessExceptionEvent bee) {
+    	log.debug("BusinessExceptionEvent handler inactivated");/*
         log.debug("Defaut observer : BusinessExceptionEvent {} ", bee);
         StringWriter errors = new StringWriter();
         bee.getException().printStackTrace(new PrintWriter(errors));
@@ -320,8 +321,7 @@ public class DefaultObserver {
         remoteInstanceNotifier.invoke(input.replaceAll("\"", "'").replaceAll("#", "\"").replaceAll("\\[", "(").replaceAll("\\]", ")"),
             ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
 
-        // TODO handel reponse
-        // if pertinent, if need logs
+       */
 
     }
 
