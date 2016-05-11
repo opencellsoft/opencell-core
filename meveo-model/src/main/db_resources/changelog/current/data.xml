@@ -297,5 +297,11 @@
 		<sql><![CDATA[update adm_country set description_fr='Territoire britannique de l''Océan Indien' where country_code ='IO']]></sql>
 		<sql><![CDATA[update adm_country set description_fr='Côte D''Ivoire' where country_code ='CI']]></sql>
 		<sql><![CDATA[update adm_country set description_fr='Etats-Unis d''Amérique' where country_code ='US']]></sql>
+	</changeSet>
+	<changeSet id="#1314_20160511" author="Tony Alejandro">
+        <insert tableName="adm_role_role">
+            <column name="role_id" valueNumeric="2" />
+            <column name="child_role_id" valueNumeric="1" />
+        </insert>
 	</changeSet>	
 </databaseChangeLog>
