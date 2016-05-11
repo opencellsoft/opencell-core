@@ -159,6 +159,7 @@ public class ProviderApi extends BaseApi {
         provider.setRounding(postData.getRounding());
         provider.setEmail(postData.getEmail());
         provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
+        provider.setPrepaidReservationExpirationDelayinMillisec(postData.getPrepaidReservationExpirationDelayinMillisec());
 
         // search for country
         if (!StringUtils.isBlank(postData.getCountry())) {
@@ -281,6 +282,7 @@ public class ProviderApi extends BaseApi {
         provider.setRounding(postData.getRounding());
         provider.setEmail(postData.getEmail());
         provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
+        provider.setPrepaidReservationExpirationDelayinMillisec(postData.getPrepaidReservationExpirationDelayinMillisec());
 
         // search for country
         if (!StringUtils.isBlank(postData.getCountry())) {
