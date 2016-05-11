@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 public abstract class RevenueRecognitionScript extends Script implements RevenueRecognitionScriptInterface{
 
 	
-	RevenueScheduleService revenueScheduleService= (RevenueScheduleService)getServiceInterface("revenueScheduleService");
+	RevenueScheduleService revenueScheduleService= (RevenueScheduleService)getServiceInterface("RevenueScheduleService");
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
     	
