@@ -13,14 +13,20 @@
 
 	<ui:define name="body">
 
-		<hftl:searchPanel label="#{messages['revenueSchedule.search']}" backingBean="#{revenueScheduleListBean}">
-			<hftl:searchField label="#{messages['revenueSchedule.chargeInstance.code']}" field="chargeInstance.code" />
+		<hftl:searchPanel label="#{messages['revenueSchedule.search']}" backingBean="#{revenueScheduleListBean}" renderNewButton="false">
+			<hftl:searchEntityField label="#{messages['revenueSchedule.billingAccount']}" id="billingAccount" field="chargeInstance.subscription.userAccount.billingAccount" />
+			<hftl:searchEntityField label="#{messages['revenueSchedule.subscription']}" id="subscription" field="chargeInstance.subscription" />
+			<hftl:searchEntityField label="#{messages['revenueSchedule.chargeInstance']}" id="chargeInstance" field="chargeInstance" />
 			<hftl:searchField label="#{messages['revenueSchedule.revenueDate']}" id="revenueDate" field="revenueDate" />
 		</hftl:searchPanel>
 
-		<hftl:dataList backingBean="#{revenueScheduleListBean}" label="#{messages['revenueSchedule.title']}" sortBy="code">
-			<hftl:column label="#{messages['revenueSchedule.chargeInstance.code']}" field="chargeInstance.code" />
+		<hftl:dataList backingBean="#{revenueScheduleListBean}" label="#{messages['revenueSchedule.title']}" sortBy="chargeInstance.code">
 			<hftl:column label="#{messages['revenueSchedule.revenueDate']}" field="revenueDate" />
+			<hftl:column label="#{messages['revenueSchedule.chargeInstance']}" field="chargeInstance.code" />
+			<hftl:column label="#{messages['revenueSchedule.recognizedRevenue']}" field="recognizedRevenue" />
+			<hftl:column label="#{messages['revenueSchedule.invoicedRevenue']}" field="invoicedRevenue" />
+			<hftl:column label="#{messages['revenueSchedule.accruedRevenue']}" field="accruedRevenue" />
+			<hftl:column label="#{messages['revenueSchedule.defferedRevenue']}" field="defferedRevenue" />
 		</hftl:dataList>
 
 	</ui:define>
