@@ -20,6 +20,7 @@ package org.meveo.admin.action;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,6 +31,7 @@ import java.util.Set;
 
 import javax.enterprise.context.Conversation;
 import javax.enterprise.inject.Instance;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
@@ -189,6 +191,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private int activeTab;
 
     private int activeMainTab = 0;
+
+	private Map<String, Boolean> writeAccessMap;
 
     /**
      * Constructor
@@ -1142,29 +1146,24 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     * 
     * 
     */
-    public boolean canUserUpdateEntity(String path){
-    	log.trace("canUserUpdateEntity path:"+path);
-    	HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-    	return PagePermission.getInstance().hasWriteAccess(request, getCurrentUser());
-//    	String pages = org.meveo.commons.utils.StringUtils.patternMacher("/pages/(.*/.*)/", path);  
-//    	log.trace("canUserUpdateEntity pages:"+pages);
-//    	if(getCurrentUser().hasRole("administrateur") || getCurrentUser().hasRole("superAdministrateur")){
-//    		return true; 
-//    	}    	
-//    	if(pages != null && pages.contains("/")){    
-//    		String cat = pages.split("/")[0];
-//    		cat = cat.length()>3?cat.substring(0, 3):cat;
-//    		String entity = pages.split("/")[1];
-//    		entity = entity.length()>3?entity.substring(0, 3):entity;    		     	       
-//        	String resource = permissionService.getResourceByPath(cat);        	
-//        	if(getCurrentUser().hasPermission(resource,resource+"Management")){
-//        		return true;
-//        	}                   	
-//        	resource = permissionService.getResourceByPath(entity);        	
-//        	if(getCurrentUser().hasPermission(resource,resource+"Management")){
-//        		return true;        	
-//        	}
-//    	}    	 			
-//    	return false;
+    public boolean canUserUpdateEntity(){
+    	if (this.writeAccessMap == null) {
+			writeAccessMap = Collections.synchronizedMap(new HashMap<String, Boolean>());
+		}
+		ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+		HttpServletRequest request = (HttpServletRequest) context.getRequest();
+		String requestURI = request.getRequestURI();
+
+		if (writeAccessMap.get(requestURI) == null) {
+			boolean hasWriteAccess = false;
+			try {
+				hasWriteAccess = PagePermission.getInstance().hasWriteAccess(request, identity);
+			} catch (BusinessException e) {
+				log.error("Error encountered checking for write access.", e);
+				hasWriteAccess = false;
+			}
+			writeAccessMap.put(requestURI, hasWriteAccess);
+		}
+		return writeAccessMap.get(requestURI);
     }
 }
