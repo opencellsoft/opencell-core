@@ -158,6 +158,7 @@ public class ProviderApi extends BaseApi {
         provider.setDisplayFreeTransacInInvoice(postData.isDisplayFreeTransacInInvoice());
         provider.setRounding(postData.getRounding());
         provider.setEmail(postData.getEmail());
+        provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
 
         // search for country
         if (!StringUtils.isBlank(postData.getCountry())) {
@@ -279,6 +280,7 @@ public class ProviderApi extends BaseApi {
         provider.setMultilanguageFlag(postData.isMultiLanguage());
         provider.setRounding(postData.getRounding());
         provider.setEmail(postData.getEmail());
+        provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
 
         // search for country
         if (!StringUtils.isBlank(postData.getCountry())) {
