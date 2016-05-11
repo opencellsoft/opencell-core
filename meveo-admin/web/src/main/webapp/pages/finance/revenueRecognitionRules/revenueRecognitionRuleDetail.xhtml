@@ -31,7 +31,24 @@
 				label="#{messages['revenueRecognitionRule.script']}" field="script"
 				valueLabelField="code"
 				listElements="#{revenueRecognitionScriptBean.listActive}" />
-
+			<hftl:formField
+				label="#{messages['revenueRecognitionRule.startDelay']}"
+				id="startDelay" field="startDelay" />
+			<hftl:formField
+				label="#{messages['revenueRecognitionRule.startUnit']}"
+				id="startUnit" field="startUnit" />
+			<hftl:formField
+				label="#{messages['revenueRecognitionRule.startEvent']}"
+				id="startEvent" field="startEvent" />
+			<hftl:formField
+				label="#{messages['revenueRecognitionRule.stopDelay']}"
+				id="stopDelay" field="stopDelay" />
+			<hftl:formField
+				label="#{messages['revenueRecognitionRule.stopUnit']}" id="stopUnit"
+				field="stopUnit" />
+			<hftl:formField
+				label="#{messages['revenueRecognitionRule.stopEvent']}"
+				id="stopEvent" field="stopEvent" />
 		</hftl:formPanel>
 	</ui:define>
 
