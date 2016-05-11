@@ -334,7 +334,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 					activeRecurringChargeInstance.setChargeDate(chargeDate);
 					activeRecurringChargeInstance.setNextChargeDate(nextChargeDate);
 				}
-				revenueRecognitionScriptService.createRevenueSchedule(activeRecurringChargeInstance.getChargeTemplate().getRevenueRecognitionRule().getScript().getScript(), activeRecurringChargeInstance, user);
+				revenueRecognitionScriptService.createRevenueSchedule(activeRecurringChargeInstance.getChargeTemplate().getRevenueRecognitionRule().getScript().getCode(), activeRecurringChargeInstance, user);
 			}
 			
 		} catch (Exception e) {
