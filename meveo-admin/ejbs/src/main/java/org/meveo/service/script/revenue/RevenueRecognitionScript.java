@@ -38,14 +38,6 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
         if(woList==null || woList.size()==0){
 			log.warn("createRevenueSchedule list of wallet operations is empty for charge instance {}",chargeInstance.getId());
 		} else {
-			BigDecimal contractAmount = BigDecimal.ZERO;
-			for(WalletOperation wo:woList){
-				log.debug("wo getAmountWithoutTax={}",wo.getAmountWithoutTax());
-				if(wo.getAmountWithoutTax()!=null){
-					contractAmount=contractAmount.add(wo.getAmountWithoutTax());
-				}
-			}
-			log.debug("createRevenueSchedule contractAmount={}",contractAmount);
 			Date startDate = chargeInstance.getSubscription().getSubscriptionDate();
 			Date endDate = chargeInstance.getSubscription().getEndAgreementDate();
 			List<RevenueSchedule> schedule = new ArrayList<>(scheduleRevenue(chargeInstance,woList, startDate, endDate, currentUser));
@@ -66,6 +58,7 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
 		        Date invoicingDate = new Date(startDate.getTime());
 		        while(!billingCycle.getNextCalendarDate(initCalendarDate,invoicingDate).after(endDate)){
 		        	invoicingDates.add(invoicingDate);
+		        	log.debug("added invoicingDate "+invoicingDate);
 		        	invoicingDate = new Date((billingCycle.getNextCalendarDate(initCalendarDate,invoicingDate)).getTime());
 		        }
 		        BigDecimal recognizedRevenue=BigDecimal.ZERO;
@@ -74,9 +67,9 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
 		        BigDecimal invoicedRevenue=BigDecimal.ZERO;
 		        int invoiceIndex=0;
 		        for(RevenueSchedule revenueSchedule : schedule){
-		        	recognizedRevenue.add(revenueSchedule.getRecognizedRevenue());
+		        	recognizedRevenue=recognizedRevenue.add(revenueSchedule.getRecognizedRevenue());
 		        	while(chargeIndex<woList.size() && !woList.get(chargeIndex).getOperationDate().after(revenueSchedule.getRevenueDate())){
-		        		chargedRevenue.add(woList.get(chargeIndex).getAmountWithoutTax());
+		        		chargedRevenue=chargedRevenue.add(woList.get(chargeIndex).getAmountWithoutTax());
 		        		chargeIndex++;
 		        	}
 		        	if(invoiceIndex<invoicingDates.size() && !invoicingDates.get(invoiceIndex).after(revenueSchedule.getRevenueDate())){
