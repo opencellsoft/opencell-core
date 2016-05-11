@@ -832,6 +832,12 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>invoiceTypes</from-outcome>
+			<to-view-id>/pages/billing/invoiceTypes/invoiceTypes.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>		
+		<navigation-case>
 			<from-outcome>invoiceCategoryDetail</from-outcome>
 			<to-view-id>/pages/catalog/invoiceCategories/invoiceCategoryDetail.xhtml
 			</to-view-id>

@@ -1,0 +1,43 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<hftl:entityPopup id="searchOccTemplatePopup"
+			header="#{messages['invoiceType.occTemplate']}"
+			updateField=":formInvoiceType:occTemplateSelectedId :formInvoiceType:occTemplateSelectedId_text"
+			selection="#{invoiceTypeBean.entity.occTemplate}"
+			backingBean="#{occTemplateBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>	
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="invoiceTypes"
+						value="#{messages['menu.invoiceTypes']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+		<hftl:formPanel formId="formInvoiceType" edit="#{invoiceTypeBean.edit}" label="#{messages['invoiceType.panel']}" backingBean="#{invoiceTypeBean}">
+			<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"  size="60" maxlength="60" />
+			<hftl:formField label="#{messages['businessEntity.description']}" id="description" field="description" useConverter="false" size="100" maxlength="100" />
+			<hftl:formField label="#{messages['invoiceType.occTemplate']}" id="occTemplateSelectedId" field="occTemplate"  valueLabelField="code"  
+							popup="true" popupId="searchOccTemplatePopup" clearButton="true" required="true"/>
+			<hftl:formField label="#{messages['invoiceType.prefix']}" field="prefix" id="prefix" textArea="true" rows="1" maxlength="2000" />
+			<hftl:formField label="#{messages['invoiceType.sequenceSize']}" field="sequenceSize" id="sequenceSize" />
+            <hftl:formField label="#{messages['invoiceType.appliesTo']}" field="appliesTo" listType="pickUpList" valueLabelField="code" dualListModel="#{invoiceTypeBean.dualListModel}" 
+            newLine="true"  id="appliesTo"/>
+		</hftl:formPanel>
+	</ui:define>
+</ui:composition>

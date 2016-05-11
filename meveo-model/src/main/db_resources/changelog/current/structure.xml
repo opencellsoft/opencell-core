@@ -1700,4 +1700,84 @@
         <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="ar_revenue_schedule" constraintName="fk_ar_revenue_schedule_charge"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
     </changeSet>
+
+	<changeSet id="#1679_20160509" author="EdwardLegaspi">
+		<addForeignKeyConstraint constraintName="fk_crm_business_account_model_accountmodel"
+			referencedTableName="meveo_script_instance" baseColumnNames="script_instance_id"
+			baseTableName="crm_business_account_model" referencedColumnNames="id" />
+	</changeSet>
+	
+   	<changeSet author="anasseh" id="#1685_20160510">
+	    <createSequence sequenceName="billing_invoice_type_seq" />
+		<createTable tableName="billing_invoice_type">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="prefix" type="VARCHAR(2000)" />
+			<column name="sequence_size" type="INT4" />
+			<column name="matching_auto" type="BOOL" />
+			<column name="occ_template_id" type="BIGINT" />
+		</createTable>
+
+		<addPrimaryKey columnNames="id" constraintName="billing_invoice_type_pkey"
+			tableName="billing_invoice_type" />
+
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="billing_invoice_type" constraintName="fk_8j22rel59dyb1evhu8rlb9nim"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		
+		<addForeignKeyConstraint baseColumnNames="creator_id"
+			baseTableName="billing_invoice_type" constraintName="fk_swjhmb14grd2sm1ou7a8g1dtw"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		
+		<addForeignKeyConstraint baseColumnNames="updater_id"
+			baseTableName="billing_invoice_type" constraintName="fk_ivfhc9r8y7mtpxocaxrer714r"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		
+		<addForeignKeyConstraint baseColumnNames="occ_template_id"
+			baseTableName="billing_invoice_type" constraintName="fk_2k602pe7r1krb5o13swoqhj5h"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" />
+		
+		<addUniqueConstraint columnNames="code, provider_id, occ_template_id" constraintName="uk_qkotb1qhsp1jw2nwy73qjs63o" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="billing_invoice_type" />				
+
+		<createTable tableName="billing_invoice_type_applies_to">
+			<column name="invoice_type_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="applies_to_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		
+		<addForeignKeyConstraint baseColumnNames="invoice_type_id"
+			baseTableName="billing_invoice_type_applies_to" constraintName="fk_fojsslpb3tof12vgkined97py"
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+			
+		<addForeignKeyConstraint baseColumnNames="applies_to_id"
+			baseTableName="billing_invoice_type_applies_to" constraintName="fk_ilis5r98r4tgue3k143lm6k13"
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice_type" />			
+	</changeSet>	
+	
 </databaseChangeLog>

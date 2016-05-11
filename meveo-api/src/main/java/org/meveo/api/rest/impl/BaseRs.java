@@ -10,6 +10,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.BaseResponse;
@@ -117,4 +119,23 @@ public abstract class BaseRs implements IBaseRs {
         return responseBuilder;
     }
 
+    /**
+     * Process exception and update status of response
+     * 
+     * @param e Exception
+     * @param status Status dto to update
+     */
+    protected void processException(Exception e, ActionStatus status) {
+
+        if (e instanceof MeveoApiException) {
+            status.setErrorCode(((MeveoApiException) e).getErrorCode());
+            status.setStatus(ActionStatusEnum.FAIL);
+            status.setMessage(e.getMessage());
+        } else {
+            log.error("Failed to execute API", e);
+            status.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            status.setStatus(ActionStatusEnum.FAIL);
+            status.setMessage(e.getMessage());
+        }
+    }
 }
