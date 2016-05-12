@@ -64,4 +64,8 @@
 		<constraint>#{currentUser.hasPermission('reporting','reportingManagement') or (!edit and currentUser.hasPermission('reporting','reportingVisualization'))}</constraint>
 	</page>
 	
+	<page view-id="/resource/*">
+		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
+	</page>
+	
 </page-access>
