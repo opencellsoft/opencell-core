@@ -26,7 +26,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
-import org.meveo.commons.utils.ClassUtils;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
@@ -78,11 +78,7 @@ public class CatMessages extends AuditableEntity {
     public CatMessages(IEntity businessEntity, String languageCode, String description) {
         super();
 
-        String className = businessEntity.getClass().getSimpleName();
-        // supress javassist proxy suffix
-        if (className.indexOf("_") >= 0) {
-            className = className.substring(0, className.indexOf("_"));
-        }
+        String className =ReflectionUtils.getCleanClassName(businessEntity.getClass().getSimpleName());
         this.messageCode = className + "_" + businessEntity.getId();
         this.languageCode = languageCode;
         this.description = description;
@@ -154,7 +150,7 @@ public class CatMessages extends AuditableEntity {
     
 	public String getObjectType() {
 		if(StringUtils.isBlank(key)){
-			Class<?> entityClass = ClassUtils.getEntityClass(getEntityClass());
+			Class<?> entityClass = ReflectionUtils.getClassBySimpleNameAndAnnotation(getEntityClass(), MultilanguageEntity.class);
 			if(entityClass != null){
 				MultilanguageEntity annotation = entityClass.getAnnotation(MultilanguageEntity.class);
 				key = annotation.key();
@@ -165,7 +161,7 @@ public class CatMessages extends AuditableEntity {
 	
 	public String getGroup() {
 		if(StringUtils.isBlank(group)){
-			Class<?> entityClass = ClassUtils.getEntityClass(getEntityClass());
+			Class<?> entityClass = ReflectionUtils.getClassBySimpleNameAndAnnotation(getEntityClass(), MultilanguageEntity.class);
 			if(entityClass != null){
 				MultilanguageEntity annotation = entityClass.getAnnotation(MultilanguageEntity.class);
 				group = annotation.group();

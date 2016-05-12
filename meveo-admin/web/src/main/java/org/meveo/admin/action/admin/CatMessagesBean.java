@@ -34,8 +34,8 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.commons.utils.ClassUtils;
 import org.meveo.commons.utils.CsvReader;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.MultilanguageEntity;
@@ -89,7 +89,7 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 	public CatMessagesBean() {
 		super(CatMessages.class);
 		objectTypeMap = new HashMap<>();
-		Set<Class<?>> multilanguageEntities = ClassUtils.getClassesOfType(MultilanguageEntity.class);
+		Set<Class<?>> multilanguageEntities = ReflectionUtils.getClassesAnnotatedWith(MultilanguageEntity.class);
 		MultilanguageEntity annotation = null;
 		for (Class<?> entityClass : multilanguageEntities) {
 			annotation = entityClass.getAnnotation(MultilanguageEntity.class);

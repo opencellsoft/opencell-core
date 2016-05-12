@@ -34,13 +34,13 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.commons.utils.ClassUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.MultilanguageEntityService;
@@ -268,7 +268,7 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 	}
 
 	private BusinessEntity getEntityByClassNameAndId(String className, long entityId) {
-		Class<?> entityClass = ClassUtils.getEntityClass(className);
+		Class<?> entityClass = ReflectionUtils.getClassBySimpleNameAndAnnotation(className, MultilanguageEntity.class);
 		BusinessEntity entity = null;
 		if (entityClass != null) {
 			try {
