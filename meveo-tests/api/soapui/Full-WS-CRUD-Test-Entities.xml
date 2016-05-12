@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="63d882e4-12ba-48cb-9cf8-b557b7f5787f" activeEnvironment="Default" name="Full WS Test Entities" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="63d882e4-12ba-48cb-9cf8-b557b7f5787f" activeEnvironment="Default" name="Full WS Test Entities" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
   <con:entry key="TestSuite" value="&lt;all>"/>
@@ -17824,7 +17824,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCustomer>
-         <!--Optional:-->
+         
          <customer code="${#Project#baseEntityPrefix}_CUST" description="${#Project#baseEntityPrefix}_CUST">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
@@ -17844,7 +17844,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <customerCategory>CLIENT</customerCategory>
             <customerBrand>DEFAULT</customerBrand>
             <seller>SELLER_FR</seller>
-            <!--Optional:-->
+            
             <contactInformation>
                <email>${#Project#baseEntityPrefix}@manaty.net</email>
                <phone>+33100000000</phone>
@@ -17873,7 +17873,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <city>Dijon</city>
                <country>FR</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
             	<email>${#Project#baseEntityPrefix}@manaty.net</email>
             	<phone>1234</phone>
@@ -17963,7 +17963,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateAccess>
-         <!--Optional:-->
+         
          <access code="${#Project#baseEntityPrefix}_ACCP">
             <subscription>${#Project#baseEntityPrefix}_SUB</subscription>
          </access>
@@ -17973,23 +17973,23 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateMeasurableQuantity>
-         <!--Optional:-->
+         
          <measurableQuantity code="${#Project#baseEntityPrefix}_MQ1" description="${#Project#baseEntityPrefix}_MQ1-DESC">
-            <!--Optional:-->
+            
             <dimension1>1</dimension1>
-            <!--Optional:-->
+            
             <dimension2>2</dimension2>
-            <!--Optional:-->
+            
             <dimension3>3</dimension3>
-            <!--Optional:-->
+            
             <dimension4>4</dimension4>
             <editable>false</editable>
             <additive>true</additive>
-            <!--Optional:-->
+            
             <sqlQuery>select count(*) from billing_subscription where status='CREATED' and date(created)='#{date}' and provider_id=#{provider}</sqlQuery>
-            <!--Optional:-->
+            
             <measurementPeriod>MONTHLY</measurementPeriod>
-            <!--Optional:-->
+            
             <lastMeasureDate>2016-03-16</lastMeasureDate>
          </measurableQuantity>
       </ws:createOrUpdateMeasurableQuantity>
@@ -17998,48 +17998,48 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateBarChart>
-         <!--Optional:-->
+         
          <barChart code="${#Project#baseEntityPrefix}_BC1" description="${#Project#baseEntityPrefix}_BarCharts">
-            <!--Optional:-->
+            
             <measurableQuantity code="${#Project#baseEntityPrefix}_MQ1"></measurableQuantity>
-            <!--Optional:-->
+            
             <width>100</width>
-            <!--Optional:-->
+            
             <height>100</height>
-            <!--Optional:-->
+            
             <style>test1</style>
-            <!--Optional:-->
+            
             <styleClass>test1</styleClass>
-            <!--Optional:-->
+            
             <extender>test1</extender>
-            <!--Optional:-->
+            
             <visible>true</visible>
-            <!--Optional:-->
+            
             <legendPosition>n</legendPosition>
             <barPadding>100</barPadding>
             <barMargin>100</barMargin>
-            <!--Optional:-->
+            
             <orientation>vertical</orientation>
             <stacked>true</stacked>
-            <!--Optional:-->
+            
             <min>100</min>
-            <!--Optional:-->
+            
             <max>100</max>
             <breakOnNull>false</breakOnNull>
-            <!--Optional:-->
+            
             <xaxisLabel>test</xaxisLabel>
-            <!--Optional:-->
+            
             <yaxisLabel>test</yaxisLabel>
-            <!--Optional:-->
+            
             <xaxisAngle>10</xaxisAngle>
-            <!--Optional:-->
+            
             <yaxisAngle>10</yaxisAngle>
             <legendCols>20</legendCols>
             <legendRows>20</legendRows>
             <zoom>true</zoom>
             <animate>true</animate>
             <showDataTip>true</showDataTip>
-            <!--Optional:-->
+            
             <datatipFormat>false</datatipFormat>
          </barChart>
       </ws:createOrUpdateBarChart>
@@ -18048,26 +18048,26 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdatePieChart>
-         <!--Optional:-->
+         
          <pieChart code="${#Project#baseEntityPrefix}_PC1" description="${#Project#baseEntityPrefix}_PieCharts">
-            <!--Optional:-->
+            
             <measurableQuantity code="${#Project#baseEntityPrefix}_MQ1"></measurableQuantity>
-           <!--Optional:-->
+           
             <width>123</width>
-            <!--Optional:-->
+            
             <height>123</height>
-            <!--Optional:-->
+            
             <style>style1</style>
-            <!--Optional:-->
+            
             <styleClass>style_class1</styleClass>
-            <!--Optional:-->
+            
             <extender>extender1</extender>
-            <!--Optional:-->
+            
             <visible>true</visible>
             <filled>false</filled>
-            <!--Optional:-->
+            
             <legendPosition>n</legendPosition>
-            <!--Optional:-->
+            
             <diameter>120</diameter>
             <sliceMargin>10</sliceMargin>
             <shadow>true</shadow>
@@ -18081,24 +18081,24 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateLineChart>
-         <!--Optional:-->
+         
          <lineChart code="${#Project#baseEntityPrefix}_LC1" description="${#Project#baseEntityPrefix}_LineCharts">
-            <!--Optional:-->
+            
             <measurableQuantity code="${#Project#baseEntityPrefix}_MQ1"></measurableQuantity>
-            <!--Optional:-->
+            
             <width>200</width>
-            <!--Optional:-->
+            
             <height>200</height>
-            <!--Optional:-->
+            
             <style>style1</style>
-            <!--Optional:-->
+            
             <styleClass>styleClass2</styleClass>
-            <!--Optional:-->
+            
             <extender>extender3</extender>
-            <!--Optional:-->
+            
             <visible>true</visible>
             <filled>false</filled>
-            <!--Optional:-->
+            
             <legendPosition>w</legendPosition>
             <shadow>true</shadow>
             <minX>45</minX>
@@ -18106,19 +18106,19 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <minY>45</minY>
             <maxY>45</maxY>
             <breakOnNull>true</breakOnNull>
-            <!--Optional:-->
+            
             <xaxisLabel>label 1</xaxisLabel>
-            <!--Optional:-->
+            
             <yaxisLabel>label 2</yaxisLabel>
-            <!--Optional:-->
+            
             <xaxisAngle>12</xaxisAngle>
-            <!--Optional:-->
+            
             <yaxisAngle>12</yaxisAngle>
             <stacked>true</stacked>
             <zoom>true</zoom>
             <animate>false</animate>
             <showDataTip>false</showDataTip>
-            <!--Optional:-->
+            
             <datatipFormat>false</datatipFormat>
             <legendCols>56</legendCols>
             <legendRows>56</legendRows>
@@ -18172,7 +18172,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateWebHookNotification>
-         <!--Optional:-->
+         
          <notification code="${#Project#baseEntityPrefix}_WebHook1">
             <classNameFilter>org.meveo.model.crm.Customer</classNameFilter>
             <eventTypeFilter>CREATED</eventTypeFilter>
@@ -20162,7 +20162,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createCalendar>\r
-         <!--Optional:-->\r
+         \r
          <calendar code="${#Project#entityPrefix}_${#TestSuite#index}_CALENDAR_PERIOD_MONTH1">\r
             <description>Period Month calendar</description>\r
             <calendarType>PERIOD</calendarType>\r
@@ -20176,7 +20176,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createCalendar>\r
-         <!--Optional:-->\r
+         \r
          <calendar code="${#Project#entityPrefix}_${#TestSuite#index}_CALENDAR_PERIOD_MONTH2">\r
             <calendarType>PERIOD</calendarType>\r
             <periodLength>10</periodLength>\r
@@ -20272,7 +20272,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createCalendar>\r
-         <!--Optional:-->\r
+         \r
          <calendar code="${#Project#entityPrefix}_${#TestSuite#index}_CALENDAR_INTERVAL_HOUR1">\r
             <description>Interval hour calendar</description>\r
             <calendarType>INTERVAL</calendarType>\r
@@ -20286,7 +20286,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createCalendar>\r
-         <!--Optional:-->\r
+         \r
          <calendar code="${#Project#entityPrefix}_${#TestSuite#index}_CALENDAR_INTERVAL_HOUR2">\r
             <calendarType>INTERVAL</calendarType>\r
             <intervalType>DAY</intervalType>\r
@@ -20377,7 +20377,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createCalendar>\r
-         <!--Optional:-->\r
+         \r
          <calendar code="${#Project#entityPrefix}_${#TestSuite#index}_CALENDAR_INTERSECT1">\r
             <description>Intersect calendar</description>\r
             <calendarType>INTERSECT</calendarType>\r
@@ -20390,7 +20390,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createCalendar>\r
-         <!--Optional:-->\r
+         \r
          <calendar code="${#Project#entityPrefix}_${#TestSuite#index}_CALENDAR_INTERSECT2">\r
             <calendarType>INTERSECT</calendarType>\r
             <joinCalendar1Code>${#Project#entityPrefix}_${#TestSuite#index}_CALENDAR_YEARLY2</joinCalendar1Code>\r
@@ -20429,7 +20429,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:updateCalendar>\r
-         <!--Optional:-->\r
+         \r
          <calendar code="${#Project#entityPrefix}_${#TestSuite#index}_CALENDAR_INTERSECT1">\r
             <description>${#Project#entityPrefix}_Intersect_Calendar</description>\r
             <calendarType>INTERSECT</calendarType>\r
@@ -20442,7 +20442,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:updateCalendar>\r
-         <!--Optional:-->\r
+         \r
          <calendar code="${#Project#entityPrefix}_${#TestSuite#index}_CALENDAR_INTERSECT2">\r
             <calendarType>INTERSECT</calendarType>\r
             <joinCalendar1Code>${#Project#entityPrefix}_${#TestSuite#index}_CALENDAR_YEARLY2</joinCalendar1Code>\r
@@ -20749,22 +20749,16 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createDescriptions>\r
-         <!--Optional:-->\r
          <descriptions>\r
             <entityClass>InvoiceCategory</entityClass>\r
             <code>CONSUMPTION</code>\r
             <defaultDescription>Consumption</defaultDescription>\r
-            <!--Zero or more repetitions:-->\r
             <translatedDescriptions>\r
-               <!--Optional:-->\r
                <languageCode>ENG</languageCode>\r
-               <!--Optional:-->\r
                <description>${#Project#entityPrefix}_${#TestSuite#index}_InvoiceCategory_Descp_en</description>\r
             </translatedDescriptions>\r
             <translatedDescriptions>
-               <!--Optional:-->
                <languageCode>FRA</languageCode>
-               <!--Optional:-->
                <description>${#Project#entityPrefix}_${#TestSuite#index}_InvoiceCategory_Descp_fr</description>
             </translatedDescriptions>
          </descriptions>\r
@@ -20788,11 +20782,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDescriptions>
-         <!--Optional:-->
          <entityClass>InvoiceCategory</entityClass>
-         <!--Optional:-->
          <code>CONSUMPTION</code>
-         <!--Optional:-->
          <languageCode>ENG</languageCode>
       </ws:findDescriptions>
    </soapenv:Body>
@@ -20808,9 +20799,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto[1]/translatedDescript
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDescriptions>
-         <!--Optional:-->
          <entityClass>Tax</entityClass>
-         <!--Optional:-->
          <code>TAX_05</code>
       </ws:findDescriptions>
    </soapenv:Body>
@@ -20827,25 +20816,18 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path><content>1</co
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:updateDescriptions>\r
-         <!--Optional:-->\r
          <descriptions>\r
             <entityClass>InvoiceCategory</entityClass>\r
             <code>CONSUMPTION</code>\r
             <defaultDescription>New Consumption Description</defaultDescription>\r
-            <!--Zero or more repetitions:-->\r
             <translatedDescriptions>\r
-               <!--Optional:-->\r
                <languageCode>ENG</languageCode>\r
-               <!--Optional:-->\r
                <description>${#Project#entityPrefix}_${#TestSuite#index}_InvoiceCategory_Description_en</description>\r
             </translatedDescriptions>\r
-            <translatedDescriptions>
-               <!--Optional:-->
-               <languageCode>FRA</languageCode>
-               <!--Optional:-->
-               <description>${#Project#entityPrefix}_${#TestSuite#index}_InvoiceCategory_Description_fr</description>
-            </translatedDescriptions>
-
+            <translatedDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>${#Project#entityPrefix}_${#TestSuite#index}_InvoiceCategory_Description_fr</description>\r
+            </translatedDescriptions>\r
          </descriptions>\r
       </ws:updateDescriptions>\r
    </soapenv:Body>\r
@@ -20854,33 +20836,26 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path><content>1</co
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:updateDescriptions>\r
-         <!--Optional:-->\r
          <descriptions>\r
             <entityClass>Tax</entityClass>\r
             <code>TAX_05</code>\r
-            <!--Zero or more repetitions:-->\r
             <translatedDescriptions>\r
-               <!--Optional:-->\r
                <languageCode>ENG</languageCode>\r
-               <!--Optional:-->\r
                <description>${#Project#entityPrefix}_${#TestSuite#index}_Tax_Description_en</description>\r
             </translatedDescriptions>\r
          </descriptions>\r
       </ws:updateDescriptions>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="9d6c2aaf-bcd2-4b27-9194-7d519e9ff5d7"/><con:assertion type="XPath Match" id="da4b591c-a244-49e5-af44-d2951f0c185d" name="status = SUCCESS"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:updateDescriptionsResponse/return/status</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find update Description with All Vals" id="0fa0bcd7-df49-4593-b72a-55d90be3b2f1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findDescriptions</con:operation><con:request name="find update Description with All Vals" id="addfaeaa-8024-4a60-abca-88b96fc41a74"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:findDescriptions>
-         <!--Optional:-->
-         <entityClass>InvoiceCategory</entityClass>
-         <!--Optional:-->
-         <code>CONSUMPTION</code>
-         <!--Optional:-->
-         <languageCode>ENG</languageCode>
-      </ws:findDescriptions>
-   </soapenv:Body>
+//ns2:updateDescriptionsResponse/return/status</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find update Description with All Vals" id="0fa0bcd7-df49-4593-b72a-55d90be3b2f1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findDescriptions</con:operation><con:request name="find update Description with All Vals" id="addfaeaa-8024-4a60-abca-88b96fc41a74"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findDescriptions>\r
+         <entityClass>InvoiceCategory</entityClass>\r
+         <code>CONSUMPTION</code>\r
+         <languageCode>ENG</languageCode>\r
+      </ws:findDescriptions>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2bc1219f-03cf-461a-8f1c-830b0e07d503"/><con:assertion type="XPath Match" id="6cfa885b-14a8-4332-b012-a3d54965d6ff" name="status = SUCCESS"><con:configuration><path>declare namespace ns2 = 'http://ws.api.meveo.org/';
 //ns2:findDescriptionsResponse/return/actionStatus/status</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="f9622eb9-480f-4a61-81d2-06677005cb79" name="catMessagesDto count = 1"><con:configuration><path>declare namespace ns2 = 'http://ws.api.meveo.org/';
 count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path><content>1</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="5acf0510-e0e5-447f-b8b7-768b4b8c1872" name="entityClass = InvoiceCategory"><con:configuration><path>declare namespace ns2 = 'http://ws.api.meveo.org/';
@@ -20893,9 +20868,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto[1]/translatedDescript
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDescriptions>
-         <!--Optional:-->
          <entityClass>Tax</entityClass>
-         <!--Optional:-->
          <code>TAX_05</code>      
       </ws:findDescriptions>
    </soapenv:Body>
@@ -20935,11 +20908,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path><content>1</co
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeDescriptions>         
-         <!--Optional:-->
          <entityClass>InvoiceCategory</entityClass>
-         <!--Optional:-->
          <code>CONSUMPTION</code>
-         <!--Optional:-->
          <languageCode>ENG</languageCode>
       </ws:removeDescriptions>
    </soapenv:Body>
@@ -20948,11 +20918,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path><content>1</co
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDescriptions>         
-         <!--Optional:-->
          <entityClass>InvoiceCategory</entityClass>
-         <!--Optional:-->
          <code>CONSUMPTION</code>
-         <!--Optional:-->
          <languageCode>ENG</languageCode>
       </ws:findDescriptions>
    </soapenv:Body>
@@ -20962,9 +20929,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path><content>1</co
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeDescriptions>\r
-         <!--Optional:-->\r
          <entityClass>Tax</entityClass>\r
-         <!--Optional:-->\r
          <code>TAX_05</code>\r
       </ws:removeDescriptions>\r
    </soapenv:Body>\r
@@ -20973,11 +20938,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path><content>1</co
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDescriptions>         
-         <!--Optional:-->
          <entityClass>Tax</entityClass>
-         <!--Optional:-->
          <code>TAX_05</code>
-         <!--Optional:-->
          <languageCode>ENG</languageCode>
       </ws:findDescriptions>
    </soapenv:Body>
@@ -21103,7 +21065,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path><content>1</co
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeBillingCycle>
-         <!--Optional:-->
+         
          <billingCycleCode>${#Project#entityPrefix}_${#TestSuite#index}_BC2</billingCycleCode>
       </ws:removeBillingCycle>
    </soapenv:Body>
@@ -21111,7 +21073,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path><content>1</co
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findBillingCycle>
-         <!--Optional:-->
+         
          <billingCycleCode>${#Project#entityPrefix}_${#TestSuite#index}_BC2</billingCycleCode>
       </ws:findBillingCycle>
    </soapenv:Body>
@@ -21658,9 +21620,9 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Body>\r
       <ws:createOfferTemplateCategory>
       	<offerTemplateCategory code="${#Project#entityPrefix}_${#TestSuite#index}_OTC1" description="${#Project#entityPrefix}_${#TestSuite#index}_Offer_Category_1">
-            <!--Optional:-->
+            
             <name>${#Project#entityPrefix}_${#TestSuite#index}_OTC1</name>
-            <!--Optional:-->
+            
             <offerTemplateCategoryCode>${#Project#entityPrefix}_${#TestSuite#index}_OTC1</offerTemplateCategoryCode>
             <id>1</id>
             <href>http://192.168.10.14:8080/meveo</href>
@@ -21676,7 +21638,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Body>\r
       <ws:createOfferTemplateCategory>
       	<offerTemplateCategory code="${#Project#entityPrefix}_${#TestSuite#index}_OTC2">
-            <!--Optional:-->
+            
             <name>${#Project#entityPrefix}_${#TestSuite#index}_OTC2_Name</name>
 		</offerTemplateCategory>
       </ws:createOfferTemplateCategory>\r
@@ -21685,7 +21647,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findOfferTemplateCategory>
-         <!--Optional:-->
+         
          <offerTemplateCategoryCode>${#Project#entityPrefix}_${#TestSuite#index}_OTC1</offerTemplateCategoryCode>
       </ws:findOfferTemplateCategory>
    </soapenv:Body>\r
@@ -21693,7 +21655,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>\r
    <soapenv:Body>\r
        <ws:findOfferTemplateCategory>
-         <!--Optional:-->
+         
          <offerTemplateCategoryCode>${#Project#entityPrefix}_${#TestSuite#index}_OTC2</offerTemplateCategoryCode>
       </ws:findOfferTemplateCategory>
    </soapenv:Body>\r
@@ -21703,9 +21665,9 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Body>\r
       <ws:createOrUpdateOfferTemplateCategory>
       	<offerTemplateCategory code="${#Project#entityPrefix}_${#TestSuite#index}_OTC1" description="${#Project#entityPrefix}_${#TestSuite#index}_OfferCategory1">
-            <!--Optional:-->
+            
             <name>${#Project#entityPrefix}_${#TestSuite#index}_Name-OTC1</name>
-            <!--Optional:-->
+            
             <offerTemplateCategoryCode>${#Project#entityPrefix}_${#TestSuite#index}_OTC1</offerTemplateCategoryCode>
             <id>2</id>
             <href>http://i.meveo.info</href>
@@ -21721,7 +21683,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Body>\r
       <ws:createOrUpdateOfferTemplateCategory>
 		<offerTemplateCategory code="${#Project#entityPrefix}_${#TestSuite#index}_OTC2">
-            <!--Optional:-->
+            
             <name>${#Project#entityPrefix}_${#TestSuite#index}_OTC_Name</name>
 		</offerTemplateCategory>
       </ws:createOrUpdateOfferTemplateCategory>\r
@@ -21730,7 +21692,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findOfferTemplateCategory>
-         <!--Optional:-->
+         
          <offerTemplateCategoryCode>${#Project#entityPrefix}_${#TestSuite#index}_OTC1</offerTemplateCategoryCode>
       </ws:findOfferTemplateCategory>
    </soapenv:Body>\r
@@ -21739,7 +21701,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>\r
    <soapenv:Body>\r
        <ws:findOfferTemplateCategory>
-         <!--Optional:-->
+         
          <offerTemplateCategoryCode>${#Project#entityPrefix}_${#TestSuite#index}_OTC2</offerTemplateCategoryCode>
       </ws:findOfferTemplateCategory>
    </soapenv:Body>\r
@@ -21748,7 +21710,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeOfferTemplateCategory>
-      	<!--Optional:-->
+      	
          	<offerTemplateCategoryCode>${#Project#entityPrefix}_${#TestSuite#index}_OTC1</offerTemplateCategoryCode>
       </ws:removeOfferTemplateCategory>\r
    </soapenv:Body>\r
@@ -21756,7 +21718,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findOfferTemplateCategory>
-         <!--Optional:-->
+         
          <offerTemplateCategoryCode>${#Project#entityPrefix}_${#TestSuite#index}_OTC1</offerTemplateCategoryCode>
       </ws:findOfferTemplateCategory>
    </soapenv:Body>\r
@@ -21764,7 +21726,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeOfferTemplateCategory>
-      	<!--Optional:-->
+      	
          	<offerTemplateCategoryCode>${#Project#entityPrefix}_${#TestSuite#index}_OTC2</offerTemplateCategoryCode>
       </ws:removeOfferTemplateCategory>\r
    </soapenv:Body>\r
@@ -21772,7 +21734,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findOfferTemplateCategory>
-         <!--Optional:-->
+         
          <offerTemplateCategoryCode>${#Project#entityPrefix}_${#TestSuite#index}_OTC2</offerTemplateCategoryCode>
       </ws:findOfferTemplateCategory>
    </soapenv:Body>\r
@@ -21868,7 +21830,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateOfferTemplate>
-         <!--Optional:-->
+         
          <offerTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER2">
             <disabled>true</disabled>
          </offerTemplate>
@@ -22188,26 +22150,26 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOneShotChargeTemplate>
-         <!--Optional:-->
+         
          <oneShotChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_OS1" description="${#Project#entityPrefix}_${#TestSuite#index}_OS1">
             <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
             <disabled>false</disabled>
-            <!--Optional:-->
+            
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <languageCode>FRA</languageCode>
                <description>Forfait test</description>
             </languageDescriptions>
-            <!--Optional:-->
+            
             <inputUnitDescription>1</inputUnitDescription>
-            <!--Optional:-->
+            
             <ratingUnitDescription>1</ratingUnitDescription>
-            <!--Optional:-->
+            
             <unitMultiplicator>1</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
             <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>
-            <!--Optional:-->
+            
             <immediateInvoicing>false</immediateInvoicing>
             <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
 		  <triggeredEdrs>
@@ -22277,22 +22239,22 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <oneShotChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_OS1" description="${#Project#entityPrefix}_OneShot1">
             <invoiceSubCategory>CMP_DATA</invoiceSubCategory>
             <disabled>false</disabled>
-            <!--Optional:-->
+            
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <languageCode>FRA</languageCode>
                <description>Forfait test 2</description>
             </languageDescriptions>
-            <!--Optional:-->
+            
             <inputUnitDescription>Unit</inputUnitDescription>
-            <!--Optional:-->
+            
             <ratingUnitDescription>Rating</ratingUnitDescription>
-            <!--Optional:-->
+            
             <unitMultiplicator>5</unitMultiplicator>
             <unitNbDecimal>1</unitNbDecimal>
             <oneShotChargeTemplateType>TERMINATION</oneShotChargeTemplateType>
-            <!--Optional:-->
+            
             <immediateInvoicing>false</immediateInvoicing>
             <roundingModeDtoEnum>DOWN</roundingModeDtoEnum>
 		  <triggeredEdrs>
@@ -22501,7 +22463,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateUsageChargeTemplate>
-         <!--Optional:-->
+         
          <usageChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_USAGE2">
             <invoiceSubCategory>CMP_DATA</invoiceSubCategory>
             <disabled>true</disabled>
@@ -23072,7 +23034,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomer>
-         <!--Optional:-->
+         
          <customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
@@ -23092,7 +23054,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             <customerCategory>CLIENT</customerCategory>
             <customerBrand>DEFAULT</customerBrand>
             <seller>SELLER_FR</seller>
-            <!--Optional:-->
+            
             <contactInformation>
                <email>${#Project#entityPrefix}@manaty.net</email>
                <phone>+33100000000</phone>
@@ -23105,11 +23067,11 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomer>
-         <!--Optional:-->
+         
          <customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST2">
             <customerCategory>CLIENT</customerCategory>
             <seller>SELLER_FR</seller>
-            <!--Optional:-->
+            
          </customer>
       </ws:createCustomer>
    </soapenv:Body>
@@ -23117,7 +23079,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findCustomer>
-         <!--Optional:-->
+         
          <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CUST</customerCode>
       </ws:findCustomer>
    </soapenv:Body>
@@ -23175,7 +23137,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findCustomer>
-         <!--Optional:-->
+         
          <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CUST2</customerCode>
       </ws:findCustomer>
    </soapenv:Body>
@@ -23192,7 +23154,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCustomer>
-         <!--Optional:-->
+         
          <customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST_DESCP">
             <externalRef1>EXT1</externalRef1>
             <externalRef2>EXT2</externalRef2>
@@ -23212,7 +23174,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             <customerCategory>PROSPECT</customerCategory>
             <customerBrand>DEFAULT</customerBrand>
             <seller>SELLER_US</seller>
-            <!--Optional:-->
+            
             <contactInformation>
                <email>${#Project#entityPrefix}@manaty.net</email>
                <phone>+33100000000</phone>
@@ -23225,11 +23187,11 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCustomer>
-         <!--Optional:-->
+         
          <customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST2">
             <customerCategory>PROSPECT</customerCategory>
             <seller>SELLER_FR</seller>
-            <!--Optional:-->
+            
          </customer>
       </ws:updateCustomer>
    </soapenv:Body>
@@ -23237,7 +23199,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findCustomer>
-         <!--Optional:-->
+         
          <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CUST</customerCode>
       </ws:findCustomer>
    </soapenv:Body>
@@ -23271,7 +23233,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findCustomer>
-         <!--Optional:-->
+         
          <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CUST2</customerCode>
       </ws:findCustomer>
    </soapenv:Body>
@@ -23287,7 +23249,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
         <ws:removeCustomer>
-         <!--Optional:-->
+         
          <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CUST</customerCode>
       </ws:removeCustomer>
    </soapenv:Body>
@@ -23295,7 +23257,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findCustomer>
-         <!--Optional:-->
+         
          <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CUST</customerCode>
       </ws:findCustomer>
    </soapenv:Body>
@@ -23303,7 +23265,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
         <ws:removeCustomer>
-         <!--Optional:-->
+         
          <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CUST2</customerCode>
       </ws:removeCustomer>
    </soapenv:Body>
@@ -23311,7 +23273,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findCustomer>
-         <!--Optional:-->
+         
          <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CUST2</customerCode>
       </ws:findCustomer>
    </soapenv:Body>
@@ -23335,7 +23297,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                <city>Dijon</city>
                <country>FR</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
             	<email>${#Project#entityPrefix}@manaty.net</email>
             	<phone>00123456789</phone>
@@ -23367,7 +23329,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
        <ws:findCustomerAccount>
-         <!--Optional:-->
+         
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA</customerAccountCode>
       </ws:findCustomerAccount>
    </soapenv:Body>
@@ -23404,7 +23366,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findCustomerAccount>
-         <!--Optional:-->
+         
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA2</customerAccountCode>
       </ws:findCustomerAccount>
    </soapenv:Body>
@@ -23440,7 +23402,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                <city>Dijon</city>
                <country>FR</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
             	<email>${#Project#entityPrefix}_${#TestSuite#index}@manaty.net</email>
             	<phone>+1002747234</phone>
@@ -23472,7 +23434,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
        <ws:findCustomerAccount>
-         <!--Optional:-->
+         
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA</customerAccountCode>
       </ws:findCustomerAccount>
    </soapenv:Body>
@@ -23510,7 +23472,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findCustomerAccount>
-         <!--Optional:-->
+         
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA2</customerAccountCode>
       </ws:findCustomerAccount>
    </soapenv:Body>
@@ -23530,7 +23492,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>        
       <ws:removeCustomerAccount>
-         <!--Optional:-->
+         
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA</customerAccountCode>
       </ws:removeCustomerAccount>
    </soapenv:Body>
@@ -23538,7 +23500,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
        <ws:findCustomerAccount>
-         <!--Optional:-->
+         
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA</customerAccountCode>
       </ws:findCustomerAccount>
    </soapenv:Body>
@@ -23546,7 +23508,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>        
       <ws:removeCustomerAccount>
-         <!--Optional:-->
+         
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA2</customerAccountCode>
       </ws:removeCustomerAccount>
    </soapenv:Body>
@@ -23554,7 +23516,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
        <ws:findCustomerAccount>
-         <!--Optional:-->
+         
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA2</customerAccountCode>
       </ws:findCustomerAccount>
    </soapenv:Body>
@@ -23612,7 +23574,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
        <ws:findBillingAccount>
-         <!--Optional:-->
+         
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_BA</billingAccountCode>
       </ws:findBillingAccount>
    </soapenv:Body>
@@ -23650,7 +23612,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findBillingAccount>
-         <!--Optional:-->
+         
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_BA2</billingAccountCode>
       </ws:findBillingAccount>
    </soapenv:Body>
@@ -23724,7 +23686,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
        <ws:findBillingAccount>
-         <!--Optional:-->
+         
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_BA</billingAccountCode>
       </ws:findBillingAccount>
    </soapenv:Body>
@@ -23761,7 +23723,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findBillingAccount>
-         <!--Optional:-->
+         
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_BA2</billingAccountCode>
       </ws:findBillingAccount>
    </soapenv:Body>
@@ -23785,7 +23747,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>        
       <ws:removeBillingAccount>
-         <!--Optional:-->
+         
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_BA</billingAccountCode>
       </ws:removeBillingAccount>
    </soapenv:Body>
@@ -23793,7 +23755,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
        <ws:findBillingAccount>
-         <!--Optional:-->
+         
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_BA</billingAccountCode>
       </ws:findBillingAccount>
    </soapenv:Body>
@@ -23801,7 +23763,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>        
       <ws:removeBillingAccount>
-         <!--Optional:-->
+         
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_BA2</billingAccountCode>
       </ws:removeBillingAccount>
    </soapenv:Body>
@@ -23809,7 +23771,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
        <ws:findBillingAccount>
-         <!--Optional:-->
+         
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_BA2</billingAccountCode>
       </ws:findBillingAccount>
    </soapenv:Body>
@@ -23852,7 +23814,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
        <ws:findUserAccount>
-         <!--Optional:-->
+         
          <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_UA</userAccountCode>
       </ws:findUserAccount>
    </soapenv:Body>
@@ -23876,7 +23838,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
        <ws:findUserAccount>
-         <!--Optional:-->
+         
          <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_UA2</userAccountCode>
       </ws:findUserAccount>
    </soapenv:Body>
@@ -23922,7 +23884,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
        <ws:findUserAccount>
-         <!--Optional:-->
+         
          <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_UA</userAccountCode>
       </ws:findUserAccount>
    </soapenv:Body>
@@ -23946,7 +23908,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findUserAccount>
-         <!--Optional:-->
+         
          <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_UA2</userAccountCode>
       </ws:findUserAccount>
    </soapenv:Body>
@@ -23958,7 +23920,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>        
       <ws:removeUserAccount>
-         <!--Optional:-->
+         
          <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_UA</userAccountCode>
       </ws:removeUserAccount>
    </soapenv:Body>
@@ -23966,7 +23928,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
        <ws:findUserAccount>
-         <!--Optional:-->
+         
          <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_UA</userAccountCode>
       </ws:findUserAccount>
    </soapenv:Body>
@@ -23974,7 +23936,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>        
       <ws:removeUserAccount>
-         <!--Optional:-->
+         
          <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_UA2</userAccountCode>
       </ws:removeUserAccount>
    </soapenv:Body>
@@ -23982,7 +23944,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
        <ws:findUserAccount>
-         <!--Optional:-->
+         
          <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_UA2</userAccountCode>
       </ws:findUserAccount>
    </soapenv:Body>
@@ -24093,7 +24055,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createAccess>
-         <!--Optional:-->
+         
          <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACC1">
             <subscription>${#Project#baseEntityPrefix}_SUB</subscription>
             <startDate>2016-03-15</startDate>
@@ -24105,7 +24067,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
        <ws:createAccess>
-         <!--Optional:-->
+         
          <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACC2">
             <subscription>${#Project#baseEntityPrefix}_SUB</subscription>
          </access>
@@ -24136,7 +24098,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateAccess>
-         <!--Optional:-->
+         
          <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACC2">
             <subscription>${#Project#baseEntityPrefix}_SUB</subscription>
             <startDate>2016-03-15</startDate>
@@ -24148,7 +24110,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
        <ws:updateAccess>
-         <!--Optional:-->
+         
          <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACC2">
             <subscription>${#Project#baseEntityPrefix}_SUB</subscription>
          </access>
@@ -24178,7 +24140,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:listAccess>
-         <!--Optional:-->
+         
          <subscriptionCode>${#Project#baseEntityPrefix}_SUB</subscriptionCode>
       </ws:listAccess>
    </soapenv:Body>
@@ -24705,29 +24667,29 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>C_UA</crmAccountType>
-            <!--Optional:-->
+            
             <crmParentCode>SELLER_FR</crmParentCode>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST</code>
-            <!--Optional:-->
+            
             <description>${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy</description>
-            <!--Optional:-->
+            
             <externalRef1>Ref1</externalRef1>
-            <!--Optional:-->
+            
             <externalRef2>Ref2</externalRef2>
-            <!--Optional:-->
+            
             <name>
             	<title>M</title>
             	<firstName>Saidani</firstName>
                <lastName>Hatem</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
-               <!--Optional:-->
+               
                <address1>Address1</address1>
                <address2>Address2</address2>  
                <zipCode>20250</zipCode>
@@ -24735,48 +24697,48 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                <country>FR</country>
                <state>Paris</state>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>${#Project#entityPrefix}_${#TestSuite#index}@yahoo.fr</email>
-               <!--Optional:-->
+               
                <phone>+0122674100</phone>
                <mobile>+0139154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>FRA</language>
-            <!--Optional:-->
+            
             <paymentMethod>CHECK</paymentMethod>
             <terminationReason>TERM_REASON_1</terminationReason>
   		  <subscriptionDate>2016-02-01</subscriptionDate>
             <terminationDate>2016-05-01</terminationDate>
-            <!--Optional:-->
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
-            <!--Optional:-->
+            
             <mandateIdentification>M1</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>2016-04-01</mandateDate>
-            <!--Optional:-->
+            
             <currency>EUR</currency>
             <caStatus>ACTIVE</caStatus>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>2016-04-01</dateStatus>
             <dateDunningLevel>2016-04-04</dateDunningLevel>
             <dunningLevel>R0</dunningLevel>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <seller>SELLER_FR</seller>
             <country>FR</country>
             <nextInvoiceDate>2016-05-01</nextInvoiceDate>
             <paymentTerms>CASH</paymentTerms>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
             <baStatus>ACTIVE</baStatus>
-            <!--Optional:-->
+            
             <email>${#Project#entityPrefix}_${#TestSuite#index}@yahoo.fr</email>
 		  <uaStatus>ACTIVE</uaStatus>
          </crmAccountHierarchy>
@@ -24786,7 +24748,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findCustomer>
-         <!--Optional:-->
+         
          <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST</customerCode>
       </ws:findCustomer>
    </soapenv:Body>
@@ -24895,29 +24857,29 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>C_UA</crmAccountType>
-            <!--Optional:-->
+            
             <crmParentCode>SELLER_US</crmParentCode>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST</code>
-            <!--Optional:-->
+            
             <description>${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy-Updated</description>
-            <!--Optional:-->
+            
             <externalRef1>EXTRef1</externalRef1>
-            <!--Optional:-->
+            
             <externalRef2>EXTRef2</externalRef2>
-            <!--Optional:-->
+            
             <name>
             	<title>M</title>
             	<firstName>Saidani</firstName>
                <lastName>Hatem</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
-               <!--Optional:-->
+               
                <address1>Address1</address1>
                <address2>Address2</address2>  
                <zipCode>01020</zipCode>
@@ -24925,48 +24887,48 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                <country>TN</country>
                <state>Tunisie</state>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>${#Project#entityPrefix}_${#TestSuite#index}@manaty.com</email>
-               <!--Optional:-->
+               
                <phone>+0135215579</phone>
                <mobile>+0141487410</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
+            
             <paymentMethod>CHECK</paymentMethod>
             <terminationReason>TERM_REASON_2</terminationReason>
   		  <subscriptionDate>2016-03-16</subscriptionDate>
             <terminationDate>2016-06-15</terminationDate>
-            <!--Optional:-->
+            
             <customerCategory>PROSPECT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
-            <!--Optional:-->
+            
             <mandateIdentification>M10221</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>2016-04-01</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
             <caStatus>ACTIVE</caStatus>
-            <!--Optional:-->
+            
             <creditCategory>PART_C</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>2016-04-01</dateStatus>
             <dateDunningLevel>2016-04-04</dateDunningLevel>
             <dunningLevel>R1</dunningLevel>
             <billingCycle>CYC_INV_MT_2</billingCycle>
-            <!--Optional:-->
+            
             <seller>SELLER_US</seller>
             <country>US</country>
             <nextInvoiceDate>2016-05-01</nextInvoiceDate>
             <paymentTerms>CASH</paymentTerms>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
             <baStatus>ACTIVE</baStatus>
-            <!--Optional:-->
+            
             <email>${#Project#entityPrefix}_${#TestSuite#index}@manaty.com</email>
 		  <uaStatus>ACTIVE</uaStatus>
          </crmAccountHierarchy>
@@ -24976,7 +24938,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findCustomer>
-         <!--Optional:-->
+         
          <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST</customerCode>
       </ws:findCustomer>
    </soapenv:Body>
@@ -25519,23 +25481,23 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createMeasurableQuantity>
-         <!--Optional:-->
+         
          <measurableQuantity code="${#Project#entityPrefix}_${#TestSuite#index}_MQ1" description="${#Project#entityPrefix}_${#TestSuite#index}_MQ1-DESC">
-            <!--Optional:-->
+            
             <dimension1>1</dimension1>
-            <!--Optional:-->
+            
             <dimension2>2</dimension2>
-            <!--Optional:-->
+            
             <dimension3>3</dimension3>
-            <!--Optional:-->
+            
             <dimension4>4</dimension4>
             <editable>false</editable>
             <additive>true</additive>
-            <!--Optional:-->
+            
             <sqlQuery>select count(*) from billing_subscription where status='CREATED' and date(created)='#{date}' and provider_id=#{provider}</sqlQuery>
-            <!--Optional:-->
+            
             <measurementPeriod>MONTHLY</measurementPeriod>
-            <!--Optional:-->
+            
             <lastMeasureDate>2016-03-16</lastMeasureDate>
          </measurableQuantity>
       </ws:createMeasurableQuantity>
@@ -25544,7 +25506,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createMeasurableQuantity>
-         <!--Optional:-->
+         
          <measurableQuantity code="${#Project#entityPrefix}_${#TestSuite#index}_MQ2"></measurableQuantity>
       </ws:createMeasurableQuantity>
    </soapenv:Body>
@@ -25552,48 +25514,48 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBarChart>
-         <!--Optional:-->
+         
          <barChart code="${#Project#entityPrefix}_${#TestSuite#index}_BC_Code1" description="${#Project#entityPrefix}_${#TestSuite#index}_BC_Desc1">
-            <!--Optional:-->
+            
             <measurableQuantity code="${#Project#baseEntityPrefix}_MQ1"></measurableQuantity>
-            <!--Optional:-->
+            
             <width>100</width>
-            <!--Optional:-->
+            
             <height>100</height>
-            <!--Optional:-->
+            
             <style>test1</style>
-            <!--Optional:-->
+            
             <styleClass>test1</styleClass>
-            <!--Optional:-->
+            
             <extender>test1</extender>
-            <!--Optional:-->
+            
             <visible>true</visible>
-            <!--Optional:-->
+            
             <legendPosition>n</legendPosition>
             <barPadding>100</barPadding>
             <barMargin>100</barMargin>
-            <!--Optional:-->
+            
             <orientation>vertical</orientation>
             <stacked>true</stacked>
-            <!--Optional:-->
+            
             <min>100</min>
-            <!--Optional:-->
+            
             <max>100</max>
             <breakOnNull>false</breakOnNull>
-            <!--Optional:-->
+            
             <xaxisLabel>test</xaxisLabel>
-            <!--Optional:-->
+            
             <yaxisLabel>test</yaxisLabel>
-            <!--Optional:-->
+            
             <xaxisAngle>10</xaxisAngle>
-            <!--Optional:-->
+            
             <yaxisAngle>10</yaxisAngle>
             <legendCols>20</legendCols>
             <legendRows>20</legendRows>
             <zoom>true</zoom>
             <animate>true</animate>
             <showDataTip>true</showDataTip>
-            <!--Optional:-->
+            
             <datatipFormat>false</datatipFormat>
          </barChart>
       </ws:createBarChart>
@@ -25602,9 +25564,9 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBarChart>
-         <!--Optional:-->
+         
          <barChart code="${#Project#entityPrefix}_${#TestSuite#index}_BC_Code2">
-            <!--Optional:-->
+            
             <measurableQuantity code="${#Project#baseEntityPrefix}_MQ1"></measurableQuantity>
          </barChart>
       </ws:createBarChart>
@@ -25686,48 +25648,48 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateBarChart>
-         <!--Optional:-->
+         
          <barChart code="${#Project#entityPrefix}_${#TestSuite#index}_BC_Code1" description="${#Project#entityPrefix}_${#TestSuite#index}_BC_Desc1_Updated">
-            <!--Optional:-->
+            
             <measurableQuantity code="${#Project#baseEntityPrefix}_MQ1"></measurableQuantity>
-            <!--Optional:-->
+            
             <width>101</width>
-            <!--Optional:-->
+            
             <height>101</height>
-            <!--Optional:-->
+            
             <style>test12</style>
-            <!--Optional:-->
+            
             <styleClass>test12</styleClass>
-            <!--Optional:-->
+            
             <extender>test12</extender>
-            <!--Optional:-->
+            
             <visible>true</visible>
-            <!--Optional:-->
+            
             <legendPosition>n</legendPosition>
             <barPadding>101</barPadding>
             <barMargin>101</barMargin>
-            <!--Optional:-->
+            
             <orientation>vertical</orientation>
             <stacked>true</stacked>
-            <!--Optional:-->
+            
             <min>101</min>
-            <!--Optional:-->
+            
             <max>101</max>
             <breakOnNull>false</breakOnNull>
-            <!--Optional:-->
+            
             <xaxisLabel>test</xaxisLabel>
-            <!--Optional:-->
+            
             <yaxisLabel>test</yaxisLabel>
-            <!--Optional:-->
+            
             <xaxisAngle>10</xaxisAngle>
-            <!--Optional:-->
+            
             <yaxisAngle>10</yaxisAngle>
             <legendCols>20</legendCols>
             <legendRows>20</legendRows>
             <zoom>true</zoom>
             <animate>true</animate>
             <showDataTip>true</showDataTip>
-            <!--Optional:-->
+            
             <datatipFormat>false</datatipFormat>
          </barChart>
       </ws:updateBarChart>
@@ -25736,9 +25698,9 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateBarChart>
-         <!--Optional:-->
+         
          <barChart code="${#Project#entityPrefix}_${#TestSuite#index}_BC_Code2">
-            <!--Optional:-->
+            
             <measurableQuantity code="${#Project#baseEntityPrefix}_MQ1"></measurableQuantity>
          </barChart>
       </ws:updateBarChart>
@@ -25822,26 +25784,26 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createPieChart>
-         <!--Optional:-->
+         
          <pieChart code="${#Project#entityPrefix}_${#TestSuite#index}_PC_Code1" description="${#Project#entityPrefix}_${#TestSuite#index}_PC_Desc1">
-            <!--Optional:-->
+            
             <measurableQuantity code="${#Project#baseEntityPrefix}_MQ1"></measurableQuantity>
-           <!--Optional:-->
+           
             <width>123</width>
-            <!--Optional:-->
+            
             <height>123</height>
-            <!--Optional:-->
+            
             <style>style1</style>
-            <!--Optional:-->
+            
             <styleClass>style_class1</styleClass>
-            <!--Optional:-->
+            
             <extender>extender1</extender>
-            <!--Optional:-->
+            
             <visible>true</visible>
             <filled>false</filled>
-            <!--Optional:-->
+            
             <legendPosition>n</legendPosition>
-            <!--Optional:-->
+            
             <diameter>120</diameter>
             <sliceMargin>10</sliceMargin>
             <shadow>true</shadow>
@@ -25855,9 +25817,9 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createPieChart>
-         <!--Optional:-->
+         
          <pieChart code="${#Project#entityPrefix}_${#TestSuite#index}_PC_Code2">
-            <!--Optional:-->
+            
             <measurableQuantity code="${#Project#baseEntityPrefix}_MQ1"></measurableQuantity>
          </pieChart>
       </ws:createPieChart>
@@ -25931,27 +25893,27 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updatePieChart>
-         <!--Optional:-->
+         
          <pieChart code="${#Project#entityPrefix}_${#TestSuite#index}_PC_Code1" description="${#Project#entityPrefix}_${#TestSuite#index}_PC_Desc1_Updated">
-            <!--Optional:-->
+            
             <measurableQuantity code="${#Project#baseEntityPrefix}_MQ1">
             </measurableQuantity>
-           <!--Optional:-->
+           
             <width>222</width>
-            <!--Optional:-->
+            
             <height>123</height>
-            <!--Optional:-->
+            
             <style>style1</style>
-            <!--Optional:-->
+            
             <styleClass>style_class22</styleClass>
-            <!--Optional:-->
+            
             <extender>extender1</extender>
-            <!--Optional:-->
+            
             <visible>true</visible>
             <filled>false</filled>
-            <!--Optional:-->
+            
             <legendPosition>n</legendPosition>
-            <!--Optional:-->
+            
             <diameter>120</diameter>
             <sliceMargin>222</sliceMargin>
             <shadow>true</shadow>
@@ -25965,9 +25927,9 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updatePieChart>
-         <!--Optional:-->
+         
          <pieChart code="${#Project#entityPrefix}_${#TestSuite#index}_PC_Code2">
-            <!--Optional:-->
+            
             <measurableQuantity code="${#Project#baseEntityPrefix}_MQ1"></measurableQuantity>
          </pieChart>
       </ws:updatePieChart>
@@ -26040,25 +26002,25 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createLineChart>
-         <!--Optional:-->
+         
          <lineChart code="${#Project#entityPrefix}_${#TestSuite#index}_LC_Code1" description="${#Project#entityPrefix}_${#TestSuite#index}_LC_Desc1">
-            <!--Optional:-->
+            
             <measurableQuantity code="${#Project#baseEntityPrefix}_MQ1">
             </measurableQuantity>
-            <!--Optional:-->
+            
             <width>200</width>
-            <!--Optional:-->
+            
             <height>200</height>
-            <!--Optional:-->
+            
             <style>style1</style>
-            <!--Optional:-->
+            
             <styleClass>styleClass2</styleClass>
-            <!--Optional:-->
+            
             <extender>extender3</extender>
-            <!--Optional:-->
+            
             <visible>true</visible>
             <filled>false</filled>
-            <!--Optional:-->
+            
             <legendPosition>w</legendPosition>
             <shadow>true</shadow>
             <minX>45</minX>
@@ -26066,19 +26028,19 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             <minY>45</minY>
             <maxY>45</maxY>
             <breakOnNull>true</breakOnNull>
-            <!--Optional:-->
+            
             <xaxisLabel>label 1</xaxisLabel>
-            <!--Optional:-->
+            
             <yaxisLabel>label 2</yaxisLabel>
-            <!--Optional:-->
+            
             <xaxisAngle>12</xaxisAngle>
-            <!--Optional:-->
+            
             <yaxisAngle>12</yaxisAngle>
             <stacked>true</stacked>
             <zoom>true</zoom>
             <animate>false</animate>
             <showDataTip>false</showDataTip>
-            <!--Optional:-->
+            
             <datatipFormat>false</datatipFormat>
             <legendCols>56</legendCols>
             <legendRows>56</legendRows>
@@ -26089,9 +26051,9 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createLineChart>
-         <!--Optional:-->
+         
          <lineChart code="${#Project#entityPrefix}_${#TestSuite#index}_LC_Code2">
-            <!--Optional:-->
+            
             <measurableQuantity code="${#Project#baseEntityPrefix}_MQ1"></measurableQuantity>
          </lineChart>
       </ws:createLineChart>
@@ -26182,25 +26144,25 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateLineChart>
-         <!--Optional:-->
+         
          <lineChart code="${#Project#entityPrefix}_${#TestSuite#index}_LC_Code1" description="${#Project#entityPrefix}_${#TestSuite#index}_LC_Desc1_Updated">
-            <!--Optional:-->
+            
             <measurableQuantity code="${#Project#baseEntityPrefix}_MQ1">
             </measurableQuantity>
-            <!--Optional:-->
+            
             <width>300</width>
-            <!--Optional:-->
+            
             <height>300</height>
-            <!--Optional:-->
+            
             <style>style1</style>
-            <!--Optional:-->
+            
             <styleClass>styleClass2</styleClass>
-            <!--Optional:-->
+            
             <extender>extender3</extender>
-            <!--Optional:-->
+            
             <visible>true</visible>
             <filled>false</filled>
-            <!--Optional:-->
+            
             <legendPosition>w</legendPosition>
             <shadow>true</shadow>
             <minX>45</minX>
@@ -26208,19 +26170,19 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             <minY>45</minY>
             <maxY>45</maxY>
             <breakOnNull>true</breakOnNull>
-            <!--Optional:-->
+            
             <xaxisLabel>label 1</xaxisLabel>
-            <!--Optional:-->
+            
             <yaxisLabel>label 2</yaxisLabel>
-            <!--Optional:-->
+            
             <xaxisAngle>12</xaxisAngle>
-            <!--Optional:-->
+            
             <yaxisAngle>12</yaxisAngle>
             <stacked>true</stacked>
             <zoom>true</zoom>
             <animate>false</animate>
             <showDataTip>false</showDataTip>
-            <!--Optional:-->
+            
             <datatipFormat>false</datatipFormat>
             <legendCols>56</legendCols>
             <legendRows>56</legendRows>
@@ -26231,9 +26193,9 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateLineChart>
-         <!--Optional:-->
+         
          <lineChart code="${#Project#entityPrefix}_${#TestSuite#index}_LC_Code2" description="${#Project#entityPrefix}_${#TestSuite#index}_LC_Desc1_Updated">
-            <!--Optional:-->
+            
             <measurableQuantity code="${#Project#baseEntityPrefix}_MQ1"></measurableQuantity>
          </lineChart>
       </ws:updateLineChart>
@@ -28191,7 +28153,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createWebHookNotification>
-         <!--Optional:-->
+         
          <notification code="${#Project#entityPrefix}_${#TestSuite#index}_WebHook1">
             <classNameFilter>org.meveo.model.crm.Customer</classNameFilter>
             <eventTypeFilter>CREATED</eventTypeFilter>
@@ -28343,7 +28305,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeWebHookNotification>
-         <!--Optional:-->
+         
          <notificationCode>${#Project#entityPrefix}_${#TestSuite#index}_WebHook1</notificationCode>
       </ws:removeWebHookNotification>
    </soapenv:Body>
@@ -28358,7 +28320,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeWebHookNotification>
-         <!--Optional:-->
+         
          <notificationCode>${#Project#entityPrefix}_${#TestSuite#index}_WebHook3</notificationCode>
       </ws:removeWebHookNotification>
    </soapenv:Body>
@@ -28557,7 +28519,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateAccess>
-         <!--Optional:-->
+         
          <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACC">
             <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_CHARGE</subscription>
          </access>
@@ -28575,7 +28537,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
        <ws:execute>
-         <!--Optional:-->
+         
          <jobInstanceInfo>
             <timerName>RR_Job</timerName>  
          </jobInstanceInfo>
@@ -28585,7 +28547,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:chargeCdr>
-         <!--Optional:-->
+         
          <cdr>2016-01-01T00:00:00Z;10;${#Project#entityPrefix}_${#TestSuite#index}_ACC;USAGE</cdr>
       </ws:chargeCdr>
    </soapenv:Body>
@@ -28593,7 +28555,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:generateInvoiceData>
-         <!--Optional:-->
+         
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-05-01T00:00:00</invoicingDate>
@@ -28620,7 +28582,7 @@ and paste that invoice number in the next step.
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoice>
-         <!--Optional:-->
+         
          <invoiceNumber>E_000000001</invoiceNumber>
       </ws:findXMLInvoice>
    </soapenv:Body>
@@ -28628,7 +28590,7 @@ and paste that invoice number in the next step.
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findPdfInvoice>
-         <!--Optional:-->
+         
          <invoiceNumber>E_000000001</invoiceNumber>
       </ws:findPdfInvoice>
    </soapenv:Body>
@@ -28950,7 +28912,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeWebHookNotification>
-         <!--Optional:-->
+         
          <notificationCode>${#Project#baseEntityPrefix}_WebHook1</notificationCode>
       </ws:removeWebHookNotification>
    </soapenv:Body>
