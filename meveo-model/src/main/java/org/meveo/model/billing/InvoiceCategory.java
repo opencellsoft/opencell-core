@@ -35,7 +35,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.MultilanguageEntity;
 
 @Entity
-@MultilanguageEntity
+@MultilanguageEntity(key = "menu.invoiceCategories", group="InvoiceCategory")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_INVOICE_CAT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CAT_SEQ")

@@ -36,7 +36,7 @@ import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
-@MultilanguageEntity
+@MultilanguageEntity(key = "menu.taxes", group = "Tax")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_TAX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TAX_SEQ")

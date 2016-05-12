@@ -49,7 +49,7 @@ import org.meveo.model.billing.TradingCurrency;
 
 @Entity
 @ObservableEntity
-@MultilanguageEntity
+@MultilanguageEntity(key = "menu.pricePlanMatrixes", group = "PricePlanMatrix")
 @CustomFieldEntity(cftCodePrefix = "PRICEPLAN")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "CAT_PRICE_PLAN_MATRIX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
