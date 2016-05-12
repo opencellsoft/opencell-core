@@ -55,6 +55,8 @@
 						<hftl:formField label="#{messages['enableEntity.disabled']}"
 							doNotShowOnNew="true" allowEdit="false" field="disabled"
 							isMessage="true" />
+						<hftl:customFields backingBean="#{offerTemplateBean}"
+								messagesId=":tabView:formId:messages" />
 					</hftl:formPanel>
 				</p:tab>
 
@@ -157,15 +159,6 @@
 							</ui:define>
 						</hftl:formPanel>
 					</p:panel>
-				</p:tab>
-				<p:tab title="#{messages['menu.customFieldTemplates']}" id="tab2"
-					rendered="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).childCount > 0}">
-					<hftl:formPanel formId="customFieldTemplatesForm"
-						backingBean="#{offerTemplateBean}" ajaxSubmit="true"
-						showDeleteButton="false">
-						<hftl:customFields backingBean="#{offerTemplateBean}"
-							messagesId=":tabView:customFieldTemplatesForm:messages" />
-					</hftl:formPanel>
 				</p:tab>
 			</p:tabView>
 		</p:panel>
