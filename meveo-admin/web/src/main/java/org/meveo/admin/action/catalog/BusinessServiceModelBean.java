@@ -143,7 +143,7 @@ public class BusinessServiceModelBean extends BaseBean<BusinessServiceModel> {
 	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		if (entity.isTransient() && meveoModuleService.findByCode(entity.getCode(), getCurrentProvider()) != null) {
-			messages.error(new BundleKey("messages", "javax.persistence.EntityExistsException"));
+			messages.error(new BundleKey("messages", "javax.persistence.ScriptExistsException"));
 			return null;
 		}
 

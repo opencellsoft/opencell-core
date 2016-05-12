@@ -155,7 +155,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
         try {
 			// check duplicate script
 			if (entity.isTransient() && scriptInstanceService.isExistsCode(scriptInstanceService.getFullClassname(entity.getScript()), getCurrentProvider())) {
-				messages.error(new BundleKey("messages", "javax.persistence.EntityExistsException"));
+				messages.error(new BundleKey("messages", "javax.persistence.ScriptExistsException"));
 				return null;
 			}
     		
