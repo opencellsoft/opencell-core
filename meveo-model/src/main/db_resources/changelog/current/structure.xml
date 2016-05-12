@@ -1609,7 +1609,7 @@
     
     <changeSet id="#1611_20160429" author="EdwardLegaspi">
     	<addColumn tableName="adm_inbound_request">
-    		<column name="body" type="VARCHAR(1000)"></column>
+    		<column name="body" type="TEXT"></column>
     	</addColumn>
     </changeSet>
     

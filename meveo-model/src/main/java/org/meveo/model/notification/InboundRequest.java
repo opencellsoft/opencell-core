@@ -60,8 +60,7 @@ public class InboundRequest extends BusinessEntity {
 	@Column(name="REMOTE_PORT")
 	private int remotePort;
 	
-	@Column(name = "BODY", length = 1000)
-	@Size(max = 1000)
+	@Column(name = "BODY")
 	private String body;
 	
 	@Column(name="METHOD",length=10)
