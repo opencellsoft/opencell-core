@@ -36,6 +36,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.MultilanguageEntity;
@@ -45,6 +46,7 @@ import org.meveo.model.MultilanguageEntity;
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_INVOICE_SUB_CAT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SUB_CAT_SEQ")
+@CustomFieldEntity(cftCodePrefix = "INV_SUB_CAT")
 @NamedQueries({			
 @NamedQuery(name = "invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", 
 	           query = "select count(*) from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null)"

@@ -43,6 +43,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 
 /**
@@ -53,6 +54,7 @@ import org.meveo.model.ICustomFieldEntity;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TRANSACTION_TYPE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_ACCOUNT_OPERATION_SEQ")
+@CustomFieldEntity(cftCodePrefix = "ACC_OP")
 public class AccountOperation extends AuditableEntity implements ICustomFieldEntity{
 
 	private static final long serialVersionUID = 1L;
