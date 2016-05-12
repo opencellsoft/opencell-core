@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.payments.AutomatedPayment;
@@ -38,7 +39,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
-public class AutomatedPaymentBean extends BaseBean<AutomatedPayment> {
+public class AutomatedPaymentBean extends CustomFieldBean<AutomatedPayment> {
 
 	private static final long serialVersionUID = 1L;
 

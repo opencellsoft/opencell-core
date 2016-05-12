@@ -29,6 +29,7 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -49,8 +50,7 @@ import org.primefaces.component.tabview.TabView;
  */
 @Named
 @ViewScoped
-public class InvoiceSubCategoryBean extends
-		BaseBean<InvoiceSubCategory> {
+public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> {
 	private static final long serialVersionUID = 1L;
 
 	/**

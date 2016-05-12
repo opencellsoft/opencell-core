@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -33,7 +34,7 @@ import org.omnifaces.cdi.ViewScoped;
 
 @Named
 @ViewScoped
-public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
+public class InvoiceCategoryBean extends CustomFieldBean<InvoiceCategory> {
 
 	private static final long serialVersionUID = 1L;
 

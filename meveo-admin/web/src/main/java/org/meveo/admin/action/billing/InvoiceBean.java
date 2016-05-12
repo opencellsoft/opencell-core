@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
@@ -85,7 +86,7 @@ import org.primefaces.model.LazyDataModel;
  */
 @Named
 @ViewScoped
-public class InvoiceBean extends BaseBean<Invoice> {
+public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 	private static final long serialVersionUID = 1L;
 
