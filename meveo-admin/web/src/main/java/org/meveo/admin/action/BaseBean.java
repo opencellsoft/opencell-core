@@ -103,7 +103,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @Inject
     @CurrentUser
     protected User currentUser;
-    
+
     @Inject
     protected Conversation conversation;
 
@@ -192,7 +192,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     private int activeMainTab = 0;
 
-	private Map<String, Boolean> writeAccessMap;
+    private Map<String, Boolean> writeAccessMap;
 
     /**
      * Constructor
@@ -351,7 +351,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         // + objectId + "&cid=" + conversation.getId());
         return outcome;
     }
-    
+
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
@@ -998,7 +998,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             this.delete();
             getPersistenceService().commit();
             return back();
-            
+
         } catch (Throwable t) {
             messages.getAll();
             messages.clear();
@@ -1009,7 +1009,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             } else {
                 log.info("unexpected exception when deleting {}", t);
                 messages.error(new BundleKey("messages", "error.delete.unexpected"));
-        }
+            }
         }
         FacesContext.getCurrentInstance().validationFailed();
         return null;
@@ -1147,7 +1147,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             log.error("Failed to instantiate a new item of {} class", itemClass.getName());
         }
     }
-    
+
     public List<T> listActive() {
         Map<String, Object> filters = getFilters();
         filters.put("disabled", false);
@@ -1155,30 +1155,30 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
         return getPersistenceService().list(config);
     }
-    
-   /**
-    *     crm/customers
-    * 
-    * 
-    */
-    public boolean canUserUpdateEntity(){
-    	if (this.writeAccessMap == null) {
-			writeAccessMap = Collections.synchronizedMap(new HashMap<String, Boolean>());
-		}
-		ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-		HttpServletRequest request = (HttpServletRequest) context.getRequest();
-		String requestURI = request.getRequestURI();
 
-		if (writeAccessMap.get(requestURI) == null) {
-			boolean hasWriteAccess = false;
-			try {
-				hasWriteAccess = PagePermission.getInstance().hasWriteAccess(request, identity);
-			} catch (BusinessException e) {
-				log.error("Error encountered checking for write access.", e);
-				hasWriteAccess = false;
-			}
-			writeAccessMap.put(requestURI, hasWriteAccess);
-		}
-		return writeAccessMap.get(requestURI);
+    /**
+     * crm/customers
+     * 
+     * 
+     */
+    public boolean canUserUpdateEntity() {
+        if (this.writeAccessMap == null) {
+            writeAccessMap = Collections.synchronizedMap(new HashMap<String, Boolean>());
+        }
+        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        HttpServletRequest request = (HttpServletRequest) context.getRequest();
+        String requestURI = request.getRequestURI();
+
+        if (writeAccessMap.get(requestURI) == null) {
+            boolean hasWriteAccess = false;
+            try {
+                hasWriteAccess = PagePermission.getInstance().hasWriteAccess(request, identity);
+            } catch (BusinessException e) {
+                log.error("Error encountered checking for write access to {}", requestURI, e);
+                hasWriteAccess = false;
+            }
+            writeAccessMap.put(requestURI, hasWriteAccess);
+        }
+        return writeAccessMap.get(requestURI);
     }
 }
