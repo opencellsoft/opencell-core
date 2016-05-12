@@ -35,39 +35,37 @@ import org.meveo.service.base.MultilanguageEntityService;
 @Stateless
 public class RecurringChargeTemplateService extends MultilanguageEntityService<RecurringChargeTemplate> {
 
-	private static final String CHARGES = "Charges";
-
 	public void removeByCode(EntityManager em, String code, Provider provider) {
-		Query query = em
-				.createQuery("DELETE RecurringChargeTemplate t WHERE t.code=:code AND t.provider=:provider");
+		Query query = em.createQuery("DELETE RecurringChargeTemplate t WHERE t.code=:code AND t.provider=:provider");
 		query.setParameter("code", code);
 		query.setParameter("provider", provider);
 		query.executeUpdate();
 	}
-	
-	public int getNbrRecurringChrgWithNotPricePlan(Provider provider) { 
-		return ((Long)getEntityManager().createNamedQuery("recurringChargeTemplate.getNbrRecurringChrgWithNotPricePlan",Long.class)
-				.setParameter("provider", provider).getSingleResult()).intValue();
-		}
-	
-	public  List<RecurringChargeTemplate> getRecurringChrgWithNotPricePlan(Provider provider) { 
-		return (List<RecurringChargeTemplate>)getEntityManager().createNamedQuery("recurringChargeTemplate.getRecurringChrgWithNotPricePlan",RecurringChargeTemplate.class)
-				.setParameter("provider", provider).getResultList();
-		}
 
-	public int getNbrRecurringChrgNotAssociated(Provider provider) { 
-		return ((Long)getEntityManager().createNamedQuery("recurringChargeTemplate.getNbrRecurringChrgNotAssociated",Long.class)
+	public int getNbrRecurringChrgWithNotPricePlan(Provider provider) {
+		return ((Long) getEntityManager()
+				.createNamedQuery("recurringChargeTemplate.getNbrRecurringChrgWithNotPricePlan", Long.class)
 				.setParameter("provider", provider).getSingleResult()).intValue();
-		}
-	
-	public  List<RecurringChargeTemplate> getRecurringChrgNotAssociated(Provider provider) { 
-		return (List<RecurringChargeTemplate>)getEntityManager().createNamedQuery("recurringChargeTemplate.getRecurringChrgNotAssociated",RecurringChargeTemplate.class)
-				.setParameter("provider", provider).getResultList();
-		}
+	}
 
-	@Override
-	public String getObjectType() {
-		return CHARGES;
+	public List<RecurringChargeTemplate> getRecurringChrgWithNotPricePlan(Provider provider) {
+		return (List<RecurringChargeTemplate>) getEntityManager()
+				.createNamedQuery("recurringChargeTemplate.getRecurringChrgWithNotPricePlan",
+						RecurringChargeTemplate.class)
+				.setParameter("provider", provider).getResultList();
+	}
+
+	public int getNbrRecurringChrgNotAssociated(Provider provider) {
+		return ((Long) getEntityManager()
+				.createNamedQuery("recurringChargeTemplate.getNbrRecurringChrgNotAssociated", Long.class)
+				.setParameter("provider", provider).getSingleResult()).intValue();
+	}
+
+	public List<RecurringChargeTemplate> getRecurringChrgNotAssociated(Provider provider) {
+		return (List<RecurringChargeTemplate>) getEntityManager()
+				.createNamedQuery("recurringChargeTemplate.getRecurringChrgNotAssociated",
+						RecurringChargeTemplate.class)
+				.setParameter("provider", provider).getResultList();
 	}
 
 }

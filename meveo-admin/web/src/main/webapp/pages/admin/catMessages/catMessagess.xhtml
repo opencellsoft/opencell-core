@@ -22,7 +22,8 @@
 		<hftl:searchPanel backingBean="#{catMessagesListBean}" columns="3"
 			label="#{messages['catMessages.search']}" renderNewButton="true">
 			<hftl:searchField label="#{messages['catMessages.objectType']}"
-				field="messageCode" listValues="#{catMessagesListBean.objectTypes}" />
+				field="messageCode" listValues="#{catMessagesListBean.objectTypes}" 
+				i18nLabels="true" />
 			<hftl:searchField label="#{messages['catMessages.languageCode']}"
 				field="languageCode"
 				listValues="#{tradingLanguageListBean.languageCodes}" />
@@ -30,14 +31,20 @@
 
 		<hftl:dataList label="#{messages['catMessages.title']}" fileName="CatMessages"
 			editable="true" backingBean="#{catMessagesListBean}"
-			rowsPerPage="10,20,50,100" exportButton="false" exportToCsv="true" importCsv="true">
-			<p:column exportable="true" width="15%">
+			rowsPerPage="10,20,50,100" exportButton="false" exportToCsv="true" importCsv="#{catMessagesListBean.canUserUpdateEntity()}">
+			<p:column exportable="true" width="10%">
 				<f:facet name="header">
 					<h:outputText value="#{messages['catMessages.objectType']}" />
 				</f:facet>
-				<h:outputText value="#{entity.objectType}" />
+				<h:outputText value="#{messages[entity.objectType]}" />
 			</p:column>
-			<p:column exportable="true" width="15%">
+			<p:column exportable="true" width="10%">
+				<f:facet name="header">
+					<h:outputText value="#{messages['catMessages.entityClass']}" />
+				</f:facet>
+				<h:outputText value="#{entity.entityClass}" />
+			</p:column>
+			<p:column exportable="true" width="10%">
 				<f:facet name="header">
 					<h:outputText value="#{messages['catMessages.messageCode']}" />
 				</f:facet>
@@ -66,15 +73,20 @@
 					<h:outputText
 						value="#{messages['catMessages.descriptionTranslation']}" />
 				</f:facet>
-				<p:cellEditor>
-					<f:facet name="output">
-						<h:outputText value="#{entity.description}" />
-					</f:facet>
-					<f:facet name="input">
-						<p:inputText value="#{entity.description}" size="60"
-							maxlength="100" style="width:100%;" />
-					</f:facet>
-				</p:cellEditor>
+				<c:if test="#{catMessagesListBean.canUserUpdateEntity()}">
+					<p:cellEditor>
+						<f:facet name="output">
+							<h:outputText value="#{entity.description}" />
+						</f:facet>
+						<f:facet name="input">
+							<p:inputText value="#{entity.description}" size="60"
+								maxlength="100" style="width:100%;" />
+						</f:facet>
+					</p:cellEditor>
+				</c:if>
+				<c:if test="#{!catMessagesListBean.canUserUpdateEntity()}">
+					<h:outputText value="#{entity.description}" />
+				</c:if>
 			</p:column>
 		</hftl:dataList>
 	</ui:define>

@@ -33,9 +33,7 @@ import org.meveo.service.base.MultilanguageEntityService;
  * InvoiceCategory service implementation.
  */
 @Stateless
-public class InvoiceCategoryService extends MultilanguageEntityService<InvoiceCategory>{
-
-	private static final String INVOICE_CATEGORIES = "Invoice categories";
+public class InvoiceCategoryService extends MultilanguageEntityService<InvoiceCategory> {
 
 	@Override
 	public InvoiceCategory findByCode(String code, Provider provider) {
@@ -48,8 +46,7 @@ public class InvoiceCategoryService extends MultilanguageEntityService<InvoiceCa
 		qb.addCriterionEntity("c.provider", provider);
 
 		try {
-			return (InvoiceCategory) qb.getQuery(getEntityManager())
-					.getSingleResult();
+			return (InvoiceCategory) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
 			return null;
 		}
@@ -69,18 +66,15 @@ public class InvoiceCategoryService extends MultilanguageEntityService<InvoiceCa
 			return null;
 		}
 	}
-	
-	public int getNbInvCatNotAssociated(Provider provider) { 
-		return ((Long)getEntityManager().createNamedQuery("invoiceCategory.getNbrInvoiceCatNotAssociated",Long.class).setParameter("provider", provider).getSingleResult()).intValue();
-		}
-	
-	public  List<InvoiceCategory> getInvoiceCatNotAssociated(Provider provider) { 
-		return (List<InvoiceCategory>)getEntityManager().createNamedQuery("invoiceCategory.getInvoiceCatNotAssociated",InvoiceCategory.class).setParameter("provider", provider).getResultList();
-		}
 
-	@Override
-	public String getObjectType() {
-		return INVOICE_CATEGORIES;
+	public int getNbInvCatNotAssociated(Provider provider) {
+		return ((Long) getEntityManager().createNamedQuery("invoiceCategory.getNbrInvoiceCatNotAssociated", Long.class)
+				.setParameter("provider", provider).getSingleResult()).intValue();
 	}
 
+	public List<InvoiceCategory> getInvoiceCatNotAssociated(Provider provider) {
+		return (List<InvoiceCategory>) getEntityManager()
+				.createNamedQuery("invoiceCategory.getInvoiceCatNotAssociated", InvoiceCategory.class)
+				.setParameter("provider", provider).getResultList();
+	}
 }

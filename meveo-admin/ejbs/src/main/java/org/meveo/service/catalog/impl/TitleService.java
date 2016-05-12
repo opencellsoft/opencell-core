@@ -30,9 +30,7 @@ import org.meveo.service.base.MultilanguageEntityService;
  * Title service implementation.
  */
 @Stateless
-public class TitleService extends MultilanguageEntityService<Title>{
-
-	private static final String TITLES_AND_CIVILITIES = "Titles and civilities";
+public class TitleService extends MultilanguageEntityService<Title> {
 
 	@Override
 	public Title findByCode(String code, Provider provider) {
@@ -41,11 +39,8 @@ public class TitleService extends MultilanguageEntityService<Title>{
 			return null;
 		}
 		try {
-			title = (Title) getEntityManager()
-					.createQuery(
-							"from Title t where t.code=:code and t.provider=:provider")
-					.setParameter("code", code)
-					.setParameter("provider", provider).getSingleResult();
+			title = (Title) getEntityManager().createQuery("from Title t where t.code=:code and t.provider=:provider")
+					.setParameter("code", code).setParameter("provider", provider).getSingleResult();
 		} catch (Exception e) {
 			return null;
 		}
@@ -59,20 +54,12 @@ public class TitleService extends MultilanguageEntityService<Title>{
 			return null;
 		}
 		try {
-			title = (Title) em
-					.createQuery(
-							"from Title t where t.code=:code and t.provider=:provider")
-					.setParameter("code", code)
-					.setParameter("provider", provider).getSingleResult();
+			title = (Title) em.createQuery("from Title t where t.code=:code and t.provider=:provider")
+					.setParameter("code", code).setParameter("provider", provider).getSingleResult();
 		} catch (Exception e) {
 			return null;
 		}
 		return title;
-	}
-
-	@Override
-	public String getObjectType() {
-		return TITLES_AND_CIVILITIES;
 	}
 
 }

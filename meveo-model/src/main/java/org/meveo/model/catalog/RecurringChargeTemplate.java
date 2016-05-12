@@ -32,7 +32,7 @@ import javax.persistence.Table;
 import org.meveo.model.MultilanguageEntity;
 
 @Entity
-@MultilanguageEntity
+@MultilanguageEntity(key = "menu.charges", group = "ChargeTemplate")
 @Table(name = "CAT_RECURRING_CHARGE_TEMPL")
 @NamedQueries({			
 @NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgWithNotPricePlan", 

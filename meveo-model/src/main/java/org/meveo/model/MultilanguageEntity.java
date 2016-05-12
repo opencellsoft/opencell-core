@@ -15,5 +15,6 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE })
 @Inherited
 public @interface MultilanguageEntity {
-
+	String key() default "";
+	String group() default "";
 }
