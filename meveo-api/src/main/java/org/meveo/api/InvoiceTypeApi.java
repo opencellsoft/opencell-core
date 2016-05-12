@@ -42,6 +42,9 @@ public class InvoiceTypeApi extends BaseApi {
         if (StringUtils.isBlank(invoiceTypeDto.getOccTemplateCode())) {
             missingParameters.add("occTemplateCode");
         }
+        if (StringUtils.isBlank(invoiceTypeDto.getInvoiceTypeEnum())) {
+            missingParameters.add("invoiceTypeEnum");
+        }        
         handleMissingParameters();	
     }
     
@@ -71,6 +74,7 @@ public class InvoiceTypeApi extends BaseApi {
         InvoiceType invoiceType = new InvoiceType();
         invoiceType.setCode(invoiceTypeDto.getCode());
         invoiceType.setDescription(invoiceTypeDto.getDescription());
+        invoiceType.setInvoiceTypeEnum(invoiceTypeDto.getInvoiceTypeEnum());
         invoiceType.setOccTemplate(occTemplate);
         invoiceType.setPrefix(invoiceTypeDto.getPrefix());
         invoiceType.setSequenceSize(invoiceTypeDto.getSequenceSize());
@@ -94,8 +98,9 @@ public class InvoiceTypeApi extends BaseApi {
         OCCTemplate occTemplate = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateCode(), provider);        
         if (occTemplate == null) {
             throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateCode());
-        }       
-        invoiceType.setOccTemplate(occTemplate);        
+        }    
+        invoiceType.setOccTemplate(occTemplate); 
+        invoiceType.setInvoiceTypeEnum(invoiceTypeDto.getInvoiceTypeEnum());       
 		if(!StringUtils.isBlank(invoiceTypeDto.getDescription())){
 	        invoiceType.setDescription(invoiceTypeDto.getDescription());
 		}

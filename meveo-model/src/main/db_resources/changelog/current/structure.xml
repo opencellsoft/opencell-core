@@ -1728,6 +1728,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="description" type="VARCHAR(100)" />
+			<column name="inv_type" type="VARCHAR(100)" />
 			<column name="prefix" type="VARCHAR(2000)" />
 			<column name="sequence_size" type="INT4" />
 			<column name="matching_auto" type="BOOL" />
@@ -1738,26 +1739,26 @@
 			tableName="billing_invoice_type" />
 
 		<addForeignKeyConstraint baseColumnNames="provider_id"
-			baseTableName="billing_invoice_type" constraintName="fk_8j22rel59dyb1evhu8rlb9nim"
+			baseTableName="billing_invoice_type" constraintName="fk_provider_id_billing_invoice_type"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
 		
 		<addForeignKeyConstraint baseColumnNames="creator_id"
-			baseTableName="billing_invoice_type" constraintName="fk_swjhmb14grd2sm1ou7a8g1dtw"
+			baseTableName="billing_invoice_type" constraintName="fk_creator_id_billing_invoice_type"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
 		
 		<addForeignKeyConstraint baseColumnNames="updater_id"
-			baseTableName="billing_invoice_type" constraintName="fk_ivfhc9r8y7mtpxocaxrer714r"
+			baseTableName="billing_invoice_type" constraintName="fk_updater_id_billing_invoice_type"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
 		
 		<addForeignKeyConstraint baseColumnNames="occ_template_id"
-			baseTableName="billing_invoice_type" constraintName="fk_2k602pe7r1krb5o13swoqhj5h"
+			baseTableName="billing_invoice_type" constraintName="fk_occ_template_id_billing_invoice_type"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" />
 		
-		<addUniqueConstraint columnNames="code, provider_id, occ_template_id" constraintName="uk_qkotb1qhsp1jw2nwy73qjs63o" deferrable="false" disabled="false"
+		<addUniqueConstraint columnNames="code, provider_id, occ_template_id" constraintName="uk_billing_invoice_type" deferrable="false" disabled="false"
             initiallyDeferred="false" tableName="billing_invoice_type" />				
 
 		<createTable tableName="billing_invoice_type_applies_to">
@@ -1770,14 +1771,29 @@
 		</createTable>
 		
 		<addForeignKeyConstraint baseColumnNames="invoice_type_id"
-			baseTableName="billing_invoice_type_applies_to" constraintName="fk_fojsslpb3tof12vgkined97py"
+			baseTableName="billing_invoice_type_applies_to" constraintName="fk_invoice_type_id_billing_invoice_type_applies_to"
 			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
 			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
 			
 		<addForeignKeyConstraint baseColumnNames="applies_to_id"
-			baseTableName="billing_invoice_type_applies_to" constraintName="fk_ilis5r98r4tgue3k143lm6k13"
+			baseTableName="billing_invoice_type_applies_to" constraintName="fk_applies_to_id_billing_invoice_type_applies_to"
 			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
 			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice_type" />			
+	</changeSet>
+	
+	
+	<changeSet id="#1695-20160512" author="anasseh">	
+		<dropUniqueConstraint constraintName="billing_invoice_provider_id_invoice_number_invoice_type_key" tableName="billing_invoice" />
+		
+		<addColumn tableName="billing_invoice">
+			<column name="invoice_type_id" type="BIGINT" />
+		</addColumn>    
+    
+    	<addForeignKeyConstraint constraintName="fk_invoice_type_id_billing_invoice"
+			referencedTableName="billing_invoice_type" baseColumnNames="invoice_type_id"
+			baseTableName="billing_invoice" referencedColumnNames="id" />
+			
+		<addUniqueConstraint constraintName="uk_billing_invoice" columnNames="provider_id, invoice_number, invoice_type_id" tableName="billing_invoice" />
 	</changeSet>	
 	
 </databaseChangeLog>

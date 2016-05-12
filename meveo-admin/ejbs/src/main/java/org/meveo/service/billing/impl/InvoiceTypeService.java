@@ -19,12 +19,72 @@
 package org.meveo.service.billing.impl;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.InvoiceTypeEnum;
+import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.payments.impl.OCCTemplateService;
 
 @Stateless
 public class InvoiceTypeService extends BusinessService<InvoiceType> {
 
+	@Inject
+	CustomFieldInstanceService customFieldInstanceService;
+
+	@Inject
+	OCCTemplateService oCCTemplateService;
+
+	public InvoiceType getDefaultType(InvoiceTypeEnum invoiceTypeEnum, User currentUser) throws BusinessException {
+		InvoiceType defaultInvoiceType = findByCode(invoiceTypeEnum.name(), currentUser.getProvider());
+		if (defaultInvoiceType != null) {
+			return defaultInvoiceType;
+		}
+
+		OCCTemplate occTemplate = null;
+
+		String occCode = "accountOperationsGenerationJob.occCode";
+		String occCodeDefaultValue = "FA_FACT";
+		if (InvoiceTypeEnum.CREDIT_NOTE_ADJUST == invoiceTypeEnum || InvoiceTypeEnum.DEBIT_NODE_ADJUST == invoiceTypeEnum || InvoiceTypeEnum.SELF_BILLED_CREDIT_NOTE == invoiceTypeEnum) {
+
+			occCode = "accountOperationsGenerationJob.occCodeAdjustement";
+			occCodeDefaultValue = "FA_ADJ";
+		}
+		String occTemplateCode = null;
+		try {
+			occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCode, occCodeDefaultValue, currentUser.getProvider(), true, currentUser);
+			log.debug("occTemplateCode:" + occTemplateCode);
+			occTemplate = oCCTemplateService.findByCode(occTemplateCode, currentUser.getProvider());
+		} catch (Exception e) {
+			log.error("error while getting occ template ", e);
+			throw new BusinessException("Cannot found OCC Template for invoice");
+		}
+
+		if (occTemplate == null) {
+			throw new BusinessException("Cannot found OCC Template for invoice");
+		}
+
+		defaultInvoiceType = new InvoiceType();
+		defaultInvoiceType.setCode(invoiceTypeEnum.name());
+		defaultInvoiceType.setInvoiceTypeEnum(invoiceTypeEnum);
+		defaultInvoiceType.setOccTemplate(occTemplate);
+		create(defaultInvoiceType, currentUser);
+		return defaultInvoiceType;
+	}
+
+	public InvoiceType getDefaultCommertial(){
+		return null;
+	}
+	public InvoiceType getDefaultAdjustement(User currentUser) throws BusinessException {
+		return getDefaultType(InvoiceTypeEnum.CREDIT_NOTE_ADJUST, currentUser);
+	}
+
+	public InvoiceType getDefaultCommertial(User currentUser) throws BusinessException {
+		return getDefaultType(InvoiceTypeEnum.COMMERCIAL, currentUser);
+	}
 
 }

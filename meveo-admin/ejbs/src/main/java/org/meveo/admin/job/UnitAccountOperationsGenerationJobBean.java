@@ -15,7 +15,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -23,8 +22,6 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.slf4j.Logger;
 
@@ -38,16 +35,10 @@ public class UnitAccountOperationsGenerationJobBean {
 	private Logger log;
 
 	@Inject
-	private OCCTemplateService oCCTemplateService;
-
-	@Inject
 	private InvoiceService invoiceService;
 
 	@Inject
 	private RecordedInvoiceService recordedInvoiceService;
-
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -55,8 +46,7 @@ public class UnitAccountOperationsGenerationJobBean {
 
 		try {
 			Invoice invoice = invoiceService.findById(id);
-			CustomerAccount customerAccount = null;
-			OCCTemplate invoiceTemplate = null;
+			CustomerAccount customerAccount = null;			
 			RecordedInvoice recordedInvoice = new RecordedInvoice();
 			BillingAccount billingAccount = invoice.getBillingAccount();
 
@@ -72,37 +62,7 @@ public class UnitAccountOperationsGenerationJobBean {
 				log.error("error while getting customer account ", e);
 				throw new ImportInvoiceException("Cannot found customerAccount");
 			}
-
-			try {
-				String occCode = "accountOperationsGenerationJob.occCode";
-				String occCodeDefaultValue = "FA_FACT";
-				
-				if(InvoiceTypeEnum.CREDIT_NOTE_ADJUST      ==  invoice.getInvoiceTypeEnum() ||
-				   InvoiceTypeEnum.DEBIT_NODE_ADJUST       ==  invoice.getInvoiceTypeEnum() ||
-				   InvoiceTypeEnum.SELF_BILLED_CREDIT_NOTE ==  invoice.getInvoiceTypeEnum() ){
-					
-					occCode = "accountOperationsGenerationJob.occCodeAdjustement";
-					occCodeDefaultValue = "FA_ADJ";
-				}
-				String occTemplateCode = null;
-				try {
-	                occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCode, occCodeDefaultValue,
-	                    customerAccount.getProvider(), true, currentUser);
-					log.debug("occTemplateCode:" + occTemplateCode);
-					invoiceTemplate = oCCTemplateService.findByCode(occTemplateCode, customerAccount.getProvider());
-				} catch (Exception e) {
-					log.error("error while getting occ template ", e);
-					throw new ImportInvoiceException("Cannot found OCC Template for invoice");
-				}
-
-				if(invoiceTemplate == null){
-					throw new ImportInvoiceException("Cannot found OCC Template for invoice");
-				}
-			} catch (Exception e) {
-				log.error("error while getting occ template ", e);
-				throw new ImportInvoiceException("Cannot found OCC Template for invoice");
-			}
-
+			OCCTemplate invoiceTemplate = invoice.getInvoiceType().getOccTemplate();
 			recordedInvoice.setReference(invoice.getInvoiceNumber());
 			recordedInvoice.setAccountCode(invoiceTemplate.getAccountCode());
 			recordedInvoice.setOccCode(invoiceTemplate.getCode());

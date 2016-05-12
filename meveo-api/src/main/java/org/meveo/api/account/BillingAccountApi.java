@@ -375,7 +375,7 @@ public class BillingAccountApi extends AccountApi {
 					String billingAccountCode = ba.getCode();
 					if (invoices != null && invoices.size() > 0) {
 						for (Invoice i : invoices) {
-							if (i.getInvoiceTypeEnum() == InvoiceTypeEnum.CREDIT_NOTE_ADJUST) {
+							if (i.getInvoiceType().getInvoiceTypeEnum() == InvoiceTypeEnum.CREDIT_NOTE_ADJUST) {
 								InvoiceDto invoiceDto = new InvoiceDto(i, billingAccountCode);
 								invoicesDto.add(invoiceDto);
 							}

@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.InvoiceTypeEnum;
 
 @XmlRootElement(name = "InvoiceType")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -21,6 +22,9 @@ public class InvoiceTypeDto  extends BaseDto{
 		private String code;
 		
 		private String description;
+		
+		@XmlElement(required = true)
+		private InvoiceTypeEnum invoiceTypeEnum;
 		
 		@XmlElement(required = true)
 		private String occTemplateCode;
@@ -40,6 +44,7 @@ public class InvoiceTypeDto  extends BaseDto{
 		public InvoiceTypeDto(InvoiceType invoiceType){
 			this.code = invoiceType.getCode();
 			this.description = invoiceType.getDescription();
+			this.invoiceTypeEnum = invoiceType.getInvoiceTypeEnum();
 			this.occTemplateCode = invoiceType.getOccTemplate() != null ? invoiceType.getOccTemplate().getCode():null;
 			this.prefix = invoiceType.getPrefix();
 			this.sequenceSize = invoiceType.getSequenceSize();
@@ -147,14 +152,31 @@ public class InvoiceTypeDto  extends BaseDto{
 		public void setMatchingAuto(boolean matchingAuto) {
 			this.matchingAuto = matchingAuto;
 		}
+		
+		
+
+		/**
+		 * @return the invoiceTypeEnum
+		 */
+		public InvoiceTypeEnum getInvoiceTypeEnum() {
+			return invoiceTypeEnum;
+		}
+
+		/**
+		 * @param invoiceTypeEnum the invoiceTypeEnum to set
+		 */
+		public void setInvoiceTypeEnum(InvoiceTypeEnum invoiceTypeEnum) {
+			this.invoiceTypeEnum = invoiceTypeEnum;
+		}
 
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
 		@Override
 		public String toString() {
-			return "InvoiceTypeDto [code=" + code + ", description=" + description + ", occTemplateCode=" + occTemplateCode + ", prefix=" + prefix + ", sequenceSize=" + sequenceSize + ", appliesTo=" + (appliesTo==null?"null":appliesTo) + ", matchingAuto=" + matchingAuto + "]";
+			return "InvoiceTypeDto [code=" + code + ", description=" + description + ", invoiceTypeEnum=" + invoiceTypeEnum + ", occTemplateCode=" + occTemplateCode + ", prefix=" + prefix + ", sequenceSize=" + sequenceSize + ", appliesTo=" + (appliesTo==null?"null":appliesTo) + ", matchingAuto=" + matchingAuto + "]";
 		}
+
 
 		
 }

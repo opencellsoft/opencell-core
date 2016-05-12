@@ -23,6 +23,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -45,10 +47,14 @@ public class InvoiceType extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "INV_TYPE")
+	private InvoiceTypeEnum invoiceTypeEnum;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "OCC_TEMPLATE_ID")
 	private OCCTemplate occTemplate;
-	
+		
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "BILLING_INVOICE_TYPE_APPLIES_TO", joinColumns = @JoinColumn(name = "INVOICE_TYPE_ID"), inverseJoinColumns = @JoinColumn(name = "APPLIES_TO_ID"))
 	private List<InvoiceType> appliesTo = new ArrayList<InvoiceType>();
@@ -136,6 +142,20 @@ public class InvoiceType extends BusinessEntity {
 	 */
 	public void setMatchingAuto(boolean matchingAuto) {
 		this.matchingAuto = matchingAuto;
+	}
+
+	/**
+	 * @return the invoiceTypeEnum
+	 */
+	public InvoiceTypeEnum getInvoiceTypeEnum() {
+		return invoiceTypeEnum;
+	}
+
+	/**
+	 * @param invoiceTypeEnum the invoiceTypeEnum to set
+	 */
+	public void setInvoiceTypeEnum(InvoiceTypeEnum invoiceTypeEnum) {
+		this.invoiceTypeEnum = invoiceTypeEnum;
 	}
 	
 	

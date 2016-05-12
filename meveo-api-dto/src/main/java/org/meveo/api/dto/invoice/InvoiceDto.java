@@ -18,7 +18,6 @@ import org.meveo.api.dto.payment.MatchingAmountsDto;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
-import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.payments.AccountOperation;
@@ -50,7 +49,7 @@ public class InvoiceDto extends BaseDto {
     private BigDecimal amountWithTax;
     private PaymentMethodEnum paymentMethod;
     private boolean PDFpresent;
-    private InvoiceTypeEnum type;
+    private String invoiceType;
     private byte[] pdf;
     private List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
     private List<AccountOperationDto> accountOperations = new ArrayList<AccountOperationDto>();
@@ -71,12 +70,8 @@ public class InvoiceDto extends BaseDto {
         this.setInvoiceNumber(invoice.getInvoiceNumber());
         this.setPaymentMethod(invoice.getPaymentMethod());
         this.setPDFpresent(invoice.getPdf() != null);
-
-        this.type = invoice.getInvoiceTypeEnum();
-        if (this.type == null) {
-            this.setType(InvoiceTypeEnum.COMMERCIAL);
-        }
-
+        this.setInvoiceType(invoice.getInvoiceType().getCode());
+        
         SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
 
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
@@ -226,15 +221,23 @@ public class InvoiceDto extends BaseDto {
         this.paymentMethod = paymentMethod;
     }
 
-    public InvoiceTypeEnum getType() {
-        return type;
-    }
+    
 
-    public void setType(InvoiceTypeEnum type) {
-        this.type = type;
-    }
+    /**
+	 * @return the invoiceType
+	 */
+	public String getInvoiceType() {
+		return invoiceType;
+	}
 
-    public List<AccountOperationDto> getAccountOperations() {
+	/**
+	 * @param invoiceType the invoiceType to set
+	 */
+	public void setInvoiceType(String invoiceType) {
+		this.invoiceType = invoiceType;
+	}
+
+	public List<AccountOperationDto> getAccountOperations() {
         return accountOperations;
     }
 
@@ -250,11 +253,12 @@ public class InvoiceDto extends BaseDto {
         this.pdf = pdf;
     }
 
+    
     @Override
     public String toString() {
         return "InvoiceDto [billingAccountCode=" + billingAccountCode + ", dueDate=" + dueDate + ", invoiceNumber=" + invoiceNumber + ", invoiceDate=" + invoiceDate
                 + ", discount=" + discount + ", amountWithoutTax=" + amountWithoutTax + ", amountTax=" + amountTax + ", amountWithTax=" + amountWithTax + ", paymentMethod="
-                + paymentMethod + ", PDFpresent=" + PDFpresent + ", type=" + type + ", subCategoryInvoiceAgregates=" + subCategoryInvoiceAgregates + "accountOperations "
+                + paymentMethod + ", PDFpresent=" + PDFpresent + ", invceType=" + invoiceType + ", subCategoryInvoiceAgregates=" + subCategoryInvoiceAgregates + "accountOperations "
                 + accountOperations + "]";
     }
 }

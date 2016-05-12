@@ -46,7 +46,7 @@ import org.meveo.model.payments.RecordedInvoice;
 
 @Entity
 @ObservableEntity
-@Table(name = "BILLING_INVOICE", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID", "INVOICE_NUMBER", "INVOICE_TYPE" }))
+@Table(name = "BILLING_INVOICE", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID", "INVOICE_NUMBER", "INVOICE_TYPE_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SEQ")
 public class Invoice extends AuditableEntity {
 
@@ -146,10 +146,10 @@ public class Invoice extends AuditableEntity {
 
 	@OneToMany(mappedBy = "adjustedInvoice", fetch = FetchType.LAZY)
 	private List<Invoice> invoiceAdjustments;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "INVOICE_TYPE")
-	private InvoiceTypeEnum invoiceTypeEnum;
+	
+	@ManyToOne
+	@JoinColumn(name = "INVOICE_TYPE_ID")
+	private InvoiceType invoiceType;
 
 	@Transient
 	private Long invoiceAdjustmentCurrentSellerNb;
@@ -409,13 +409,7 @@ public class Invoice extends AuditableEntity {
 		this.adjustedInvoice = adjustedInvoice;
 	}
 
-	public InvoiceTypeEnum getInvoiceTypeEnum() {
-		return invoiceTypeEnum;
-	}
 
-	public void setInvoiceTypeEnum(InvoiceTypeEnum invoiceTypeEnum) {
-		this.invoiceTypeEnum = invoiceTypeEnum;
-	}
 
 	public List<Invoice> getInvoiceAdjustments() {
 		return invoiceAdjustments;
@@ -457,4 +451,19 @@ public class Invoice extends AuditableEntity {
 		}
 		return true;
 	}
+
+	/**
+	 * @return the invoiceType
+	 */
+	public InvoiceType getInvoiceType() {
+		return invoiceType;
+	}
+
+	/**
+	 * @param invoiceType the invoiceType to set
+	 */
+	public void setInvoiceType(InvoiceType invoiceType) {
+		this.invoiceType = invoiceType;
+	}
+	
 }

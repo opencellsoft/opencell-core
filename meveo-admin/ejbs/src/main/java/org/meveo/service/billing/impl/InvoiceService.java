@@ -130,6 +130,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
+    
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
 	
 
 	private String PDF_DIR_NAME = "pdf";
@@ -471,8 +474,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				billingCycle = billingAccount.getBillingCycle();
 			}
 
-			Invoice invoice = new Invoice();
-			invoice.setInvoiceTypeEnum(InvoiceTypeEnum.COMMERCIAL);
+			Invoice invoice = new Invoice();			
+			invoice.setInvoiceType(invoiceTypeService.getDefaultCommertial(currentUser));
 			invoice.setBillingAccount(billingAccount);
 			invoice.setBillingRun(billingRun);
 			invoice.setAuditable(billingRun.getAuditable());

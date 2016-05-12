@@ -40,6 +40,7 @@ import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
@@ -55,6 +56,7 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
@@ -108,6 +110,9 @@ public class InvoiceApi extends BaseApi {
     private PDFParametersConstruction pDFParametersConstruction;
 
     @Inject
+    private InvoiceTypeService invoiceTypeService;
+    
+    @Inject
     @MeveoParamBean
     private ParamBean paramBean;
 
@@ -131,16 +136,20 @@ public class InvoiceApi extends BaseApi {
         if (StringUtils.isBlank(invoiceDTO.getAmountWithTax())) {
             missingParameters.add("amountWithTax");
         }
+        if (StringUtils.isBlank(invoiceDTO.getInvoiceType())) {
+            missingParameters.add("invoiceType");
+        }
 
         handleMissingParameters();
         
-
         Provider provider = currentUser.getProvider();
-
         BillingAccount billingAccount = billingAccountService.findByCode(invoiceDTO.getBillingAccountCode(), provider);
-
         if (billingAccount == null) {
             throw new EntityDoesNotExistsException(BillingAccount.class, invoiceDTO.getBillingAccountCode());
+        }
+        InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceDTO.getInvoiceType(), provider);
+        if (invoiceType == null) {
+            throw new EntityDoesNotExistsException(InvoiceType.class, invoiceDTO.getInvoiceType());
         }
 
         // FIXME : store that in SubCategoryInvoiceAgregateDto
@@ -166,15 +175,9 @@ public class InvoiceApi extends BaseApi {
         invoice.setAmountWithoutTax(invoiceDTO.getAmountWithoutTax());
         invoice.setAmountWithTax(invoiceDTO.getAmountWithTax());
         invoice.setDiscount(invoiceDTO.getDiscount());
-
+        invoice.setInvoiceType(invoiceType);
         
-        if (invoiceDTO.getType() != null) {
-            invoice.setInvoiceTypeEnum(invoiceDTO.getType());
-        } else {
-            invoice.setInvoiceTypeEnum(InvoiceTypeEnum.COMMERCIAL);
-        }
-        
-        if (invoice.getInvoiceTypeEnum() == InvoiceTypeEnum.CREDIT_NOTE_ADJUST) {
+        if (invoice.getInvoiceType().getInvoiceTypeEnum() == InvoiceTypeEnum.CREDIT_NOTE_ADJUST) {
             String invoiceNumber = invoiceDTO.getInvoiceNumber();
             if (invoiceNumber == null) {
                 missingParameters.add("invoiceNumber");
@@ -331,7 +334,7 @@ public class InvoiceApi extends BaseApi {
                 customerInvoiceDto.setAmountWithTax(invoice.getAmountWithTax());
                 customerInvoiceDto.setInvoiceNumber(invoice.getInvoiceNumber());
                 customerInvoiceDto.setPaymentMethod(invoice.getPaymentMethod());
-                customerInvoiceDto.setType(invoice.getInvoiceTypeEnum());
+                customerInvoiceDto.setInvoiceType(invoice.getInvoiceType().getCode());
                 customerInvoiceDto.setPDFpresent(invoice.getPdf() != null);
                 customerInvoiceDto.setPdf(invoice.getPdf());
                 SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;

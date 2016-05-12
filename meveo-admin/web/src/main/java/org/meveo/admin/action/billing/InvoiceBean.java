@@ -69,6 +69,7 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.crm.impl.ProviderService;
@@ -109,15 +110,15 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 	@Inject
 	InvoiceAgregateService invoiceAgregateService;
+	
+	@Inject
+	InvoiceTypeService invoiceTypeService;	
 
 	@Inject
 	XMLInvoiceCreator xmlInvoiceCreator;
 
 	@Inject
 	private PDFParametersConstruction pDFParametersConstruction;
-	
-	@Inject
-	private BillingRunService billingRunService;
 	
 	@Inject
 	@RequestParam()
@@ -164,10 +165,14 @@ public class InvoiceBean extends BaseBean<Invoice> {
 				invoice.setBillingRun(adjustedInvoice.getBillingRun());
 				invoice.setDueDate(new Date());
 				invoice.setInvoiceDate(new Date());				
-				invoice.setPaymentMethod(adjustedInvoice.getPaymentMethod());
-				invoice.setInvoiceTypeEnum(InvoiceTypeEnum.CREDIT_NOTE_ADJUST);
+				invoice.setPaymentMethod(adjustedInvoice.getPaymentMethod());				
+				try {
+					invoice.setInvoiceType(invoiceTypeService.getDefaultAdjustement(getCurrentUser()));
+				} catch (BusinessException e) {					
+					log.error("cant get InvoiceType ",e);
+				}
 				if(adjustedInvoice.getBillingAccount()!=null){
-				billingAccountId=adjustedInvoice.getBillingAccount().getId();
+					billingAccountId=adjustedInvoice.getBillingAccount().getId();
 				}
 
 				// duplicate rated transaction for detailed
