@@ -4,56 +4,46 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>ModifiedContactTestCase</title>
+<title>DeleteContactTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">ModifiedContactTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">DeleteContactTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>waitForElementPresent</td>
-	<td>id=fieldsForm:fields:0:addFieldGroupBtn</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
-	<td>id=fieldsForm:fields:0:addFieldGroupBtn</td>
+	<td>${DeleteActionBtn}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${AddFieldGroupBTN}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForVisible</td>
-	<td>id=groupDialog</td>
+	<td>${DeleteActionBtn}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>id=groupDialog_title</td>
+	<td>${deleteYes}</td>
 	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>id=groupDialog_title</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${TitleField}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${TitleField}</td>
-	<td>${TitleFGValue}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SaveBTN}</td>
+	<td>${deleteYes}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

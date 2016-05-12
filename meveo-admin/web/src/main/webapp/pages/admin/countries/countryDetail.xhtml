@@ -41,9 +41,9 @@
 		
 			<hftl:formField label="#{messages['country.code']}"		field="countryCode" required="true" maxlength="3" />
 			
-			<hftl:formField label="#{messages['country.nameEn']}" 	field="descriptionEn" required="true" />
+			<hftl:formField label="#{messages['country.nameEn']}" 	field="descriptionEn" required="true" maxlength="100" />
 			
-			<hftl:formField label="#{messages['country.nameFr']}" 	field="descriptionFr" required="true" />
+			<hftl:formField label="#{messages['country.nameFr']}" 	field="descriptionFr" required="true" maxlength="100" />
 			
 			<hftl:formField id="currencySelectedId" label="#{messages['currency.currencyCode']}" field="currency" 
 			    valueLabelField="currencyCode"  required="true" popup="true"  popupId="popupForCurrency"/>

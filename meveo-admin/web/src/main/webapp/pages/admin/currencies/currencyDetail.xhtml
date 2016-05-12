@@ -16,9 +16,9 @@
 		<hftl:formPanel label="#{messages['currency.currencyPanel']}"
 			backingBean="#{currencyBean}">
 			<hftl:formField label="#{messages['currency.code']}"
-				field="currencyCode" required="false" />
+				field="currencyCode" required="false" maxlength="3"/>
 			<hftl:formField label="#{messages['currency.name']}"
-				field="descriptionEn" required="false" />
+				field="descriptionEn" required="false" maxlength="255"/>
 		</hftl:formPanel>
 
 	</ui:define>
