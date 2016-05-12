@@ -79,6 +79,15 @@ public class InvoiceCategoryApi extends BaseApi {
                 catMessagesService.create(catMsg, currentUser);
             }
         }
+        
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), invoiceCategory, true, currentUser, true);
+
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
     }
 
     public void update(InvoiceCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
@@ -130,6 +139,14 @@ public class InvoiceCategoryApi extends BaseApi {
         }
 
         invoiceCategoryService.update(invoiceCategory, currentUser);
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), invoiceCategory, true, currentUser, true);
+
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
     }
 
     public InvoiceCategoryDto find(String code, Provider provider) throws MeveoApiException {

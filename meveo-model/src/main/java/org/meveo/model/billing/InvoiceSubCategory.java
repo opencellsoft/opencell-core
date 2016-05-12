@@ -35,8 +35,9 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.MultilanguageEntity;
 
 @Entity
@@ -55,7 +56,7 @@ import org.meveo.model.MultilanguageEntity;
             		+ " and v.id not in (select inv.invoiceSubCategory.id from InvoiceSubcategoryCountry inv where inv.invoiceSubCategory.id is not null)"
 		            + " and v.provider=:provider")           	                  	         
 })
-public class InvoiceSubCategory extends BusinessEntity {
+public class InvoiceSubCategory extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -103,6 +104,11 @@ public class InvoiceSubCategory extends BusinessEntity {
 
 	public void setDiscount(BigDecimal discount) {
 		this.discount = discount;
+	}
+
+	@Override
+	public ICustomFieldEntity getParentCFEntity() {		
+		return invoiceCategory;
 	}
 
 }

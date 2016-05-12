@@ -25,6 +25,8 @@ public class InvoiceCategoryDto extends BaseDto {
 	private String description;
 
 	private List<LanguageDescriptionDto> languageDescriptions;
+	
+	private CustomFieldsDto customFields = new CustomFieldsDto();
 
 	public InvoiceCategoryDto() {
 
@@ -59,10 +61,26 @@ public class InvoiceCategoryDto extends BaseDto {
 		this.languageDescriptions = languageDescriptions;
 	}
 
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}
+
+
 	@Override
 	public String toString() {
-		return "InvoiceCategoryDto [code=" + code + ", description=" + description + ", languageDescriptions="
-				+ languageDescriptions + "]";
+		return "InvoiceCategoryDto [code=" + code + ", description=" + description + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
 	}
+
+
 
 }

@@ -303,6 +303,14 @@ public class InvoiceApi extends BaseApi {
         }
 
         invoiceService.update(invoice, currentUser);
+        // populate customFields
+        try {
+            populateCustomFields(invoiceDTO.getCustomFields(), invoice, true, currentUser, true);
+
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
         return invoice.getInvoiceNumber();
     }
 

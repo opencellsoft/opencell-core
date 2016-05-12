@@ -117,6 +117,14 @@ public class AccountOperationApi extends BaseApi {
         }
 
         accountOperationService.create(accountOperation, currentUser);
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), accountOperation, true, currentUser, true);
+
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
 
         if (postData.getMatchingAmounts() != null) {
             for (MatchingAmountDto matchingAmountDto : postData.getMatchingAmounts().getMatchingAmount()) {

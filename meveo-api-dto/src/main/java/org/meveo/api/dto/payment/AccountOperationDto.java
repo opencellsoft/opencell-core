@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 
@@ -38,6 +39,22 @@ public class AccountOperationDto extends BaseDto {
 	private OtherCreditAndChargeDto otherCreditAndCharge;
 	private RecordedInvoiceDto recordedInvoice;
 	private RejectedPaymentDto rejectedPayment;
+	
+	private CustomFieldsDto customFields = new CustomFieldsDto();
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}
 
 	public Date getDueDate() {
 		return dueDate;

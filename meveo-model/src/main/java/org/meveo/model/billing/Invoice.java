@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -37,9 +38,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
@@ -48,7 +51,7 @@ import org.meveo.model.payments.RecordedInvoice;
 @ObservableEntity
 @Table(name = "BILLING_INVOICE", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID", "INVOICE_NUMBER", "INVOICE_TYPE_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SEQ")
-public class Invoice extends AuditableEntity {
+public class Invoice extends AuditableEntity  implements ICustomFieldEntity{
 
 	private static final long serialVersionUID = 1L;
 
@@ -150,6 +153,11 @@ public class Invoice extends AuditableEntity {
 	@ManyToOne
 	@JoinColumn(name = "INVOICE_TYPE_ID")
 	private InvoiceType invoiceType;
+	
+    @Column(name = "UUID", nullable = false, updatable = false, length = 50)
+    @Size(max = 50)
+    @NotNull
+    private String uuid = UUID.randomUUID().toString();	
 
 	@Transient
 	private Long invoiceAdjustmentCurrentSellerNb;
@@ -465,5 +473,25 @@ public class Invoice extends AuditableEntity {
 	public void setInvoiceType(InvoiceType invoiceType) {
 		this.invoiceType = invoiceType;
 	}
-	
+
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    @Override
+    public String clearUuid() {
+        String oldUuid = uuid;
+        uuid = UUID.randomUUID().toString();
+        return oldUuid;
+    }
+
+	@Override
+	public ICustomFieldEntity getParentCFEntity() {
+		return null;
+	}
 }

@@ -30,8 +30,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.MultilanguageEntity;
 
 @Entity
@@ -49,7 +50,7 @@ import org.meveo.model.MultilanguageEntity;
 	           		+ " and v.provider=:provider")         	                  	         
 })
  
-public class InvoiceCategory extends BusinessEntity {
+public class InvoiceCategory extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -73,6 +74,11 @@ public class InvoiceCategory extends BusinessEntity {
 
 	public void setSortIndex(Integer sortIndex) {
 		this.sortIndex = sortIndex;
+	}
+
+	@Override
+	public ICustomFieldEntity getParentCFEntity() {
+		return null;
 	}
 
 }

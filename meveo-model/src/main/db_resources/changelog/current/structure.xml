@@ -1796,4 +1796,26 @@
 		<addUniqueConstraint constraintName="uk_billing_invoice" columnNames="provider_id, invoice_number, invoice_type_id" tableName="billing_invoice" />
 	</changeSet>	
 	
+    <changeSet id="#1686-20160512" author="anasseh">
+        <addColumn tableName="BILLING_INVOICE">
+            <column name="UUID" type="VARCHAR(60)"/>
+        </addColumn>
+        <sql>update BILLING_INVOICE set UUID ='Invoice-'|| id </sql>  
+        
+        <addColumn tableName="BILLING_INVOICE_CAT">
+            <column name="UUID" type="VARCHAR(60)"/>
+        </addColumn>
+        <sql>update BILLING_INVOICE_CAT set UUID ='InvoiceCategory-'|| id </sql>     
+        
+       <addColumn tableName="BILLING_INVOICE_SUB_CAT">
+            <column name="UUID" type="VARCHAR(60)"/>
+        </addColumn>
+        <sql>update BILLING_INVOICE_SUB_CAT set UUID ='InvoiceSubCategory-'|| id </sql>  
+        
+       <addColumn tableName="AR_ACCOUNT_OPERATION">
+            <column name="UUID" type="VARCHAR(60)"/>
+        </addColumn>
+        <sql>update AR_ACCOUNT_OPERATION set UUID ='AccountOperation-'|| id </sql>          
+    </changeSet>   	
+	
 </databaseChangeLog>

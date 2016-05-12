@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.MatchingAmountDto;
@@ -54,6 +55,8 @@ public class InvoiceDto extends BaseDto {
     private List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
     private List<AccountOperationDto> accountOperations = new ArrayList<AccountOperationDto>();
 
+    private CustomFieldsDto customFields = new CustomFieldsDto();
+    
     public InvoiceDto() {
     }
 
@@ -254,11 +257,25 @@ public class InvoiceDto extends BaseDto {
     }
 
     
-    @Override
+    /**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}
+
+	@Override
     public String toString() {
         return "InvoiceDto [billingAccountCode=" + billingAccountCode + ", dueDate=" + dueDate + ", invoiceNumber=" + invoiceNumber + ", invoiceDate=" + invoiceDate
                 + ", discount=" + discount + ", amountWithoutTax=" + amountWithoutTax + ", amountTax=" + amountTax + ", amountWithTax=" + amountWithTax + ", paymentMethod="
                 + paymentMethod + ", PDFpresent=" + PDFpresent + ", invceType=" + invoiceType + ", subCategoryInvoiceAgregates=" + subCategoryInvoiceAgregates + "accountOperations "
-                + accountOperations + "]";
+                + accountOperations + ", customFields=" + customFields + "]";
     }
 }
