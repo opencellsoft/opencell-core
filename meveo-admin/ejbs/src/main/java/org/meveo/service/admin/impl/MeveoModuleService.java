@@ -259,10 +259,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
                 moduleDto.addModuleItem(new BarChartDto((BarChart) item.getItemEntity()));
 
             } else if (item.getItemEntity() instanceof MeasurableQuantity) {
-                moduleDto.addModuleItem(new MeasurableQuantityDto((MeasurableQuantity) item.getItemEntity()));
-
-            } else if (item.getItemEntity() instanceof MeveoModule) {
-                moduleDto.addModuleItem(moduleToDto((MeveoModule) item.getItemEntity(), provider));
+                moduleDto.addModuleItem(new MeasurableQuantityDto((MeasurableQuantity) item.getItemEntity()));           
                 
             } else if (item.getItemEntity() instanceof BusinessServiceModel) {
                 moduleDto.addModuleItem(new BusinessServiceModelDto((BusinessServiceModel) item.getItemEntity()));
@@ -270,6 +267,9 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
             } else if (item.getItemEntity() instanceof BusinessOfferModel) {
                 moduleDto.addModuleItem(new BusinessOfferModelDto((BusinessOfferModel) item.getItemEntity()));
                 
+            } else if (item.getItemEntity() instanceof MeveoModule) {
+                moduleDto.addModuleItem(moduleToDto((MeveoModule) item.getItemEntity(), provider));
+            
             }
         }
         return moduleDto;
