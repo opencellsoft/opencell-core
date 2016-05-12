@@ -66,7 +66,7 @@
                         </f:facet>
                         <f:facet name="input">
                             <hftl:customFieldValueMuteField edit="true" id="cfValue_in" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}"
-                                datePattern="#{datePattern}" required="true" />
+                                datePattern="#{datePattern}" />
                         </f:facet>
                     </p:cellEditor>
                 </p:column>
@@ -82,7 +82,7 @@
 
                             <c:if test="#{cft.storageType eq CustomFieldStorageTypeEnum.MAP}">
                                 <c:if test="#{cft.mapKeyType eq CustomFieldMapKeyEnum.STRING}">
-                                    <p:inputText id="newKey" value="#{cfValueHolder.newValues[cft.code.concat('_key')]}" required="true" placeholder="#{messages['commons.key']}"
+                                    <p:inputText id="newKey" value="#{cfValueHolder.newValues[cft.code.concat('_key')]}" placeholder="#{messages['commons.key']}"
                                         label="#{messages['commons.key']}" size="30" maxlength="50" />
                                 </c:if>
 
@@ -99,7 +99,7 @@
                                 <h:outputText value=" &nbsp; " escape="false" />
                             </c:if>
 
-                            <hftl:customFieldValueMuteField id="newValue" edit="true" cft="#{cft}" field="#{cfValueHolder.newValues[cft.code.concat('_value')]}" required="true"
+                            <hftl:customFieldValueMuteField id="newValue" edit="true" cft="#{cft}" field="#{cfValueHolder.newValues[cft.code.concat('_value')]}" 
                                 label="#{messages['commons.value']}" placeholder="#{messages['commons.value']}" datePattern="#{datePattern}" />
                         </hf:namingContainer>
 
@@ -154,7 +154,7 @@
                                 datePattern="#{datePattern}" />
                         </f:facet>
                         <f:facet name="input">
-                            <hftl:customFieldValueMuteField edit="true" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}" required="true"
+                            <hftl:customFieldValueMuteField edit="true" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}" 
                                 datePattern="#{datePattern}" />
                         </f:facet>
                     </p:cellEditor>
