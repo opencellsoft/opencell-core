@@ -115,7 +115,9 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     public List<CustomEntityTemplate> list(PaginationConfiguration config) {
 
         boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCET", "true"));
-        if (useCache) {
+        if (useCache
+                && (config.getFilters() == null || config.getFilters().isEmpty() || (config.getFilters().size() == 1 && config.getFilters().get("disabled") != null && !(boolean) config
+                    .getFilters().get("disabled")))) {
             List<CustomEntityTemplate> cets = new ArrayList<CustomEntityTemplate>();
             cets.addAll(customFieldsCache.getCustomEntityTemplates(getCurrentProvider()));
             return cets;

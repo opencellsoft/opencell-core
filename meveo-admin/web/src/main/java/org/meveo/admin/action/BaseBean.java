@@ -183,7 +183,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     private Filter listFilter;
 
-    private boolean listFiltered = false;
+    protected boolean listFiltered = false;
 
     /**
      * Tracks active tabs in GUI
@@ -524,9 +524,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @param id Entity id to delete
      */
+    @ActionMethod
     public void delete(Long id) {
         try {
-            log.info(String.format("Deleting entity %s with id = %s", clazz.getName(), id));
+            log.info("Deleting entity {} with id = {}", clazz.getName(), id);
             getPersistenceService().remove(id);
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
@@ -543,9 +544,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         // initEntity();
     }
 
+    @ActionMethod
     public void delete() {
         try {
-            log.info(String.format("Deleting entity %s with id = %s", clazz.getName(), getEntity().getId()));
+            log.info("Deleting entity {} with id = {}", clazz.getName(), getEntity().getId());
             getPersistenceService().remove((Long) getEntity().getId());
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
@@ -574,7 +576,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                     idsToDelete.add((Long) entity.getId());
                     idsString.append(entity.getId()).append(" ");
                 }
-                log.info(String.format("Deleting multiple entities %s with ids = %s", clazz.getName(), idsString.toString()));
+                log.info("Deleting multiple entities {} with ids = {}", clazz.getName(), idsString.toString());
 
                 getPersistenceService().remove(idsToDelete);
                 getPersistenceService().commit();
@@ -602,8 +604,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return Filters map.
      */
     public Map<String, Object> getFilters() {
-        if (filters == null)
+        if (filters == null) {
             filters = new HashMap<String, Object>();
+        }
         return filters;
     }
 
@@ -669,9 +672,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @param id Entity id to disable
      */
+    @ActionMethod
     public void disable() {
         try {
-            log.info(String.format("Disabling entity %s with id = %s", clazz.getName(), entity.getId()));
+            log.info("Disabling entity {} with id = {}", clazz.getName(), entity.getId());
             entity = getPersistenceService().disable(entity);
             messages.info(new BundleKey("messages", "disabled.successful"));
 
@@ -686,9 +690,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @param id Entity id to disable
      */
+    @ActionMethod
     public void disable(Long id) {
         try {
-            log.info(String.format("Disabling entity %s with id = %s", clazz.getName(), id));
+            log.info("Disabling entity {} with id = {}", clazz.getName(), id);
             getPersistenceService().disable(id);
             messages.info(new BundleKey("messages", "disabled.successful"));
 
@@ -703,9 +708,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @param id Entity id to enable
      */
+    @ActionMethod
     public void enable() {
         try {
-            log.info(String.format("Enabling entity %s with id = %s", clazz.getName(), entity.getId()));
+            log.info("Enabling entity {} with id = {}", clazz.getName(), entity.getId());
             entity = getPersistenceService().enable(entity);
             messages.info(new BundleKey("messages", "enabled.successful"));
 
@@ -720,9 +726,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @param id Entity id to enable
      */
+    @ActionMethod
     public void enable(Long id) {
         try {
-            log.info(String.format("Enabling entity %s with id = %s", clazz.getName(), id));
+            log.info("Enabling entity {} with id = {}", clazz.getName(), id);
             getPersistenceService().enable(id);
             messages.info(new BundleKey("messages", "enabled.successful"));
 
@@ -974,6 +981,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             this.delete();
             getPersistenceService().commit();
         } catch (Exception e) {
+            log.error("Failed to delete {}", entity, e);
             result = false;
         }
         RequestContext requestContext = RequestContext.getCurrentInstance();
@@ -986,16 +994,24 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return back() page if deleted success, if not, return a callback result to UI for validate
      */
     public String deleteWithBack() {
-        boolean result = true;
         try {
             this.delete();
             getPersistenceService().commit();
             return back();
-        } catch (Exception e) {
-            result = false;
+            
+        } catch (Throwable t) {
+            messages.getAll();
+            messages.clear();
+            if (t.getCause() instanceof EntityExistsException) {
+                log.info("delete was unsuccessful because entity is used in the system {}", t);
+                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
+
+            } else {
+                log.info("unexpected exception when deleting {}", t);
+                messages.error(new BundleKey("messages", "error.delete.unexpected"));
         }
-        RequestContext requestContext = RequestContext.getCurrentInstance();
-        requestContext.addCallbackParam("result", result);
+        }
+        FacesContext.getCurrentInstance().validationFailed();
         return null;
     }
 
@@ -1140,7 +1156,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return getPersistenceService().list(config);
     }
     
-   
    /**
     *     crm/customers
     * 

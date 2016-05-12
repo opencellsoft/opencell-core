@@ -110,22 +110,6 @@ public class ServiceModelScriptBean extends BaseBean<ServiceModelScript> {
 		}
 	}
 
-	@Override
-	public void deleteInlist() {
-		// delete in bom
-		List<BusinessServiceModel> businessServiceModels = businessServiceModelService.findByScriptId(entity.getId());
-		for (BusinessServiceModel bsm : businessServiceModels) {
-			bsm.setScript(null);
-			try {
-				businessServiceModelService.update(bsm, getCurrentUser());
-			} catch (BusinessException e) {
-				messages.error(e.getMessage());
-			}
-		}
-
-		super.deleteInlist();
-	}
-
 	public Long getSomId() {
 		return somId;
 	}

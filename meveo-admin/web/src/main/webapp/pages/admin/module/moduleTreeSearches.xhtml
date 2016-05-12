@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui"
+    xmlns:of="http://omnifaces.org/functions" xmlns:hftl="http://hftl.org">
+
+<ui:composition>
+
+    <hftl:entityPopup id="searchCustomEntity" header="#{messages['customEntity.popup.header']}" backingBean="#{customEntityTemplateListBean}"
+        searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+        column2Label="#{messages['businessEntity.description']}" column2="description" selection="#{backingBean.customEntity}" updateField=":formId:moduleItems">
+    </hftl:entityPopup>
+    <hftl:entityPopup id="searchCustomField" width="750" header="#{messages['customField.popup.header']}" backingBean="#{customFieldTemplateListBean}"
+        searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['meveoModuleItem.appliesTo']}" searchField2="appliesTo"
+        selection="#{backingBean.customField}" column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}"
+        column2="description" column3Label="#{messages['meveoModuleItem.appliesTo']}" column3="appliesTo" updateField=":formId:moduleItems" column3Converter="customFieldAppliesTo"
+        isAutocomplete2="true" autocompleteBean2="#{customFieldTemplateBean}" autocompleteMethod2="autocompleteClassNamesHuman"
+        searchField2Converter="customFieldAppliesToConverter">
+    </hftl:entityPopup>
+    <hftl:entityPopup id="searchFilter" header="#{messages['filter.popup.header']}" backingBean="#{filterListBean}" searchField1Label="#{messages['businessEntity.code']}"
+        searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
+        selection="#{backingBean.filter}" updateField=":formId:moduleItems">
+    </hftl:entityPopup>
+    <hftl:entityPopup id="searchScript" header="#{messages['scriptInstance.popup.header']}" backingBean="#{scriptInstanceListBean}"
+        searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+        column2Label="#{messages['businessEntity.description']}" column2="description" selection="#{backingBean.script}" updateField=":formId:moduleItems">
+    </hftl:entityPopup>
+    <hftl:entityPopup id="searchJob" header="#{messages['jobInstance.popup.header']}" backingBean="#{jobInstanceListBean}" searchField1Label="#{messages['businessEntity.code']}"
+        searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
+        selection="#{backingBean.job}" updateField=":formId:moduleItems">
+    </hftl:entityPopup>
+    <hftl:entityPopup id="searchNotification" header="#{messages['notification.popup.header']}" backingBean="#{genericNotificationListBean}"
+        searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+        column2Label="#{messages['businessEntity.description']}" column2="description" selection="#{backingBean.notification}" updateField=":formId:moduleItems">
+    </hftl:entityPopup>
+    <hftl:entityPopup id="searchSubModules" header="#{messages['meveoModule.popup.header']}" backingBean="#{meveoModuleListBean}" dataModel="#{backingBean.getSubModules()}"
+        searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+        column2Label="#{messages['businessEntity.description']}" column2="description" selection="#{backingBean.meveoModule}" updateField=":formId:moduleItems">
+    </hftl:entityPopup>
+    <hftl:entityPopup id="searchMeasurableQuantities" header="#{messages['measurableQuantity.popup.header']}" backingBean="#{measurableQuantityListBean}"
+        searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+        column2Label="#{messages['businessEntity.description']}" column2="description" selection="#{backingBean.measurableQuantity}" updateField=":formId:moduleItems">
+    </hftl:entityPopup>
+    <hftl:entityPopup id="searchCharts" header="#{messages['chart.popup.header']}" backingBean="#{chartListBean}" searchField1Label="#{messages['businessEntity.code']}"
+        searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
+        selection="#{backingBean.chart}" updateField=":formId:moduleItems">
+    </hftl:entityPopup>
+</ui:composition>
+
+</html>

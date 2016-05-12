@@ -16,6 +16,11 @@
                 </p:breadCrumb>
             </h:form>
         </p:panel>
+
+        <ui:include src="moduleTreeSearches.xhtml">
+            <ui:param name="backingBean" value="#{meveoModuleBean}" />
+        </ui:include>
+
         <hftl:formPanel ajaxSubmit="true" buttons="true" label="#{messages['meveoModule.title']}" showEnableDisableButton="true"
             backingBean="#{meveoModuleBean}">
             <hftl:formField label="#{messages['businessEntity.code']}" field="code" maxlength="35" required="true" validateUnique="true" />

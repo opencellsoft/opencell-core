@@ -35,7 +35,7 @@ public class PageAccessListener implements PhaseListener {
 		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
 		NavigationHandler navigationHandler = null;
 		String requestURI = request.getRequestURI();
-		logger.debug("Checking access to page: %s", requestURI);
+		logger.trace("Checking access to page: {}", requestURI);
 
 		if (!isLogoutAction(request)) {
 			boolean pageExists = PagePermission.getInstance().isPageExisting(request);
@@ -49,14 +49,14 @@ public class PageAccessListener implements PhaseListener {
 				Identity identity = context.getApplication().evaluateExpressionGet(context, IDENTITY, Identity.class);
 				allowed = PagePermission.getInstance().hasAccessToPage(request, identity);
 			} catch (BusinessException e) {
-				logger.error("Failed to check access to page: %s", requestURI, e);
+				logger.error("Failed to check access to page: {}", requestURI, e);
 				allowed = false;
 			}
 			if (!allowed) {
 				navigationHandler = context.getApplication().getNavigationHandler();
 				navigationHandler.handleNavigation(context, null, FORBIDDEN);
 			}
-			logger.debug("Allow access to page: %s is %s", requestURI, allowed);
+			logger.trace("Allow access to page: {} is {}", requestURI, allowed);
 		}
 	}
 

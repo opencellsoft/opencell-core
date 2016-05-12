@@ -168,13 +168,6 @@
 
         <script type="text/javascript">
 			//<![CDATA[
-				function handleDeleteComplete(xhr, status, args) {
-					var result = args.result;
-					if(typeof(result)!="undefined" && !result){
-						PF('#{cc.attrs.formId}confirmCanotDeleteWidget').show();
-					}
-				}
-
 				function handleUpdateWithMessageComplete(xhr, status, args) {
 					var result = args.result;
 					if(typeof(result)!="undefined" && !result){
@@ -183,20 +176,11 @@
 				}
 			//]]>
 		</script>	
-		<p:remoteCommand id="remoteDeleteButton" action="#{cc.attrs.backingBean.deleteWithBack}" name="#{cc.attrs.formId}doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" />
-		<p:commandButton id="deletelink" icon="ui-icon-trash" value="#{messages['commons.delete']}"
-			oncomplete="#{cc.attrs.formId}doDelete()" rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null and cc.attrs.backingBean.canUserUpdateEntity()}">
-            <f:setPropertyActionListener target="#{cc.attrs.backingBean.entity}" value="#{entity}" />
+		<p:commandButton id="deletelink" icon="ui-icon-trash" value="#{messages['commons.delete']}" action="#{cc.attrs.backingBean.deleteWithBack}" immediate="true" update="@form"
+			rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null and cc.attrs.backingBean.canUserUpdateEntity()}">
             <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
 		</p:commandButton>
-		<p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog"
-			message="#{messages['commons.confirmCanotDelete']}" header="#{messages['commons.confirmCanotDeleteHeader']}"
-			severity="alert" widgetVar="#{cc.attrs.formId}confirmCanotDeleteWidget" appendTo="@(body)">
-			<p:panel styleClass="confirm-dialog-content">
-				<p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}"
-					oncomplete="PF('#{cc.attrs.formId}confirmCanotDeleteWidget').hide()" update="@this" />
-			</p:panel>
-		</p:confirmDialog>
+
 		<p:confirmDialog id="confirmCannotUpdateWithMessageDialog" styleClass="confirm-dialog"
 			message="#{messages['message.confirm.cannotUpdate']}" header=""
 			severity="alert" widgetVar="#{cc.attrs.formId}confirmCannotUpdateWithMessageDialog" appendTo="@(body)">
