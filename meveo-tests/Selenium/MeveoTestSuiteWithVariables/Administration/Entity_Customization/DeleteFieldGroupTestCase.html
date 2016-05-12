@@ -4,21 +4,31 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>DeleteFileTestCase</title>
+<title>DeleteContactTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">DeleteFileTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">DeleteContactTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>clickAndWait</td>
-	<td>xpath=/html/body/div[1]/div[2]/div[2]/form[1]/div[2]/div/button[2]/span[2]</td>
+	<td>assertElementPresent</td>
+	<td>${DeleteFieldGroupBtn}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[38]/div[3]/button[1]/span[2]</td>
+	<td>${DeleteFieldGroupBtn}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${deleteYes}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${deleteYes}</td>
 	<td></td>
 </tr>
 </tbody></table>
