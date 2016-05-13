@@ -64,9 +64,11 @@
 				</f:facet>
 
 				<p:tooltip for="updateEdr" value="#{messages['action.update']}"
+					rendered="#{edrBean.canUserUpdateEntity()}"
 					showEffect="slide" hideEffect="slide" />
 				<p:commandButton id="updateEdr" icon="ui-icon-play"
 					actionListener="#{edrBean.updateStatus(entity)}"
+					rendered="#{edrBean.canUserUpdateEntity()}"
 					update=":results_form">
 					<p:confirm header="#{messages['commons.confirmationHeader']}"
 						message="#{messages['message.confirm.edr.update']}"
@@ -76,7 +78,8 @@
 
 		</hftl:dataList>
 
-		<p:panel styleClass="action-buttons">
+		<p:panel styleClass="action-buttons"
+			rendered="#{edrBean.canUserUpdateEntity()}">
 			<p:tooltip for="massUpdateEdr" value="#{messages['action.update']}"
 				showEffect="slide" hideEffect="slide" />
 			<p:commandButton id="massUpdateEdr"

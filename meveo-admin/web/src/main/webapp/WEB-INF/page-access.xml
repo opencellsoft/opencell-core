@@ -1,71 +1,135 @@
-<page-access>
+<!-- 
+	This page-access configuration file defines different constraints/rules for accessing pages.
+	
+	The page-access element is the root element and contains multiple page elements.  It also has a path attribute:
+		
+		path - the root path/directory that contains the pages that will be protected by the page rules/constraints.
+		
+	The page element defines a view-id that determines what page/pages are affected by the constraints.
+		
+		view-id - this attribute is a regular expression (regex) that determines what page/pages will be checked
+				using the constraints or page access rules defined by the page element.
+	
+	NOTE: The page view-ids are evaluated in the order they are listed.  Therefore, more general rules should be 
+		  defined at the bottom while more specific ones should be defined at the top.
+		  
+	The constraint element contains the EL expression that is evaluated to check permissions.  It has 2 optional
+	attributes:
+		
+		type - is a value that determines if the constraint/rule is used when checking for READ(viewing), WRITE(modifying), 
+				or READ_WRITE access.  The default value is READ_WRITE, which means the same rule is evaluated when trying 
+				to view the page(READ) or checking for the ability to do modifications(WRITE) on the page.
+		prepend- this is used if more than one rule/constraint is going to be used. There are two valid values: AND, OR.
+				The default value is OR.
+				
+	Below is an example of how a page is defined:
+	
+	<page view-id=".+\/admin\/(?!.*Detail).*">
+		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
+	</page>
+	
+	In this example, the view-id will match all pages under the /admin/ directory whose path does not contain the word "Detail"
+	The constraints defined will be evaluated as:
+		For WRITE permissions it will use the EL: #{currentUser.hasPermission('administration','administrationManagement')}
+		For READ  permissions it will use the EL: #{currentUser.hasPermission('administration','administrationManagement') or currentUser.hasPermission('administration','administrationVisualization')}
+	This is because the first constraint has the following default type attribute: type="READ_WRITE" 
+	At the same time, the second constraint has a default prepend attribute of: prepend="OR"
+	
+ -->
 
-	<page view-id="/admin/*">
-		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
-	</page>
+<page-access path="/pages">
 
-	<page view-id="/admin/providers/provider*">
-		<constraint>#{currentUser.hasPermission('superAdmin','superAdminManagement')}</constraint>
+	<!-- PAGE RULES FOR ADMIN PAGES -->
+	<page view-id=".+\/admin\/properties\/properties" >
+		<constraint>currentUser.hasPermission('superAdmin','superAdminManagement')</constraint>
 	</page>
 	
-	<page view-id="/admin/providers/providerSelfDetail">
-		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
+	<page view-id=".+\/admin\/providers\/providerSelfDetail">
+		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
 	</page>
 	
-	<page view-id="/admin/properties/properties" >
-		<constraint>#{currentUser.hasPermission('superAdmin','superAdminManagement')}</constraint>
+	<page view-id=".+\/admin\/providers\/provider.*">
+		<constraint>currentUser.hasPermission('superAdmin','superAdminManagement')</constraint>
 	</page>
 	
-	<page view-id="/billing/*">
-		<constraint>#{currentUser.hasPermission('account','accountManagement') or (!edit and currentUser.hasPermission('account','accountVisualization'))}</constraint>
+	<page view-id=".+\/admin\/.+">
+		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
 	</page>
 	
-	<page view-id="/billing/wallets/wallet*">
+	<!-- PAGE RULES FOR BILLING PAGES -->
+	<page view-id=".+\/billing\/wallets\/wallet.*">
 		<constraint>#{currentUser.hasPermission('billing','billingManagement')}</constraint>
 	</page>
 	
-	<page view-id="/catalog/*">
-		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('catalog','catalogVisualization'))}</constraint>
+	<page view-id=".+\/billing\/.+">
+		<constraint>currentUser.hasPermission('account','accountManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('account','accountVisualization')</constraint>
 	</page>
 	
-	<page view-id="/crm/*" >
-		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
+	<!-- PAGE RULES FOR CATALOG PAGES -->
+	<page view-id=".+\/catalog\/.+">
+		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
 	</page>
 	
-	<page view-id="/crm/syntheseClients/syntheseClientDetail" >
-		<constraint>#{currentUser.hasPermission('customerSummary','customerSummaryVisualization') or currentUser.hasPermission('account','accountManagement') or (!edit and currentUser.hasPermission('account','accountVisualization'))}</constraint>
+	<!-- PAGE RULES FOR CRM PAGES -->
+	<page view-id=".+\/crm\/syntheseClients\/syntheseClientDetail" >
+		<constraint>currentUser.hasPermission('account','accountManagement')</constraint> 
+		<constraint type="READ">currentUser.hasPermission('customerSummary','customerSummaryVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('account','accountVisualization')</constraint>
 	</page>
 	
-	<page view-id="/medina/*" >
-		<constraint>#{currentUser.hasPermission('catalog','catalogManagement') or (!edit and currentUser.hasPermission('billing','billingManagement'))}</constraint>
+	<page view-id=".+\/crm\/.+" >
+		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
 	</page>
 	
-	<page view-id="/notification/*">
-		<constraint>#{currentUser.hasPermission('administration','administrationManagement') or (!edit and currentUser.hasPermission('administration','administrationVisualization'))}</constraint>
+	<!-- PAGE RULES FOR MEDINA PAGES -->
+	<page view-id=".+\/medina\/.+" >
+		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
 	</page>
 	
-	<page view-id="/payments/customerAccounts/customerAccount*">
-		<constraint>#{currentUser.hasPermission('account','accountManagement') or (!edit and currentUser.hasPermission('account','accountVisualization'))}</constraint>
+	<!-- PAGE RULES FOR NOTIFICATION PAGES -->
+	<page view-id=".+\/notification\/.+">
+		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
 	</page>
 	
-	<page view-id="/payments/*">
-		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
+	<!-- PAGE RULES FOR PAYMENT PAGES -->
+	<page view-id=".+\/payments\/customerAccounts\/customerAccount.*">
+		<constraint>currentUser.hasPermission('account','accountManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('account','accountVisualization')</constraint>
 	</page>
 	
-	<page view-id="/payments/occTemplates/occTemplate*">
-		<constraint>#{currentUser.hasPermission('billing','billingManagement')}</constraint>
+	<page view-id=".+\/payments\/occTemplates\/occTemplate.*">
+		<constraint>currentUser.hasPermission('billing','billingManagement')</constraint>
+	</page>
+		
+	<page view-id=".+\/payments\/.+">
+		<constraint>currentUser.hasPermission('billing','billingManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('billing','billingVisualization')</constraint>
 	</page>
 	
-	<page view-id="/rating/*">
-		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
+	<!-- PAGE RULES FOR RATING PAGES -->
+	<page view-id=".+\/rating\/.+">
+		<constraint>currentUser.hasPermission('billing','billingManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('billing','billingVisualization')</constraint>
 	</page>
-	
-	<page view-id="/reporting/*">
-		<constraint>#{currentUser.hasPermission('reporting','reportingManagement') or (!edit and currentUser.hasPermission('reporting','reportingVisualization'))}</constraint>
+
+	<!-- PAGE RULES FOR REPORTING PAGES -->
+	<page view-id=".+\/reporting\/.+">
+		<constraint>currentUser.hasPermission('reporting','reportingManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('reporting','reportingVisualization')</constraint>
 	</page>
-	
-	<page view-id="/resource/*">
-		<constraint>#{currentUser.hasPermission('billing','billingManagement') or (!edit and currentUser.hasPermission('billing','billingVisualization'))}</constraint>
+
+	<!-- PAGE RULES FOR RESOURCE PAGES -->
+	<page view-id=".+\/resource\/.+">
+		<constraint>currentUser.hasPermission('billing','billingManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('billing','billingVisualization')</constraint>
 	</page>
 	
 </page-access>

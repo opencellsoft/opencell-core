@@ -83,7 +83,7 @@
         </p:commandButton>
             
         <p:commandButton value="#{messages['commons.enable']}"
-            rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.disabled}"
+            rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.disabled and cc.attrs.backingBean.canUserUpdateEntity()}"
             action="#{cc.attrs.backingBean.enable}" update="@form">
             <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
         </p:commandButton>
@@ -111,7 +111,7 @@
         </p:commandButton>
         
         <p:commandButton id="ExecuteButtonAjax"
-            rendered="#{ cc.attrs.execute  and cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit and !empty(cc.attrs.backingBean.objectId)}"
+            rendered="#{ cc.attrs.execute  and cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit and !empty(cc.attrs.backingBean.objectId) and cc.attrs.backingBean.canUserUpdateEntity()}"
             value="#{cc.attrs.executeLabel}" oncomplete="$('html,body').scrollTop(0);"
             action="#{cc.attrs.backingBean.execute()}"
             process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="#{cc.attrs.submitUpdate}">
@@ -130,7 +130,7 @@
             update="#{cc.attrs.submitUpdate}" name="#{cc.attrs.formId}updateWithMessagePartialSubmit" oncomplete="handleUpdateWithMessageComplete(xhr,status,args)" />            
             
 		<p:commandButton id="saveButtonWithMessage"
-			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId) and !empty(cc.attrs.updateConfirmationMessage)}"
+			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId) and !empty(cc.attrs.updateConfirmationMessage) and cc.attrs.backingBean.canUserUpdateEntity()}"
 			value="#{messages['action.save']}" icon="ui-icon-check"
 			oncomplete="#{cc.attrs.formId}#{cc.attrs.submitPartialProcess==null?'updateWithMessage()':'updateWithMessagePartialSubmit()'}" >
 			<c:if test="#{cc.attrs.submitActionListener}">

@@ -46,7 +46,8 @@
 				field="active" isMessage="true" />
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('catalog','catalogManagement')}"
-				renderEnableLink="true" renderDuplicateLink="true" />
+				renderEnableLink="#{offerTemplateListBean.canUserUpdateEntity()}" 
+				renderDuplicateLink="true" />
 		</hftl:dataList>
 
 	</ui:define>

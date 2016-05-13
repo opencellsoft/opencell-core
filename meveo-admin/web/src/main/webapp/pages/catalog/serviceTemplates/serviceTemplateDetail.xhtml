@@ -184,7 +184,7 @@
                                     <ui:param name="buttons" value="true"/>
                                     <ui:define name="buttons">
 										<p:commandButton
-											rendered="#{serviceRecurringChargeTemplate.id==null}"
+											rendered="#{serviceRecurringChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateRecurring}"
 											value="#{messages['action.addSave']}"
 											update=":tabView:serviceRecurringChargeTempalte_panel, :tabView:serviceRecurringChargediv" />
@@ -276,7 +276,7 @@
 									<ui:param name="buttons" value="true"/>
                                     <ui:define name="buttons">
 										<p:commandButton
-											rendered="#{serviceSubscriptionChargeTemplate.id==null}"
+											rendered="#{serviceSubscriptionChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateSubscription}"
 											value="#{messages['action.addSave']}"
 											update=":tabView:serviceSubscriptionChargeTempalte_panel,:tabView:formSubscriptionCharge ,:tabView:serviceSubscriptionChargediv" />
@@ -367,7 +367,7 @@
 									<ui:param name="buttons" value="true"/>
                                     <ui:define name="buttons">
 										<p:commandButton
-											rendered="#{serviceTerminationChargeTemplate.id==null}"
+											rendered="#{serviceTerminationChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateTermination}"
 											value="#{messages['action.addSave']}"
 											update=":tabView:serviceTerminationChargeTempalte_panel,:tabView:formTerminationCharge ,:tabView:serviceTerminationChargediv" />
@@ -462,7 +462,7 @@
 									<ui:param name="buttons" value="true"/>
                                     <ui:define name="buttons">
 										<p:commandButton
-											rendered="#{serviceUsageChargeTemplate.id==null}"
+											rendered="#{serviceUsageChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateUsage}"
 											value="#{messages['action.addSave']}"
 											update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formUsageCharge ,:tabView:serviceUsageChargediv" />

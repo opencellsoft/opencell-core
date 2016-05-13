@@ -1,12 +1,6 @@
 package org.meveo.admin.web.listener;
 
-import java.util.Map;
-
-import javax.el.MethodExpression;
 import javax.faces.application.NavigationHandler;
-import javax.faces.component.UICommand;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
@@ -24,7 +18,6 @@ public class PageAccessListener implements PhaseListener {
     private static final long serialVersionUID = 6092965175755558330L;
     private static final String FORBIDDEN = "forbidden";
     private static final String NOT_FOUND = "notFound";
-    private static final String LOGOUT_ACTION = "#{identity.logout}";
     private static final String IDENTITY = "#{identity}";
 
     private static final Logger logger = LoggerFactory.getLogger(PageAccessListener.class);
@@ -37,7 +30,7 @@ public class PageAccessListener implements PhaseListener {
         String requestURI = request.getRequestURI();
         logger.trace("Checking access to page: {}", requestURI);
 
-        if (!isLogoutAction(request)) {
+//        if (!isLogoutAction(request)) {
             boolean pageExists = PagePermission.getInstance().isPageExisting(request);
             if (!pageExists) {
                 navigationHandler = context.getApplication().getNavigationHandler();
@@ -53,11 +46,11 @@ public class PageAccessListener implements PhaseListener {
                 allowed = false;
             }
             if (!allowed) {
-                logger.trace("Denied access to page: {}", requestURI);
+                logger.warn("Denied access to page: {}", requestURI);
                 navigationHandler = context.getApplication().getNavigationHandler();
                 navigationHandler.handleNavigation(context, null, FORBIDDEN);
             }
-        }
+//        }
     }
 
     @Override
@@ -68,32 +61,6 @@ public class PageAccessListener implements PhaseListener {
     @Override
     public PhaseId getPhaseId() {
         return PhaseId.RESTORE_VIEW;
-    }
-
-    private boolean isLogoutAction(HttpServletRequest request) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        UIViewRoot view = context.getViewRoot();
-        boolean logout = false;
-        if (view != null) {
-            Map<String, String> params = context.getExternalContext().getRequestParameterMap();
-            UICommand command = null;
-
-            UIComponent component = null;
-            for (String clientId : params.keySet()) {
-                component = view.findComponent(clientId);
-                if (component instanceof UICommand) {
-                    command = (UICommand) component;
-                }
-            }
-            if (command != null) {
-                MethodExpression actionExpression = command.getActionExpression();
-                if (actionExpression != null) {
-                    String action = actionExpression.getExpressionString();
-                    logout = LOGOUT_ACTION.equals(action);
-                }
-            }
-        }
-        return logout;
     }
 
 }

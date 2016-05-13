@@ -43,7 +43,9 @@
 
 		<hftl:formPanel formId="reccuringChargeId" ajaxSubmit="true" submitPartialProcess=":reccuringChargeId:tabView"
 			label="#{messages['recurringChargeTemplate.chargeTemplatePanel']}"
-			backingBean="#{recurringChargeTemplateBean}" showEnableDisableButton="true" updateConfirmationMessage="#{recurringChargeTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
+			backingBean="#{recurringChargeTemplateBean}" 
+			showEnableDisableButton="true" 
+			updateConfirmationMessage="#{recurringChargeTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
 
 			<p:tabView id="tabView" activeIndex="#{recurringChargeTemplateBean.activeTab}">
 

@@ -81,6 +81,7 @@
                 <f:facet name="footer">
                     <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this"
                         update=":#{clientGuiId}:#{fieldPrefix}dlg_childEntityForm #{messagesId}"
+                        rendered="#{customFieldDataEntryBean.canUserUpdateEntity()}"
                         actionListener="#{customFieldDataEntryBean.newChildEntity(cfValueHolder, field, cft)}" oncomplete="PF('#{fieldPrefix}childEntityDialogWidget').show()">
                         <p:resetInput target=":#{clientGuiId}:#{fieldPrefix}dlg_childEntityForm" />
                     </p:commandButton>
