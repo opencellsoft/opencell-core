@@ -164,16 +164,18 @@ public class BusinessOfferModelApi extends BaseApi {
 			entity.getModuleItems().clear();
 		}
 
-		for (BaseDto dto : postData.getModuleItems()) {
-			if (dto instanceof BusinessServiceModelDto) {
-				String bsmCode = ((BusinessServiceModelDto) dto).getCode();
-				BusinessServiceModel bsm = businessServiceModelService.findByCode(bsmCode, currentUser.getProvider());
-				if (bsm == null) {
-					throw new EntityDoesNotExistsException(BusinessServiceModel.class, bsmCode);
-				}
-				MeveoModuleItem meveoModuleItem = new MeveoModuleItem(bsm);
-				if (!entity.getModuleItems().contains(meveoModuleItem)) {
-					entity.addModuleItem(meveoModuleItem);
+		if (postData.getModuleItems() != null) {
+			for (BaseDto dto : postData.getModuleItems()) {
+				if (dto instanceof BusinessServiceModelDto) {
+					String bsmCode = ((BusinessServiceModelDto) dto).getCode();
+					BusinessServiceModel bsm = businessServiceModelService.findByCode(bsmCode, currentUser.getProvider());
+					if (bsm == null) {
+						throw new EntityDoesNotExistsException(BusinessServiceModel.class, bsmCode);
+					}
+					MeveoModuleItem meveoModuleItem = new MeveoModuleItem(bsm);
+					if (!entity.getModuleItems().contains(meveoModuleItem)) {
+						entity.addModuleItem(meveoModuleItem);
+					}
 				}
 			}
 		}
