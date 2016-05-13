@@ -3,12 +3,8 @@ package org.meveo.service.catalog.impl;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessServiceModel;
-import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.scripts.ServiceModelScript;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -16,30 +12,6 @@ import org.meveo.service.base.BusinessService;
  **/
 @Stateless
 public class BusinessServiceModelService extends BusinessService<BusinessServiceModel> {
-
-	public void create(String code, String description, boolean isDuplicatePricePlan, boolean isDuplicateService, ServiceModelScript serviceModelScript,
-			ServiceTemplate serviceTemplate, User currentUser) throws BusinessException {
-		BusinessServiceModel bsm = new BusinessServiceModel();
-		bsm.setCode(code);
-		bsm.setDescription(description);
-		bsm.setDuplicatePricePlan(isDuplicatePricePlan);
-		bsm.setDuplicateService(isDuplicateService);
-		bsm.setScript(serviceModelScript);
-		bsm.setServiceTemplate(serviceTemplate);
-
-		create(bsm, currentUser);
-	}
-
-	public void update(BusinessServiceModel bsm, String description, boolean isDuplicatePricePlan, boolean isDuplicateService, ServiceModelScript serviceModelScript,
-			ServiceTemplate serviceTemplate, User currentUser) throws BusinessException {
-		bsm.setDescription(description);
-		bsm.setDuplicatePricePlan(isDuplicatePricePlan);
-		bsm.setDuplicateService(isDuplicateService);
-		bsm.setScript(serviceModelScript);
-		bsm.setServiceTemplate(serviceTemplate);
-
-		update(bsm, currentUser);
-	}
 
 	public BusinessServiceModel findByBSMAndServiceTemplate(String bsm, String st) {
 		QueryBuilder qb = new QueryBuilder(BusinessServiceModel.class, "b");

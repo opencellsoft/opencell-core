@@ -48,22 +48,10 @@ public class BusinessServiceModelApi extends BaseApi {
 			throw new EntityAlreadyExistsException(BusinessServiceModel.class, postData.getCode());
 		}
 
-		ServiceModelScript serviceModelScript = null;
-		if (!StringUtils.isBlank(postData.getScriptCode())) {
-			serviceModelScript = serviceModelScriptService.findByCode(postData.getScriptCode(), currentUser.getProvider());
-			if (serviceModelScript == null) {
-				throw new EntityDoesNotExistsException(ServiceModelScript.class, postData.getScriptCode());
-			}
-		}
-
-		ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(postData.getServiceTemplateCode(), currentUser.getProvider());
-		if (serviceTemplate == null) {
-			throw new EntityDoesNotExistsException(ServiceTemplate.class, postData.getServiceTemplateCode());
-		}
+		BusinessServiceModel bsm = fromDto(postData, currentUser, null);
 
 		try {
-			businessServiceModelService.create(postData.getCode(), postData.getDescription(), postData.isDuplicatePricePlan(), postData.isDuplicateService(), serviceModelScript,
-					serviceTemplate, currentUser);
+			businessServiceModelService.create(bsm, currentUser);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
 		}
@@ -84,22 +72,10 @@ public class BusinessServiceModelApi extends BaseApi {
 			throw new EntityDoesNotExistsException(BusinessServiceModel.class, postData.getCode());
 		}
 
-		ServiceModelScript serviceModelScript = null;
-		if (!StringUtils.isBlank(postData.getScriptCode())) {
-			serviceModelScript = serviceModelScriptService.findByCode(postData.getScriptCode(), currentUser.getProvider());
-			if (serviceModelScript == null) {
-				throw new EntityDoesNotExistsException(ServiceModelScript.class, postData.getScriptCode());
-			}
-		}
-
-		ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(postData.getServiceTemplateCode(), currentUser.getProvider());
-		if (serviceTemplate == null) {
-			throw new EntityDoesNotExistsException(ServiceTemplate.class, postData.getServiceTemplateCode());
-		}
+		bsm = fromDto(postData, currentUser, bsm);
 
 		try {
-			businessServiceModelService.update(bsm, postData.getDescription(), postData.isDuplicatePricePlan(), postData.isDuplicateService(), serviceModelScript, serviceTemplate,
-					currentUser);
+			businessServiceModelService.update(bsm, currentUser);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
 		}
@@ -154,4 +130,35 @@ public class BusinessServiceModelApi extends BaseApi {
 			update(postData, currentUser);
 		}
 	}
+
+	public BusinessServiceModel fromDto(BusinessServiceModelDto postData, User currentUser, BusinessServiceModel entityToUpdate) throws MeveoApiException {
+		BusinessServiceModel entity = new BusinessServiceModel();
+		if (entityToUpdate != null) {
+			entity = entityToUpdate;
+		} else {
+			entity.setCode(postData.getCode());
+		}
+
+		ServiceModelScript serviceModelScript = null;
+		if (!StringUtils.isBlank(postData.getScriptCode())) {
+			serviceModelScript = serviceModelScriptService.findByCode(postData.getScriptCode(), currentUser.getProvider());
+			if (serviceModelScript == null) {
+				throw new EntityDoesNotExistsException(ServiceModelScript.class, postData.getScriptCode());
+			}
+		}
+
+		ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(postData.getServiceTemplateCode(), currentUser.getProvider());
+		if (serviceTemplate == null) {
+			throw new EntityDoesNotExistsException(ServiceTemplate.class, postData.getServiceTemplateCode());
+		}
+
+		entity.setDescription(postData.getDescription());
+		entity.setDuplicatePricePlan(postData.isDuplicatePricePlan());
+		entity.setDuplicateService(postData.isDuplicateService());
+		entity.setScript(serviceModelScript);
+		entity.setServiceTemplate(serviceTemplate);
+
+		return entity;
+	}
+
 }

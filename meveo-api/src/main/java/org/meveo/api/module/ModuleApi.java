@@ -14,12 +14,16 @@ import org.meveo.api.CustomEntityApi;
 import org.meveo.api.CustomFieldTemplateApi;
 import org.meveo.api.FilterApi;
 import org.meveo.api.ScriptInstanceApi;
+import org.meveo.api.catalog.BusinessOfferModelApi;
+import org.meveo.api.catalog.BusinessServiceModelApi;
 import org.meveo.api.catalog.CounterTemplateApi;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.ScriptInstanceDto;
+import org.meveo.api.dto.catalog.BusinessOfferModelDto;
+import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.dwh.BarChartDto;
 import org.meveo.api.dto.dwh.ChartDto;
@@ -45,6 +49,8 @@ import org.meveo.api.notification.NotificationApi;
 import org.meveo.api.notification.WebhookNotificationApi;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
@@ -113,6 +119,12 @@ public class ModuleApi extends BaseApi {
     
     @Inject
     private ChartApi chartApi;
+    
+    @Inject
+    private BusinessOfferModelApi businessOfferModelApi;
+    
+    @Inject
+    private BusinessServiceModelApi businessServiceModelApi;
 
     public void create(ModuleDto moduleDto, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -284,6 +296,15 @@ public class ModuleApi extends BaseApi {
             }  else if (dto instanceof CounterTemplateDto) {
                 counterTemplateApi.createOrUpdate((CounterTemplateDto) dto, currentUser);
                 meveoModule.addModuleItem(new MeveoModuleItem(((CounterTemplateDto) dto).getCode(), CounterTemplate.class.getName(), null));
+                
+            }  else if (dto instanceof BusinessServiceModelDto) {
+                businessServiceModelApi.createOrUpdate((BusinessServiceModelDto) dto, currentUser);
+                meveoModule.addModuleItem(new MeveoModuleItem(((BusinessServiceModelDto) dto).getCode(), BusinessServiceModel.class.getName(), null));
+                
+            }  else if (dto instanceof BusinessOfferModelDto) {
+                businessOfferModelApi.createOrUpdate((BusinessOfferModelDto) dto, currentUser);
+                meveoModule.addModuleItem(new MeveoModuleItem(((BusinessOfferModelDto) dto).getCode(), BusinessOfferModel.class.getName(), null));
+                
             }
         }
         return meveoModule;
