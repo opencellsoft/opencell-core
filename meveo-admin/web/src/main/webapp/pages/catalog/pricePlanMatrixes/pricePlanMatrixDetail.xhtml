@@ -102,7 +102,7 @@
 					activeIndex="#{pricePlanMatrixBean.activeTab}">
 					<p:tab title="#{messages['commons.tab.information']}">
 						<hftl:formField label="#{messages['BusinessEntity.code']}"
-							field="code" required="true" id="pricePlanCode" maxlength="60"/>
+							field="code" required="true" id="pricePlanCode" />
 <!-- 						<hftl:formField id="chargeSelectId" required="true" -->
 <!-- 							label="#{messages['pricePlanMatrix.eventCode']}" -->
 <!-- 							field="eventCode" popup="true" popupId="pricPlanMatChargePopup" -->
@@ -110,7 +110,7 @@
 							
 						<hftl:formField id="chargeSelectId"
     							label="#{messages['pricePlanMatrix.eventCode']}"
-    							field="eventCode" valueLabelField="code" required="true" maxlength="100"
+    							field="eventCode" valueLabelField="code" required="true"
     							popup="true" popupId="pricPlanMatChargePopup" /> 
 
 						<hftl:formLanguageFields entity="#{pricePlanMatrixBean.entity}"
@@ -163,13 +163,13 @@
 							field="endRatingDate" />
 						<hftl:formField
 							label="#{messages['pricePlanMatrix.criteria1Value']}"
-							field="criteria1Value" maxlength="255" />
+							field="criteria1Value" />
 						<hftl:formField
 							label="#{messages['pricePlanMatrix.criteria2Value']}"
-							field="criteria2Value" maxlength="255" />
+							field="criteria2Value" />
 						<hftl:formField
 							label="#{messages['pricePlanMatrix.criteria3Value']}"
-							field="criteria3Value" maxlength="255" />
+							field="criteria3Value" />
 						<hftl:formField label="#{messages['pricePlanMatrix.criteriaEL']}"
 							field="criteriaEL" textArea="true" rows="1" maxlength="2000" />
 

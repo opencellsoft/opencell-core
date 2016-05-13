@@ -112,11 +112,11 @@
             <hftl:formField label="#{messages['ratedTransaction.unitAmountTax']}" field="unitAmountTax" converter="bigDecimal4DigitsConverter" disabled="#{ratedTransactionBean.isBilled()}"/>
             <hftl:formField label="#{messages['ratedTransaction.quantity']}" field="quantity" disabled="#{ratedTransactionBean.isBilled()}"/>
             <hftl:formField label="#{messages['ratedTransaction.status']}" field="status" disabled="#{ratedTransactionBean.isBilled()}"/>
-            <hftl:formField label="#{messages['ratedTransaction.param1']}" field="parameter1" disabled="#{ratedTransactionBean.isBilled()}" maxlength="255" />
-            <hftl:formField label="#{messages['ratedTransaction.param2']}" field="parameter2" disabled="#{ratedTransactionBean.isBilled()}" maxlength="255" />
-            <hftl:formField label="#{messages['ratedTransaction.param3']}" field="parameter3" disabled="#{ratedTransactionBean.isBilled()}" maxlength="255" />
+            <hftl:formField label="#{messages['ratedTransaction.param1']}" field="parameter1" disabled="#{ratedTransactionBean.isBilled()}"/>
+            <hftl:formField label="#{messages['ratedTransaction.param2']}" field="parameter2" disabled="#{ratedTransactionBean.isBilled()}"/>
+            <hftl:formField label="#{messages['ratedTransaction.param3']}" field="parameter3" disabled="#{ratedTransactionBean.isBilled()}"/>
             <hftl:formField label="#{messages['ratedTransaction.usageDate']}" field="usageDate" disabled="#{ratedTransactionBean.isBilled()}"/>
-            <hftl:formField label="#{messages['ratedTransaction.unityDescription']}" field="unityDescription" disabled="#{ratedTransactionBean.isBilled()}" maxlength="20"/>
+            <hftl:formField label="#{messages['ratedTransaction.unityDescription']}" field="unityDescription" disabled="#{ratedTransactionBean.isBilled()}"/>
             <hftl:formField label="#{messages['ratedTransaction.doNotTriggerInvoicing']}" field="doNotTriggerInvoicing" disabled="#{ratedTransactionBean.isBilled()}"/>           
         </hftl:formPanel>
 		<p:outputPanel layout="block">

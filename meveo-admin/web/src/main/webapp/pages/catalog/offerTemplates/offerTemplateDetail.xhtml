@@ -45,9 +45,9 @@
 						backingBean="#{offerTemplateBean}" showEnableDisableButton="true"
 						updateConfirmationMessage="#{offerTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
 						<hftl:formField label="#{messages['offerTemplate.code']}"
-							field="code" required="true" validateUnique="true" maxlength="60" />
+							field="code" required="true" validateUnique="true" />
 						<hftl:formField label="#{messages['offerTemplate.description']}"
-							field="description" useConverter="false" id="description" maxlength="100" />
+							field="description" useConverter="false" id="description"/>
 						<hftl:formField id="offerTemplateCategoryId"
 							label="#{messages['offerTemplate.category']}"
 							field="offerTemplateCategory" valueLabelField="code"

@@ -54,10 +54,10 @@
 				field="role" valueLabelField="name" required="false" popup="true"
 				popupId="searchRole" />
 
-			<hftl:formField label="#{messages['chart.style']}" field="style" maxlength="1000"/>
+			<hftl:formField label="#{messages['chart.style']}" field="style" />
 			<hftl:formField label="#{messages['chart.styleClass']}"
-				field="styleClass" maxlength="255"/>
-			<hftl:formField label="#{messages['chart.extender']}" field="extender" maxlength="255"/>
+				field="styleClass" />
+			<hftl:formField label="#{messages['chart.extender']}" field="extender" />
 
 			<h:panelGroup 
 				rendered="#{not chartBean.entity.isTransient()}"

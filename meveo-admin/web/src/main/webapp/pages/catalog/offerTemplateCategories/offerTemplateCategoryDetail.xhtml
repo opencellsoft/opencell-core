@@ -42,12 +42,12 @@
 				activeIndex="#{offerTemplateCategoryBean.activeTab}">
 				<p:tab title="#{messages['customer.tab.information']}">
 					<hftl:formField label="#{messages['BusinessEntity.code']}"
-						field="code" required="true" validateUnique="true" maxlength="60" />
+						field="code" required="true" validateUnique="true" />
 					<hftl:formField label="#{messages['commons.name']}" field="name"
-						required="true" maxlength="100" />
+						required="true" />
 					<hftl:formField label="#{messages['BusinessEntity.description']}"
 						field="description" useConverter="false"
-						id="description" maxlength="100" />
+						id="description" />
 
 					<hftl:decorateFormField fieldId="offerImageUpload"
 						rendered="#{offerTemplateCategoryBean.entity.transient}"
