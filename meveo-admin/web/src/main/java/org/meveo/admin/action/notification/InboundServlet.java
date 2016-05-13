@@ -31,6 +31,9 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.notification.InboundRequestService;
 import org.slf4j.Logger;
 
+/**
+ * To call this servlet the url must be in this format: /inboud/<provider.code>
+ */
 @WebServlet("/inbound/*")
 public class InboundServlet extends HttpServlet {
 

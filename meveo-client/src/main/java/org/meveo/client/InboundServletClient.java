@@ -5,8 +5,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.postgresql.util.Base64;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Edward P. Legaspi
@@ -24,18 +23,26 @@ public class InboundServletClient {
 			inboundServlet = new URL("http://192.168.0.120:8080/meveo/inbound/demo/");
 			HttpURLConnection servletConnection = (HttpURLConnection) inboundServlet.openConnection();
 
-//			String userCredentials = "meveo.admin:meveo.admin";
-//			String basicAuth = "Basic " + new String(Base64.encodeBytes(userCredentials.getBytes()));
-//			servletConnection.setRequestProperty("Authorization", basicAuth);
+			// String userCredentials = "meveo.admin:meveo.admin";
+			// String basicAuth = "Basic " + new
+			// String(Base64.encodeBytes(userCredentials.getBytes()));
+			// servletConnection.setRequestProperty("Authorization", basicAuth);
 
+			String urlParameters = "param1=a&param2=b&param3=c";
+			byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
+			int postDataLength = postData.length;
+
+			servletConnection.setDoOutput(true);
 			servletConnection.setRequestMethod("POST");
 			servletConnection.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 			servletConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			servletConnection.setRequestProperty("Content-Language", "en-US");
-			servletConnection.setDoOutput(true);
+			servletConnection.setRequestProperty("charset", "utf-8");
+			servletConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
+			servletConnection.setUseCaches(false);
 
 			DataOutputStream wr = new DataOutputStream(servletConnection.getOutputStream());
-			wr.writeUTF("Hello World!");
+			wr.write(postData);
 			wr.flush();
 			wr.close();
 
