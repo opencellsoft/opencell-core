@@ -10,9 +10,11 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.BusinessServiceModel;
+import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ServiceModelScript;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
+import org.meveo.service.script.GenericScriptService;
 import org.meveo.service.script.ServiceModelScriptService;
 import org.omnifaces.cdi.ViewScoped;
 
@@ -31,6 +33,9 @@ public class ServiceModelScriptBean extends BaseBean<ServiceModelScript> {
 	@Inject
 	private BusinessServiceModelService businessServiceModelService;
 
+    @Inject
+    private GenericScriptService genericScriptService;
+    
 	private Long somId;
 
 	public ServiceModelScriptBean() {
@@ -79,15 +84,10 @@ public class ServiceModelScriptBean extends BaseBean<ServiceModelScript> {
 
 		entity.setCode(serviceModelScriptService.getFullClassname(entity.getScript()));
 
-		ServiceModelScript actionDuplicate = serviceModelScriptService.findByCode(entity.getCode(), getCurrentProvider());
-		if (actionDuplicate != null && !actionDuplicate.getId().equals(entity.getId())) {
-			messages.error(new BundleKey("messages", "serviceModelScript.actionAlreadyExists"));
-			return null;
-		}
-
 		// check duplicate script
-		if (entity.isTransient() && serviceModelScriptService.isExistsCode(entity.getCode(), getCurrentProvider())) {
-			messages.error(new BundleKey("messages", "javax.persistence.ScriptExistsException"));
+		CustomScript scriptDuplicate =  genericScriptService.findByCode(entity.getCode(), getCurrentProvider());
+		if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
+            messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), entity.getCode());
 			return null;
 		}
 

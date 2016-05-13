@@ -11,9 +11,11 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.OfferModelScript;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
+import org.meveo.service.script.GenericScriptService;
 import org.meveo.service.script.OfferModelScriptService;
 import org.omnifaces.cdi.ViewScoped;
 
@@ -28,6 +30,9 @@ public class OfferModelScriptBean extends BaseBean<OfferModelScript> {
 
     @Inject
     private OfferModelScriptService offerModelScriptService;
+    
+    @Inject
+    private GenericScriptService genericScriptService;
 
     @Inject
     private BusinessOfferModelService businessOfferModelService;
@@ -81,15 +86,9 @@ public class OfferModelScriptBean extends BaseBean<OfferModelScript> {
 
         entity.setCode(offerModelScriptService.getFullClassname(entity.getScript()));
 
-        OfferModelScript actionDuplicate = offerModelScriptService.findByCode(entity.getCode(), getCurrentProvider());
-        if (actionDuplicate != null && !actionDuplicate.getId().equals(entity.getId())) {
-            messages.error(new BundleKey("messages", "offerModelScript.actionAlreadyExists"));
-            return null;
-        }
-
-        // check duplicate script
-        if (entity.isTransient() && offerModelScriptService.isExistsCode(entity.getCode(), getCurrentProvider())) {
-            messages.error(new BundleKey("messages", "javax.persistence.EntityExistsException"));
+        CustomScript scriptDuplicate =  genericScriptService.findByCode(entity.getCode(), getCurrentProvider());
+        if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
+            messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), entity.getCode());
             return null;
         }
 
