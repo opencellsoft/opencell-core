@@ -180,7 +180,8 @@ public class Authenticator extends BaseAuthenticator {
 		} else {
 			long daysToExpiration = userService.checkPasswordExpirationNotification(user);
 			if(daysToExpiration != -1 ){
-				messages.warn(new BundleKey("messages", "user.password.expiration.notif"),daysToExpiration);
+				String key = daysToExpiration==0?"user.password.expi.notif.today":"user.password.expiration.notif";
+				messages.warn(new BundleKey("messages", key),daysToExpiration);
 			}
 
             // homeMessage = "application.home.message";
