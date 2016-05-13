@@ -386,7 +386,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param src Java source code
      * @return Package name
      */
-    public String getPackageName(String src) {
+    public static String getPackageName(String src) {
         return StringUtils.patternMacher("package (.*?);", src);
     }
 
@@ -396,7 +396,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param src Java source code
      * @return Class name
      */
-    public String getClassName(String src) {
+    public static String getClassName(String src) {
         String className = StringUtils.patternMacher("public class (.*) extends", src);
         if (className == null) {
             className = StringUtils.patternMacher("public class (.*) implements", src);
@@ -410,7 +410,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param script Java source code
      * @return Full classname
      */
-    public String getFullClassname(String script) {
+    public static String getFullClassname(String script) {
         String packageName = getPackageName(script);
         String className = getClassName(script);
         return (packageName != null ? packageName + "." : "") + className;

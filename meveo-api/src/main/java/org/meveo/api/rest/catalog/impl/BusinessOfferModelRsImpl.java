@@ -13,8 +13,10 @@ import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
+import org.meveo.api.module.ModuleApi;
 import org.meveo.api.rest.catalog.BusinessOfferModelRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.catalog.BusinessOfferModel;
 
 /**
  * @author Edward P. Legaspi
@@ -25,6 +27,9 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
 
     @Inject
     private BusinessOfferModelApi bomApi;
+
+    @Inject
+    private ModuleApi moduleApi;
 
     @Override
     public ActionStatus create(BusinessOfferModelDto postData) {
@@ -71,7 +76,7 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
         GetBusinessOfferModelResponseDto result = new GetBusinessOfferModelResponseDto();
 
         try {
-            result.setBusinessOfferModel(bomApi.find(businessOfferModelCode, getCurrentUser().getProvider()));
+            result.setBusinessOfferModel((BusinessOfferModelDto) moduleApi.get(businessOfferModelCode, BusinessOfferModel.class, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

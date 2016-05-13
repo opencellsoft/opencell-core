@@ -17,6 +17,7 @@ import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.ScriptInstanceDto;
+import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.dwh.BarChartDto;
@@ -53,15 +54,16 @@ public class ModuleDto extends BaseDataModelDto {
     private byte[] logoPictureFile;
 
     @XmlElementWrapper(name = "moduleItems")
-	@XmlElements({ @XmlElement(name = "customEntityTemplate", type = CustomEntityTemplateDto.class),
-			@XmlElement(name = "customFieldTemplate", type = CustomFieldTemplateDto.class), @XmlElement(name = "filter", type = FilterDto.class),
-			@XmlElement(name = "jobInstance", type = JobInstanceDto.class), @XmlElement(name = "script", type = ScriptInstanceDto.class),
-			@XmlElement(name = "notification", type = NotificationDto.class), @XmlElement(name = "timerEntity", type = TimerEntityDto.class),
-			@XmlElement(name = "emailNotif", type = EmailNotificationDto.class), @XmlElement(name = "jobTrigger", type = JobTriggerDto.class),
-			@XmlElement(name = "webhookNotif", type = WebhookNotificationDto.class), @XmlElement(name = "counter", type = CounterTemplateDto.class),
-			@XmlElement(name = "subModule", type = ModuleDto.class), @XmlElement(name = "measurableQuantity", type = MeasurableQuantityDto.class),
-			@XmlElement(name = "pieChart", type = PieChartDto.class), @XmlElement(name = "lineChart", type = LineChartDto.class),
-			@XmlElement(name = "barChart", type = BarChartDto.class), @XmlElement(name = "bsm", type = BusinessServiceModelDto.class) })
+    @XmlElements({ @XmlElement(name = "customEntityTemplate", type = CustomEntityTemplateDto.class),
+            @XmlElement(name = "customFieldTemplate", type = CustomFieldTemplateDto.class), @XmlElement(name = "filter", type = FilterDto.class),
+            @XmlElement(name = "jobInstance", type = JobInstanceDto.class), @XmlElement(name = "script", type = ScriptInstanceDto.class),
+            @XmlElement(name = "notification", type = NotificationDto.class), @XmlElement(name = "timerEntity", type = TimerEntityDto.class),
+            @XmlElement(name = "emailNotif", type = EmailNotificationDto.class), @XmlElement(name = "jobTrigger", type = JobTriggerDto.class),
+            @XmlElement(name = "webhookNotif", type = WebhookNotificationDto.class), @XmlElement(name = "counter", type = CounterTemplateDto.class),
+            @XmlElement(name = "businessServiceModel", type = BusinessServiceModelDto.class), @XmlElement(name = "businessOfferModel", type = BusinessOfferModelDto.class),
+            @XmlElement(name = "subModule", type = ModuleDto.class), @XmlElement(name = "measurableQuantity", type = MeasurableQuantityDto.class),
+            @XmlElement(name = "pieChart", type = PieChartDto.class), @XmlElement(name = "lineChart", type = LineChartDto.class),
+            @XmlElement(name = "barChart", type = BarChartDto.class)})
     private List<BaseDto> moduleItems;
 
     public ModuleDto() {
@@ -75,15 +77,7 @@ public class ModuleDto extends BaseDataModelDto {
         this.moduleItems = new ArrayList<BaseDto>();
     }
 
-    public ModuleDto(ModuleDto dto) {
-    	  this.code = dto.getCode();
-          this.description = dto.getDescription();
-          this.license = dto.getLicense();
-          this.logoPicture = dto.getLogoPicture();
-          this.moduleItems = dto.getModuleItems();
-	}
-
-	public String getCode() {
+    public String getCode() {
         return code;
     }
 
@@ -142,7 +136,7 @@ public class ModuleDto extends BaseDataModelDto {
     }
 
     @SuppressWarnings("unused")
-	public void addModuleItem(BaseDto item) {
+    public void addModuleItem(BaseDto item) {
         if (item instanceof ScriptInstanceDto) {
             Logger log = LoggerFactory.getLogger(getClass());
         }

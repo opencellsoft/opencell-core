@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 
@@ -71,9 +72,12 @@ public abstract class CustomScriptDto extends BaseDto {
         this.script = script;
     }
 
-	@Override
-	public String toString() {
-		return "CustomScriptDto [code=" + code + ", description=" + description + ", type=" + type + ", script="
-				+ script + "]";
-	}
+    public boolean isCodeOnly() {
+        return StringUtils.isBlank(script);
+    }
+
+    @Override
+    public String toString() {
+        return "CustomScriptDto [code=" + code + ", description=" + description + ", type=" + type + ", script=" + script + "]";
+    }
 }

@@ -11,6 +11,7 @@ import org.meveo.api.dto.EntityActionScriptDto;
 import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.ScriptInstanceDto;
 import org.meveo.api.dto.ScriptInstanceErrorDto;
+import org.meveo.api.dto.script.CustomScriptDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -227,10 +228,7 @@ public class ScriptInstanceApi extends BaseApi {
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         checkDtoAndUpdateCode(postData);
 
-        String packageName = scriptInstanceService.getPackageName(postData.getScript());
-        String className = scriptInstanceService.getClassName(postData.getScript());
-        ScriptInstance scriptInstance = scriptInstanceService.findByCode(StringUtils.isBlank(postData.getCode()) ? (packageName + "." + className) : postData.getCode(),
-            currentUser.getProvider());
+        ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getCode(), currentUser.getProvider());
 
         if (scriptInstance == null) {
             result = create(postData, currentUser);
@@ -256,27 +254,22 @@ public class ScriptInstanceApi extends BaseApi {
         return result;
     }
 
-    private void checkDtoAndUpdateCode(ScriptInstanceDto dto) throws BusinessApiException, MissingParameterException {
-        if (dto == null) {
-            missingParameters.add("scriptInstanceDto");
-            handleMissingParameters();
-        }
+    public void checkDtoAndUpdateCode(CustomScriptDto dto) throws BusinessApiException, MissingParameterException {
+
         if (StringUtils.isBlank(dto.getScript())) {
             missingParameters.add("script");
         }
 
         handleMissingParameters();
 
-        String packageName = scriptInstanceService.getPackageName(dto.getScript());
-        String className = scriptInstanceService.getClassName(dto.getScript());
-        String scriptCode = packageName + "." + className;
+        String scriptCode = ScriptInstanceService.getFullClassname(dto.getScript());
         if (!StringUtils.isBlank(dto.getCode()) && !dto.getCode().equals(scriptCode)) {
             throw new BusinessApiException("The code and the canonical script class name must be identical");
         }
         dto.setCode(scriptCode);
     }
 
-    private void checkDtoAndSetAppliesTo(EntityActionScriptDto dto, String appliesTo) throws MissingParameterException  {
+    private void checkDtoAndSetAppliesTo(EntityActionScriptDto dto, String appliesTo) throws MissingParameterException {
         if (dto == null) {
             missingParameters.add("entityActionScriptDto");
             handleMissingParameters();

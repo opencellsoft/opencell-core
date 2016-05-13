@@ -7,100 +7,68 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.module.ModuleDto;
-import org.meveo.model.catalog.BusinessServiceModel;
+import org.meveo.api.dto.script.ServiceModelScriptDto;
+import org.meveo.model.module.MeveoModule;
 
 @XmlRootElement(name = "BusinessServiceModel")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BusinessServiceModelDto extends ModuleDto {
 
-	private static final long serialVersionUID = -7023791262640948222L;
+    private static final long serialVersionUID = -7023791262640948222L;
 
-	@NotNull
-	@XmlElement(required = true)
-	private String serviceTemplateCode;
+    @NotNull
+    @XmlElement(required = true)
+    private ServiceTemplateDto serviceTemplate;
 
-	private String scriptCode;
+    private ServiceModelScriptDto script;
 
-	private boolean duplicateService;
+    private boolean duplicateService;
 
-	private boolean duplicatePricePlan;
-	
-	public BusinessServiceModelDto() {
-		
-	}
+    private boolean duplicatePricePlan;
 
-	public BusinessServiceModelDto(BusinessServiceModel e) {
-		super(e);
+    public BusinessServiceModelDto() {
+    }
 
-		if (e.getServiceTemplate() != null) {
-			serviceTemplateCode = e.getServiceTemplate().getCode();
-		}
-		if (e.getScript() != null) {
-			scriptCode = e.getScript().getCode();
-		}
-		duplicateService = e.isDuplicateService();
-		duplicatePricePlan = e.isDuplicatePricePlan();
-	}
+    public BusinessServiceModelDto(MeveoModule module) {
+        super(module);
+    }
 
-	public String getServiceTemplateCode() {
-		return serviceTemplateCode;
-	}
+    public void setServiceTemplate(ServiceTemplateDto serviceTemplate) {
+        this.serviceTemplate = serviceTemplate;
+    }
 
-	public void setServiceTemplateCode(String serviceTemplateCode) {
-		this.serviceTemplateCode = serviceTemplateCode;
-	}
+    public ServiceTemplateDto getServiceTemplate() {
+        return serviceTemplate;
+    }
 
-	public String getScriptCode() {
-		return scriptCode;
-	}
+    public void setScript(ServiceModelScriptDto script) {
+        this.script = script;
+    }
 
-	public void setScriptCode(String scriptCode) {
-		this.scriptCode = scriptCode;
-	}
+    public ServiceModelScriptDto getScript() {
+        return script;
+    }
 
-	public boolean isDuplicateService() {
-		return duplicateService;
-	}
+    public boolean isDuplicateService() {
+        return duplicateService;
+    }
 
-	public void setDuplicateService(boolean duplicateService) {
-		this.duplicateService = duplicateService;
-	}
+    public void setDuplicateService(boolean duplicateService) {
+        this.duplicateService = duplicateService;
+    }
 
-	public boolean isDuplicatePricePlan() {
-		return duplicatePricePlan;
-	}
+    public boolean isDuplicatePricePlan() {
+        return duplicatePricePlan;
+    }
 
-	public void setDuplicatePricePlan(boolean duplicatePricePlan) {
-		this.duplicatePricePlan = duplicatePricePlan;
-	}
+    public void setDuplicatePricePlan(boolean duplicatePricePlan) {
+        this.duplicatePricePlan = duplicatePricePlan;
+    }
 
-	/**
-	 * Convert BusinessServiceModelDto to a BusinessServiceModel instance.
-	 * 
-	 * @param dto
-	 *            BusinessServiceModelDto object to convert
-	 * @param bsmToUpdate
-	 *            BusinessServiceModel to update with values from dto, or if
-	 *            null create a new one
-	 * @return A new or updated BusinessServiceModel instance
-	 */
-	public static BusinessServiceModel fromDTO(BusinessServiceModelDto dto, BusinessServiceModel bsmToUpdate) {
-		BusinessServiceModel bsm = new BusinessServiceModel();
-		if (bsmToUpdate != null) {
-			bsm = bsmToUpdate;
-		}
-		bsm.setCode(dto.getCode());
-		bsm.setDescription(dto.getDescription());
-		bsm.setDuplicatePricePlan(dto.isDuplicatePricePlan());
-		bsm.setDuplicateService(dto.isDuplicateService());
-
-		return bsm;
-	}
-
-	@Override
-	public String toString() {
-		return "BusinessServiceModelDto [serviceTemplateCode=" + serviceTemplateCode + ", scriptCode=" + scriptCode + ", duplicateService=" + duplicateService
-				+ ", duplicatePricePlan=" + duplicatePricePlan + ", toString()=" + super.toString() + "]";
-	}
+    @Override
+    public String toString() {
+        return "BusinessServiceModelDto [serviceTemplate=" + serviceTemplate + ", script=" + script + ", duplicateService=" + duplicateService + ", duplicatePricePlan="
+                + duplicatePricePlan + ", toString()=" + super.toString() + "]";
+    }
 
 }
