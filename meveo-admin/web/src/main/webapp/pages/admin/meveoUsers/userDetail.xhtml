@@ -25,10 +25,10 @@
 		<hftl:formPanel label="#{messages['user.userPanel']}"
 			backingBean="#{userBean}" columns="1">
 			<hftl:formField label="#{messages['user.userName']}" field="userName"
-				required="true" validateUnique="true" useConverter="false" maxlength="50" />
+				required="true" validateUnique="true" useConverter="false" />
 			<hftl:formField label="#{messages['contactInformation.email']}"
 				field="email" required="true" useConverter="false"
-				validatorId="emailValidator" maxlength="100" />
+				validatorId="emailValidator" />
 			<p:commandLink value="#{messages['menutop.changePassword']}" 
 				action="#{userBean.showHidePassword}" update="passwordPanel"
 				rendered="#{!(userBean.entity.id==null) and userBean.edit}" partialSubmit="true" process="@this"
@@ -37,8 +37,8 @@
 
             <p:outputPanel id="passwordPanel" styleClass="clearLeft">
                 <h:panelGroup rendered="#{(userBean.show or userBean.entity.id==null) and userBean.edit}">
-                    <hftl:decorateFormField fieldId="password" label="#{messages['user.password']}" >
-                        <p:password autocomplete="off" id="password" feedback="true" value="#{userBean.password}" required="true" match="repeatedPassword" maxlength="50" />
+                    <hftl:decorateFormField fieldId="password" label="#{messages['user.password']}">
+                        <p:password autocomplete="off" id="password" feedback="true" value="#{userBean.password}" required="true" match="repeatedPassword"/>
                     </hftl:decorateFormField>
                     <hftl:decorateFormField id="repeatedPassword" fieldId="repeatedPassword" label="#{messages['user.repeatedPassword']}">
                         <p:password id="repeatedPassword" value="#{userBean.repeatedPassword}" autocomplete="off"/>

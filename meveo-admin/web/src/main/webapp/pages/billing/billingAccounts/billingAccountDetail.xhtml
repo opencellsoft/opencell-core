@@ -282,7 +282,7 @@
 															<p:inputText id="email_select"
 																rendered="#{billingAccountBean.edit}"
 																value="#{billingAccountBean.entity.email}"
-																size="20" maxlength="255"
+																size="20" maxlength="100"
 																converter="nullableStringConverter">
 																<o:validator validatorId="javax.faces.RegularExpression"
 																	pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"
