@@ -13,33 +13,73 @@
 </thead><tbody>
 <tr>
 	<td>assertText</td>
-	<td>//a[contains(text(),'${DuPCode}')]</td>
-	<td>${DuPCode}</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>//a[contains(text(),'${DuPCode}')]</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${BSMDisableBtn}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${IconDelete}</td>
+	<td>${BSMDisableBtn}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>${deleteYes}</td>
+	<td>${disableYes}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${deleteYes}</td>
+	<td>${disableYes}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
 </tr>
 </tbody></table>
 </body>
