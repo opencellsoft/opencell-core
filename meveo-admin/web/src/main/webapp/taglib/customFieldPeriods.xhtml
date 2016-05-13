@@ -97,14 +97,17 @@
             </hf:namingContainer>
 
             <p:commandButton value="#{messages['customFieldTemplate.addNewPeriod']}" partialSubmit="true" process="@this addNewFields" update="periodTable_omitFromSubmit"
-                action="#{customFieldDataEntryBean.addNewValuePeriod(cfValueHolder, cft)}" rendered="#{edit and !disabled and cft.storageType == CustomFieldStorageTypeEnum.SINGLE}">
+                action="#{customFieldDataEntryBean.addNewValuePeriod(cfValueHolder, cft)}" 
+                rendered="#{edit and !disabled and cft.storageType == CustomFieldStorageTypeEnum.SINGLE and customFieldDataEntryBean.canUserUpdateEntity()}">
                 <p:resetInput target="addNewFields" />
             </p:commandButton>
 
             <p:commandButton value="#{messages['customFieldTemplate.addNewPeriod']}" partialSubmit="true" process="@this addNewFields"
                 update="periodTable_omitFromSubmit :#{p:component(prefix.concat('periodFields'))}"
                 oncomplete="if (args &amp;&amp; !args.validationFailed) PF('#{prefix}periodValuesDialogWidget').show()"
-                action="#{customFieldDataEntryBean.addNewValuePeriod(cfValueHolder, cft)}" actionListener="#{cfValueHolder.setSelectedValuePeriodId(':'.concat(clientGuiId.concat(':periodTable_omitFromSubmit')))}" rendered="#{edit and !disabled and cft.storageType != CustomFieldStorageTypeEnum.SINGLE}">
+                action="#{customFieldDataEntryBean.addNewValuePeriod(cfValueHolder, cft)}" 
+                actionListener="#{cfValueHolder.setSelectedValuePeriodId(':'.concat(clientGuiId.concat(':periodTable_omitFromSubmit')))}" 
+                rendered="#{edit and !disabled and cft.storageType != CustomFieldStorageTypeEnum.SINGLE and customFieldDataEntryBean.canUserUpdateEntity()}">
                 <p:resetInput target="addNewFields" />
                 <p:resetInput target=":#{p:component(prefix.concat('periodFields'))}" />
             </p:commandButton>

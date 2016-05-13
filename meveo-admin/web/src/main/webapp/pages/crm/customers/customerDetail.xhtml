@@ -140,7 +140,7 @@
 
                     <hf:formButtons columns="5" backingBean="#{customerBean}" edit="#{customerBean.edit}" ajaxSubmit="true"
                         submitPartialProcess=":formCustomer:tabView" useCustomIdParam="true">
-                        <p:button outcome="addCustomerAccount" rendered="#{not empty customerBean.entity.id}" value="#{messages['customer.buttonAddCustomerAccount']}">
+                        <p:button outcome="addCustomerAccount" rendered="#{not empty customerBean.entity.id and customerBean.canUserUpdateEntity()}" value="#{messages['customer.buttonAddCustomerAccount']}">
                             <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                         </p:button>
                     </hf:formButtons>
