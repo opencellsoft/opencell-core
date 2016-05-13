@@ -443,8 +443,9 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        if (entity.isTransient() && meveoModuleService.findByCode(entity.getCode(), getCurrentProvider()) != null) {
-            messages.error(new BundleKey("messages", "javax.persistence.EntityExistsException"));
+    	MeveoModule module = meveoModuleService.findByCode(entity.getCode(), getCurrentProvider());
+        if (entity.isTransient() && module != null) {
+        	messages.error(new BundleKey("messages", "javax.persistence.ScriptExistsException"), module.getCode());
             return null;
         }
 
