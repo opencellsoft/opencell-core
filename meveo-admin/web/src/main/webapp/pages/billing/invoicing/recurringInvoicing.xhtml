@@ -53,6 +53,7 @@
             <ui:param name="buttons" value="true"/>
             <ui:define name="buttons">
     			<p:commandButton action="#{billingRunBean.launchRecurringInvoicing}"
+    				rendered="#{billingRunBean.canUserUpdateEntity()}"
     				value="#{messages['button.launchInvoicing']}" update=":formId " />
             </ui:define>
 		</hftl:formPanel>

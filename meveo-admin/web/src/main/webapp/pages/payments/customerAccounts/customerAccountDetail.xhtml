@@ -237,14 +237,14 @@
 										edit="#{customerAccountBean.edit}"
 										useCustomIdParam="true" ajaxSubmit="true" submitPartialProcess=":parentTab:formCustomerAccount:childTab">
 										<p:commandButton
-											rendered="#{customerAccountBean.isActiveAccount()}"
+											rendered="#{customerAccountBean.isActiveAccount() and customerAccountBean.canUserUpdateEntity()}"
 											action="#{customerAccountBean.closeCustomerAccount}"
 											value="#{messages['customerAccount.buttonCloseAccount']}" immediate="true"
 											onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}">
 											<!-- 										<f:attribute name="backView" value="#{backView}" /> -->
 										</p:commandButton>
 										<p:button
-											rendered="#{customerAccountBean.isActiveAccount()}"
+											rendered="#{customerAccountBean.isActiveAccount() and customerAccountBean.canUserUpdateEntity()}"
 											outcome="addBillingAccount"
 											value="#{messages['customerAccount.buttonAddBillingAccount']}">
 											<f:param name="cid"
@@ -280,7 +280,7 @@
 								<h:panelGroup layout="block" styleClass="form-panel-actions">
 									<p:button value="#{messages['customerAccount.addOperation']}"
 										outcome="addNewOperation"
-										rendered="#{customerAccountBean.isActiveAccount()}"
+										rendered="#{customerAccountBean.isActiveAccount() and customerAccountBean.canUserUpdateEntity()}"
 										includeViewParams="true">
 										<f:param name="cid"
 											value="#{javax.enterprise.context.conversation.id}" />
@@ -288,10 +288,10 @@
 									<p:commandButton
 										value="#{messages['customerAccount.addPaymentCheck']}"
 										action="#{otherCreditAndChargeBean.loadFromTemplatePaymentCheck(customerAccountBean.entity.id)}"
-										rendered="#{customerAccountBean.isActiveAccount()}" />
+										rendered="#{customerAccountBean.isActiveAccount() and customerAccountBean.canUserUpdateEntity()}" />
 									<p:button outcome="transferAccount"
 										value="#{messages['customerAccount.buttonTransfert']}"
-										rendered="#{customerAccountBean.isActiveAccount()}">
+										rendered="#{customerAccountBean.isActiveAccount() and customerAccountBean.canUserUpdateEntity()}">
 										<f:param name="objectId"
 											value="#{customerAccountBean.entity.id}" />
 										<f:param name="cid"
@@ -353,7 +353,7 @@
 								<hftl:actionsColumn width="15%"
 									editView="#{accountOperationBean.displayOperation(entity)}" renderViewLink="true"/> 
 								<ui:define name="add-on-buttons"> 
-									<h:panelGroup layout="block" styleClass="form-panel-actions">
+									<h:panelGroup layout="block" styleClass="form-panel-actions" rendered="#{accountOperationBean.canUserUpdateEntity()}">
 										<p:commandButton
 											action="#{accountOperationBean.matching(customerAccountBean.entity.id)}"
 											value="#{messages['customerAccount.buttonLettrage']}"

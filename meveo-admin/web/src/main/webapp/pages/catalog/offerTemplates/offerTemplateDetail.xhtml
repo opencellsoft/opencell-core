@@ -105,6 +105,7 @@
 									icon="ui-icon-document" />
 								<p:commandButton
 									action="#{offerTemplateBean.deleteOfferServiceTemplate(entity)}"
+									rendered="#{offerTemplateBean.canUserUpdateEntity()}"
 									icon="ui-icon-trash"
 									update=":tabView:servicesPanel :tabView:serviceForm" />
 							</p:column>
@@ -137,7 +138,7 @@
 							<ui:param name="buttons" value="true" />
 							<ui:define name="buttons">
 								<p:commandButton
-									rendered="#{offerTemplateBean.offerServiceTemplate.id==null}"
+									rendered="#{offerTemplateBean.offerServiceTemplate.id==null and offerTemplateBean.canUserUpdateEntity()}"
 									action="#{offerTemplateBean.saveOfferServiceTemplate()}"
 									value="#{messages['action.addSave']}"
 									update=":tabView:servicesPanel :tabView:serviceForm">

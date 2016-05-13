@@ -1,15 +1,18 @@
 package org.meveo.util.view;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.security.Identity;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.filter.config.ConstraintType;
 import org.meveo.admin.web.filter.config.Page;
 import org.meveo.admin.web.filter.config.Param;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,14 +21,14 @@ public class PagePermission {
 
     private static final String PAGE_ACCESS_RULES_EXCEPTION = "Page access rules have not been initialized. Call the init() method to initialize properly.";
     private static final String CURRENT_USER = "currentUser";
-    private static final String EDIT = "edit";
-    // private static final String GET = "GET";
+//    private static final String EDIT = "edit";
+//    private static final String GET = "GET";
     private static final String JSF = ".jsf";
     private static final String XHTML = ".xhtml";
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private Map<String, Page> pages;
+    private List<Page> pages;
     private String pagesDirectory;
 
     // Private constructor. Prevents instantiation from other classes.
@@ -46,7 +49,7 @@ public class PagePermission {
         return PagePermissionHolder.INSTANCE;
     }
 
-    public void init(String pagesDirectory, Map<String, Page> pages) {
+    public void init(String pagesDirectory, List<Page> pages) {
         this.pages = pages;
         this.pagesDirectory = pagesDirectory;
     }
@@ -55,8 +58,8 @@ public class PagePermission {
         boolean exists = true;
         String requestURI = request.getRequestURI();
         if (this.pages != null && requestURI != null && requestURI.startsWith(pagesDirectory)) {
-            String key = findMatchingKey(request.getRequestURI());
-            if (StringUtils.isEmpty(key)) {
+            Page page = matchPage(request.getRequestURI());
+            if (page == null) {
                 exists = false;
             }
         }
@@ -65,19 +68,19 @@ public class PagePermission {
 
     public boolean hasAccessToPage(HttpServletRequest request, Identity currentUser) throws BusinessException {
         // determine edit mode using request method.
-        // boolean edit = false;//!GET.equalsIgnoreCase(request.getMethod());
-        boolean allow = checkConstraints(request, currentUser, false);
+//    	boolean edit = !GET.equalsIgnoreCase(request.getMethod());
+        boolean allow = checkConstraints(request, currentUser, ConstraintType.READ);
         return allow;
     }
 
     public boolean hasWriteAccess(HttpServletRequest request, Identity currentUser) throws BusinessException {
         // for checking write access, edit will always be true.
         // boolean edit = true;
-        boolean allow = checkConstraints(request, currentUser, true);
+        boolean allow = checkConstraints(request, currentUser, ConstraintType.WRITE);
         return allow;
     }
 
-    private boolean checkConstraints(HttpServletRequest request, Identity currentUser, boolean edit) throws BusinessException {
+    private boolean checkConstraints(HttpServletRequest request, Identity currentUser, ConstraintType type) throws BusinessException {
         boolean allow = false;
         if (this.pages == null) {
             logger.error(PAGE_ACCESS_RULES_EXCEPTION);
@@ -85,31 +88,18 @@ public class PagePermission {
         }
         String requestURI = request.getRequestURI();
         if (requestURI != null && requestURI.startsWith(pagesDirectory)) {
-            String key = findMatchingKey(requestURI);
-            if (StringUtils.isEmpty(key)) {
+            Page page = matchPage(requestURI);
+            if (page == null) {
                 return false;
             }
             
-            Page page = this.pages.get(key);
             if ((currentUser != null && currentUser.isLoggedIn() && page != null)) {
-                Map<Object, Object> parameters = fetchParameters(page, request, currentUser, edit);
-                // load all constraints
-                allow = true;
-                for (String constraint : page.getConstraints()) {
-                    try {
-                        allow = allow && (Boolean) ValueExpressionWrapper.evaluateExpression(constraint, parameters, Boolean.class);
-                        // if allow is false any succeeding expressions will
-                        // never be true so immediately log then break from
-                        // loop.
-                        if (!allow) {
-//                            logger.debug("User does not have permission to {}. Returning false.", requestURI);
-                            break;
-                        }
-                    } catch (BusinessException e) {
-                        logger.error("Failed to execute constraint expression. Returning false.", e);
-                        allow = false;
-                        break;
-                    }
+                Map<Object, Object> parameters = fetchParameters(page, request, currentUser);
+                try {
+                	allow = (Boolean) ValueExpressionWrapper.evaluateExpression(page.getExpression(type), parameters, Boolean.class);
+                } catch (BusinessException e) {
+                    logger.error("Failed to execute constraint expression. Returning false.", e);
+                    allow = false;
                 }
             }
         } else {
@@ -119,7 +109,7 @@ public class PagePermission {
         return allow;
     }
 
-    private Map<Object, Object> fetchParameters(Page page, HttpServletRequest request, Identity currentUser, boolean edit) {
+    private Map<Object, Object> fetchParameters(Page page, HttpServletRequest request, Identity currentUser) {
 
         Map<Object, Object> parameters = new HashMap<>();
 
@@ -140,18 +130,9 @@ public class PagePermission {
         parameters.put(CURRENT_USER, currentUser);
 
         // load the edit parameter.
-        parameters.put(EDIT, edit);
+//        parameters.put(EDIT, edit);
 
         return parameters;
-    }
-
-    private String trimPageExtension(String url) {
-        if (url != null && url.endsWith(JSF)) {
-            url = url.substring(0, url.lastIndexOf(JSF));
-        } else if (url != null && url.endsWith(XHTML)) {
-            url = url.substring(0, url.lastIndexOf(XHTML));
-        }
-        return url;
     }
 
     /**
@@ -161,29 +142,23 @@ public class PagePermission {
      * @param requestUri The page URI to match.
      * @return The key of the matching page access rule.
      */
-    private String findMatchingKey(String requestUri) {
-        if (this.pages == null || !(this.pages instanceof Map) || StringUtils.isEmpty(requestUri)) {
-            return null;
+    private Page matchPage(String requestUri) {
+    	String uri = null;
+    	if (requestUri != null && requestUri.endsWith(JSF)) {
+            uri = requestUri.substring(0, requestUri.lastIndexOf(JSF));
+        } else if (requestUri != null && requestUri.endsWith(XHTML)) {
+            uri = requestUri.substring(0, requestUri.lastIndexOf(XHTML));
         }
-        String uri = trimPageExtension(requestUri);
-        Page page = null;
-        StringBuilder key = new StringBuilder();
-        for (int i = uri.length(); i > 0; i--) {
-            key.append(uri.substring(0, i));
-            page = this.pages.get(key.toString());
-            if (page != null) {
-                break;
-            } else {
-                key.append("*");
-                page = this.pages.get(key.toString());
-                if (page != null) {
-                    break;
-                } else {
-                    key.setLength(0);
-                }
-            }
-        }
-        return key.toString();
+    	if(!StringUtils.isBlank(uri)){
+    		Matcher matcher = null;
+        	for (Page page : this.pages) {
+        		matcher = page.getPattern().matcher(uri);
+        		if(matcher.matches()){
+        			return page;
+        		}
+    		}
+    	}
+    	return null;
     }
 
 }

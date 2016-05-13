@@ -159,7 +159,7 @@
                             <ui:param name="buttons" value="true" />
                             <ui:define name="buttons">
 
-                                <h:panelGroup rendered="#{not empty userAccountBean.entity.id}">
+                                <h:panelGroup rendered="#{not empty userAccountBean.entity.id and userAccountBean.canUserUpdateEntity()}">
                                     <div class="action-buttons">
                                         <p:button outcome="addNewSubscription" value="#{messages['userAccount.addNewSubscription']}"
                                             disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}">

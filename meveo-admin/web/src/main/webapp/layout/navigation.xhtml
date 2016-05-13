@@ -93,7 +93,7 @@
 					value="#{messages['menu.creditCategories']}" />
 					
 				<p:menuitem id="occTemplates"
-					rendered="#{identity.hasPermission('administration','administrationVisualization')}"
+					rendered="#{identity.hasPermission('billing','billingManagement')}"
 					outcome="occTemplates" value="#{messages['menu.occTemplates']}" />		
 			</p:submenu>
 			
@@ -277,6 +277,7 @@
 			rendered="#{identity.hasPermission('billing','billingVisualization')}">
 
 			<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing"
+				rendered="#{identity.hasPermission('billing','billingManagement')}"
 				value="#{messages['menu.globalExecution']}" />
 
 			<p:menuitem id="exceptionalInvoicing" outcome="exceptionelInvoicing"
@@ -389,6 +390,7 @@
 			<p:submenu id="tools" label="#{messages['menu.tools']}"
 				rendered="#{identity.hasPermission('superAdmin','superAdminManagement') || identity.hasPermission('administration','administrationVisualization')}">
 				<p:menuitem id="import" outcome="import"
+					rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}"
 					value="#{messages['menu.import']}" />
 				<p:menuitem id="export" outcome="export"
 					value="#{messages['menu.export']}" />

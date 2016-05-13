@@ -36,7 +36,10 @@
             <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" renderEnableLink="true">
             </hftl:actionsColumn>
             <ui:define name="add-on-buttons">
-                <p:commandButton id="installMeveoModuleButton" value="#{messages['meveoModule.installModule']}" update=":#{p:component('meveoModulesDialog')}"
+                <p:commandButton id="installMeveoModuleButton" 
+                	rendered="#{meveoModuleListBean.canUserUpdateEntity()}"
+                	value="#{messages['meveoModule.installModule']}" 
+                	update=":#{p:component('meveoModulesDialog')}"
                     oncomplete="PF('meveoModulesDialog').show()">
                 </p:commandButton>
             </ui:define>
@@ -107,7 +110,9 @@
                     </hftl:decorateFormField>
                 </ui:define>
                 <ui:define name="buttons">
-                    <p:commandButton id="confirmOk" value="#{messages['meveoModule.install']}" oncomplete="PF('meveoModuleDialog').hide();PF('meveoModulesDialog').show()" process="@this"
+                    <p:commandButton id="confirmOk" value="#{messages['meveoModule.install']}" 
+                    	rendered="#{meveoModuleListBean.canUserUpdateEntity()}"
+                    	oncomplete="PF('meveoModuleDialog').hide();PF('meveoModulesDialog').show()" process="@this"
                         action="#{meveoModuleListBean.installModule}" update="@this :#{p:component('meveoModulesDialog')}">
                     </p:commandButton>
                     <p:commandButton id="confirmKo" value="#{messages['action.cancel']}" onclick="PF('meveoModuleDialog').hide();PF('meveoModulesDialog').show()" type="button" />

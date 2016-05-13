@@ -14,11 +14,6 @@
 	</context-param>
 	
 	<context-param>
-		<param-name>pagesDirectory</param-name>
-		<param-value>/pages</param-value>
-	</context-param>
-
-	<context-param>
 		<param-name>javax.faces.FACELETS_BUFFER_SIZE</param-name>
 		<param-value>65535</param-value> <!-- 64KB. -->
 	</context-param>
