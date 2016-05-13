@@ -12,7 +12,7 @@
     <ui:define name="body">
     	
 		<hftl:formPanel label="#{messages['job.jobPanel']}" backingBean="#{jobBean}" >
- 			<hftl:formField label="#{messages['job.name']}" field="name" edit="false" useConverter="false"/>
+ 			<hftl:formField label="#{messages['job.name']}" field="name" edit="false" useConverter="false" maxlength="50" />
    		    <hftl:formField label="#{messages['job.nextExecutionDate']}" field="nextExecutionDate" isDate="true"/>
    		    <hftl:formField label="#{messages['job.lastExecutionDate']}" field="lastExecutionDate" isDate="true"/>
    		    <hftl:formField label="#{messages['job.active']}" field="active" isMessage="true"/>

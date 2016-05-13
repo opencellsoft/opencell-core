@@ -24,9 +24,9 @@
                 <p:tooltip for="exprEl" value="#{messages['counterTemplate.elExpressionUsed']}" />
             </h:panelGrid>
 
-            <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" />
-            <hftl:formField label="#{messages['businessEntity.description']}" field="description" id="description" />
-            <hftl:formField label="#{messages['usageChargeTemplate.unityDescription']}" field="unityDescription" />
+            <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" maxlength="60" />
+            <hftl:formField label="#{messages['businessEntity.description']}" field="description" id="description" maxlength="100" />
+            <hftl:formField label="#{messages['usageChargeTemplate.unityDescription']}" field="unityDescription" maxlength="20" />
             <hftl:formField label="#{messages['counterTemplate.counterType']}" field="counterType" required="true" />
             <hftl:formField label="#{messages['counterTemplate.counterLevel']}" field="counterLevel" required="true" />
             <hftl:formField label="#{messages['counterTemplate.level']}" field="ceiling" converter="bigDecimal4DigitsConverter" />

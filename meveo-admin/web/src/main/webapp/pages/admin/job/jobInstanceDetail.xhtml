@@ -55,7 +55,7 @@
                             </p:selectOneMenu>
                         </hftl:decorateFormField>
 
-                        <hftl:formField label="#{messages['jobInstance.parametres']}" field="parametres" />
+                        <hftl:formField label="#{messages['jobInstance.parametres']}" field="parametres" maxlength="255"/>
                         <hftl:decorateFormField fieldId="timerFollowingJob" label="#{messages['timer.followingJob']}">
                             <p:selectOneMenu id="timerFollowingJob" value="#{jobInstanceBean.entity.followingJob}" rendered="#{jobInstanceBean.edit}">
                                 <s:objectConverter />

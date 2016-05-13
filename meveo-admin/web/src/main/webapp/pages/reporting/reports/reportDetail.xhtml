@@ -12,7 +12,7 @@
     <ui:define name="body">
     	
 		<hftl:formPanel label="#{messages['report.reportPanel']}" backingBean="#{reportBean}">
-			<hftl:formField label="#{messages['report.name']}" field="name" useConverter="false"/>
+			<hftl:formField label="#{messages['report.name']}" field="name" useConverter="false" maxlength="50" />
 			<hftl:formField label="#{messages['report.startDate']}" field="startDate" isDate="true"/>
 			<hftl:formField label="#{messages['report.endDate']}" field="endDate" isDate="true"/>
 			<hftl:formField label="#{messages['report.nextExecution']}" field="schedule" isDate="true"/>

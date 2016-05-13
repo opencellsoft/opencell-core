@@ -28,15 +28,15 @@
 			backingBean="#{emailTemplateBean}" columns="1">
 
 			<hftl:formField label="#{messages['BusinessEntity.code']}" field="code"
-				required="true" />
+				required="true" maxlength="60"/>
 
 			<hftl:formField label="#{messages['emailTemplate.subject']}"
-				field="subject" size="80" required="true" />
+				field="subject" size="80" required="true" maxlength="255"/>
 
 			<hftl:formField label="#{messages['emailTemplate.htmlContent']}"
-				field="htmlContent" isHtml="true" componentWidth="100" newLine="true"/>
+				field="htmlContent" isHtml="true" componentWidth="100" newLine="true" maxlength="4000"/>
 
-			<hftl:formField label="#{messages['emailTemplate.textContent']}"
+			<hftl:formField label="#{messages['emailTemplate.textContent']}" maxlength="4000"
 				field="textContent" textArea="true" cols="180" rows="10" componentWidth="100" newLine="true"/>
 
 		</hftl:formPanel>

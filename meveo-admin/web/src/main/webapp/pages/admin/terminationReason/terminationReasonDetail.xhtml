@@ -22,9 +22,9 @@
 		<hftl:formPanel label="#{messages['terminationReason.title']}"
 			backingBean="#{terminationReasonBean}" columns="2">
 			<hftl:formField label="#{messages['BusinessEntity.code']}" field="code"
-				required="true" />
+				required="true" maxlength="255" />
 			<hftl:formField label="#{messages['BusinessEntity.description']}"
-				field="description"/>
+				field="description" maxlength="255" />
 			<hftl:formField label="#{messages['terminationReason.applyAgreement']}"
 				field="applyAgreement" newLine="true"/>
 			<hftl:formField

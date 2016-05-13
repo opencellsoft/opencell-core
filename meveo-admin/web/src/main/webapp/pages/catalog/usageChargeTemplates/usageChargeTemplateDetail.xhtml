@@ -62,7 +62,7 @@
 							field="inputUnitDescription" />
 						<hftl:formField
 							label="#{messages['chargeTemplate.ratingUnitDescription']}"
-							field="ratingUnitDescription" />
+							field="ratingUnitDescription" maxlength="20" />
 						<hftl:formField
 							label="#{messages['chargeTemplate.unitMultiplicator']}"
 							field="unitMultiplicator" converter="bigDecimal12DigitsConverter" />
@@ -71,13 +71,13 @@
 							<hftl:formField label="#{messages['chargeTemplate.roundingMode']}" field="roundingMode" />	
 						<hftl:formField
 							label="#{messages['usageChargeTemplate.filterParam1']}"
-							field="filterParam1" />
+							field="filterParam1" maxlength="255"/>
 						<hftl:formField
 							label="#{messages['usageChargeTemplate.filterParam2']}"
-							field="filterParam2" />
+							field="filterParam2" maxlength="255"/>
 						<hftl:formField
 							label="#{messages['usageChargeTemplate.filterParam3']}"
-							field="filterParam3" />
+							field="filterParam3" maxlength="255"/>
 						<hftl:formField
 							label="#{messages['usageChargeTemplate.filterParam4']}"
 							field="filterParam4" />

@@ -51,14 +51,14 @@
 				popupId="searchRole"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
 				
-			<hftl:formField label="#{messages['commons.width']}" field="width" />
-			<hftl:formField label="#{messages['commons.height']}" field="height" />
-			<hftl:formField label="#{messages['chart.style']}" field="style" />
+			<hftl:formField label="#{messages['commons.width']}" field="width" maxlength="10"/>
+			<hftl:formField label="#{messages['commons.height']}" field="height" maxlength="10"/>
+			<hftl:formField label="#{messages['chart.style']}" field="style" maxlength="1000"/>
 			<hftl:formField label="#{messages['chart.styleClass']}"
-				field="styleClass" />
+				field="styleClass" maxlength="255"/>
 			
 			<hftl:formField label="#{messages['chart.extender']}"
-				field="extender" />
+				field="extender" maxlength="255"/>
 			<hftl:formField label="#{messages['chart.visible']}"
 				field="visible" />
 
@@ -73,9 +73,9 @@
 			<hftl:formField label="#{messages['barChart.breakOnNull']}"
 				field="breakOnNull" />
 			<hftl:formField label="#{messages['barChart.xaxislabel']}"
-				field="xaxisLabel" />
+				field="xaxisLabel" maxlength="255" />
 			<hftl:formField label="#{messages['barChart.yaxislabel']}"
-				field="yaxisLabel" />
+				field="yaxisLabel" maxlength="255" />
 			<hftl:formField label="#{messages['barChart.xaxisangle']}"
 				field="xaxisAngle" />
 			<hftl:formField label="#{messages['barChart.yaxisangle']}"
@@ -90,7 +90,7 @@
 			<hftl:formField label="#{messages['barChart.showDataTip']}"
 				field="showDataTip" />
 			<hftl:formField label="#{messages['barChart.datatipFormat']}"
-				field="datatipFormat" />
+				field="datatipFormat" maxlength="255"/>
 
 <!-- 			<p:commandButton id="showPreview"
 				action="#{barChartBean.getChartEntityModel()}"

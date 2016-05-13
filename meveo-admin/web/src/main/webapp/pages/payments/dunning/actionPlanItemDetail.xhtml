@@ -18,7 +18,7 @@
 			<hftl:formField label="#{messages['actionPlanItem.thresholdAmount']}" field="thresholdAmount" required="true"/>
 			<a:outputPanel id="amountOrTemplate">
 			   <h:panelGroup style="display:block;" rendered="#{entity.actionType.toString() != 'CHARGE'}">
-				<hftl:formField label="#{messages['actionPlanItem.letterTemplate']}" field="letterTemplate" size="50"  required="false" />
+				<hftl:formField label="#{messages['actionPlanItem.letterTemplate']}" field="letterTemplate" size="50"  required="false" maxlength="255"/>
 				</h:panelGroup>
 				<h:panelGroup style="display:block;" rendered="#{entity.actionType.toString() == 'CHARGE'}" >
 				<hftl:formField label="#{messages['actionPlanItem.chargeAmount']}" field="chargeAmount"   required="true"/>
