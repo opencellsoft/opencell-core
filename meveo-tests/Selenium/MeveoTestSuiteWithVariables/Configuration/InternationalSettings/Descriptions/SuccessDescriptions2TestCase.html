@@ -43,7 +43,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>${InvSubCategoryObjTypeValue}</td>
+	<td>//*[contains(@id, 'catMessagesType_text_panel')]/div/ul/li[6]</td>
 	<td></td>
 </tr>
 <tr>
@@ -68,62 +68,62 @@
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>id=InvoiceSubCategory__title</td>
-	<td>Search invoice sub categories</td>
+	<td>id=InvoiceCategory__title</td>
+	<td>Search invoice categories</td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>id=InvoiceSubCategory__title</td>
-	<td>Search invoice sub categories</td>
+	<td>id=InvoiceCategory__title</td>
+	<td>Search invoice categories</td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>id=InvoiceSubCategory_popupForm:searchField1</td>
+	<td>id=InvoiceCategory_popupForm:searchField1</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>id=InvoiceSubCategory_popupForm:searchField1</td>
+	<td>id=InvoiceCategory_popupForm:searchField1</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>id=InvoiceSubCategory_popupForm:searchField1</td>
-	<td>${CodeValue}</td>
+	<td>id=InvoiceCategory_popupForm:searchField1</td>
+	<td>${Code2Value}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=InvoiceSubCategory_popupForm:buttonSearch</td>
+	<td>id=InvoiceCategory_popupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>//tbody[@id='InvoiceSubCategory_popupForm:InvoiceSubCategory_datatable_data']/tr/td[1]</td>
-	<td>${CodeValue}</td>
+	<td>//tbody[@id='InvoiceCategory_popupForm:InvoiceCategory_datatable_data']/tr/td[1]</td>
+	<td>${Code2Value}</td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>${CodeValue}</td>
+	<td>${Code2Value}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=InvoiceSubCategory_popupForm:buttonSearch</td>
+	<td>id=InvoiceCategory_popupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>//tbody[@id='InvoiceSubCategory_popupForm:InvoiceSubCategory_datatable_data']/tr/td[1]</td>
-	<td>${CodeValue}</td>
+	<td>//tbody[@id='InvoiceCategory_popupForm:InvoiceCategory_datatable_data']/tr/td[1]</td>
+	<td>${Code2Value}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//tbody[@id='InvoiceSubCategory_popupForm:InvoiceSubCategory_datatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='InvoiceCategory_popupForm:InvoiceCategory_datatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForNotVisible</td>
-	<td>id=InvoiceSubCategory_</td>
+	<td>id=InvoiceCategory_</td>
 	<td></td>
 </tr>
 <tr>
@@ -133,18 +133,18 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>//tbody[@id='InvoiceSubCategory_popupForm:InvoiceSubCategory_datatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='InvoiceCategory_popupForm:InvoiceCategory_datatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//tbody[@id='InvoiceSubCategory_popupForm:InvoiceSubCategory_datatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='InvoiceCategory_popupForm:InvoiceCategory_datatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForValue</td>
 	<td>id=catMessageFormId:businessEntity_code</td>
-	<td>${CodeValue}</td>
+	<td>${Code2Value}</td>
 </tr>
 <tr>
 	<td>if</td>
@@ -178,7 +178,7 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${DescriptionTranslationBool}==true</td>
+	<td>${DescriptionTranslationBool}==false</td>
 	<td></td>
 </tr>
 <tr>
