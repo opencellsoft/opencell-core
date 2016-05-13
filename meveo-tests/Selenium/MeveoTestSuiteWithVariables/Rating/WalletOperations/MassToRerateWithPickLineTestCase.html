@@ -12,8 +12,18 @@
 <tr><td rowspan="1" colspan="3">DeleteMultipleWithPickLineTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${Check}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[1]/div[10]/div/form/div[1]/div[2]/table/thead/tr/th[1]/div/div[2]/span</td>
+	<td>${Check}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${MassToRerate}</td>
 	<td></td>
 </tr>
 <tr>
@@ -22,8 +32,23 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${MassToRerateYes}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[39]/div[3]/button[1]/span[2]</td>
+	<td>${MassToRerateYes}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>
