@@ -50,6 +50,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.IAuditable;
 import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.MultilanguageEntity;
@@ -628,7 +629,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Get new instance for backing bean class.
+     * Get new instance for backing bean class.  
      * 
      * @return New instance.
      * 
@@ -636,7 +637,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @throws InstantiationException
      */
     public T getInstance() throws InstantiationException, IllegalAccessException {
-        return clazz.newInstance();
+
+        T newInstance = clazz.newInstance();
+
+        // A workaround for #1300 fix. Set auditable property if applicable, so current user would be available for EL expressions.
+        if (newInstance instanceof IAuditable) {
+            ((IAuditable) newInstance).updateAudit(getCurrentUser());
+        }
+        return newInstance;
     }
 
     /**
