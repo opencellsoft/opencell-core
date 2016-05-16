@@ -142,9 +142,6 @@ public class CountryApi extends BaseApi {
         if (StringUtils.isBlank(countryCode)) {
             missingParameters.add("countryCode");
         }
-        if (StringUtils.isBlank(currencyCode)) {
-            missingParameters.add("currencyCode");
-        }
 
         handleMissingParameters();
         
