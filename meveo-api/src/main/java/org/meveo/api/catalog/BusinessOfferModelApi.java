@@ -43,6 +43,8 @@ public class BusinessOfferModelApi extends BaseApi {
             // If script was passed code is needed if script source was not passed.
             if (StringUtils.isBlank(postData.getScript().getCode()) && StringUtils.isBlank(postData.getScript().getScript())) {
                 missingParameters.add("script.code");
+            } else if (!StringUtils.isBlank(postData.getScript().getCode()) && StringUtils.isBlank(postData.getScript().getScript())) {
+				postData.getScript().setCode(postData.getScript().getCode());
 
                 // Otherwise code is calculated from script source by combining package and classname
             } else {
@@ -79,6 +81,8 @@ public class BusinessOfferModelApi extends BaseApi {
             // If script was passed code is needed if script source was not passed.
             if (StringUtils.isBlank(postData.getScript().getCode()) && StringUtils.isBlank(postData.getScript().getScript())) {
                 missingParameters.add("script.code");
+            } else if (!StringUtils.isBlank(postData.getScript().getCode()) && StringUtils.isBlank(postData.getScript().getScript())) {
+				postData.getScript().setCode(postData.getScript().getCode());
 
                 // Otherwise code is calculated from script source by combining package and classname
             } else {
