@@ -42,25 +42,20 @@ public class BusinessServiceModelApi extends BaseApi {
             missingParameters.add("serviceTemplate.code");
         }
 
-		if (postData.getScript() != null) {
-			// If script was passed code is needed if script source was not
-			// passed.
-			if (StringUtils.isBlank(postData.getScript().getCode()) && StringUtils.isBlank(postData.getScript().getScript())) {
-				missingParameters.add("script.code");
+        if (postData.getScript() != null) {
+            // If script was passed code is needed if script source was not passed.
+            if (StringUtils.isBlank(postData.getScript().getCode()) && StringUtils.isBlank(postData.getScript().getScript())) {
+                missingParameters.add("script.code");
 
-			} else if (!StringUtils.isBlank(postData.getScript().getCode()) && StringUtils.isBlank(postData.getScript().getScript())) {				
-				postData.getScript().setCode(postData.getScript().getCode());
-
-				// Otherwise code is calculated from script source by combining
-				// package and classname
-			} else {
-				String fullClassname = ScriptInstanceService.getFullClassname(postData.getScript().getScript());
-				if (!StringUtils.isBlank(postData.getScript().getCode()) && !postData.getScript().getCode().equals(fullClassname)) {
-					throw new BusinessApiException("The code and the canonical script class name must be identical");
-				}
-				postData.getScript().setCode(fullClassname);
-			}
-		}
+                // Otherwise code is calculated from script source by combining package and classname
+            } else if (!StringUtils.isBlank(postData.getScript().getScript())) {
+                String fullClassname = ScriptInstanceService.getFullClassname(postData.getScript().getScript());
+                if (!StringUtils.isBlank(postData.getScript().getCode()) && !postData.getScript().getCode().equals(fullClassname)) {
+                    throw new BusinessApiException("The code and the canonical script class name must be identical");
+                }
+                postData.getScript().setCode(fullClassname);
+            }
+        }
 
         handleMissingParameters();
 
@@ -85,11 +80,9 @@ public class BusinessServiceModelApi extends BaseApi {
             // If script was passed code is needed if script source was not passed.
             if (StringUtils.isBlank(postData.getScript().getCode()) && StringUtils.isBlank(postData.getScript().getScript())) {
                 missingParameters.add("script.code");
-            } else if (!StringUtils.isBlank(postData.getScript().getCode()) && StringUtils.isBlank(postData.getScript().getScript())) {
-				postData.getScript().setCode(postData.getScript().getCode());
-				
+
                 // Otherwise code is calculated from script source by combining package and classname
-            } else {
+            } else if (!StringUtils.isBlank(postData.getScript().getScript())) {
                 String fullClassname = ScriptInstanceService.getFullClassname(postData.getScript().getScript());
                 if (!StringUtils.isBlank(postData.getScript().getCode()) && !postData.getScript().getCode().equals(fullClassname)) {
                     throw new BusinessApiException("The code and the canonical script class name must be identical");
