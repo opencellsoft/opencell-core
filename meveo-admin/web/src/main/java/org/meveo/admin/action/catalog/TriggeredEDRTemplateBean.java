@@ -24,6 +24,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -95,6 +96,7 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 		return result;
 	}
 	
+	@ActionMethod
 	public void duplicate() {
 		if (entity != null && entity.getId() != null) {
 			entity = triggeredEdrService.refreshOrRetrieve(entity);
@@ -106,10 +108,12 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 
 			try {
 				triggeredEdrService.create(entity, getCurrentUser());
-
+				messages.info(new BundleKey("messages", "save.successful"));
 			} catch (BusinessException e) {
-				log.error("error when duplicate offer#{0}:#{1}", entity.getCode(), e);
+				log.error("Error encountered persisting triggered EDR template entity: #{0}:#{1}", entity.getCode(), e);
+				messages.error(new BundleKey("messages", "save.unsuccessful"));
 			}
+
 		}
 	}
 

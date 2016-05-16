@@ -27,6 +27,7 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
@@ -268,13 +269,19 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
    	      return "/pages/catalog/"+chargeName+"/"+backPage+".xhtml?objectId="+chargeTemplateId+"&edit=true&faces-redirect=true&includeViewParams=true"; 
 	    }
  
-	 
-	 public void duplicate() throws BusinessException {
+	 @ActionMethod
+	 public void duplicate(){
 			if (entity != null && entity.getId() != null) {
 				pricePlanMatrixService.detach(entity);
 				entity.setId(null);
 				entity.setCode(entity.getCode() + "_copy");
-				pricePlanMatrixService.create(entity, getCurrentUser());
+				try {
+					pricePlanMatrixService.create(entity, getCurrentUser());
+					messages.info(new BundleKey("messages", "save.successful"));
+	            } catch (BusinessException e) {
+	                log.error("Error encountered persisting price plan matrix entity: #{0}:#{1}", entity.getCode(), e);
+	                messages.error(new BundleKey("messages", "save.unsuccessful"));
+	            }
 			}
 		}
 	 
