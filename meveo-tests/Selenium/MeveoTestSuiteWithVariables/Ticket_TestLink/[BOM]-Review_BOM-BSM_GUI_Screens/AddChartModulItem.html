@@ -12,6 +12,11 @@
 <tr><td rowspan="1" colspan="3">AddCFTModulItem</td></tr>
 </thead><tbody>
 <tr>
+	<td>if</td>
+	<td>${VarBool}==false</td>
+	<td></td>
+</tr>
+<tr>
 	<td>assertText</td>
 	<td>//a[contains(text(),'${Code}')]</td>
 	<td>${Code}</td>
@@ -165,6 +170,11 @@
 	<td>verifyText</td>
 	<td>//a[contains(text(),'${Code}')]</td>
 	<td>${Code}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 </tbody></table>
 </body>

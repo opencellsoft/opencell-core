@@ -12,6 +12,11 @@
 <tr><td rowspan="1" colspan="3">SuccessJobInstancesTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>if</td>
+	<td>${ChartBool}==false</td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
 	<td>${Charts}</td>
 	<td></td>
@@ -19,11 +24,6 @@
 <tr>
 	<td>waitForPageToLoad</td>
 	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ChartBool}==true</td>
 	<td></td>
 </tr>
 <tr>

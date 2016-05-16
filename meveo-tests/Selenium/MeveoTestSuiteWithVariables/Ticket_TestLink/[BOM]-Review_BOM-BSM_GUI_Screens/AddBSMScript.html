@@ -4,16 +4,16 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SuccessJobInstancesTestCase</title>
+<title>AddCFTModulItem</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SuccessJobInstancesTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">AddCFTModulItem</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${Filters}</td>
+	<td>${BusinessServiceModels}</td>
 	<td></td>
 </tr>
 <tr>
@@ -22,13 +22,18 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${VarBool}==false</td>
-	<td></td>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>${buttonNew}</td>
+	<td>verifyText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[contains(text(),'${Code}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -38,38 +43,38 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${codeText}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${codeText}</td>
-	<td>${CodeFilter}</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${descriptionText}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${descriptionText}</td>
-	<td>${DescriptionValue}</td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${SharedBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${Shared}</td>
+	<td>${AddServiceScript}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${Shared}</td>
+	<td>${AddServiceScript}</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>id=scriptDialog_title</td>
+	<td>Script</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=scriptDialog_title</td>
+	<td>Script</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ScriptDescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ScriptDescription}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${ScriptDescription}</td>
+	<td>${ScriptDescriptionValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -78,18 +83,23 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${SharedBool}==true</td>
+	<td>${ScriptBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${InputXML}</td>
+	<td>css=div.CodeMirror &gt; div &gt; textarea</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${InputXML}</td>
-	<td>${InputXMLValue}</td>
+	<td>css=div.CodeMirror &gt; div &gt; textarea</td>
+	<td>${ScriptCodeValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -97,13 +107,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>${saveButtonWhenCreate}</td>
+	<td>pause</td>
+	<td>1000</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
+	<td>click</td>
+	<td>${SaveScript}</td>
 	<td></td>
 </tr>
 <tr>
@@ -112,18 +122,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>assertElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${CodeFilter}')]</td>
-	<td>${CodeFilter}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
 	<td></td>
 </tr>
 </tbody></table>
