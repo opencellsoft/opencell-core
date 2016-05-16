@@ -43,7 +43,7 @@
                             </p:selectOneMenu>
                             <h:outputText value="#{jobInstanceBean.entity.jobTemplate}" rendered="#{jobInstanceBean.entity.id!=null}" />
                         </hftl:decorateFormField>
-                        <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" />
+                        <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" validateUnique="true"/>
                         <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" />
 
 
