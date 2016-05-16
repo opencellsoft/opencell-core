@@ -274,7 +274,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 			log.warn("No billingAccount code");
 		} else {
 			filters.put("billingAccount", ba);
-			filters.put("invoiceTypeEnum", InvoiceTypeEnum.COMMERCIAL);
+			filters.put("invoiceType.invoiceTypeEnum", InvoiceTypeEnum.COMMERCIAL);
 			return getLazyDataModel();
 		}
 

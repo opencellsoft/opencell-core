@@ -30,6 +30,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -83,6 +84,7 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RejectedBillingAccount;
@@ -163,7 +165,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			throws BusinessException {
 		QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null, provider);
 		qb.addCriterion("invoiceNumber", "=", invoiceNumber, true);
-		qb.addCriterionEnum("invoiceTypeEnum", type);
+		qb.addCriterionEnum("invoice.invoiceTypeEnum", type);
 		try {
 			return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
@@ -208,7 +210,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null, null);
 		try {
 			qb.addCriterion("invoiceNumber", "=", invoiceNumber, true);
-			qb.addCriterionEnum("invoiceTypeEnum", type);
+			qb.addCriterionEnum("invoiceType.invoiceTypeEnum", type);
 			return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
 			log.info("Invoice with invoice number #0 was not found. Returning null.", invoiceNumber);
@@ -1059,7 +1061,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public List<Invoice> findInvoiceAdjustmentByInvoice(Invoice adjustedInvoice) {
 		QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null, adjustedInvoice.getProvider());
 		qb.addCriterionEntity("adjustedInvoice", adjustedInvoice);
-		qb.addCriterionEnum("invoiceTypeEnum", InvoiceTypeEnum.CREDIT_NOTE_ADJUST);
+		qb.addCriterionEnum("invoiceType.invoiceTypeEnum", InvoiceTypeEnum.CREDIT_NOTE_ADJUST);
 
 		try {
 			return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
@@ -1067,5 +1069,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			return null;
 		}
 	}
-	
+
+	public List<Invoice> findInvoicesByType(InvoiceType invoiceType, BillingAccount ba) {
+		List<Invoice> result = new ArrayList<Invoice>();
+		QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null, invoiceType.getProvider());
+		qb.addCriterionEntity("billingAccount", ba);
+		qb.addCriterionEntity("invoiceType", invoiceType);
+		try {
+			result =  (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {			
+		}
+		return result;
+	}
 }
