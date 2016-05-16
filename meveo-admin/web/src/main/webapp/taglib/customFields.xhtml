@@ -46,6 +46,7 @@
     </c:if>
     <c:set var="newEntity" value="#{entity.transient}" />
     <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldsValuesByUUID(entity.uuid)}" />
+    <c:set var="edit" value="#{edit and backingBean.canUserUpdateEntity()}" />
 
     <o:importFunctions type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
 
@@ -82,7 +83,7 @@
 
             <c:if test="#{index==0}">
                 <p:dialog id="#{prefix}dlg_periodValues" widgetVar="#{prefix}periodValuesDialogWidget" header="#{messages['customFieldTemplate.periodValues']}" closeOnEscape="true"
-                    modal="true" appendTo="@(body)" rendered="#{edit}" width="900">
+                    modal="true" appendTo="@(body)" width="900">
 
                     <p:panel>
                         <h:panelGroup id="#{prefix}periodFields" layout="block" styleClass="form-panel">
@@ -101,7 +102,7 @@
                             <!--  only customFieldListTable as for simple values no need to show a periodvalue dialog -->
                             <hftl:customFieldListTable edit="#{edit}" cft="#{cfValueHolder.selectedFieldTemplate}" entity="#{entity}"
                                 field="#{cfValueHolder.selectedValuePeriod.cfValue}" updateOnAddEdit="#{cfValueHolder.selectedValuePeriodId}" messagesId="#{messagesId}"
-                                popupWidgetVar="#{prefix}periodValuesDialogWidget" prefix="#{prefix}" datePattern="#{datePattern}" componentWidth="100"/>
+                                popupWidgetVar="#{prefix}periodValuesDialogWidget" prefix="#{prefix}" datePattern="#{datePattern}" componentWidth="100" />
 
                         </h:panelGroup>
                     </p:panel>

@@ -72,7 +72,6 @@
                 </p:column>
                 <p:column headerText="#{messages['commons.actions']}" rendered="#{edit and !disabled}" width="15%">
                     <p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this" update="#{updateOnAddEdit} #{idPrefix}_customFields_map_omitFromSubmit"
-                        rendered="#{customFieldDataEntryBean.canUserUpdateEntity()}"
                         action="#{field.mapValuesForGUI.remove(mapValues)}" />
                 </p:column>
                 <c:if test="#{!inherited}">
@@ -100,13 +99,12 @@
                                 <h:outputText value=" &nbsp; " escape="false" />
                             </c:if>
 
-                            <hftl:customFieldValueMuteField id="newValue" edit="true" cft="#{cft}" field="#{cfValueHolder.newValues[cft.code.concat('_value')]}" 
+                            <hftl:customFieldValueMuteField id="newValue" edit="true" cft="#{cft}" field="#{cfValueHolder.newValues[cft.code.concat('_value')]}"
                                 label="#{messages['commons.value']}" placeholder="#{messages['commons.value']}" datePattern="#{datePattern}" />
                         </hf:namingContainer>
 
-                        <c:if test="#{!empty(popupWidgetVar) and !disabled}">
+                        <c:if test="#{!empty(popupWidgetVar) and edit and !disabled}">
                             <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields"
-                                rendered="#{customFieldDataEntryBean.canUserUpdateEntity()}"
                                 update="#{idPrefix}_customFields_map_omitFromSubmit" action="#{customFieldDataEntryBean.addValueToMap(cfValueHolder, field, cft)}"
                                 oncomplete="if (args &amp;&amp; !args.validationFailed) updateMasterTable()">
                                 <p:resetInput target="addNewFields" />
@@ -115,7 +113,6 @@
 
                         <c:if test="#{empty(popupWidgetVar) and edit and !disabled}">
                             <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields"
-                                rendered="#{customFieldDataEntryBean.canUserUpdateEntity()}"
                                 update="#{idPrefix}_customFields_map_omitFromSubmit" action="#{customFieldDataEntryBean.addValueToMap(cfValueHolder, field, cft)}">
                                 <p:resetInput target="addNewFields" />
                             </p:commandButton>
@@ -157,8 +154,7 @@
                                 datePattern="#{datePattern}" />
                         </f:facet>
                         <f:facet name="input">
-                            <hftl:customFieldValueMuteField edit="true" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}" 
-                                datePattern="#{datePattern}" />
+                            <hftl:customFieldValueMuteField edit="true" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}" datePattern="#{datePattern}" />
                         </f:facet>
                     </p:cellEditor>
                 </p:column>
@@ -166,7 +162,7 @@
                     <f:facet name="footer" layout="block">
 
                         <p:commandButton value="#{messages['customFieldTemplate.addRow']}" partialSubmit="true" process="@this" update="#{idPrefix}_customFields_map_omitFromSubmit"
-                            action="#{customFieldDataEntryBean.addMatrixRow(cft, field.matrixValuesForGUI)}" rendered="#{edit and !disabled and customFieldDataEntryBean.canUserUpdateEntity()}">
+                            action="#{customFieldDataEntryBean.addMatrixRow(cft, field.matrixValuesForGUI)}" rendered="#{edit and !disabled}">
                         </p:commandButton>
 
                         <p:commandButton value="#{messages['commons.close']}" process="@this" rendered="#{!empty(popupWidgetVar) and edit and !disabled}"

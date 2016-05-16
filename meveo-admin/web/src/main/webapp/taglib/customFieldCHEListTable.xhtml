@@ -81,7 +81,6 @@
                 <f:facet name="footer">
                     <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this"
                         update=":#{clientGuiId}:#{fieldPrefix}dlg_childEntityForm #{messagesId}"
-                        rendered="#{customFieldDataEntryBean.canUserUpdateEntity()}"
                         actionListener="#{customFieldDataEntryBean.newChildEntity(cfValueHolder, field, cft)}" oncomplete="PF('#{fieldPrefix}childEntityDialogWidget').show()">
                         <p:resetInput target=":#{clientGuiId}:#{fieldPrefix}dlg_childEntityForm" />
                     </p:commandButton>
@@ -91,8 +90,7 @@
 
     </hftl:decorateFormField>
 
-    <p:dialog widgetVar="#{fieldPrefix}childEntityDialogWidget" header="#{cft.description}" closeOnEscape="true" modal="true" dynamic="true" appendTo="@(body)" rendered="#{edit}"
-        width="90%">
+    <p:dialog widgetVar="#{fieldPrefix}childEntityDialogWidget" header="#{cft.description}" closeOnEscape="true" modal="true" dynamic="true" appendTo="@(body)" width="90%">
 
         <hftl:decorateFormPanel formId="#{fieldPrefix}dlg_childEntityForm" edit="#{edit}" label="" autoupdateMessages="false">
             <ui:define name="fields">

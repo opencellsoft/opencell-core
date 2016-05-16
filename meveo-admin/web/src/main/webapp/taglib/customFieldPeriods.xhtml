@@ -98,7 +98,7 @@
 
             <p:commandButton value="#{messages['customFieldTemplate.addNewPeriod']}" partialSubmit="true" process="@this addNewFields" update="periodTable_omitFromSubmit"
                 action="#{customFieldDataEntryBean.addNewValuePeriod(cfValueHolder, cft)}" 
-                rendered="#{edit and !disabled and cft.storageType == CustomFieldStorageTypeEnum.SINGLE and customFieldDataEntryBean.canUserUpdateEntity()}">
+                rendered="#{edit and !disabled and cft.storageType == CustomFieldStorageTypeEnum.SINGLE}">
                 <p:resetInput target="addNewFields" />
             </p:commandButton>
 
@@ -107,7 +107,7 @@
                 oncomplete="if (args &amp;&amp; !args.validationFailed) PF('#{prefix}periodValuesDialogWidget').show()"
                 action="#{customFieldDataEntryBean.addNewValuePeriod(cfValueHolder, cft)}" 
                 actionListener="#{cfValueHolder.setSelectedValuePeriodId(':'.concat(clientGuiId.concat(':periodTable_omitFromSubmit')))}" 
-                rendered="#{edit and !disabled and cft.storageType != CustomFieldStorageTypeEnum.SINGLE and customFieldDataEntryBean.canUserUpdateEntity()}">
+                rendered="#{edit and !disabled and cft.storageType != CustomFieldStorageTypeEnum.SINGLE}">
                 <p:resetInput target="addNewFields" />
                 <p:resetInput target=":#{p:component(prefix.concat('periodFields'))}" />
             </p:commandButton>

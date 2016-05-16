@@ -142,7 +142,7 @@
 		<cc:insertChildren />
 
 		<hf:clearButton id="resetButton" label="#{messages['action.reset']}"
-			edit="#{cc.attrs.edit}"
+			edit="#{cc.attrs.edit}" rendered="#{cc.attrs.backingBean.canUserUpdateEntity()}"
 			resetAction="#{cc.attrs.backingBean.resetFormEntity()}" includeViewParams="true"/>
 
 		<p:button id="backButton" value="#{messages['action.back']}"
