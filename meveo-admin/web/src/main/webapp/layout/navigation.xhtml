@@ -260,7 +260,8 @@
 		<p:submenu id="mediation" label="#{messages['menu.mediation']}"
 			rendered="#{identity.hasPermission('billing','billingVisualization')}">
 			<p:menuitem id="edr" outcome="edr" value="#{messages['menu.edr']}" />
-			<p:menuitem id="importedFiles" outcome="importedFiles" value="#{messages['menu.importedFiles']}" />
+			<p:menuitem id="importedFiles" outcome="importedFiles" value="#{messages['menu.importedFiles']}" 
+				rendered="#{identity.hasPermission('billing','billingManagement')}" />
 		</p:submenu>
 
 		<p:submenu id="rating" label="#{messages['menu.rating']}"

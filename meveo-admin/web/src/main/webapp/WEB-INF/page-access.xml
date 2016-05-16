@@ -54,12 +54,69 @@
 		<constraint>currentUser.hasPermission('superAdmin','superAdminManagement')</constraint>
 	</page>
 	
+	<page view-id=".+\/admin\/sellers\/.*">
+		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+	</page>
+	
+	<page view-id=".+\/admin\/title\/.*">
+		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+	</page>
+	
+	<page view-id=".+\/admin\/creditCategories\/.*">
+		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+	</page>
+	
 	<page view-id=".+\/admin\/.+">
 		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
 	</page>
 	
 	<!-- PAGE RULES FOR BILLING PAGES -->
+	<page view-id=".+\/billing\/invoicing\/billingRuns">
+		<constraint>currentUser.hasPermission('account','accountManagement')</constraint>
+		<constraint>currentUser.hasPermission('billing','billingManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('account','accountVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('billing','billingVisualization')</constraint>
+	</page>
+	
+	<page view-id=".+\/billing\/invoicing\/exceptionelInvoicing">
+		<constraint>currentUser.hasPermission('account','accountManagement')</constraint>
+		<constraint>currentUser.hasPermission('billing','billingManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('account','accountVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('billing','billingVisualization')</constraint>
+	</page>
+	
+	<page view-id=".+\/billing\/invoices\/.*">
+		<constraint>currentUser.hasPermission('account','accountManagement')</constraint>
+		<constraint>currentUser.hasPermission('billing','billingManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('account','accountVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('billing','billingVisualization')</constraint>
+	</page>
+	
+	<page view-id=".+\/billing\/ratedTransactions\/.*">
+		<constraint>currentUser.hasPermission('account','accountManagement')</constraint>
+		<constraint>currentUser.hasPermission('billing','billingManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('account','accountVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('billing','billingVisualization')</constraint>
+	</page>
+	
+	<page view-id=".+\/billing\/walletOperations\/.*">
+		<constraint>currentUser.hasPermission('account','accountManagement')</constraint>
+		<constraint>currentUser.hasPermission('billing','billingManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('account','accountVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('billing','billingVisualization')</constraint>
+	</page>
+	
+	<page view-id=".+\/billing\/billingAccounts\/.*">
+		<constraint>currentUser.hasPermission('account','accountManagement')</constraint>
+		<constraint>currentUser.hasPermission('billing','billingManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('account','accountVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('billing','billingVisualization')</constraint>
+	</page>
+	
 	<page view-id=".+\/billing\/wallets\/wallet.*">
 		<constraint>#{currentUser.hasPermission('billing','billingManagement')}</constraint>
 	</page>
@@ -70,12 +127,46 @@
 	</page>
 	
 	<!-- PAGE RULES FOR CATALOG PAGES -->
+	<page view-id=".+\/catalog\/pricePlanMatrixes\/.*">
+		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint>currentUser.hasPermission('billing','billingManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('billing','billingVisualization')</constraint>
+	</page>
+	
+	<page view-id=".+\/catalog\/discountPlans\/.*">
+		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint>currentUser.hasPermission('billing','billingManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('billing','billingVisualization')</constraint>
+	</page>
+	
 	<page view-id=".+\/catalog\/.+">
 		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
 		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
 	</page>
 	
 	<!-- PAGE RULES FOR CRM PAGES -->
+	<page view-id=".+\/crm\/customers\/customer.*" >
+		<constraint>currentUser.hasPermission('account','accountManagement')</constraint> 
+		<constraint type="READ">currentUser.hasPermission('account','accountVisualization')</constraint>
+	</page>
+	
+	<page view-id=".+\/crm\/customerBrands\/.*" >
+		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+	</page>
+	
+	<page view-id=".+\/crm\/customerCategories\/.*" >
+		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+	</page>
+	
+	<page view-id=".+\/crm\/providerContacts\/.*" >
+		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+	</page>
+	
 	<page view-id=".+\/crm\/syntheseClients\/syntheseClientDetail" >
 		<constraint>currentUser.hasPermission('account','accountManagement')</constraint> 
 		<constraint type="READ">currentUser.hasPermission('customerSummary','customerSummaryVisualization')</constraint>
@@ -88,6 +179,11 @@
 	</page>
 	
 	<!-- PAGE RULES FOR MEDINA PAGES -->
+	<page view-id=".+\/medina\/access\/access.*" >
+		<constraint>currentUser.hasPermission('account','accountManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('account','accountVisualization')</constraint>
+	</page>
+	
 	<page view-id=".+\/medina\/.+" >
 		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
 		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
