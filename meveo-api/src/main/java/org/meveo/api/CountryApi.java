@@ -150,17 +150,12 @@ public class CountryApi extends BaseApi {
         
 
         TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode, provider);
-        Currency currency = currencyService.findByCode(currencyCode);
-        if (tradingCountry != null && currency != null) {
+        if (tradingCountry != null) {
             if (tradingCountry != null) {
                 tradingCountryService.remove(tradingCountry);
             }
         } else {
-            if (tradingCountry == null) {
-                throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
-            } else {
-                throw new EntityDoesNotExistsException(Currency.class, currencyCode);
-            }
+        	throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
         }
     }
 
