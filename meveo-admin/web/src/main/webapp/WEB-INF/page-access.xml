@@ -56,17 +56,23 @@
 	
 	<page view-id=".+\/admin\/sellers\/.*">
 		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
 	</page>
 	
 	<page view-id=".+\/admin\/title\/.*">
 		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
 	</page>
 	
 	<page view-id=".+\/admin\/creditCategories\/.*">
 		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
 	</page>
 	
 	<page view-id=".+\/admin\/.+">
@@ -141,6 +147,13 @@
 		<constraint type="READ">currentUser.hasPermission('billing','billingVisualization')</constraint>
 	</page>
 	
+	<page view-id=".+\/catalog\/calendars\/.*" >
+		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
+	</page>
+	
 	<page view-id=".+\/catalog\/.+">
 		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
 		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
@@ -154,17 +167,23 @@
 	
 	<page view-id=".+\/crm\/customerBrands\/.*" >
 		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
 	</page>
 	
 	<page view-id=".+\/crm\/customerCategories\/.*" >
 		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
 	</page>
 	
 	<page view-id=".+\/crm\/providerContacts\/.*" >
 		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
 	</page>
 	
 	<page view-id=".+\/crm\/syntheseClients\/syntheseClientDetail" >
@@ -217,6 +236,13 @@
 	</page>
 
 	<!-- PAGE RULES FOR REPORTING PAGES -->
+	<page view-id=".+\/reporting\/cache\/.*">
+		<constraint>currentUser.hasPermission('reporting','reportingManagement')</constraint>
+		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('reporting','reportingVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
+	</page>
+	
 	<page view-id=".+\/reporting\/.+">
 		<constraint>currentUser.hasPermission('reporting','reportingManagement')</constraint>
 		<constraint type="READ">currentUser.hasPermission('reporting','reportingVisualization')</constraint>
