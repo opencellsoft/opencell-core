@@ -34076,7 +34076,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
       	<notification code="${#Project#entityPrefix}_${#TestSuite#index}_Notif1">
 		  <classNameFilter>org.meveo.model.billing.Subscription</classNameFilter>
 		  <eventTypeFilter>UPDATED</eventTypeFilter>
-		  <elFilter>#{event.invoiceNumber.length() > 2}</elFilter>
+		  <elFilter>#{event.code.startsWith('test')}</elFilter>
 		  <scriptInstanceCode>org.meveo.service.script.${#Project#baseEntityPrefix}_Script</scriptInstanceCode>
 		  <scriptParams></scriptParams>
 		</notification>
@@ -34103,7 +34103,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="64d04093-53e3-4916-9a0c-5c235dfbd777"/><con:assertion type="Simple Contains" id="74685cf0-7ad3-4275-86ac-2e010acdcc31" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="c83110ca-cce0-48bf-9ff4-d204bb607c78" name="Contains 1"><con:configuration><token><![CDATA[  <notificationDto code="${#Project#entityPrefix}_${#TestSuite#index}_Notif1">
                <classNameFilter>org.meveo.model.billing.Subscription</classNameFilter>
                <eventTypeFilter>UPDATED</eventTypeFilter>
-               <elFilter>#{event.invoiceNumber.length() > 2}</elFilter>
+               <elFilter>#{event.code.startsWith('test')}</elFilter>
                <scriptInstanceCode>org.meveo.service.script.${#Project#baseEntityPrefix}_Script</scriptInstanceCode>
                <scriptParams/>
             </notificationDto>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find Update Notification with min reqs Vals" id="ad897328-30ec-4af0-b06d-92be2d9582f8"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>NotificationWsSoapBinding</con:interface><con:operation>findNotification</con:operation><con:request name="find Update Notification with min reqs Vals" id="103f3644-a889-4242-8d86-5de097e18109"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
@@ -34228,7 +34228,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
 		<notification code="${#Project#entityPrefix}_${#TestSuite#index}_WebHook1">
             <classNameFilter>org.meveo.model.billing.Subscription</classNameFilter>
             <eventTypeFilter>UPDATED</eventTypeFilter>
-            <elFilter>#{event.invoiceNumber.length() > 2}</elFilter>
+            <elFilter>#{event.code.startsWith('test')}</elFilter>
 		  <scriptInstanceCode>org.meveo.service.script.${#Project#baseEntityPrefix}_Script</scriptInstanceCode>
 		  <host>localhost</host>
             <port>8481</port>
@@ -34264,7 +34264,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="64d04093-53e3-4916-9a0c-5c235dfbd777"/><con:assertion type="Simple Contains" id="2b8b2a64-6a77-4a12-862b-92f6ff83f3b8" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="51baa00e-f896-4be8-9146-8465e49de7db" name="Contains 1"><con:configuration><token><![CDATA[<webhookDto code="${#Project#entityPrefix}_${#TestSuite#index}_WebHook1">
                <classNameFilter>org.meveo.model.billing.Subscription</classNameFilter>
                <eventTypeFilter>UPDATED</eventTypeFilter>
-               <elFilter>#{event.invoiceNumber.length() > 2}</elFilter>
+               <elFilter>#{event.code.startsWith('test')}</elFilter>
                <scriptInstanceCode>org.meveo.service.script.${#Project#baseEntityPrefix}_Script</scriptInstanceCode>
                <scriptParams/>
                <counterTemplate>${#Project#baseEntityPrefix}_CT1</counterTemplate>
@@ -34400,7 +34400,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
       	<notification code="${#Project#entityPrefix}_${#TestSuite#index}_EmailNotif1">
 		  <classNameFilter>org.meveo.model.crm.Provider</classNameFilter>
 		  <eventTypeFilter>UPDATED</eventTypeFilter>
-		  <elFilter>#{event.invoiceNumber.length() > 10}</elFilter>
+		  <elFilter>#{event.code.startsWith('test')}</elFilter>
 		  <scriptInstanceCode>org.meveo.service.script.${#Project#baseEntityPrefix}_Script</scriptInstanceCode>
 		  <emailFrom>OpenCell Software</emailFrom>
 		  <emailToEl>#{context eq context}</emailToEl>
@@ -34433,7 +34433,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="64d04093-53e3-4916-9a0c-5c235dfbd777"/><con:assertion type="Simple Contains" id="58821e86-5c9e-4b21-b2a0-bef96ae9a16e" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="28fadc49-f69d-448b-9094-ddf75d27c1b5" name="Contains 1"><con:configuration><token><![CDATA[ <emailNotificationDto code="${#Project#entityPrefix}_${#TestSuite#index}_EmailNotif1">
                <classNameFilter>org.meveo.model.crm.Provider</classNameFilter>
                <eventTypeFilter>UPDATED</eventTypeFilter>
-               <elFilter>#{event.invoiceNumber.length() > 10}</elFilter>
+               <elFilter>#{event.code.startsWith('test')}</elFilter>
                <scriptInstanceCode>org.meveo.service.script.${#Project#baseEntityPrefix}_Script</scriptInstanceCode>
                <scriptParams/>
                <counterTemplate>${#Project#baseEntityPrefix}_CT1</counterTemplate>
