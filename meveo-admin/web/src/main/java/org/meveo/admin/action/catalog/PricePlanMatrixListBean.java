@@ -18,7 +18,6 @@
  */
 package org.meveo.admin.action.catalog;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityExistsException;
@@ -30,7 +29,6 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 
 @Named
-@ConversationScoped
 public class PricePlanMatrixListBean extends PricePlanMatrixBean {
 
 	private static final long serialVersionUID = -3037867704912788027L;
