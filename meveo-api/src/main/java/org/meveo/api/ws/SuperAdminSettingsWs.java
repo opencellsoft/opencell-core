@@ -13,11 +13,12 @@ import org.meveo.api.dto.response.GetCountryIsoResponse;
 import org.meveo.api.dto.response.GetCurrencyIsoResponse;
 import org.meveo.api.dto.response.GetLanguageIsoResponse;
 import org.meveo.api.dto.response.GetProviderResponse;
+import org.meveo.api.ws.IBaseWs;
 
 /**
  * @author Edward P. Legaspi
  **/
-@WebService
+@WebService(targetNamespace = "http://superAdmin.ws.api.meveo.org/")
 public interface SuperAdminSettingsWs extends IBaseWs {
 
     // provider
