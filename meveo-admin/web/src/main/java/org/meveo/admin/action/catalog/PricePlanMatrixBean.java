@@ -22,9 +22,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
-import javax.faces.bean.ApplicationScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -45,10 +43,9 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.event.ToggleEvent;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.Visibility;
 
 /**
  * Standard backing bean for {@link PricePlanMatrix} (extends {@link BaseBean}
@@ -57,7 +54,7 @@ import org.primefaces.model.Visibility;
  * Manaty custom JSF components.
  */
 @Named
-@ApplicationScoped
+@ViewScoped
 public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 
 	private static final long serialVersionUID = -7046887530976683885L;
@@ -89,8 +86,6 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 	private String backPage;
 	
 	private long chargeTemplateId;
-	
-	private List<Boolean> columnVisibilitylist;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -99,7 +94,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 	public PricePlanMatrixBean() {
 		super(PricePlanMatrix.class);
 	}
-	
+
 	/**
 	 * Factory method for entity to edit. If objectId param set load that entity
 	 * from database, otherwise create new.
@@ -288,23 +283,6 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 		return chargeTemplateId;
 	}
   
-	/**
-	 * initialize the list of table columns to be visible
-	 */
-	@PostConstruct
-    public void init() {
-		columnVisibilitylist = Arrays.asList(true, true, true, true, true, true, false, 
-        		false, false, false, false, false, false, false, 
-        		false, false, false, false, false, false, false, false);
-    }
-	
-	 public List<Boolean> getColumnVisibilitylist() {
-        return columnVisibilitylist;
-    }
- 
-    public void onToggle(ToggleEvent e) {
-    	columnVisibilitylist.set((Integer) e.getData(), e.getVisibility() == Visibility.VISIBLE);
-    }
 	
 }
 
