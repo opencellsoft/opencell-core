@@ -25,7 +25,7 @@ import org.meveo.api.ws.SuperAdminSettingsWs;
 /**
  * @author Edward P. Legaspi
  **/
-@WebService(serviceName = "SuperAdminSettingsWs", endpointInterface = "org.meveo.api.ws.SuperAdminSettingsWs")
+@WebService(serviceName = "SuperAdminSettingsWs", endpointInterface = "org.meveo.api.ws.SuperAdminSettingsWs",targetNamespace = "http://superAdmin.ws.api.meveo.org/")
 @Interceptors({ WsRestApiInterceptor.class })
 @SuperAdminPermission
 public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettingsWs {

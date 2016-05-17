@@ -12,6 +12,11 @@
 <tr><td rowspan="1" colspan="3">DeleteMultipleWithoutPickAnyLineTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>if</td>
+	<td>${VarBool} == false</td>
+	<td></td>
+</tr>
+<tr>
 	<td>assertElementPresent</td>
 	<td>${MassToRerate}</td>
 	<td></td>
@@ -39,6 +44,11 @@
 <tr>
 	<td>verifyElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 </tbody></table>

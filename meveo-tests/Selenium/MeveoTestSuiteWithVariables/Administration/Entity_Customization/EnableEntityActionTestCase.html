@@ -12,6 +12,36 @@
 <tr><td rowspan="1" colspan="3">DeleteContactTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>clickAndWait</td>
+	<td>${CustomizedEntities}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${CodeECT}')]</td>
+	<td>${CodeECT}</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//a[contains(text(),'${CodeECT}')]</td>
+	<td>${CodeECT}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${CodeECT}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//a[contains(text(),'${CodeECT}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>assertElementPresent</td>
 	<td>${EnableActionBtn}</td>
 	<td></td>
