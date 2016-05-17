@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="63d882e4-12ba-48cb-9cf8-b557b7f5787f" activeEnvironment="Default" name="Full WS Test Entities" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="63d882e4-12ba-48cb-9cf8-b557b7f5787f" activeEnvironment="Default" name="Full WS Test Entities" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
   <con:entry key="TestSuite" value="&lt;all>"/>
@@ -21498,7 +21498,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       	<notification code="${#Project#baseEntityPrefix}_Notification1">
 		  <classNameFilter>org.meveo.model.crm.Customer</classNameFilter>
 		  <eventTypeFilter>CREATED</eventTypeFilter>
-		  <elFilter>#{event.invoiceNumber.length() > 0}</elFilter>
+		  <elFilter>#{event.code.startsWith('test')}</elFilter>
 		  <scriptInstanceCode>org.meveo.service.script.${#Project#baseEntityPrefix}_Script</scriptInstanceCode>
 		  <scriptParams></scriptParams>
 		</notification>
@@ -34027,7 +34027,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
       	<notification code="${#Project#entityPrefix}_${#TestSuite#index}_Notif1">
 		  <classNameFilter>org.meveo.model.crm.Customer</classNameFilter>
 		  <eventTypeFilter>CREATED</eventTypeFilter>
-		  <elFilter>#{event.invoiceNumber.length() > 0}</elFilter>
+		  <elFilter>#{event.code.startsWith('test')}</elFilter>
 		  <scriptInstanceCode>org.meveo.service.script.${#Project#baseEntityPrefix}_Script</scriptInstanceCode>
 		</notification>
       </ws:createNotification>\r
