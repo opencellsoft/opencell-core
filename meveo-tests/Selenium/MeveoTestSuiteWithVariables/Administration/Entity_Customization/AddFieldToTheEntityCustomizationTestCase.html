@@ -49,7 +49,7 @@
 <tr>
 	<td>type</td>
 	<td>${CFCode}</td>
-	<td>field1</td>
+	<td>${CodeField}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -59,7 +59,7 @@
 <tr>
 	<td>type</td>
 	<td>${CFFieldLabel}</td>
-	<td>Field1</td>
+	<td>${FieldLabelValue}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -73,7 +73,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='cftForm:fieldType_enum_panel']/div/ul/li[7]</td>
+	<td>//div[@id='cftForm:fieldType_enum_panel']/div/ul/li[8]</td>
 	<td></td>
 </tr>
 <tr>
@@ -92,6 +92,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>if</td>
+	<td>${DefaultValueBool}==true</td>
+	<td></td>
+</tr>
+<tr>
 	<td>assertElementPresent</td>
 	<td>${CFDefaultValue}</td>
 	<td></td>
@@ -99,6 +104,11 @@
 <tr>
 	<td>type</td>
 	<td>${CFDefaultValue}</td>
+	<td>${DefaultValueValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 <tr>
@@ -149,7 +159,7 @@
 <tr>
 	<td>type</td>
 	<td>${CFMaxLength}</td>
-	<td>50</td>
+	<td>${MaxLengthValue}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>

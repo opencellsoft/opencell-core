@@ -1,8 +1,5 @@
 package org.meveo.api.dto;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -11,7 +8,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.invoice.InvoiceConfigurationDto;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 
 /**
@@ -40,16 +36,7 @@ public class ProviderDto extends BaseDto {
 	private boolean levelDuplication;
 	private String invoicePrefix;
 	private Long currentInvoiceNb;
-	//private Boolean displaySubscriptions = false;
-	//private Boolean displayServices = false;
-	//private Boolean displayOffers = false;
-	//private Boolean displayEdrs = false;
-	//private Boolean displayProvider = false;
-	//private Boolean displayCfAsXML = false;
-	//private Boolean displayPricePlans = false;
 	private boolean displayFreeTransacInInvoice;
-	//private Boolean displayDetail = true;
-	//private Boolean displayChargesPeriods = false;
 	private String invoiceAdjustmentPrefix;
 	private Long currentInvoiceAdjustmentNb;
 	private Integer invoiceAdjustmentSequenceSize;
@@ -68,7 +55,7 @@ public class ProviderDto extends BaseDto {
 
 	}
 
-	public ProviderDto(Provider e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
+	public ProviderDto(Provider e, CustomFieldsDto customFieldInstances) {
 		code = e.getCode();
 		description = e.getDescription();
 		invoiceSequenceSize=e.getInvoiceSequenceSize();
@@ -89,25 +76,13 @@ public class ProviderDto extends BaseDto {
 		discountAccountingCode = e.getDiscountAccountingCode();
 		email = e.getEmail();
 		
-		customFields = CustomFieldsDto.toDTO(customFieldInstances);
+		customFields = customFieldInstances;
 		
 		this.setEnterprise(e.isEntreprise());
 		this.setLevelDuplication(e.isLevelDuplication());
 		this.setInvoicePrefix(e.getInvoicePrefix());
 		this.setCurrentInvoiceNb(e.getCurrentInvoiceNb());
 		this.setDisplayFreeTransacInInvoice(e.isDisplayFreeTransacInInvoice());
-		/*InvoiceConfiguration invoiceConfiguration = e.getInvoiceConfiguration();
-		if (invoiceConfiguration != null) {
-			this.setDisplaySubscriptions(invoiceConfiguration.getDisplaySubscriptions());
-			this.setDisplayServices(invoiceConfiguration.getDisplayServices());
-			this.setDisplayOffers(invoiceConfiguration.getDisplayOffers());
-			this.setDisplayEdrs(invoiceConfiguration.getDisplayEdrs());
-			this.setDisplayProvider(invoiceConfiguration.getDisplayProvider());
-			this.setDisplayDetail(invoiceConfiguration.getDisplayDetail());
-			this.setDisplayPricePlans(invoiceConfiguration.getDisplayPricePlans());
-			this.setDisplayCfAsXML(invoiceConfiguration.getDisplayCfAsXML());
-			this.setDisplayChargesPeriods(invoiceConfiguration.getDisplayChargesPeriods());
-		}*/
 		
 		if (e.getInvoiceAdjustmentPrefix() != null) {
 			this.setInvoiceAdjustmentPrefix(e.getInvoiceAdjustmentPrefix());

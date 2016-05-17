@@ -148,11 +148,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         UserAccount userAccount = subscription.getUserAccount();
 
         Seller seller = userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-
         if (serviceInstance.getSubscriptionDate() == null) {
-            serviceInstance.setSubscriptionDate(new Date());
+        serviceInstance.setSubscriptionDate(subscription.getSubscriptionDate() != null?subscription.getSubscriptionDate():new Date());
         }
-
         serviceInstance.setStatus(InstanceStatusEnum.INACTIVE);
         serviceInstance.setCode(serviceCode);
         serviceInstance.setInvoicingCalendar(serviceInstance.getServiceTemplate().getInvoicingCalendar());

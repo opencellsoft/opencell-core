@@ -30,11 +30,13 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.script.GenericScriptService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DualListModel;
@@ -55,6 +57,9 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 
     @Inject
     private RoleService roleService;
+
+    @Inject
+    private GenericScriptService genericScriptService;
 
     private DualListModel<Role> execRolesDM;
     private DualListModel<Role> sourcRolesDM;
@@ -154,10 +159,12 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
         String result = getListViewName();
         try {
 			// check duplicate script
-			if (entity.isTransient() && scriptInstanceService.isExistsCode(scriptInstanceService.getFullClassname(entity.getScript()), getCurrentProvider())) {
-				messages.error(new BundleKey("messages", "javax.persistence.EntityExistsException"));
-				return null;
-			}
+            String code = scriptInstanceService.getFullClassname(entity.getScript());
+	        CustomScript scriptDuplicate =  genericScriptService.findByCode(code, getCurrentProvider());
+	        if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
+	            messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), code);
+	            return null;
+	        }			
     		
             // Update roles
             getEntity().getExecutionRoles().clear();

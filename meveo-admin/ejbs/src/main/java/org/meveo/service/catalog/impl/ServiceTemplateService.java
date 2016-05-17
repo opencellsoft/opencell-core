@@ -101,17 +101,4 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 			return null;
 		}
 	}
-	
-	@SuppressWarnings("unchecked")
-	public List<ServiceTemplate> listNoBSM() {
-		QueryBuilder qb = new QueryBuilder(ServiceTemplate.class, "s");
-		qb.addSql(" s.businessServiceModel is null ");
-
-		try {
-			return (List<ServiceTemplate>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
-
 }

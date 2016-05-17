@@ -21,9 +21,6 @@
 
 <ui:composition>
     <h:outputText value="#{''}" />
-    <c:if test="${empty(datePattern)}">
-        <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-    </c:if>
     <c:if test="#{empty(cols)}">
         <c:set var="cols" value="#{paramBean.getProperty('meveo.textArea.cols','50')}" />
     </c:if>

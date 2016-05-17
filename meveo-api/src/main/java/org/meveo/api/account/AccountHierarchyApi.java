@@ -234,9 +234,9 @@ public class AccountHierarchyApi extends BaseApi {
 	 */
 	public void create(AccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		Provider provider = currentUser.getProvider();
-
-		if (StringUtils.isBlank(postData.getCustomerId())) {
-			missingParameters.add("customerId");
+		
+		if (StringUtils.isBlank(postData.getCustomerId()) && StringUtils.isBlank(postData.getCustomerCode())) {
+			missingParameters.add("customerCode");
 		}
 		if (StringUtils.isBlank(postData.getCustomerCategoryCode())) {
 			missingParameters.add("customerCategoryCode");
@@ -264,9 +264,17 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		handleMissingParameters();
+		
+		String customerCodeOrId = null;
+		if (!StringUtils.isBlank(postData.getCustomerId())) {
+			customerCodeOrId = postData.getCustomerId();
+		}
+		if (!StringUtils.isBlank(postData.getCustomerCode())) {
+			customerCodeOrId = postData.getCustomerCode();
+		}
 
-		if (customerService.findByCode(postData.getCustomerId(), provider) != null) {
-			throw new EntityAlreadyExistsException(Customer.class, postData.getCustomerId());
+		if (customerService.findByCode(CUSTOMER_PREFIX + customerCodeOrId, provider) != null) {
+			throw new EntityAlreadyExistsException(Customer.class, customerCodeOrId);
 		}
 
 		Seller seller = sellerService.findByCode(postData.getSellerCode(), provider);
@@ -392,7 +400,7 @@ public class AccountHierarchyApi extends BaseApi {
 			title = titleService.findByCode(StringUtils.normalizeHierarchyCode(postData.getTitleCode()), provider);
 		}
 
-		String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId());
+		String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
 		Customer customer = customerService.findByCode(customerCode, provider);
 		if (customer != null) {
 			throw new EntityAlreadyExistsException(Customer.class, customerCode);
@@ -404,7 +412,7 @@ public class AccountHierarchyApi extends BaseApi {
 		customer.getName().setTitle(title);
 		customer.setContactInformation(contactInformation);
 		customer.setAddress(address);
-		customer.setCode(CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
+		customer.setCode(CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId));
 		customer.setCustomerBrand(customerBrand);
 		customer.setCustomerCategory(customerCategory);
 		customer.setSeller(seller);
@@ -417,7 +425,7 @@ public class AccountHierarchyApi extends BaseApi {
 		customerAccount.getName().setFirstName(postData.getFirstName());
 		customerAccount.getName().setLastName(postData.getLastName());
 		customerAccount.getName().setTitle(title);
-		customerAccount.setCode(CUSTOMER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
+		customerAccount.setCode(CUSTOMER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId));
 		customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 		customerAccount.setPaymentMethod(PaymentMethodEnum.getValue(caPaymentMethod));
 		if (!StringUtils.isBlank(creditCategory)) {
@@ -438,7 +446,7 @@ public class AccountHierarchyApi extends BaseApi {
 		BillingAccount billingAccount = new BillingAccount();
 		billingAccount.setEmail(postData.getEmail());
 		billingAccount.setPaymentMethod(PaymentMethodEnum.getValue(postData.getPaymentMethod()));
-		billingAccount.setCode(BILLING_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
+		billingAccount.setCode(BILLING_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId));
 		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 		billingAccount.setCustomerAccount(customerAccount);
 		billingAccount.setPaymentMethod(PaymentMethodEnum.getValue(baPaymentMethod));
@@ -451,7 +459,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		billingAccountService.createBillingAccount(billingAccount, currentUser);
 
-		String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId());
+		String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
 		UserAccount userAccount = new UserAccount();
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
 		userAccount.setBillingAccount(billingAccount);
@@ -474,8 +482,8 @@ public class AccountHierarchyApi extends BaseApi {
 
 		Provider provider = currentUser.getProvider();
 
-		if (StringUtils.isBlank(postData.getCustomerId())) {
-			missingParameters.add("customerId");
+		if (StringUtils.isBlank(postData.getCustomerId()) && StringUtils.isBlank(postData.getCustomerCode())) {
+			missingParameters.add("customerCode");
 		}
 		if (StringUtils.isBlank(postData.getCustomerCategoryCode())) {
 			missingParameters.add("customerCategoryCode");
@@ -503,12 +511,20 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		handleMissingParameters();
+		
+		String customerCodeOrId = null;
+		if (!StringUtils.isBlank(postData.getCustomerId())) {
+			customerCodeOrId = postData.getCustomerId();
+		}
+		if (!StringUtils.isBlank(postData.getCustomerCode())) {
+			customerCodeOrId = postData.getCustomerCode();
+		}		
 
-		String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId());
+		String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
 		Customer customer = customerService.findByCode(customerCode, provider);
 
 		if (customer == null) {
-			throw new EntityDoesNotExistsException(Customer.class, postData.getCustomerId());
+			throw new EntityDoesNotExistsException(Customer.class, customerCodeOrId);
 		}
 
 		Seller seller = sellerService.findByCode(postData.getSellerCode(), provider);
@@ -687,6 +703,7 @@ public class AccountHierarchyApi extends BaseApi {
 		Address address = new Address();
 		address.setAddress1(postData.getAddress1());
 		address.setAddress2(postData.getAddress2());
+		address.setAddress3(postData.getAddress3());
 		address.setZipCode(postData.getZipCode());
 		address.setCity(postData.getCity());
 		address.setCountry(postData.getCountryCode());
@@ -712,11 +729,11 @@ public class AccountHierarchyApi extends BaseApi {
 		customerService.update(customer, currentUser);
 
 		CustomerAccount customerAccount = customerAccountService.findByCode(
-				CUSTOMER_ACCOUNT_PREFIX + postData.getCustomerId(), provider);
+				CUSTOMER_ACCOUNT_PREFIX + customerCodeOrId, provider);
 		if (customerAccount == null) {
 			customerAccount = new CustomerAccount();
 			customerAccount.setCode(CUSTOMER_ACCOUNT_PREFIX
-					+ StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
+					+ StringUtils.normalizeHierarchyCode(customerCodeOrId));
 		}
 		customerAccount.setCustomer(customer);
 
@@ -747,12 +764,12 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		BillingAccount billingAccount = billingAccountService.findByCode(
-				BILLING_ACCOUNT_PREFIX + postData.getCustomerId(), provider);
+				BILLING_ACCOUNT_PREFIX + customerCodeOrId, provider);
 
 		if (billingAccount == null) {
 			billingAccount = new BillingAccount();
 			billingAccount.setCode(BILLING_ACCOUNT_PREFIX
-					+ StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
+					+ StringUtils.normalizeHierarchyCode(customerCodeOrId));
 		}
 
 		billingAccount.setEmail(postData.getEmail());
@@ -772,7 +789,7 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccountService.update(billingAccount, currentUser);
 		}
 
-		UserAccount userAccount = userAccountService.findByCode(USER_ACCOUNT_PREFIX + postData.getCustomerId(),
+		UserAccount userAccount = userAccountService.findByCode(USER_ACCOUNT_PREFIX + customerCodeOrId,
 				provider);
 		if (userAccount == null) {
 			userAccount = new UserAccount();
@@ -782,7 +799,7 @@ public class AccountHierarchyApi extends BaseApi {
 		userAccount.setBillingAccount(billingAccount);
 
 		if (userAccount.isTransient()) {
-			String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId());
+			String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
 			try {
 				userAccount.setCode(userAccountCode);
 				userAccountService.createUserAccount(billingAccount, userAccount, currentUser);
@@ -809,7 +826,10 @@ public class AccountHierarchyApi extends BaseApi {
 				postData.getLimit(), null, null, postData.getSortField(), null);
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c", null, currentUser.getProvider());
 
-		String customerCodeOrId = CUSTOMER_PREFIX +  postData.getCustomerCode();
+		String customerCodeOrId = null;
+		if (!StringUtils.isBlank(postData.getCustomerCode())) {
+			customerCodeOrId = CUSTOMER_PREFIX + postData.getCustomerCode();
+		}
 		if (!StringUtils.isBlank(postData.getCustomerId())) {
 			customerCodeOrId = CUSTOMER_PREFIX + postData.getCustomerId();
 		}
@@ -896,7 +916,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 						if (!cfDto.isEmpty()) {
 							Object cfValue = customFieldInstanceService.getCFValue(cust, cfDto.getCode(), currentUser);
-							if (cfDto.getValueConverted().equals(cfValue)) {
+							if (getValueConverted(cfDto).equals(cfValue)) {
 								result.getCustomer().add(customerToDto(cust));
 							}
 						}
@@ -2425,9 +2445,16 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws BusinessException
 	 */
 	public void createOrUpdate(AccountHierarchyDto postData, User currentUser) throws MeveoApiException,
-			BusinessException {
+			BusinessException {		
+		String customerCodeOrId = null;
+		if (!StringUtils.isBlank(postData.getCustomerId())) {
+			customerCodeOrId = postData.getCustomerId();
+		}
+		if (!StringUtils.isBlank(postData.getCustomerCode())) {
+			customerCodeOrId = postData.getCustomerCode();
+		}		
 
-		if (customerService.findByCode(CUSTOMER_PREFIX + postData.getCustomerId(), currentUser.getProvider()) == null) {
+		if (customerService.findByCode(CUSTOMER_PREFIX + customerCodeOrId, currentUser.getProvider()) == null) {
 			create(postData, currentUser);
 		} else {
 			update(postData, currentUser);
@@ -2620,8 +2647,7 @@ public class AccountHierarchyApi extends BaseApi {
 			for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
 				if (customerDto.getCode().equals(customer.getCode())) {
 					if (!customerDto.isLoaded()) {
-						customerDto.initFromEntity(customer,
-								customFieldInstanceService.getCustomFieldInstances(customer));
+                        customerDto.initFromEntity(customer, entityToDtoConverter.getCustomFieldsDTO(customer));
 					}
 
 					found = true;
@@ -2643,7 +2669,7 @@ public class AccountHierarchyApi extends BaseApi {
 		dto.setName(new NameDto(account.getName()));
 		dto.setAddress(new AddressDto(account.getAddress()));
 
-		dto.setCustomFields(CustomFieldsDto.toDTO(customFieldInstanceService.getCustomFieldInstances(account)));
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(account));
 
 	}
 

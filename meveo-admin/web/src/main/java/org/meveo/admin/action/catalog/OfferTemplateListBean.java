@@ -21,9 +21,18 @@ package org.meveo.admin.action.catalog;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.service.base.PersistenceService;
+import org.primefaces.model.LazyDataModel;
+
 @Named
 @ConversationScoped
 public class OfferTemplateListBean extends OfferTemplateBean {
 
     private static final long serialVersionUID = -3037867704912788024L;
+
+    public LazyDataModel<OfferTemplate> getLazyDataModelNoBSM() {
+        filters.put("businessOfferModel", PersistenceService.SEARCH_IS_NULL);
+        return getLazyDataModel(filters, listFiltered);
+    }
 }

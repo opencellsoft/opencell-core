@@ -15,6 +15,7 @@
         edit - edit or view mode
         formId - form id value
         showMessages - should messages component be included
+        autoupdateMessages - should messages be updated automatically
         
     Components
         fields - fields to include. Can be specified via <ui:define ..> tag
@@ -31,15 +32,20 @@
     <c:if test="${empty edit}">
         <c:set var="edit" value="true" />
     </c:if>
+    <c:set var="formLevelEdit" value="${edit}" />
 
     <c:if test="${empty showMessages}">
         <c:set var="showMessages" value="true" />
     </c:if>
 
+    <c:if test="${empty autoupdateMessages}">
+        <c:set var="autoupdateMessages" value="true" />
+    </c:if>
+    
     <c:if test="${empty rendered}">
         <c:set var="rendered" value="true" />
     </c:if>
-    
+
     <h:form id="#{formId}">
         <p:panel rendered="#{rendered}">
             <c:if test="#{not empty label}">
@@ -49,7 +55,7 @@
             </c:if>
             <p:panel layout="block" styleClass="form-panel">
                 <c:if test="#{showMessages}">
-                    <p:messages id="messages" autoUpdate="true" />
+                    <p:messages id="messages" autoUpdate="#{autoupdateMessages}" />
                 </c:if>
                 <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
                     <ui:insert name="fields" />

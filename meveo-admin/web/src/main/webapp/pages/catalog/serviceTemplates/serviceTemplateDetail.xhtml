@@ -109,6 +109,7 @@
 							label="#{messages['serviceTemplate.calendar']}"
 							field="invoicingCalendar" valueLabelField="code" required="false" popup="false"
 							listBean="#{calendarBean}" />
+						<hftl:customFields backingBean="#{serviceTemplateBean}" messagesId=":tabView:formId:messages" />
 					</hftl:formPanel>
 				</p:tab>
 				
@@ -183,7 +184,7 @@
                                     <ui:param name="buttons" value="true"/>
                                     <ui:define name="buttons">
 										<p:commandButton
-											rendered="#{serviceRecurringChargeTemplate.id==null}"
+											rendered="#{serviceRecurringChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateRecurring}"
 											value="#{messages['action.addSave']}"
 											update=":tabView:serviceRecurringChargeTempalte_panel, :tabView:serviceRecurringChargediv" />
@@ -275,7 +276,7 @@
 									<ui:param name="buttons" value="true"/>
                                     <ui:define name="buttons">
 										<p:commandButton
-											rendered="#{serviceSubscriptionChargeTemplate.id==null}"
+											rendered="#{serviceSubscriptionChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateSubscription}"
 											value="#{messages['action.addSave']}"
 											update=":tabView:serviceSubscriptionChargeTempalte_panel,:tabView:formSubscriptionCharge ,:tabView:serviceSubscriptionChargediv" />
@@ -366,7 +367,7 @@
 									<ui:param name="buttons" value="true"/>
                                     <ui:define name="buttons">
 										<p:commandButton
-											rendered="#{serviceTerminationChargeTemplate.id==null}"
+											rendered="#{serviceTerminationChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateTermination}"
 											value="#{messages['action.addSave']}"
 											update=":tabView:serviceTerminationChargeTempalte_panel,:tabView:formTerminationCharge ,:tabView:serviceTerminationChargediv" />
@@ -461,7 +462,7 @@
 									<ui:param name="buttons" value="true"/>
                                     <ui:define name="buttons">
 										<p:commandButton
-											rendered="#{serviceUsageChargeTemplate.id==null}"
+											rendered="#{serviceUsageChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateUsage}"
 											value="#{messages['action.addSave']}"
 											update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formUsageCharge ,:tabView:serviceUsageChargediv" />
@@ -481,16 +482,6 @@
 									</ui:define>
 								</hftl:formPanel>
 						</p:panel>
-				</p:tab>
-				<p:tab title="#{messages['menu.customFieldTemplates']}" id="tab6"
-					rendered="#{customFieldDataEntryBean.getGroupedFieldTemplates(serviceTemplateBean.entity).childCount > 0}">
-					<hftl:formPanel formId="customFieldTemplatesForm"
-							backingBean="#{serviceTemplateBean}"
-							ajaxSubmit="true"
-							showDeleteButton="false">
-						<hftl:customFields backingBean="#{serviceTemplateBean}" 
-							messagesId=":tabView:customFieldTemplatesForm:messages" />
-					</hftl:formPanel>
 				</p:tab>
 			</p:tabView>
 		</p:panel>

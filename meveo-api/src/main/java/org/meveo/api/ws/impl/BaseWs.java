@@ -12,6 +12,7 @@ import javax.xml.ws.handler.MessageContext;
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.SuperAdminPermission;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.LoginException;
@@ -110,11 +111,16 @@ public abstract class BaseWs {
 
         if (user == null) {
             throw new LoginException("Authentication failed!");
+        }        
+        boolean isAllowed = false;
+
+        if( this.getClass().isAnnotationPresent(SuperAdminPermission.class)){
+        	  isAllowed = user.hasPermission("superAdmin", "superAdminManagement");
+        }else{
+        	isAllowed = user.hasPermission("user", "apiAccess");
         }
-
         // check if has api permission
-        boolean isAllowed = user.hasPermission("user", "apiAccess");
-
+       
         if (!isAllowed) {
             throw new LoginException(user.getUserName(), "Authentication failed! Insufficient privilege to access API services!");
         }

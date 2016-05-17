@@ -30,7 +30,6 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -552,9 +551,4 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 				&& (serviceInstanceService.findByServiceTemplate(getEntity()) != null) && serviceInstanceService
 				.findByServiceTemplate(getEntity()).size() > 0) ? true : false;
 	}
-	
-	public List<ServiceTemplate> listNoBSM() {
-		return serviceTemplateService.listNoBSM();
-	}
-
 }

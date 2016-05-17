@@ -1,6 +1,7 @@
 package org.meveo.api.dto;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,12 +28,21 @@ public class CustomFieldTemplateDto extends BaseDto {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Field code
+     */
     @XmlAttribute(required = true)
     protected String code;
 
+    /**
+     * Field label
+     */
     @XmlAttribute(required = true)
     protected String description;
 
+    /**
+     * Value type
+     */
     @XmlElement(required = true)
     protected CustomFieldTypeEnum fieldType;
 
@@ -48,63 +58,130 @@ public class CustomFieldTemplateDto extends BaseDto {
     @XmlElement(required = false)
     protected String appliesTo;
 
+    /**
+     * Default value
+     */
     @XmlElement
     protected String defaultValue;
 
+    /**
+     * Value storage type
+     */
     @XmlElement(required = true)
     protected CustomFieldStorageTypeEnum storageType;
 
+    /**
+     * Is value required
+     */
     @XmlElement
     protected boolean valueRequired;
 
+    /**
+     * Is value versionable
+     */
     @XmlElement
     protected boolean versionable;
 
+    /**
+     * Should Period end event be fired when value period is over
+     */
     @XmlElement
     protected boolean triggerEndPeriodEvent;
 
+    /**
+     * Calendar associated to value versioning periods
+     */
     @XmlElement
     protected String calendar;
 
+    /**
+     * How long versionable values be cached past the period end date
+     */
     @XmlElement
     protected Integer cacheValueTimeperiod;
 
+    /**
+     * Entity class and CET code for a reference to entity or child entity type fields
+     */
     @XmlElement
     protected String entityClazz;
 
+    /**
+     * List of values for LIST type field
+     */
     @XmlElement
     protected Map<String, String> listValues;
 
+    /**
+     * Can value be changed when editing a previously saved entity
+     */
     @XmlElement
     protected boolean allowEdit = true;
 
+    /**
+     * Do not show/apply field on new entity creation
+     */
     @XmlElement
     protected boolean hideOnNew;
 
+    /**
+     * Maximum value to validate long and double values OR maximum length of string value
+     */
     @XmlElement
     protected Long maxValue;
 
+    /**
+     * Minimum value to validate long and double values
+     */
     @XmlElement
     protected Long minValue;
 
+    /**
+     * Regular expression to validate string values
+     */
     @XmlElement
     protected String regExp;
 
+    /**
+     * Should value be cached
+     */
     @XmlElement
     protected boolean cacheValue;
 
+    /**
+     * Where field should be displayed - concatenated information with tab and fieldset information in a format:
+     * tab:TAB_NAME:TAB_POSITION;fieldGroup:FIELD_SET_NAME:FIELD_SET_POSITION;field:FIELD_POSITION
+     * 
+     * e.g. tab:First tab:0;fieldGroup:Field set name:0;field:0 or tab:Second tab:1;field:1
+     */
     @XmlElement
     protected String guiPosition;
 
+    /**
+     * Key format of a map for map type fields
+     */
     @XmlElement()
     protected CustomFieldMapKeyEnum mapKeyType;
 
+    /**
+     * EL expression (including #{}) to evaluate when field is applicable.
+     */
     @XmlElement()
     protected String applicableOnEl;
 
+    /**
+     * A list of columns matrix consists of
+     */
     @XmlElementWrapper(name = "matrixColumns")
     @XmlElement(name = "matrixColumn")
     private List<CustomFieldMatrixColumnDto> matrixColumns;
+
+    /**
+     * A list of child entity fields to be displayed in a summary table of child entities
+     */
+    @XmlElementWrapper(name = "childEntityFieldsForSummary")
+    @XmlElement(name = "fieldCode")
+    private List<String> childEntityFieldsForSummary;
 
     public CustomFieldTemplateDto() {
 
@@ -139,11 +216,17 @@ public class CustomFieldTemplateDto extends BaseDto {
         applicableOnEl = cf.getApplicableOnEl();
         mapKeyType = cf.getMapKeyType();
 
-        if (cf.getMatrixColumns() != null) {
+        if (cf.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && cf.getMatrixColumns() != null) {
+            matrixColumns = new ArrayList<>();
             for (CustomFieldMatrixColumn column : cf.getMatrixColumns()) {
                 matrixColumns.add(new CustomFieldMatrixColumnDto(column));
             }
         }
+
+        if (cf.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && cf.getChildEntityFields() != null) {
+            childEntityFieldsForSummary = Arrays.asList(cf.getChildEntityFieldsAsList());
+        }
+
     }
 
     public String getCode() {
@@ -355,5 +438,13 @@ public class CustomFieldTemplateDto extends BaseDto {
 
     public void setMatrixColumns(List<CustomFieldMatrixColumnDto> matrixColumns) {
         this.matrixColumns = matrixColumns;
+    }
+
+    public List<String> getChildEntityFieldsForSummary() {
+        return childEntityFieldsForSummary;
+    }
+
+    public void setChildEntityFieldsForSummary(List<String> childEntityFieldsForSummary) {
+        this.childEntityFieldsForSummary = childEntityFieldsForSummary;
     }
 }

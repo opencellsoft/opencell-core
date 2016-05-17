@@ -29,7 +29,7 @@ import javax.validation.constraints.Size;
 import org.meveo.model.MultilanguageEntity;
 
 @Entity
-@MultilanguageEntity
+@MultilanguageEntity(key = "menu.charges", group = "ChargeTemplate")
 @Table(name = "CAT_USAGE_CHARGE_TEMPLATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_USAGE_CHARGE_TEMPLATE_SEQ")
 @NamedQueries({ @NamedQuery(name = "UsageChargeTemplate.getWithTemplateEDR", query = "SELECT u FROM UsageChargeTemplate u join u.edrTemplates t WHERE :edrTemplate=t"

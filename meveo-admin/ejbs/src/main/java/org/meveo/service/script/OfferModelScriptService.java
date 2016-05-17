@@ -61,6 +61,15 @@ public class OfferModelScriptService extends CustomScriptService<OfferModelScrip
         return offerModelScript;
     }
 
+    @Override
+    public void remove(OfferModelScript e) {
+
+        if (e.getBusinessOfferModel() != null) {
+            e.getBusinessOfferModel().setScript(null);
+        }
+        super.remove(e);
+    }
+
     /**
      * Get all OfferModelScripts with error for a provider
      * 
@@ -131,4 +140,5 @@ public class OfferModelScriptService extends CustomScriptService<OfferModelScrip
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
         scriptInterface.updateOfferTemplate(scriptContext, currentUser);
     }
+
 }

@@ -1,14 +1,13 @@
 package org.meveo.api.dto.catalog;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -16,7 +15,6 @@ import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.CustomFieldInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -26,211 +24,210 @@ import org.meveo.model.crm.CustomFieldInstance;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceTemplateDto implements Serializable {
 
-	private static final long serialVersionUID = -6794700715161690227L;
+    private static final long serialVersionUID = -6794700715161690227L;
 
-	@XmlAttribute(required = true)
-	private String code;
+    @XmlAttribute(required = true)
+    private String code;
 
-	@XmlAttribute()
-	private String description;
+    @XmlAttribute()
+    private String description;
 
-	private String invoicingCalendar;
+    private String invoicingCalendar;
 
-	private ServiceChargeTemplateRecurringsDto serviceChargeTemplateRecurrings;
-	private ServiceChargeTemplateSubscriptionsDto serviceChargeTemplateSubscriptions;
-	private ServiceChargeTemplateTerminationsDto serviceChargeTemplateTerminations;
-	private ServiceChargeTemplateUsagesDto serviceChargeTemplateUsages;
-	
-	private CustomFieldsDto customFields = new CustomFieldsDto();
-	
-	private boolean mandatory;
-	
-	/**
-	 * BusinessServiceModel code.
-	 */
-	private String somCode;
+    private ServiceChargeTemplateRecurringsDto serviceChargeTemplateRecurrings;
+    private ServiceChargeTemplateSubscriptionsDto serviceChargeTemplateSubscriptions;
+    private ServiceChargeTemplateTerminationsDto serviceChargeTemplateTerminations;
+    private ServiceChargeTemplateUsagesDto serviceChargeTemplateUsages;
 
-	public ServiceTemplateDto() {
-	}
+    private CustomFieldsDto customFields = new CustomFieldsDto();
 
-	public ServiceTemplateDto(ServiceTemplate serviceTemplate, Map<String, List<CustomFieldInstance>> customFieldInstances) {
-		code = serviceTemplate.getCode();
-		description = serviceTemplate.getDescription();
-		invoicingCalendar=serviceTemplate.getInvoicingCalendar()==null?null:serviceTemplate.getInvoicingCalendar().getCode();
-		
-		if (serviceTemplate.getBusinessServiceModel() != null) {
-			somCode = serviceTemplate.getBusinessServiceModel().getCode();
-		}
+    private boolean mandatory;
 
-		// set serviceChargeTemplateRecurrings
-		if (serviceTemplate.getServiceRecurringCharges().size() > 0) {
-			serviceChargeTemplateRecurrings = new ServiceChargeTemplateRecurringsDto();
+    /**
+     * BusinessServiceModel code.
+     */
+    private String somCode;
 
-			for (ServiceChargeTemplateRecurring recCharge : serviceTemplate.getServiceRecurringCharges()) {
-				ServiceChargeTemplateRecurringDto serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurringDto();
-				serviceChargeTemplateRecurring.setCode(recCharge.getChargeTemplate().getCode());
+    public ServiceTemplateDto() {
+    }
 
-				for (WalletTemplate wallet : recCharge.getWalletTemplates()) {
-					serviceChargeTemplateRecurring.getWallets().getWallet().add(wallet.getCode());
-				}
+    public ServiceTemplateDto(ServiceTemplate serviceTemplate, CustomFieldsDto customFieldInstances) {
+        code = serviceTemplate.getCode();
+        description = serviceTemplate.getDescription();
+        invoicingCalendar = serviceTemplate.getInvoicingCalendar() == null ? null : serviceTemplate.getInvoicingCalendar().getCode();
 
-				serviceChargeTemplateRecurrings.getServiceChargeTemplateRecurring().add(serviceChargeTemplateRecurring);
-			}
-		}
+        if (serviceTemplate.getBusinessServiceModel() != null) {
+            somCode = serviceTemplate.getBusinessServiceModel().getCode();
+        }
 
-		// set serviceChargeTemplateSubscriptions
-		if (serviceTemplate.getServiceSubscriptionCharges().size() > 0) {
-			serviceChargeTemplateSubscriptions = new ServiceChargeTemplateSubscriptionsDto();
+        // set serviceChargeTemplateRecurrings
+        if (serviceTemplate.getServiceRecurringCharges().size() > 0) {
+            serviceChargeTemplateRecurrings = new ServiceChargeTemplateRecurringsDto();
 
-			for (ServiceChargeTemplateSubscription subCharge : serviceTemplate.getServiceSubscriptionCharges()) {
-				ServiceChargeTemplateSubscriptionDto serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscriptionDto();
-				serviceChargeTemplateSubscription.setCode(subCharge.getChargeTemplate().getCode());
+            for (ServiceChargeTemplateRecurring recCharge : serviceTemplate.getServiceRecurringCharges()) {
+                ServiceChargeTemplateRecurringDto serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurringDto();
+                serviceChargeTemplateRecurring.setCode(recCharge.getChargeTemplate().getCode());
 
-				for (WalletTemplate wallet : subCharge.getWalletTemplates()) {
-					serviceChargeTemplateSubscription.getWallets().getWallet().add(wallet.getCode());
-				}
+                for (WalletTemplate wallet : recCharge.getWalletTemplates()) {
+                    serviceChargeTemplateRecurring.getWallets().getWallet().add(wallet.getCode());
+                }
 
-				serviceChargeTemplateSubscriptions.getServiceChargeTemplateSubscription().add(
-						serviceChargeTemplateSubscription);
-			}
-		}
+                serviceChargeTemplateRecurrings.getServiceChargeTemplateRecurring().add(serviceChargeTemplateRecurring);
+            }
+        }
 
-		// set serviceChargeTemplateTerminations
-		if (serviceTemplate.getServiceTerminationCharges().size() > 0) {
-			serviceChargeTemplateTerminations = new ServiceChargeTemplateTerminationsDto();
+        // set serviceChargeTemplateSubscriptions
+        if (serviceTemplate.getServiceSubscriptionCharges().size() > 0) {
+            serviceChargeTemplateSubscriptions = new ServiceChargeTemplateSubscriptionsDto();
 
-			for (ServiceChargeTemplateTermination terminationCharge : serviceTemplate.getServiceTerminationCharges()) {
-				ServiceChargeTemplateTerminationDto serviceChargeTemplateTermination = new ServiceChargeTemplateTerminationDto();
-				serviceChargeTemplateTermination.setCode(terminationCharge.getChargeTemplate().getCode());
+            for (ServiceChargeTemplateSubscription subCharge : serviceTemplate.getServiceSubscriptionCharges()) {
+                ServiceChargeTemplateSubscriptionDto serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscriptionDto();
+                serviceChargeTemplateSubscription.setCode(subCharge.getChargeTemplate().getCode());
 
-				for (WalletTemplate wallet : terminationCharge.getWalletTemplates()) {
-					serviceChargeTemplateTermination.getWallets().getWallet().add(wallet.getCode());
-				}
+                for (WalletTemplate wallet : subCharge.getWalletTemplates()) {
+                    serviceChargeTemplateSubscription.getWallets().getWallet().add(wallet.getCode());
+                }
 
-				serviceChargeTemplateTerminations.getServiceChargeTemplateTermination().add(
-						serviceChargeTemplateTermination);
-			}
+                serviceChargeTemplateSubscriptions.getServiceChargeTemplateSubscription().add(serviceChargeTemplateSubscription);
+            }
+        }
 
-		}
+        // set serviceChargeTemplateTerminations
+        if (serviceTemplate.getServiceTerminationCharges().size() > 0) {
+            serviceChargeTemplateTerminations = new ServiceChargeTemplateTerminationsDto();
 
-		// add serviceChargeTemplateUsages
+            for (ServiceChargeTemplateTermination terminationCharge : serviceTemplate.getServiceTerminationCharges()) {
+                ServiceChargeTemplateTerminationDto serviceChargeTemplateTermination = new ServiceChargeTemplateTerminationDto();
+                serviceChargeTemplateTermination.setCode(terminationCharge.getChargeTemplate().getCode());
 
-		if (serviceTemplate.getServiceUsageCharges().size() > 0) {
-			serviceChargeTemplateUsages = new ServiceChargeTemplateUsagesDto();
+                for (WalletTemplate wallet : terminationCharge.getWalletTemplates()) {
+                    serviceChargeTemplateTermination.getWallets().getWallet().add(wallet.getCode());
+                }
 
-			for (ServiceChargeTemplateUsage usageCharge : serviceTemplate.getServiceUsageCharges()) {
-				ServiceUsageChargeTemplateDto serviceUsageChargeTemplate = new ServiceUsageChargeTemplateDto();
-				serviceUsageChargeTemplate.setCode(usageCharge.getChargeTemplate().getCode());
+                serviceChargeTemplateTerminations.getServiceChargeTemplateTermination().add(serviceChargeTemplateTermination);
+            }
 
-				if (usageCharge.getCounterTemplate() != null) {
-					serviceUsageChargeTemplate.setCounterTemplate(usageCharge.getCounterTemplate().getCode());
-				}
+        }
 
-				for (WalletTemplate wallet : usageCharge.getWalletTemplates()) {
-					serviceUsageChargeTemplate.getWallets().getWallet().add(wallet.getCode());
-				}
+        // add serviceChargeTemplateUsages
 
-				serviceChargeTemplateUsages.getServiceChargeTemplateUsage().add(serviceUsageChargeTemplate);
-			}
-		}
-		
-		customFields = CustomFieldsDto.toDTO(customFieldInstances);
-	}
+        if (serviceTemplate.getServiceUsageCharges().size() > 0) {
+            serviceChargeTemplateUsages = new ServiceChargeTemplateUsagesDto();
 
-	public ServiceTemplateDto(String code) {
-		this.code = code;
-	}
+            for (ServiceChargeTemplateUsage usageCharge : serviceTemplate.getServiceUsageCharges()) {
+                ServiceUsageChargeTemplateDto serviceUsageChargeTemplate = new ServiceUsageChargeTemplateDto();
+                serviceUsageChargeTemplate.setCode(usageCharge.getChargeTemplate().getCode());
 
-	public String getCode() {
-		return code;
-	}
+                if (usageCharge.getCounterTemplate() != null) {
+                    serviceUsageChargeTemplate.setCounterTemplate(usageCharge.getCounterTemplate().getCode());
+                }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+                for (WalletTemplate wallet : usageCharge.getWalletTemplates()) {
+                    serviceUsageChargeTemplate.getWallets().getWallet().add(wallet.getCode());
+                }
 
-	public String getDescription() {
-		return description;
-	}
+                serviceChargeTemplateUsages.getServiceChargeTemplateUsage().add(serviceUsageChargeTemplate);
+            }
+        }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+        customFields = customFieldInstances;
+    }
 
-	public String getInvoicingCalendar() {
-		return invoicingCalendar;
-	}
+    public ServiceTemplateDto(String code) {
+        this.code = code;
+    }
 
-	public void setInvoicingCalendar(String invoicingCalendar) {
-		this.invoicingCalendar = invoicingCalendar;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public ServiceChargeTemplateRecurringsDto getServiceChargeTemplateRecurrings() {
-		return serviceChargeTemplateRecurrings;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setServiceChargeTemplateRecurrings(ServiceChargeTemplateRecurringsDto serviceChargeTemplateRecurrings) {
-		this.serviceChargeTemplateRecurrings = serviceChargeTemplateRecurrings;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public ServiceChargeTemplateSubscriptionsDto getServiceChargeTemplateSubscriptions() {
-		return serviceChargeTemplateSubscriptions;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setServiceChargeTemplateSubscriptions(
-			ServiceChargeTemplateSubscriptionsDto serviceChargeTemplateSubscriptions) {
-		this.serviceChargeTemplateSubscriptions = serviceChargeTemplateSubscriptions;
-	}
+    public String getInvoicingCalendar() {
+        return invoicingCalendar;
+    }
 
-	public ServiceChargeTemplateTerminationsDto getServiceChargeTemplateTerminations() {
-		return serviceChargeTemplateTerminations;
-	}
+    public void setInvoicingCalendar(String invoicingCalendar) {
+        this.invoicingCalendar = invoicingCalendar;
+    }
 
-	public void setServiceChargeTemplateTerminations(
-			ServiceChargeTemplateTerminationsDto serviceChargeTemplateTerminations) {
-		this.serviceChargeTemplateTerminations = serviceChargeTemplateTerminations;
-	}
+    public ServiceChargeTemplateRecurringsDto getServiceChargeTemplateRecurrings() {
+        return serviceChargeTemplateRecurrings;
+    }
 
-	public ServiceChargeTemplateUsagesDto getServiceChargeTemplateUsages() {
-		return serviceChargeTemplateUsages;
-	}
+    public void setServiceChargeTemplateRecurrings(ServiceChargeTemplateRecurringsDto serviceChargeTemplateRecurrings) {
+        this.serviceChargeTemplateRecurrings = serviceChargeTemplateRecurrings;
+    }
 
-	public void setServiceChargeTemplateUsages(ServiceChargeTemplateUsagesDto serviceChargeTemplateUsages) {
-		this.serviceChargeTemplateUsages = serviceChargeTemplateUsages;
-	}
+    public ServiceChargeTemplateSubscriptionsDto getServiceChargeTemplateSubscriptions() {
+        return serviceChargeTemplateSubscriptions;
+    }
 
-	@Override
-	public String toString() {
-		return "ServiceTemplateDto [code=" + code + ", description=" + description + ", invoicingCalendar="
-				+ invoicingCalendar + ", serviceChargeTemplateRecurrings=" + serviceChargeTemplateRecurrings
-				+ ", serviceChargeTemplateSubscriptions=" + serviceChargeTemplateSubscriptions
-				+ ", serviceChargeTemplateTerminations=" + serviceChargeTemplateTerminations
-				+ ", serviceChargeTemplateUsages=" + serviceChargeTemplateUsages + ", customFields=" + customFields
-				+ ", mandatory=" + mandatory + ", somCode=" + somCode + "]";
-	}
+    public void setServiceChargeTemplateSubscriptions(ServiceChargeTemplateSubscriptionsDto serviceChargeTemplateSubscriptions) {
+        this.serviceChargeTemplateSubscriptions = serviceChargeTemplateSubscriptions;
+    }
 
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    public ServiceChargeTemplateTerminationsDto getServiceChargeTemplateTerminations() {
+        return serviceChargeTemplateTerminations;
+    }
 
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
+    public void setServiceChargeTemplateTerminations(ServiceChargeTemplateTerminationsDto serviceChargeTemplateTerminations) {
+        this.serviceChargeTemplateTerminations = serviceChargeTemplateTerminations;
+    }
 
-	public boolean isMandatory() {
-		return mandatory;
-	}
+    public ServiceChargeTemplateUsagesDto getServiceChargeTemplateUsages() {
+        return serviceChargeTemplateUsages;
+    }
 
-	public void setMandatory(boolean mandatory) {
-		this.mandatory = mandatory;
-	}
+    public void setServiceChargeTemplateUsages(ServiceChargeTemplateUsagesDto serviceChargeTemplateUsages) {
+        this.serviceChargeTemplateUsages = serviceChargeTemplateUsages;
+    }
 
-	public String getSomCode() {
-		return somCode;
-	}
+    @Override
+    public String toString() {
+        return "ServiceTemplateDto [code=" + code + ", description=" + description + ", invoicingCalendar=" + invoicingCalendar + ", serviceChargeTemplateRecurrings="
+                + serviceChargeTemplateRecurrings + ", serviceChargeTemplateSubscriptions=" + serviceChargeTemplateSubscriptions + ", serviceChargeTemplateTerminations="
+                + serviceChargeTemplateTerminations + ", serviceChargeTemplateUsages=" + serviceChargeTemplateUsages + ", customFields=" + customFields + ", mandatory="
+                + mandatory + ", somCode=" + somCode + "]";
+    }
 
-	public void setSomCode(String somCode) {
-		this.somCode = somCode;
-	}
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
 
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
+    }
+
+    public String getSomCode() {
+        return somCode;
+    }
+
+    public void setSomCode(String somCode) {
+        this.somCode = somCode;
+    }
+
+    public boolean isCodeOnly() {
+        return StringUtils.isBlank(description) && StringUtils.isBlank(invoicingCalendar) && StringUtils.isBlank(somCode) && serviceChargeTemplateRecurrings == null
+                && serviceChargeTemplateSubscriptions == null && serviceChargeTemplateTerminations == null && serviceChargeTemplateUsages == null
+                && (customFields == null || customFields.isEmpty());
+    }
 }

@@ -59,7 +59,9 @@ import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
+import org.meveo.api.module.ModuleApi;
 import org.meveo.api.ws.Catalog4_1Ws;
+import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.shared.DateUtils;
 
 /**
@@ -107,6 +109,9 @@ public class Catalog4_1WsImpl extends BaseWs implements Catalog4_1Ws {
 
     @Inject
     private OfferTemplateCategoryApi offerTemplateCategoryApi;
+    
+    @Inject
+    private ModuleApi moduleApi;
 
     @Override
     public ActionStatus createCounterTemplate(CounterTemplateDto postData) {
@@ -1110,7 +1115,7 @@ public class Catalog4_1WsImpl extends BaseWs implements Catalog4_1Ws {
         GetBusinessOfferModelResponseDto result = new GetBusinessOfferModelResponseDto();
 
         try {
-            result.setBusinessOfferModel(businessOfferModelApi.find(businessOfferModelCode, getCurrentUser().getProvider()));
+            result.setBusinessOfferModel((BusinessOfferModelDto) moduleApi.get(businessOfferModelCode, BusinessOfferModel.class, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

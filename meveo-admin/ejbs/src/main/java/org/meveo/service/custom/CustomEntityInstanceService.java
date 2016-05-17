@@ -1,5 +1,7 @@
 package org.meveo.service.custom;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
@@ -19,7 +21,6 @@ public class CustomEntityInstanceService extends BusinessService<CustomEntityIns
         QueryBuilder qb = new QueryBuilder(getEntityClass(), "cei", null, provider);
         qb.addCriterion("cei.cetCode", "=", cetCode, true);
         qb.addCriterion("cei.code", "=", code, true);
-        qb.addCriterionEntity("cei.provider", provider);
 
         try {
             return (CustomEntityInstance) qb.getQuery(getEntityManager()).getSingleResult();
@@ -27,5 +28,15 @@ public class CustomEntityInstanceService extends BusinessService<CustomEntityIns
             log.warn("No CustomEntityInstance by code {} and cetCode {} found", code, cetCode);
             return null;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<CustomEntityInstance> findChildEntities(String cetCode, String parentEntityUuid, Provider provider) {
+
+        QueryBuilder qb = new QueryBuilder(getEntityClass(), "cei", null, provider);
+        qb.addCriterion("cei.cetCode", "=", cetCode, true);
+        qb.addCriterion("cei.parentEntityUuid", "=", parentEntityUuid, true);
+
+        return qb.getQuery(getEntityManager()).getResultList();
     }
 }

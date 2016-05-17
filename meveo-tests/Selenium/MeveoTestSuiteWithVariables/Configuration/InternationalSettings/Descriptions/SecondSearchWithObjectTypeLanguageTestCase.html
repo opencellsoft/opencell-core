@@ -12,8 +12,18 @@
 <tr><td rowspan="1" colspan="3">SearchWithCodeTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>click</td>
-	<td>${CleanFilters}</td>
+	<td>clickAndWait</td>
+	<td>${Descriptions}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SearchWithObjectType}</td>
 	<td></td>
 </tr>
 <tr>
@@ -23,7 +33,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>${InvoiceCategories}</td>
+	<td>//ul[@id='searchForm:messageCode_txt_items']/li[4]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SearchWithLanguage}</td>
 	<td></td>
 </tr>
 <tr>
@@ -33,7 +48,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>${ENG}</td>
+	<td>${FRA}</td>
 	<td></td>
 </tr>
 <tr>

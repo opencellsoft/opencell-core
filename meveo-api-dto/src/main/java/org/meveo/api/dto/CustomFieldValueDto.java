@@ -13,8 +13,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.crm.EntityReferenceWrapper;
-
 /**
  * Represents a single CF simple value inside a more complex CF value (list, map, matrix)
  * 
@@ -27,21 +25,12 @@ public class CustomFieldValueDto implements Serializable {
     private static final long serialVersionUID = -6551785257592739335L;
 
     @XmlElements({ @XmlElement(name = "dateValue", type = Date.class), @XmlElement(name = "doubleValue", type = Double.class), @XmlElement(name = "longValue", type = Long.class),
-            @XmlElement(name = "stringValue", type = String.class), @XmlElement(name = "entityReferenceValue", type = EntityReferenceDto.class) })
+            @XmlElement(name = "stringValue", type = String.class), @XmlElement(name = "entityReferenceValue", type = EntityReferenceDto.class),
+            @XmlElement(name = "childEntityValue", type = CustomEntityInstanceDto.class) })
     protected Object value;
 
     public CustomFieldValueDto() {
     }
-
-    // public static CustomFieldValueDto toDTO(CustomFieldValue cfv) {
-    // CustomFieldValueDto dto = new CustomFieldValueDto();
-    // Object singleValue = cfv.getSingleValue();
-    // if (singleValue != null && singleValue instanceof EntityReferenceWrapper) {
-    // singleValue = new EntityReferenceDto((EntityReferenceWrapper) singleValue);
-    // }
-    // dto.value = singleValue;
-    // return dto;
-    // }
 
     private Object fromDTO() {
 
@@ -50,25 +39,6 @@ public class CustomFieldValueDto implements Serializable {
         } else {
             return value;
         }
-    }
-
-    public static List<CustomFieldValueDto> toDTO(List<Object> listValue) {
-
-        if (listValue == null) {
-            return null;
-        }
-        List<CustomFieldValueDto> dtos = new ArrayList<CustomFieldValueDto>();
-
-        for (Object listItem : listValue) {
-            CustomFieldValueDto dto = new CustomFieldValueDto();
-            if (listItem instanceof EntityReferenceWrapper) {
-                dto.value = new EntityReferenceDto((EntityReferenceWrapper) listItem);
-            } else {
-                dto.value = listItem;
-            }
-            dtos.add(dto);
-        }
-        return dtos;
     }
 
     public static List<Object> fromDTO(List<CustomFieldValueDto> listValue) {
@@ -85,24 +55,6 @@ public class CustomFieldValueDto implements Serializable {
             values.put(valueDto.getKey(), valueDto.getValue().fromDTO());
         }
         return values;
-    }
-
-    public static LinkedHashMap<String, CustomFieldValueDto> toDTO(Map<String, Object> mapValue) {
-        if (mapValue == null || mapValue.entrySet().size() == 0) {
-            return null;
-        }
-        LinkedHashMap<String, CustomFieldValueDto> dtos = new LinkedHashMap<String, CustomFieldValueDto>();
-
-        for (Map.Entry<String, Object> mapItem : mapValue.entrySet()) {
-            CustomFieldValueDto dto = new CustomFieldValueDto();
-            if (mapItem.getValue() instanceof EntityReferenceWrapper) {
-                dto.value = new EntityReferenceDto((EntityReferenceWrapper) mapItem.getValue());
-            } else {
-                dto.value = mapItem.getValue();
-            }
-            dtos.put(mapItem.getKey(), dto);
-        }
-        return dtos;
     }
 
     public CustomFieldValueDto(Object e) {
@@ -129,5 +81,13 @@ public class CustomFieldValueDto implements Serializable {
             return ((String) value).length() == 0;
         }
         return false;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
+
+    public Object getValue() {
+        return value;
     }
 }

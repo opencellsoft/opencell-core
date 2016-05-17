@@ -77,19 +77,19 @@
 		</p:button>
 
         <p:commandButton value="#{messages['commons.disable']}"
-            rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.active and cc.attrs.backingBean.canUserUpdateEntity(request.requestURL)}"
+            rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.active and cc.attrs.backingBean.canUserUpdateEntity()}"
             action="#{cc.attrs.backingBean.disable}" update="@form">
             <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
         </p:commandButton>
             
         <p:commandButton value="#{messages['commons.enable']}"
-            rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.disabled}"
+            rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.disabled and cc.attrs.backingBean.canUserUpdateEntity()}"
             action="#{cc.attrs.backingBean.enable}" update="@form">
             <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
         </p:commandButton>
 
 		<p:commandButton id="saveButton"
-			rendered="#{cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and !cc.attrs.ajaxSubmit and cc.attrs.backingBean.canUserUpdateEntity(request.requestURL)}"
+			rendered="#{cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and !cc.attrs.ajaxSubmit and cc.attrs.backingBean.canUserUpdateEntity()}"
 			value="#{messages['action.save']}"
 			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
 			icon="ui-icon-check" ajax="false">
@@ -100,7 +100,7 @@
 		</p:commandButton>
 
         <p:commandButton id="saveButtonAjax"
-            rendered="#{cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit and cc.attrs.backingBean.canUserUpdateEntity(request.requestURL)}"
+            rendered="#{cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit and cc.attrs.backingBean.canUserUpdateEntity()}"
             value="#{messages['action.save']} " oncomplete="$('html,body').scrollTop(0);"
             action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
             icon="ui-icon-check" process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="#{cc.attrs.submitUpdate}">
@@ -111,7 +111,7 @@
         </p:commandButton>
         
         <p:commandButton id="ExecuteButtonAjax"
-            rendered="#{ cc.attrs.execute  and cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit and !empty(cc.attrs.backingBean.objectId)}"
+            rendered="#{ cc.attrs.execute  and cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit and !empty(cc.attrs.backingBean.objectId) and cc.attrs.backingBean.canUserUpdateEntity()}"
             value="#{cc.attrs.executeLabel}" oncomplete="$('html,body').scrollTop(0);"
             action="#{cc.attrs.backingBean.execute()}"
             process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="#{cc.attrs.submitUpdate}">
@@ -130,7 +130,7 @@
             update="#{cc.attrs.submitUpdate}" name="#{cc.attrs.formId}updateWithMessagePartialSubmit" oncomplete="handleUpdateWithMessageComplete(xhr,status,args)" />            
             
 		<p:commandButton id="saveButtonWithMessage"
-			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId) and !empty(cc.attrs.updateConfirmationMessage)}"
+			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId) and !empty(cc.attrs.updateConfirmationMessage) and cc.attrs.backingBean.canUserUpdateEntity()}"
 			value="#{messages['action.save']}" icon="ui-icon-check"
 			oncomplete="#{cc.attrs.formId}#{cc.attrs.submitPartialProcess==null?'updateWithMessage()':'updateWithMessagePartialSubmit()'}" >
 			<c:if test="#{cc.attrs.submitActionListener}">
@@ -142,7 +142,7 @@
 		<cc:insertChildren />
 
 		<hf:clearButton id="resetButton" label="#{messages['action.reset']}"
-			edit="#{cc.attrs.edit}"
+			edit="#{cc.attrs.edit}" rendered="#{cc.attrs.backingBean.canUserUpdateEntity()}"
 			resetAction="#{cc.attrs.backingBean.resetFormEntity()}" includeViewParams="true"/>
 
 		<p:button id="backButton" value="#{messages['action.back']}"
@@ -168,13 +168,6 @@
 
         <script type="text/javascript">
 			//<![CDATA[
-				function handleDeleteComplete(xhr, status, args) {
-					var result = args.result;
-					if(typeof(result)!="undefined" && !result){
-						PF('#{cc.attrs.formId}confirmCanotDeleteWidget').show();
-					}
-				}
-
 				function handleUpdateWithMessageComplete(xhr, status, args) {
 					var result = args.result;
 					if(typeof(result)!="undefined" && !result){
@@ -183,20 +176,11 @@
 				}
 			//]]>
 		</script>	
-		<p:remoteCommand id="remoteDeleteButton" action="#{cc.attrs.backingBean.deleteWithBack}" name="#{cc.attrs.formId}doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" />
-		<p:commandButton id="deletelink" icon="ui-icon-trash" value="#{messages['commons.delete']}"
-			oncomplete="#{cc.attrs.formId}doDelete()" rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null and cc.attrs.backingBean.canUserUpdateEntity(request.requestURL)}">
-            <f:setPropertyActionListener target="#{cc.attrs.backingBean.entity}" value="#{entity}" />
+		<p:commandButton id="deletelink" icon="ui-icon-trash" value="#{messages['commons.delete']}" action="#{cc.attrs.backingBean.deleteWithBack}" immediate="true" update="@form"
+			rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null and cc.attrs.backingBean.canUserUpdateEntity()}">
             <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
 		</p:commandButton>
-		<p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog"
-			message="#{messages['commons.confirmCanotDelete']}" header="#{messages['commons.confirmCanotDeleteHeader']}"
-			severity="alert" widgetVar="#{cc.attrs.formId}confirmCanotDeleteWidget" appendTo="@(body)">
-			<p:panel styleClass="confirm-dialog-content">
-				<p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}"
-					oncomplete="PF('#{cc.attrs.formId}confirmCanotDeleteWidget').hide()" update="@this" />
-			</p:panel>
-		</p:confirmDialog>
+
 		<p:confirmDialog id="confirmCannotUpdateWithMessageDialog" styleClass="confirm-dialog"
 			message="#{messages['message.confirm.cannotUpdate']}" header=""
 			severity="alert" widgetVar="#{cc.attrs.formId}confirmCannotUpdateWithMessageDialog" appendTo="@(body)">

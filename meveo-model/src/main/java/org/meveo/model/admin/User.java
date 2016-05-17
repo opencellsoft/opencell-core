@@ -41,6 +41,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Name;
 
 /**

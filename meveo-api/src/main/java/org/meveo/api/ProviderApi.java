@@ -64,7 +64,6 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.catalog.impl.TitleService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -131,9 +130,6 @@ public class ProviderApi extends BaseApi {
     @Inject
     private TitleService titleService;
 
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-
     public void create(ProviderDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -162,6 +158,8 @@ public class ProviderApi extends BaseApi {
         provider.setDisplayFreeTransacInInvoice(postData.isDisplayFreeTransacInInvoice());
         provider.setRounding(postData.getRounding());
         provider.setEmail(postData.getEmail());
+        provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
+        provider.setPrepaidReservationExpirationDelayinMillisec(postData.getPrepaidReservationExpirationDelayinMillisec());
 
         // search for country
         if (!StringUtils.isBlank(postData.getCountry())) {
@@ -254,7 +252,7 @@ public class ProviderApi extends BaseApi {
 
         Provider provider = providerService.findByCodeWithFetch(providerCode, Arrays.asList("currency", "country", "language"));
         if (provider != null) {
-            return new ProviderDto(provider, customFieldInstanceService.getCustomFieldInstances(provider));
+            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider));
         }
 
         throw new EntityDoesNotExistsException(Provider.class, providerCode);
@@ -283,6 +281,8 @@ public class ProviderApi extends BaseApi {
         provider.setMultilanguageFlag(postData.isMultiLanguage());
         provider.setRounding(postData.getRounding());
         provider.setEmail(postData.getEmail());
+        provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
+        provider.setPrepaidReservationExpirationDelayinMillisec(postData.getPrepaidReservationExpirationDelayinMillisec());
 
         // search for country
         if (!StringUtils.isBlank(postData.getCountry())) {

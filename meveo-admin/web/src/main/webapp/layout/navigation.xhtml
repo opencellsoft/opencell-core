@@ -93,13 +93,13 @@
 					value="#{messages['menu.creditCategories']}" />
 					
 				<p:menuitem id="occTemplates"
-					rendered="#{identity.hasPermission('administration','administrationVisualization')}"
+					rendered="#{identity.hasPermission('billing','billingManagement')}"
 					outcome="occTemplates" value="#{messages['menu.occTemplates']}" />		
 			</p:submenu>
 			
 
 				<p:submenu id="trading" label="#{messages['menu.trading']}"
-					rendered="#{identity.hasPermission('administration','administrationVisualization')}">
+					rendered="#{identity.hasPermission('administration','administrationVisualization') and !identity.hasPermission('superAdmin','superAdminManagement')}">
 					<p:menuitem id="tradingLanguages" outcome="tradingLanguages"
 						value="#{messages['menu.comLanguages']}" />
 
@@ -260,7 +260,8 @@
 		<p:submenu id="mediation" label="#{messages['menu.mediation']}"
 			rendered="#{identity.hasPermission('billing','billingVisualization')}">
 			<p:menuitem id="edr" outcome="edr" value="#{messages['menu.edr']}" />
-			<p:menuitem id="importedFiles" outcome="importedFiles" value="#{messages['menu.importedFiles']}" />
+			<p:menuitem id="importedFiles" outcome="importedFiles" value="#{messages['menu.importedFiles']}" 
+				rendered="#{identity.hasPermission('billing','billingManagement')}" />
 		</p:submenu>
 
 		<p:submenu id="rating" label="#{messages['menu.rating']}"
@@ -277,6 +278,7 @@
 			rendered="#{identity.hasPermission('billing','billingVisualization')}">
 
 			<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing"
+				rendered="#{identity.hasPermission('billing','billingManagement')}"
 				value="#{messages['menu.globalExecution']}" />
 
 			<p:menuitem id="exceptionalInvoicing" outcome="exceptionelInvoicing"
@@ -389,6 +391,7 @@
 			<p:submenu id="tools" label="#{messages['menu.tools']}"
 				rendered="#{identity.hasPermission('superAdmin','superAdminManagement') || identity.hasPermission('administration','administrationVisualization')}">
 				<p:menuitem id="import" outcome="import"
+					rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}"
 					value="#{messages['menu.import']}" />
 				<p:menuitem id="export" outcome="export"
 					value="#{messages['menu.export']}" />

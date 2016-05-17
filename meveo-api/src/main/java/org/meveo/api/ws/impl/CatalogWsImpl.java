@@ -58,7 +58,10 @@ import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
+import org.meveo.api.module.ModuleApi;
 import org.meveo.api.ws.CatalogWs;
+import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.shared.DateUtils;
 
 /**
@@ -109,6 +112,9 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 
     @Inject
     private OfferTemplateCategoryApi offerTemplateCategoryApi;
+
+    @Inject
+    private ModuleApi moduleApi;
 
     @Override
     public ActionStatus createCounterTemplate(CounterTemplateDto postData) {
@@ -1084,7 +1090,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         GetBusinessOfferModelResponseDto result = new GetBusinessOfferModelResponseDto();
 
         try {
-            result.setBusinessOfferModel(businessOfferModelApi.find(businessOfferModelCode, getCurrentUser().getProvider()));
+            result.setBusinessOfferModel((BusinessOfferModelDto) moduleApi.get(businessOfferModelCode, BusinessOfferModel.class, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1424,7 +1430,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         GetBusinessServiceModelResponseDto result = new GetBusinessServiceModelResponseDto();
 
         try {
-            result.setBusinessServiceModel(businessServiceModelApi.find(businessServiceModelCode, getCurrentUser().getProvider()));
+            result.setBusinessServiceModel((BusinessServiceModelDto) moduleApi.get(businessServiceModelCode, BusinessServiceModel.class, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1464,7 +1470,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            businessServiceModelApi.create(postData, getCurrentUser());
+            businessServiceModelApi.createOrUpdate(postData, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

@@ -10,17 +10,19 @@
     Makes part of custom field management tag group 
 
     Attributes
-        cft - custom field template containing field definition
+        cft - current field's template definition
         edit - should value be displayed, or edit control be shown
         field - field storing a value - CustomFieldValue type variable only
         datePattern - date pattern for date entry/display
-        required - if a value is required
         entity - entity, custom fields are related to
         messagesId - messages id tag to update for general errors
         popupWidgetVar - a name of a popup widget var if used inside a popup
         updateOnAddEdit - ids of controlls to update uppon data changes (value edit/create/delete)
         disabled - is field non-editable
         inherited - is tag used to show inherited CF values
+        prefix - prefix for component to distinguish when used multiple times in the same page (for different entities)
+        clientGuiId - current component's ID
+        componentWidth - component width
  -->
 
 <ui:composition>
@@ -28,15 +30,16 @@
     <c:if test="${empty(inherited)}">
         <c:set var="inherited" value="false" />
     </c:if>
-    <c:set var="idPrefix" value="#{inherited?'i':'c'}" />
-    <c:if test="${empty(datePattern)}">
-        <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+    <c:if test="${empty(componentWidth)}">
+        <c:set var="componentWidth" value="#{cft.storageType eq CustomFieldStorageTypeEnum.LIST or cft.storageType eq CustomFieldStorageTypeEnum.MAP?45:100}" />
     </c:if>
-    <c:set var="fieldsValues" value="#{customFieldDataEntryBean.getFieldsValues(entity.uuid)}" />
+    <c:set var="idPrefix" value="#{inherited?'i':'c'}" />
+    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldsValuesByUUID(entity.uuid)}" />
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />
-    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
 
-    <hftl:decorateFormField label="#{cft.description}#{cft.valueRequired?' *':''} #{inherited?messages['customField.inheritedValue']:''}" componentWidth="#{cft.storageType eq CustomFieldStorageTypeEnum.LIST or cft.storageType eq CustomFieldStorageTypeEnum.MAP?45:100}" displayOneLine="false">
+    <hftl:decorateFormField label="#{cft.description}#{cft.valueRequired?' *':''} #{inherited?messages['customField.inheritedValue']:''}" componentWidth="#{componentWidth}"
+        displayOneLine="false">
 
         <p:messages id="#{idPrefix}_cfMessages" globalOnly="false" redisplay="false" />
 
@@ -58,11 +61,12 @@
                 <p:column headerText="#{messages['commons.value']}" sortBy="#{mapValues['value']}">
                     <p:cellEditor>
                         <f:facet name="output">
-                            <hftl:customFieldValueMuteField edit="false" id="cfValue_out" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}" />
+                            <hftl:customFieldValueMuteField edit="false" id="cfValue_out" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}"
+                                datePattern="#{datePattern}" />
                         </f:facet>
                         <f:facet name="input">
                             <hftl:customFieldValueMuteField edit="true" id="cfValue_in" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}"
-                                required="true" />
+                                datePattern="#{datePattern}" />
                         </f:facet>
                     </p:cellEditor>
                 </p:column>
@@ -72,35 +76,36 @@
                 </p:column>
                 <c:if test="#{!inherited}">
                     <f:facet name="footer" layout="block">
+
                         <p:messages id="cfNewFieldsMessage" globalOnly="false" redisplay="false" rendered="#{edit and !disabled}" />
                         <hf:namingContainer id="addNewFields" rendered="#{edit and !disabled}">
 
                             <c:if test="#{cft.storageType eq CustomFieldStorageTypeEnum.MAP}">
                                 <c:if test="#{cft.mapKeyType eq CustomFieldMapKeyEnum.STRING}">
-                                    <p:inputText id="newKey" value="#{fieldsValues.newValues[cft.code.concat('_key')]}" required="true" placeholder="#{messages['commons.key']}"
+                                    <p:inputText id="newKey" value="#{cfValueHolder.newValues[cft.code.concat('_key')]}" placeholder="#{messages['commons.key']}"
                                         label="#{messages['commons.key']}" size="30" maxlength="50" />
                                 </c:if>
 
                                 <c:if test="#{cft.mapKeyType eq CustomFieldMapKeyEnum.RON}">
 
-                                    <p:inputText id="newRonKeyFrom" value="#{fieldsValues.newValues[cft.code.concat('_key_one_from')]}" converter="javax.faces.Double"
+                                    <p:inputText id="newRonKeyFrom" value="#{cfValueHolder.newValues[cft.code.concat('_key_one_from')]}" converter="javax.faces.Double"
                                         placeholder="#{messages['customFieldTemplate.mapKeyRonFrom']}" label="#{messages['customFieldTemplate.mapKeyRonFrom']}" size="9"
                                         maxlength="15" />
                                     <h:outputText value=" - " />
-                                    <p:inputText id="newRonKeyTo" value="#{fieldsValues.newValues[cft.code.concat('_key_one_to')]}" converter="javax.faces.Double"
+                                    <p:inputText id="newRonKeyTo" value="#{cfValueHolder.newValues[cft.code.concat('_key_one_to')]}" converter="javax.faces.Double"
                                         placeholder="#{messages['customFieldTemplate.mapKeyRonTo']}" label="#{messages['customFieldTemplate.mapKeyRonTo']}" size="9" maxlength="15" />
                                 </c:if>
 
                                 <h:outputText value=" &nbsp; " escape="false" />
                             </c:if>
 
-                            <hftl:customFieldValueMuteField id="newValue" edit="true" cft="#{cft}" field="#{fieldsValues.newValues[cft.code.concat('_value')]}" required="true"
-                                label="#{messages['commons.value']}" placeholder="#{messages['commons.value']}" />
+                            <hftl:customFieldValueMuteField id="newValue" edit="true" cft="#{cft}" field="#{cfValueHolder.newValues[cft.code.concat('_value')]}"
+                                label="#{messages['commons.value']}" placeholder="#{messages['commons.value']}" datePattern="#{datePattern}" />
                         </hf:namingContainer>
 
-                        <c:if test="#{!empty(popupWidgetVar) and !disabled}">
+                        <c:if test="#{!empty(popupWidgetVar) and edit and !disabled}">
                             <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields"
-                                update="#{idPrefix}_customFields_map_omitFromSubmit" action="#{customFieldDataEntryBean.addValueToMap(entity.uuid, field, cft)}"
+                                update="#{idPrefix}_customFields_map_omitFromSubmit" action="#{customFieldDataEntryBean.addValueToMap(cfValueHolder, field, cft)}"
                                 oncomplete="if (args &amp;&amp; !args.validationFailed) updateMasterTable()">
                                 <p:resetInput target="addNewFields" />
                             </p:commandButton>
@@ -108,20 +113,19 @@
 
                         <c:if test="#{empty(popupWidgetVar) and edit and !disabled}">
                             <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields"
-                                update="#{idPrefix}_customFields_map_omitFromSubmit" action="#{customFieldDataEntryBean.addValueToMap(entity.uuid, field, cft)}">
+                                update="#{idPrefix}_customFields_map_omitFromSubmit" action="#{customFieldDataEntryBean.addValueToMap(cfValueHolder, field, cft)}">
                                 <p:resetInput target="addNewFields" />
                             </p:commandButton>
                         </c:if>
 
                         <p:commandButton value="#{messages['commons.close']}" process="@this" rendered="#{!empty(popupWidgetVar)}" update="@this #{updateOnAddEdit}"
-                            oncomplete="PF('#{popupWidgetVar}').hide(); updateMasterTable()" actionListener="#{fieldsValues.populateNewValueDefaults(null, cft)}">
+                            oncomplete="PF('#{popupWidgetVar}').hide(); updateMasterTable()" actionListener="#{cfValueHolder.populateNewValueDefaults(null, cft)}">
                         </p:commandButton>
 
                     </f:facet>
                 </c:if>
             </p:dataTable>
         </c:if>
-
 
         <c:if test="#{cft.storageType eq CustomFieldStorageTypeEnum.MATRIX}">
             <p:dataTable id="#{idPrefix}_customFields_map_omitFromSubmit" lazy="false" value="#{field.matrixValuesForGUI}" var="mapValues" editable="#{edit and !disabled}"
@@ -146,10 +150,11 @@
                 <p:column headerText="#{messages['commons.value']}" width="20%" sortBy="#{mapValues['value']}">
                     <p:cellEditor>
                         <f:facet name="output">
-                            <hftl:customFieldValueMuteField edit="false" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}" />
+                            <hftl:customFieldValueMuteField edit="false" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}"
+                                datePattern="#{datePattern}" />
                         </f:facet>
                         <f:facet name="input">
-                            <hftl:customFieldValueMuteField edit="true" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}" required="true" />
+                            <hftl:customFieldValueMuteField edit="true" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}" datePattern="#{datePattern}" />
                         </f:facet>
                     </p:cellEditor>
                 </p:column>
@@ -162,13 +167,12 @@
 
                         <p:commandButton value="#{messages['commons.close']}" process="@this" rendered="#{!empty(popupWidgetVar) and edit and !disabled}"
                             update="@this #{updateOnAddEdit}" oncomplete="PF('#{popupWidgetVar}').hide(); updateMasterTable()"
-                            actionListener="#{fieldsValues.populateNewValueDefaults(null, cft)}">
+                            actionListener="#{cfValueHolder.populateNewValueDefaults(null, cft)}">
                         </p:commandButton>
 
                     </f:facet>
                 </c:if>
             </p:dataTable>
-
         </c:if>
     </hftl:decorateFormField>
 </ui:composition>

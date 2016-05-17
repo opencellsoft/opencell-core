@@ -19,7 +19,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
@@ -37,9 +36,6 @@ public class JobInstanceApi extends BaseApi {
 	@Inject
 	private CustomFieldTemplateService customFieldTemplateService;
     
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-
 	public void create(JobInstanceDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		if (StringUtils.isBlank(postData.getJobTemplate()) || StringUtils.isBlank(postData.getCode())) {
 
@@ -208,7 +204,7 @@ public class JobInstanceApi extends BaseApi {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }
         
-        JobInstanceDto jobInstanceDto = new JobInstanceDto(jobInstance, customFieldInstanceService.getCustomFieldInstances(jobInstance));
+        JobInstanceDto jobInstanceDto = new JobInstanceDto(jobInstance, entityToDtoConverter.getCustomFieldsDTO(jobInstance));
         return jobInstanceDto;
 
     }

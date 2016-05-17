@@ -43,16 +43,19 @@ public class PostInvoicingReportsDTO {
 	private Integer directDebitInvoicesNumber = 0;
 	private Integer tipInvoicesNumber = 0;
 	private Integer wiretransferInvoicesNumber = 0;
+	private Integer creditDebitCardInvoicesNumber = 0;
 
 	private BigDecimal checkAmuontHT = BigDecimal.ZERO;
 	private BigDecimal directDebitAmuontHT = BigDecimal.ZERO;
 	private BigDecimal tipAmuontHT = BigDecimal.ZERO;
 	private BigDecimal wiretransferAmuontHT = BigDecimal.ZERO;
+	private BigDecimal creditDebitCardAmountHT = BigDecimal.ZERO;
 
 	private BigDecimal checkAmuont = BigDecimal.ZERO;
 	private BigDecimal directDebitAmuont = BigDecimal.ZERO;
 	private BigDecimal tipAmuont = BigDecimal.ZERO;
 	private BigDecimal wiretransferAmuont = BigDecimal.ZERO;
+	private BigDecimal creditDebitCardAmount = BigDecimal.ZERO;
 
 	public Integer getInvoicesNumber() {
 		return invoicesNumber;
@@ -245,5 +248,32 @@ public class PostInvoicingReportsDTO {
 	public void setWiretransferAmuont(BigDecimal wiretransferAmuont) {
 		this.wiretransferAmuont = wiretransferAmuont;
 	}
+
+	public Integer getCreditDebitCardInvoicesNumber() {
+		return creditDebitCardInvoicesNumber;
+	}
+
+	public void setCreditDebitCardInvoicesNumber(
+			Integer creditDebitCardInvoicesNumber) {
+		this.creditDebitCardInvoicesNumber = creditDebitCardInvoicesNumber;
+	}
+
+	public BigDecimal getCreditDebitCardAmountHT() {
+		return creditDebitCardAmountHT;
+	}
+
+	public void setCreditDebitCardAmountHT(BigDecimal creditDebitCardAmountHT) {
+		this.creditDebitCardAmountHT = creditDebitCardAmountHT;
+	}
+
+	public BigDecimal getCreditDebitCardAmount() {
+		return creditDebitCardAmount;
+	}
+
+	public void setCreditDebitCardAmount(BigDecimal creditDebitCardAmount) {
+		this.creditDebitCardAmount = creditDebitCardAmount;
+	}
+	
+	
 
 }

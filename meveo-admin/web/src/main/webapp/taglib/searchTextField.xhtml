@@ -36,7 +36,12 @@
         <c:if test="#{listValues != null}">
             <p:selectOneMenu id="#{id}" value="#{backingBean.filters[field]}" disabled="#{disabled}">
                 <f:selectItem itemValue="#{null}" itemLabel="" />
-                <f:selectItems value="#{listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value}" />
+                <c:if test="#{i18nLabels}">
+                	<f:selectItems value="#{listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{messages[listVal.value]}" />
+                </c:if>
+                <c:if test="#{!i18nLabels}">
+                	<f:selectItems value="#{listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value}" />
+                </c:if>
             </p:selectOneMenu>
         </c:if>
     </hftl:decorateFormField>

@@ -13,7 +13,7 @@
 </thead><tbody>
 <tr>
 	<td>store</td>
-	<td>http://192.168.10.14:8080/meveo/loginInternal.jsf</td>
+	<td>http://localhost:8080/meveo/loginInternal.jsf</td>
 	<td>url</td>
 </tr>
 <tr>
@@ -33,6 +33,11 @@
 </tr>
 <tr>
 	<td>store</td>
+	<td>meveo.superadmin</td>
+	<td>SuperAdminUN</td>
+</tr>
+<tr>
+	<td>store</td>
 	<td>id=loginForm:password</td>
 	<td>PasswordID</td>
 </tr>
@@ -40,6 +45,11 @@
 	<td>store</td>
 	<td>meveo.admin</td>
 	<td>passWord</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>meveo.superadmin</td>
+	<td>SuperAdminPW</td>
 </tr>
 <tr>
 	<td>store</td>
@@ -153,12 +163,12 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=datatable_results:0:deleteKo</td>
+	<td>//button[contains(@class,'ui-confirmdialog-no')]</td>
 	<td>deleteNo</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=datatable_results:0:deleteOk</td>
+	<td>//button[contains(@class,'ui-confirmdialog-yes')]</td>
 	<td>deleteYes</td>
 </tr>
 <tr>
@@ -168,13 +178,28 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=datatable_results:0:disableKo</td>
+	<td>//button[contains(@class,'ui-confirmdialog-no')]</td>
 	<td>disableNo</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=datatable_results:0:disableOk</td>
+	<td>//button[contains(@class,'ui-confirmdialog-yes')]</td>
 	<td>disableYes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'resultsenablelink')]</td>
+	<td>IconEnable</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//button[contains(@class,'ui-confirmdialog-no')]</td>
+	<td>EnableNo</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//button[contains(@class,'ui-confirmdialog-yes')]</td>
+	<td>EnableYes</td>
 </tr>
 <tr>
 	<td>store</td>

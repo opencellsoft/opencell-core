@@ -13,8 +13,10 @@ import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
+import org.meveo.api.module.ModuleApi;
 import org.meveo.api.rest.catalog.BusinessServiceModelRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.catalog.BusinessServiceModel;
 
 /**
  * @author Edward P. Legaspi
@@ -25,6 +27,9 @@ public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServic
 
     @Inject
     private BusinessServiceModelApi businessServiceModelApi;
+
+    @Inject
+    private ModuleApi moduleApi;
 
     @Override
     public ActionStatus create(BusinessServiceModelDto postData) {
@@ -71,7 +76,7 @@ public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServic
         GetBusinessServiceModelResponseDto result = new GetBusinessServiceModelResponseDto();
 
         try {
-            result.setBusinessServiceModel(businessServiceModelApi.find(businessServiceModelCode, getCurrentUser().getProvider()));
+            result.setBusinessServiceModel((BusinessServiceModelDto) moduleApi.get(businessServiceModelCode, BusinessServiceModel.class, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

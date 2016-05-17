@@ -20,6 +20,7 @@ package org.meveo.admin.action;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,6 +31,7 @@ import java.util.Set;
 
 import javax.enterprise.context.Conversation;
 import javax.enterprise.inject.Instance;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
@@ -48,6 +50,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.IAuditable;
 import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.MultilanguageEntity;
@@ -101,7 +104,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @Inject
     @CurrentUser
     protected User currentUser;
-    
+
     @Inject
     protected Conversation conversation;
 
@@ -181,7 +184,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     private Filter listFilter;
 
-    private boolean listFiltered = false;
+    protected boolean listFiltered = false;
 
     /**
      * Tracks active tabs in GUI
@@ -189,6 +192,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private int activeTab;
 
     private int activeMainTab = 0;
+
+    private Map<String, Boolean> writeAccessMap;
 
     /**
      * Constructor
@@ -347,7 +352,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         // + objectId + "&cid=" + conversation.getId());
         return outcome;
     }
-    
+
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
@@ -520,9 +525,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @param id Entity id to delete
      */
+    @ActionMethod
     public void delete(Long id) {
         try {
-            log.info(String.format("Deleting entity %s with id = %s", clazz.getName(), id));
+            log.info("Deleting entity {} with id = {}", clazz.getName(), id);
             getPersistenceService().remove(id);
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
@@ -539,9 +545,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         // initEntity();
     }
 
+    @ActionMethod
     public void delete() {
         try {
-            log.info(String.format("Deleting entity %s with id = %s", clazz.getName(), getEntity().getId()));
+            log.info("Deleting entity {} with id = {}", clazz.getName(), getEntity().getId());
             getPersistenceService().remove((Long) getEntity().getId());
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
@@ -570,7 +577,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                     idsToDelete.add((Long) entity.getId());
                     idsString.append(entity.getId()).append(" ");
                 }
-                log.info(String.format("Deleting multiple entities %s with ids = %s", clazz.getName(), idsString.toString()));
+                log.info("Deleting multiple entities {} with ids = {}", clazz.getName(), idsString.toString());
 
                 getPersistenceService().remove(idsToDelete);
                 getPersistenceService().commit();
@@ -598,8 +605,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return Filters map.
      */
     public Map<String, Object> getFilters() {
-        if (filters == null)
+        if (filters == null) {
             filters = new HashMap<String, Object>();
+        }
         return filters;
     }
 
@@ -621,7 +629,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Get new instance for backing bean class.
+     * Get new instance for backing bean class.  
      * 
      * @return New instance.
      * 
@@ -629,7 +637,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @throws InstantiationException
      */
     public T getInstance() throws InstantiationException, IllegalAccessException {
-        return clazz.newInstance();
+
+        T newInstance = clazz.newInstance();
+
+        // A workaround for #1300 fix. Set auditable property if applicable, so current user would be available for EL expressions.
+        if (newInstance instanceof IAuditable) {
+            ((IAuditable) newInstance).updateAudit(getCurrentUser());
+        }
+        return newInstance;
     }
 
     /**
@@ -665,9 +680,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @param id Entity id to disable
      */
+    @ActionMethod
     public void disable() {
         try {
-            log.info(String.format("Disabling entity %s with id = %s", clazz.getName(), entity.getId()));
+            log.info("Disabling entity {} with id = {}", clazz.getName(), entity.getId());
             entity = getPersistenceService().disable(entity);
             messages.info(new BundleKey("messages", "disabled.successful"));
 
@@ -682,9 +698,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @param id Entity id to disable
      */
+    @ActionMethod
     public void disable(Long id) {
         try {
-            log.info(String.format("Disabling entity %s with id = %s", clazz.getName(), id));
+            log.info("Disabling entity {} with id = {}", clazz.getName(), id);
             getPersistenceService().disable(id);
             messages.info(new BundleKey("messages", "disabled.successful"));
 
@@ -699,9 +716,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @param id Entity id to enable
      */
+    @ActionMethod
     public void enable() {
         try {
-            log.info(String.format("Enabling entity %s with id = %s", clazz.getName(), entity.getId()));
+            log.info("Enabling entity {} with id = {}", clazz.getName(), entity.getId());
             entity = getPersistenceService().enable(entity);
             messages.info(new BundleKey("messages", "enabled.successful"));
 
@@ -716,9 +734,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @param id Entity id to enable
      */
+    @ActionMethod
     public void enable(Long id) {
         try {
-            log.info(String.format("Enabling entity %s with id = %s", clazz.getName(), id));
+            log.info("Enabling entity {} with id = {}", clazz.getName(), id);
             getPersistenceService().enable(id);
             messages.info(new BundleKey("messages", "enabled.successful"));
 
@@ -970,6 +989,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             this.delete();
             getPersistenceService().commit();
         } catch (Exception e) {
+            log.error("Failed to delete {}", entity, e);
             result = false;
         }
         RequestContext requestContext = RequestContext.getCurrentInstance();
@@ -982,16 +1002,24 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return back() page if deleted success, if not, return a callback result to UI for validate
      */
     public String deleteWithBack() {
-        boolean result = true;
         try {
             this.delete();
             getPersistenceService().commit();
             return back();
-        } catch (Exception e) {
-            result = false;
+
+        } catch (Throwable t) {
+            messages.getAll();
+            messages.clear();
+            if (t.getCause() instanceof EntityExistsException) {
+                log.info("delete was unsuccessful because entity is used in the system {}", t);
+                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
+
+            } else {
+                log.info("unexpected exception when deleting {}", t);
+                messages.error(new BundleKey("messages", "error.delete.unexpected"));
+            }
         }
-        RequestContext requestContext = RequestContext.getCurrentInstance();
-        requestContext.addCallbackParam("result", result);
+        FacesContext.getCurrentInstance().validationFailed();
         return null;
     }
 
@@ -1127,7 +1155,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             log.error("Failed to instantiate a new item of {} class", itemClass.getName());
         }
     }
-    
+
     public List<T> listActive() {
         Map<String, Object> filters = getFilters();
         filters.put("disabled", false);
@@ -1135,36 +1163,30 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
         return getPersistenceService().list(config);
     }
-    
-   
-   /**
-    *     crm/customers
-    * 
-    * 
-    */
-    public boolean canUserUpdateEntity(String path){
-    	log.trace("canUserUpdateEntity path:"+path);
-    	HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-    	return PagePermission.getInstance().hasWriteAccess(request, getCurrentUser());
-//    	String pages = org.meveo.commons.utils.StringUtils.patternMacher("/pages/(.*/.*)/", path);  
-//    	log.trace("canUserUpdateEntity pages:"+pages);
-//    	if(getCurrentUser().hasRole("administrateur") || getCurrentUser().hasRole("superAdministrateur")){
-//    		return true; 
-//    	}    	
-//    	if(pages != null && pages.contains("/")){    
-//    		String cat = pages.split("/")[0];
-//    		cat = cat.length()>3?cat.substring(0, 3):cat;
-//    		String entity = pages.split("/")[1];
-//    		entity = entity.length()>3?entity.substring(0, 3):entity;    		     	       
-//        	String resource = permissionService.getResourceByPath(cat);        	
-//        	if(getCurrentUser().hasPermission(resource,resource+"Management")){
-//        		return true;
-//        	}                   	
-//        	resource = permissionService.getResourceByPath(entity);        	
-//        	if(getCurrentUser().hasPermission(resource,resource+"Management")){
-//        		return true;        	
-//        	}
-//    	}    	 			
-//    	return false;
+
+    /**
+     * crm/customers
+     * 
+     * 
+     */
+    public boolean canUserUpdateEntity() {
+        if (this.writeAccessMap == null) {
+            writeAccessMap = Collections.synchronizedMap(new HashMap<String, Boolean>());
+        }
+        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        HttpServletRequest request = (HttpServletRequest) context.getRequest();
+        String requestURI = request.getRequestURI();
+
+        if (writeAccessMap.get(requestURI) == null) {
+            boolean hasWriteAccess = false;
+            try {
+                hasWriteAccess = PagePermission.getInstance().hasWriteAccess(request, identity);
+            } catch (BusinessException e) {
+                log.error("Error encountered checking for write access to {}", requestURI, e);
+                hasWriteAccess = false;
+            }
+            writeAccessMap.put(requestURI, hasWriteAccess);
+        }
+        return writeAccessMap.get(requestURI);
     }
 }

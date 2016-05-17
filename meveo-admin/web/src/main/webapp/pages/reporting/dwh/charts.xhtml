@@ -60,7 +60,7 @@
 				label="#{messages['entity.measuredvalue.measurableQuantity']}"
 				field="measurableQuantity.code" />
             </hftl:searchPanel>
-             <p:panel styleClass="action-buttons">
+             <p:panel styleClass="action-buttons" rendered="#{chartListBean.canUserUpdateEntity()}">
     			<p:button id="buttonNewBar"
     				value="#{messages['entity.barChart.new']}" outcome="barChartDetail">
     				<f:param name="cid"

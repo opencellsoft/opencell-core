@@ -13,6 +13,7 @@ public abstract class Script implements ScriptInterface {
     public static String RESULT_GUI_MESSAGE = "GUI_MESSAGE";
     public static String RESULT_VALUE = "RESULT_VALUE";
     public static String CONTEXT_ENTITY = "CONTEXT_ENTITY";
+    public static String CONTEXT_PARENT_ENTITY = "CONTEXT_PARENT_ENTITY";
 
     @Override
     public void init(Map<String, Object> methodContext, User user) throws BusinessException {

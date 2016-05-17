@@ -84,7 +84,7 @@
 			column2Label="#{messages['invoiceSubCategory.description']}"
 			column2="description" 
 			selection="#{walletOperationBean.filters['billingAccount']}"
-            updateField=":searchForm">
+            updateField=":searchForm:billingAccountId">
 		</hftl:entityPopup>
 		
 <!-- 		<hftl:entityPopup id="searchInvoiceSubCategoryPopup" -->
@@ -186,9 +186,11 @@
 			<hftl:actionsColumn renderEditLink="false" renderDeleteLink="false"
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 			  <p:tooltip for="updateWallet" value="#{messages['action.update']}"
+			  		rendered="#{walletOperationBean.canUserUpdateEntity()}"
 					showEffect="slide" hideEffect="slide" />
 				<p:commandButton id="updateWallet" icon="ui-icon-play"
 					actionListener="#{walletOperationBean.updatedToRerate(entity)}"
+					rendered="#{walletOperationBean.canUserUpdateEntity()}"
 					update="@all">
 					<p:confirm header="#{messages['commons.confirmationHeader']}"
 						message="#{messages['message.confirm.walletOperation.update']}"
@@ -196,7 +198,8 @@
 				</p:commandButton>
 				</p:column>
 				</hftl:dataList>
-		  	<p:panel styleClass="action-buttons">
+		  	<p:panel styleClass="action-buttons"
+		  		rendered="#{walletOperationBean.canUserUpdateEntity()}">
 			<p:commandButton id="massUpdateWallet"
             value="#{messages['action.massRerate']}"
             action="#{walletOperationBean.massToRerate()}" 

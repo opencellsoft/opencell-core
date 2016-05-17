@@ -22,9 +22,6 @@
 
 <ui:composition>
     <h:outputText value="#{''}" />
-    <c:if test="${empty(datePattern)}">
-        <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-    </c:if>
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.STRING}">
