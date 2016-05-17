@@ -87,12 +87,25 @@
             action="#{cc.attrs.backingBean.enable}" update="@form">
             <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
         </p:commandButton>
+        
+        <script type="text/javascript">
+			//<![CDATA[
+				function delayDisable(button){
+					setTimeout(function(){
+		            	button.disabled = true;
+		            }, 100);
+				}
+			//]]>
+		</script>
 
 		<p:commandButton id="saveButton"
 			rendered="#{cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and !cc.attrs.ajaxSubmit and cc.attrs.backingBean.canUserUpdateEntity(request.requestURL)}"
 			value="#{messages['action.save']}"
+			onclick="delayDisable(this);"
+			oncomplete="this.disabled=false;"
 			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
-			icon="ui-icon-check" ajax="false">
+			icon="ui-icon-check" 
+			ajax="false">
 			<f:param name="edit" value="#{cc.attrs.edit}" />
 			<c:if test="#{cc.attrs.submitActionListener}">
             	<f:actionListener binding="#{cc.attrs.backingBean.submitActionListener()}"></f:actionListener>
@@ -101,9 +114,14 @@
 
         <p:commandButton id="saveButtonAjax"
             rendered="#{cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit and cc.attrs.backingBean.canUserUpdateEntity(request.requestURL)}"
-            value="#{messages['action.save']} " oncomplete="$('html,body').scrollTop(0);"
+            value="#{messages['action.save']} " 
+            onclick="delayDisable(this);"
+           	oncomplete="$('html,body').scrollTop(0);this.disabled=false;"
             action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
-            icon="ui-icon-check" process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="#{cc.attrs.submitUpdate}">
+            icon="ui-icon-check" process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" 
+            partialSubmit="#{cc.attrs.submitPartialProcess !=null}" 
+            partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" 
+            update="#{cc.attrs.submitUpdate}">
             <f:param name="edit" value="#{cc.attrs.edit}" />
             <c:if test="#{cc.attrs.submitActionListener}">
             	<f:actionListener binding="#{cc.attrs.backingBean.submitActionListener()}"></f:actionListener>
