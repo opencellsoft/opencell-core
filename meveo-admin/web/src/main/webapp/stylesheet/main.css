@@ -386,12 +386,12 @@ input[type="submit"],
 	display: inline-block;
 }
 .col2-set .col1 {
-	width: 3%; 
+	width: 25%; 
 	float:left;
 }
 
 .col2-set .col2 {
-	width: 97%; 
+	width: 75%; 
 	float:left;
 }
 
