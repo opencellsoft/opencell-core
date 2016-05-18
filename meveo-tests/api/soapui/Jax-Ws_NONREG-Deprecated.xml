@@ -584,7 +584,7 @@
          <invoiceType>?</invoiceType>\r
       </ws:findXMLInvoiceWithType>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoiceWs/findXMLInvoiceWithType"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SettingsWs?wsdl" id="f7a0eb3d-2762-441a-b8c1-33d1c9ca6147" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SettingsWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SettingsWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SettingsWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoiceWs/findXMLInvoiceWithType"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SettingsWs?wsdl" id="f7a0eb3d-2762-441a-b8c1-33d1c9ca6147" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SettingsWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SettingsWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SettingsWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SettingsWs?wsdl=SettingsWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SettingsWsSoapBinding" type="ns1:SettingsWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -14023,7 +14023,7 @@
          </module>\r
       </ws:create>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/create"/></con:call></con:operation><con:operation id="18d57796-55ef-4013-8490-25792d393815" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5cce5eb5-58cf-4602-afdc-4c509649def7" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/create"/></con:call></con:operation><con:operation id="18d57796-55ef-4013-8490-25792d393815" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5cce5eb5-58cf-4602-afdc-4c509649def7" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdate>\r
@@ -14434,7 +14434,7 @@
          </module>\r
       </ws:createOrUpdate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/createOrUpdate"/></con:call></con:operation><con:operation id="18398f32-5a29-4971-a4c9-67b4bc72c805" isOneWay="false" action="" name="delete" bindingOperationName="delete" type="Request-Response" outputName="deleteResponse" inputName="delete" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b2504916-ceab-4cda-a759-af6a8e5c5cd3" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/createOrUpdate"/></con:call></con:operation><con:operation id="18398f32-5a29-4971-a4c9-67b4bc72c805" isOneWay="false" action="" name="delete" bindingOperationName="delete" type="Request-Response" outputName="deleteResponse" inputName="delete" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b2504916-ceab-4cda-a759-af6a8e5c5cd3" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:delete>\r
@@ -14442,7 +14442,7 @@
          <code>?</code>\r
       </ws:delete>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/delete"/></con:call></con:operation><con:operation id="93691877-7991-486f-beb1-02f55bd8bd0d" isOneWay="false" action="" name="get" bindingOperationName="get" type="Request-Response" outputName="getResponse" inputName="get" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="972f5e9e-bcaa-4456-93c5-b026847d1681" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/delete"/></con:call></con:operation><con:operation id="93691877-7991-486f-beb1-02f55bd8bd0d" isOneWay="false" action="" name="get" bindingOperationName="get" type="Request-Response" outputName="getResponse" inputName="get" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="972f5e9e-bcaa-4456-93c5-b026847d1681" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:get>\r
@@ -14450,17 +14450,17 @@
          <code>?</code>\r
       </ws:get>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/get"/></con:call></con:operation><con:operation id="8573353d-41bd-4798-a0b9-c22acaa01f9d" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d3c0562f-2ea5-4911-8764-3d858543d49f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/get"/></con:call></con:operation><con:operation id="8573353d-41bd-4798-a0b9-c22acaa01f9d" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d3c0562f-2ea5-4911-8764-3d858543d49f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:index/>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/index"/></con:call></con:operation><con:operation id="a9127173-9cfa-4ba3-8b9a-e4d60ea76791" isOneWay="false" action="" name="list" bindingOperationName="list" type="Request-Response" outputName="listResponse" inputName="list" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="fba5d14c-cd8d-4335-816f-9d044b30f0d8" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/index"/></con:call></con:operation><con:operation id="a9127173-9cfa-4ba3-8b9a-e4d60ea76791" isOneWay="false" action="" name="list" bindingOperationName="list" type="Request-Response" outputName="listResponse" inputName="list" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="fba5d14c-cd8d-4335-816f-9d044b30f0d8" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:list/>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/list"/></con:call></con:operation><con:operation id="12eedc02-b648-44e2-82f4-76772c559466" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="78b5bd14-7c28-4ba1-859d-9a4959ae2419" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/list"/></con:call></con:operation><con:operation id="12eedc02-b648-44e2-82f4-76772c559466" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="78b5bd14-7c28-4ba1-859d-9a4959ae2419" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:update>\r
@@ -14871,7 +14871,7 @@
          </module>\r
       </ws:update>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/update"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="5ed9a7ab-f19a-4227-9014-b5d744afb99e" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/EntityCustomizationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/EntityCustomizationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="EntityCustomizationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/update"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="5ed9a7ab-f19a-4227-9014-b5d744afb99e" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/EntityCustomizationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/EntityCustomizationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="EntityCustomizationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/EntityCustomizationWs?wsdl=EntityCustomizationWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="EntityCustomizationWsSoapBinding" type="ns1:EntityCustomizationWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -15899,7 +15899,7 @@
          </entityAction>\r
       </ws:createAction>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/createAction"/></con:call></con:operation><con:operation id="01be5ef8-6fdd-4867-856f-c9f237875456" isOneWay="false" action="" name="createCustomEntityInstance" bindingOperationName="createCustomEntityInstance" type="Request-Response" outputName="createCustomEntityInstanceResponse" inputName="createCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="78559c45-c462-4aab-a4ed-13a9fb3cce88" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/createAction"/></con:call></con:operation><con:operation id="01be5ef8-6fdd-4867-856f-c9f237875456" isOneWay="false" action="" name="createCustomEntityInstance" bindingOperationName="createCustomEntityInstance" type="Request-Response" outputName="createCustomEntityInstanceResponse" inputName="createCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="78559c45-c462-4aab-a4ed-13a9fb3cce88" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createCustomEntityInstance>\r
@@ -15953,7 +15953,7 @@
          </customEntityInstance>\r
       </ws:createCustomEntityInstance>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/createCustomEntityInstance"/></con:call></con:operation><con:operation id="3802c78c-a083-4f3b-ba07-9ae0dc422127" isOneWay="false" action="" name="createEntityTemplate" bindingOperationName="createEntityTemplate" type="Request-Response" outputName="createEntityTemplateResponse" inputName="createEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="acff6c13-cb23-46c6-ae50-439b84c67984" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/createCustomEntityInstance"/></con:call></con:operation><con:operation id="3802c78c-a083-4f3b-ba07-9ae0dc422127" isOneWay="false" action="" name="createEntityTemplate" bindingOperationName="createEntityTemplate" type="Request-Response" outputName="createEntityTemplateResponse" inputName="createEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="acff6c13-cb23-46c6-ae50-439b84c67984" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createEntityTemplate>\r
@@ -16022,7 +16022,7 @@
          </customEntityTemplate>\r
       </ws:createEntityTemplate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/createEntityTemplate"/></con:call></con:operation><con:operation id="3dcf7478-84d6-4954-aecb-4815a4486e0b" isOneWay="false" action="" name="createField" bindingOperationName="createField" type="Request-Response" outputName="createFieldResponse" inputName="createField" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c6053de3-5b3d-4627-b16f-80907803c4ef" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/createEntityTemplate"/></con:call></con:operation><con:operation id="3dcf7478-84d6-4954-aecb-4815a4486e0b" isOneWay="false" action="" name="createField" bindingOperationName="createField" type="Request-Response" outputName="createFieldResponse" inputName="createField" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c6053de3-5b3d-4627-b16f-80907803c4ef" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createField>\r
@@ -16072,7 +16072,7 @@
          </customField>\r
       </ws:createField>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/createField"/></con:call></con:operation><con:operation id="85bef1f7-b887-4cd2-9648-887f14f041e5" isOneWay="false" action="" name="createOrUpdateAction" bindingOperationName="createOrUpdateAction" type="Request-Response" outputName="createOrUpdateActionResponse" inputName="createOrUpdateAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="77bd9afe-51c6-4ff7-97b9-d6ec0e664454" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/createField"/></con:call></con:operation><con:operation id="85bef1f7-b887-4cd2-9648-887f14f041e5" isOneWay="false" action="" name="createOrUpdateAction" bindingOperationName="createOrUpdateAction" type="Request-Response" outputName="createOrUpdateActionResponse" inputName="createOrUpdateAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="77bd9afe-51c6-4ff7-97b9-d6ec0e664454" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateAction>\r
@@ -16088,7 +16088,7 @@
          </entityAction>\r
       </ws:createOrUpdateAction>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/createOrUpdateAction"/></con:call></con:operation><con:operation id="5460e5c3-0616-45da-acf2-3fce3308b8a9" isOneWay="false" action="" name="createOrUpdateCustomEntityInstance" bindingOperationName="createOrUpdateCustomEntityInstance" type="Request-Response" outputName="createOrUpdateCustomEntityInstanceResponse" inputName="createOrUpdateCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="1adb7ca5-a768-474f-b65c-b2a272efd7e3" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/createOrUpdateAction"/></con:call></con:operation><con:operation id="5460e5c3-0616-45da-acf2-3fce3308b8a9" isOneWay="false" action="" name="createOrUpdateCustomEntityInstance" bindingOperationName="createOrUpdateCustomEntityInstance" type="Request-Response" outputName="createOrUpdateCustomEntityInstanceResponse" inputName="createOrUpdateCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="1adb7ca5-a768-474f-b65c-b2a272efd7e3" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateCustomEntityInstance>\r
@@ -16142,7 +16142,7 @@
          </customEntityInstance>\r
       </ws:createOrUpdateCustomEntityInstance>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/createOrUpdateCustomEntityInstance"/></con:call></con:operation><con:operation id="d451445f-2f7e-4d28-bed2-79d8c543cbad" isOneWay="false" action="" name="createOrUpdateEntityTemplate" bindingOperationName="createOrUpdateEntityTemplate" type="Request-Response" outputName="createOrUpdateEntityTemplateResponse" inputName="createOrUpdateEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="1079363c-61b7-4a1f-87cd-54c73ec38722" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/createOrUpdateCustomEntityInstance"/></con:call></con:operation><con:operation id="d451445f-2f7e-4d28-bed2-79d8c543cbad" isOneWay="false" action="" name="createOrUpdateEntityTemplate" bindingOperationName="createOrUpdateEntityTemplate" type="Request-Response" outputName="createOrUpdateEntityTemplateResponse" inputName="createOrUpdateEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="1079363c-61b7-4a1f-87cd-54c73ec38722" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateEntityTemplate>\r
@@ -16211,7 +16211,7 @@
          </customEntityTemplate>\r
       </ws:createOrUpdateEntityTemplate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/createOrUpdateEntityTemplate"/></con:call></con:operation><con:operation id="2afda081-4027-4ad2-8e27-a152ed0a8ff8" isOneWay="false" action="" name="createOrUpdateField" bindingOperationName="createOrUpdateField" type="Request-Response" outputName="createOrUpdateFieldResponse" inputName="createOrUpdateField" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="0a63eacb-9edc-4102-adde-f65cef9faa07" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/createOrUpdateEntityTemplate"/></con:call></con:operation><con:operation id="2afda081-4027-4ad2-8e27-a152ed0a8ff8" isOneWay="false" action="" name="createOrUpdateField" bindingOperationName="createOrUpdateField" type="Request-Response" outputName="createOrUpdateFieldResponse" inputName="createOrUpdateField" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="0a63eacb-9edc-4102-adde-f65cef9faa07" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateField>\r
@@ -16261,7 +16261,7 @@
          </customField>\r
       </ws:createOrUpdateField>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/createOrUpdateField"/></con:call></con:operation><con:operation id="b71aebfd-1c21-468a-a320-1bda023eb776" isOneWay="false" action="" name="customizeEntity" bindingOperationName="customizeEntity" type="Request-Response" outputName="customizeEntityResponse" inputName="customizeEntity" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="4525f5fd-bd91-4c39-97e9-c2f2119003fc" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/createOrUpdateField"/></con:call></con:operation><con:operation id="b71aebfd-1c21-468a-a320-1bda023eb776" isOneWay="false" action="" name="customizeEntity" bindingOperationName="customizeEntity" type="Request-Response" outputName="customizeEntityResponse" inputName="customizeEntity" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="4525f5fd-bd91-4c39-97e9-c2f2119003fc" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:customizeEntity>\r
@@ -16330,7 +16330,7 @@
          </entityCustomization>\r
       </ws:customizeEntity>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/customizeEntity"/></con:call></con:operation><con:operation id="328b2c2a-717b-41e9-89cf-bba4164c2a92" isOneWay="false" action="" name="findAction" bindingOperationName="findAction" type="Request-Response" outputName="findActionResponse" inputName="findAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d426e716-3325-4808-82a3-b61f2dcbbd50" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/customizeEntity"/></con:call></con:operation><con:operation id="328b2c2a-717b-41e9-89cf-bba4164c2a92" isOneWay="false" action="" name="findAction" bindingOperationName="findAction" type="Request-Response" outputName="findActionResponse" inputName="findAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d426e716-3325-4808-82a3-b61f2dcbbd50" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findAction>\r
@@ -16340,7 +16340,7 @@
          <appliesTo>?</appliesTo>\r
       </ws:findAction>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/findAction"/></con:call></con:operation><con:operation id="20b68cec-ceca-4f82-861b-64ec77e9ef3e" isOneWay="false" action="" name="findCustomEntityInstance" bindingOperationName="findCustomEntityInstance" type="Request-Response" outputName="findCustomEntityInstanceResponse" inputName="findCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d894ce38-8a8f-4b30-aa71-4de0948955cc" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/findAction"/></con:call></con:operation><con:operation id="20b68cec-ceca-4f82-861b-64ec77e9ef3e" isOneWay="false" action="" name="findCustomEntityInstance" bindingOperationName="findCustomEntityInstance" type="Request-Response" outputName="findCustomEntityInstanceResponse" inputName="findCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d894ce38-8a8f-4b30-aa71-4de0948955cc" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findCustomEntityInstance>\r
@@ -16350,7 +16350,7 @@
          <code>?</code>\r
       </ws:findCustomEntityInstance>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/findCustomEntityInstance"/></con:call></con:operation><con:operation id="0caba382-e48b-4eac-a3c9-362b17e7b6bb" isOneWay="false" action="" name="findEntityCustomizations" bindingOperationName="findEntityCustomizations" type="Request-Response" outputName="findEntityCustomizationsResponse" inputName="findEntityCustomizations" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="6e3be8e9-df3f-4707-a459-f307b0724a9f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/findCustomEntityInstance"/></con:call></con:operation><con:operation id="0caba382-e48b-4eac-a3c9-362b17e7b6bb" isOneWay="false" action="" name="findEntityCustomizations" bindingOperationName="findEntityCustomizations" type="Request-Response" outputName="findEntityCustomizationsResponse" inputName="findEntityCustomizations" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="6e3be8e9-df3f-4707-a459-f307b0724a9f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findEntityCustomizations>\r
@@ -16358,7 +16358,7 @@
          <customizedEntityClass>?</customizedEntityClass>\r
       </ws:findEntityCustomizations>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/findEntityCustomizations"/></con:call></con:operation><con:operation id="49baa518-b0b4-4ad1-8f44-1f6f5b825cee" isOneWay="false" action="" name="findEntityTemplate" bindingOperationName="findEntityTemplate" type="Request-Response" outputName="findEntityTemplateResponse" inputName="findEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="08304ab7-68bc-424a-8da3-ffd7f0635a7e" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/findEntityCustomizations"/></con:call></con:operation><con:operation id="49baa518-b0b4-4ad1-8f44-1f6f5b825cee" isOneWay="false" action="" name="findEntityTemplate" bindingOperationName="findEntityTemplate" type="Request-Response" outputName="findEntityTemplateResponse" inputName="findEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="08304ab7-68bc-424a-8da3-ffd7f0635a7e" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findEntityTemplate>\r
@@ -16366,7 +16366,7 @@
          <code>?</code>\r
       </ws:findEntityTemplate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/findEntityTemplate"/></con:call></con:operation><con:operation id="0b4a6748-046f-4487-a824-a278e3c96145" isOneWay="false" action="" name="findField" bindingOperationName="findField" type="Request-Response" outputName="findFieldResponse" inputName="findField" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c815ec81-af9d-4b08-9b04-33ae75a90936" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/findEntityTemplate"/></con:call></con:operation><con:operation id="0b4a6748-046f-4487-a824-a278e3c96145" isOneWay="false" action="" name="findField" bindingOperationName="findField" type="Request-Response" outputName="findFieldResponse" inputName="findField" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c815ec81-af9d-4b08-9b04-33ae75a90936" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findField>\r
@@ -16376,12 +16376,12 @@
          <appliesTo>?</appliesTo>\r
       </ws:findField>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/findField"/></con:call></con:operation><con:operation id="5c5c989f-54a0-413a-9c0c-00c7fa9f0b63" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c9f1d17d-916a-474e-872d-227101e33559" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/findField"/></con:call></con:operation><con:operation id="5c5c989f-54a0-413a-9c0c-00c7fa9f0b63" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c9f1d17d-916a-474e-872d-227101e33559" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:index/>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/index"/></con:call></con:operation><con:operation id="5bcfc5fc-5299-4cfd-8a5c-320f979616ee" isOneWay="false" action="" name="removeAction" bindingOperationName="removeAction" type="Request-Response" outputName="removeActionResponse" inputName="removeAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="807b13ed-064a-487b-a805-ee47f751c71e" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/index"/></con:call></con:operation><con:operation id="5bcfc5fc-5299-4cfd-8a5c-320f979616ee" isOneWay="false" action="" name="removeAction" bindingOperationName="removeAction" type="Request-Response" outputName="removeActionResponse" inputName="removeAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="807b13ed-064a-487b-a805-ee47f751c71e" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeAction>\r
@@ -16391,7 +16391,7 @@
          <appliesTo>?</appliesTo>\r
       </ws:removeAction>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/removeAction"/></con:call></con:operation><con:operation id="57f36b8b-5fea-4dd0-a93e-9aaf0ade3d24" isOneWay="false" action="" name="removeCustomEntityInstance" bindingOperationName="removeCustomEntityInstance" type="Request-Response" outputName="removeCustomEntityInstanceResponse" inputName="removeCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="937675b2-924a-40b4-bc92-f27ede7d051f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/removeAction"/></con:call></con:operation><con:operation id="57f36b8b-5fea-4dd0-a93e-9aaf0ade3d24" isOneWay="false" action="" name="removeCustomEntityInstance" bindingOperationName="removeCustomEntityInstance" type="Request-Response" outputName="removeCustomEntityInstanceResponse" inputName="removeCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="937675b2-924a-40b4-bc92-f27ede7d051f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeCustomEntityInstance>\r
@@ -16401,7 +16401,7 @@
          <code>?</code>\r
       </ws:removeCustomEntityInstance>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/removeCustomEntityInstance"/></con:call></con:operation><con:operation id="4c6a482e-f6d4-447b-bacf-96dd309e7e80" isOneWay="false" action="" name="removeEntityTemplate" bindingOperationName="removeEntityTemplate" type="Request-Response" outputName="removeEntityTemplateResponse" inputName="removeEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="9d1ed926-c599-4c8e-b718-32165fef2fb5" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/removeCustomEntityInstance"/></con:call></con:operation><con:operation id="4c6a482e-f6d4-447b-bacf-96dd309e7e80" isOneWay="false" action="" name="removeEntityTemplate" bindingOperationName="removeEntityTemplate" type="Request-Response" outputName="removeEntityTemplateResponse" inputName="removeEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="9d1ed926-c599-4c8e-b718-32165fef2fb5" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeEntityTemplate>\r
@@ -16409,7 +16409,7 @@
          <code>?</code>\r
       </ws:removeEntityTemplate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/removeEntityTemplate"/></con:call></con:operation><con:operation id="e1823230-62d1-401e-96ad-f6bc86974894" isOneWay="false" action="" name="removeField" bindingOperationName="removeField" type="Request-Response" outputName="removeFieldResponse" inputName="removeField" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="55d64533-eed1-42c6-8ac3-10492396d701" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/removeEntityTemplate"/></con:call></con:operation><con:operation id="e1823230-62d1-401e-96ad-f6bc86974894" isOneWay="false" action="" name="removeField" bindingOperationName="removeField" type="Request-Response" outputName="removeFieldResponse" inputName="removeField" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="55d64533-eed1-42c6-8ac3-10492396d701" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeField>\r
@@ -16419,7 +16419,7 @@
          <appliesTo>?</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/removeField"/></con:call></con:operation><con:operation id="c23336c7-9e6e-4657-ba19-51e67f237e7f" isOneWay="false" action="" name="updateAction" bindingOperationName="updateAction" type="Request-Response" outputName="updateActionResponse" inputName="updateAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="34531166-be5d-4ed5-847d-10f70516c39d" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/removeField"/></con:call></con:operation><con:operation id="c23336c7-9e6e-4657-ba19-51e67f237e7f" isOneWay="false" action="" name="updateAction" bindingOperationName="updateAction" type="Request-Response" outputName="updateActionResponse" inputName="updateAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="34531166-be5d-4ed5-847d-10f70516c39d" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:updateAction>\r
@@ -16435,7 +16435,7 @@
          </entityAction>\r
       </ws:updateAction>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/updateAction"/></con:call></con:operation><con:operation id="9ba84e96-dc4f-4541-8878-2e80c09ddd77" isOneWay="false" action="" name="updateCustomEntityInstance" bindingOperationName="updateCustomEntityInstance" type="Request-Response" outputName="updateCustomEntityInstanceResponse" inputName="updateCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="7a8ddad7-e6d5-4dad-aea5-6ec099ce9e79" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/updateAction"/></con:call></con:operation><con:operation id="9ba84e96-dc4f-4541-8878-2e80c09ddd77" isOneWay="false" action="" name="updateCustomEntityInstance" bindingOperationName="updateCustomEntityInstance" type="Request-Response" outputName="updateCustomEntityInstanceResponse" inputName="updateCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="7a8ddad7-e6d5-4dad-aea5-6ec099ce9e79" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:updateCustomEntityInstance>\r
@@ -16489,7 +16489,7 @@
          </customEntityInstance>\r
       </ws:updateCustomEntityInstance>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/updateCustomEntityInstance"/></con:call></con:operation><con:operation id="91dbd580-a399-4cb6-b564-1622ecbdca80" isOneWay="false" action="" name="updateEntityTemplate" bindingOperationName="updateEntityTemplate" type="Request-Response" outputName="updateEntityTemplateResponse" inputName="updateEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="60c1e3cf-6174-4771-85f3-662054450a75" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/updateCustomEntityInstance"/></con:call></con:operation><con:operation id="91dbd580-a399-4cb6-b564-1622ecbdca80" isOneWay="false" action="" name="updateEntityTemplate" bindingOperationName="updateEntityTemplate" type="Request-Response" outputName="updateEntityTemplateResponse" inputName="updateEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="60c1e3cf-6174-4771-85f3-662054450a75" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:updateEntityTemplate>\r
@@ -16558,7 +16558,7 @@
          </customEntityTemplate>\r
       </ws:updateEntityTemplate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/updateEntityTemplate"/></con:call></con:operation><con:operation id="82604ff2-a326-4ca7-82fa-a9f879ae4ac7" isOneWay="false" action="" name="updateField" bindingOperationName="updateField" type="Request-Response" outputName="updateFieldResponse" inputName="updateField" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="9156219c-7fa3-432c-8dbe-64f66e335da0" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/updateEntityTemplate"/></con:call></con:operation><con:operation id="82604ff2-a326-4ca7-82fa-a9f879ae4ac7" isOneWay="false" action="" name="updateField" bindingOperationName="updateField" type="Request-Response" outputName="updateFieldResponse" inputName="updateField" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="9156219c-7fa3-432c-8dbe-64f66e335da0" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:updateField>\r
@@ -16608,7 +16608,7 @@
          </customField>\r
       </ws:updateField>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/updateField"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="282d9473-39e5-4a9b-88d6-55103d30a1aa" wsaVersion="NONE" name="FilterWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilterWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/FilterWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/FilterWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/FilterWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="FilterWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/EntityCustomizationWs/updateField"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="282d9473-39e5-4a9b-88d6-55103d30a1aa" wsaVersion="NONE" name="FilterWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilterWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/FilterWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/FilterWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/FilterWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="FilterWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/FilterWs?wsdl=FilterWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="FilterWsSoapBinding" type="ns1:FilterWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -16744,12 +16744,12 @@
          </filter>\r
       </ws:createOrUpdateFilter>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/FilterWs/createOrUpdateFilter"/></con:call></con:operation><con:operation id="70cc3473-6e32-497b-a8d1-1bf8393e20b0" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d5fbbbfb-a687-45c4-9611-e282d4607847" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/FilterWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/FilterWs/createOrUpdateFilter"/></con:call></con:operation><con:operation id="70cc3473-6e32-497b-a8d1-1bf8393e20b0" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d5fbbbfb-a687-45c4-9611-e282d4607847" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/FilterWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:index/>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/FilterWs/index"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="53006e78-a6c2-4f11-8d93-f2bb5821f472" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/ScriptInstanceWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/ScriptInstanceWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ScriptInstanceWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/FilterWs/index"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="53006e78-a6c2-4f11-8d93-f2bb5821f472" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/ScriptInstanceWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/ScriptInstanceWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ScriptInstanceWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/ScriptInstanceWs?wsdl=ScriptInstanceWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="ScriptInstanceWsSoapBinding" type="ns1:ScriptInstanceWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -17117,7 +17117,7 @@
          </createScriptInstanceRequest>\r
       </ws:create>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/create"/></con:call></con:operation><con:operation id="79247f20-1c12-4a92-8c0b-e5ff8c13e8c5" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="60439f95-0c41-43bb-b308-52f5739b43d7" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/create"/></con:call></con:operation><con:operation id="79247f20-1c12-4a92-8c0b-e5ff8c13e8c5" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="60439f95-0c41-43bb-b308-52f5739b43d7" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdate>\r
@@ -17159,7 +17159,7 @@
          </createOrUpdateScriptInstanceRequest>\r
       </ws:createOrUpdate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/createOrUpdate"/></con:call></con:operation><con:operation id="a9ad9a20-3ba9-456e-bfa3-2b071297c9ee" isOneWay="false" action="" name="find" bindingOperationName="find" type="Request-Response" outputName="findResponse" inputName="find" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="bb39cd73-ce40-468e-9d2a-001c20078427" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/createOrUpdate"/></con:call></con:operation><con:operation id="a9ad9a20-3ba9-456e-bfa3-2b071297c9ee" isOneWay="false" action="" name="find" bindingOperationName="find" type="Request-Response" outputName="findResponse" inputName="find" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="bb39cd73-ce40-468e-9d2a-001c20078427" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:find>\r
@@ -17167,12 +17167,12 @@
          <findScriptInstanceRequest>?</findScriptInstanceRequest>\r
       </ws:find>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/find"/></con:call></con:operation><con:operation id="fad5a971-448c-4e6e-a00e-f32d5555c14f" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="fdf525e9-421c-4a44-afda-3ba00c3a59f6" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/find"/></con:call></con:operation><con:operation id="fad5a971-448c-4e6e-a00e-f32d5555c14f" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="fdf525e9-421c-4a44-afda-3ba00c3a59f6" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:index/>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/index"/></con:call></con:operation><con:operation id="95d298fd-d71f-4ad2-b3c3-c8ccd66869f8" isOneWay="false" action="" name="remove" bindingOperationName="remove" type="Request-Response" outputName="removeResponse" inputName="remove" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="e042b80e-727d-466c-946f-64e3f931957c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/index"/></con:call></con:operation><con:operation id="95d298fd-d71f-4ad2-b3c3-c8ccd66869f8" isOneWay="false" action="" name="remove" bindingOperationName="remove" type="Request-Response" outputName="removeResponse" inputName="remove" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="e042b80e-727d-466c-946f-64e3f931957c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:remove>\r
@@ -17180,7 +17180,7 @@
          <removeScriptInstanceRequest>?</removeScriptInstanceRequest>\r
       </ws:remove>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/remove"/></con:call></con:operation><con:operation id="09dd3d19-a5b6-4af9-856e-074e48b56796" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="11c6c907-78f9-4e73-a0bc-c66b5d5eb91b" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/remove"/></con:call></con:operation><con:operation id="09dd3d19-a5b6-4af9-856e-074e48b56796" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="11c6c907-78f9-4e73-a0bc-c66b5d5eb91b" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:update>\r
@@ -17222,7 +17222,7 @@
          </updateScriptInstanceRequest>\r
       </ws:update>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/update"/></con:call></con:operation></con:interface><con:testSuite name="CatalogWsSoapBinding TestSuite" id="17378c48-6a2d-4b07-bb26-0309b164ba88"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createCounterTemplate TestCase" searchProperties="true" id="732a29bb-dcee-49a0-b447-1918139d7d1b"><con:settings/><con:testStep type="request" name="createCounterTemplate" id="6102ffc2-cd03-478f-abbc-2816720c0cad"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createCounterTemplate</con:operation><con:request name="createCounterTemplate" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="8f487693-453e-4107-a739-ad22020770cf"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/update"/></con:call></con:operation></con:interface><con:testSuite name="CatalogWsSoapBinding TestSuite" id="17378c48-6a2d-4b07-bb26-0309b164ba88"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createCounterTemplate TestCase" searchProperties="true" id="732a29bb-dcee-49a0-b447-1918139d7d1b"><con:settings/><con:testStep type="request" name="createCounterTemplate" id="6102ffc2-cd03-478f-abbc-2816720c0cad"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createCounterTemplate</con:operation><con:request name="createCounterTemplate" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="8f487693-453e-4107-a739-ad22020770cf"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCounterTemplate>
@@ -17279,7 +17279,7 @@
          <!--Optional:-->
          <invoiceSubCategoryCountry>
             <invoiceSubCategory>SOAP_TEST</invoiceSubCategory>
-            <country>US</country>
+            <country>FR</country>
             <tax>TAX_00</tax>
             <!--Optional:-->
          </invoiceSubCategoryCountry>
@@ -17962,21 +17962,21 @@
          <offerTemplateCode>SOAP_OFFER1</offerTemplateCode>
       </ws:removeOfferTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="61e83175-2863-46b7-9f77-8c9b291781bc" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/removeOfferTemplate"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="removePricePlan TestCase" searchProperties="true" id="1f3ca1a5-606c-4b29-af5c-53b82f199329"><con:settings/><con:testStep type="request" name="removePricePlan" id="2d02680b-7f6f-404a-b051-3d0c5c66b246"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>removePricePlan</con:operation><con:request name="removePricePlan" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6c1ddeff-aa38-45eb-b370-f4e84efb5560"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="61e83175-2863-46b7-9f77-8c9b291781bc" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/removeOfferTemplate"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="removePricePlan TestCase" searchProperties="true" id="1f3ca1a5-606c-4b29-af5c-53b82f199329"><con:settings/><con:testStep type="request" name="removePricePlan_SUB" id="2d02680b-7f6f-404a-b051-3d0c5c66b246"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>removePricePlan</con:operation><con:request name="removePricePlan_SUB" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6c1ddeff-aa38-45eb-b370-f4e84efb5560"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removePricePlan>
       	<pricePlanCode>SOAP_SUB1</pricePlanCode>
       </ws:removePricePlan>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="44122f28-80e6-49da-a6ab-3766d3a5fd69" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/removePricePlan"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Copy of removePricePlan" id="2e85bff0-3a0d-4ece-aef4-ed20ae5fcdf2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>removePricePlan</con:operation><con:request name="Copy of removePricePlan" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6c1ddeff-aa38-45eb-b370-f4e84efb5560"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="44122f28-80e6-49da-a6ab-3766d3a5fd69" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/removePricePlan"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="removePricePlan_REC" id="2e85bff0-3a0d-4ece-aef4-ed20ae5fcdf2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>removePricePlan</con:operation><con:request name="removePricePlan_REC" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6c1ddeff-aa38-45eb-b370-f4e84efb5560"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removePricePlan>
       	<pricePlanCode>SOAP_REC1</pricePlanCode>
       </ws:removePricePlan>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="2c765f3d-2458-42fa-9938-91c74f9cc2ba" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/removePricePlan"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Copy of Copy of removePricePlan" id="cf28d46b-61e6-42dc-b786-b40855526b5d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>removePricePlan</con:operation><con:request name="Copy of Copy of removePricePlan" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6c1ddeff-aa38-45eb-b370-f4e84efb5560"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="2c765f3d-2458-42fa-9938-91c74f9cc2ba" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/removePricePlan"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="removePricePlan_Usage" id="cf28d46b-61e6-42dc-b786-b40855526b5d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>removePricePlan</con:operation><con:request name="removePricePlan_Usage" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6c1ddeff-aa38-45eb-b370-f4e84efb5560"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removePricePlan>
@@ -18209,7 +18209,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                <joinCalendar1Code>${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_YEARLY</joinCalendar1Code>
                <joinCalendar2Code>${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_PERIOD_MONTH</joinCalendar2Code>
             </calendar>
-]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="d625b0ce-14a0-4a18-8048-4cffce187eac" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Provider" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Provider" id="59739ba3-dd10-4347-b63a-4c45982df7cb"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createProvider</con:operation><con:request name="Create Provider" id="c50aa7cd-17c1-42d5-a007-a203aa9c591b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="d625b0ce-14a0-4a18-8048-4cffce187eac" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Provider" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Provider" id="59739ba3-dd10-4347-b63a-4c45982df7cb"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createProvider</con:operation><con:request name="Create Provider" id="c50aa7cd-17c1-42d5-a007-a203aa9c591b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authSuperAdmin}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createProvider>\r
@@ -18241,7 +18241,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
       </ws:createProvider>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a5b8988e-d5e0-48dc-87ce-8d3ba993df71"/><con:assertion type="Simple Contains" id="bb98e3c4-066b-4478-97bd-4d32931b6320" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Provider" id="fceafcd2-b806-453c-8aaa-ede81266bb45"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findProvider</con:operation><con:request name="Find Provider" id="105d4cfe-6455-4394-8bf6-6308b8c5386d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Provider" id="fceafcd2-b806-453c-8aaa-ede81266bb45"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findProvider</con:operation><con:request name="Find Provider" id="105d4cfe-6455-4394-8bf6-6308b8c5386d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authSuperAdmin}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findProvider>\r
@@ -18279,7 +18279,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                   <displayDetail>true</displayDetail>
                   <displayChargesPeriods>false</displayChargesPeriods>
                </invoiceConfiguration>
-            </provider>]]></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Trading configuration" id="aa0aa7e1-55a8-46c9-9f73-c662d60ca7b3"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findTradingConfiguration</con:operation><con:request name="Find Trading configuration" id="57c06e80-fca0-4aed-829b-6b32e7c06530"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+            </provider>]]></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Trading configuration" id="aa0aa7e1-55a8-46c9-9f73-c662d60ca7b3"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findTradingConfiguration</con:operation><con:request name="Find Trading configuration" id="57c06e80-fca0-4aed-829b-6b32e7c06530"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authSuperAdmin}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findTradingConfiguration>\r
@@ -18289,7 +18289,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d5bb550b-6cb5-489b-9311-e154ae964f0b"/><con:assertion type="Simple Contains" id="1a5e1399-3b0b-4643-9851-a75581e724a5" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="34b2ffd1-9825-4d47-ba57-89eb9315daa0" name="Contains 1"><con:configuration><token>            &lt;countries/>
             &lt;currencies/>
-            &lt;languages/></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Invoicing configuration" id="e9db922b-3af0-44ce-abad-eab1a5ed5369"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findInvoicingConfiguration</con:operation><con:request name="Find Invoicing configuration" id="e697557f-7764-4ff0-a542-9511da6fcf10"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+            &lt;languages/></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Invoicing configuration" id="e9db922b-3af0-44ce-abad-eab1a5ed5369"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findInvoicingConfiguration</con:operation><con:request name="Find Invoicing configuration" id="e697557f-7764-4ff0-a542-9511da6fcf10"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authSuperAdmin}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findInvoicingConfiguration>\r
@@ -18303,7 +18303,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             <invoiceSubCategories/>
             <billingCycles/>
             <terminationReasons/>
-]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Customer configuration" id="ce18f2ab-c02a-43ee-bdf0-0bc47a5c3516"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomerConfiguration</con:operation><con:request name="Find Customer configuration" id="63bcac8e-4f22-4eb9-9a7a-26f6fcfc66a2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Customer configuration" id="ce18f2ab-c02a-43ee-bdf0-0bc47a5c3516"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomerConfiguration</con:operation><con:request name="Find Customer configuration" id="63bcac8e-4f22-4eb9-9a7a-26f6fcfc66a2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authSuperAdmin}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findCustomerConfiguration>\r
@@ -18314,7 +18314,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="44c27058-b4f6-4687-a815-a49339f5ac96" name="Contains 1"><con:configuration><token>            &lt;customerBrands/>
             &lt;customerCategories/>
             &lt;titles/>
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find CustomerAccount configuration" id="e6e8085d-ef32-4b97-8cee-7ef3c030310f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomerAccountConfiguration</con:operation><con:request name="Find CustomerAccount configuration" id="5e3c24b7-a2fa-4484-8b89-2079ac2dbd8a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find CustomerAccount configuration" id="e6e8085d-ef32-4b97-8cee-7ef3c030310f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomerAccountConfiguration</con:operation><con:request name="Find CustomerAccount configuration" id="5e3c24b7-a2fa-4484-8b89-2079ac2dbd8a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authSuperAdmin}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findCustomerAccountConfiguration>\r
@@ -18328,7 +18328,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             <paymentMethods>WIRETRANSFER</paymentMethods>
             <paymentMethods>CARD</paymentMethods>
             <creditCategories/>
-]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Provider - DEMO" id="dab5efa2-3935-4b9e-a359-ed7dc1d6a975"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findProvider</con:operation><con:request name="Find Provider - DEMO" id="105d4cfe-6455-4394-8bf6-6308b8c5386d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Provider - DEMO" id="dab5efa2-3935-4b9e-a359-ed7dc1d6a975"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findProvider</con:operation><con:request name="Find Provider - DEMO" id="105d4cfe-6455-4394-8bf6-6308b8c5386d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authSuperAdmin}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findProvider>\r
@@ -18337,7 +18337,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e8d6ca82-da1f-476e-81f1-84922cdb6476"/><con:assertion type="Simple Contains" id="7361f561-7ab4-4faa-ae83-83bf22f4eac7" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="597880b0-5fe8-4396-b9f7-d00c9ce15d2c" name="Contains 1"><con:configuration><token>&lt;provider code="DEMO">
-</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Provider - No code" id="b8a192a2-f8de-4876-91a8-2b38dc90d334"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findProvider</con:operation><con:request name="Find Provider - No code" id="105d4cfe-6455-4394-8bf6-6308b8c5386d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Provider - No code" id="b8a192a2-f8de-4876-91a8-2b38dc90d334"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findProvider</con:operation><con:request name="Find Provider - No code" id="105d4cfe-6455-4394-8bf6-6308b8c5386d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authSuperAdmin}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findProvider>\r
@@ -18345,7 +18345,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e8d6ca82-da1f-476e-81f1-84922cdb6476"/><con:assertion type="Simple Contains" id="7361f561-7ab4-4faa-ae83-83bf22f4eac7" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="597880b0-5fe8-4396-b9f7-d00c9ce15d2c" name="Contains 1"><con:configuration><token>&lt;provider code="DEMO">
-</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Trading configuration - DEMO" id="4182350c-a695-4a70-a0c3-e815c97c64ce"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findTradingConfiguration</con:operation><con:request name="Find Trading configuration - DEMO" id="57c06e80-fca0-4aed-829b-6b32e7c06530"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Trading configuration - DEMO" id="4182350c-a695-4a70-a0c3-e815c97c64ce"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findTradingConfiguration</con:operation><con:request name="Find Trading configuration - DEMO" id="57c06e80-fca0-4aed-829b-6b32e7c06530"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authSuperAdmin}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findTradingConfiguration>\r
@@ -18356,7 +18356,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="34b2ffd1-9825-4d47-ba57-89eb9315daa0" name="Contains 1"><con:configuration><token>&lt;country countryCode="US" name="United States">
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="8ad2aae5-0649-404e-a7fc-deb2d91dd382" name="Contains 2"><con:configuration><token>&lt;currency code="USD">
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="80cb8501-6812-4458-96da-8fd1b88fb332" name="Contains 3"><con:configuration><token>&lt;language code="ENG">
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Invoicing configuration - DEMO" id="1ead959a-fcb9-453c-b6c2-cef15ffebc71"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findInvoicingConfiguration</con:operation><con:request name="Find Invoicing configuration - DEMO" id="e697557f-7764-4ff0-a542-9511da6fcf10"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Invoicing configuration - DEMO" id="1ead959a-fcb9-453c-b6c2-cef15ffebc71"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findInvoicingConfiguration</con:operation><con:request name="Find Invoicing configuration - DEMO" id="e697557f-7764-4ff0-a542-9511da6fcf10"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authSuperAdmin}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findInvoicingConfiguration>\r
@@ -18369,7 +18369,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="85b6f36c-6942-4f63-ba5a-779b271e7094" name="Contains 3"><con:configuration><token>&lt;invoiceCategory code="CONSUMPTION" description="Consumption"/>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="6e55bfc0-bcc6-40be-ac3f-efaaa739b588" name="Contains 4"><con:configuration><token>&lt;invoiceSubCategory code="CMP_DATA" description="Consumption Data">
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="02216cc0-eabe-42f4-a9a5-f50a01ea1d92" name="Contains 5"><con:configuration><token>&lt;billingCycle code="CYC_INV_MT_1" description="Monthly Invoice Cycle 1">
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Customer configuration - DEMO" id="f098d008-98c1-4592-bf63-9b3fdac23881"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomerConfiguration</con:operation><con:request name="Find Customer configuration - DEMO" id="63bcac8e-4f22-4eb9-9a7a-26f6fcfc66a2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Customer configuration - DEMO" id="f098d008-98c1-4592-bf63-9b3fdac23881"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomerConfiguration</con:operation><con:request name="Find Customer configuration - DEMO" id="63bcac8e-4f22-4eb9-9a7a-26f6fcfc66a2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authSuperAdmin}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findCustomerConfiguration>\r
@@ -18384,7 +18384,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
 ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="531783b2-f644-4c8b-a2ee-01ad6b8ae012" name="Contains 2"><con:configuration><token>&lt;customerCategory>
                   &lt;code>PROSPECT&lt;/code>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="fb72fcc3-28d3-4cba-bb01-27bc3f788230" name="Contains 3"><con:configuration><token>&lt;title code="AGCE">
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find CustomerAccount configuration - DEMO" id="46712b7f-6967-4f3b-8cc0-69a6372438ac"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomerAccountConfiguration</con:operation><con:request name="Find CustomerAccount configuration - DEMO" id="5e3c24b7-a2fa-4484-8b89-2079ac2dbd8a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find CustomerAccount configuration - DEMO" id="46712b7f-6967-4f3b-8cc0-69a6372438ac"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomerAccountConfiguration</con:operation><con:request name="Find CustomerAccount configuration - DEMO" id="5e3c24b7-a2fa-4484-8b89-2079ac2dbd8a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authSuperAdmin}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findCustomerAccountConfiguration>\r
@@ -18401,7 +18401,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                   <code>PART_C</code>
                   <description>Part C</description>
                </creditCategory>
-]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Trading configuration - No code" id="404158b3-0059-4152-a7ae-5a11f13fcc26"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findTradingConfiguration</con:operation><con:request name="Find Trading configuration - No code" id="57c06e80-fca0-4aed-829b-6b32e7c06530"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Trading configuration - No code" id="404158b3-0059-4152-a7ae-5a11f13fcc26"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findTradingConfiguration</con:operation><con:request name="Find Trading configuration - No code" id="57c06e80-fca0-4aed-829b-6b32e7c06530"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authSuperAdmin}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findTradingConfiguration>\r
@@ -18411,7 +18411,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="34b2ffd1-9825-4d47-ba57-89eb9315daa0" name="Contains 1"><con:configuration><token>&lt;country countryCode="US" name="United States">
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="8ad2aae5-0649-404e-a7fc-deb2d91dd382" name="Contains 2"><con:configuration><token>&lt;currency code="USD">
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="80cb8501-6812-4458-96da-8fd1b88fb332" name="Contains 3"><con:configuration><token>&lt;language code="ENG">
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Invoicing configuration - No code" id="f9454cd4-2d45-46bc-b038-55fe12b16114"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findInvoicingConfiguration</con:operation><con:request name="Find Invoicing configuration - No code" id="e697557f-7764-4ff0-a542-9511da6fcf10"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Invoicing configuration - No code" id="f9454cd4-2d45-46bc-b038-55fe12b16114"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findInvoicingConfiguration</con:operation><con:request name="Find Invoicing configuration - No code" id="e697557f-7764-4ff0-a542-9511da6fcf10"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authSuperAdmin}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findInvoicingConfiguration>\r
@@ -18518,7 +18518,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          	  <username>SOAP_TEST</username>
             <password>TEST</password>
             <email>TEST@GMAIL.COM</email>
-            <role>administrateur</role>
+            <role>ModifyAllCE</role>
             <provider>SOAP_TEST</provider>
             <!--Optional:-->
             <firstName>Edward</firstName>
@@ -18655,11 +18655,11 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Body>\r
       <ws:createOccTemplate>\r
          <!--Optional:-->\r
-         <occTemplate code="OCC_1" description="OCC_1">\r
-            <accountCode>OCC_1</accountCode>\r
+         <occTemplate code="OCC_001" description="OCC_001">\r
+            <accountCode>OCC_001</accountCode>\r
             <occCategory>CREDIT</occCategory>\r
             <!--Optional:-->\r
-            <accountCodeClientSide>OCC_1</accountCodeClientSide>\r
+            <accountCodeClientSide>OCC_001</accountCodeClientSide>\r
          </occTemplate>\r
       </ws:createOccTemplate>\r
    </soapenv:Body>\r
@@ -18800,8 +18800,8 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          	  <username>SOAP_TEST</username>
             <password>TEST</password>
             <email>TEST@GMAIL.COM</email>
-            <role>administrateur</role>
-            <provider>DEMO</provider>
+            <role>ModifyAllCE</role>
+            <provider>OCB</provider>
             <!--Optional:-->
             <firstName>Edward</firstName>
             <!--Optional:-->
@@ -19246,7 +19246,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             <!--Optional:-->
             <customerCategory>CLIENT</customerCategory>
             <!--Optional:-->
-            <customerBrand>DEFAULT</customerBrand>
+            <customerBrand>SOAP_CB1</customerBrand>
             <!--Optional:-->
             <seller>MAIN_SELLER</seller>
               <!--Optional:-->
@@ -19364,6 +19364,21 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             <customField code="CF_BA1" description="CF_BA1">
             <!--Optional:-->
                <stringValue>CF_BA_VAL</stringValue>
+               </customField>
+                <customField code="ENGAGEMENT">
+                  <longValue>36</longValue>
+               </customField>
+
+               <customField code="CACONTRIBUTIF">
+                  <stringValue>36</stringValue>
+               </customField>
+               
+               <customField code="INTERCO">
+                  <stringValue>36</stringValue>
+               </customField>
+   
+               <customField code="OFFRE">
+                  <stringValue>FCA_V1</stringValue>
                </customField>
             </customFields>
             <!--Optional:-->
@@ -19600,7 +19615,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             <!--Optional:-->
             <customerCategory>CLIENT</customerCategory>
             <!--Optional:-->
-            <customerBrand>DEFAULT</customerBrand>
+            <customerBrand>DEFAULTY</customerBrand>
             <!--Optional:-->
             <seller>MAIN_SELLER</seller>
               <contactInformation>
@@ -19824,7 +19839,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             <paymentMethod>1</paymentMethod>
 
             <!--Optional:-->
-            <customerId>SOAP_CUST3</customerId>
+            <customerId>SOAP_CUST003</customerId>
             <!--Optional:-->
             <sellerCode>MAIN_SELLER</sellerCode>
             <!--Optional:-->
@@ -19921,7 +19936,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
       <ws:updateRecurringChargeTemplate>
          <!--Optional:-->
          <recurringChargeTemplate code="SOAP_REC1" description="SOAP_REC1 modif">
-         <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+         <invoiceSubCategory>SOAP_TEST</invoiceSubCategory>
          <disabled>false</disabled> 
          <calendar>MONTHLY</calendar>
             <!--Optional:-->
@@ -20021,7 +20036,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
 						<!--Optional: -->
 						<currencyCode>USD</currencyCode>
 						<!--Optional: -->
-						<countryCode>US</countryCode>
+						<countryCode>FR</countryCode>
 						<!--Optional: -->
 						<languageCode>ENG</languageCode>
 						<!--Optional: -->
@@ -20140,7 +20155,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
 										<billingAccounts>
 											<billingAccount code="SOAP_BA2" description="BAS2">
 												<billingCycle>CYC_INV_MT_1</billingCycle>
-												<country>US</country>
+												<country>FR</country>
 												<language>ENG</language>
 												<paymentMethod>CHECK</paymentMethod>
 												<!--Optional: -->
@@ -20177,6 +20192,21 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
 												<customField code="CF_BA1" description="CF_BA1">
 												<stringValue>CF_String_Val</stringValue>
 												</customField>
+												 <customField code="ENGAGEMENT">
+					                  <longValue>36</longValue>
+					               </customField>
+					
+					               <customField code="CACONTRIBUTIF">
+					                  <stringValue>36</stringValue>
+					               </customField>
+					               
+					               <customField code="INTERCO">
+					                  <stringValue>36</stringValue>
+					               </customField>
+					   
+					               <customField code="OFFRE">
+					                  <stringValue>FCA_V1</stringValue>
+					               </customField>
 												</customFields>
 												<!--Optional: -->
 												<nextInvoiceDate>2015-02-20</nextInvoiceDate>
@@ -20439,7 +20469,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             <!--Optional:-->
             <crmAccountType>S</crmAccountType>
             <!--Optional:-->
-            <code>MEVEO_${#TestCase#ticket}_BASIC</code>
+            <code>MEVEO_${#TestCase#ticket}_BASIC_01</code>
             <!--Optional:-->
             <description>Open Source Billing System</description>
             <!--Optional:-->
@@ -20520,7 +20550,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             <!--Optional:-->
             <customerCategory>CLIENT</customerCategory>
             <!--Optional:-->
-            <customerBrand>DEFAULT</customerBrand>
+            <customerBrand>DEFAULTY</customerBrand>
             <!--Optional:-->
             <mandateIdentification>1234</mandateIdentification>
             <!--Optional:-->
@@ -20575,7 +20605,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             <!--Optional:-->
             <customerCategory>CLIENT</customerCategory>
             <!--Optional:-->
-            <customerBrand>DEFAULT</customerBrand>
+            <customerBrand>DEFAULTY</customerBrand>
             <!--Optional:-->
             <mandateIdentification>1234</mandateIdentification>
             <!--Optional:-->
@@ -20601,7 +20631,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <!--Optional:-->
          <crmAccountHierarchy>
             <!--Optional:-->
-            <crmAccountType>XXX</crmAccountType>
+            <crmAccountType>C_CA</crmAccountType>
             <!--Optional:-->
             <code>MEVEO_${#TestCase#ticket}_BASIC</code>
             <!--Optional:-->
@@ -20629,7 +20659,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             <!--Optional:-->
             <customerCategory>CLIENT</customerCategory>
             <!--Optional:-->
-            <customerBrand>DEFAULT</customerBrand>
+            <customerBrand>DEFAULTY</customerBrand>
             <!--Optional:-->
             <seller>MAIN_SELLER</seller>
             <!--Optional:-->
@@ -20740,7 +20770,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             <!--Optional:-->
             <customerCategory>CLIENT</customerCategory>
             <!--Optional:-->
-            <customerBrand>DEFAULT</customerBrand>
+            <customerBrand>DEFAULTY</customerBrand>
             <!--Optional:-->
             <mandateIdentification>1234</mandateIdentification>
             <!--Optional:-->
@@ -20795,7 +20825,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             <!--Optional:-->
             <customerCategory>CLIENT</customerCategory>
             <!--Optional:-->
-            <customerBrand>DEFAULT</customerBrand>
+            <customerBrand>DEFAULTY</customerBrand>
             <!--Optional:-->
             <mandateIdentification>1234</mandateIdentification>
             <!--Optional:-->
@@ -20821,7 +20851,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <!--Optional:-->
          <crmAccountHierarchy>
             <!--Optional:-->
-            <crmAccountType>XXX</crmAccountType>
+            <crmAccountType>C_CA</crmAccountType>
             <!--Optional:-->
             <code>MEVEO_${#TestCase#ticket}_BASIC</code>
             <!--Optional:-->
@@ -20909,7 +20939,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
         <pricePlanCode>SOAP_REC1</pricePlanCode>
       </ws:removePricePlan>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b1b97ae0-a9ec-4606-a149-0055f50d17d9"/><con:assertion type="Simple Contains" name="Contains" id="65b14176-5b89-4e02-9dfd-f6b2702a37dd"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>accounts</con:value></con:property><con:property><con:name>index</con:name><con:value>10</con:value></con:property></con:properties><con:setupScript>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b1b97ae0-a9ec-4606-a149-0055f50d17d9"/><con:assertion type="Simple Contains" name="Contains" id="65b14176-5b89-4e02-9dfd-f6b2702a37dd"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>accounts</con:value></con:property><con:property><con:name>index</con:name><con:value>11</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite name="FiltersWsSoapBinding" id="80ac909a-805e-4812-9969-f9d9ebfdef85"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="listFilter" searchProperties="true" id="0495421e-5371-4a0b-804a-8c761aac7fd1"><con:settings/><con:testStep type="request" name="create filter" id="83c9c49a-216a-4853-a8f3-4877190ce280"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>FilterWsSoapBinding</con:interface><con:operation>createOrUpdateFilter</con:operation><con:request name="create filter" id="e998c2d6-e186-4ab2-866c-7fd0f32f0139"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/FilterWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -21109,7 +21139,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
       <ws:createRecurringChargeTemplate>
          <!--Optional:-->
          <recurringChargeTemplate code="${#TestSuite#ticket}_REC1" description="${#TestSuite#ticket}_REC1">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+            <invoiceSubCategory>SOAP_TEST</invoiceSubCategory>
             <disabled>false</disabled>
             <!--Optional:-->
             <amountEditable>false</amountEditable>
@@ -21137,7 +21167,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
       <ws:createOneShotChargeTemplate>
          <!--Optional:-->
          <oneShotChargeTemplate code="${#TestSuite#ticket}_OS1" description="${#TestSuite#ticket}_OS1">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+            <invoiceSubCategory>SOAP_TEST</invoiceSubCategory>
             <disabled>false</disabled>
             <!--Optional:-->
             <amountEditable>false</amountEditable>
@@ -21165,7 +21195,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
       <ws:createUsageChargeTemplate>
          <!--Optional:-->
          <usageChargeTemplate code="${#TestSuite#ticket}_USAGE1" description="${#TestSuite#ticket}_USAGE1">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+            <invoiceSubCategory>SOAP_TEST</invoiceSubCategory>
             <disabled>false</disabled>
             <!--Optional:-->
             <amountEditable>false</amountEditable>
@@ -21407,7 +21437,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                   <!--Optional:-->
                   <currencyCode>USD</currencyCode>
                   <!--Optional:-->
-                  <countryCode>USD</countryCode>
+                  <countryCode>FR</countryCode>
                   <!--Optional:-->
                   <languageCode>ENG</languageCode>
                   <!--Optional:-->
@@ -21578,9 +21608,24 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                                           <!--Optional:-->
                                           <stringValue>BA</stringValue>
                                        </customField>
+                                        <customField code="ENGAGEMENT">
+					                  <longValue>36</longValue>
+					               </customField>
+					
+					               <customField code="CACONTRIBUTIF">
+					                  <stringValue>36</stringValue>
+					               </customField>
+					               
+					               <customField code="INTERCO">
+					                  <stringValue>36</stringValue>
+					               </customField>
+					   
+					               <customField code="OFFRE">
+					                  <stringValue>FCA_V1</stringValue>
+					               </customField>
                                     </customFields>
                                     <billingCycle>CYC_INV_MT_1</billingCycle>
-                                    <country>US</country>
+                                    <country>FR</country>
                                     <language>ENG</language>
                                     <paymentMethod>CHECK</paymentMethod>
                                     <!--Optional:-->
@@ -21660,6 +21705,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                                                 <!--Optional:-->
                                                 <stringValue>UA</stringValue>
                                              </customField>
+                                             
                                           </customFields>
                                           <!--Optional:-->
                                           <subscriptionDate>${#TestSuite#date}</subscriptionDate>
@@ -22207,9 +22253,24 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                                           <!--Optional:-->
                                           <stringValue>BA</stringValue>
                                        </customField>
+                                        <customField code="ENGAGEMENT">
+					                  <longValue>36</longValue>
+					               </customField>
+					
+					               <customField code="CACONTRIBUTIF">
+					                  <stringValue>36</stringValue>
+					               </customField>
+					               
+					               <customField code="INTERCO">
+					                  <stringValue>36</stringValue>
+					               </customField>
+					   
+					               <customField code="OFFRE">
+					                  <stringValue>FCA_V1</stringValue>
+					               </customField>
                                     </customFields>
                                     <billingCycle>CYC_INV_MT_1</billingCycle>
-                                    <country>US</country>
+                                    <country>FR</country>
                                     <language>ENG</language>
                                     <paymentMethod>CHECK</paymentMethod>
                                     <!--Optional:-->
@@ -22493,6 +22554,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                                     <!--Optional:-->
                                     <stringValue>CA</stringValue>
                                  </customField>
+                                 
                               </customFields>
                               <currency>USD</currency>
                               <language>ENG</language>
@@ -22561,9 +22623,24 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                                           <!--Optional:-->
                                           <stringValue>BA</stringValue>
                                        </customField>
+                                        <customField code="ENGAGEMENT">
+					                  <longValue>36</longValue>
+					               </customField>
+					
+					               <customField code="CACONTRIBUTIF">
+					                  <stringValue>36</stringValue>
+					               </customField>
+					               
+					               <customField code="INTERCO">
+					                  <stringValue>36</stringValue>
+					               </customField>
+					   
+					               <customField code="OFFRE">
+					                  <stringValue>FCA_V1</stringValue>
+					               </customField>
                                     </customFields>
                                     <billingCycle>CYC_INV_MT_1</billingCycle>
-                                    <country>US</country>
+                                    <country>FR</country>
                                     <language>ENG</language>
                                     <paymentMethod>CHECK</paymentMethod>
                                     <!--Optional:-->
@@ -22919,9 +22996,24 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                                           <!--Optional:-->
                                           <stringValue>BA</stringValue>
                                        </customField>
+                                        <customField code="ENGAGEMENT">
+					                  <longValue>36</longValue>
+					               </customField>
+					
+					               <customField code="CACONTRIBUTIF">
+					                  <stringValue>36</stringValue>
+					               </customField>
+					               
+					               <customField code="INTERCO">
+					                  <stringValue>36</stringValue>
+					               </customField>
+					   
+					               <customField code="OFFRE">
+					                  <stringValue>FCA_V1</stringValue>
+					               </customField>
                                     </customFields>
                                     <billingCycle>CYC_INV_MT_1</billingCycle>
-                                    <country>US</country>
+                                    <country>FR</country>
                                     <language>ENG</language>
                                     <paymentMethod>CHECK</paymentMethod>
                                     <!--Optional:-->
@@ -23282,9 +23374,24 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                                           <!--Optional:-->
                                           <stringValue>BA</stringValue>
                                        </customField>
+                                        <customField code="ENGAGEMENT">
+					                  <longValue>36</longValue>
+					               </customField>
+					
+					               <customField code="CACONTRIBUTIF">
+					                  <stringValue>36</stringValue>
+					               </customField>
+					               
+					               <customField code="INTERCO">
+					                  <stringValue>36</stringValue>
+					               </customField>
+					   
+					               <customField code="OFFRE">
+					                  <stringValue>FCA_V1</stringValue>
+					               </customField>
                                     </customFields>
                                     <billingCycle>CYC_INV_MT_1</billingCycle>
-                                    <country>US</country>
+                                    <country>FR</country>
                                     <language>ENG</language>
                                     <paymentMethod>CHECK</paymentMethod>
                                     <!--Optional:-->
@@ -23863,8 +23970,8 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             </address>
             
             <customerCategory>CLIENT</customerCategory>
-            <customerBrand>DEFAULT</customerBrand>
-            <seller>SELLER_FR</seller>
+            <customerBrand>DEFAULTY</customerBrand>
+            <seller>MAIN_SELLER</seller>
             <contactInformation>
                <email>613@manaty.net</email>
                <phone>+33100000000</phone>
@@ -23921,6 +24028,28 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                <city>Dijon</city>
                <country>FR</country>
             </address>
+             <customFields>
+              <!--Zero or more repetitions:-->
+              <customField code="CF_BA" description="?">
+                 <!--Optional:-->
+                 <stringValue>BA</stringValue>
+              </customField>
+               <customField code="ENGAGEMENT">
+                  <longValue>36</longValue>
+               </customField>
+
+               <customField code="CACONTRIBUTIF">
+                  <stringValue>36</stringValue>
+               </customField>
+               
+               <customField code="INTERCO">
+                  <stringValue>36</stringValue>
+               </customField>
+   
+               <customField code="OFFRE">
+                  <stringValue>FCA_V1</stringValue>
+               </customField>
+           </customFields>
             <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <country>FR</country>
@@ -23981,8 +24110,8 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             </address>
             
             <customerCategory>CLIENT</customerCategory>
-            <customerBrand>DEFAULT</customerBrand>
-            <seller>SELLER_FR</seller>
+            <customerBrand>DEFAULTY</customerBrand>
+            <seller>MAIN_SELLER</seller>
             <contactInformation>
                <email>613@manaty.net</email>
                <phone>+33100000000</phone>
@@ -24039,6 +24168,28 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                <city>Dijon</city>
                <country>FR</country>
             </address>
+             <customFields>
+              <!--Zero or more repetitions:-->
+              <customField code="CF_BA" description="?">
+                 <!--Optional:-->
+                 <stringValue>BA</stringValue>
+              </customField>
+               <customField code="ENGAGEMENT">
+                  <longValue>36</longValue>
+               </customField>
+
+               <customField code="CACONTRIBUTIF">
+                  <stringValue>36</stringValue>
+               </customField>
+               
+               <customField code="INTERCO">
+                  <stringValue>36</stringValue>
+               </customField>
+   
+               <customField code="OFFRE">
+                  <stringValue>FCA_V1</stringValue>
+               </customField>
+           </customFields>
             <customerAccount>${#TestSuite#ticket}_CA2</customerAccount>
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <country>FR</country>
@@ -24099,8 +24250,8 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             </address>
             
             <customerCategory>CLIENT</customerCategory>
-            <customerBrand>DEFAULT</customerBrand>
-            <seller>SELLER_FR</seller>
+            <customerBrand>DEFAULTY</customerBrand>
+            <seller>MAIN_SELLER</seller>
             <contactInformation>
                <email>613@manaty.net</email>
                <phone>+33100000000</phone>
@@ -24157,6 +24308,28 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                <city>Dijon</city>
                <country>FR</country>
             </address>
+             <customFields>
+         <!--Zero or more repetitions:-->
+         <customField code="CF_BA" description="?">
+            <!--Optional:-->
+            <stringValue>BA</stringValue>
+         </customField>
+          <customField code="ENGAGEMENT">
+             <longValue>36</longValue>
+          </customField>
+
+          <customField code="CACONTRIBUTIF">
+             <stringValue>36</stringValue>
+          </customField>
+          
+          <customField code="INTERCO">
+             <stringValue>36</stringValue>
+          </customField>
+
+          <customField code="OFFRE">
+             <stringValue>FCA_V1</stringValue>
+          </customField>
+      </customFields>
             <customerAccount>${#TestSuite#ticket}_CA3</customerAccount>
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <country>FR</country>
@@ -24191,6 +24364,28 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                <city>Dijon</city>
                <country>FR</country>
             </address>
+             <customFields>
+                                       <!--Zero or more repetitions:-->
+              <customField code="CF_BA" description="?">
+                 <!--Optional:-->
+                 <stringValue>BA</stringValue>
+              </customField>
+               <customField code="ENGAGEMENT">
+                  <longValue>36</longValue>
+               </customField>
+
+               <customField code="CACONTRIBUTIF">
+                  <stringValue>36</stringValue>
+               </customField>
+               
+               <customField code="INTERCO">
+                  <stringValue>36</stringValue>
+               </customField>
+   
+               <customField code="OFFRE">
+                  <stringValue>FCA_V1</stringValue>
+               </customField>
+           </customFields>
             <customerAccount>${#TestSuite#ticket}_CA3</customerAccount>
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <country>FR</country>
@@ -24251,8 +24446,8 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             </address>
             
             <customerCategory>CLIENT</customerCategory>
-            <customerBrand>DEFAULT</customerBrand>
-            <seller>SELLER_FR</seller>
+            <customerBrand>DEFAULTY</customerBrand>
+            <seller>MAIN_SELLER</seller>
             <contactInformation>
                <email>613@manaty.net</email>
                <phone>+33100000000</phone>
@@ -24309,6 +24504,28 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                <city>Dijon</city>
                <country>FR</country>
             </address>
+             <customFields>
+              <!--Zero or more repetitions:-->
+              <customField code="CF_BA" description="?">
+                 <!--Optional:-->
+                 <stringValue>BA</stringValue>
+              </customField>
+               <customField code="ENGAGEMENT">
+                  <longValue>36</longValue>
+               </customField>
+
+               <customField code="CACONTRIBUTIF">
+                  <stringValue>36</stringValue>
+               </customField>
+               
+               <customField code="INTERCO">
+                  <stringValue>36</stringValue>
+               </customField>
+   
+               <customField code="OFFRE">
+                  <stringValue>FCA_V1</stringValue>
+               </customField>
+           </customFields>
             <customerAccount>${#TestSuite#ticket}_CA4</customerAccount>
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <country>FR</country>
@@ -24343,6 +24560,28 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                <city>Dijon</city>
                <country>FR</country>
             </address>
+             <customFields>
+              <!--Zero or more repetitions:-->
+              <customField code="CF_BA" description="?">
+                 <!--Optional:-->
+                 <stringValue>BA</stringValue>
+              </customField>
+               <customField code="ENGAGEMENT">
+                  <longValue>36</longValue>
+               </customField>
+
+               <customField code="CACONTRIBUTIF">
+                  <stringValue>36</stringValue>
+               </customField>
+               
+               <customField code="INTERCO">
+                  <stringValue>36</stringValue>
+               </customField>
+   
+               <customField code="OFFRE">
+                  <stringValue>FCA_V1</stringValue>
+               </customField>
+           </customFields>
             <customerAccount>${#TestSuite#ticket}_CA4</customerAccount>
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <country>FR</country>
@@ -24516,7 +24755,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
       <ws:createRecurringChargeTemplate>
          <!--Optional:-->
          <recurringChargeTemplate code="${#TestSuite#ticket}_REC1" description="${#TestSuite#ticket}_REC1">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+            <invoiceSubCategory>SOAP_TEST</invoiceSubCategory>
             <disabled>false</disabled>
             <!--Optional:-->
             <amountEditable>false</amountEditable>
@@ -24544,7 +24783,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
       <ws:createUsageChargeTemplate>
          <!--Optional:-->
          <usageChargeTemplate code="${#TestSuite#ticket}_USG1" description="${#TestSuite#ticket}_USG1" disabled="false">
-         	  <invoiceSubCategory>CMP_DATA</invoiceSubCategory>
+         	  <invoiceSubCategory>SOAP_TEST</invoiceSubCategory>
             <!--Optional:-->
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
@@ -24665,8 +24904,8 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             </address>
             
             <customerCategory>CLIENT</customerCategory>
-            <customerBrand>DEFAULT</customerBrand>
-            <seller>SELLER_FR</seller>
+            <customerBrand>DEFAULTY</customerBrand>
+            <seller>MAIN_SELLER</seller>
             <contactInformation>
                <email>invoicing@manaty.net</email>
                <phone>+33100000000</phone>
@@ -24723,6 +24962,28 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                <city>Dijon</city>
                <country>FR</country>
             </address>
+             <customFields>
+              <!--Zero or more repetitions:-->
+              <customField code="CF_BA" description="?">
+                 <!--Optional:-->
+                 <stringValue>BA</stringValue>
+              </customField>
+               <customField code="ENGAGEMENT">
+                  <longValue>36</longValue>
+               </customField>
+
+               <customField code="CACONTRIBUTIF">
+                  <stringValue>36</stringValue>
+               </customField>
+               
+               <customField code="INTERCO">
+                  <stringValue>36</stringValue>
+               </customField>
+   
+               <customField code="OFFRE">
+                  <stringValue>FCA_V1</stringValue>
+               </customField>
+           </customFields>
             <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <country>FR</country>
@@ -24813,7 +25074,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
        <ws:execute>
          <!--Optional:-->
          <jobInstanceInfo>
-            <timerName>RR_Job</timerName>  
+            <timerName>2_RecuringRating</timerName>  
          </jobInstanceInfo>
       </ws:execute>
    </soapenv:Body>
@@ -24853,20 +25114,20 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <billingRunId>1</billingRunId>
       </ws:validateBillingRun>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f65e103c-6d51-43d3-a40f-d76917e92e54"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="GetInvoiceXml" id="18828197-c5ae-4a9f-a2c4-51d93bd45c99"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>findXMLInvoice</con:operation><con:request name="GetInvoiceXml" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f65e103c-6d51-43d3-a40f-d76917e92e54"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="GetInvoiceXml" id="18828197-c5ae-4a9f-a2c4-51d93bd45c99"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>findXMLInvoice</con:operation><con:request name="GetInvoiceXml" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoice>
          <!--Optional:-->
-         <invoiceNumber>000000001</invoiceNumber>
+         <invoiceNumber>000000008</invoiceNumber>
       </ws:findXMLInvoice>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="GetInvoicePdf" id="a814e080-07d2-49d4-8660-1310e94eb06e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>findPdfInvoice</con:operation><con:request name="GetInvoicePdf" id="f3d0dddc-6857-4363-8f2f-917774f9fefe"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="GetInvoicePdf" id="a814e080-07d2-49d4-8660-1310e94eb06e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>findPdfInvoice</con:operation><con:request name="GetInvoicePdf" id="f3d0dddc-6857-4363-8f2f-917774f9fefe"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findPdfInvoice>
          <!--Optional:-->
-         <invoiceNumber>000000001</invoiceNumber>
+         <invoiceNumber>000000008</invoiceNumber>
       </ws:findPdfInvoice>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f24123ca-553d-42a4-93d9-a187f3be4240"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>invoicing</con:value></con:property><con:property><con:name>index</con:name><con:value>9</con:value></con:property></con:properties><con:setupScript>
@@ -25271,7 +25532,7 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
   </orderCondition>
 </filter>]]]]>><![CDATA[</inputXml>\r
                </filter>\r
-               <jobInstance jobTemplate="ReRatingJob" code="${#TestSuite#ticket}_${#TestSuite#index}_Rerate_Job" timerCode="Hourly">\r
+               <jobInstance jobTemplate="ReRatingJob" code="${#TestSuite#ticket}_${#TestSuite#index}_Rerate_Job" timerCode="code_1">\r
                   <jobCategory>RATING</jobCategory>\r
                   <active>false</active>\r
                </jobInstance>\r
@@ -25297,7 +25558,7 @@ public class Script1 extends org.meveo.service.script.Script {
 	}
 
 }</script>\r
-                  <executionRoles name="administrateur">\r
+                  <executionRoles name="ReadAllCE">\r
                      <description>Administrateur</description>\r
                      <permissions>\r
                         <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>\r
@@ -25354,7 +25615,7 @@ public class Script1 extends org.meveo.service.script.Script {
                         </role>\r
                      </roles>\r
                   </executionRoles>\r
-                  <sourcingRoles name="administrateur">\r
+                  <sourcingRoles name="ReadAllCE">\r
                      <description>Administrateur</description>\r
                      <permissions>\r
                         <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>\r
@@ -25535,7 +25796,7 @@ public class Script3 extends org.meveo.service.script.Script {
 	}
 
 }</script>\r
-                        <executionRoles name="administrateur">\r
+                        <executionRoles name="ReadAllCE">\r
                            <description>Administrateur</description>\r
                            <permissions>\r
                               <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>\r
@@ -25615,7 +25876,7 @@ public class Script2 extends org.meveo.service.script.Script {
 	}
 
 }</script>\r
-                        <executionRoles name="superAdministrateur">\r
+                        <executionRoles name="ReadAllCE">\r
                            <description>Super Administrateur</description>\r
                            <permissions>\r
                               <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>\r
@@ -25952,4 +26213,4 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
       </ws:removeEntityTemplate>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e8ac783d-aa45-4924-bcb1-d79c57949d1e"/><con:assertion type="XPath Match" id="00bad731-bfff-42fb-8a83-a5cadeb0b748" name="Match content of [status]"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:removeEntityTemplateResponse[1]/return[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/><con:reportParameters/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>ModuleWs3</con:value></con:property><con:property><con:name>index</con:name><con:value>101</con:value></con:property><con:property><con:name>invoice_date</con:name><con:value>2016-02-15</con:value></con:property><con:property><con:name>last_tx_date</con:name><con:value>2016-02-15</con:value></con:property></con:properties><con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString())</con:setupScript><con:reportParameters/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">${#Project#meveoUrl}/SettingsWs</con:endpoint><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin" domain="" wssTimeToLive="" outgoingWss="" incomingWss="">${#Project#meveoUrl}/AccountWs</con:endpoint><con:endpoint mode="COMPLEMENT" username="" password="meveo.admin" domain="" wssTimeToLive="" wssType="" outgoingWss="" incomingWss="">${#Project#meveoUrl}/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>username</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>password</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:afterLoadScript/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+//ns2:removeEntityTemplateResponse[1]/return[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/><con:reportParameters/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>ModuleWs3</con:value></con:property><con:property><con:name>index</con:name><con:value>101</con:value></con:property><con:property><con:name>invoice_date</con:name><con:value>2016-02-15</con:value></con:property><con:property><con:name>last_tx_date</con:name><con:value>2016-02-15</con:value></con:property></con:properties><con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString())</con:setupScript><con:reportParameters/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">${#Project#meveoUrl}/SettingsWs</con:endpoint><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin" domain="" wssTimeToLive="" outgoingWss="" incomingWss="">${#Project#meveoUrl}/AccountWs</con:endpoint><con:endpoint mode="COMPLEMENT" username="" password="meveo.admin" domain="" wssTimeToLive="" wssType="" outgoingWss="" incomingWss="">${#Project#meveoUrl}/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>username</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>password</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://orange.env-integration.com/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>authSuperAdmin</con:name><con:value>Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu</con:value></con:property></con:properties><con:afterLoadScript/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
