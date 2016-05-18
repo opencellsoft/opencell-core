@@ -140,4 +140,5 @@ public class OfferModelScriptService extends CustomScriptService<OfferModelScrip
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
         scriptInterface.updateOfferTemplate(scriptContext, currentUser);
     }
+
 }

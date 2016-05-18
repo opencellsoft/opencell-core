@@ -115,14 +115,12 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
     private Long selectedEntityId;
     @SuppressWarnings("rawtypes")
     private Class selectedEntityClass;
-
-    // private TreeNodeData selectedNode;
     
     public boolean isVisible() {
     	HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
     	Boolean visible = (Boolean) session.getAttribute("hierarchyPanel:visible");
     	if(visible == null){
-    		visible = false;
+    		visible = true;
     		session.setAttribute("hierarchyPanel:visible", visible);
     	}
 		return visible;
@@ -132,7 +130,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
     	HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
     	Boolean visible = (Boolean) session.getAttribute("hierarchyPanel:visible");
     	if(visible == null){
-    		visible = false;
+    		visible = true;
     		session.setAttribute("hierarchyPanel:visible", visible);
     	} else {
     		visible = !visible;

@@ -1560,7 +1560,7 @@
             <column name="EXONERATION_REASON" type="VARCHAR(255)" />          
         </addColumn>   
         <dropColumn columnName="EXONERATION_TAX_EL" tableName="CRM_PROVIDER" />
-    </changeSet>      
+    </changeSet>    
     <changeSet id="#1588_20160412" author="AndriusKarpavicius">
         <dropNotNullConstraint tableName="adm_notif_webhooks" columnName="HTTP_PORT"/>  
 
@@ -1589,7 +1589,7 @@
 			baseTableName="AR_DDREQUEST_ITEM" constraintName="fk_ar_occ_dd_item"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />                   
-    </changeSet> 
+    </changeSet>
     
     <changeSet id="#1548_20160421" author="AndriusKarpavicius">
         <modifyDataType tableName="MEVEO_SCRIPT_INSTANCE" columnName="APPLICABLE_ON_EL" newDataType="varchar(2000)"/>
@@ -1601,7 +1601,7 @@
     <changeSet id="#1651-20160421" author="Mbarek">
 	<modifyDataType columnName="APPLICABLE_ON_EL"
 		newDataType="VARCHAR(2000)" tableName="CRM_CUSTOM_FIELD_TMPL" />
-    </changeSet>	
+    </changeSet>
 
     <changeSet id="#1649_20160427" author="AndriusKarpavicius">
         <sql>update crm_custom_field_tmpl tm set provider_id = (select provider_id from adm_user where id = tm.creator_id) where tm.provider_id is null;</sql>    

@@ -100,7 +100,9 @@
 
         <h:panelGroup styleClass="col2-set">
             <h:panelGroup styleClass="col1">
-                <hf:hierarchyPanel treeValue="#{customerTreeBean.buildAccountsHierarchy(userAccountBean.entity)}" entity="#{userAccountBean.entity}" />
+                <hf:hierarchyPanel 
+                	treeBean="#{customerTreeBean}"
+                	entity="#{userAccountBean.entity}" />
             </h:panelGroup>
             <h:panelGroup styleClass="col2">
                 <p:tabView id="parentTab" styleClass="tab-parent" activeIndex="#{userAccountBean.activeMainTab}">

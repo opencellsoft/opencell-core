@@ -152,4 +152,5 @@ public class ServiceModelScriptService extends CustomScriptService<ServiceModelS
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
         scriptInterface.terminateServiceInstance(scriptContext, currentUser);
     }
+
 }

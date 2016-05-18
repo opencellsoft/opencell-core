@@ -79,6 +79,7 @@ public class ServiceModelScriptBean extends BaseBean<ServiceModelScript> {
 		}
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 

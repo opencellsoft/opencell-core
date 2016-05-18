@@ -80,7 +80,8 @@ public class OfferModelScriptBean extends BaseBean<OfferModelScript> {
         }
     }
 
-    @Override
+    @SuppressWarnings("static-access")
+	@Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
