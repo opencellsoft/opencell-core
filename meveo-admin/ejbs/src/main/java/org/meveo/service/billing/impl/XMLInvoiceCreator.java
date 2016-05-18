@@ -972,8 +972,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 									// instanceof is not used in this control because chargeTemplate can never be instance of usageChargeTemplate according to model structure
 									else if(usageChargeTemplateService.findById(chargeTemplate.getId())!=null && walletOperation.getOperationDate()!=null){
 										CounterPeriod counterPeriod = counterPeriodService.getCounterPeriod(walletOperation.getCounter(), walletOperation.getOperationDate());
+										if(counterPeriod!=null){
 										periodStartDate=counterPeriod.getPeriodStartDate();
 										periodEndDate=counterPeriod.getPeriodEndDate();
+										}
 									}
 									line.setAttribute("periodStartDate", periodStartDate != null ? 
 											 DateUtils.formatDateWithPattern(periodStartDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
