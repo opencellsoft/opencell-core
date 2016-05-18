@@ -120,7 +120,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     @Inject	
     private CounterPeriodService counterPeriodService;
     
-    @Inject	
+    @SuppressWarnings("rawtypes")
+	@Inject	
     private ChargeInstanceService chargeInstanceService;
     
     @Inject
@@ -128,9 +129,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	TransformerFactory transfac = TransformerFactory.newInstance();
 
-	List<Long> serviceIds = new ArrayList<>();
-	List<Long> offerIds = new ArrayList<>();
-	List<Long> priceplanIds = new ArrayList<>();
+	List<Long> serviceIds = null,  offerIds =null , priceplanIds = null;
 
 	private static String DEFAULT_DATE_PATTERN = "dd/MM/yyyy";
 	private static String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
@@ -147,7 +146,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	public void createXMLInvoice(Long invoiceId, File billingRundir, boolean isInvoiceAdjustment)
 			throws BusinessException {
 //		 log.debug("creating xml invoice... using date pattern: " + DEFAULT_DATE_PATTERN);
-		 
+		serviceIds = new ArrayList<>();
+		offerIds = new ArrayList<>();
+		priceplanIds = new ArrayList<>();
 		try {
 			Invoice invoice = findById(invoiceId);
 			getEntityManager().refresh(invoice);
@@ -539,7 +540,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					if (invoice.getProvider().getInvoiceConfiguration() != null
 							&& invoice.getProvider().getInvoiceConfiguration().getDisplayServices() != null
 							&& invoice.getProvider().getInvoiceConfiguration().getDisplayServices()) {
-						addServices(offerTemplate, invoice, doc, invoiceTag);
+						addServices(subscription, invoice, doc, invoiceTag);
 					}
 				}
 			}
@@ -560,17 +561,17 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		offersTag.appendChild(offerTag);
 	}
 
-	private void addServices(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element invoiceTag) {
+	private void addServices(Subscription subscription, Invoice invoice, Document doc, Element invoiceTag) {
+		OfferTemplate offerTemplate = subscription.getOffer();
 		if (offerTemplate.getOfferServiceTemplates() != null && offerTemplate.getOfferServiceTemplates().size() > 0) {
 
 			Element servicesTag = getCollectionTag(doc, invoiceTag, "services");
-
-			ServiceTemplate serviceTemplate = null;
 			Element serviceTag = null;
 			Element calendarTag = null;
-
-			for (OfferServiceTemplate offerServiceTemplate : offerTemplate.getOfferServiceTemplates()) {
-				serviceTemplate = offerServiceTemplate.getServiceTemplate();
+			ServiceTemplate serviceTemplate = null;
+			
+			for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {				
+				 serviceTemplate =serviceInstance.getServiceTemplate();
 				if (!serviceIds.contains(serviceTemplate.getId())) {
 					serviceTag = doc.createElement("service");
 					serviceTag.setAttribute("code", serviceTemplate.getCode() != null ? serviceTemplate.getCode() : "");
@@ -587,7 +588,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						calendarText = doc.createTextNode("");
 					}
 					calendarTag.appendChild(calendarText);
-					addCustomFields(serviceTemplate, invoice, doc, servicesTag);
+					addCustomFields(serviceInstance, invoice, doc, servicesTag);
 					servicesTag.appendChild(serviceTag);
 					serviceIds.add(serviceTemplate.getId());
 				}
@@ -952,8 +953,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 									// instanceof is not used in this control because chargeTemplate can never be instance of usageChargeTemplate according to model structure
 									else if(usageChargeTemplateService.findById(chargeTemplate.getId())!=null && walletOperation.getOperationDate()!=null){
 										CounterPeriod counterPeriod = counterPeriodService.getCounterPeriod(walletOperation.getCounter(), walletOperation.getOperationDate());
-										periodStartDate=counterPeriod.getPeriodStartDate();
-										periodEndDate=counterPeriod.getPeriodEndDate();
+										if(counterPeriod!=null){
+											periodStartDate=counterPeriod.getPeriodStartDate();
+											periodEndDate=counterPeriod.getPeriodEndDate();
+										}
 									}
 									line.setAttribute("periodStartDate", periodStartDate != null ? 
 											 DateUtils.formatDateWithPattern(periodStartDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");

@@ -118,6 +118,12 @@ public class InvoiceConfiguration extends BaseEntity {
 	public void setDisplayChargesPeriods(Boolean displayChargesPeriods) {
 		this.displayChargesPeriods = displayChargesPeriods;
 	}
+
+
+	@Override
+	public String toString() {
+		return "InvoiceConfiguration [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers + ", displayPricePlans=" + displayPricePlans + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", displayDetail=" + displayDetail + ", displayCfAsXML=" + displayCfAsXML + ", displayChargesPeriods=" + displayChargesPeriods + "]";
+	}
 	
 	
 
