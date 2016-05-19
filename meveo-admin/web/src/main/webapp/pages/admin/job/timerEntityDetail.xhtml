@@ -22,7 +22,7 @@
 		</p:panel>
 		<hftl:formPanel label="#{messages['timer.panel']}"
 			backingBean="#{timerEntityBean}" columns="1">
-			<hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" />			
+			<hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />			
 			<hftl:formField label="#{messages['BusinessEntity.description']}" field="description"  />
 			<p:fieldset legend="#{messages['timer.schedule']}" layout="block" styleClass="clearLeft">
                     <hftl:formField label="#{messages['timer.hour']}" field="hour" required="true" />

@@ -137,7 +137,7 @@
 							<p:commandButton action="#{subscriptionBean.terminateService()}"
 								value="#{messages['button.terminateButton']}"
 								oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_serviceTerminationPopup').hide()"
-								update=":subscriptionTab:headerInfo1 :subscriptionTab:ST_results2_form:instantiatePanelActions :#{p:component('srvInstansFrm')} :#{p:component('operationFrm')} :subscriptionTab:headerInfo1:messages :subscriptionTab:ST_results2_form terminationMessages" />
+								update=":subscriptionTab:headerInfo1 :subscriptionTab:ST_results2_form:instantiatePanelActions :#{p:component('srvInstansFrm')} :subscriptionTab:headerInfo1:messages :subscriptionTab:ST_results2_form terminationMessages" />
 							<p:commandButton immediate="true"
 								onclick="PF('dlg_serviceTerminationPopup').hide()" type="button"
 								value="#{messages['management.close']}" />
@@ -186,7 +186,7 @@
         <h:panelGroup styleClass="col2-set">
             <h:panelGroup styleClass="col1" id="hierarchyGroup">
 					<hf:hierarchyPanel
-						treeValue="#{customerTreeBean.buildAccountsHierarchy(subscriptionBean.entity)}"
+						treeBean="#{customerTreeBean}"
 						entity="#{subscriptionBean.entity}" />
             </h:panelGroup>
 			<h:panelGroup styleClass="col2">
@@ -260,20 +260,19 @@
 									</p:button>
 									<p:commandButton rendered="#{entity.status eq 'INACTIVE' and subscriptionBean.canUserUpdateEntity()}"
 										action="#{subscriptionBean.deleteServiceInstance(entity)}"
-										icon="ui-icon-trash" update=":#{p:component('serviceTab')}">
+										icon="ui-icon-trash" update="@form :subscriptionTab:ST_results2_form :subscriptionTab:OS_oneShot_results_form :subscriptionTab:OS_recurring_results_form :subscriptionTab:headerInfo1:messages">
 										<p:confirm header="#{messages['commons.confirmationHeader']}"
 											message="#{messages['commons.confirmDelete']}"
 											icon="ui-icon-alert" />
 									</p:commandButton>
 								</p:column>
 							</p:dataTable>
-						</h:form>
-						<p:outputPanel id="serviceInstOperations" rendered="#{subscriptionBean.canUserUpdateEntity()}">
-							<h:form id="operationFrm">
+						
+						    <h:panelGroup id="serviceInstOperations" rendered="#{subscriptionBean.canUserUpdateEntity()}">
 								<p:panel styleClass="action-buttons">
 									<p:commandButton action="#{subscriptionBean.activateService}"
 										value="#{messages['button.activateButton']}"
-										update=":subscriptionTab:srvInstansFrm :subscriptionTab:operationFrm :subscriptionTab:headerInfo1:messages"
+										update=":subscriptionTab:srvInstansFrm :subscriptionTab:headerInfo1:messages"
 										disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status!='INACTIVE'}">
 										<p:confirm header="#{messages['commons.confirmationHeader']}"
 											message="#{messages['confirmationMessage.confirmActivation']}"
@@ -284,10 +283,9 @@
 										type="button"
 										disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED'}" />
 								</p:panel>
-							</h:form>
-						</p:outputPanel>
-
-						<br />
+						   </h:panelGroup>
+                        </h:form>
+<!-- 						<br /> -->
 
 						<h:outputText
 							value="#{messages['subscription.subscribableServices']}:" />
@@ -314,7 +312,7 @@
 								<p:commandButton id="cbutton"
 									action="#{subscriptionBean.instanciateManyServices}"
 									value="#{messages['button.instanciateButton']}"
-									update=":subscriptionTab:ST_results2_form:ST_results2_formPanel :subscriptionTab:srvInstansFrm :subscriptionTab:OS_oneShot_results_form :subscriptionTab:OS_recurring_results_form"
+									update=":subscriptionTab:ST_results2_form:ST_results2_formPanel :subscriptionTab:srvInstansFrm :subscriptionTab:OS_oneShot_results_form :subscriptionTab:OS_recurring_results_form :subscriptionTab:headerInfo1:messages"
 									disabled="#{subscriptionBean.entity.status != 'ACTIVE' and subscriptionBean.entity.status != 'CREATED'}" />
 							</h:panelGroup>
 						</h:form>

@@ -119,7 +119,6 @@ public class InvoiceConfiguration extends BaseEntity {
 		this.displayChargesPeriods = displayChargesPeriods;
 	}
 
-
 	@Override
 	public String toString() {
 		return "InvoiceConfiguration [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers + ", displayPricePlans=" + displayPricePlans + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", displayDetail=" + displayDetail + ", displayCfAsXML=" + displayCfAsXML + ", displayChargesPeriods=" + displayChargesPeriods + "]";

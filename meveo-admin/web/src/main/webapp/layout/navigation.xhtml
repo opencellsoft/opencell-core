@@ -410,7 +410,7 @@
 			<p:submenu id="tools" label="#{messages['menu.tools']}"
 				rendered="#{identity.hasPermission('superAdmin','superAdminManagement') || identity.hasPermission('administration','administrationVisualization')}">
 				<p:menuitem id="import" outcome="import"
-					rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}"
+					rendered="#{identity.hasPermission('superAdmin','superAdminManagement') || identity.hasPermission('administration','administrationManagement')}"
 					value="#{messages['menu.import']}" />
 				<p:menuitem id="export" outcome="export"
 					value="#{messages['menu.export']}" />
