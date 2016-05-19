@@ -339,62 +339,74 @@ public class ProviderApi extends BaseApi {
         if (postData.getInvoiceAdjustmentSequenceSize() != null) {
             provider.setInvoiceAdjustmentSequenceSize(postData.getInvoiceAdjustmentSequenceSize());
         }
-        if (postData.getBankCoordinates() != null) {
-            BankCoordinates bankCoordinates = new BankCoordinates();
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
-                bankCoordinates.setBankCode(postData.getBankCoordinates().getBankCode());
-            }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getBranchCode())) {
-                bankCoordinates.setBranchCode(postData.getBankCoordinates().getBranchCode());
-            }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountNumber())) {
-                bankCoordinates.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-            }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getKey())) {
-                bankCoordinates.setKey(postData.getBankCoordinates().getKey());
-            }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
-                bankCoordinates.setIban(postData.getBankCoordinates().getIban());
-            }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getBic())) {
-                bankCoordinates.setBic(postData.getBankCoordinates().getBic());
-            }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountOwner())) {
-                bankCoordinates.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
-            }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getBankName())) {
-                bankCoordinates.setBankName(postData.getBankCoordinates().getBankName());
-            }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getBankId())) {
-                bankCoordinates.setBankId(postData.getBankCoordinates().getBankId());
-            }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerNumber())) {
-                bankCoordinates.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
-            }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerName())) {
-                bankCoordinates.setIssuerName(postData.getBankCoordinates().getIssuerName());
-            }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getIcs())) {
-                bankCoordinates.setIcs(postData.getBankCoordinates().getIcs());
-            }
-            provider.setBankCoordinates(bankCoordinates);
+        BankCoordinates bankCoordinates = provider.getBankCoordinates() == null ? new BankCoordinates() : provider.getBankCoordinates();
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
+        	bankCoordinates.setBankCode(postData.getBankCoordinates().getBankCode());
         }
-        
-        InvoiceConfiguration invoiceConfiguration = provider.getInvoiceConfiguration();
-        if (invoiceConfiguration == null) {
-            invoiceConfiguration = new InvoiceConfiguration();
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getBranchCode())) {
+        	bankCoordinates.setBranchCode(postData.getBankCoordinates().getBranchCode());
         }
-        
-    	invoiceConfiguration.setDisplaySubscriptions(postData.getInvoiceConfiguration().getDisplaySubscriptions());
-        invoiceConfiguration.setDisplayServices(postData.getInvoiceConfiguration().getDisplayServices());
-        invoiceConfiguration.setDisplayOffers(postData.getInvoiceConfiguration().getDisplayOffers());
-        invoiceConfiguration.setDisplayEdrs(postData.getInvoiceConfiguration().getDisplayEdrs());
-        invoiceConfiguration.setDisplayProvider(postData.getInvoiceConfiguration().getDisplayProvider());
-        invoiceConfiguration.setDisplayDetail(postData.getInvoiceConfiguration().getDisplayDetail());
-        invoiceConfiguration.setDisplayPricePlans(postData.getInvoiceConfiguration().getDisplayPricePlans());
-        invoiceConfiguration.setDisplayCfAsXML(postData.getInvoiceConfiguration().getDisplayCfAsXML());
-        invoiceConfiguration.setDisplayChargesPeriods(postData.getInvoiceConfiguration().getDisplayChargesPeriods());
-        
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountNumber())) {
+        	bankCoordinates.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getKey())) {
+        	bankCoordinates.setKey(postData.getBankCoordinates().getKey());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
+        	bankCoordinates.setIban(postData.getBankCoordinates().getIban());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getBic())) {
+        	bankCoordinates.setBic(postData.getBankCoordinates().getBic());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountOwner())) {
+        	bankCoordinates.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getBankName())) {
+        	bankCoordinates.setBankName(postData.getBankCoordinates().getBankName());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getBankId())) {
+        	bankCoordinates.setBankId(postData.getBankCoordinates().getBankId());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerNumber())) {
+        	bankCoordinates.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerName())) {
+        	bankCoordinates.setIssuerName(postData.getBankCoordinates().getIssuerName());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getIcs())) {
+        	bankCoordinates.setIcs(postData.getBankCoordinates().getIcs());
+        }
+        provider.setBankCoordinates(bankCoordinates);
+
+        InvoiceConfiguration invoiceConfiguration = provider.getInvoiceConfiguration() == null ? new InvoiceConfiguration() : provider.getInvoiceConfiguration();
+
+        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplaySubscriptions())) {
+        	invoiceConfiguration.setDisplaySubscriptions(postData.getInvoiceConfiguration().getDisplaySubscriptions());
+        }
+        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayServices())) {
+        	invoiceConfiguration.setDisplayServices(postData.getInvoiceConfiguration().getDisplayServices());
+        }
+        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayOffers())) {
+        	invoiceConfiguration.setDisplayOffers(postData.getInvoiceConfiguration().getDisplayOffers());
+        }
+        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayEdrs())) {
+        	invoiceConfiguration.setDisplayEdrs(postData.getInvoiceConfiguration().getDisplayEdrs());
+        }
+        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayProvider())) {
+        	invoiceConfiguration.setDisplayProvider(postData.getInvoiceConfiguration().getDisplayProvider());	
+        }
+        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayDetail())) {
+        	invoiceConfiguration.setDisplayDetail(postData.getInvoiceConfiguration().getDisplayDetail());	
+        }
+        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayPricePlans())) {
+        	invoiceConfiguration.setDisplayPricePlans(postData.getInvoiceConfiguration().getDisplayPricePlans());	
+        }
+        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayCfAsXML())) {
+        	invoiceConfiguration.setDisplayCfAsXML(postData.getInvoiceConfiguration().getDisplayCfAsXML());
+        }
+        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayChargesPeriods())) {
+        	invoiceConfiguration.setDisplayChargesPeriods(postData.getInvoiceConfiguration().getDisplayChargesPeriods());
+        }
         invoiceConfiguration.setProvider(provider);
         provider.setInvoiceConfiguration(invoiceConfiguration);
         

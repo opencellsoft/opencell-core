@@ -1515,4 +1515,64 @@ customerCategory</con:description><con:settings/><con:config xsi:type="con:Manua
 "billingCycleCode": "BC_YYYY-MM-${#TestSuite#ticket}",
 "email": "email@mail.com",
 "paymentMethod": 0
-}</con:request><con:originalUri>http://i.meveo.info/meveo/api/rest/account/accountHierarchy</con:originalUri><con:assertion type="Simple Contains" id="be4b6bcf-a126-4249-8cdf-89f453968b2e" name="Contains"><con:configuration><token>BillingCycle with code=BC_YYYY-MM-1670 does not exists.</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1670</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" domain="">http://localhost:8080/meveo</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>Authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+}</con:request><con:originalUri>http://i.meveo.info/meveo/api/rest/account/accountHierarchy</con:originalUri><con:assertion type="Simple Contains" id="be4b6bcf-a126-4249-8cdf-89f453968b2e" name="Contains"><con:configuration><token>BillingCycle with code=BC_YYYY-MM-1670 does not exists.</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1670</con:value></con:property></con:properties></con:testSuite><con:testSuite id="7a6842de-0455-45f8-b694-9adb6a925a8c" name="#1724 - [WS] REST PUT /provider resets invoiceConfiguration and bankCoordinates"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="063dc9c6-5525-4fc1-8ec5-ed2f81aac54a" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create_and_find" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="create" id="2a679112-e7b9-4d6f-b2df-d59448ca3d81"><con:settings/><con:config service="http://localhost:8080" methodName="create" resourcePath="/meveo/api/rest/provider" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="create" id="ca13a8f9-319b-419a-826c-c32ca3c2025a" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info</con:endpoint><con:request>{
+  "code" : "1724_provider",
+  "description" : "1724_1",
+  "multiCurrency" : true,
+  "multiCountry" : true,
+  "multiLanguage" : true,
+  "userAccount" : "...",
+  "invoiceSequenceSize" : 12345,
+  "enterprise" : true,
+  "levelDuplication" : true,
+  "invoicePrefix" : "...",
+  "currentInvoiceNb" : 12345,
+  "displayFreeTransacInInvoice" : true,
+  "invoiceAdjustmentPrefix" : "...",
+  "currentInvoiceAdjustmentNb" : 12345,
+  "invoiceAdjustmentSequenceSize" : 12345,
+  "rounding" : 12345,
+  "prepaidReservationExpirationDelayinMillisec" : 12345,
+  "discountAccountingCode" : "...",
+  "email" : "email@manaty.net",
+  "bankCoordinates" : {
+    "bankCode" : "123",
+    "branchCode" : "22",
+    "accountNumber" : "3"
+  },
+  "invoiceConfiguration" : {
+    "displaySubscriptions" : false,
+    "displayServices" : true,
+    "displayOffers" : false,
+    "displayEdrs" : true,
+    "displayProvider" : true,
+    "displayCfAsXML" : true,
+    "displayPricePlans" : false,
+    "displayDetail" : true,
+    "displayChargesPeriods" : true
+  }
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/catalog/offerTemplateCategory</con:originalUri><con:assertion type="Simple Contains" id="63c739a5-b676-45b3-a4ff-f03c34ba06e0" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Valid HTTP Status Codes" id="3452f18f-5899-4d36-bd25-d3dc954cd68a" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:attachment><con:name>animal.jpg</con:name><con:contentType>image/jpeg</con:contentType><con:contentId>animal.jpg</con:contentId><con:url>C:/Users/cmsdev02/Pictures/animal.jpg</con:url><con:id>23b118b6-21fc-474a-b55a-5ca340a49d67</con:id></con:attachment><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="find" id="b6673d13-f839-4a69-9a68-e91a8bf206ae"><con:settings/><con:config service="http://localhost:8080" methodName="find" resourcePath="/meveo/api/rest/provider" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="find" id="0c8015da-8c72-45d4-834d-1c6594e4c649" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info</con:endpoint><con:request/><con:originalUri>http://localhost/meveo/api/rest/catalog/offerTemplateCategory</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="05a39a43-2ab0-443b-8d51-9ff733778b8e" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:assertion type="Simple Contains" id="36a350f3-5ac8-4bc5-8b06-ce6b13e27cb0" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="5cd2d0ed-7de4-45dc-8671-f411aa89ed1c" name="response_code"><con:configuration><token>1461_OTC_code</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="providerCode" value="1724_provider"/>
+  <con:entry key="offerTemplateCategoryCode" value="1461_OTC_code"/>
+</con:parameters></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="f2b03ff8-e4f9-484c-96f0-33a9b9b853f4" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="update and find" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="update" id="4f4f9c8e-8db4-4844-8317-fde27ac80539"><con:settings/><con:config service="http://localhost:8080" methodName="update" resourcePath="/meveo/api/rest/provider" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="update" id="56eb7194-2e6a-4f21-b859-af48734c9805" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info</con:endpoint><con:request>{
+  "code" : "1724_provider",
+  "description" : "1724_provider_updated",
+  "multiCurrency" : true,
+  "multiCountry" : true,
+  "multiLanguage" : true,
+  "invoiceSequenceSize" : 12345,
+  "enterprise" : true,
+  "levelDuplication" : true,
+  "currentInvoiceNb" : 12345,
+  "displayFreeTransacInInvoice" : true,
+  "invoiceAdjustmentPrefix" : "...",
+  "currentInvoiceAdjustmentNb" : 12345,
+  "invoiceAdjustmentSequenceSize" : 12345,
+  "rounding" : 12345,
+  "prepaidReservationExpirationDelayinMillisec" : 12345,
+  "discountAccountingCode" : "...",
+  "email" : "emailupdate@open.com"
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/catalog/offerTemplateCategory</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="8a407107-487e-48be-afc7-7b99df915470" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:assertion type="Simple Contains" id="061ca6f5-ce7a-4690-9b53-3b7538c50a39" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="find" id="a2a7f218-28a2-4c11-badc-2b4c57df2233"><con:settings/><con:config service="http://localhost:8080" methodName="find" resourcePath="/meveo/api/rest/provider" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="find" id="fa73d865-f516-4631-a1eb-b11a0e6684f3" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info</con:endpoint><con:request/><con:originalUri>http://localhost/meveo/api/rest/catalog/offerTemplateCategory</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="5fcc80e2-4616-4731-a19b-c3fe232592e7" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:assertion type="Simple Contains" id="fffcfaf2-5d68-4b3f-b8a7-b216d3645509" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="ca6d2b90-08bb-4b3b-bf5a-5669b6de91a0" name="response_name"><con:configuration><token>1461_OTC_updated_name1</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="c0850f17-6d5f-473d-b639-8b841c67e4db" name="response_desc"><con:configuration><token>1461_OTC_updated_description1</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="providerCode" value="1724_provider"/>
+  <con:entry key="offerTemplateCategoryCode" value="1461_OTC_code1"/>
+</con:parameters></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1461</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" domain="">http://localhost:8080/meveo</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>Authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

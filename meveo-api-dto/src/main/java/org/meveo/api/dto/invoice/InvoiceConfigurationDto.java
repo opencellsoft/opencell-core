@@ -17,15 +17,15 @@ public class InvoiceConfigurationDto implements Serializable {
 
 	private static final long serialVersionUID = -3317673469040337077L;
 	
-	private Boolean displaySubscriptions = false;
-	private Boolean displayServices = false;
-	private Boolean displayOffers = false;
-	private Boolean displayEdrs = false;
-	private Boolean displayProvider = false;
-	private Boolean displayCfAsXML = false;
-	private Boolean displayPricePlans = false;
-	private Boolean displayDetail = true;
-	private Boolean displayChargesPeriods = false;
+	private Boolean displaySubscriptions ;
+	private Boolean displayServices;
+	private Boolean displayOffers;
+	private Boolean displayEdrs;
+	private Boolean displayProvider;
+	private Boolean displayCfAsXML;
+	private Boolean displayPricePlans;
+	private Boolean displayDetail;
+	private Boolean displayChargesPeriods;
 	
 	public InvoiceConfigurationDto() {}
 	
