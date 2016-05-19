@@ -711,7 +711,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		country.appendChild(countryTxt);
 		addressTag.appendChild(country);
 		
-		Element countryName = doc.createElement("country_name");
+		Element countryName = doc.createElement("countryName");
 		
 		String countryCode = account.getAddress().getCountry() != null ? account.getAddress().getCountry() : "";
 		Country countrybyCode = countryService.findByCode(countryCode);
