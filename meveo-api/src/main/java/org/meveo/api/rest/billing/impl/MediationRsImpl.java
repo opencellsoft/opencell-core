@@ -18,6 +18,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.MediationRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.commons.utils.StringUtils;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -34,7 +35,9 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            postData.setIpAddress(httpServletRequest.getRemoteAddr());
+        	String ip = StringUtils.isBlank(httpServletRequest.getHeader("x-forwarded-for")) ? 
+        			httpServletRequest.getRemoteAddr() : httpServletRequest.getHeader("x-forwarded-for");
+            postData.setIpAddress(ip);
             mediationApi.registerCdrList(postData, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());

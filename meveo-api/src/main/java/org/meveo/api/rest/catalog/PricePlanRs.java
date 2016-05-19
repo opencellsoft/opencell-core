@@ -69,7 +69,7 @@ public interface PricePlanRs extends IBaseRs {
     @DELETE
     ActionStatus remove(@PathParam("pricePlanCode") String pricePlanCode);
 
-    @Path("/")
+    @Path("/list")
     @GET
     PricePlanMatrixesResponseDto listPricePlanByEventCode(@QueryParam("eventCode") String eventCode);
 

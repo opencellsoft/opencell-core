@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -155,9 +156,11 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 	}
 
     public void deleteInvoiceSubcategoryCountry(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
-        entity.getInvoiceSubcategoryCountries().remove(invoiceSubcategoryCountry);
+        List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = entity.getInvoiceSubcategoryCountries();
+    	invoiceSubcategoryCountries.remove(invoiceSubcategoryCountry);
         invoiceSubcategoryCountry = (InvoiceSubcategoryCountry) invoiceSubCategoryCountryService.attach(invoiceSubcategoryCountry);
         invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);
+        entity.setInvoiceSubcategoryCountries(new ArrayList<>(invoiceSubcategoryCountries));
     }
 
 	public void editInvoiceSubcategoryCountry(

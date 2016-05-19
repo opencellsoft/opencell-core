@@ -29,7 +29,7 @@ import javax.persistence.Table;
 import org.meveo.model.MultilanguageEntity;
 
 @Entity
-@MultilanguageEntity
+@MultilanguageEntity(key = "menu.charges", group = "ChargeTemplate")
 @Table(name = "CAT_ONE_SHOT_CHARGE_TEMPL")
 @NamedQueries({			
 @NamedQuery(name = "oneShotChargeTemplate.getNbrOneShotWithNotPricePlan", 

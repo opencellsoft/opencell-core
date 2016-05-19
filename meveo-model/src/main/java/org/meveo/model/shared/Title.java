@@ -32,7 +32,7 @@ import org.meveo.model.MultilanguageEntity;
 
 @Entity
 @Cacheable
-@MultilanguageEntity
+@MultilanguageEntity(key = "menu.titles", group = "Title")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "ADM_TITLE", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID", "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_TITLE_SEQ")

@@ -26,9 +26,12 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.MultilanguageEntity;
 
 @Entity
 @Cacheable
@@ -54,6 +57,15 @@ public class CatMessages extends AuditableEntity {
 	
 	@Transient
 	private String entityDescription;
+	
+	@Transient
+	private String className;
+	
+	@Transient
+	private String group;
+	
+	@Transient
+	private String key;
 
 	public CatMessages() {
 		super();
@@ -66,11 +78,7 @@ public class CatMessages extends AuditableEntity {
     public CatMessages(IEntity businessEntity, String languageCode, String description) {
         super();
 
-        String className = businessEntity.getClass().getSimpleName();
-        // supress javassist proxy suffix
-        if (className.indexOf("_") >= 0) {
-            className = className.substring(0, className.indexOf("_"));
-        }
+        String className =ReflectionUtils.getCleanClassName(businessEntity.getClass().getSimpleName());
         this.messageCode = className + "_" + businessEntity.getId();
         this.languageCode = languageCode;
         this.description = description;
@@ -127,23 +135,39 @@ public class CatMessages extends AuditableEntity {
             return -1;
         }
     }
-    public String getObjectType(){
-		if(messageCode==null) return "";
-		String code=messageCode;
-		if(code.indexOf("Title_")==0){
-			return "Titles";
-		}else if(code.indexOf("Tax_")==0){
-			return "Taxes";
-		}else if(code.indexOf("InvoiceCategory_")==0){
-			return "Invoice categories";
-		}else if(code.indexOf("InvoiceSubCategory_")==0){
-			return "Invoice subcategories";
-		}else if(code.indexOf("ChargeTemplate_")>=0){
-			return "Charges";
-		}else if(code.indexOf("PricePlanMatrix_")==0){
-			return "Price plans";
+    
+    public String getEntityClass() {
+    	if(StringUtils.isBlank(className)){
+    		if (messageCode == null){
+    			return "";
+    		}	
+    		if (messageCode.indexOf("_") >= 0) {
+    			className = messageCode.substring(0, messageCode.indexOf("_"));
+    		}
+    	}
+		return className;
+    }
+    
+	public String getObjectType() {
+		if(StringUtils.isBlank(key)){
+			Class<?> entityClass = ReflectionUtils.getClassBySimpleNameAndAnnotation(getEntityClass(), MultilanguageEntity.class);
+			if(entityClass != null){
+				MultilanguageEntity annotation = entityClass.getAnnotation(MultilanguageEntity.class);
+				key = annotation.key();
+			}
 		}
-		return "";
+		return key;
+	}
+	
+	public String getGroup() {
+		if(StringUtils.isBlank(group)){
+			Class<?> entityClass = ReflectionUtils.getClassBySimpleNameAndAnnotation(getEntityClass(), MultilanguageEntity.class);
+			if(entityClass != null){
+				MultilanguageEntity annotation = entityClass.getAnnotation(MultilanguageEntity.class);
+				group = annotation.group();
+			}
+		}
+		return group;
 	}
 
 	public String getEntityCode() {

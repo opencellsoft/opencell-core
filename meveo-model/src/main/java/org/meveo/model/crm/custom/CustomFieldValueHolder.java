@@ -14,7 +14,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.slf4j.LoggerFactory;
 
 /**
- * Used to facilitate custom field value data entry in GUI
+ * Used to facilitate custom field value data entry in GUI. Represents custom field values of a single entity
  * 
  * @author Andrius Karpavicius
  * 
@@ -28,14 +28,47 @@ public class CustomFieldValueHolder implements Serializable {
 
     private Map<String, Object> newValues = new HashMap<String, Object>();
 
+    /**
+     * Values of a single entity
+     */
     private Map<String, List<CustomFieldInstance>> values = new HashMap<String, List<CustomFieldInstance>>();
 
     private ICustomFieldEntity entity;
 
     /**
+     * Field used to show detail values of a single value period
+     */
+    private CustomFieldTemplate selectedFieldTemplate;
+
+    /**
+     * Field used to show detail values of a single value period
+     */
+    private CustomFieldInstance selectedValuePeriod;
+
+    /**
+     * Field used to show detail values of a single value period
+     */
+    private String selectedValuePeriodId;
+
+    /**
+     * Was value period found with identical/overlapping dates
+     */
+    private Boolean valuePeriodMatched;
+
+    /**
+     * Field used to show detail values of a single child entity
+     */
+    private CustomFieldValueHolder selectedChildEntity;
+
+    /**
+     * Were values updated - used only in child entity type field to not update not changed values
+     */
+    private boolean updated;
+
+    /**
      * Constructor
      * 
-     * @param customFieldTemplates Custom field templates applicable for the entity
+     * @param customFieldTemplates Custom field templates applicable for the entity, mapped by a CFT code
      * @param cfisAsMap Custom field instances mapped by a CFT code
      * @param entity Entity containing custom field values
      */
@@ -46,43 +79,10 @@ public class CustomFieldValueHolder implements Serializable {
             return;
         }
 
-        // For each template, check if custom field value exists, and instantiate one if needed with a default value
-        for (CustomFieldTemplate cft : customFieldTemplates.values()) {
-
-            List<CustomFieldInstance> cfisByTemplate = cfisAsMap.get(cft.getCode());
-            if (cfisByTemplate == null) {
-                cfisByTemplate = new ArrayList<>();
-            }
-
-            // Instantiate with a default value if no value found
-            if (cfisByTemplate.isEmpty() && !cft.isVersionable()) {
-                cfisByTemplate.add(CustomFieldInstance.fromTemplate(cft, (ICustomFieldEntity) entity));
-            }
-
-            // Deserialize values if applicable
-            for (CustomFieldInstance cfi : cfisByTemplate) {
-                cfi.getCfValue().deserializeForGUI(cft);
-            }
-
-            // Make sure that only one value is retrieved
-            if (!cft.isVersionable()) {
-                cfisByTemplate = cfisByTemplate.subList(0, 1);
-            }
-            values.put(cft.getCode(), cfisByTemplate);
-        }
+        values.putAll(cfisAsMap);
 
         populateNewValueDefaults(customFieldTemplates.values(), null);
 
-    }
-
-    /**
-     * Construct to convert ChildEntityValueWrapper to CustomFieldValueHolder
-     * 
-     * @param childEntity ChildEntityValueWrapper entity
-     */
-    public CustomFieldValueHolder(ChildEntityValueWrapper childEntity) {
-        this.entity = childEntity;
-        values = childEntity.getFieldValues();
     }
 
     /**
@@ -240,7 +240,7 @@ public class CustomFieldValueHolder implements Serializable {
 
     public CustomFieldInstance getFirstValue(String cftCode) {
         List<CustomFieldInstance> cfis = values.get(cftCode);
-        if (!cfis.isEmpty()) {
+        if (cfis != null && !cfis.isEmpty()) {
             return cfis.get(0);
         }
         log.error("No custom field instance found for {} when it should", cftCode);
@@ -278,6 +278,10 @@ public class CustomFieldValueHolder implements Serializable {
         newValues.clear();
     }
 
+    public ICustomFieldEntity getEntity() {
+        return entity;
+    }
+
     public String getEntityUuid() {
         return entity.getUuid();
     }
@@ -301,5 +305,69 @@ public class CustomFieldValueHolder implements Serializable {
             }
         }
         return true;
+    }
+
+    public CustomFieldValueHolder getSelectedChildEntity() {
+        return selectedChildEntity;
+    }
+
+    public void setSelectedChildEntity(CustomFieldValueHolder selectedChildEntity) {
+        this.selectedChildEntity = selectedChildEntity;
+    }
+
+    public CustomFieldTemplate getSelectedFieldTemplate() {
+        return selectedFieldTemplate;
+    }
+
+    public void setSelectedFieldTemplate(CustomFieldTemplate selectedFieldTemplate) {
+        this.selectedFieldTemplate = selectedFieldTemplate;
+    }
+
+    public CustomFieldInstance getSelectedValuePeriod() {
+        return selectedValuePeriod;
+    }
+
+    public void setSelectedValuePeriod(CustomFieldInstance selectedValuePeriod) {
+        this.selectedValuePeriod = selectedValuePeriod;
+    }
+
+    public String getSelectedValuePeriodId() {
+        return selectedValuePeriodId;
+    }
+
+    public void setSelectedValuePeriodId(String selectedValuePeriodId) {
+        this.selectedValuePeriodId = selectedValuePeriodId;
+    }
+
+    public Boolean getValuePeriodMatched() {
+        return valuePeriodMatched;
+    }
+
+    public void setValuePeriodMatched(Boolean valuePeriodMatched) {
+        this.valuePeriodMatched = valuePeriodMatched;
+    }
+
+    public void setUpdated(boolean updated) {
+        this.updated = updated;
+    }
+
+    public boolean isUpdated() {
+        return updated;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        } else if (!(obj instanceof CustomFieldValueHolder)) {
+            return false;
+        }
+
+        CustomFieldValueHolder other = (CustomFieldValueHolder) obj;
+
+        return getEntityUuid().equals(other.getEntityUuid());
     }
 }

@@ -3,7 +3,6 @@ package org.meveo.api.dto.catalog;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -18,7 +17,6 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
-import org.meveo.model.crm.CustomFieldInstance;
 
 @XmlRootElement(name = "ChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,8 +53,8 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
     public ChargeTemplateDto() {
 
     }
-
-    public ChargeTemplateDto(ChargeTemplate e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
+    
+    public ChargeTemplateDto(ChargeTemplate e, CustomFieldsDto customFieldInstances) {
         code = e.getCode();
         description = e.getDescription();
         if (e.getInvoiceSubCategory() != null) {
@@ -71,8 +69,14 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
             }
         }
         roundingModeDtoEnum = e.getRoundingMode();
+        customFields = customFieldInstances;
+        
+        inputUnitDescription = e.getInputUnitDescription();
+        ratingUnitDescription = e.getRatingUnitDescription();
+        unitNbDecimal = e.getUnitNbDecimal();
+        unitMultiplicator = e.getUnitMultiplicator();
+        roundingModeDtoEnum = e.getRoundingMode();
         revenueRecognitionRuleCode = e.getRevenueRecognitionRule()==null?null:e.getRevenueRecognitionRule().getCode();
-        customFields = CustomFieldsDto.toDTO(customFieldInstances);
     }
 
     public String getCode() {

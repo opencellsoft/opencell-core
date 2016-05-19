@@ -7,56 +7,46 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.module.ModuleDto;
-import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.api.dto.script.OfferModelScriptDto;
+import org.meveo.model.module.MeveoModule;
 
 @XmlRootElement(name = "BusinessOfferModel")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BusinessOfferModelDto extends ModuleDto {
 
-	private static final long serialVersionUID = -7023791262640948222L;
+    private static final long serialVersionUID = -7023791262640948222L;
 
-	@NotNull
-	@XmlElement(required = true)
-	private String offerTemplateCode;
+    @NotNull
+    @XmlElement(required = true)
+    private OfferTemplateDto offerTemplate;
 
-	private String scriptCode;
-	
-	public BusinessOfferModelDto() {
-		
-	}
+    private OfferModelScriptDto script;
 
-	public BusinessOfferModelDto(BusinessOfferModel e) {
-		if (e.getOfferTemplate() != null) {
-			offerTemplateCode = e.getOfferTemplate().getCode();
-		}
-		if (e.getScript() != null) {
-			scriptCode = e.getScript().getCode();
-		}
-	}
+    public BusinessOfferModelDto() {
+    }
 
-	public BusinessOfferModelDto(ModuleDto dto) {
-		super(dto);
-	}
+    public BusinessOfferModelDto(MeveoModule module) {
+        super(module);
+    }
 
-	public String getOfferTemplateCode() {
-		return offerTemplateCode;
-	}
+    public void setOfferTemplate(OfferTemplateDto offerTemplate) {
+        this.offerTemplate = offerTemplate;
+    }
 
-	public void setOfferTemplateCode(String offerTemplateCode) {
-		this.offerTemplateCode = offerTemplateCode;
-	}
+    public OfferTemplateDto getOfferTemplate() {
+        return offerTemplate;
+    }
 
-	@Override
-	public String toString() {
-		return "BusinessOfferModelDto [offerTemplateCode=" + offerTemplateCode + ", scriptCode=" + scriptCode + "]";
-	}
+    public void setScript(OfferModelScriptDto script) {
+        this.script = script;
+    }
 
-	public String getScriptCode() {
-		return scriptCode;
-	}
+    public OfferModelScriptDto getScript() {
+        return script;
+    }
 
-	public void setScriptCode(String scriptCode) {
-		this.scriptCode = scriptCode;
-	}
-
+    @Override
+    public String toString() {
+        return "BusinessOfferModelDto [offerTemplate=" + offerTemplate + ", script=" + script + "]";
+    }
 }

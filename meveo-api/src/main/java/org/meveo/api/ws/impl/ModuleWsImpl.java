@@ -17,6 +17,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.ModuleApi;
 import org.meveo.api.ws.ModuleWs;
+import org.meveo.model.module.MeveoModule;
 
 /**
  * @author Tyshan Shi(tyshan@manaty.net)
@@ -117,7 +118,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
         try {
-            ModuleDto dto = moduleApi.get(code, getCurrentUser());
+            ModuleDto dto = moduleApi.get(code, MeveoModule.class, getCurrentUser());
             result.setModule(dto);
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());

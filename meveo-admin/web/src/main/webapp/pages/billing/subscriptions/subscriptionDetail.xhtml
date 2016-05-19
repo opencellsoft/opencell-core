@@ -258,7 +258,7 @@
 										<f:param name="backView"
 											value="subscriptionDetailWithNavigation" />
 									</p:button>
-									<p:commandButton rendered="#{entity.status eq 'INACTIVE'}"
+									<p:commandButton rendered="#{entity.status eq 'INACTIVE' and subscriptionBean.canUserUpdateEntity()}"
 										action="#{subscriptionBean.deleteServiceInstance(entity)}"
 										icon="ui-icon-trash" update=":#{p:component('serviceTab')}">
 										<p:confirm header="#{messages['commons.confirmationHeader']}"
@@ -268,7 +268,7 @@
 								</p:column>
 							</p:dataTable>
 						</h:form>
-						<p:outputPanel id="serviceInstOperations">
+						<p:outputPanel id="serviceInstOperations" rendered="#{subscriptionBean.canUserUpdateEntity()}">
 							<h:form id="operationFrm">
 								<p:panel styleClass="action-buttons">
 									<p:commandButton action="#{subscriptionBean.activateService}"
@@ -306,7 +306,7 @@
 							</p:outputPanel>
 
 
-							<h:panelGroup id="instantiatePanelActions">
+							<h:panelGroup id="instantiatePanelActions" rendered="#{subscriptionBean.canUserUpdateEntity()}">
 								<p:outputLabel for="quantity"
 									value="#{messages['serviceInstance.quantity']}:"></p:outputLabel>
 								<p:inputText id="quantity" value="#{subscriptionBean.quantity}"
@@ -364,6 +364,7 @@
 				                <ui:define name="buttons">
 								<p:commandButton value="#{messages['button.terminateButton']}" id="subTerminationButton"
 										onclick="PF('dlg_subscriptionTerminationPopup').show();"
+										rendered="#{subscriptionBean.canUserUpdateEntity()}"
 										type="button"
 										disabled="#{not empty subscriptionBean.entity.terminationDate}" /> 
 										</ui:define>
@@ -423,13 +424,16 @@
 																	</f:facet>
 																	<p:commandButton id="editOneShotChgInsLink"
 																		action="#{subscriptionBean.editOneShotChargeIns(entity)}"
+																		rendered="#{subscriptionBean.canUserUpdateEntity()}"
 																		update=":subscriptionTab:oneShotChgForm1 :#{p:component('oneShotChgDiv')}"
 																		icon="ui-icon-document">
 																		<f:setPropertyActionListener value="true"
 																			target="#{subscriptionBean.showApplyOneShotForm}" />
 																	</p:commandButton>
 																	<p:tooltip for="editOneShotChgInsLink"
-																		value="#{messages['commons.edit']}" showEffect="slide"
+																		value="#{messages['commons.edit']}" 
+																		rendered="#{subscriptionBean.canUserUpdateEntity()}"
+																		showEffect="slide"
 																		hideEffect="slide" />
 																</p:column>
 															</p:dataTable>
@@ -440,6 +444,7 @@
 															<p:commandButton
 																value="#{messages['subscription.oneShotChgButton']}"
 																actionListener="#{subscriptionBean.newOneShotChargeInstance}"
+																rendered="#{subscriptionBean.canUserUpdateEntity()}"
 																update=":#{p:component('oneShotChgDiv')}">
 																<f:setPropertyActionListener value="true"
 																	target="#{subscriptionBean.showApplyOneShotForm}" />
@@ -734,7 +739,7 @@
 																		<h:commandButton
 																			action="#{subscriptionBean.saveOneShotChargeIns}"
 																			value="#{messages['action.save']}"
-																			rendered="#{currentProvider.amountValidation}">
+																			rendered="#{currentProvider.amountValidation and subscriptionBean.canUserUpdateEntity()}">
 																			<!-- 															<a:ajax event="click" render="OS_oneShot_results_form" -->
 																			<!-- 																onsubmit="return validation();" -->
 																			<!-- 																oncomplete="document.getElementById('oneShotChgDiv').style.display='none';" /> -->
@@ -744,10 +749,11 @@
 																			action="#{subscriptionBean.saveOneShotChargeIns}"
 																			value="#{messages['action.save']}"
 																			update=":subscriptionTab:oneShotPanel"
-																			rendered="#{!currentProvider.amountValidation}" />
+																			rendered="#{!currentProvider.amountValidation and subscriptionBean.canUserUpdateEntity()}" />
 
 																		<p:commandButton value="#{messages['action.cancel']}"
 																			update=":#{p:component('oneShotChgDiv')}"
+																			rendered="#{subscriptionBean.canUserUpdateEntity()}"
 																			immediate="true">
 																			<f:setPropertyActionListener value="false"
 																				target="#{subscriptionBean.showApplyOneShotForm}" />
@@ -941,6 +947,7 @@
 																</f:facet>
 																<p:commandButton id="accessDeletelink"
 																	action="#{accessBean.delete(entity.id)}"
+																	rendered="#{accessBean.canUserUpdateEntity()}"
 																	update=":hierarchyGroup,#{p:component('medinaAccessPanel')},#{p:component('accessInfoForm')}"
 																	icon="ui-icon-trash">
 																	<f:param name="subscriptionId"
@@ -955,6 +962,7 @@
 													<p:panel>
 														<p:commandButton value="#{messages['access.new']}"
 															update=":accessDialog"
+															rendered="#{accessBean.canUserUpdateEntity()}"
 															oncomplete="PF('accessWidget').show()"
 															actionListener="#{accessBean.resetEntity()}">
 															<f:param name="subscriptionId"
@@ -1029,6 +1037,7 @@
                         <ui:define name="buttons">    
     						<p:commandButton
     							action="#{subscriptionBean.saveUsageChargeIns}"
+    							rendered="#{subscriptionBean.canUserUpdateEntity()}"
     							value="#{messages['action.save']}"
     							update=":#{p:component('OS_usage_results_form')}"
     							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_usageChgPopup').hide()" />
@@ -1093,6 +1102,7 @@
     						<p:commandButton
     							action="#{subscriptionBean.saveRecurringChargeIns}"
     							value="#{messages['action.save']}" 
+    							rendered="#{subscriptionBean.canUserUpdateEntity()}"
     							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_recurringChgPopup').hide()" />
     						<p:button value="#{messages['action.cancel']}"
     							onclick="PF('dlg_recurringChgPopup').hide()" type="button" />

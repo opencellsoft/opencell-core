@@ -20,6 +20,8 @@ import org.meveo.api.rest.security.RSSecured;
  * Web service for managing {@link org.meveo.model.billing.Country} and {@link org.meveo.model.billing.TradingCountry}.
  * 
  * @author Edward P. Legaspi
+ * 
+ * @deprecated will be renammed to  TradingCountryRs
  **/
 @Path("/country")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -55,8 +57,8 @@ public interface CountryRs extends IBaseRs {
      * @return
      */
     @DELETE
-    @Path("/")
-    public ActionStatus remove(@PathParam("countryCode") String countryCode);
+    @Path("/{countryCode}/{currencyCode}")
+    public ActionStatus remove(@PathParam("countryCode") String countryCode, @PathParam("currencyCode") String currencyCode);
 
     /**
      * Modify a country. Same input parameter as create. The country and tradingCountry are created if they don't exists. The operation fails if the tradingCountry is null.

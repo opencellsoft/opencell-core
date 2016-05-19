@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
@@ -44,10 +43,8 @@ import org.meveo.model.IEntity;
 import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.MultilanguageEntityService;
 import org.meveo.service.base.PersistenceService;
-import org.reflections.Reflections;
 
 /**
  * CatMessagesService service implementation.
@@ -55,9 +52,13 @@ import org.reflections.Reflections;
 @Stateless
 public class CatMessagesService extends PersistenceService<CatMessages> {
 
-    private static final String INVALID_CLASS_TYPE = "Invalid class type!";
-	
-    private Map<String, List<MultilanguageEntityService<?>>> services;
+    private static final int ENTITY_ID = 1;
+
+	private static final int ENTITY_CLASS = 0;
+
+	private static final String INVALID_CLASS_TYPE = "Invalid class type!";
+    
+    private Map<String, MultilanguageEntityService<?>> services;
     
     @PostConstruct
     private void init() {
@@ -67,14 +68,11 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
     @Inject
 	private void initServiceList(@Any Instance<MultilanguageEntityService<?>> entityServices) {
 		if (services == null) {
-			services = Collections.synchronizedMap(new HashMap<String, List<MultilanguageEntityService<?>>>());
+			services = Collections.synchronizedMap(new HashMap<String, MultilanguageEntityService<?>>());
 		}
 		if (services.isEmpty()) {
 			for (MultilanguageEntityService<?> entityService : entityServices) {
-				if(services.get(entityService.getObjectType()) == null){
-					services.put(entityService.getObjectType(), new ArrayList<MultilanguageEntityService<?>>());
-				}
-				services.get(entityService.getObjectType()).add(entityService);
+				services.put(ReflectionUtils.getCleanClassName(entityService.getEntityClass().getSimpleName()), entityService);
 			}
 		}
 	}
@@ -124,7 +122,7 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 
     @SuppressWarnings("unchecked")
     public List<CatMessages> getCatMessagesList(String messageCode) {
-        log.info("getCatMessagesList messageCode={} ", messageCode);
+        log.debug("getCatMessagesList messageCode={} ", messageCode);
         if (StringUtils.isBlank(messageCode)) {
             return new ArrayList<CatMessages>();
         }
@@ -193,21 +191,32 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
             return null;
         }
     }
+    
+    @SuppressWarnings("unchecked")
+	public List<CatMessages> findByCode(String messageCode, Provider provider) {
+        QueryBuilder qb = new QueryBuilder(CatMessages.class, "c", null, provider);
+        qb.addCriterionWildcard("c.messageCode", messageCode, true);
+        try {
+            return (List<CatMessages>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
     @Override
     public List<CatMessages> list(PaginationConfiguration config) {
         List<CatMessages> catMessages = super.list(config);
         for (CatMessages catMsg : catMessages) {
-            BusinessEntity obj = getObject(catMsg);
-            if (obj != null) {
-                catMsg.setEntityCode(obj.getCode());
-                catMsg.setEntityDescription(obj.getDescription());
+            BusinessEntity entity = getBusinessEntity(catMsg);
+            if (entity != null) {
+                catMsg.setEntityCode(entity.getCode());
+                catMsg.setEntityDescription(entity.getDescription());
             }
         }
         return catMessages;
     }
 
-	private BusinessEntity getObject(CatMessages catMessages) {
+	private BusinessEntity getBusinessEntity(CatMessages catMessages) {
 		BusinessEntity entity = null;
 		if (catMessages != null) {
 			String messagesCode = catMessages.getMessageCode();
@@ -216,10 +225,10 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 			if (codes != null && codes.length == 2) {
 				Long id = null;
 				try {
-					id = Long.valueOf(codes[1]);
-					BusinessService<?> service = getMultilanguageEntityService(codes[0]);
+					id = Long.valueOf(codes[ENTITY_ID]);
+					MultilanguageEntityService<?> service = getMultilanguageEntityService(codes[ENTITY_CLASS]);
 					if (service != null) {
-						entity = (BusinessEntity) service.findById(id);
+						entity = service.findById(id);
 					}
 				} catch (NumberFormatException e) {
 					log.warn("Failed to parse id. Returning null entity.");
@@ -233,35 +242,14 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
      
 	public MultilanguageEntityService<?> getMultilanguageEntityService(String entityClassName)
 			throws BusinessException {
-		MultilanguageEntityService<?> persistenceService = null;
-		List<MultilanguageEntityService<?>> serviceList = null;
+		MultilanguageEntityService<?> service = null;
 		if (entityClassName != null) {
-			outerLoop: for (String key : services.keySet()) {
-				serviceList = services.get(key);
-				for (MultilanguageEntityService<?> businessService : serviceList) {
-					if (businessService.getEntityClass().getSimpleName().equals(entityClassName)) {
-						persistenceService = businessService;
-						break outerLoop;
-					}
-				}
-			}
+			service = this.services.get(entityClassName);
 		}
-		if (persistenceService == null) {
+		if (service == null) {
 			throw new BusinessException(INVALID_CLASS_TYPE);
 		}
-		return persistenceService;
-	}
-	
-	public List<MultilanguageEntityService<?>> getMultilanguageEntityServiceList(String objectName)
-			throws BusinessException {
-		List<MultilanguageEntityService<?>> serviceList = null;
-		if (objectName != null) {
-			serviceList = services.get(objectName);
-		}
-		if (serviceList == null) {
-			throw new BusinessException(INVALID_CLASS_TYPE);
-		}
-		return serviceList;
+		return service;
 	}
 	
 	public BusinessEntity getEntityByMessageCode(String messageCode) {
@@ -280,7 +268,7 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 	}
 
 	private BusinessEntity getEntityByClassNameAndId(String className, long entityId) {
-		Class<?> entityClass = getEntityClass(className);
+		Class<?> entityClass = ReflectionUtils.getClassBySimpleNameAndAnnotation(className, MultilanguageEntity.class);
 		BusinessEntity entity = null;
 		if (entityClass != null) {
 			try {
@@ -293,21 +281,6 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 			}
 		}
 		return entity;
-	}
-	
-	public Class<?> getEntityClass(String className) {
-		Class<?> entityClass = null;
-		if (!StringUtils.isBlank(className)) {
-			Reflections reflections = new Reflections("org.meveo.model");
-			Set<Class<?>> multiLanguageClasses = reflections.getTypesAnnotatedWith(MultilanguageEntity.class);
-			for (Class<?> multiLanguageClass : multiLanguageClasses) {
-				if (className.equals(multiLanguageClass.getSimpleName())) {
-					entityClass = multiLanguageClass;
-					break;
-				}
-			}
-		}
-		return entityClass;
 	}
 
 }

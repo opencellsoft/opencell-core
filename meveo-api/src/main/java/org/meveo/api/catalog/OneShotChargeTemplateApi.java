@@ -34,7 +34,6 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.finance.RevenueRecognitionRule;
-import org.meveo.model.scripts.RevenueRecognitionScriptEntity;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
@@ -44,9 +43,7 @@ import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.finance.RevenueRecognitionRuleService;
-import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
 
 
 @Stateless
@@ -78,9 +75,6 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
     @Inject
     private TriggeredEDRTemplateService triggeredEDRTemplateService;
-
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private RevenueRecognitionRuleService revenueRecognitionRuleService;
@@ -312,7 +306,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
             throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, code);
         }
 
-        result = new OneShotChargeTemplateDto(chargeTemplate, customFieldInstanceService.getCustomFieldInstances(chargeTemplate));
+        result = new OneShotChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
         for (CatMessages msg : catMessagesService.getCatMessagesList(OneShotChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId())) {

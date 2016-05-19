@@ -37,7 +37,7 @@
 			column2="description"
 			selection="#{pricePlanMatrixListBean.filters['seller']}" lazy="false"
 			dataModel="#{sellerBean.listAll}"
-			updateField=":searchForm:seller :searchForm:seller_text">
+			updateField=":searchForm:seller">
 		</hftl:entityPopup>
 <!-- 		<hftl:entityPopup id="searchTradingCountryPopup" -->
 <!-- 			header="#{messages['country.search']}" -->
@@ -69,7 +69,7 @@
 		<hftl:searchPanel columns="3"
 			label="#{messages['pricePlanMatrix.search']}"
 			backingBean="#{pricePlanMatrixListBean}"
-			renderAdvancedLink="#{!pricePlanMatrixListBrean.advanced}"
+			renderAdvancedLink="#{!pricePlanMatrixListBean.advanced}"
 			renderHideAdvancedLink="#{pricePlanMatrixListBean.advanced}">
 			<hftl:searchField label="#{messages['BusinessEntity.code']}"
 				field="code" />

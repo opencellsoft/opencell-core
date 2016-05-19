@@ -33,16 +33,19 @@ public class PreInvoicingReportsDTO {
     private Integer directDebitBANumber;
     private Integer tipBANumber;
     private Integer wiretransferBANumber;
+    private Integer creditDebitCardBANumber;
 
     private Integer checkBillableBANumber;
     private Integer directDebitBillableBANumber;
     private Integer tipBillableBANumber;
     private Integer wiretransferBillableBANumber;
+    private Integer creditDebitCardBillableBANumber;
 
     private BigDecimal checkBillableBAAmountHT;
     private BigDecimal directDebitBillableBAAmountHT;
     private BigDecimal tipBillableBAAmountHT;
     private BigDecimal wiretransferBillableBAAmountHT;
+    private BigDecimal creditDebitCardBillableBAAmountHT;
    // List<InvoiceSubCategory> InvoiceSubCategories = new ArrayList<InvoiceSubCategory>();
 
     private BigDecimal SubCategoriesAmountHT = new BigDecimal(0);
@@ -213,5 +216,35 @@ public class PreInvoicingReportsDTO {
     public void setTaxesAmount(BigDecimal taxesAmount) {
         TaxesAmount = taxesAmount;
     }
+
+	public Integer getCreditDebitCardBANumber() {
+		return creditDebitCardBANumber;
+	}
+
+	public void setCreditDebitCardBANumber(Integer creditDebitCardBANumber) {
+		this.creditDebitCardBANumber = creditDebitCardBANumber;
+	}
+
+	public Integer getCreditDebitCardBillableBANumber() {
+		return creditDebitCardBillableBANumber;
+	}
+
+	public void setCreditDebitCardBillableBANumber(
+			Integer creditDebitCardBillableBANumber) {
+		this.creditDebitCardBillableBANumber = creditDebitCardBillableBANumber;
+	}
+
+	public BigDecimal getCreditDebitCardBillableBAAmountHT() {
+		return creditDebitCardBillableBAAmountHT;
+	}
+
+	public void setCreditDebitCardBillableBAAmountHT(
+			BigDecimal creditDebitCardBillableBAAmountHT) {
+		this.creditDebitCardBillableBAAmountHT = creditDebitCardBillableBAAmountHT;
+	}
+	
+	
+    
+    
 
 }

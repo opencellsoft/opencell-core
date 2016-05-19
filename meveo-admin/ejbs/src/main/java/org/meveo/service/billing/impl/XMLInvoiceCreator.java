@@ -57,6 +57,7 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
@@ -84,6 +85,7 @@ import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
@@ -101,6 +103,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	@Inject
 	private InvoiceService invoiceService;
+	
+	@Inject
+	private CountryService countryService;
 
 	@Inject
 	private RatedTransactionService ratedTransactionService;
@@ -705,6 +710,21 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				.getCountry() : "");
 		country.appendChild(countryTxt);
 		addressTag.appendChild(country);
+		
+		Element countryName = doc.createElement("country_name");
+		
+		String countryCode = account.getAddress().getCountry() != null ? account.getAddress().getCountry() : "";
+		Country countrybyCode = countryService.findByCode(countryCode);
+		Text countryNameTxt;
+		if(countrybyCode != null){
+		   //get country desciption by language code
+		   countryNameTxt = doc.createTextNode(countrybyCode.getDescription(languageCode));
+		}else{
+		   countryNameTxt = doc.createTextNode("");
+		}
+		countryName.appendChild(countryNameTxt);
+		addressTag.appendChild(countryName);
+		
 
 		parent.appendChild(addressTag);
 	}

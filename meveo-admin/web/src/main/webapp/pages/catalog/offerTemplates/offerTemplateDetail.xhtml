@@ -55,6 +55,8 @@
 						<hftl:formField label="#{messages['enableEntity.disabled']}"
 							doNotShowOnNew="true" allowEdit="false" field="disabled"
 							isMessage="true" />
+						<hftl:customFields backingBean="#{offerTemplateBean}"
+								messagesId=":tabView:formId:messages" />
 					</hftl:formPanel>
 				</p:tab>
 
@@ -103,6 +105,7 @@
 									icon="ui-icon-document" />
 								<p:commandButton
 									action="#{offerTemplateBean.deleteOfferServiceTemplate(entity)}"
+									rendered="#{offerTemplateBean.canUserUpdateEntity()}"
 									icon="ui-icon-trash"
 									update=":tabView:servicesPanel :tabView:serviceForm" />
 							</p:column>
@@ -135,7 +138,7 @@
 							<ui:param name="buttons" value="true" />
 							<ui:define name="buttons">
 								<p:commandButton
-									rendered="#{offerTemplateBean.offerServiceTemplate.id==null}"
+									rendered="#{offerTemplateBean.offerServiceTemplate.id==null and offerTemplateBean.canUserUpdateEntity()}"
 									action="#{offerTemplateBean.saveOfferServiceTemplate()}"
 									value="#{messages['action.addSave']}"
 									update=":tabView:servicesPanel :tabView:serviceForm">
@@ -157,15 +160,6 @@
 							</ui:define>
 						</hftl:formPanel>
 					</p:panel>
-				</p:tab>
-				<p:tab title="#{messages['menu.customFieldTemplates']}" id="tab2"
-					rendered="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).childCount > 0}">
-					<hftl:formPanel formId="customFieldTemplatesForm"
-						backingBean="#{offerTemplateBean}" ajaxSubmit="true"
-						showDeleteButton="false">
-						<hftl:customFields backingBean="#{offerTemplateBean}"
-							messagesId=":tabView:customFieldTemplatesForm:messages" />
-					</hftl:formPanel>
 				</p:tab>
 			</p:tabView>
 		</p:panel>

@@ -42,14 +42,14 @@ public class FlatFileProcessingJob extends Job {
     
     @Override
     @Asynchronous
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobInstance jobInstance, User currentUser) {
         super.execute(jobInstance, currentUser);
     }
 
 	@SuppressWarnings("unchecked")
 	@Override
-	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	@TransactionAttribute(TransactionAttributeType.NEVER)
 	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
 		try {
 			String mappingConf = null;

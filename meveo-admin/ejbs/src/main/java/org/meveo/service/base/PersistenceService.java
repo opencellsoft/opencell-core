@@ -77,6 +77,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_CURRENT_USER = "currentUser";
     public static String SEARCH_CURRENT_PROVIDER = "currentProvider";
     public static String SEARCH_ATTR_TYPE_CLASS = "type_class";
+    public static String SEARCH_IS_NULL = "IS_NULL";
 
     @Inject
     @MeveoJpa
@@ -716,7 +717,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
                             // if not ranged search
                         } else {
-                            if (filter instanceof String) {
+                            if (filter instanceof String && SEARCH_IS_NULL.equals(filter)) {
+                                queryBuilder.addSql("a." + fieldName+" is null ");
+                                
+                            } else if (filter instanceof String) {
+
                                 // if contains dot, that means join is needed
                                 String filterString = (String) filter;
                                 boolean wildcard = (filterString.indexOf("*") != -1);

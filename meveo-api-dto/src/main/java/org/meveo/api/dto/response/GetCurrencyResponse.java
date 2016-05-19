@@ -9,6 +9,8 @@ import org.meveo.api.dto.CurrencyDto;
 /**
  * @author Edward P. Legaspi
  * @since Oct 7, 2013
+ * 
+ * @deprecated will be rennamed to GetTradingCurrencyResponse
  **/
 @XmlRootElement(name = "GetCurrencyResponse")
 @XmlAccessorType(XmlAccessType.FIELD)

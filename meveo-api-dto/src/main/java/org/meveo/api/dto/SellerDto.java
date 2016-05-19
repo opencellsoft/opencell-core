@@ -1,8 +1,5 @@
 package org.meveo.api.dto;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -11,7 +8,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.account.CustomersDto;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.crm.CustomFieldInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -53,7 +49,7 @@ public class SellerDto extends BaseDto {
 	public SellerDto() {
 	}
 
-	public SellerDto(Seller seller, Map<String, List<CustomFieldInstance>> customFieldInstances) {
+	public SellerDto(Seller seller, CustomFieldsDto customFieldInstances) {
 		code = seller.getCode();
 		description = seller.getDescription();
 		invoicePrefix = seller.getInvoicePrefix();
@@ -83,7 +79,7 @@ public class SellerDto extends BaseDto {
 			provider = seller.getProvider().getCode();
 		}
 		
-		customFields = CustomFieldsDto.toDTO(customFieldInstances);
+		customFields = customFieldInstances;
 	}
 
 	public String getCode() {

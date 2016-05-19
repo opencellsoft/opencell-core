@@ -42,7 +42,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.MultilanguageEntity;
 
 @Entity
-@MultilanguageEntity
+@MultilanguageEntity(key = "menu.invoiceSubCategories", group = "InvoiceSubCategory")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_INVOICE_SUB_CAT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SUB_CAT_SEQ")

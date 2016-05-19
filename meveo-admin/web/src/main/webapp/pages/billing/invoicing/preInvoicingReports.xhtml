@@ -46,11 +46,11 @@
 
             <p:fieldset legend="#{messages['preInvoicingReport.noOfBillingAccountInBillingCyclePerPaymentMode']}" styleClass="clearLeft">
 
-				<hftl:formField label="#{messages['paymentMethod.check']}"
+				<hftl:formField label="#{messages['paymentMethod.check']}"  
 					field="preInvoicingReports" childField="checkBANumber"
 					displayOneLine="true" />
 
-				<hftl:formField label="#{messages['paymentMethod.directDebit']}"
+				<hftl:formField label="#{messages['paymentMethod.directDebit']}"  
 					field="preInvoicingReports" childField="directDebitBANumber"
 					displayOneLine="true" />
 
@@ -58,9 +58,15 @@
 					field="preInvoicingReports" childField="tipBANumber" displayOneLine="true" />
 
 				<hftl:formField
-					label="#{messages['paymentMethod.wiretransfer']}"
+					label="#{messages['paymentMethod.wiretransfer']}"  
 					field="preInvoicingReports" childField="wiretransferBANumber"
 					displayOneLine="true" />
+					
+				<hftl:formField
+					label="#{messages['paymentMethod.card']}" 
+					field="preInvoicingReports" childField="creditDebitCardBANumber"
+					displayOneLine="true" />
+						
             </p:fieldset>
 			<p:fieldset legend="#{messages['preInvoicingReport.noOfBillingAccountToInvoicePerPaymentMode']}" styleClass="clearLeft">
 
@@ -81,6 +87,11 @@
 					label="#{messages['paymentMethod.wiretransfer']}"
 					field="preInvoicingReports"
 					childField="wiretransferBillableBANumber" displayOneLine="true" />
+					
+				<hftl:formField
+					label="#{messages['paymentMethod.card']}"
+					field="preInvoicingReports" childField="creditDebitCardBillableBANumber"
+					displayOneLine="true" />
             </p:fieldset>
 
 
@@ -102,6 +113,12 @@
 					label="#{messages['paymentMethod.wiretransfer']}"
 					field="preInvoicingReports"
 					childField="wiretransferBillableBAAmountHT" displayOneLine="true" />
+					
+				<hftl:formField
+					label="#{messages['paymentMethod.card']}"
+					field="preInvoicingReports"
+					childField="creditDebitCardBillableBAAmountHT" displayOneLine="true" />
+						
             </p:fieldset>
 
 		</hftl:formPanel>

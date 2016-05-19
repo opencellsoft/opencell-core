@@ -122,7 +122,7 @@
 					<hftl:decorateFormField fieldId="catMessagesType_text" label="#{messages['catMessages.objectType']}">
 						<p:selectOneMenu id="catMessagesType_text" value="#{catMessagesBean.objectType}" required="true" valueChangeListener="#{catMessagesBean.updateBusinessEntity()}">
 							<f:selectItem itemLabel=""/>
-							<f:selectItems value="#{catMessagesBean.objectTypes.keySet().toArray()}" var="t" itemLabel="#{catMessagesBean.objectTypes.get(t)}" itemValue="#{t}"/>
+							<f:selectItems value="#{catMessagesBean.objectTypes.entrySet()}" var="item" itemLabel="#{messages[item.value]}" itemValue="#{item.key}"/>
 							<p:ajax update=":catMessageFormId" event="change" />
 						</p:selectOneMenu>
 					</hftl:decorateFormField>

@@ -1,8 +1,6 @@
 package org.meveo.api.dto.account;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -12,7 +10,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.AccountEntity;
-import org.meveo.model.crm.CustomFieldInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -43,11 +40,11 @@ public abstract class AccountDto implements Serializable {
 		super();
 	}
 
-	public AccountDto(AccountEntity e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
+	public AccountDto(AccountEntity e, CustomFieldsDto customFieldInstances) {
 		initFromEntity(e, customFieldInstances);
 	}
 
-	public void initFromEntity(AccountEntity e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
+	public void initFromEntity(AccountEntity e, CustomFieldsDto customFieldInstances) {
 		setCode(e.getCode());
 		setDescription(e.getDescription());
 		setExternalRef1(e.getExternalRef1());
@@ -55,7 +52,7 @@ public abstract class AccountDto implements Serializable {
 		setName(new NameDto(e.getName()));
 		setAddress(new AddressDto(e.getAddress()));
 
-        customFields = CustomFieldsDto.toDTO(customFieldInstances);
+        customFields = customFieldInstances;
 
 		loaded = true;
 	}

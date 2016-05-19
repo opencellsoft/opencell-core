@@ -12,6 +12,8 @@
     
     Must be located inside a formPanel component or have the following attributes provided if used as standalone: entity, edit and backingBean for map and list type fields only
     
+    See hftl:decorateFormField tag for styling attributes
+    
     An applicable input control or a value output format is determined automatically based on field's type. The following field types are supported:
         Text - as regular text entry, html editor, textarea, list of values, autocomplete and selection via popup
         Number -  as regular text entry, as a spinner of numbers and a list of values
@@ -52,6 +54,8 @@
         validateRib - validate rib values
         validateEmail - validate email value
         validatorId - validator to apply
+        listenerUpdate - components (ids) to update when value changes 
+        actionListenerBean and actionListenerMethod - action listener bean and method to execute when value changes
           
         
      Additional attributes applicable to Number type fields
@@ -76,6 +80,7 @@
      Additional attributes applicable to Enum type fields             
         listValues - a map of value (key) and label (value) pairs for picklist 
         listenerUpdate - components (ids) to update when value changes 
+        actionListenerBean and actionListenerMethod - action listener bean and method to execute when value changes
         
      Additional attributes applicable to Entity type fields    
         size - a size attribute of inputText control
@@ -213,7 +218,7 @@
                 <c:set var="textArea" value="false" />
             </c:if>
             <c:if test="${empty(cols)}">
-                <c:set var="cols" value="${componentWidth&lt;=50?80:componentWidth&lt;=75?140:200}" />
+                <c:set var="cols" value="${componentWidth&lt;=50?80:componentWidth&lt;=75?140:190}" />
             </c:if>
             <c:if test="${empty(rows)}">
                 <c:set var="rows" value="5" />
@@ -243,7 +248,8 @@
                 inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" size="${size}" maxlength="${maxlength}" isHtml="${isHtml}"
                 textArea="${textArea}" cols="${cols}" rows="${rows}" isAutocomplete="${isAutocomplete}" autocompleteBean="#{autocompleteBean}"
                 autocompleteMethod="#{autocompleteMethod}" listValues="${listValues}" popup="${popup}" popupId="${popupId}" useConverter="${useConverter}" converter="${converter}"
-                validateUnique="${validateUnique}" validateRib="${validateRib}" validateEmail="${validateEmail}" validatorId="${validatorId}" edit="#{edit}" />
+                validateUnique="${validateUnique}" validateRib="${validateRib}" validateEmail="${validateEmail}" validatorId="${validatorId}" listenerUpdate="${listenerUpdate}"
+                actionListenerBean="${actionListenerBean}" actionListenerMethod="${actionListenerMethod}" edit="#{edit}" />
         </c:if>
 
         <!--  Enter map values -->
@@ -275,9 +281,10 @@
             <c:if test="${empty(negativeValue)}">
                 <c:set var="negativeValue" value="false" />
             </c:if>
-            
+
             <c:if test="${empty(spinner)}">
-                <c:set var="spinner" value="${fieldInfo.numberType!=FieldNumberTypeEnum.BigDecimal and fieldInfo.numberType!=FieldNumberTypeEnum.Double and fieldInfo.numberType!=FieldNumberTypeEnum.Float}" />
+                <c:set var="spinner"
+                    value="${fieldInfo.numberType!=FieldNumberTypeEnum.BigDecimal and fieldInfo.numberType!=FieldNumberTypeEnum.Double and fieldInfo.numberType!=FieldNumberTypeEnum.Float}" />
             </c:if>
 
             <hftl:formNumberField id="${empty(id)?fieldIdPrefix.concat('_number'):id}" fieldItem="#{fieldItem}" fieldIdPrefix="${fieldIdPrefix}" label="${label}"
@@ -285,9 +292,7 @@
                 style="${style}" labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}"
                 labelWidth="${labelWidth}" inputWidth="${inputWidth}" size="${size}" maxlength="${maxlength}" listValues="${listValues}" minValue="${minValue}"
                 maxValue="${maxValue}" isMessage="${isMessage}" messagePrefix="${messagePrefix}" converter="${empty(converter)?fieldInfo.numberConverter:converter}"
-                negativeValue="${negativeValue}"
-                spinner="${spinner}"
-                edit="#{edit}" />
+                negativeValue="${negativeValue}" spinner="${spinner}" edit="#{edit}" />
 
         </c:if>
 
@@ -323,7 +328,7 @@
                 required="${required}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}"
                 labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}"
                 inputWidth="${inputWidth}" listValues="${empty(listValues)? fieldInfo.enumListValues:listValues}" enumClassname="#{fieldInfo.enumClassname}"
-                listenerUpdate="${listenerUpdate}" edit="#{edit}" />
+                listenerUpdate="${listenerUpdate}" actionListenerBean="${actionListenerBean}" actionListenerMethod="${actionListenerMethod}" edit="#{edit}" />
         </c:if>
 
         <!--  If the value binding is a List, display a panel with list of entities. -->

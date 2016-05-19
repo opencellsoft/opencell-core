@@ -3,7 +3,6 @@ package org.meveo.api.dto.catalog;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -12,10 +11,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.crm.CustomFieldInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -24,111 +23,114 @@ import org.meveo.model.crm.CustomFieldInstance;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OfferTemplateDto implements Serializable {
 
-	private static final long serialVersionUID = 9156372453581362595L;
+    private static final long serialVersionUID = 9156372453581362595L;
 
-	@XmlAttribute(required = true)
-	private String code;
+    @XmlAttribute(required = true)
+    private String code;
 
-	@XmlAttribute()
-	private String description;
+    @XmlAttribute()
+    private String description;
 
-	private boolean disabled = false;
-	private String bomCode;
-	private String offerTemplateCategoryCode;
+    private boolean disabled = false;
+    private String bomCode;
+    private String offerTemplateCategoryCode;
 
-	@XmlElementWrapper(name = "offerServiceTemplates")
-	@XmlElement(name = "offerServiceTemplate")
-	private List<OfferServiceTemplateDto> offerServiceTemplates;
+    @XmlElementWrapper(name = "offerServiceTemplates")
+    @XmlElement(name = "offerServiceTemplate")
+    private List<OfferServiceTemplateDto> offerServiceTemplates;
 
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields = new CustomFieldsDto();
 
-	public OfferTemplateDto() {
+    public OfferTemplateDto() {
 
-	}
+    }
 
-	public OfferTemplateDto(OfferTemplate e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
-		code = e.getCode();
-		description = e.getDescription();
-		disabled = e.isDisabled();
-		if (e.getBusinessOfferModel() != null) {
-			bomCode = e.getBusinessOfferModel().getCode();
-		}
+    public OfferTemplateDto(OfferTemplate e, CustomFieldsDto customFieldInstances) {
+        code = e.getCode();
+        description = e.getDescription();
+        disabled = e.isDisabled();
+        if (e.getBusinessOfferModel() != null) {
+            bomCode = e.getBusinessOfferModel().getCode();
+        }
 
-		if (e.getOfferTemplateCategory() != null) {
-			offerTemplateCategoryCode = e.getOfferTemplateCategory().getCode();
-		}
+        if (e.getOfferTemplateCategory() != null) {
+            offerTemplateCategoryCode = e.getOfferTemplateCategory().getCode();
+        }
 
-		if (e.getOfferServiceTemplates() != null && e.getOfferServiceTemplates().size() > 0) {
-			offerServiceTemplates = new ArrayList<>();
-			for (OfferServiceTemplate st : e.getOfferServiceTemplates()) {
-				offerServiceTemplates.add(new OfferServiceTemplateDto(st));
-			}
-		}
+        if (e.getOfferServiceTemplates() != null && e.getOfferServiceTemplates().size() > 0) {
+            offerServiceTemplates = new ArrayList<>();
+            for (OfferServiceTemplate st : e.getOfferServiceTemplates()) {
+                offerServiceTemplates.add(new OfferServiceTemplateDto(st));
+            }
+        }
 
-		customFields = CustomFieldsDto.toDTO(customFieldInstances);
-	}
+        customFields = customFieldInstances;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public boolean isDisabled() {
-		return disabled;
-	}
+    public boolean isDisabled() {
+        return disabled;
+    }
 
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
-	}
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
 
-	@Override
-	public String toString() {
-		return "OfferTemplateDto [code=" + code + ", description=" + description + ", disabled=" + disabled
-				+ ", bomCode=" + bomCode + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode
-				+ ", offerServiceTemplates=" + offerServiceTemplates + ", customFields=" + customFields + "]";
-	}
+    @Override
+    public String toString() {
+        return "OfferTemplateDto [code=" + code + ", description=" + description + ", disabled=" + disabled + ", bomCode=" + bomCode + ", offerTemplateCategoryCode="
+                + offerTemplateCategoryCode + ", offerServiceTemplates=" + offerServiceTemplates + ", customFields=" + customFields + "]";
+    }
 
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
 
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 
-	public String getBomCode() {
-		return bomCode;
-	}
+    public String getBomCode() {
+        return bomCode;
+    }
 
-	public void setBomCode(String bomCode) {
-		this.bomCode = bomCode;
-	}
+    public void setBomCode(String bomCode) {
+        this.bomCode = bomCode;
+    }
 
-	public String getOfferTemplateCategoryCode() {
-		return offerTemplateCategoryCode;
-	}
+    public String getOfferTemplateCategoryCode() {
+        return offerTemplateCategoryCode;
+    }
 
-	public void setOfferTemplateCategoryCode(String offerTemplateCategoryCode) {
-		this.offerTemplateCategoryCode = offerTemplateCategoryCode;
-	}
+    public void setOfferTemplateCategoryCode(String offerTemplateCategoryCode) {
+        this.offerTemplateCategoryCode = offerTemplateCategoryCode;
+    }
 
-	public List<OfferServiceTemplateDto> getOfferServiceTemplates() {
-		return offerServiceTemplates;
-	}
+    public List<OfferServiceTemplateDto> getOfferServiceTemplates() {
+        return offerServiceTemplates;
+    }
 
-	public void setOfferServiceTemplates(List<OfferServiceTemplateDto> offerServiceTemplates) {
-		this.offerServiceTemplates = offerServiceTemplates;
-	}
+    public void setOfferServiceTemplates(List<OfferServiceTemplateDto> offerServiceTemplates) {
+        this.offerServiceTemplates = offerServiceTemplates;
+    }
 
+    public boolean isCodeOnly() {
+        return StringUtils.isBlank(description) && StringUtils.isBlank(bomCode) && StringUtils.isBlank(offerTemplateCategoryCode)
+                && (offerServiceTemplates == null || offerServiceTemplates.isEmpty()) && (customFields == null || customFields.isEmpty());
+    }
 }

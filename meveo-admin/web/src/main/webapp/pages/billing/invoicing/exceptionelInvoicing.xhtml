@@ -61,11 +61,14 @@
 				renderEditLink="false" renderDeleteLink="false"
 				editView="billingAccountDetail" />
 			<ui:define name="add-on-buttons">
-                <hftl:decorateFormField fieldId="invoiceDate" label="#{messages['billingRun.invoiceDate']}" >
-                    <p:calendar id="invoiceDate" value="#{billingAccountBean.exceptionalInvoicingDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+                <hftl:decorateFormField fieldId="invoiceDate" label="#{messages['billingRun.invoiceDate']}" 
+                	rendered="#{billingAccountBean.canUserUpdateEntity()}">
+                    <p:calendar id="invoiceDate" value="#{billingAccountBean.exceptionalInvoicingDate}" 
+                    	pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
                         required="true" />
                 </hftl:decorateFormField>
-    			<hftl:decorateFormField fieldId="lastTransactionDate" label="#{messages['billingRun.lastTransactionDate']}" >
+    			<hftl:decorateFormField fieldId="lastTransactionDate" label="#{messages['billingRun.lastTransactionDate']}" 
+    				rendered="#{billingAccountBean.canUserUpdateEntity()}">
     				<p:calendar id="lastTransactionDate"
     				value="#{billingAccountBean.exceptionalLastTransactionDate}"
     				 pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
@@ -74,6 +77,7 @@
                 <h:panelGroup layout="block" styleClass="form-panel-actions">               
     				<p:commandButton
     					action="#{billingAccountBean.launchExceptionalInvoicing}"
+    					rendered="#{billingAccountBean.canUserUpdateEntity()}"
     					ajax="false" value="#{messages['button.launchInvoicing']}"/>
                 </h:panelGroup>
 			</ui:define>

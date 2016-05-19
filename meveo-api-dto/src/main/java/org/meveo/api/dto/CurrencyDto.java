@@ -10,6 +10,8 @@ import org.meveo.model.billing.TradingCurrency;
 
 /**
  * @author Edward P. Legaspi
+ * 
+ *  @deprecated will be renammed to  TradingCurrencyDto
  **/
 @XmlRootElement(name = "Currency")
 @XmlAccessorType(XmlAccessType.FIELD)

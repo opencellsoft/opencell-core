@@ -29,8 +29,24 @@
 		<navigation-handler>org.primefaces.application.DialogNavigationHandler</navigation-handler>
 		<view-handler>org.primefaces.application.DialogViewHandler</view-handler>
 	</application>
+	
+	<lifecycle>
+		<phase-listener>org.meveo.admin.web.listener.PageAccessListener</phase-listener>
+	</lifecycle>
 
 	<navigation-rule>
+		<navigation-case>
+			<from-outcome>forbidden</from-outcome>
+			<to-view-id>/errors/403.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>notFound</from-outcome>
+			<to-view-id>/errors/404.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	
 		<navigation-case>
 			<from-action>#{identity.login}</from-action>
 			<if>#{identity.loggedIn}</if>

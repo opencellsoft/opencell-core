@@ -315,7 +315,7 @@ public class UsageChargeTemplateApi extends BaseApi {
             throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
         }
 
-        result = new UsageChargeTemplateDto(chargeTemplate, customFieldInstanceService.getCustomFieldInstances(chargeTemplate));
+        result = new UsageChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
         for (CatMessages msg : catMessagesService.getCatMessagesList(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId())) {

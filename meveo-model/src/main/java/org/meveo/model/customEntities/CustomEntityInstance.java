@@ -27,6 +27,10 @@ public class CustomEntityInstance extends BusinessCFEntity {
     @NotNull
     public String cetCode;
 
+    @Column(name = "PARENT_UUID", updatable = false, length = 60)
+    @Size(max = 60)
+    public String parentEntityUuid;
+
     @Override
     public ICustomFieldEntity getParentCFEntity() {
         return null;
@@ -38,6 +42,14 @@ public class CustomEntityInstance extends BusinessCFEntity {
 
     public void setCetCode(String cetCode) {
         this.cetCode = cetCode;
+    }
+
+    public void setParentEntityUuid(String parentEntityUuid) {
+        this.parentEntityUuid = parentEntityUuid;
+    }
+
+    public String getParentEntityUuid() {
+        return parentEntityUuid;
     }
 
     @Override
@@ -53,8 +65,8 @@ public class CustomEntityInstance extends BusinessCFEntity {
 
         CustomEntityInstance other = (CustomEntityInstance) obj;
 
-        if (getId() != null && other.getId() != null && getId() == other.getId()) {
-            // return true;
+        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
+            return true;
         }
 
         if (code == null && other.getCode() != null) {

@@ -1,15 +1,12 @@
 package org.meveo.api.dto.catalog;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.crm.CustomFieldInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -33,7 +30,7 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 
 	}
 
-	public RecurringChargeTemplateDto(RecurringChargeTemplate e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
+	public RecurringChargeTemplateDto(RecurringChargeTemplate e, CustomFieldsDto customFieldInstances) {
 		super(e, customFieldInstances);
 		durationTermInMonth = e.getDurationTermInMonth();
 		subscriptionProrata = e.getSubscriptionProrata();

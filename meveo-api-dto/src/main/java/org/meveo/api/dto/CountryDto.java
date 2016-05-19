@@ -12,6 +12,8 @@ import org.meveo.model.billing.TradingCountry;
 /**
  * @author Edward P. Legaspi
  * @since Oct 4, 2013
+ * 
+ * @deprecated will be renammed to TradingCountryDto
  **/
 @XmlRootElement(name = "Country")
 @XmlAccessorType(XmlAccessType.FIELD)

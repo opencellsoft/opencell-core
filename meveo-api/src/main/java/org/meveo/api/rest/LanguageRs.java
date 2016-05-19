@@ -20,6 +20,8 @@ import org.meveo.api.rest.security.RSSecured;
  * * Web service for managing {@link org.meveo.model.billing.Language} and {@link org.meveo.model.billing.TradingLanguage}.
  * 
  * @author Edward P. Legaspi
+ * 
+ * @deprecated will be rennamed to  TradingLanguageRs
  **/
 @Path("/language")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })

@@ -12,27 +12,27 @@
 <tr><td rowspan="1" colspan="3">BackButtonTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${RePopulateButton}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${RePopulateButton}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForText</td>
-	<td>//div[2]/div[2]/span[2]</td>
-	<td>exact:Do you really want to re-populate all caches?</td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>//div[2]/form/div[2]/div[2]</td>
-	<td>exact:Do you really want to re-populate all caches?</td>
-</tr>
-<tr>
-	<td>verifyText</td>
-	<td>//div[2]/div[2]/span[2]</td>
-	<td>exact:Do you really want to re-populate all caches?</td>
+	<td>waitForElementPresent</td>
+	<td>${RePopulateNo}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
+	<td>${RePopulateNo}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
 	<td>${RePopulateNo}</td>
 	<td></td>
 </tr>

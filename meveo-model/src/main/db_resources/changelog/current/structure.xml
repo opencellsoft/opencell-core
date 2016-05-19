@@ -1560,7 +1560,7 @@
             <column name="EXONERATION_REASON" type="VARCHAR(255)" />          
         </addColumn>   
         <dropColumn columnName="EXONERATION_TAX_EL" tableName="CRM_PROVIDER" />
-    </changeSet>      
+    </changeSet>    
     <changeSet id="#1588_20160412" author="AndriusKarpavicius">
         <dropNotNullConstraint tableName="adm_notif_webhooks" columnName="HTTP_PORT"/>  
 
@@ -1589,7 +1589,7 @@
 			baseTableName="AR_DDREQUEST_ITEM" constraintName="fk_ar_occ_dd_item"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />                   
-    </changeSet> 
+    </changeSet>
     
     <changeSet id="#1548_20160421" author="AndriusKarpavicius">
         <modifyDataType tableName="MEVEO_SCRIPT_INSTANCE" columnName="APPLICABLE_ON_EL" newDataType="varchar(2000)"/>
@@ -1601,7 +1601,7 @@
     <changeSet id="#1651-20160421" author="Mbarek">
 	<modifyDataType columnName="APPLICABLE_ON_EL"
 		newDataType="VARCHAR(2000)" tableName="CRM_CUSTOM_FIELD_TMPL" />
-    </changeSet>	
+    </changeSet>
 
     <changeSet id="#1649_20160427" author="AndriusKarpavicius">
         <sql>update crm_custom_field_tmpl tm set provider_id = (select provider_id from adm_user where id = tm.creator_id) where tm.provider_id is null;</sql>    
@@ -1609,7 +1609,7 @@
     
     <changeSet id="#1611_20160429" author="EdwardLegaspi">
     	<addColumn tableName="adm_inbound_request">
-    		<column name="body" type="VARCHAR(1000)"></column>
+    		<column name="body" type="TEXT"></column>
     	</addColumn>
     </changeSet>
     
@@ -1816,6 +1816,67 @@
             <column name="UUID" type="VARCHAR(60)"/>
         </addColumn>
         <sql>update AR_ACCOUNT_OPERATION set UUID ='AccountOperation-'|| id </sql>          
-    </changeSet>   	
-	
+    </changeSet> 
+    
+	<changeSet id="#1666_20160503" author="mhammam">
+		<addColumn tableName="ADM_COUNTRY">
+			<column name="DESCRIPTION_FR" type="VARCHAR(100)" /> 
+		</addColumn>
+	</changeSet>
+    
+    <changeSet id="#1487_20160503" author="AndriusKarpavicius">
+        <addColumn tableName="CUST_CEI">
+            <column name="PARENT_UUID" type="VARCHAR(60)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#1671_20150504" author="AndriusKarpavicius">
+        <sql>
+            update CAT_COUNTER_TEMPLATE set CEILING_EXPRESSION_EL=replace(CEILING_EXPRESSION_EL,'.mapValue[','[')  where CEILING_EXPRESSION_EL is not null and CEILING_EXPRESSION_EL like '%mv:%';
+            update CAT_COUNTER_TEMPLATE set CEILING_EXPRESSION_EL=replace(CEILING_EXPRESSION_EL,'.listValue','')  where CEILING_EXPRESSION_EL is not null and CEILING_EXPRESSION_EL like '%mv:%';
+            update CAT_DISCOUNT_PLAN_ITEM set EXPRESSION_EL=replace(EXPRESSION_EL,'.mapValue[','[')  where EXPRESSION_EL is not null and EXPRESSION_EL like '%mv:%';
+            update CAT_DISCOUNT_PLAN_ITEM set EXPRESSION_EL=replace(EXPRESSION_EL,'.listValue','')  where EXPRESSION_EL is not null and EXPRESSION_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set SUBSCRIPTION_EL=replace(SUBSCRIPTION_EL,'.mapValue[','[')  where SUBSCRIPTION_EL is not null and SUBSCRIPTION_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set SUBSCRIPTION_EL=replace(SUBSCRIPTION_EL,'.listValue','')  where SUBSCRIPTION_EL is not null and SUBSCRIPTION_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set CONDITION_EL=replace(CONDITION_EL,'.mapValue[','[')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set CONDITION_EL=replace(CONDITION_EL,'.listValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set QUANTITY_EL=replace(QUANTITY_EL,'.mapValue[','[')  where QUANTITY_EL is not null and QUANTITY_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set QUANTITY_EL=replace(QUANTITY_EL,'.listValue','')  where QUANTITY_EL is not null and QUANTITY_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_1_EL=replace(PARAM_1_EL,'.mapValue[','[')  where PARAM_1_EL is not null and PARAM_1_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_1_EL=replace(PARAM_1_EL,'.listValue','')  where PARAM_1_EL is not null and PARAM_1_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_2_EL=replace(PARAM_2_EL,'.mapValue[','[')  where PARAM_2_EL is not null and PARAM_2_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_2_EL=replace(PARAM_2_EL,'.listValue','')  where PARAM_2_EL is not null and PARAM_2_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_3_EL=replace(PARAM_3_EL,'.mapValue[','[')  where PARAM_3_EL is not null and PARAM_3_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_3_EL=replace(PARAM_3_EL,'.listValue','')  where PARAM_3_EL is not null and PARAM_3_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_4_EL=replace(PARAM_4_EL,'.mapValue[','[')  where PARAM_4_EL is not null and PARAM_4_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_4_EL=replace(PARAM_4_EL,'.listValue','')  where PARAM_4_EL is not null and PARAM_4_EL like '%mv:%';
+            update MEVEO_NATIVE_FILTER_CONDITION set EL=replace(EL,'.mapValue[','[')  where EL is not null and EL like '%mv:%';
+            update MEVEO_NATIVE_FILTER_CONDITION set EL=replace(EL,'.listValue','')  where EL is not null and EL like '%mv:%';
+            update ADM_NOTIF_EMAIL set EMAIL_TO_EL=replace(EMAIL_TO_EL,'.mapValue[','[')  where EMAIL_TO_EL is not null and EMAIL_TO_EL like '%mv:%';
+            update ADM_NOTIF_EMAIL set EMAIL_TO_EL=replace(EMAIL_TO_EL,'.listValue','')  where EMAIL_TO_EL is not null and EMAIL_TO_EL like '%mv:%';
+            update ADM_NOTIF_WEBHOOKS set BODY_EL=replace(BODY_EL,'.mapValue[','[')  where BODY_EL is not null and BODY_EL like '%mv:%';
+            update ADM_NOTIF_WEBHOOKS set BODY_EL=replace(BODY_EL,'.listValue','')  where BODY_EL is not null and BODY_EL like '%mv:%';
+            update ADM_NOTIF_IM set ID_EXPRESSION=replace(ID_EXPRESSION,'.mapValue[','[')  where ID_EXPRESSION is not null and ID_EXPRESSION like '%mv:%';
+            update ADM_NOTIF_IM set ID_EXPRESSION=replace(ID_EXPRESSION,'.listValue','')  where ID_EXPRESSION is not null and ID_EXPRESSION like '%mv:%';
+            update ADM_NOTIFICATION set EVENT_EXPRESSION_FILTER=replace(EVENT_EXPRESSION_FILTER,'.mapValue[','[')  where EVENT_EXPRESSION_FILTER is not null and EVENT_EXPRESSION_FILTER like '%mv:%';
+            update ADM_NOTIFICATION set EVENT_EXPRESSION_FILTER=replace(EVENT_EXPRESSION_FILTER,'.listValue','')  where EVENT_EXPRESSION_FILTER is not null and EVENT_EXPRESSION_FILTER like '%mv:%';
+            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.mapValue[','[')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.listValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.mapValue[','[')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.listValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL=replace(CRITERIA_EL,'.mapValue[','[')  where CRITERIA_EL is not null and CRITERIA_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL=replace(CRITERIA_EL,'.listValue','')  where CRITERIA_EL is not null and CRITERIA_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL=replace(AMOUNT_WITHOUT_TAX_EL,'.mapValue[','[')  where AMOUNT_WITHOUT_TAX_EL is not null and AMOUNT_WITHOUT_TAX_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL=replace(AMOUNT_WITHOUT_TAX_EL,'.listValue','')  where AMOUNT_WITHOUT_TAX_EL is not null and AMOUNT_WITHOUT_TAX_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL=replace(AMOUNT_WITH_TAX_EL,'.mapValue[','[')  where AMOUNT_WITH_TAX_EL is not null and AMOUNT_WITH_TAX_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL=replace(AMOUNT_WITH_TAX_EL,'.listValue','')  where AMOUNT_WITH_TAX_EL is not null and AMOUNT_WITH_TAX_EL like '%mv:%';
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL=replace(FILTER_EL,'.mapValue[','[')  where FILTER_EL is not null and FILTER_EL like '%mv:%';
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL=replace(FILTER_EL,'.listValue','')  where FILTER_EL is not null and FILTER_EL like '%mv:%';
+        </sql>
+    </changeSet>
+    <changeSet id="#1487_20150509" author="AndriusKarpavicius">
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+            <column name="CHE_FIELDS" type="VARCHAR(500)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

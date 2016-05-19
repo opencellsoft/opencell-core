@@ -74,6 +74,8 @@
        <hftl:entityPopup id="searchInvoicePopup"
 			header="#{messages['invoice.search']}"
 			backingBean="#{invoiceBean}"
+			searchField1="invoiceNumber" 
+			searchField2Label="#{messages['invoice.invoiceNumber']}"
 			updateField=":#{p:component('invoice')}"
 			selection="#{ratedTransactionListBean.filters['invoice']}"   
 			formField1="invoiceNumber" column1Label="#{messages['invoice.invoiceNumber']}"

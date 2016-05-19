@@ -70,7 +70,7 @@
                         <f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
                     </p:commandButton>
             
-                    <p:button id="buttonNew" value="#{messages['commons.new']}" outcome="#{newButtonView}" rendered="#{renderNewButton and backingBean.canUserUpdateEntity(request.requestURL)}">
+                    <p:button id="buttonNew" value="#{messages['commons.new']}" outcome="#{newButtonView}" rendered="#{renderNewButton and backingBean.canUserUpdateEntity()}">
                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                         <f:param name="edit" value="true" />
                     </p:button>

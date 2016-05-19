@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -59,6 +60,10 @@ public class CustomFieldDto {
 
     @XmlElement()
     protected EntityReferenceDto entityReferenceValue;
+    
+    // A transient object. Contains a converted value from DTO to some object when it is applicable
+    @XmlTransient
+    protected Object valueConverted;
 
     public CustomFieldDto() {
     }
@@ -322,6 +327,10 @@ public class CustomFieldDto {
             return entityReferenceValue.fromDTO();
         }
         return null;
+    }
+
+    public void setValueConverted(Object valueConverted) {
+        this.valueConverted = valueConverted;
     }
 
     @Override

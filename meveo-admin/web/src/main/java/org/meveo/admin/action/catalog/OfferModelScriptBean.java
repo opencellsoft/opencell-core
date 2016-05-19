@@ -11,9 +11,11 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.OfferModelScript;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
+import org.meveo.service.script.GenericScriptService;
 import org.meveo.service.script.OfferModelScriptService;
 import org.omnifaces.cdi.ViewScoped;
 
@@ -24,116 +26,98 @@ import org.omnifaces.cdi.ViewScoped;
 @ViewScoped
 public class OfferModelScriptBean extends BaseBean<OfferModelScript> {
 
-	private static final long serialVersionUID = -4034706786961656074L;
+    private static final long serialVersionUID = -4034706786961656074L;
 
-	@Inject
-	private OfferModelScriptService offerModelScriptService;
+    @Inject
+    private OfferModelScriptService offerModelScriptService;
+    
+    @Inject
+    private GenericScriptService genericScriptService;
 
-	@Inject
-	private BusinessOfferModelService businessOfferModelService;
+    @Inject
+    private BusinessOfferModelService businessOfferModelService;
 
-	private Long bomId;
+    private Long bomId;
 
-	public OfferModelScriptBean() {
-		super(OfferModelScript.class);
-	}
+    public OfferModelScriptBean() {
+        super(OfferModelScript.class);
+    }
 
+    @Override
+    public OfferModelScript initEntity() {
+        if (bomId != null) {
+            return super.initEntity();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public OfferModelScript initEntity(Long id) {
+        super.initEntity(id);
+
+        if (entity.isError()) {
+            offerModelScriptService.compileScript(entity, true);
+        }
+
+        return entity;
+    }
+
+    @Override
+    protected IPersistenceService<OfferModelScript> getPersistenceService() {
+        return offerModelScriptService;
+    }
+
+    @Override
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("provider");
+    }
+
+    public void testCompilation() {
+        offerModelScriptService.compileScript(entity, true);
+        if (!entity.isError()) {
+            messages.info(new BundleKey("messages", "scriptInstance.compilationSuccessfull"));
+        }
+    }
+
+    @SuppressWarnings("static-access")
 	@Override
-	public OfferModelScript initEntity() {
-		if (bomId != null) {
-			return super.initEntity();
-		} else {
-			return null;
-		}
-	}
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-	@Override
-	public OfferModelScript initEntity(Long id) {
-		super.initEntity(id);
+        entity.setCode(offerModelScriptService.getFullClassname(entity.getScript()));
 
-		if (entity.isError()) {
-			offerModelScriptService.compileScript(entity, true);
-		}
+        CustomScript scriptDuplicate =  genericScriptService.findByCode(entity.getCode(), getCurrentProvider());
+        if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
+            messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), entity.getCode());
+            return null;
+        }
 
-		return entity;
-	}
+        try {
+            String result = super.saveOrUpdate(killConversation);
 
-	@Override
-	protected IPersistenceService<OfferModelScript> getPersistenceService() {
-		return offerModelScriptService;
-	}
+            // find bom
+            BusinessOfferModel businessOfferModel = businessOfferModelService.findById(bomId);
+            businessOfferModel.setScript(entity);
+            businessOfferModelService.update(businessOfferModel, getCurrentUser());
 
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
+            if (entity.isError()) {
+                return null;
+            }
 
-	public void testCompilation() {
-		offerModelScriptService.compileScript(entity, true);
-		if (!entity.isError()) {
-			messages.info(new BundleKey("messages", "scriptInstance.compilationSuccessfull"));
-		}
-	}
+            return result;
+        } catch (Exception e) {
+            messages.error(e.getMessage());
+            return null;
+        }
+    }
 
-	@Override
-	@ActionMethod
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+    public Long getBomId() {
+        return bomId;
+    }
 
-		entity.setCode(offerModelScriptService.getFullClassname(entity.getScript()));
-
-		OfferModelScript actionDuplicate = offerModelScriptService.findByCode(entity.getCode(), getCurrentProvider());
-		if (actionDuplicate != null && !actionDuplicate.getId().equals(entity.getId())) {
-			messages.error(new BundleKey("messages", "offerModelScript.actionAlreadyExists"));
-			return null;
-		}
-
-		// check duplicate script
-		if (entity.isTransient() && offerModelScriptService.isExistsCode(entity.getCode(), getCurrentProvider())) {
-			messages.error(new BundleKey("messages", "javax.persistence.EntityExistsException"));
-			return null;
-		}
-
-		try {
-			String result = super.saveOrUpdate(killConversation);
-
-			// find bom
-			BusinessOfferModel businessOfferModel = businessOfferModelService.findById(bomId);
-			businessOfferModel.setScript(entity);
-			businessOfferModelService.update(businessOfferModel, getCurrentUser());
-
-			if (entity.isError()) {
-				return null;
-			}
-
-			return result;
-		} catch (Exception e) {
-			messages.error(e.getMessage());
-			return null;
-		}
-	}
-
-	@Override
-	public void deleteInlist() {
-		// delete in bom
-		List<BusinessOfferModel> businessOfferModels = businessOfferModelService.findByScriptId(entity.getId());
-		for (BusinessOfferModel bom : businessOfferModels) {
-			bom.setScript(null);
-			try {
-				businessOfferModelService.update(bom, getCurrentUser());
-			} catch (BusinessException e) {
-				messages.error(e.getMessage());
-			}
-		}
-
-		super.deleteInlist();
-	}
-
-	public Long getBomId() {
-		return bomId;
-	}
-
-	public void setBomId(Long bomId) {
-		this.bomId = bomId;
-	}
+    public void setBomId(Long bomId) {
+        this.bomId = bomId;
+    }
 
 }

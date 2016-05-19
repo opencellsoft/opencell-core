@@ -10,7 +10,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
@@ -675,15 +674,15 @@ public class SubscriptionApi extends BaseApi {
 
         if (subscription.getAccessPoints() != null) {
             for (Access ac : subscription.getAccessPoints()) {
-                dto.getAccesses().getAccess().add(new AccessDto(ac, customFieldInstanceService.getCustomFieldInstances(ac)));
+                dto.getAccesses().getAccess().add(new AccessDto(ac, entityToDtoConverter.getCustomFieldsDTO(ac)));
             }
         }
 
-        dto.setCustomFields(CustomFieldsDto.toDTO(customFieldInstanceService.getCustomFieldInstances(subscription)));
+        dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(subscription));
 
         if (subscription.getServiceInstances() != null) {
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
-                dto.getServices().getServiceInstance().add(new ServiceInstanceDto(serviceInstance, customFieldInstanceService.getCustomFieldInstances(serviceInstance)));
+                dto.getServices().getServiceInstance().add(new ServiceInstanceDto(serviceInstance, entityToDtoConverter.getCustomFieldsDTO(serviceInstance)));
             }
         }
         return dto;

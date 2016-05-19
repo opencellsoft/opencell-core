@@ -17,6 +17,7 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.CustomScript;
@@ -61,6 +62,18 @@ public class ServiceModelScriptService extends CustomScriptService<ServiceModelS
         return serviceModelScript;
     }
 
+    
+    @Override
+    public void remove(ServiceModelScript e) {
+
+        if (e.getBusinessServiceModel()!=null){
+            BusinessServiceModel bsm =  e.getBusinessServiceModel();
+            bsm.setScript(null);
+        }
+        super.remove(e);
+    }
+    
+    
     /**
      * Get all ServiceModelScripts with error for a provider
      * 
@@ -139,4 +152,5 @@ public class ServiceModelScriptService extends CustomScriptService<ServiceModelS
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
         scriptInterface.terminateServiceInstance(scriptContext, currentUser);
     }
+
 }

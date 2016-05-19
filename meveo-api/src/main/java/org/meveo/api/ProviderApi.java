@@ -17,7 +17,6 @@ import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.ProviderDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
-import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
@@ -65,7 +64,6 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.catalog.impl.TitleService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -74,6 +72,7 @@ import org.meveo.service.payments.impl.CreditCategoryService;
 /**
  * @author Edward P. Legaspi
  **/
+@SuppressWarnings("deprecation")
 @Stateless
 public class ProviderApi extends BaseApi {
 
@@ -131,9 +130,6 @@ public class ProviderApi extends BaseApi {
     @Inject
     private TitleService titleService;
 
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-
     public void create(ProviderDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -162,6 +158,8 @@ public class ProviderApi extends BaseApi {
         provider.setDisplayFreeTransacInInvoice(postData.isDisplayFreeTransacInInvoice());
         provider.setRounding(postData.getRounding());
         provider.setEmail(postData.getEmail());
+        provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
+        provider.setPrepaidReservationExpirationDelayinMillisec(postData.getPrepaidReservationExpirationDelayinMillisec());
 
         // search for country
         if (!StringUtils.isBlank(postData.getCountry())) {
@@ -199,16 +197,18 @@ public class ProviderApi extends BaseApi {
         }
 
         InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
-        invoiceConfiguration.setDisplayEdrs(postData.getDisplayEdrs());
-        invoiceConfiguration.setDisplayOffers(postData.getDisplayOffers());
-        invoiceConfiguration.setDisplayServices(postData.getDisplayServices());
-        invoiceConfiguration.setDisplaySubscriptions(postData.getDisplaySubscriptions());
-        invoiceConfiguration.setDisplayProvider(postData.getDisplayProvider());
-        invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
-        invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
-        invoiceConfiguration.setDisplayPricePlans(postData.getDisplayPricePlans());
-        invoiceConfiguration.setDisplayCfAsXML(postData.getDisplayCfAsXML());
-        invoiceConfiguration.setDisplayChargesPeriods(postData.getDisplayChargesPeriods());
+        if(postData.getInvoiceConfiguration() != null) {
+        	invoiceConfiguration.setDisplayEdrs(postData.getInvoiceConfiguration().getDisplayEdrs());
+        	invoiceConfiguration.setDisplayOffers(postData.getInvoiceConfiguration().getDisplayOffers());
+        	invoiceConfiguration.setDisplayServices(postData.getInvoiceConfiguration().getDisplayServices());
+        	invoiceConfiguration.setDisplaySubscriptions(postData.getInvoiceConfiguration().getDisplaySubscriptions());
+        	invoiceConfiguration.setDisplayProvider(postData.getInvoiceConfiguration().getDisplayProvider());
+        	invoiceConfiguration.setDisplayDetail(postData.getInvoiceConfiguration().getDisplayDetail());
+        	invoiceConfiguration.setDisplayPricePlans(postData.getInvoiceConfiguration().getDisplayPricePlans());
+        	invoiceConfiguration.setDisplayCfAsXML(postData.getInvoiceConfiguration().getDisplayCfAsXML());
+        	invoiceConfiguration.setDisplayChargesPeriods(postData.getInvoiceConfiguration().getDisplayChargesPeriods());
+        }
+
         invoiceConfiguration.setProvider(provider);
 
         provider.setInvoiceConfiguration(invoiceConfiguration);
@@ -254,7 +254,7 @@ public class ProviderApi extends BaseApi {
 
         Provider provider = providerService.findByCodeWithFetch(providerCode, Arrays.asList("currency", "country", "language"));
         if (provider != null) {
-            return new ProviderDto(provider, customFieldInstanceService.getCustomFieldInstances(provider));
+            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider));
         }
 
         throw new EntityDoesNotExistsException(Provider.class, providerCode);
@@ -283,6 +283,8 @@ public class ProviderApi extends BaseApi {
         provider.setMultilanguageFlag(postData.isMultiLanguage());
         provider.setRounding(postData.getRounding());
         provider.setEmail(postData.getEmail());
+        provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
+        provider.setPrepaidReservationExpirationDelayinMillisec(postData.getPrepaidReservationExpirationDelayinMillisec());
 
         // search for country
         if (!StringUtils.isBlank(postData.getCountry())) {
@@ -323,22 +325,6 @@ public class ProviderApi extends BaseApi {
         provider.setEntreprise(postData.isEnterprise());
         provider.setInvoicePrefix(postData.getInvoicePrefix());
         provider.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
-
-        InvoiceConfiguration invoiceConfiguration = provider.getInvoiceConfiguration();
-        if (invoiceConfiguration == null) {
-            invoiceConfiguration = new InvoiceConfiguration();
-            invoiceConfiguration.setProvider(provider);
-            provider.setInvoiceConfiguration(invoiceConfiguration);
-        }
-        invoiceConfiguration.setDisplaySubscriptions(postData.getDisplaySubscriptions());
-        invoiceConfiguration.setDisplayServices(postData.getDisplayServices());
-        invoiceConfiguration.setDisplayOffers(postData.getDisplayOffers());
-        invoiceConfiguration.setDisplayEdrs(postData.getDisplayEdrs());
-        invoiceConfiguration.setDisplayProvider(postData.getDisplayProvider());
-        invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
-        invoiceConfiguration.setDisplayPricePlans(postData.getDisplayPricePlans());
-        invoiceConfiguration.setDisplayCfAsXML(postData.getDisplayCfAsXML());
-        invoiceConfiguration.setDisplayChargesPeriods(postData.getDisplayChargesPeriods());
 
         if (postData.getInvoiceSequenceSize() != null) {
             provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
@@ -395,6 +381,26 @@ public class ProviderApi extends BaseApi {
             }
             provider.setBankCoordinates(bankCoordinates);
         }
+        
+        InvoiceConfiguration invoiceConfiguration = provider.getInvoiceConfiguration();
+        if (invoiceConfiguration == null) {
+            invoiceConfiguration = new InvoiceConfiguration();
+        }
+        
+    	invoiceConfiguration.setDisplaySubscriptions(postData.getInvoiceConfiguration().getDisplaySubscriptions());
+        invoiceConfiguration.setDisplayServices(postData.getInvoiceConfiguration().getDisplayServices());
+        invoiceConfiguration.setDisplayOffers(postData.getInvoiceConfiguration().getDisplayOffers());
+        invoiceConfiguration.setDisplayEdrs(postData.getInvoiceConfiguration().getDisplayEdrs());
+        invoiceConfiguration.setDisplayProvider(postData.getInvoiceConfiguration().getDisplayProvider());
+        invoiceConfiguration.setDisplayDetail(postData.getInvoiceConfiguration().getDisplayDetail());
+        invoiceConfiguration.setDisplayPricePlans(postData.getInvoiceConfiguration().getDisplayPricePlans());
+        invoiceConfiguration.setDisplayCfAsXML(postData.getInvoiceConfiguration().getDisplayCfAsXML());
+        invoiceConfiguration.setDisplayChargesPeriods(postData.getInvoiceConfiguration().getDisplayChargesPeriods());
+        
+        invoiceConfiguration.setProvider(provider);
+        provider.setInvoiceConfiguration(invoiceConfiguration);
+        
+        
 
         provider.setRecognizeRevenue(postData.isRecognizeRevenue());
         

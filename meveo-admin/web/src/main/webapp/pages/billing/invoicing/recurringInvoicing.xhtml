@@ -27,7 +27,7 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description"
 			selection="#{billingRunBean.billingCycle}"
-			updateField=":formId:billingCycleId :formId:billingCycleId_text">
+			updateField=":formId">
 
 		</hftl:entityPopup>
 
@@ -53,6 +53,7 @@
             <ui:param name="buttons" value="true"/>
             <ui:define name="buttons">
     			<p:commandButton action="#{billingRunBean.launchRecurringInvoicing}"
+    				rendered="#{billingRunBean.canUserUpdateEntity()}"
     				value="#{messages['button.launchInvoicing']}" update=":formId " />
             </ui:define>
 		</hftl:formPanel>

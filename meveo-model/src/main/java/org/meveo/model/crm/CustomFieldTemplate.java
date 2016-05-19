@@ -26,6 +26,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.catalog.Calendar;
@@ -34,6 +35,7 @@ import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +54,8 @@ public class CustomFieldTemplate extends BusinessEntity {
     public static String POSITION_FIELD = "field";
 
     public static long DEFAULT_MAX_LENGTH_STRING = 50L;
+
+    public static String ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR = " - ";
 
     @Column(name = "FIELD_TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -94,6 +98,9 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Size(max = 50)
     private String defaultValue;
 
+    /**
+     * Reference to an entity. A classname. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - <CustomEntityTemplate code>"
+     */
     @Column(name = "ENTITY_CLAZZ", length = 255)
     @Size(max = 255)
     private String entityClazz;
@@ -139,6 +146,13 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Column(name = "CACHE_VALUE")
     @NotNull
     private boolean cacheValue;
+
+    /**
+     * Child entity fields to display as summary. Field names are separated by a comma.
+     */
+    @Column(name = "CHE_FIELDS", length = 500)
+    @Size(max = 500)
+    private String childEntityFields;
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -268,6 +282,27 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     public void setEntityClazz(String entityClazz) {
         this.entityClazz = entityClazz;
+    }
+
+    public String getEntityClazzCetCode() {
+        return CustomFieldTemplate.retrieveCetCode(entityClazz);
+    }
+
+    /**
+     * Retrieve a cet code from classname and code as it is stored in entityClazz field.
+     * 
+     * @param entityClazz
+     * @return
+     */
+    public static String retrieveCetCode(String entityClazz) {
+        if (entityClazz == null) {
+            return null;
+        }
+        if (entityClazz.startsWith(CustomEntityTemplate.class.getName())) {
+            String cetCode = entityClazz.substring(entityClazz.indexOf(ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR) + ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR.length());
+            return cetCode;
+        }
+        return null;
     }
 
     public Object getDefaultValueConverted() {
@@ -479,6 +514,25 @@ public class CustomFieldTemplate extends BusinessEntity {
             return false;
         }
         return true;
+    }
+
+    public String getChildEntityFields() {
+        return childEntityFields;
+    }
+
+    public String[] getChildEntityFieldsAsList() {
+        if (childEntityFields != null) {
+            return childEntityFields.split("\\|");
+        }
+        return new String[0];
+    }
+
+    public void setChildEntityFields(String childEntityFields) {
+        this.childEntityFields = childEntityFields;
+    }
+
+    public void setChildEntityFieldsAsList(List<String> cheFields) {
+        this.childEntityFields = StringUtils.concatenate("|", cheFields);
     }
 
     @Override

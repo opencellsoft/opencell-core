@@ -43,13 +43,20 @@
                 <!--                 </c:if> -->
             </p:inputText>
         </c:if>
-        <c:if test="#{isAutocomplete and  edit}">        
+        <c:if test="#{isAutocomplete and  edit}">
             <p:autoComplete id="#{id}" value="#{fieldItem}" disabled="#{disabled}" required="#{required}" size="#{size}" maxlength="#{maxlength}" dropdown="true"
                 completeMethod="#{autocompleteBean[autocompleteMethod]}" var="e" itemLabel="#{e}" itemValue="#{e}">
+                <c:if test="#{not empty listenerUpdate and empty actionListenerBean}">
+                    <p:ajax update="#{listenerUpdate}" event="itemSelect" />
+                </c:if>
+                <c:if test="#{not empty listenerUpdate and not empty actionListenerBean}">
+                    <p:ajax update="#{listenerUpdate}" listener="#{actionListenerBean[actionListenerMethod]}" event="itemSelect" />
+                </c:if>
             </p:autoComplete>
         </c:if>
         <c:if test="#{textArea and edit}">
-            <p:inputTextarea id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" cols="#{cols}" rows="#{rows}" maxlength="#{maxlength}" autoResize="true"/>
+            <p:inputTextarea id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" cols="#{cols}" rows="#{rows}" maxlength="#{maxlength}" autoResize="true"
+                style="width:100%;" />
         </c:if>
         <c:if test="#{isHtml and edit}">
             <p:editor id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}"></p:editor>

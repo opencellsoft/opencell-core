@@ -52,8 +52,6 @@ import org.w3c.dom.Element;
 @Stateless
 public class CustomFieldInstanceService extends PersistenceService<CustomFieldInstance> {
 
-    public static String ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR = " - ";
-
     @Inject
     private CustomFieldTemplateService cfTemplateService;
 
@@ -143,21 +141,21 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     /**
      * Find a list of entities of a given class and matching given code. In case classname points to CustomEntityTemplate, find CustomEntityInstances of a CustomEntityTemplate code
      * 
-     * @param className Classname to match. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - <CustomEntityTemplate code>"
+     * @param classNameAndCode Classname to match. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - <CustomEntityTemplate code>"
      * @param wildcode Filter by entity code
      * @param provider Current provider
      * @return A list of entities
      */
     @SuppressWarnings("unchecked")
-    public List<BusinessEntity> findBusinessEntityForCFVByCode(String className, String wildcode, Provider provider) {
+    public List<BusinessEntity> findBusinessEntityForCFVByCode(String classNameAndCode, String wildcode, Provider provider) {
         Query query = null;
-        if (className.startsWith(CustomEntityTemplate.class.getName())) {
-            String cetCode = className.substring(className.indexOf(ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR) + ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR.length());
+        if (classNameAndCode.startsWith(CustomEntityTemplate.class.getName())) {
+            String cetCode = CustomFieldTemplate.retrieveCetCode(classNameAndCode);
             query = getEntityManager().createQuery("select e from CustomEntityInstance e where cetCode=:cetCode and lower(e.code) like :code and e.provider=:provider");
             query.setParameter("cetCode", cetCode);
 
         } else {
-            query = getEntityManager().createQuery("select e from " + className + " e where lower(e.code) like :code and e.provider=:provider");
+            query = getEntityManager().createQuery("select e from " + classNameAndCode + " e where lower(e.code) like :code and e.provider=:provider");
         }
 
         query.setParameter("code", "%" + wildcode.toLowerCase() + "%");
@@ -192,9 +190,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
         try {
             // If no template found - create it first
-            log.info("currentUser:" + currentUser);
-            log.info("currentUser.getProvider():" + currentUser.getProvider());
-
+        	log.info("currentUser:"+currentUser);
+        	log.info("currentUser.getProvider():"+currentUser.getProvider());
+        	
             CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity, currentUser.getProvider());
             if (cft == null) {
                 cft = new CustomFieldTemplate();
@@ -681,8 +679,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     @SuppressWarnings("unchecked")
     public Object getInheritedOnlyCFValueCumulative(ICustomFieldEntity entity, String code, User currentUser) {
 
-        if (entity == null){
-            return null; 
+        if (entity == null) {
+            return null;
         }
         ICustomFieldEntity parentEntity = entity.getParentCFEntity();
         List<Object> cfValues = new ArrayList<>();
@@ -1315,5 +1313,4 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
         return false;
     }
-
 }

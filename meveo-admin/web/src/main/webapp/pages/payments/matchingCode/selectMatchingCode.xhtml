@@ -18,19 +18,18 @@
 				<h:outputText value="#{messages['matchingCode.selectMatching']}" />
 			</f:facet>
 			<h:outputText value="#{messages['matchingCode.opInManyMatchings']}" />
-		<hftl:dataList backingBean="#{accountOperationBean}" dataModel="#{accountOperationBean.entity.matchingAmounts}" edit="false">    																												
+		<hftl:dataList backingBean="#{matchingAmountBean}" dataModel="#{accountOperationBean.entity.matchingAmounts}" edit="false">    																												
 			<hftl:column label="#{messages['matchingCode.code']}" field="matchingCode"	childField="id" />									
-			<hftl:column label="#{messages['matchingCode.matchingAmount']}" field="matchingAmount"	 />							
-	    	<hftl:column label="#{messages['matchingCode.matchingDate']}" field="matchingCode"	childField="matchingDate" />
+			<hftl:column label="#{messages['matchingCode.matchingAmount']}" field="matchingAmount"	 />								    	
 			<p:column styleClass="actions-column">
             	<f:facet name="header">
                 	<h:outputText value="#{messages['commons.actions']}" />
              	</f:facet>
-             	<p:link id="viewlink" view="/pages/payments/matchingCode/matchingCodeDetail.xhtml" >
-                <h:graphicImage value="/img/search.gif" style="border:0"/>
-             	<f:param name="objectId" value="#{entity.matchingCode.id}"/>
-             	<f:param name="edit" value="false"/>
-               </p:link>                	             	          	            
+             	<h:link id="viewlink" outcome="/pages/payments/matchingCode/matchingCodeDetail.xhtml" >
+	                <h:graphicImage value="/img/search.gif" style="border:0"/>
+	             	<f:param name="objectId" value="#{entity.matchingCode.id}"/>
+	             	<f:param name="edit" value="false"/>
+               </h:link>                	             	          	            
             	<p:tooltip for="viewlink" value="#{messages['matching.viewMatchingCode']}"/>
              </p:column>							
 		</hftl:dataList>	  

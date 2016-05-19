@@ -16,6 +16,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.ModuleApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.module.ModuleRs;
+import org.meveo.model.module.MeveoModule;
 
 /**
  * @author Tyshan Shi(tyshan@manaty.net)
@@ -102,7 +103,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
         MeveoModuleDtoResponse result = new MeveoModuleDtoResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         try {
-            result.setModule(moduleApi.get(code, getCurrentUser()));
+            result.setModule(moduleApi.get(code, MeveoModule.class, getCurrentUser()));
         } catch (Exception e) {
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());

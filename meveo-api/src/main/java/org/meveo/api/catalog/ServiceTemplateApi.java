@@ -360,7 +360,7 @@ public class ServiceTemplateApi extends BaseApi {
         if (serviceTemplate == null) {
             throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateCode);
         }
-        ServiceTemplateDto result = new ServiceTemplateDto(serviceTemplate, customFieldInstanceService.getCustomFieldInstances(serviceTemplate));
+        ServiceTemplateDto result = new ServiceTemplateDto(serviceTemplate, entityToDtoConverter.getCustomFieldsDTO(serviceTemplate));
         return result;
     }
 

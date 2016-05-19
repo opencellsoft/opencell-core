@@ -30,6 +30,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -168,13 +169,14 @@ public class OrderApi extends BaseApi {
 
         CustomFieldsDto customFieldsDto = new CustomFieldsDto();
 
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(EntityCustomizationUtils.getAppliesTo(appliesToClass), provider);
+        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(EntityCustomizationUtils.getAppliesTo(appliesToClass, null), provider);
 
         for (ProductCharacteristic characteristic : product.getProductCharacteristic()) {
             if (characteristic.getName() != null && cfts.containsKey(characteristic.getName())) {
 
                 CustomFieldTemplate cft = cfts.get(characteristic.getName());
-                CustomFieldDto cftDto = CustomFieldDto.toDTO(characteristic.getName(), cft.parseValue(characteristic.getValue()));
+                CustomFieldDto cftDto = entityToDtoConverter.customFieldToDTO(characteristic.getName(), cft.parseValue(characteristic.getValue()),
+                    cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY, provider);
                 customFieldsDto.getCustomField().add(cftDto);
             }
         }

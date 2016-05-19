@@ -97,6 +97,96 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForText</td>
+	<td>id=serviceTemplatePopup_title</td>
+	<td>Service Template</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=serviceTemplatePopup_title</td>
+	<td>Service Template</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=serviceTemplatePopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>id=serviceTemplatePopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=serviceTemplatePopuppopupForm:searchField1</td>
+	<td>${ServiceTemplateValue}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=serviceTemplatePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='serviceTemplatePopuppopupForm:serviceTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td>${ServiceTemplateValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//tbody[@id='serviceTemplatePopuppopupForm:serviceTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>${ServiceTemplateValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${ServiceTemplateValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=serviceTemplatePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='serviceTemplatePopuppopupForm:serviceTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td>${ServiceTemplateValue}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='serviceTemplatePopuppopupForm:serviceTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=serviceTemplatePopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${ChooseServiceTemplate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='serviceTemplatePopuppopupForm:serviceTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='serviceTemplatePopuppopupForm:serviceTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=formId:tabView:serviceSelectId_text</td>
+	<td>${ServiceTemplateValue}</td>
+</tr>
+<tr>
 	<td>endIf</td>
 	<td></td>
 	<td></td>

@@ -45,11 +45,13 @@ import javax.validation.constraints.Size;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.ObservableEntity;
 
 /**
  * Account Transaction.
  */
 @Entity
+@ObservableEntity
 @Table(name = "AR_ACCOUNT_OPERATION")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TRANSACTION_TYPE")

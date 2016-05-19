@@ -87,6 +87,96 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForText</td>
+	<td>id=offerTemplatePopup_title</td>
+	<td>Offer template</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=offerTemplatePopup_title</td>
+	<td>Offer template</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=offerTemplatePopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>id=offerTemplatePopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=offerTemplatePopuppopupForm:searchField1</td>
+	<td>${OfferCodeValue}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=offerTemplatePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='offerTemplatePopuppopupForm:offerTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td>${OfferCodeValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//tbody[@id='offerTemplatePopuppopupForm:offerTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>${OfferCodeValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${OfferCodeValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=offerTemplatePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='offerTemplatePopuppopupForm:offerTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td>${OfferCodeValue}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='offerTemplatePopuppopupForm:offerTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=offerTemplatePopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${OfferCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='offerTemplatePopuppopupForm:offerTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='offerTemplatePopuppopupForm:offerTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=formId:tabView:offerSelectId_text</td>
+	<td>${OfferCodeValue}</td>
+</tr>
+<tr>
 	<td>endIf</td>
 	<td></td>
 	<td></td>

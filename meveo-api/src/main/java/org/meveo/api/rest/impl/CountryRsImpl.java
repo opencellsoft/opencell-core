@@ -9,21 +9,20 @@ import javax.ws.rs.QueryParam;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.CountryApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.TradingCountryApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.response.GetCountryResponse;
-import org.meveo.api.dto.response.GetTradingCountryResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CountryRs;
-import org.meveo.api.rest.TradingCountryRs;
 
 /**
  * @see {@link org.meveo.api.rest.CountryWs}.
  * 
  * @author Edward P. Legaspi
+ * 
+ * @deprecated will be renammed to TradingCountryRsImpl
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -60,11 +59,11 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
 
     @Override
     public GetCountryResponse find(@QueryParam("countryCode") String countryCode) {
-    	GetCountryResponse result = new GetCountryResponse();
+        GetCountryResponse result = new GetCountryResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCountry(countryApi.find(countryCode));
+            result.setCountry(countryApi.find(countryCode, getCurrentUser().getProvider()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -80,11 +79,11 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
     }
 
     @Override
-    public ActionStatus remove(@PathParam("countryCode") String countryCode) {
+    public ActionStatus remove(@PathParam("countryCode") String countryCode, @PathParam("currencyCode") String currencyCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            countryApi.remove(countryCode);
+            countryApi.remove(countryCode, currencyCode, getCurrentUser().getProvider());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

@@ -8,6 +8,8 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Named;
 
@@ -18,6 +20,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CSVCDRParser;
 import org.meveo.service.medina.impl.EDRDAO;
 import org.meveo.service.medina.impl.InvalidAccessException;
@@ -87,27 +90,34 @@ public class MEVEOCdrParser implements CSVCDRParser {
 	}
 
 	private String batchName;
-	private String originBatch;
+	private Map<String, String> originBatch;
 	private String username;
 
 	@Override
 	public void init(File CDRFile) {
 		batchName = "CDR_" + CDRFile.getName();
+		if(originBatch == null) {
+			originBatch = new HashMap<>();
+		}
+		
+		originBatch.put(CDRParsingService.CDR_ORIGIN_JOB, batchName);
 	}
 
 	@Override
 	public void initByApi(String username, String ip) {
-		originBatch = "API_" + ip;
+		if(originBatch == null) {
+			originBatch = new HashMap<>();
+		}
+		originBatch.put(CDRParsingService.CDR_ORIGIN_API, "API_" + ip);
 		this.username = username;
 	}
 
 	@Override
-	public String getOriginBatch() {
-		if (StringUtils.isBlank(originBatch)) {
-			return batchName == null ? "CDR_CONS_CSV" : batchName;
-		} else {
-			return originBatch;
+	public Map<String, String> getOriginBatch() {
+		if (StringUtils.isBlank(originBatch.get(CDRParsingService.CDR_ORIGIN_JOB))) {
+			originBatch.put(CDRParsingService.CDR_ORIGIN_JOB, batchName == null ? "CDR_CONS_CSV" : batchName);
 		}
+		return originBatch;
 	}
 
 	@Override
@@ -254,9 +264,9 @@ public class MEVEOCdrParser implements CSVCDRParser {
 	}
 
 	@Override
-	public String getOriginRecord(Serializable object) {
+	public String getOriginRecord(Serializable object, String origin) {
 		String result = null;
-		if (StringUtils.isBlank(username)) {
+		if (StringUtils.isBlank(username) || origin.equals(CDRParsingService.CDR_ORIGIN_JOB)) {
 			CDR cdr = (CDR) object;
 			result = cdr.toString();
 
@@ -293,12 +303,12 @@ public class MEVEOCdrParser implements CSVCDRParser {
 	}
 
 	@Override
-	public EDRDAO getEDR(Serializable object) {
+	public EDRDAO getEDR(Serializable object, String origin) {
 		CDR cdr = (CDR) object;
 		EDRDAO result = new EDRDAO();
 		result.setEventDate(new Date(cdr.timestamp));
-		result.setOriginBatch(getOriginBatch());
-		result.setOriginRecord(getOriginRecord(object));
+		result.setOriginBatch(getOriginBatch().get(origin));
+		result.setOriginRecord(getOriginRecord(object, origin));
 		result.setQuantity(cdr.quantity.setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
 		result.setParameter1(cdr.param1);
 		result.setParameter2(cdr.param2);

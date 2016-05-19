@@ -1,6 +1,7 @@
 package org.meveo.service.custom;
 
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.crm.CustomFieldTemplate;
 
 public class CustomizedEntity {
 
@@ -62,6 +63,22 @@ public class CustomizedEntity {
 
     public boolean isStandardEntity() {
         return customEntityId == null;
+    }
+
+    public String getClassnameToDisplay() {
+        String classNameToDisplay = ReflectionUtils.getCleanClassName(getEntityClass().getName());
+        if (!isStandardEntity()) {
+            classNameToDisplay = classNameToDisplay + CustomFieldTemplate.ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR + getEntityName();
+        }
+        return classNameToDisplay;
+    }
+
+    public String getClassnameToDisplayHuman() {
+        String classNameToDisplay = ReflectionUtils.getHumanClassName(getEntityClass().getSimpleName());
+        if (!isStandardEntity()) {
+            classNameToDisplay = classNameToDisplay + CustomFieldTemplate.ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR + getEntityName();
+        }
+        return classNameToDisplay;
     }
 
     @Override

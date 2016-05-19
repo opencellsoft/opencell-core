@@ -263,7 +263,7 @@ public class PricePlanApi extends BaseApi {
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
         }
 
-        return new PricePlanDto(pricePlanMatrix, customFieldInstanceService.getCustomFieldInstances(pricePlanMatrix));
+        return new PricePlanDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix));
     }
 
     public void remove(String pricePlanCode, Provider provider) throws MeveoApiException {
@@ -294,7 +294,7 @@ public class PricePlanApi extends BaseApi {
 
         List<PricePlanDto> pricePlanDtos = new ArrayList<>();
         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-            pricePlanDtos.add(new PricePlanDto(pricePlanMatrix, customFieldInstanceService.getCustomFieldInstances(pricePlanMatrix)));
+            pricePlanDtos.add(new PricePlanDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix)));
         }
 
         return pricePlanDtos;

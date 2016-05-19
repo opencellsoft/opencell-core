@@ -122,16 +122,19 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		Integer directDebitBANumber = 0;
 		Integer tipBANumber = 0;
 		Integer wiretransferBANumber = 0;
+		Integer creditDebitCardBANumber = 0;
 
 		Integer checkBillableBANumber = 0;
 		Integer directDebitBillableBANumber = 0;
 		Integer tipBillableBANumber = 0;
 		Integer wiretransferBillableBANumber = 0;
+		Integer creditDebitCardBillableBANumber = 0;
 
 		BigDecimal checkBillableBAAmountHT = BigDecimal.ZERO;
 		BigDecimal directDebitBillableBAAmountHT = BigDecimal.ZERO;
 		BigDecimal tipBillableBAAmountHT = BigDecimal.ZERO;
 		BigDecimal wiretransferBillableBAAmountHT = BigDecimal.ZERO;
+		BigDecimal creditDebitCardBillableBAAmountHT = BigDecimal.ZERO;
 
 		for (BillingAccount billingAccount : billingAccounts) {
 		    PaymentMethodEnum paymentMethod= billingAccount.getPaymentMethod();
@@ -151,7 +154,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			case WIRETRANSFER:
 				wiretransferBANumber++;
 				break;
-
+				
+			case CARD:
+				creditDebitCardBANumber++;
+				break;	
+				
 			default:
 				break;
 			}
@@ -182,6 +189,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 				wiretransferBillableBAAmountHT = wiretransferBillableBAAmountHT.add(billingAccount
 						.getBrAmountWithoutTax());
 				break;
+			
+			case CARD:
+				creditDebitCardBillableBANumber++;
+				creditDebitCardBillableBAAmountHT = creditDebitCardBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
 
 			default:
 				break;
@@ -200,6 +211,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		preInvoicingReportsDTO.setWiretransferBANumber(wiretransferBANumber);
 		preInvoicingReportsDTO.setWiretransferBillableBAAmountHT(round(wiretransferBillableBAAmountHT, 2));
 		preInvoicingReportsDTO.setWiretransferBillableBANumber(wiretransferBillableBANumber);
+		preInvoicingReportsDTO.setCreditDebitCardBANumber(creditDebitCardBANumber);
+		preInvoicingReportsDTO.setCreditDebitCardBillableBAAmountHT(round(creditDebitCardBillableBAAmountHT, 2));
+		preInvoicingReportsDTO.setCreditDebitCardBillableBANumber(creditDebitCardBillableBANumber);
 
 		return preInvoicingReportsDTO;
 	}
@@ -228,16 +242,19 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		Integer directDebitInvoicesNumber = 0;
 		Integer tipInvoicesNumber = 0;
 		Integer wiretransferInvoicesNumber = 0;
+		Integer creditDebitCardInvoicesNumber = 0;
 
 		BigDecimal checkAmuontHT = BigDecimal.ZERO;
 		BigDecimal directDebitAmuontHT = BigDecimal.ZERO;
 		BigDecimal tipAmuontHT = BigDecimal.ZERO;
 		BigDecimal wiretransferAmuontHT = BigDecimal.ZERO;
+		BigDecimal creditDebitCardAmountHT = BigDecimal.ZERO;
 
 		BigDecimal checkAmuont = BigDecimal.ZERO;
 		BigDecimal directDebitAmuont = BigDecimal.ZERO;
 		BigDecimal tipAmuont = BigDecimal.ZERO;
 		BigDecimal wiretransferAmuont = BigDecimal.ZERO;
+		BigDecimal creditDebitCardAmount = BigDecimal.ZERO;
 
 		for (Invoice invoice : billingRun.getInvoices()) {
 
@@ -263,7 +280,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 					wiretransferAmuontHT = wiretransferAmuontHT.add(invoice.getAmountWithoutTax());
 					wiretransferAmuont = wiretransferAmuont.add(invoice.getAmountWithTax());
 					break;
-
+				case CARD:
+					creditDebitCardInvoicesNumber++;
+					creditDebitCardAmountHT = creditDebitCardAmountHT.add(invoice.getAmountWithoutTax());
+					creditDebitCardAmount = creditDebitCardAmount.add(invoice.getAmountWithTax());
+					break;
+					
 				default:
 					break;
 				}
@@ -321,6 +343,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		postInvoicingReportsDTO.setWiretransferAmuont(wiretransferAmuont);
 		postInvoicingReportsDTO.setWiretransferAmuontHT(wiretransferAmuontHT);
 		postInvoicingReportsDTO.setWiretransferInvoicesNumber(wiretransferInvoicesNumber);
+		
+		postInvoicingReportsDTO.setCreditDebitCardAmount(creditDebitCardAmount);
+		postInvoicingReportsDTO.setCreditDebitCardAmountHT(creditDebitCardAmountHT);
+		postInvoicingReportsDTO.setCreditDebitCardInvoicesNumber(creditDebitCardInvoicesNumber);
 		postInvoicingReportsDTO.setGlobalAmount(globalAmountHT);
 
 		return postInvoicingReportsDTO;

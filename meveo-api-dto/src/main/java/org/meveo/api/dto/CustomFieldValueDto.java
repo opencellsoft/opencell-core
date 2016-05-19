@@ -16,7 +16,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.crm.EntityReferenceWrapper;
 
 /**
- * Represents a single CF simple value inside a more complex CF value (list, map, matrix)
+ * Represents a single CF simple value inside a more complex CF value (list,
+ * map, matrix)
  * 
  * @author Andrius Karpavicius
  **/
@@ -24,110 +25,121 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomFieldValueDto implements Serializable {
 
-    private static final long serialVersionUID = -6551785257592739335L;
+	private static final long serialVersionUID = -6551785257592739335L;
 
-    @XmlElements({ @XmlElement(name = "dateValue", type = Date.class), @XmlElement(name = "doubleValue", type = Double.class), @XmlElement(name = "longValue", type = Long.class),
-            @XmlElement(name = "stringValue", type = String.class), @XmlElement(name = "entityReferenceValue", type = EntityReferenceDto.class) })
-    protected Object value;
+	@XmlElements({ @XmlElement(name = "dateValue", type = Date.class), @XmlElement(name = "doubleValue", type = Double.class), @XmlElement(name = "longValue", type = Long.class),
+			@XmlElement(name = "stringValue", type = String.class), @XmlElement(name = "entityReferenceValue", type = EntityReferenceDto.class),
+			@XmlElement(name = "childEntityValue", type = CustomEntityInstanceDto.class) })
+	protected Object value;
 
-    public CustomFieldValueDto() {
-    }
+	public CustomFieldValueDto() {
+	}
 
-    // public static CustomFieldValueDto toDTO(CustomFieldValue cfv) {
-    // CustomFieldValueDto dto = new CustomFieldValueDto();
-    // Object singleValue = cfv.getSingleValue();
-    // if (singleValue != null && singleValue instanceof EntityReferenceWrapper) {
-    // singleValue = new EntityReferenceDto((EntityReferenceWrapper) singleValue);
-    // }
-    // dto.value = singleValue;
-    // return dto;
-    // }
+	// public static CustomFieldValueDto toDTO(CustomFieldValue cfv) {
+	// CustomFieldValueDto dto = new CustomFieldValueDto();
+	// Object singleValue = cfv.getSingleValue();
+	// if (singleValue != null && singleValue instanceof EntityReferenceWrapper)
+	// {
+	// singleValue = new EntityReferenceDto((EntityReferenceWrapper)
+	// singleValue);
+	// }
+	// dto.value = singleValue;
+	// return dto;
+	// }
 
-    private Object fromDTO() {
+	private Object fromDTO() {
 
-        if (value instanceof EntityReferenceDto) {
-            return ((EntityReferenceDto) value).fromDTO();
-        } else {
-            return value;
-        }
-    }
+		if (value instanceof EntityReferenceDto) {
+			return ((EntityReferenceDto) value).fromDTO();
+		} else {
+			return value;
+		}
+	}
 
-    public static List<CustomFieldValueDto> toDTO(List<Object> listValue) {
+	public static List<CustomFieldValueDto> toDTO(List<Object> listValue) {
 
-        if (listValue == null) {
-            return null;
-        }
-        List<CustomFieldValueDto> dtos = new ArrayList<CustomFieldValueDto>();
+		if (listValue == null) {
+			return null;
+		}
+		List<CustomFieldValueDto> dtos = new ArrayList<CustomFieldValueDto>();
 
-        for (Object listItem : listValue) {
-            CustomFieldValueDto dto = new CustomFieldValueDto();
-            if (listItem instanceof EntityReferenceWrapper) {
-                dto.value = new EntityReferenceDto((EntityReferenceWrapper) listItem);
-            } else {
-                dto.value = listItem;
-            }
-            dtos.add(dto);
-        }
-        return dtos;
-    }
+		for (Object listItem : listValue) {
+			CustomFieldValueDto dto = new CustomFieldValueDto();
+			if (listItem instanceof EntityReferenceWrapper) {
+				dto.value = new EntityReferenceDto((EntityReferenceWrapper) listItem);
+			} else {
+				dto.value = listItem;
+			}
+			dtos.add(dto);
+		}
+		return dtos;
+	}
 
-    public static List<Object> fromDTO(List<CustomFieldValueDto> listValue) {
-        List<Object> values = new ArrayList<Object>();
-        for (CustomFieldValueDto valueDto : listValue) {
-            values.add(valueDto.fromDTO());
-        }
-        return values;
-    }
+	public static List<Object> fromDTO(List<CustomFieldValueDto> listValue) {
+		List<Object> values = new ArrayList<Object>();
+		for (CustomFieldValueDto valueDto : listValue) {
+			values.add(valueDto.fromDTO());
+		}
+		return values;
+	}
 
-    public static LinkedHashMap<String, Object> fromDTO(Map<String, CustomFieldValueDto> mapValue) {
-        LinkedHashMap<String, Object> values = new LinkedHashMap<String, Object>();
-        for (Map.Entry<String, CustomFieldValueDto> valueDto : mapValue.entrySet()) {
-            values.put(valueDto.getKey(), valueDto.getValue().fromDTO());
-        }
-        return values;
-    }
+	public static LinkedHashMap<String, Object> fromDTO(Map<String, CustomFieldValueDto> mapValue) {
+		LinkedHashMap<String, Object> values = new LinkedHashMap<String, Object>();
+		for (Map.Entry<String, CustomFieldValueDto> valueDto : mapValue.entrySet()) {
+			values.put(valueDto.getKey(), valueDto.getValue().fromDTO());
+		}
+		return values;
+	}
 
-    public static LinkedHashMap<String, CustomFieldValueDto> toDTO(Map<String, Object> mapValue) {
-        if (mapValue == null || mapValue.entrySet().size() == 0) {
-            return null;
-        }
-        LinkedHashMap<String, CustomFieldValueDto> dtos = new LinkedHashMap<String, CustomFieldValueDto>();
+	public static LinkedHashMap<String, CustomFieldValueDto> toDTO(Map<String, Object> mapValue) {
+		if (mapValue == null || mapValue.entrySet().size() == 0) {
+			return null;
+		}
+		LinkedHashMap<String, CustomFieldValueDto> dtos = new LinkedHashMap<String, CustomFieldValueDto>();
 
-        for (Map.Entry<String, Object> mapItem : mapValue.entrySet()) {
-            CustomFieldValueDto dto = new CustomFieldValueDto();
-            if (mapItem.getValue() instanceof EntityReferenceWrapper) {
-                dto.value = new EntityReferenceDto((EntityReferenceWrapper) mapItem.getValue());
-            } else {
-                dto.value = mapItem.getValue();
-            }
-            dtos.put(mapItem.getKey(), dto);
-        }
-        return dtos;
-    }
+		for (Map.Entry<String, Object> mapItem : mapValue.entrySet()) {
+			CustomFieldValueDto dto = new CustomFieldValueDto();
+			if (mapItem.getValue() instanceof EntityReferenceWrapper) {
+				dto.value = new EntityReferenceDto((EntityReferenceWrapper) mapItem.getValue());
+			} else {
+				dto.value = mapItem.getValue();
+			}
+			dtos.put(mapItem.getKey(), dto);
+		}
+		return dtos;
+	}
 
-    public CustomFieldValueDto(Object e) {
-        this.value = e;
-    }
+	public CustomFieldValueDto(Object e) {
+		this.value = e;
+	}
 
-    @Override
-    public String toString() {
-        return String.format("CustomFieldValueDto [value=%s]", value);
-    }
+	@Override
+	public String toString() {
+		return String.format("CustomFieldValueDto [value=%s]", value);
+	}
 
-    /**
-     * Check if value is empty
-     * 
-     * @return True if value is empty
-     */
-    public boolean isEmpty() {
-        if (value == null) {
-            return true;
-        }
-        if (value instanceof EntityReferenceDto) {
-            return ((EntityReferenceDto) value).isEmpty();
-        } else if (value instanceof String) {
-            return ((String) value).length() == 0;
-        }
-        return false;
-    }
+	/**
+	 * Check if value is empty
+	 * 
+	 * @return True if value is empty
+	 */
+	public boolean isEmpty() {
+		if (value == null) {
+			return true;
+		}
+		if (value instanceof EntityReferenceDto) {
+			return ((EntityReferenceDto) value).isEmpty();
+		} else if (value instanceof String) {
+			return ((String) value).length() == 0;
+		}
+		return false;
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
+	}
+
+	public Object getValue() {
+		return value;
+	}
 }

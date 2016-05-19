@@ -1,6 +1,8 @@
 package org.meveo.model.jaxb.customer;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,6 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.EntityReferenceDto;
 import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 
@@ -75,8 +78,8 @@ public class CustomField {
         dto.setDateValue(cfi.getCfValue().getDateValue());
         dto.setLongValue(cfi.getCfValue().getLongValue());
         dto.setDoubleValue(cfi.getCfValue().getDoubleValue());
-        dto.setListValue(CustomFieldValueDto.toDTO(cfi.getCfValue().getListValue()));
-        dto.setMapValue(CustomFieldValueDto.toDTO(cfi.getCfValue().getMapValue()));
+        dto.setListValue(customFieldValueToDTO(cfi.getCfValue().getListValue()));
+        dto.setMapValue(customFieldValueToDTO(cfi.getCfValue().getMapValue()));
         if (cfi.getCfValue().getEntityReferenceValue() != null) {
             dto.setEntityReferenceValue(new EntityReferenceDto(cfi.getCfValue().getEntityReferenceValue()));
         }
@@ -223,6 +226,7 @@ public class CustomField {
             case TEXT_AREA:
                 return stringValue == null;
             case ENTITY:
+            case CHILD_ENTITY:
                 return entityReferenceValue == null || entityReferenceValue.isEmpty();
             }
         }
@@ -295,5 +299,42 @@ public class CustomField {
         return String.format(
             "CustomField [code=%s, valueDate=%s, valuePeriodStartDate=%s, valuePeriodEndDate=%s, valuePeriodPriority=%s, stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s,mapValue="
                     + mapValue + "]", code, valueDate, valuePeriodStartDate, valuePeriodEndDate, valuePeriodPriority, stringValue, dateValue, longValue, doubleValue);
+    }
+
+    private static List<CustomFieldValueDto> customFieldValueToDTO(List<Object> listValue) {
+
+        if (listValue == null) {
+            return null;
+        }
+        List<CustomFieldValueDto> dtos = new ArrayList<CustomFieldValueDto>();
+
+        for (Object listItem : listValue) {
+            CustomFieldValueDto dto = new CustomFieldValueDto();
+            if (listItem instanceof EntityReferenceWrapper) {
+                dto.setValue(new EntityReferenceDto((EntityReferenceWrapper) listItem));
+            } else {
+                dto.setValue(listItem);
+            }
+            dtos.add(dto);
+        }
+        return dtos;
+    }
+
+    private static LinkedHashMap<String, CustomFieldValueDto> customFieldValueToDTO(Map<String, Object> mapValue) {
+        if (mapValue == null || mapValue.entrySet().size() == 0) {
+            return null;
+        }
+        LinkedHashMap<String, CustomFieldValueDto> dtos = new LinkedHashMap<String, CustomFieldValueDto>();
+
+        for (Map.Entry<String, Object> mapItem : mapValue.entrySet()) {
+            CustomFieldValueDto dto = new CustomFieldValueDto();
+            if (mapItem.getValue() instanceof EntityReferenceWrapper) {
+                dto.setValue(new EntityReferenceDto((EntityReferenceWrapper) mapItem.getValue()));
+            } else {
+                dto.setValue(mapItem.getValue());
+            }
+            dtos.put(mapItem.getKey(), dto);
+        }
+        return dtos;
     }
 }

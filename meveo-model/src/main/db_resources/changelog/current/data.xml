@@ -55,5 +55,259 @@
 	</changeSet>
      <changeSet id="1349_20160308_3" author="anasseh">
 		<sql><![CDATA[UPDATE CAT_CHARGE_TEMPLATE SET UNIT_NB_DECIMAL=12 WHERE UNIT_NB_DECIMAL > 12 ]]></sql>
+	</changeSet>
+		
+     <changeSet id="1666_20160505" author="anasseh">
+		<sql><![CDATA[update adm_country set description_fr='Afghanistan' where country_code ='AF']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Albanie' where country_code ='AL']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Algérie' where country_code ='DZ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Samoa orientales' where country_code ='AS']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Andorre' where country_code ='AD']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Angola' where country_code ='AO']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Anguilla' where country_code ='AI']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Antarctique' where country_code ='AQ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Antigua-et-Barbuda' where country_code ='AG']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Argentine' where country_code ='AR']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Arménie' where country_code ='AM']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Aruba' where country_code ='AW']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Australie' where country_code ='AU']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Autriche' where country_code ='AT']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Azerbaïdjan' where country_code ='AZ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Bahamas' where country_code ='BS']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Bahreïn' where country_code ='BH']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Bangladesh' where country_code ='BD']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Barbade' where country_code ='BB']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Biélorussie' where country_code ='BY']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Belgique' where country_code ='BE']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Bélize' where country_code ='BZ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Bénin' where country_code ='BJ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Bermudes' where country_code ='BM']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Bhoutan' where country_code ='BT']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Bolivie' where country_code ='BO']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Bosnie-Herzégovine' where country_code ='BA']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Botswana' where country_code ='BW']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Bouvet (Île)' where country_code ='BV']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Brésil' where country_code ='BR']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Bruneï' where country_code ='BN']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Bulgarie' where country_code ='BG']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Burkina Faso' where country_code ='BF']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Burundi' where country_code ='BI']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Cambodge' where country_code ='KH']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Cameroun' where country_code ='CM']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Canada' where country_code ='CA']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Cap Vert' where country_code ='CV']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Caïmans (Îles)' where country_code ='KY']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='République Centrafricaine' where country_code ='CF']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Tchad' where country_code ='TD']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Chili' where country_code ='CL']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Chine' where country_code ='CN']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Christmas (Île)' where country_code ='CX']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Cocos / Keeling (Îles)' where country_code ='CC']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Colombie' where country_code ='CO']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Comores' where country_code ='KM']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Congo' where country_code ='CG']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='République Démocratique du Congo' where country_code ='CD']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Cook (Îles)' where country_code ='CK']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Costa Rica' where country_code ='CR']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Croatie' where country_code ='HR']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Cuba' where country_code ='CU']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Chypre' where country_code ='CY']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='République Tchèque' where country_code ='CZ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Danemark' where country_code ='DK']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Djibouti' where country_code ='DJ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Dominique' where country_code ='DM']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='République Dominicaine' where country_code ='DO']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Timor-Oriental' where country_code ='TP']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Equateur' where country_code ='EC']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Egypte' where country_code ='EG']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Salvador' where country_code ='SV']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Guinée Equatoriale' where country_code ='GQ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Erythrée' where country_code ='ER']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Estonie' where country_code ='EE']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Ethiopie' where country_code ='ET']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Falkland / Malouines (Îles)' where country_code ='FK']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Féroé (Îles)' where country_code ='FO']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Fiji' where country_code ='FJ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Finlande' where country_code ='FI']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='France' where country_code ='FR']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='France métropolitaine' where country_code ='FX']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Guyane française' where country_code ='GF']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Polynésie française' where country_code ='PF']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Territoires Antarctiques français' where country_code ='TF']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Gabon' where country_code ='GA']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Gambie' where country_code ='GM']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Géorgie' where country_code ='GE']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Allemagne' where country_code ='DE']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Ghana' where country_code ='GH']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Gibraltar' where country_code ='GI']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Grèce' where country_code ='GR']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Groënland' where country_code ='GL']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Grenade' where country_code ='GD']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Guadeloupe' where country_code ='GP']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Guam' where country_code ='GU']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Guatemala' where country_code ='GT']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Guinée' where country_code ='GN']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Guinée-Bissau' where country_code ='GW']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Guyana' where country_code ='GY']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Haïti' where country_code ='HT']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Territoire des Îles Heard et McDonald' where country_code ='HM']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Vatican' where country_code ='VA']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Honduras' where country_code ='HN']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Hong Kong' where country_code ='HK']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Hongrie' where country_code ='HU']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Islande' where country_code ='IS']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Inde' where country_code ='IN']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Indonésie' where country_code ='ID']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Iran (République islamique d)' where country_code ='IR']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Irak' where country_code ='IQ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Irlande' where country_code ='IE']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Israël' where country_code ='IL']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Italie' where country_code ='IT']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Jamaïque' where country_code ='JM']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Japon' where country_code ='JP']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Jordanie' where country_code ='JO']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Kazakstan' where country_code ='KZ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Kenya' where country_code ='KE']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Kiribati' where country_code ='KI']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Corée (République populaire démocratique du)' where country_code ='KP']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Corée (République démocratique du)' where country_code ='KR']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Koweït' where country_code ='KW']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Kyrgyzstan' where country_code ='KG']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Laos (République populaire démocratique du)' where country_code ='LA']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Lettonie' where country_code ='LV']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Liban' where country_code ='LB']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Lesotho' where country_code ='LS']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Libéria' where country_code ='LR']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Libye (Jamahiriya Arabe Libyenne)' where country_code ='LY']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Liechtenstein' where country_code ='LI']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Lithuanie' where country_code ='LT']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Luxembourg' where country_code ='LU']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Macau' where country_code ='MO']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Macédoine (ancienne République yougoslave de)' where country_code ='MK']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Madagascar' where country_code ='MG']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Malawi' where country_code ='MW']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Malaysie' where country_code ='MY']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Maldives' where country_code ='MV']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Mali' where country_code ='ML']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Malte' where country_code ='MT']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Marshall (Îles)' where country_code ='MH']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Martinique' where country_code ='MQ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Mauritanie' where country_code ='MR']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Maurice' where country_code ='MU']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Mayotte' where country_code ='YT']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Mexique' where country_code ='MX']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Micronésie (Etats fédérés de)' where country_code ='FM']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Moldavie' where country_code ='MD']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Monaco' where country_code ='MC']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Mongolie' where country_code ='MN']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Montserrat' where country_code ='MS']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Maroc' where country_code ='MA']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Mozambique' where country_code ='MZ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Myanmar' where country_code ='MM']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Namibie' where country_code ='NA']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Nauru' where country_code ='NR']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Népal' where country_code ='NP']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Pays-Bas' where country_code ='NL']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Antilles néerlandaises' where country_code ='AN']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Nouvelle-Calédonie' where country_code ='NC']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Nouvelle-Zélande' where country_code ='NZ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Nicaragua' where country_code ='NI']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Niger' where country_code ='NE']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Nigéria' where country_code ='NG']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Niue' where country_code ='NU']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Norfolk (Île)' where country_code ='NF']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Mariannes (Îles)' where country_code ='MP']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Norvège' where country_code ='NO']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Oman' where country_code ='OM']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Pakistan' where country_code ='PK']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Palau' where country_code ='PW']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Panama' where country_code ='PA']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Papouasie Nouvelle-Guinée' where country_code ='PG']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Paraguay' where country_code ='PY']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Pérou' where country_code ='PE']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Philippines' where country_code ='PH']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Pitcaïrn' where country_code ='PN']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Pologne' where country_code ='PL']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Portugal' where country_code ='PT']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Porto Rico' where country_code ='PR']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Quatar' where country_code ='QA']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Réunion' where country_code ='RE']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Romania' where country_code ='RO']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Russie (Fédération de)' where country_code ='RU']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Rwanda' where country_code ='RW']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Saint Kitts et Nevis' where country_code ='KN']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Sainte Lucie' where country_code ='LC']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Saint Vincent et Grenadines' where country_code ='VC']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Samoa' where country_code ='WS']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='San Marin' where country_code ='SM']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Sao Tomé et Principe' where country_code ='ST']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Arabie Séoudite' where country_code ='SA']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Sénégal' where country_code ='SN']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Seychelles' where country_code ='SC']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Sierra Léone' where country_code ='SL']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Singapour' where country_code ='SG']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Slovaquie' where country_code ='SK']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Slovénie' where country_code ='SI']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Salomon (Îles)' where country_code ='SB']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Somalie' where country_code ='SO']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Afrique du Sud' where country_code ='ZA']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Géorgie du Sud et îles Sandwich du Sud' where country_code ='GS']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Espagne' where country_code ='ES']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Sri Lanka' where country_code ='LK']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Ste Hélène' where country_code ='SH']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='St. Pierre et Miquelon' where country_code ='PM']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Soudan' where country_code ='SD']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Surinam' where country_code ='SR']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Svalbard et Jan Mayen (Îles)' where country_code ='SJ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Swaziland' where country_code ='SZ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Suède' where country_code ='SE']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Suisse' where country_code ='CH']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Syrie (République arabe syrienne)' where country_code ='SY']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Taïwan' where country_code ='TW']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Tadjikistan' where country_code ='TJ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Tanzanie' where country_code ='TZ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Thaïlande' where country_code ='TH']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Togo' where country_code ='TG']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Tokelau' where country_code ='TK']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Tonga' where country_code ='TO']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Trinidad et Tobago' where country_code ='TT']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Tunisie' where country_code ='TN']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Turquie' where country_code ='TR']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Turkménistan' where country_code ='TM']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Turks et Caicos (Îles)' where country_code ='TC']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Tuvalu' where country_code ='TV']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Ouganda' where country_code ='UG']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Ukraine' where country_code ='UA']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Emirats Arabes Unis' where country_code ='AE']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Royaume-Uni' where country_code ='GB']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Territoires non incorporés des États-Unis ' where country_code ='UM']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Uruguay' where country_code ='UY']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Ouzbékistan' where country_code ='UZ']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Vanuatu' where country_code ='VU']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Vénézuela' where country_code ='VE']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Vietnam' where country_code ='VN']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Vierges (Îles) - RU' where country_code ='VG']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Vierges (Îles) - EU' where country_code ='VI']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Wallis et Futuna (Îles)' where country_code ='WF']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Sahara Occidental' where country_code ='EH']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Yemen' where country_code ='YE']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Yougoslavie' where country_code ='YU']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Zambie' where country_code ='ZM']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Zimbabwe' where country_code ='ZW']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Territoire britannique de l''Océan Indien' where country_code ='IO']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Côte D''Ivoire' where country_code ='CI']]></sql>
+		<sql><![CDATA[update adm_country set description_fr='Etats-Unis d''Amérique' where country_code ='US']]></sql>
+	</changeSet>
+	<changeSet id="#1314_20160511" author="Tony Alejandro">
+        <insert tableName="adm_role_role">
+            <column name="role_id" valueNumeric="2" />
+            <column name="child_role_id" valueNumeric="1" />
+        </insert>
 	</changeSet>	
+
+    <changeSet id="#1649_20160517" author="anasseh">               
+       <sql>delete from crm_custom_field_tmpl tm where  provider_id is null and code in (select code from crm_custom_field_tmpl where provider_id is not null and applies_to = tm.applies_to )</sql>
+       <sql>update crm_custom_field_tmpl tm set provider_id = (select provider_id from adm_user where id = tm.creator_id) where tm.provider_id is null</sql>
+    </changeSet>
+    	
 </databaseChangeLog>

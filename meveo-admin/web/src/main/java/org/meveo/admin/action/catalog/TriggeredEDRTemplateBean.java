@@ -49,9 +49,8 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 	private TriggeredEDRTemplateService triggeredEdrService;
 
 	@Inject
-    private RatingCacheContainerProvider ratingCacheContainerProvider;
+	private RatingCacheContainerProvider ratingCacheContainerProvider;
 
-	
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -89,31 +88,29 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 	}
 
 	@Override
-    @ActionMethod
+	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String result = super.saveOrUpdate(killConversation);
 		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(entity);
 		return result;
 	}
-	
-	@ActionMethod
+
 	public void duplicate() {
-		if (entity != null && entity.getId() != null) {
-			entity = triggeredEdrService.refreshOrRetrieve(entity);
+		if (entity == null || entity.getId() == null) {
+			return;
+		}
+		entity = triggeredEdrService.refreshOrRetrieve(entity);
 
-			// Detach and clear ids of entity and related entities
-			triggeredEdrService.detach(entity);
-			entity.setId(null);
-			entity.setCode(entity.getCode() + "_copy");
-
-			try {
-				triggeredEdrService.create(entity, getCurrentUser());
-				messages.info(new BundleKey("messages", "save.successful"));
-			} catch (BusinessException e) {
-				log.error("Error encountered persisting triggered EDR template entity: #{0}:#{1}", entity.getCode(), e);
-				messages.error(new BundleKey("messages", "save.unsuccessful"));
-			}
-
+		// Detach and clear ids of entity and related entities
+		triggeredEdrService.detach(entity);
+		entity.setId(null);
+		entity.setCode(entity.getCode() + "_copy");
+		try {
+			triggeredEdrService.create(entity, getCurrentUser());
+			messages.info(new BundleKey("messages", "save.successful"));
+		} catch (BusinessException e) {
+			log.error("Error encountered persisting triggered EDR template entity: {}: {}", entity.getCode(), e);
+			messages.error(new BundleKey("messages", "save.unsuccessful"));
 		}
 	}
 

@@ -14,10 +14,8 @@ import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 
 import org.meveo.admin.action.admin.CurrentProvider;
-import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
 import org.meveo.util.EntityCustomizationUtils;
@@ -89,12 +87,10 @@ public class CustomFieldAppliesToConverter implements Converter, Serializable {
         for (CustomizedEntity customizedEntity : entities) {
 
             if (customizedEntity.isStandardEntity()) {
-                appliesToMap.put(EntityCustomizationUtils.getAppliesTo(customizedEntity.getEntityClass()),
-                    ReflectionUtils.getHumanClassName(customizedEntity.getEntityClass().getSimpleName()));
+                appliesToMap.put(EntityCustomizationUtils.getAppliesTo(customizedEntity.getEntityClass(), null), customizedEntity.getClassnameToDisplayHuman());
             } else {
-                appliesToMap.put(CustomEntityTemplate.getAppliesTo(customizedEntity.getEntityName()),
-                    ReflectionUtils.getHumanClassName(customizedEntity.getEntityClass().getSimpleName()) + CustomFieldInstanceService.ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR
-                            + customizedEntity.getEntityName());
+                appliesToMap.put(EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomEntityTemplate.getAppliesTo(customizedEntity.getEntityName())),
+                    customizedEntity.getClassnameToDisplayHuman());
             }
         }
     }

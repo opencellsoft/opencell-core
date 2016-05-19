@@ -48,7 +48,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
         boolean isNew = entity.isTransient();
         String outcome = super.saveOrUpdate(killConversation);
-        customFieldDataEntryBean.updateCustomFieldsInEntity((ICustomFieldEntity) entity, isNew);
+        customFieldDataEntryBean.saveCustomFieldsToEntity((ICustomFieldEntity) entity, isNew);
         return outcome;
     }
 }

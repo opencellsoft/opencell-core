@@ -64,7 +64,7 @@
 
         </hftl:formPanel>
 
-        <h:form id="operationsForm" rendered="#{not empty serviceInstanceBean.entity.id}">
+        <h:form id="operationsForm" rendered="#{not empty serviceInstanceBean.entity.id and serviceInstanceBean.canUserUpdateEntity()}">
             <p:commandButton action="#{serviceInstanceBean.activateService}" value="#{messages['serviceInstance.activateButton']}" ajax="false"
                 onclick="if(confirm('#{messages['confirmationMessage.confirmActivation']}')){return true;}else{return false;}"
                 disabled="#{serviceInstanceBean.entity.status.toString() == 'ACTIVE' or serviceInstanceBean.entity.status.toString() == 'TERMINATED'}" />

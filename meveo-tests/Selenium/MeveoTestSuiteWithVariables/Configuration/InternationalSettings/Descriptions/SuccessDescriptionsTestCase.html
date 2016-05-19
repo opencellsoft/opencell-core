@@ -43,27 +43,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>${InvCategoryObjTypeValue}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${Language}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${Language}</td>
+	<td>${InvSubCategoryObjTypeValue}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>pause</td>
-	<td>1000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;${LanguageValue}&quot;)</td>
+	<td>5000</td>
 	<td></td>
 </tr>
 <tr>
@@ -83,37 +68,37 @@
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>id=InvoiceCategory__title</td>
-	<td>Search invoice categories</td>
+	<td>id=InvoiceSubCategory__title</td>
+	<td>Search invoice sub categories</td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>id=InvoiceCategory__title</td>
-	<td>Search invoice categories</td>
+	<td>id=InvoiceSubCategory__title</td>
+	<td>Search invoice sub categories</td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>${InputCode}</td>
+	<td>id=InvoiceSubCategory_popupForm:searchField1</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${InputCode}</td>
+	<td>id=InvoiceSubCategory_popupForm:searchField1</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${InputCode}</td>
+	<td>id=InvoiceSubCategory_popupForm:searchField1</td>
 	<td>${CodeValue}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=InvoiceCategory_popupForm:buttonSearch</td>
+	<td>id=InvoiceSubCategory_popupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>//tbody[@id='InvoiceCategory_popupForm:InvoiceCategory_datatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='InvoiceSubCategory_popupForm:InvoiceSubCategory_datatable_data']/tr/td[1]</td>
 	<td>${CodeValue}</td>
 </tr>
 <tr>
@@ -123,22 +108,22 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=InvoiceCategory_popupForm:buttonSearch</td>
+	<td>id=InvoiceSubCategory_popupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>//tbody[@id='InvoiceCategory_popupForm:InvoiceCategory_datatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='InvoiceSubCategory_popupForm:InvoiceSubCategory_datatable_data']/tr/td[1]</td>
 	<td>${CodeValue}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//tbody[@id='InvoiceCategory_popupForm:InvoiceCategory_datatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='InvoiceSubCategory_popupForm:InvoiceSubCategory_datatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForNotVisible</td>
-	<td>id=InvoiceCategory_</td>
+	<td>id=InvoiceSubCategory_</td>
 	<td></td>
 </tr>
 <tr>
@@ -148,12 +133,12 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>//tbody[@id='InvoiceCategory_popupForm:InvoiceCategory_datatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='InvoiceSubCategory_popupForm:InvoiceSubCategory_datatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//tbody[@id='InvoiceCategory_popupForm:InvoiceCategory_datatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='InvoiceSubCategory_popupForm:InvoiceSubCategory_datatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
@@ -162,14 +147,64 @@
 	<td>${CodeValue}</td>
 </tr>
 <tr>
+	<td>if</td>
+	<td>${DescriptionTranslationBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>${ENGLanguage}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>assertElementPresent</td>
-	<td>${descriptionTranslation}</td>
+	<td>${ENGLanguage}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${ENGLanguage}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${descriptionTranslation}</td>
-	<td>${DescriptionTranslationValue}</td>
+	<td>${ENGLanguage}</td>
+	<td>${DescriptionENGValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DescriptionTranslationBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>${FRALanguage}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${FRALanguage}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${FRALanguage}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${FRALanguage}</td>
+	<td>${DescriptionFRAValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>

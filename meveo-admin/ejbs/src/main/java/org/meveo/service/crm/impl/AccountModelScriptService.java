@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -65,21 +64,6 @@ public class AccountModelScriptService extends CustomScriptService<AccountModelS
 	void compileAll() {
 		List<AccountModelScript> accountModelScripts = findByType(ScriptSourceTypeEnum.JAVA);
 		compile(accountModelScripts);
-	}
-
-	/**
-	 * Find the class name in a source java text
-	 * 
-	 * @param src
-	 *            Java source code
-	 * @return Class name
-	 */
-	public String getClassName(String src) {
-		String className = StringUtils.patternMacher("public class (.*) extends", src);
-		if (className == null) {
-			className = StringUtils.patternMacher("public class (.*) implements", src);
-		}
-		return className;
 	}
 
 	// Interface methods

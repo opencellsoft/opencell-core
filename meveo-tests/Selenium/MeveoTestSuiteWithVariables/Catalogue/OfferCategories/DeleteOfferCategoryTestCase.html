@@ -12,28 +12,33 @@
 <tr><td rowspan="1" colspan="3">DeleteOfferTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>click</td>
-	<td>${IconDelete}</td>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${Code}')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForText</td>
-	<td>//*[contains(@id, 'confirmDeleteDialog')]/div[2]/span[2]</td>
-	<td>Do you really want to delete this record?</td>
+	<td>click</td>
+	<td>//*[contains(@id, 'deletelink')]</td>
+	<td></td>
 </tr>
 <tr>
-	<td>assertText</td>
-	<td>//*[contains(@id, 'confirmDeleteDialog')]/div[2]/span[2]</td>
-	<td>Do you really want to delete this record?</td>
-</tr>
-<tr>
-	<td>verifyText</td>
-	<td>//*[contains(@id, 'confirmDeleteDialog')]/div[2]/span[2]</td>
-	<td>Do you really want to delete this record?</td>
+	<td>waitForElementPresent</td>
+	<td>${deleteYes}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>${deleteYes}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

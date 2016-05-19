@@ -1,151 +1,164 @@
 package org.meveo.util.view;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.seam.security.Identity;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.filter.config.ConstraintType;
 import org.meveo.admin.web.filter.config.Page;
 import org.meveo.admin.web.filter.config.Param;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PagePermission {
 
-	private static final String CURRENT_USER = "currentUser";
-	private static final String EDIT = "edit";
-	private static final String GET = "GET";
-	private static final String JSF = ".jsf";
-	private static final String XHTML = ".xhtml";
+    private static final String PAGE_ACCESS_RULES_EXCEPTION = "Page access rules have not been initialized. Call the init() method to initialize properly.";
+    private static final String CURRENT_USER = "currentUser";
+//    private static final String EDIT = "edit";
+//    private static final String GET = "GET";
+    private static final String JSF = ".jsf";
+    private static final String XHTML = ".xhtml";
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private Map<String, Page> pages;
+    private List<Page> pages;
+    private String pagesDirectory;
 
-	// Private constructor. Prevents instantiation from other classes.
-	private PagePermission() {
-		pages = Collections.synchronizedMap(new HashMap<String, Page>());
-	}
+    // Private constructor. Prevents instantiation from other classes.
+    private PagePermission() {
+    }
 
-	/**
-	 * Initializes singleton.
-	 *
-	 * {@link PagePermissionHolder} is loaded on the first execution of
-	 * {@link PagePermission#getInstance()} or the first access to
-	 * {@link PagePermissionHolder#INSTANCE}, not before.
-	 */
-	private static class PagePermissionHolder {
-		private static final PagePermission INSTANCE = new PagePermission();
-	}
+    /**
+     * Initializes singleton.
+     * 
+     * {@link PagePermissionHolder} is loaded on the first execution of {@link PagePermission#getInstance()} or the first access to {@link PagePermissionHolder#INSTANCE}, not
+     * before.
+     */
+    private static class PagePermissionHolder {
+        private static final PagePermission INSTANCE = new PagePermission();
+    }
 
-	public static PagePermission getInstance() {
-		return PagePermissionHolder.INSTANCE;
-	}
+    public static PagePermission getInstance() {
+        return PagePermissionHolder.INSTANCE;
+    }
 
-	public Map<String, Page> getPages() {
-		return pages;
-	}
+    public void init(String pagesDirectory, List<Page> pages) {
+        this.pages = pages;
+        this.pagesDirectory = pagesDirectory;
+    }
 
-	public Page findPage(String url) {
-		url = trimPageExtension(url);
-		return this.pages.get(url);
-	}
+    public boolean isPageExisting(HttpServletRequest request) {
+        boolean exists = true;
+        String requestURI = request.getRequestURI();
+        if (this.pages != null && requestURI != null && requestURI.startsWith(pagesDirectory)) {
+            Page page = matchPage(request.getRequestURI());
+            if (page == null) {
+                exists = false;
+            }
+        }
+        return exists;
+    }
 
-	public boolean hasAccessToPage(HttpServletRequest request, Identity currentUser) {
+    public boolean hasAccessToPage(HttpServletRequest request, Identity currentUser) throws BusinessException {
+        // determine edit mode using request method.
+//    	boolean edit = !GET.equalsIgnoreCase(request.getMethod());
+        boolean allow = checkConstraints(request, currentUser, ConstraintType.READ);
+        return allow;
+    }
 
-		Page page = findPage(request.getRequestURI());
-		Map<Object, Object> parameters = new HashMap<>();
+    public boolean hasWriteAccess(HttpServletRequest request, Identity currentUser) throws BusinessException {
+        // for checking write access, edit will always be true.
+        // boolean edit = true;
+        boolean allow = checkConstraints(request, currentUser, ConstraintType.WRITE);
+        return allow;
+    }
 
-		// load the identity object as the currentUser
-		parameters.put(CURRENT_USER, currentUser);
+    private boolean checkConstraints(HttpServletRequest request, Identity currentUser, ConstraintType type) throws BusinessException {
+        boolean allow = false;
+        if (this.pages == null) {
+            logger.error(PAGE_ACCESS_RULES_EXCEPTION);
+            throw new BusinessException(PAGE_ACCESS_RULES_EXCEPTION);
+        }
+        String requestURI = request.getRequestURI();
+        if (requestURI != null && requestURI.startsWith(pagesDirectory)) {
+            Page page = matchPage(requestURI);
+            if (page == null) {
+                return false;
+            }
+            
+            if ((currentUser != null && currentUser.isLoggedIn() && page != null)) {
+                Map<Object, Object> parameters = fetchParameters(page, request, currentUser);
+                try {
+                	allow = (Boolean) ValueExpressionWrapper.evaluateExpression(page.getExpression(type), parameters, Boolean.class);
+                } catch (BusinessException e) {
+                    logger.error("Failed to execute constraint expression. Returning false.", e);
+                    allow = false;
+                }
+            }
+        } else {
+            allow = true;
+        }
 
-		// load the edit parameter automatically
-		// boolean edit = Boolean.getBoolean(request.getParameter("edit"));
-		boolean edit = !GET.equalsIgnoreCase(request.getMethod());
-		parameters.put(EDIT, edit);
+        return allow;
+    }
 
-		String value = null;
-		String key = null;
+    private Map<Object, Object> fetchParameters(Page page, HttpServletRequest request, Identity currentUser) {
 
-		// load all parameters needed for the expression's evaluation
-		for (Param paramKey : page.getParameters()) {
-			key = paramKey.getName();
-			value = request.getParameter(key);
-			if (value != null) {
-				parameters.put(key, value);
-			}
-		}
+        Map<Object, Object> parameters = new HashMap<>();
 
-		boolean allow = true;
-		// load all constraints
-		for (String constraint : page.getConstraints()) {
-			try {
-				allow = allow && (Boolean) ValueExpressionWrapper.evaluateExpression(constraint, parameters, Boolean.class);
-				// if allow is false any succeeding expressions will never be true.
-				// so immediately log a warning then break from loop.
-				if (!allow) {
-					logger.warn("User does not have permission to access the page. Returning false...");
-					break;
-				}
-			} catch (BusinessException e) {
-				logger.error("Failed to execute constraint expression. Returning false...", e);
-				allow = false;
-				break;
-			}
-		}
-		return allow;
-	}
+        if (page != null && page.getParameters() != null && !page.getParameters().isEmpty()) {
+            String value = null;
+            String key = null;
 
-	public boolean hasWriteAccess(HttpServletRequest request, User currentUser) {
-		// define exemptions, if user is admin or superadmin or if the request
-		// is not an action, return true
-		boolean isAdmin = currentUser.hasPermission("administration", "administrationManagement");
-		boolean isSuperAdmin = currentUser.hasPermission("superAdmin", "superAdminManagement");
-//		boolean isEdit = !GET.equalsIgnoreCase(request.getMethod());
+            // load all parameters needed for the expression's evaluation
+            for (Param paramKey : page.getParameters()) {
+                key = paramKey.getName();
+                value = request.getParameter(key);
+                if (value != null) {
+                    parameters.put(key, value);
+                }
+            }
+        }
+        // load the identity object as the currentUser
+        parameters.put(CURRENT_USER, currentUser);
 
-		boolean hasWriteAccess = false;
-		if (isAdmin || isSuperAdmin) {
-			hasWriteAccess = true;
-		} else {
-			// check if user has permissions to manage the resource
-			List<String> resources = getResourcesFromUrl(request.getRequestURI());
-			
-			if(resources != null){
-				for (String resource : resources) {
-					if (currentUser.hasPermission(resource, resource + "Management")) {
-						hasWriteAccess = true;
-						break;
-					}
-				}
-			}
-		}
-		return hasWriteAccess;
-	}
+        // load the edit parameter.
+//        parameters.put(EDIT, edit);
 
-	private List<String> getResourcesFromUrl(String path) {
-		String categoryAndEntity = StringUtils.patternMacher("/pages/(.*/.*)/", path);
-		List<String> resources = null;
-		if (categoryAndEntity != null && categoryAndEntity.contains("/")) {
-			resources = Arrays.asList(categoryAndEntity.split("/"));
-		}
-		return resources;
-	}
+        return parameters;
+    }
 
-	private String trimPageExtension(String url) {
-		if (url != null && url.endsWith(JSF)) {
-			url = url.substring(0, url.lastIndexOf(JSF));
-		} else if (url != null && url.endsWith(XHTML)) {
-			url = url.substring(0, url.lastIndexOf(XHTML));
-		}
-		return url;
-	}
+    /**
+     * Match as close as possible a page access rule key to the page URI provided and return a the page access rule key. Match is performed by matching a full string and then
+     * reducing one by one symbol until a match is found.
+     * 
+     * @param requestUri The page URI to match.
+     * @return The key of the matching page access rule.
+     */
+    private Page matchPage(String requestUri) {
+    	String uri = null;
+    	if (requestUri != null && requestUri.endsWith(JSF)) {
+            uri = requestUri.substring(0, requestUri.lastIndexOf(JSF));
+        } else if (requestUri != null && requestUri.endsWith(XHTML)) {
+            uri = requestUri.substring(0, requestUri.lastIndexOf(XHTML));
+        }
+    	if(!StringUtils.isBlank(uri)){
+    		Matcher matcher = null;
+        	for (Page page : this.pages) {
+        		matcher = page.getPattern().matcher(uri);
+        		if(matcher.matches()){
+        			return page;
+        		}
+    		}
+    	}
+    	return null;
+    }
 
 }

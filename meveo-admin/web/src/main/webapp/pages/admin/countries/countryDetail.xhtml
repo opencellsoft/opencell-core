@@ -12,20 +12,45 @@
 	</ui:define>
 
 	<ui:define name="body">
+	
+	   <hftl:entityPopup id="popupForCurrency" header="#{messages['currency.popup.header']}"
+            updateField=":formCountry:currencySelectedId :formCountry:currencySelectedId_text" 
+            selection="#{countryBean.entity.currency}"
+            backingBean="#{currencyBean}"
+            searchField1Label="#{messages['currency.currencyCode']}"
+            searchField1="currencyCode"
+            column1Label="#{messages['currency.currencyCode']}"
+            column1="currencyCode"
+            column2Label="#{messages['tradingLanguage.prDescription']}"
+            column2="descriptionEn" eventBackingBean="#{countryBean}">
+        </hftl:entityPopup>
+        
+        <hftl:entityPopup id="popupForLanguage" header="#{messages['language.popup.header']}"
+            updateField=":formCountry:languageSelectedId :formCountry:languageSelectedId_text" 
+            selection="#{countryBean.entity.language}"
+            backingBean="#{languageBean}"
+            searchField1Label="#{messages['language.languageCode']}"
+            searchField1="languageCode"
+            column1Label="#{messages['language.languageCode']}"
+            column1="languageCode"
+            column2Label="#{messages['tradingLanguage.prDescription']}"
+            column2="descriptionEn" eventBackingBean="#{countryBean}" >
+        </hftl:entityPopup>
 
-		<hftl:formPanel label="#{messages['country.countryPanel']}"	backingBean="#{countryBean}">
+		<hftl:formPanel formId="formCountry"  label="#{messages['country.countryPanel']}"	backingBean="#{countryBean}">
 		
 			<hftl:formField label="#{messages['country.code']}"		field="countryCode" required="true" maxlength="3" />
 			
-		
+			<hftl:formField label="#{messages['country.nameEn']}" 	field="descriptionEn" required="true" />
 			
-			<hftl:formField id="currencySelectId" label="#{messages['currency.currencyCode']}" field="currency" 
-			    valueLabelField="currencyCode"  listBean="#{currencyBean}" required="true"/>
+			<hftl:formField label="#{messages['country.nameFr']}" 	field="descriptionFr" required="true" />
+			
+			<hftl:formField id="currencySelectedId" label="#{messages['currency.currencyCode']}" field="currency" 
+			    valueLabelField="currencyCode"  required="true" popup="true"  popupId="popupForCurrency"/>
 			    
-			<hftl:formField id="languageSelectId" label="#{messages['language.languageCode']}" field="language" 
-			    valueLabelField="languageCode"  listBean="#{languageBean}" required="true"/>
+			<hftl:formField id="languageSelectedId" label="#{messages['language.languageCode']}" field="language" 
+			    valueLabelField="languageCode"  required="true" popup="true"  popupId="popupForLanguage"/>
 			
-			<hftl:formLanguageFields entity="#{countryBean.entity}" backingBean="#{countryBean}" multiLang="true"/>
 			    
 		</hftl:formPanel>
 

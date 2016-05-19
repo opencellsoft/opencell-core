@@ -12,12 +12,27 @@
 <tr><td rowspan="1" colspan="3">DeleteRecurringChargeTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>click</td>
+	<td>assertElementPresent</td>
 	<td>${IconRefresh}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
+	<td>${IconRefresh}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${RefreshYes}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${RefreshYes}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
 	<td>${RefreshYes}</td>
 	<td></td>
 </tr>

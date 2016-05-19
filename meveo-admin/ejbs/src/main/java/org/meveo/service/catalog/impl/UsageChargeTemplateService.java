@@ -41,17 +41,16 @@ import org.meveo.service.base.MultilanguageEntityService;
 @Stateless
 public class UsageChargeTemplateService extends MultilanguageEntityService<UsageChargeTemplate> {
 
-    private static final String CHARGES = "Charges";
 	@Inject
-    private RatingCacheContainerProvider ratingCacheContainerProvider;
+	private RatingCacheContainerProvider ratingCacheContainerProvider;
 
-    @Override
+	@Override
 	public void create(UsageChargeTemplate e, User creator) throws BusinessException {
 		super.create(e, creator);
 		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(e);
 	}
 
-    @Override
+	@Override
 	public UsageChargeTemplate update(UsageChargeTemplate e, User updater) throws BusinessException {
 		e = super.update(e, updater);
 		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(e);
@@ -59,48 +58,40 @@ public class UsageChargeTemplateService extends MultilanguageEntityService<Usage
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<UsageChargeTemplate> findByPrefix(EntityManager em,
-			String usageChargePrefix, Provider provider) {
+	public List<UsageChargeTemplate> findByPrefix(EntityManager em, String usageChargePrefix, Provider provider) {
 		QueryBuilder qb = new QueryBuilder(UsageChargeTemplate.class, "a");
 		qb.like("code", usageChargePrefix, QueryLikeStyleEnum.MATCH_BEGINNING, true);
 
 		return (List<UsageChargeTemplate>) qb.getQuery(em).getResultList();
-    }
+	}
 
-    public List<UsageChargeTemplate> findAssociatedToEDRTemplate(TriggeredEDRTemplate triggeredEDRTemplate) {
-        return getEntityManager().createNamedQuery("UsageChargeTemplate.getWithTemplateEDR", UsageChargeTemplate.class).setParameter("edrTemplate", triggeredEDRTemplate)
-            .getResultList();
-    }
-    
-    public int getNbrUsagesChrgWithNotPricePlan(Provider provider) { 
-		return ((Long)getEntityManager().
-				createNamedQuery("usageChargeTemplate.getNbrUsagesChrgWithNotPricePlan",Long.class)
+	public List<UsageChargeTemplate> findAssociatedToEDRTemplate(TriggeredEDRTemplate triggeredEDRTemplate) {
+		return getEntityManager().createNamedQuery("UsageChargeTemplate.getWithTemplateEDR", UsageChargeTemplate.class)
+				.setParameter("edrTemplate", triggeredEDRTemplate).getResultList();
+	}
+
+	public int getNbrUsagesChrgWithNotPricePlan(Provider provider) {
+		return ((Long) getEntityManager()
+				.createNamedQuery("usageChargeTemplate.getNbrUsagesChrgWithNotPricePlan", Long.class)
 				.setParameter("provider", provider).getSingleResult()).intValue();
-		}
-    
-		public  List<UsageChargeTemplate> getUsagesChrgWithNotPricePlan(Provider provider) { 
-		return (List<UsageChargeTemplate>)getEntityManager().createNamedQuery("usageChargeTemplate.getUsagesChrgWithNotPricePlan",UsageChargeTemplate.class)
-				.setParameter("provider", provider).getResultList();
-		}
-	
-		public int getNbrUsagesChrgNotAssociated(Provider provider) { 
-				return ((Long)getEntityManager().
-						createNamedQuery("usageChargeTemplate.getNbrUsagesChrgNotAssociated",Long.class)
-						.setParameter("provider", provider).getSingleResult()).intValue();
-				}
-		    
-	    public  List<UsageChargeTemplate> getUsagesChrgNotAssociated(Provider provider) { 
-			return (List<UsageChargeTemplate>)getEntityManager().createNamedQuery("usageChargeTemplate.getUsagesChrgNotAssociated",UsageChargeTemplate.class)
-					.setParameter("provider", provider).getResultList();
-			}
+	}
 
-		@Override
-		public String getObjectType() {
-			return CHARGES;
-		}
-	
-    
-    
-    
-    
+	public List<UsageChargeTemplate> getUsagesChrgWithNotPricePlan(Provider provider) {
+		return (List<UsageChargeTemplate>) getEntityManager()
+				.createNamedQuery("usageChargeTemplate.getUsagesChrgWithNotPricePlan", UsageChargeTemplate.class)
+				.setParameter("provider", provider).getResultList();
+	}
+
+	public int getNbrUsagesChrgNotAssociated(Provider provider) {
+		return ((Long) getEntityManager()
+				.createNamedQuery("usageChargeTemplate.getNbrUsagesChrgNotAssociated", Long.class)
+				.setParameter("provider", provider).getSingleResult()).intValue();
+	}
+
+	public List<UsageChargeTemplate> getUsagesChrgNotAssociated(Provider provider) {
+		return (List<UsageChargeTemplate>) getEntityManager()
+				.createNamedQuery("usageChargeTemplate.getUsagesChrgNotAssociated", UsageChargeTemplate.class)
+				.setParameter("provider", provider).getResultList();
+	}
+
 }
