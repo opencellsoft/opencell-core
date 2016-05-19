@@ -910,6 +910,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         List<CustomFieldInstance> cfis = query.getResultList();
 
         for (CustomFieldInstance cfi : cfis) {
+            getEntityManager().detach(cfi);
             cfi.setId(null);
             cfi.setVersion(0);
             cfi.setAppliesToEntity(entity.getUuid());
