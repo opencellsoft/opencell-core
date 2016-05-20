@@ -149,6 +149,15 @@
 							field="minQuantity" />
 						<hftl:formField label="#{messages['pricePlanMatrix.maxQuantity']}"
 							field="maxQuantity" />
+							
+						<hftl:formField
+							label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}"
+							newLine="true" field="minSubscriptionAgeInMonth" maxValue="9999"
+							maxlength="4" />
+						<hftl:formField
+							label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}"
+							field="maxSubscriptionAgeInMonth" maxValue="9999" maxlength="4" />
+								
 						<hftl:formField
 							label="#{messages['pricePlanMatrix.startSubscriptionDate']}"
 							field="startSubscriptionDate" />
@@ -191,15 +200,6 @@
 							label="#{messages['pricePlanMatrix.amountWithTax']} EL"
 							field="amountWithTaxEL" textArea="true" rows="1" maxlength="2000"
 							rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}" />
-
-						<hftl:formField
-							label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}"
-							newLine="true" field="minSubscriptionAgeInMonth" maxValue="9999"
-							maxlength="4" />
-						<hftl:formField
-							label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}"
-							field="maxSubscriptionAgeInMonth" maxValue="9999" maxlength="4" />
-
 					</p:tab>
 					<hftl:customFields backingBean="#{pricePlanMatrixBean}"
 							messagesId=":formPricePlan:messages" />
