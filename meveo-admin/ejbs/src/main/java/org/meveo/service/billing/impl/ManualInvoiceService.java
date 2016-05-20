@@ -16,36 +16,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.model.billing;
+package org.meveo.service.billing.impl;
 
-public enum RatedTransactionStatusEnum {
-    
-    OPEN(1, "ratedTransactionStatus.open"), 
-    BILLED(2, "ratedTransactionStatus.billed"), 
-    REJECTED(3,"ratedTransactionStatus.rejected"),
-    RERATED(4, "ratedTransactionStatus.rerated"), 
-    CANCELED(5,"ratedTransactionStatus.canceled"), 
-    MANUAL(6,"ratedTransactionStatus.manual");
+import java.util.ArrayList;
+import java.util.List;
 
-	private Integer id;
-	private String label;
- 
-	
-	private RatedTransactionStatusEnum(Integer id, String label) {
-		this.id = id;
-		this.label = label;
-	}
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 
-	public String getLabel() {
-		return label;
-	}
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceCategory;
 
-	public Integer getId() {
-		return id;
-	}
+import org.meveo.service.base.PersistenceService;
 
-	public String toString() {
-		return name();
-	}
+@Stateless
+public class ManualInvoiceService extends PersistenceService<Invoice> {
 
 }

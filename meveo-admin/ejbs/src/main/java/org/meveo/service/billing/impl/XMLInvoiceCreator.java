@@ -73,6 +73,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.XMLInvoiceHeaderCategoryDTO;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -629,7 +630,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	private void addCustomFields(ICustomFieldEntity entity, Invoice invoice, Document doc, Element parent) {
 		if(invoice.getProvider().getInvoiceConfiguration() != null
 				&& invoice.getProvider().getInvoiceConfiguration().getDisplayCfAsXML() != null
-				&& invoice.getProvider().getInvoiceConfiguration().getDisplayCfAsXML()){	
+				&& invoice.getProvider().getInvoiceConfiguration().getDisplayCfAsXML()){	    
 			Element customFieldsTag = customFieldInstanceService.getCFValuesAsDomElement(entity,doc);
 			parent.appendChild(customFieldsTag);
 		} else {
@@ -710,8 +711,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				.getCountry() : "");
 		country.appendChild(countryTxt);
 		addressTag.appendChild(country);
-		
-		Element countryName = doc.createElement("country_name");
+		Element countryName = doc.createElement("countryName");
 		
 		String countryCode = account.getAddress().getCountry() != null ? account.getAddress().getCountry() : "";
 		Country countrybyCode = countryService.findByCode(countryCode);
@@ -724,8 +724,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		}
 		countryName.appendChild(countryNameTxt);
 		addressTag.appendChild(countryName);
-		
-
 		parent.appendChild(addressTag);
 	}
 
@@ -883,8 +881,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 			InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
 
-			String invoiceCategoryLabel = invoiceCategory != null ? catMessagesService.getMessageDescription(
-					invoiceCategory, languageCode) : "";
+			String invoiceCategoryLabel = categoryInvoiceAgregate.getDescription();
 			Element category = doc.createElement("category");
 			category.setAttribute("label", (invoiceCategoryLabel != null) ? invoiceCategoryLabel : "");
 			category.setAttribute("code",
@@ -916,8 +913,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							subCatInvoiceAgregate.getWallet(), subCatInvoiceAgregate.getInvoice(),
 							subCatInvoiceAgregate.getInvoiceSubCategory());
 
-					String invoiceSubCategoryLabel = invoiceSubCat != null ? catMessagesService.getMessageDescription(
-							invoiceSubCat, languageCode) : "";
+					String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription();
 					Element subCategory = doc.createElement("subCategory");
 					subCategories.appendChild(subCategory);
 					subCategory.setAttribute("label", (invoiceSubCategoryLabel != null) ? invoiceSubCategoryLabel : "");

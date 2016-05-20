@@ -1729,7 +1729,7 @@
 			</column>
 			<column name="description" type="VARCHAR(100)" />
 			<column name="inv_type" type="VARCHAR(100)" />
-			<column name="prefix" type="VARCHAR(2000)" />
+			<column name="prefix_el" type="VARCHAR(2000)" />
 			<column name="sequence_size" type="INT4" />
 			<column name="matching_auto" type="BOOL" />
 			<column name="occ_template_id" type="BIGINT" />
@@ -1879,4 +1879,7 @@
             <column name="CHE_FIELDS" type="VARCHAR(500)"/>
         </addColumn>
     </changeSet>
+	<changeSet author="anasseh" id="#1688_20160520">
+     	<modifyDataType columnName="DESCRIPTION" newDataType="VARCHAR(600)"   tableName="BILLING_INVOICE_AGREGATE"/>
+     </changeSet>    
 </databaseChangeLog>
