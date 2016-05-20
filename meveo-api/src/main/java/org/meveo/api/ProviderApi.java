@@ -251,9 +251,13 @@ public class ProviderApi extends BaseApi {
         }
 
         Provider provider = providerService.findByCodeWithFetch(providerCode, Arrays.asList("currency", "country", "language"));
-        if (provider != null) {
-            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider));
-        }
+		if (provider != null) {
+			if (provider.getId().equals(currentUser.getProvider().getId())) {
+				return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider));
+			} else {
+				throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+			}
+		}
 
         throw new EntityDoesNotExistsException(Provider.class, providerCode);
 
@@ -272,6 +276,10 @@ public class ProviderApi extends BaseApi {
         Provider provider = providerService.findByCodeWithFetch(postData.getCode(), Arrays.asList("currency", "country", "language"));
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, postData.getCode());
+        }
+        
+        if (!provider.getId().equals(currentUser.getProvider().getId())) {
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
         }
 
         provider.setDescription(postData.getDescription());
