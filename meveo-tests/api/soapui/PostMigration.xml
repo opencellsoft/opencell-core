@@ -17845,13 +17845,13 @@
             <ratingUnitDescription>Quantity</ratingUnitDescription>
             <unitNbDecimal>2</unitNbDecimal>
             <!--Optional:-->
-            <filterParam1>1</filterParam1>
+            <filterParam1>USAGE</filterParam1>
             <!--Optional:-->
-            <filterParam2>2</filterParam2>
+            <filterParam2></filterParam2>
             <!--Optional:-->
-            <filterParam3>3</filterParam3>
+            <filterParam3></filterParam3>
             <!--Optional:-->
-            <filterParam4>4</filterParam4>
+            <filterParam4></filterParam4>
             <!--Optional:-->
             <filterExpression></filterExpression>
             <priority>1</priority>
@@ -18009,11 +18009,13 @@
          <offerTemplate code="${#TestSuite#ticket}_OFFER1" description="${#TestSuite#ticket}_OFFER1">
          	  <disabled>false</disabled>
             <!--Optional:-->
-            <serviceTemplates>
+            <offerServiceTemplates>
+            <offerServiceTemplate>
                <!--Zero or more repetitions:-->
                <serviceTemplate code="${#TestSuite#ticket}_SERVICE1" description="">
                </serviceTemplate>
-            </serviceTemplates>
+            </offerServiceTemplate>
+            </offerServiceTemplates>
          </offerTemplate>
       </ws:createOrUpdateOfferTemplate>
    </soapenv:Body>
@@ -18168,7 +18170,7 @@
          <!--Optional:-->
          <access code="${#TestSuite#ticket}_ACC0">
             <subscription>${#TestSuite#ticket}_SUB0</subscription>
-            <startDate>2016-03-01</startDate>
+            <startDate>2016-01-01</startDate>
   		  <endDate>2016-08-30</endDate>
          </access>
       </ws:createAccess>
@@ -18178,7 +18180,7 @@
    <soapenv:Body>
       <ws:chargeCdr>
          <!--Optional:-->
-         <cdr>2015-02-01T00:00:00Z;10;${#TestSuite#ticket}_ACC0;1;2;3;4</cdr>
+         <cdr>2016-02-01T00:00:00Z;10;postMigration1_ACC0;USAGE</cdr>
       </ws:chargeCdr>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5b02a077-1178-43ab-bc54-6a993e51798f"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Invoicing" searchProperties="true" id="927bed65-fed0-4f58-ba90-b0fd78b45756"><con:settings/><con:testStep type="request" name="GenerateInvoice" id="7dbc2531-4811-4156-a3c8-84f377e3fa9b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>generateInvoiceData</con:operation><con:request name="GenerateInvoice" id="7e62d038-732c-4fef-a703-9048e8424c07"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
@@ -18232,7 +18234,7 @@
             <occTemplateCode>ENC</occTemplateCode>
             <amount>200</amount>
             <paymentMethod>CHECK</paymentMethod>
-            <customerAccountCode>${#TestSuite#ticket}_CA</customerAccountCode>
+            <customerAccountCode>${#TestSuite#ticket}_CA0</customerAccountCode>
             <reference>000000001</reference>
             <dueDate>2016-06-12</dueDate>
             <transactionDate>2016-04-08</transactionDate>
@@ -18244,7 +18246,7 @@
    <soapenv:Body>
       <ws:findXMLInvoice>
          <!--Optional:-->
-         <invoiceNumber>Prefix_000000002</invoiceNumber>
+         <invoiceNumber>Prefix_000000003</invoiceNumber>
       </ws:findXMLInvoice>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="GetInvoicePdf" id="88da17fa-25f8-4554-8de6-c50ef5610962"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>findPdfInvoice</con:operation><con:request name="GetInvoicePdf" id="f3d0dddc-6857-4363-8f2f-917774f9fefe"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
@@ -18252,7 +18254,7 @@
    <soapenv:Body>
       <ws:findPdfInvoice>
          <!--Optional:-->
-         <invoiceNumber>Prefix_000000002</invoiceNumber>
+         <invoiceNumber>Prefix_000000003</invoiceNumber>
       </ws:findPdfInvoice>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f24123ca-553d-42a4-93d9-a187f3be4240"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="33c73c60-4c46-4531-93ae-7bcda16db41b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Dunning" searchProperties="true"><con:settings/><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>postMigration1</con:value></con:property></con:properties><con:setupScript>
