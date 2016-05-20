@@ -12,25 +12,25 @@ import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
-import org.meveo.api.dto.invoice.InvoiceDto;
+import org.meveo.api.dto.invoice.Invoice4_2Dto;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.dto.response.InvoiceCreationResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.invoice.InvoiceApi;
+import org.meveo.api.invoice.Invoice4_2Api;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.api.rest.invoice.InvoiceRs;
+import org.meveo.api.rest.invoice.Invoice4_2Rs;
 import org.meveo.model.billing.InvoiceTypeEnum;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
-public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
+public class Invoice4_2RsImpl extends BaseRs implements Invoice4_2Rs {
 
     @Inject
-    private InvoiceApi invoiceApi;
+    private Invoice4_2Api invoiceApi;
 
     @Override
-    public InvoiceCreationResponse create(InvoiceDto invoiceDto) {
+    public InvoiceCreationResponse create(Invoice4_2Dto invoiceDto) {
         InvoiceCreationResponse result = new InvoiceCreationResponse();
 
         try {

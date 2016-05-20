@@ -8,7 +8,7 @@ import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
-import org.meveo.api.dto.invoice.InvoiceDto;
+import org.meveo.api.dto.invoice.Invoice4_2Dto;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.dto.response.InvoiceCreationResponse;
 
@@ -16,10 +16,10 @@ import org.meveo.api.dto.response.InvoiceCreationResponse;
  * @author Edward P. Legaspi
  **/
 @WebService
-public interface InvoiceWs extends IBaseWs {
+public interface Invoice4_2Ws extends IBaseWs {
 
 	@WebMethod
-	public InvoiceCreationResponse createInvoice(@WebParam(name = "invoice") InvoiceDto invoiceDto);
+	public InvoiceCreationResponse createInvoice(@WebParam(name = "invoice") Invoice4_2Dto invoiceDto);
 
 	@WebMethod
 	public CustomerInvoicesResponse findInvoice(@WebParam(name = "customerAccountCode") String customerAccountCode);

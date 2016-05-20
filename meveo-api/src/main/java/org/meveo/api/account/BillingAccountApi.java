@@ -12,7 +12,7 @@ import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
-import org.meveo.api.dto.invoice.InvoiceDto;
+import org.meveo.api.dto.invoice.Invoice4_2Dto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -371,12 +371,12 @@ public class BillingAccountApi extends AccountApi {
 
 				List<Invoice> invoices = ba.getInvoices();
 				if (invoices != null && invoices.size() > 0) {
-					List<InvoiceDto> invoicesDto = new ArrayList<InvoiceDto>();
+					List<Invoice4_2Dto> invoicesDto = new ArrayList<Invoice4_2Dto>();
 					String billingAccountCode = ba.getCode();
 					if (invoices != null && invoices.size() > 0) {
 						for (Invoice i : invoices) {
 							if (i.getInvoiceType().getInvoiceTypeEnum() == InvoiceTypeEnum.CREDIT_NOTE_ADJUST) {
-								InvoiceDto invoiceDto = new InvoiceDto(i, billingAccountCode);
+								Invoice4_2Dto invoiceDto = new Invoice4_2Dto(i, billingAccountCode);
 								invoicesDto.add(invoiceDto);
 							}
 						}

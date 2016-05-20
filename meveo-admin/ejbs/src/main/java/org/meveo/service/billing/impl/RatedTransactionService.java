@@ -75,6 +75,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
@@ -98,6 +99,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	
 	@Inject
 	private BillingAccountService billingAccountService;
+	
+	@Inject
+	private CatMessagesService catMessagesService;
 
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -246,9 +250,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		boolean entreprise = billingAccount.getProvider().isEntreprise();
 		int rounding = billingAccount.getProvider().getRounding()==null?2:billingAccount.getProvider().getRounding();
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
-		
-		List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount);
-		//TODO do this in the right place (one time by userAccount)			
+		String languageCode = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
+		List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount);				
 		boolean isExonerated = billingAccountService.isExonerated(billingAccount);
 
 		for (UserAccount userAccount : userAccounts) {
@@ -299,27 +302,27 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
 
 			SubCategoryInvoiceAgregate biggestSubCat = null;
-			BigDecimal biggestAmount = new BigDecimal("-100000000");
+			BigDecimal biggestAmount = new BigDecimal("-100000000");			
 			if(invoiceSubCats!=null && !invoiceSubCats.isEmpty()){
 				for (Object[] object : invoiceSubCats) {
 					log.info("amountWithoutTax=" + object[1] + "amountWithTax =" + object[2] + "amountTax=" + object[3]);
 					Long invoiceSubCategoryId = (Long) object[0];
 					InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findById(invoiceSubCategoryId);
 					List<Tax> taxes = new ArrayList<Tax>();
-					for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory
-							.getInvoiceSubcategoryCountries()) {
-						if (invoicesubcatCountry.getTradingCountry().getCountryCode()
-								.equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()) 
-								&& matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(),billingAccount, invoice)) {
+					for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
+						if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()) 
+					    && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(),billingAccount, invoice)) {
+							
 							taxes.add(invoicesubcatCountry.getTax());
 						}
 					}
 
+					String invSubCatDescTranslated = catMessagesService.getMessageDescription(invoiceSubCategory, languageCode);
 					SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
 					invoiceAgregateSubcat.setAuditable(billingAccount.getAuditable());
 					invoiceAgregateSubcat.setProvider(billingAccount.getProvider());
 					invoiceAgregateSubcat.setInvoice(invoice);
-					invoiceAgregateSubcat.setDescription(invoiceSubCategory.getDescription());
+					invoiceAgregateSubcat.setDescription(invSubCatDescTranslated);
 					invoiceAgregateSubcat.setBillingRun(billingAccount.getBillingRun());
 					invoiceAgregateSubcat.setWallet(wallet);
 					invoiceAgregateSubcat.setAccountingCode(invoiceSubCategory.getAccountingCode());
@@ -390,11 +393,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					if (catInvoiceAgregateMap.containsKey(invoiceCategoryId)) {
 						invoiceAgregateCat = catInvoiceAgregateMap.get(invoiceCategoryId);
 					} else {
+						String invCatDescTranslated  = catMessagesService.getMessageDescription(invoiceSubCategory.getInvoiceCategory(), languageCode);
 						invoiceAgregateCat = new CategoryInvoiceAgregate();
 						invoiceAgregateCat.setAuditable(billingAccount.getAuditable());
 						invoiceAgregateCat.setProvider(billingAccount.getProvider());
 						invoiceAgregateCat.setInvoice(invoice);
-						invoiceAgregateCat.setBillingRun(billingAccount.getBillingRun());
+						invoiceAgregateCat.setBillingRun(billingAccount.getBillingRun());						
+						invoiceAgregateCat.setDescription(invCatDescTranslated);
 						catInvoiceAgregateMap.put(invoiceCategoryId, invoiceAgregateCat);
 					}
 
@@ -666,7 +671,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					.getInvoiceSubcategoryCountries()) {
 				if (invoicesubcatCountry.getTradingCountry().getCountryCode()
 						.equalsIgnoreCase(invoice.getBillingAccount().getTradingCountry().getCountryCode()) 
-						&& matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(),billingAccount, invoice)) {
+						&& invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(),billingAccount, invoice)) {
 					taxes.add(invoicesubcatCountry.getTax());
 				}
 			}
@@ -711,34 +716,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			invoiceAgregateService.create(invoiceAgregateSubcat,currentUser);
 
 		}}
-	private boolean matchInvoicesubcatCountryExpression(String expression,BillingAccount billingAccount,Invoice invoice) throws BusinessException {
-		Boolean result = true;
-		if (StringUtils.isBlank(expression)) {
-			return result;
-		}
-		Map<Object, Object> userMap = new HashMap<Object, Object>();
+	
 
-
-		if (expression.indexOf("ca") >= 0) {
-			userMap.put("ca", billingAccount.getCustomerAccount());
-		}
-		if (expression.indexOf("ba") >= 0) {
-			userMap.put("ba", billingAccount);
-		}
-		if (expression.indexOf("iv") >= 0) {
-			userMap.put("iv", invoice);
-
-		}
-		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap,
-				Boolean.class);
-		try {
-			result = (Boolean) res;
-		} catch (Exception e) {
-			throw new BusinessException("Expression " + expression
-					+ " do not evaluate to boolean but " + res);
-		}
-		return result;
-	}
 
 	private boolean matchDiscountPlanItemExpression(String expression,CustomerAccount customerAccount,BillingAccount billingAccount,Invoice invoice) throws BusinessException {
 		Boolean result = true;

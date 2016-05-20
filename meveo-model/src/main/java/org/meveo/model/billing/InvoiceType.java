@@ -59,9 +59,9 @@ public class InvoiceType extends BusinessEntity {
 	@JoinTable(name = "BILLING_INVOICE_TYPE_APPLIES_TO", joinColumns = @JoinColumn(name = "INVOICE_TYPE_ID"), inverseJoinColumns = @JoinColumn(name = "APPLIES_TO_ID"))
 	private List<InvoiceType> appliesTo = new ArrayList<InvoiceType>();
 	
-	@Column(name = "PREFIX", length = 2000)
+	@Column(name = "PREFIX_EL", length = 2000)
 	@Size(max = 2000)
-	private String prefix;
+	private String prefixEL;
 
 	@Column(name = "SEQUENCE_SIZE")
 	private Integer sequenceSize=9;
@@ -102,18 +102,20 @@ public class InvoiceType extends BusinessEntity {
 		this.appliesTo = appliesTo;
 	}
 
+	
+
 	/**
-	 * @return the prefix
+	 * @return the prefixEL
 	 */
-	public String getPrefix() {
-		return prefix;
+	public String getPrefixEL() {
+		return prefixEL;
 	}
 
 	/**
-	 * @param prefix the prefix to set
+	 * @param prefixEL the prefixEL to set
 	 */
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
+	public void setPrefixEL(String prefixEL) {
+		this.prefixEL = prefixEL;
 	}
 
 	/**

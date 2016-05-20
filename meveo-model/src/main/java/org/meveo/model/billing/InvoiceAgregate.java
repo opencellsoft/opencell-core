@@ -67,8 +67,7 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	@Size(max = 255)
 	private String accountingCode;
 
-	@Column(name = "DESCRIPTION", length = 50)
-	@Size(max = 50)
+	@Column(name = "DESCRIPTION")
 	private String description;
 
 	@Column(name = "TAX_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
