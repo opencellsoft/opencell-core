@@ -20,11 +20,11 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
@@ -36,12 +36,15 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingWalletDetailDTO;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.AccountService;
 
 @Stateless
@@ -160,6 +163,30 @@ public class UserAccountService extends AccountService<UserAccount> {
 			log.warn("error while getting user account list by billing account",e);
 			return null;
 		}
+	}
+	
+	/**
+	 * Returns map of counters at a given date
+	 * means counter period for period linked to this given date
+	 * @param userAccount
+	 * @param date
+	 * @return map of counters
+	 * @throws BusinessException
+	 */
+	public Map<String, CounterInstance> countersMap(UserAccount userAccount, Date date) throws BusinessException {
+		Map<String, CounterInstance> counters = userAccount.getCounters();
+		Iterator<Map.Entry<String, CounterInstance>> countersIterator = counters.entrySet().iterator();
+		while(countersIterator.hasNext()) {
+			Map.Entry<String, CounterInstance> counterEntry = countersIterator.next();
+			CounterInstance ci = counterEntry.getValue();
+			for(CounterPeriod cp : ci.getCounterPeriods()) {
+				if(!DateUtils.isDateWithinPeriod(date, cp.getPeriodStartDate(), cp.getPeriodEndDate())) {
+					counters.remove(counterEntry.getKey());
+				}
+			}
+		}
+		
+		return counters;
 	}
 
 }
