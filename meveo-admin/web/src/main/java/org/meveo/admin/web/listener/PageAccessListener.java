@@ -30,28 +30,33 @@ public class PageAccessListener implements PhaseListener {
         String requestURI = request.getRequestURI();
         logger.trace("Checking access to page: {}", requestURI);
 
-//        if (!isLogoutAction(request)) {
-            boolean pageExists = PagePermission.getInstance().isPageExisting(request);
-            if (!pageExists) {
-                navigationHandler = context.getApplication().getNavigationHandler();
-                navigationHandler.handleNavigation(context, null, NOT_FOUND);
-            }
+		boolean isPageProtected = PagePermission.getInstance().isPageProtected(request);
+		if (!isPageProtected) {
+			navigationHandler = context.getApplication().getNavigationHandler();
+			navigationHandler.handleNavigation(context, null, NOT_FOUND);
+			return;
+		}
 
-            boolean allowed = false;
-            try {
-                Identity identity = context.getApplication().evaluateExpressionGet(context, IDENTITY, Identity.class);
-                allowed = PagePermission.getInstance().hasAccessToPage(request, identity);
-            } catch (BusinessException e) {
-                logger.error("Failed to check access to page: {}. Access will be denied.", requestURI, e);
-                allowed = false;
-            }
-            if (!allowed) {
-                logger.warn("Denied access to page: {}", requestURI);
-                navigationHandler = context.getApplication().getNavigationHandler();
-                navigationHandler.handleNavigation(context, null, FORBIDDEN);
-            }
-//        }
-    }
+		boolean allowed = false;
+		try {
+			Identity identity = context.getApplication().evaluateExpressionGet(context, IDENTITY, Identity.class);
+			if (identity != null && identity.isLoggedIn()) {
+				allowed = PagePermission.getInstance().hasAccessToPage(request, identity);
+			} else {
+				// if user is not logged in, allow session handler to redirect to session expired page.
+				return;
+			}
+		} catch (BusinessException e) {
+			logger.error("Failed to check access to page: {}. Access will be denied.", requestURI, e);
+			allowed = false;
+		}
+		if (!allowed) {
+			logger.warn("Denied access to page: {}", requestURI);
+			navigationHandler = context.getApplication().getNavigationHandler();
+			navigationHandler.handleNavigation(context, null, FORBIDDEN);
+			return;
+		}
+	}
 
     @Override
     public void beforePhase(PhaseEvent event) {
