@@ -11,25 +11,24 @@ import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
-import org.meveo.api.dto.invoice.Invoice4_2Dto;
-import org.meveo.api.dto.response.CustomerInvoices4_2Response;
+import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.dto.response.InvoiceCreationResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.invoice.Invoice4_2Api;
+import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.ws.Invoice4_2Ws;
+import org.meveo.api.ws.InvoiceWs;
 import org.meveo.model.billing.InvoiceTypeEnum;
 
-@WebService(serviceName = "Invoice4_2Ws", endpointInterface = "org.meveo.api.ws.Invoice4_2Ws")
+@WebService(serviceName = "InvoiceWs", endpointInterface = "org.meveo.api.ws.InvoiceWs")
 @Interceptors({ WsRestApiInterceptor.class })
-public class Invoice4_2WsImpl extends BaseWs implements Invoice4_2Ws {
+public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 
     @Inject
-    Invoice4_2Api invoiceApi;
+    InvoiceApi invoiceApi;
 
     @Override
-    public InvoiceCreationResponse createInvoice(Invoice4_2Dto invoiceDto) {
+    public InvoiceCreationResponse createInvoice(InvoiceDto invoiceDto) {
         InvoiceCreationResponse result = new InvoiceCreationResponse();
 
         try {
@@ -52,8 +51,8 @@ public class Invoice4_2WsImpl extends BaseWs implements Invoice4_2Ws {
     }
 
     @Override
-    public CustomerInvoices4_2Response findInvoice(String customerAccountCode) {
-    	CustomerInvoices4_2Response result = new CustomerInvoices4_2Response();
+    public CustomerInvoicesResponse findInvoice(String customerAccountCode) {
+        CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 
         try {
             result.setCustomerInvoiceDtoList(invoiceApi.list(customerAccountCode, getCurrentUser().getProvider()));

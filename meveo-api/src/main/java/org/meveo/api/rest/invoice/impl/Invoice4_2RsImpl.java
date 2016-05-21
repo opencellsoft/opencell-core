@@ -13,6 +13,7 @@ import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
 import org.meveo.api.dto.invoice.Invoice4_2Dto;
+import org.meveo.api.dto.response.CustomerInvoices4_2Response;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.dto.response.InvoiceCreationResponse;
 import org.meveo.api.exception.MeveoApiException;
@@ -53,8 +54,8 @@ public class Invoice4_2RsImpl extends BaseRs implements Invoice4_2Rs {
     }
 
     @Override
-    public CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode) {
-        CustomerInvoicesResponse result = new CustomerInvoicesResponse();
+    public CustomerInvoices4_2Response find(@QueryParam("customerAccountCode") String customerAccountCode) {
+    	CustomerInvoices4_2Response result = new CustomerInvoices4_2Response();
 
         try {
             result.setCustomerInvoiceDtoList(invoiceApi.list(customerAccountCode, getCurrentUser().getProvider()));

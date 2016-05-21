@@ -6,25 +6,25 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.invoice.InvoiceDto;
+import org.meveo.api.dto.invoice.Invoice4_2Dto;
 
-@XmlRootElement(name = "CustomerInvoicesResponse")
+@XmlRootElement(name = "CustomerInvoices4_2Response")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomerInvoicesResponse extends BaseResponse {
+public class CustomerInvoices4_2Response extends BaseResponse {
 
 	private static final long serialVersionUID = -954637537391623233L;
 
-	private List<InvoiceDto> CustomerInvoiceDtoList;
+	private List<Invoice4_2Dto> CustomerInvoiceDtoList;
 
-	public CustomerInvoicesResponse() {
+	public CustomerInvoices4_2Response() {
 		super();
 	}
 
-	public List<InvoiceDto> getCustomerInvoiceDtoList() {
+	public List<Invoice4_2Dto> getCustomerInvoiceDtoList() {
 		return CustomerInvoiceDtoList;
 	}
 
-	public void setCustomerInvoiceDtoList(List<InvoiceDto> customerInvoiceDtoList) {
+	public void setCustomerInvoiceDtoList(List<Invoice4_2Dto> customerInvoiceDtoList) {
 		CustomerInvoiceDtoList = customerInvoiceDtoList;
 	}
 

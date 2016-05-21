@@ -14,7 +14,7 @@ import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
 import org.meveo.api.dto.invoice.Invoice4_2Dto;
-import org.meveo.api.dto.response.CustomerInvoicesResponse;
+import org.meveo.api.dto.response.CustomerInvoices4_2Response;
 import org.meveo.api.dto.response.InvoiceCreationResponse;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
@@ -48,7 +48,7 @@ public interface Invoice4_2Rs extends IBaseRs {
      */
     @GET
     @Path("/")
-    public CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode);
+    public CustomerInvoices4_2Response find(@QueryParam("customerAccountCode") String customerAccountCode);
 
     /**
      * This operation generates rated transaction given a billing account and invoicing date, updates billing account amounts and generates aggregates and invoice.
