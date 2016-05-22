@@ -2,6 +2,7 @@ package org.meveo.api.invoice;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -137,9 +138,6 @@ public class InvoiceApi extends BaseApi {
 		if (StringUtils.isBlank(invoiceDTO.getInvoiceType())) {
 			missingParameters.add("invoiceType");
 		}
-		if (StringUtils.isBlank(invoiceDTO.getCategoryInvoiceAgregates())) {
-			missingParameters.add("categoryInvoiceAgregates");
-		}
 
 		if (StringUtils.isBlank(invoiceDTO.getCategoryInvoiceAgregates()) || invoiceDTO.getCategoryInvoiceAgregates().isEmpty()) {
 			missingParameters.add("categoryInvoiceAgregates");
@@ -228,6 +226,7 @@ public class InvoiceApi extends BaseApi {
 			}	       
 		} 
 
+		
 		invoiceService.create(invoice, currentUser);
 
 		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
@@ -243,11 +242,14 @@ public class InvoiceApi extends BaseApi {
 			invoiceAgregateCat.setUserAccount(userAccount);
 			invoiceAgregateCat.setBillingAccount(billingAccount);
 			invoiceAgregateCat.setInvoiceCategory(invoiceCategoryService.findByCode(catInvAgrDto.getCategoryInvoiceCode(), currentUser.getProvider()));
+			invoiceAgregateCat.setAuditable(billingAccount.getAuditable());		
 			invoiceAgregateService.create(invoiceAgregateCat, currentUser);
+			invoiceAgregateService.commit();			
+			
 			for(SubCategoryInvoiceAgregateDto subCatInvAgrDTO : catInvAgrDto.getListSubCategoryInvoiceAgregateDto()){
-				InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(subCatInvAgrDTO.getAccountingCode(), provider);				
-				for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
-					if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()) 
+				InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(subCatInvAgrDTO.getInvoiceSubCategoryCode(), provider);				
+				for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {					
+					if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()) 							
 							&& invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(),billingAccount, invoice)) {
 						if( ! taxes.contains(invoicesubcatCountry.getTax())){
 							taxes.add(invoicesubcatCountry.getTax());
@@ -263,9 +265,14 @@ public class InvoiceApi extends BaseApi {
 				invoiceAgregateSubcat.setWallet(userAccount.getWallet());
 				invoiceAgregateSubcat.setAccountingCode(invoiceSubCategory.getAccountingCode());
 				invoiceAgregateSubcat.setItemNumber(subCatInvAgrDTO.getRatedTransactions().size());
+				/////
+				invoiceAgregateSubcat.setQuantity(BigDecimal.ONE);
+				invoiceAgregateSubcat.setAmountWithoutTax(subCatInvAgrDTO.getAmountWithoutTax());
+				invoiceAgregateSubcat.setAmountTax(subCatInvAgrDTO.getAmountTax());
+				invoiceAgregateSubcat.setAmountWithTax(subCatInvAgrDTO.getAmountWithTax());
 
+				invoiceAgregateSubcat.setAuditable(billingAccount.getAuditable());
 				invoiceAgregateService.create(invoiceAgregateSubcat, currentUser);
-
 				for (Tax tax:taxes) {
 					TaxInvoiceAgregate invoiceAgregateTax = null;
 					Long taxId = tax.getId();
@@ -278,9 +285,11 @@ public class InvoiceApi extends BaseApi {
 						invoiceAgregateTax.setBillingRun(billingAccount.getBillingRun());
 						invoiceAgregateTax.setTax(tax);
 						invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
+						invoiceAgregateTax.setTaxPercent(tax.getPercent());
 
 						taxInvoiceAgregateMap.put(taxId, invoiceAgregateTax);
-						invoiceAgregateService.create(invoiceAgregateTax, currentUser);
+						invoiceAgregateTax.setAuditable(billingAccount.getAuditable());						
+						invoiceAgregateService.create(invoiceAgregateTax, currentUser);						
 					}
 
 					invoiceAgregateSubcat.addSubCategoryTax(tax);
@@ -295,18 +304,14 @@ public class InvoiceApi extends BaseApi {
 	                meveoRatedTransaction.setDescription(ratedTransaction.getDescription());
 	                meveoRatedTransaction.setUnityDescription(ratedTransaction.getUnityDescription());
 	                meveoRatedTransaction.setInvoice(invoice);
-	                meveoRatedTransaction.setWallet(userAccount.getWallet());
-	                ratedTransactionService.create(meveoRatedTransaction, currentUser);
-
+	                meveoRatedTransaction.setWallet(userAccount.getWallet());	               
+	                ratedTransactionService.create(meveoRatedTransaction, currentUser);	                
 	            }
 			}
 		}
 
 		//includ open RT
-		
-	invoiceService.recomputeAggregates(invoice, currentUser);
-	invoiceService.update(invoice, currentUser);
-	// populate customFields
+	
 	try {
 		populateCustomFields(invoiceDTO.getCustomFields(), invoice, true, currentUser, true);
 
@@ -314,7 +319,8 @@ public class InvoiceApi extends BaseApi {
 		log.error("Failed to associate custom field instance to an entity", e);
 		throw new MeveoApiException("Failed to associate custom field instance to an entity");
 	}
-	return null;
+	
+	return "responseObjectWithHeader";
 }
 
 public List<InvoiceDto> list(String customerAccountCode, Provider provider) throws MeveoApiException {

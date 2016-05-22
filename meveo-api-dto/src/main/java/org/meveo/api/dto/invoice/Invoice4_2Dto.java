@@ -11,7 +11,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.MatchingAmountDto;
@@ -30,7 +29,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  * @author R.AITYAAZZA
  * 
  */
-@XmlRootElement(name = "Invoice")
+@XmlRootElement(name = "Invoice4_2")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Invoice4_2Dto extends BaseDto {
 
