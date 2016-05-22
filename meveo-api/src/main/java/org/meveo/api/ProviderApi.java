@@ -252,7 +252,7 @@ public class ProviderApi extends BaseApi {
 
         Provider provider = providerService.findByCodeWithFetch(providerCode, Arrays.asList("currency", "country", "language"));
 		if (provider != null) {
-			if (provider.getId().equals(currentUser.getProvider().getId())) {
+			if (provider.getId().equals(currentUser.getProvider().getId()) || currentUser.hasPermission("superAdmin", "superAdminManagement")) {
 				return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider));
 			} else {
 				throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
@@ -278,7 +278,7 @@ public class ProviderApi extends BaseApi {
             throw new EntityDoesNotExistsException(Provider.class, postData.getCode());
         }
         
-        if (!provider.getId().equals(currentUser.getProvider().getId())) {
+        if (!provider.getId().equals(currentUser.getProvider().getId()) && !currentUser.hasPermission("superAdmin", "superAdminManagement") ) {
 			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
         }
 
