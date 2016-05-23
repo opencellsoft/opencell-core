@@ -15,6 +15,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.dto.response.job.TimerEntityResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -74,4 +75,8 @@ public interface JobRs extends IBaseRs {
     @DELETE
     @Path("/timer/{timerCode}")
     public ActionStatus removeTimer(@PathParam("timerCode") String timerCode);
+    
+    @GET
+    @Path("/jobReport")
+    public JobExecutionResultResponseDto findJobExecutionResult(@QueryParam("id") Long jobExecutionResultId);
 }
