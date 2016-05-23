@@ -21,6 +21,8 @@ package org.meveo.admin.action.admin;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -28,6 +30,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -48,6 +51,9 @@ public class SellerBean extends CustomFieldBean<Seller> {
 	 */
 	@Inject
 	private SellerService sellerService;
+	
+	 @Inject
+	private ResourceBundle resourceMessages;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -83,6 +89,14 @@ public class SellerBean extends CustomFieldBean<Seller> {
 	@Override
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		if((initEntity().getCurrentInvoiceNb()!=null && entity.getCurrentInvoiceNb()!=null) 
+				&& entity.getCurrentInvoiceNb()<initEntity().getCurrentInvoiceNb()){
+			throw new ValidatorException(new FacesMessage(resourceMessages.getString("'Current invoice number' must be greater than current value.")));
+		}
+		if((initEntity().getCurrentInvoiceAdjustmentNb()!=null && entity.getCurrentInvoiceAdjustmentNb()!=null)
+				&& entity.getCurrentInvoiceAdjustmentNb()<initEntity().getCurrentInvoiceAdjustmentNb()){
+			throw new ValidatorException(new FacesMessage(resourceMessages.getString("'Current Invoice Adjustment number' must be greater than current value.")));
+		}
 		// prefix must be set
 		if (entity.getCurrentInvoiceNb() != null && StringUtils.isBlank(entity.getInvoicePrefix())) {
 			messages.error(new BundleKey("messages", "message.error.seller.invoicePrefix.required"));
