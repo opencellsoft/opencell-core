@@ -11,6 +11,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.dto.response.job.TimerEntityResponseDto;
 import org.meveo.api.exception.MeveoApiException;
@@ -251,5 +252,23 @@ public class JobWsImpl extends BaseWs implements JobWs {
         }
 
         return result;
+    }
+    
+    @Override
+    public JobExecutionResultResponseDto findJobExecutionResult(Long jobExecutionResultId) {
+    	JobExecutionResultResponseDto result = new JobExecutionResultResponseDto();
+    	try {
+    		result.setJobExecutionResultDto(jobApi.findJobExecutionResult(jobExecutionResultId));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+    	return result;
     }
 }

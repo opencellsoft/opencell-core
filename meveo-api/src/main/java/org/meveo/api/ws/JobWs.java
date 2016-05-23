@@ -8,6 +8,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.dto.response.job.TimerEntityResponseDto;
 
@@ -50,4 +51,8 @@ public interface JobWs extends IBaseWs {
 
     @WebMethod
     public ActionStatus removeTimer(@WebParam(name = "timerCode") String timerCode);
+    
+    @WebMethod
+    public JobExecutionResultResponseDto findJobExecutionResult(@WebParam(name="jobExecutionResultId") Long jobExecutionResultId);
+    
 }
