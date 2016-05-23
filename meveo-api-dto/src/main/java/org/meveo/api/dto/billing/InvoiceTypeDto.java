@@ -46,7 +46,7 @@ public class InvoiceTypeDto  extends BaseDto{
 			this.description = invoiceType.getDescription();
 			this.invoiceTypeEnum = invoiceType.getInvoiceTypeEnum();
 			this.occTemplateCode = invoiceType.getOccTemplate() != null ? invoiceType.getOccTemplate().getCode():null;
-			this.prefix = invoiceType.getPrefix();
+			this.prefix = invoiceType.getPrefixEL();
 			this.sequenceSize = invoiceType.getSequenceSize();
 			if(invoiceType.getAppliesTo() != null){				
 				for(InvoiceType tmpInvoiceType : invoiceType.getAppliesTo()){

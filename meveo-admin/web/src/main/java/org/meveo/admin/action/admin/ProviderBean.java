@@ -111,39 +111,11 @@ public class ProviderBean extends CustomFieldBean<Provider> {
      */
     @Override
     protected Provider saveOrUpdate(Provider entity) throws BusinessException {
-
         boolean isNew = entity.isTransient();
-
         if (isNew) {
             entity.getInvoiceConfiguration().setProvider(entity);
         }
-
         entity = super.saveOrUpdate(entity);
-
-        // Create a default role and a user
-        if (isNew) {
-
-            Role adminRole = roleService.findById(Long.parseLong(paramBean.getProperty("systgetEntityManager().adminRoleid", "1")));
-
-            Role role = new Role();
-            role.setName(adminRole.getName());
-            role.setDescription(adminRole.getDescription());
-            role.getPermissions().addAll(adminRole.getPermissions());
-
-            role.setProvider(entity);
-            roleService.create(role, getCurrentUser());
-
-            User user = new User();
-            user.setProvider(entity);
-            user.setPassword(entity.getCode() + ".password");
-            user.setUserName(entity.getCode() + ".ADMIN");
-            user.getRoles().add(role);
-            userService.create(user, getCurrentUser());
-            log.info("created default user id={} for provider {}", user.getId(), entity.getCode());
-
-            messages.info(new BundleKey("messages", "provider.createdWithDefaultUser"), entity.getCode() + ".ADMIN", entity.getCode() + ".password");
-        }
-
         return entity;
     }
 

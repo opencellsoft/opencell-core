@@ -76,7 +76,7 @@ public class InvoiceTypeApi extends BaseApi {
         invoiceType.setDescription(invoiceTypeDto.getDescription());
         invoiceType.setInvoiceTypeEnum(invoiceTypeDto.getInvoiceTypeEnum());
         invoiceType.setOccTemplate(occTemplate);
-        invoiceType.setPrefix(invoiceTypeDto.getPrefix());
+        invoiceType.setPrefixEL(invoiceTypeDto.getPrefix());
         invoiceType.setSequenceSize(invoiceTypeDto.getSequenceSize());
         invoiceType.setAppliesTo(invoiceTypesToApplies);
         invoiceType.setMatchingAuto(invoiceTypeDto.isMatchingAuto());
@@ -105,7 +105,7 @@ public class InvoiceTypeApi extends BaseApi {
 	        invoiceType.setDescription(invoiceTypeDto.getDescription());
 		}
 		if(!StringUtils.isBlank(invoiceTypeDto.getPrefix())){
-			invoiceType.setPrefix(invoiceTypeDto.getPrefix());
+			invoiceType.setPrefixEL(invoiceTypeDto.getPrefix());
 		}
 		if(!StringUtils.isBlank(invoiceTypeDto.getSequenceSize())){
 			invoiceType.setSequenceSize(invoiceTypeDto.getSequenceSize());
