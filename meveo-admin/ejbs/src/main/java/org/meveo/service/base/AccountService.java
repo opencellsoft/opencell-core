@@ -18,14 +18,21 @@
  */
 package org.meveo.service.base;
 
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Query;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.Address;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Name;
 
 public abstract class AccountService<P extends AccountEntity> extends BusinessService<P> {
@@ -124,6 +131,29 @@ public abstract class AccountService<P extends AccountEntity> extends BusinessSe
 		}
 
 		return query.getResultList();
+	}
+
+	/**
+	 * Returns map of counters at a given date
+	 * means counter period for period linked to this given date
+	 * @param counters
+	 * @param date
+	 * @return map of counters
+	 * @throws BusinessException
+	 */
+	public Map<String, CounterInstance> filterCountersByPeriod(Map<String, CounterInstance> counters, Date date) throws BusinessException {
+		Iterator<Map.Entry<String, CounterInstance>> countersIterator = counters.entrySet().iterator();
+		while(countersIterator.hasNext()) {
+			Map.Entry<String, CounterInstance> counterEntry = countersIterator.next();
+			CounterInstance ci = counterEntry.getValue();
+			for(CounterPeriod cp : ci.getCounterPeriods()) {
+				if(!DateUtils.isDateWithinPeriod(date, cp.getPeriodStartDate(), cp.getPeriodEndDate())) {
+					counters.remove(counterEntry.getKey());
+				}
+			}
+		}
+		
+		return counters;
 	}
 
 }

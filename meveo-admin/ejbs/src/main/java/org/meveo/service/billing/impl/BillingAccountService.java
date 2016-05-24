@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,8 +43,6 @@ import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionTerminationReason;
@@ -53,7 +50,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
 
@@ -326,30 +322,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			isExonerated = (isExon == null ? false : isExon);
 		}		
 		return isExonerated;
-	}
-	
-	/**
-	 * Returns map of counters at a given date
-	 * means counter period for period linked to this given date
-	 * @param billingAccount
-	 * @param date
-	 * @return map of counters
-	 * @throws BusinessException
-	 */
-	public Map<String, CounterInstance> countersMap(BillingAccount billingAccount, Date date) throws BusinessException {
-		Map<String, CounterInstance> counters = billingAccount.getCounters();
-		Iterator<Map.Entry<String, CounterInstance>> countersIterator = counters.entrySet().iterator();
-		while(countersIterator.hasNext()) {
-			Map.Entry<String, CounterInstance> counterEntry = countersIterator.next();
-			CounterInstance ci = counterEntry.getValue();
-			for(CounterPeriod cp : ci.getCounterPeriods()) {
-				if(!DateUtils.isDateWithinPeriod(date, cp.getPeriodStartDate(), cp.getPeriodEndDate())) {
-					counters.remove(counterEntry.getKey());
-				}
-			}
-		}
-		
-		return counters;
 	}
 	
 }
