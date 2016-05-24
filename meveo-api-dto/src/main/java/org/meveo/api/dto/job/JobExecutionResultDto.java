@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -20,10 +19,10 @@ public class JobExecutionResultDto extends BaseDto {
 	@XmlElement(required = false)
     private Date startDate;
 
-    @XmlAttribute(required = false)
+	@XmlElement(required = false)
     private Date endDate;
 
-    @XmlAttribute(required = false)
+	@XmlElement(required = false)
     private long nbItemsToProcess;
 
     @XmlElement(required = true)
@@ -37,6 +36,9 @@ public class JobExecutionResultDto extends BaseDto {
 
     @XmlElement(required = true)
     private boolean done = true;
+    
+    @XmlElement(required = false)
+    private String report;
 
     public JobExecutionResultDto() {}
 
@@ -48,6 +50,7 @@ public class JobExecutionResultDto extends BaseDto {
         this.nbItemsProcessedWithWarning = jobExecutionResult.getNbItemsProcessedWithWarning();
         this.nbItemsProcessedWithError = jobExecutionResult.getNbItemsProcessedWithError();
         this.done = jobExecutionResult.isDone();
+        this.report = jobExecutionResult.getReport();
     }
 
 	public Date getStartDate() {
@@ -104,6 +107,14 @@ public class JobExecutionResultDto extends BaseDto {
 
 	public void setDone(boolean done) {
 		this.done = done;
+	}
+	
+	public String getReport() {
+		return report;
+	}
+	
+	public void setReport(String report) {
+		this.report = report;
 	}
 
 	@Override
