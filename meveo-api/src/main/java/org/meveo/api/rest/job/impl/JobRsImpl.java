@@ -21,6 +21,7 @@ import org.meveo.api.job.TimerEntityApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.job.JobRs;
+import org.meveo.commons.utils.StringUtils;
 
 /**
  * @author Edward P. Legaspi
@@ -262,6 +263,10 @@ public class JobRsImpl extends BaseRs implements JobRs {
     	JobExecutionResultResponseDto result = new JobExecutionResultResponseDto();
     	try {
     		result.setJobExecutionResultDto(jobApi.findJobExecutionResult(jobExecutionResultId));
+    		if(StringUtils.isBlank(result.getJobExecutionResultDto().getEndDate())) {
+                result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+                result.getActionStatus().setMessage("Job still running, not yet finished");
+    		}
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

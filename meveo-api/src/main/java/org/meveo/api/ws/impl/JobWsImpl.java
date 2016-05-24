@@ -20,6 +20,7 @@ import org.meveo.api.job.JobInstanceApi;
 import org.meveo.api.job.TimerEntityApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.JobWs;
+import org.meveo.commons.utils.StringUtils;
 
 @WebService(serviceName = "JobWs", endpointInterface = "org.meveo.api.ws.JobWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -259,6 +260,10 @@ public class JobWsImpl extends BaseWs implements JobWs {
     	JobExecutionResultResponseDto result = new JobExecutionResultResponseDto();
     	try {
     		result.setJobExecutionResultDto(jobApi.findJobExecutionResult(jobExecutionResultId));
+    		if(StringUtils.isBlank(result.getJobExecutionResultDto().getEndDate())) {
+                result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+                result.getActionStatus().setMessage("Job still running, not yet finished");
+    		}
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
