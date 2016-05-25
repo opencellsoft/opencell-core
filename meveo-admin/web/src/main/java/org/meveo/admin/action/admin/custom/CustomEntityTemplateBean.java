@@ -392,7 +392,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
         // Re-position current and child nodes
         List<TreeNode> nodes = nodeToUpdate.getChildren();
-        if (nodeToUpdate.getType().equals(GroupedCustomField.TYPE_ROOT)) {
+        if (!nodeToUpdate.getType().equals(GroupedCustomField.TYPE_ROOT)) {
             nodes = new ArrayList<TreeNode>();
             nodes.add(nodeToUpdate);
         }
