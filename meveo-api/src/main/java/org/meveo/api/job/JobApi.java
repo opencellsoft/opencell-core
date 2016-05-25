@@ -59,6 +59,10 @@ public class JobApi extends BaseApi {
             throw new EntityDoesNotExistsException(JobExecutionResult.class, id);
         }
     	
+    	if(StringUtils.isBlank(jobExecutionResult.getEndDate())) {
+            throw new MeveoApiException("Job still running, not yet finished");
+		}
+    	
     	jobExecutionResultDto = new JobExecutionResultDto(jobExecutionResult);
     	
     	return jobExecutionResultDto;
