@@ -44,6 +44,7 @@ import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
+import org.meveo.api.dto.User4_2Dto;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
@@ -70,6 +71,7 @@ import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTaxesResponse;
 import org.meveo.api.dto.response.GetTerminationReasonResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
+import org.meveo.api.dto.response.GetUser4_2Response;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.PermissionResponseDto;
@@ -940,6 +942,26 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
     }
+    
+    @Override
+    public ActionStatus createUser4_2(User4_2Dto postData) {
+    	ActionStatus result = new ActionStatus();
+
+        try {
+            userApi.create4_2(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+    }
 
     @Override
     public ActionStatus updateUser(UserDto postData) {
@@ -947,6 +969,26 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             userApi.update(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+    }
+    
+    @Override
+    public ActionStatus updateUser4_2(User4_2Dto postData) {
+    	ActionStatus result = new ActionStatus();
+
+        try {
+            userApi.update4_2(postData, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -987,6 +1029,26 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setUser(userApi.find(username));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        return result;
+    }
+    
+    @Override
+    public GetUser4_2Response findUser4_2(String username) {
+    	GetUser4_2Response result = new GetUser4_2Response();
+
+        try {
+            result.setUser(new User4_2Dto(userApi.find(username)));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
