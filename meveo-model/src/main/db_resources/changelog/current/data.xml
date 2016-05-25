@@ -310,4 +310,111 @@
        <sql>update crm_custom_field_tmpl tm set provider_id = (select provider_id from adm_user where id = tm.creator_id) where tm.provider_id is null</sql>
     </changeSet>
     	
+
+    <changeSet id="#1671_20150524" author="AndriusKarpavicius">
+        <sql>
+            update CAT_COUNTER_TEMPLATE set CEILING_EXPRESSION_EL=replace(CEILING_EXPRESSION_EL,'.stringValue','')  where CEILING_EXPRESSION_EL is not null and CEILING_EXPRESSION_EL like '%mv:%';
+            update CAT_COUNTER_TEMPLATE set CEILING_EXPRESSION_EL=replace(CEILING_EXPRESSION_EL,'.longValue','')  where CEILING_EXPRESSION_EL is not null and CEILING_EXPRESSION_EL like '%mv:%';
+            update CAT_COUNTER_TEMPLATE set CEILING_EXPRESSION_EL=replace(CEILING_EXPRESSION_EL,'.doubleValue','')  where CEILING_EXPRESSION_EL is not null and CEILING_EXPRESSION_EL like '%mv:%';
+            update CAT_COUNTER_TEMPLATE set CEILING_EXPRESSION_EL=replace(CEILING_EXPRESSION_EL,'.dateValue','')  where CEILING_EXPRESSION_EL is not null and CEILING_EXPRESSION_EL like '%mv:%';
+            update CAT_COUNTER_TEMPLATE set CEILING_EXPRESSION_EL=replace(CEILING_EXPRESSION_EL,'.entityReferenceValue','')  where CEILING_EXPRESSION_EL is not null and CEILING_EXPRESSION_EL like '%mv:%';
+            update CAT_DISCOUNT_PLAN_ITEM set EXPRESSION_EL=replace(EXPRESSION_EL,'.stringValue','')  where EXPRESSION_EL is not null and EXPRESSION_EL like '%mv:%';
+            update CAT_DISCOUNT_PLAN_ITEM set EXPRESSION_EL=replace(EXPRESSION_EL,'.longValue','')  where EXPRESSION_EL is not null and EXPRESSION_EL like '%mv:%';
+            update CAT_DISCOUNT_PLAN_ITEM set EXPRESSION_EL=replace(EXPRESSION_EL,'.doubleValue','')  where EXPRESSION_EL is not null and EXPRESSION_EL like '%mv:%';
+            update CAT_DISCOUNT_PLAN_ITEM set EXPRESSION_EL=replace(EXPRESSION_EL,'.dateValue','')  where EXPRESSION_EL is not null and EXPRESSION_EL like '%mv:%';
+            update CAT_DISCOUNT_PLAN_ITEM set EXPRESSION_EL=replace(EXPRESSION_EL,'.entityReferenceValue','')  where EXPRESSION_EL is not null and EXPRESSION_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set SUBSCRIPTION_EL=replace(SUBSCRIPTION_EL,'.stringValue','')  where SUBSCRIPTION_EL is not null and SUBSCRIPTION_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set SUBSCRIPTION_EL=replace(SUBSCRIPTION_EL,'.longValue','')  where SUBSCRIPTION_EL is not null and SUBSCRIPTION_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set SUBSCRIPTION_EL=replace(SUBSCRIPTION_EL,'.doubleValue','')  where SUBSCRIPTION_EL is not null and SUBSCRIPTION_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set SUBSCRIPTION_EL=replace(SUBSCRIPTION_EL,'.dateValue','')  where SUBSCRIPTION_EL is not null and SUBSCRIPTION_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set SUBSCRIPTION_EL=replace(SUBSCRIPTION_EL,'.entityReferenceValue','')  where SUBSCRIPTION_EL is not null and SUBSCRIPTION_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set CONDITION_EL=replace(CONDITION_EL,'.stringValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set CONDITION_EL=replace(CONDITION_EL,'.longValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set CONDITION_EL=replace(CONDITION_EL,'.doubleValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set CONDITION_EL=replace(CONDITION_EL,'.dateValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set CONDITION_EL=replace(CONDITION_EL,'.entityReferenceValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set QUANTITY_EL=replace(QUANTITY_EL,'.stringValue','')  where QUANTITY_EL is not null and QUANTITY_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set QUANTITY_EL=replace(QUANTITY_EL,'.longValue','')  where QUANTITY_EL is not null and QUANTITY_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set QUANTITY_EL=replace(QUANTITY_EL,'.doubleValue','')  where QUANTITY_EL is not null and QUANTITY_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set QUANTITY_EL=replace(QUANTITY_EL,'.dateValue','')  where QUANTITY_EL is not null and QUANTITY_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set QUANTITY_EL=replace(QUANTITY_EL,'.entityReferenceValue','')  where QUANTITY_EL is not null and QUANTITY_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_1_EL=replace(PARAM_1_EL,'.stringValue','')  where PARAM_1_EL is not null and PARAM_1_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_1_EL=replace(PARAM_1_EL,'.longValue','')  where PARAM_1_EL is not null and PARAM_1_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_1_EL=replace(PARAM_1_EL,'.doubleValue','')  where PARAM_1_EL is not null and PARAM_1_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_1_EL=replace(PARAM_1_EL,'.dateValue','')  where PARAM_1_EL is not null and PARAM_1_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_1_EL=replace(PARAM_1_EL,'.entityReferenceValue','')  where PARAM_1_EL is not null and PARAM_1_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_2_EL=replace(PARAM_2_EL,'.stringValue','')  where PARAM_2_EL is not null and PARAM_2_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_2_EL=replace(PARAM_2_EL,'.longValue','')  where PARAM_2_EL is not null and PARAM_2_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_2_EL=replace(PARAM_2_EL,'.doubleValue','')  where PARAM_2_EL is not null and PARAM_2_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_2_EL=replace(PARAM_2_EL,'.dateValue','')  where PARAM_2_EL is not null and PARAM_2_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_2_EL=replace(PARAM_2_EL,'.entityReferenceValue','')  where PARAM_2_EL is not null and PARAM_2_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_3_EL=replace(PARAM_3_EL,'.stringValue','')  where PARAM_3_EL is not null and PARAM_3_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_3_EL=replace(PARAM_3_EL,'.longValue','')  where PARAM_3_EL is not null and PARAM_3_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_3_EL=replace(PARAM_3_EL,'.doubleValue','')  where PARAM_3_EL is not null and PARAM_3_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_3_EL=replace(PARAM_3_EL,'.dateValue','')  where PARAM_3_EL is not null and PARAM_3_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_3_EL=replace(PARAM_3_EL,'.entityReferenceValue','')  where PARAM_3_EL is not null and PARAM_3_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_4_EL=replace(PARAM_4_EL,'.stringValue','')  where PARAM_4_EL is not null and PARAM_4_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_4_EL=replace(PARAM_4_EL,'.longValue','')  where PARAM_4_EL is not null and PARAM_4_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_4_EL=replace(PARAM_4_EL,'.doubleValue','')  where PARAM_4_EL is not null and PARAM_4_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_4_EL=replace(PARAM_4_EL,'.dateValue','')  where PARAM_4_EL is not null and PARAM_4_EL like '%mv:%';
+            update CAT_TRIGGERED_EDR set PARAM_4_EL=replace(PARAM_4_EL,'.entityReferenceValue','')  where PARAM_4_EL is not null and PARAM_4_EL like '%mv:%';
+            update MEVEO_NATIVE_FILTER_CONDITION set EL=replace(EL,'.stringValue','')  where EL is not null and EL like '%mv:%';
+            update MEVEO_NATIVE_FILTER_CONDITION set EL=replace(EL,'.longValue','')  where EL is not null and EL like '%mv:%';
+            update MEVEO_NATIVE_FILTER_CONDITION set EL=replace(EL,'.doubleValue','')  where EL is not null and EL like '%mv:%';
+            update MEVEO_NATIVE_FILTER_CONDITION set EL=replace(EL,'.dateValue','')  where EL is not null and EL like '%mv:%';
+            update MEVEO_NATIVE_FILTER_CONDITION set EL=replace(EL,'.entityReferenceValue','')  where EL is not null and EL like '%mv:%';
+            update ADM_NOTIF_EMAIL set EMAIL_TO_EL=replace(EMAIL_TO_EL,'.stringValue','')  where EMAIL_TO_EL is not null and EMAIL_TO_EL like '%mv:%';
+            update ADM_NOTIF_EMAIL set EMAIL_TO_EL=replace(EMAIL_TO_EL,'.longValue','')  where EMAIL_TO_EL is not null and EMAIL_TO_EL like '%mv:%';
+            update ADM_NOTIF_EMAIL set EMAIL_TO_EL=replace(EMAIL_TO_EL,'.doubleValue','')  where EMAIL_TO_EL is not null and EMAIL_TO_EL like '%mv:%';
+            update ADM_NOTIF_EMAIL set EMAIL_TO_EL=replace(EMAIL_TO_EL,'.dateValue','')  where EMAIL_TO_EL is not null and EMAIL_TO_EL like '%mv:%';
+            update ADM_NOTIF_EMAIL set EMAIL_TO_EL=replace(EMAIL_TO_EL,'.entityReferenceValue','')  where EMAIL_TO_EL is not null and EMAIL_TO_EL like '%mv:%';
+            update ADM_NOTIF_WEBHOOKS set BODY_EL=replace(BODY_EL,'.stringValue','')  where BODY_EL is not null and BODY_EL like '%mv:%';
+            update ADM_NOTIF_WEBHOOKS set BODY_EL=replace(BODY_EL,'.longValue','')  where BODY_EL is not null and BODY_EL like '%mv:%';
+            update ADM_NOTIF_WEBHOOKS set BODY_EL=replace(BODY_EL,'.doubleValue','')  where BODY_EL is not null and BODY_EL like '%mv:%';
+            update ADM_NOTIF_WEBHOOKS set BODY_EL=replace(BODY_EL,'.dateValue','')  where BODY_EL is not null and BODY_EL like '%mv:%';
+            update ADM_NOTIF_WEBHOOKS set BODY_EL=replace(BODY_EL,'.entityReferenceValue','')  where BODY_EL is not null and BODY_EL like '%mv:%';
+            update ADM_NOTIF_IM set ID_EXPRESSION=replace(ID_EXPRESSION,'.stringValue','')  where ID_EXPRESSION is not null and ID_EXPRESSION like '%mv:%';
+            update ADM_NOTIF_IM set ID_EXPRESSION=replace(ID_EXPRESSION,'.longValue','')  where ID_EXPRESSION is not null and ID_EXPRESSION like '%mv:%';
+            update ADM_NOTIF_IM set ID_EXPRESSION=replace(ID_EXPRESSION,'.doubleValue','')  where ID_EXPRESSION is not null and ID_EXPRESSION like '%mv:%';
+            update ADM_NOTIF_IM set ID_EXPRESSION=replace(ID_EXPRESSION,'.dateValue','')  where ID_EXPRESSION is not null and ID_EXPRESSION like '%mv:%';
+            update ADM_NOTIF_IM set ID_EXPRESSION=replace(ID_EXPRESSION,'.entityReferenceValue','')  where ID_EXPRESSION is not null and ID_EXPRESSION like '%mv:%';
+            update ADM_NOTIFICATION set EVENT_EXPRESSION_FILTER=replace(EVENT_EXPRESSION_FILTER,'.stringValue','')  where EVENT_EXPRESSION_FILTER is not null and EVENT_EXPRESSION_FILTER like '%mv:%';
+            update ADM_NOTIFICATION set EVENT_EXPRESSION_FILTER=replace(EVENT_EXPRESSION_FILTER,'.longValue','')  where EVENT_EXPRESSION_FILTER is not null and EVENT_EXPRESSION_FILTER like '%mv:%';
+            update ADM_NOTIFICATION set EVENT_EXPRESSION_FILTER=replace(EVENT_EXPRESSION_FILTER,'.doubleValue','')  where EVENT_EXPRESSION_FILTER is not null and EVENT_EXPRESSION_FILTER like '%mv:%';
+            update ADM_NOTIFICATION set EVENT_EXPRESSION_FILTER=replace(EVENT_EXPRESSION_FILTER,'.dateValue','')  where EVENT_EXPRESSION_FILTER is not null and EVENT_EXPRESSION_FILTER like '%mv:%';
+            update ADM_NOTIFICATION set EVENT_EXPRESSION_FILTER=replace(EVENT_EXPRESSION_FILTER,'.entityReferenceValue','')  where EVENT_EXPRESSION_FILTER is not null and EVENT_EXPRESSION_FILTER like '%mv:%';
+            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.stringValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.longValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.doubleValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.dateValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.entityReferenceValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.stringValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.longValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.doubleValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.dateValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.entityReferenceValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL=replace(CRITERIA_EL,'.stringValue','')  where CRITERIA_EL is not null and CRITERIA_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL=replace(CRITERIA_EL,'.longValue','')  where CRITERIA_EL is not null and CRITERIA_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL=replace(CRITERIA_EL,'.doubleValue','')  where CRITERIA_EL is not null and CRITERIA_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL=replace(CRITERIA_EL,'.dateValue','')  where CRITERIA_EL is not null and CRITERIA_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL=replace(CRITERIA_EL,'.entityReferenceValue','')  where CRITERIA_EL is not null and CRITERIA_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL=replace(AMOUNT_WITHOUT_TAX_EL,'.stringValue','')  where AMOUNT_WITHOUT_TAX_EL is not null and AMOUNT_WITHOUT_TAX_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL=replace(AMOUNT_WITHOUT_TAX_EL,'.longValue','')  where AMOUNT_WITHOUT_TAX_EL is not null and AMOUNT_WITHOUT_TAX_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL=replace(AMOUNT_WITHOUT_TAX_EL,'.doubleValue','')  where AMOUNT_WITHOUT_TAX_EL is not null and AMOUNT_WITHOUT_TAX_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL=replace(AMOUNT_WITHOUT_TAX_EL,'.dateValue','')  where AMOUNT_WITHOUT_TAX_EL is not null and AMOUNT_WITHOUT_TAX_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL=replace(AMOUNT_WITHOUT_TAX_EL,'.entityReferenceValue','')  where AMOUNT_WITHOUT_TAX_EL is not null and AMOUNT_WITHOUT_TAX_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL=replace(AMOUNT_WITH_TAX_EL,'.stringValue','')  where AMOUNT_WITH_TAX_EL is not null and AMOUNT_WITH_TAX_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL=replace(AMOUNT_WITH_TAX_EL,'.longValue','')  where AMOUNT_WITH_TAX_EL is not null and AMOUNT_WITH_TAX_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL=replace(AMOUNT_WITH_TAX_EL,'.doubleValue','')  where AMOUNT_WITH_TAX_EL is not null and AMOUNT_WITH_TAX_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL=replace(AMOUNT_WITH_TAX_EL,'.dateValue','')  where AMOUNT_WITH_TAX_EL is not null and AMOUNT_WITH_TAX_EL like '%mv:%';
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL=replace(AMOUNT_WITH_TAX_EL,'.entityReferenceValue','')  where AMOUNT_WITH_TAX_EL is not null and AMOUNT_WITH_TAX_EL like '%mv:%';
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL=replace(FILTER_EL,'.stringValue','')  where FILTER_EL is not null and FILTER_EL like '%mv:%';
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL=replace(FILTER_EL,'.longValue','')  where FILTER_EL is not null and FILTER_EL like '%mv:%';
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL=replace(FILTER_EL,'.doubleValue','')  where FILTER_EL is not null and FILTER_EL like '%mv:%';
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL=replace(FILTER_EL,'.dateValue','')  where FILTER_EL is not null and FILTER_EL like '%mv:%';
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL=replace(FILTER_EL,'.entityReferenceValue','')  where FILTER_EL is not null and FILTER_EL like '%mv:%';
+        
+        </sql>
+    </changeSet>        
+        
 </databaseChangeLog>
