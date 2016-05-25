@@ -121,8 +121,8 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 	@Column(name = "EXCLUDED_FROM_DUNNING")
 	private boolean excludedFromDunning;
 	
-    @Column(name = "UUID", nullable = false, updatable = false, length = 50)
-    @Size(max = 50)
+    @Column(name = "UUID", nullable = false, updatable = false, length = 60)
+    @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();	
 

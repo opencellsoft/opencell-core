@@ -18,6 +18,7 @@
  */
 package org.meveo.service.admin.impl;
 
+import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,6 +33,8 @@ import javax.persistence.TypedQuery;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.apache.commons.lang3.StringUtils;
@@ -48,6 +51,7 @@ import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.ScriptInstanceDto;
+import org.meveo.api.dto.account.BusinessAccountModelDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
@@ -65,8 +69,6 @@ import org.meveo.api.dto.notification.JobTriggerDto;
 import org.meveo.api.dto.notification.NotificationDto;
 import org.meveo.api.dto.notification.WebhookNotificationDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
-import org.meveo.api.dto.script.OfferModelScriptDto;
-import org.meveo.api.dto.script.ServiceModelScriptDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.model.BusinessEntity;
@@ -74,8 +76,10 @@ import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.communication.MeveoInstance;
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobInstance;
@@ -87,12 +91,11 @@ import org.meveo.model.notification.JobTrigger;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.ScriptNotification;
 import org.meveo.model.notification.WebHook;
-import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.script.EntityActionScriptService;
+import org.meveo.service.custom.EntityCustomActionService;
 import org.meveocrm.model.dwh.BarChart;
 import org.meveocrm.model.dwh.LineChart;
 import org.meveocrm.model.dwh.MeasurableQuantity;
@@ -108,7 +111,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
     protected EntityToDtoConverter entityToDtoConverter;
 
     @Inject
-    private EntityActionScriptService entityActionScriptService;
+    private EntityCustomActionService entityActionScriptService;
 
     /**
      * import module from remote meveo instance
@@ -196,13 +199,24 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
      * @param provider Provider
      * @return MeveoModuleDto object
      */
-    public ModuleDto moduleToDto(MeveoModule module, Provider provider) {
+    public ModuleDto moduleToDto(MeveoModule module, Provider provider) throws BusinessException {
+
+        if (module.getModuleSource() != null && !module.isInstalled()) {
+            try {
+                return MeveoModuleService.moduleSourceToDto(module);
+            } catch (Exception e) {
+                log.error("Failed to load module source {}", module.getCode(), e);
+                throw new BusinessException("Failed to load module source", e);
+            }
+        }
 
         Class<? extends ModuleDto> dtoClass = ModuleDto.class;
         if (module instanceof BusinessServiceModel) {
             dtoClass = BusinessServiceModelDto.class;
         } else if (module instanceof BusinessOfferModel) {
             dtoClass = BusinessOfferModelDto.class;
+        } else if (module instanceof BusinessAccountModel) {
+            dtoClass = BusinessAccountModelDto.class;
         }
 
         ModuleDto moduleDto = null;
@@ -220,6 +234,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
                 log.error("Failed to read module files {}, info {}", module.getLogoPicture(), e.getMessage(), e);
             }
         }
+
         List<MeveoModuleItem> moduleItems = module.getModuleItems();
         if (moduleItems != null) {
             for (MeveoModuleItem item : moduleItems) {
@@ -231,7 +246,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
                 if (item.getItemEntity() instanceof CustomEntityTemplate) {
                     CustomEntityTemplate customEntityTemplate = (CustomEntityTemplate) item.getItemEntity();
                     Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(customEntityTemplate.getAppliesTo(), module.getProvider());
-                    Map<String, EntityActionScript> customActions = entityActionScriptService.findByAppliesTo(customEntityTemplate.getAppliesTo(), module.getProvider());
+                    Map<String, EntityCustomAction> customActions = entityActionScriptService.findByAppliesTo(customEntityTemplate.getAppliesTo(), module.getProvider());
 
                     CustomEntityTemplateDto dto = CustomEntityTemplateDto.toDTO(customEntityTemplate, customFieldTemplates != null ? customFieldTemplates.values() : null,
                         customActions != null ? customActions.values() : null);
@@ -292,7 +307,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
                 }
             }
         }
-        
+
         // Finish converting subclasses of MeveoModule class
         if (module instanceof BusinessServiceModel) {
             businessServiceModelToDto((BusinessServiceModel) module, (BusinessServiceModelDto) moduleDto, provider);
@@ -342,9 +357,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         if (bom.getOfferTemplate() != null) {
             dto.setOfferTemplate(new OfferTemplateDto(bom.getOfferTemplate(), entityToDtoConverter.getCustomFieldsDTO(bom.getOfferTemplate())));
         }
-        if (bom.getScript() != null) {
-            dto.setScript(new OfferModelScriptDto(bom.getScript()));
-        }
+
     }
 
     /**
@@ -358,9 +371,6 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 
         if (bsm.getServiceTemplate() != null) {
             dto.setServiceTemplate(new ServiceTemplateDto(bsm.getServiceTemplate(), entityToDtoConverter.getCustomFieldsDTO(bsm.getServiceTemplate())));
-        }
-        if (bsm.getScript() != null) {
-            dto.setScript(new ServiceModelScriptDto(bsm.getScript()));
         }
         dto.setDuplicateService(bsm.isDuplicateService());
         dto.setDuplicatePricePlan(bsm.isDuplicatePricePlan());
@@ -439,5 +449,20 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    public static ModuleDto moduleSourceToDto(MeveoModule module) throws JAXBException {
+        Class<? extends ModuleDto> dtoClass = ModuleDto.class;
+        if (module instanceof BusinessServiceModel) {
+            dtoClass = BusinessServiceModelDto.class;
+        } else if (module instanceof BusinessOfferModel) {
+            dtoClass = BusinessOfferModelDto.class;
+        } else if (module instanceof BusinessAccountModel) {
+            dtoClass = BusinessAccountModelDto.class;
+        }
+
+        ModuleDto moduleDto = (ModuleDto) JAXBContext.newInstance(dtoClass).createUnmarshaller().unmarshal(new StringReader(module.getModuleSource()));
+
+        return moduleDto;
     }
 }

@@ -14,6 +14,8 @@ public abstract class Script implements ScriptInterface {
     public static String RESULT_VALUE = "RESULT_VALUE";
     public static String CONTEXT_ENTITY = "CONTEXT_ENTITY";
     public static String CONTEXT_PARENT_ENTITY = "CONTEXT_PARENT_ENTITY";
+    public static String CONTEXT_ACTION = "CONTEXT_ACTION";
+    public static String CONTEXT_PREPOST = "CONTEXT_PREPOST";
 
     @Override
     public void init(Map<String, Object> methodContext, User user) throws BusinessException {

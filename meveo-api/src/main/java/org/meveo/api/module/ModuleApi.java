@@ -1,12 +1,15 @@
 package org.meveo.api.module;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ModuleUtil;
@@ -15,8 +18,6 @@ import org.meveo.api.CustomEntityApi;
 import org.meveo.api.CustomFieldTemplateApi;
 import org.meveo.api.FilterApi;
 import org.meveo.api.ScriptInstanceApi;
-import org.meveo.api.catalog.BusinessOfferModelApi;
-import org.meveo.api.catalog.BusinessServiceModelApi;
 import org.meveo.api.catalog.CounterTemplateApi;
 import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.catalog.ServiceTemplateApi;
@@ -25,6 +26,7 @@ import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.ScriptInstanceDto;
+import org.meveo.api.dto.account.BusinessAccountModelDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
@@ -41,6 +43,7 @@ import org.meveo.api.dto.notification.NotificationDto;
 import org.meveo.api.dto.notification.WebhookNotificationDto;
 import org.meveo.api.dwh.ChartApi;
 import org.meveo.api.dwh.MeasurableQuantityApi;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -50,8 +53,6 @@ import org.meveo.api.notification.EmailNotificationApi;
 import org.meveo.api.notification.JobTriggerApi;
 import org.meveo.api.notification.NotificationApi;
 import org.meveo.api.notification.WebhookNotificationApi;
-import org.meveo.api.script.OfferModelScriptApi;
-import org.meveo.api.script.ServiceModelScriptApi;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -59,6 +60,7 @@ import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityTemplate;
@@ -71,14 +73,11 @@ import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.JobTrigger;
 import org.meveo.model.notification.ScriptNotification;
 import org.meveo.model.notification.WebHook;
-import org.meveo.model.scripts.OfferModelScript;
 import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.model.scripts.ServiceModelScript;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
-import org.meveo.service.script.OfferModelScriptService;
-import org.meveo.service.script.ServiceModelScriptService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveocrm.model.dwh.BarChart;
 import org.meveocrm.model.dwh.LineChart;
 import org.meveocrm.model.dwh.MeasurableQuantity;
@@ -133,12 +132,6 @@ public class ModuleApi extends BaseApi {
     @Inject
     private ChartApi chartApi;
 
-    @EJB
-    private BusinessServiceModelApi businessServiceModelApi;
-
-    @EJB
-    private BusinessOfferModelApi businessOfferModelApi;
-
     @Inject
     private OfferTemplateApi offerTemplateApi;
 
@@ -152,16 +145,7 @@ public class ModuleApi extends BaseApi {
     private ServiceTemplateService serviceTemplateService;
 
     @Inject
-    private OfferModelScriptApi offerModelScriptApi;
-
-    @Inject
-    private OfferModelScriptService offerModelScriptService;
-
-    @Inject
-    private ServiceModelScriptApi serviceModelScriptApi;
-
-    @Inject
-    private ServiceModelScriptService serviceModelScriptService;
+    private ScriptInstanceService scriptInstanceService;
 
     public void create(ModuleDto moduleDto, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -175,6 +159,33 @@ public class ModuleApi extends BaseApi {
             missingParameters.add("license");
         }
 
+        if (moduleDto instanceof BusinessOfferModelDto
+                && (((BusinessOfferModelDto) moduleDto).getOfferTemplate() == null || StringUtils.isBlank(((BusinessOfferModelDto) moduleDto).getOfferTemplate().getCode()))) {
+            missingParameters.add("offerTemplate.code");
+
+        } else if (moduleDto instanceof BusinessServiceModelDto
+                && (((BusinessServiceModelDto) moduleDto).getServiceTemplate() == null || StringUtils.isBlank(((BusinessServiceModelDto) moduleDto).getServiceTemplate().getCode()))) {
+            missingParameters.add("serviceTemplate.code");
+
+        } else if (moduleDto instanceof BusinessAccountModelDto && ((BusinessAccountModelDto) moduleDto).getType() == null) {
+            missingParameters.add("type");
+        }
+
+        if (moduleDto.getScript() != null) {
+            // If script was passed code is needed if script source was not passed.
+            if (StringUtils.isBlank(moduleDto.getScript().getCode()) && StringUtils.isBlank(moduleDto.getScript().getScript())) {
+                missingParameters.add("script.code");
+
+                // Otherwise code is calculated from script source by combining package and classname
+            } else if (!StringUtils.isBlank(moduleDto.getScript().getScript())) {
+                String fullClassname = ScriptInstanceService.getFullClassname(moduleDto.getScript().getScript());
+                if (!StringUtils.isBlank(moduleDto.getScript().getCode()) && !moduleDto.getScript().getCode().equals(fullClassname)) {
+                    throw new BusinessApiException("The code and the canonical script class name must be identical");
+                }
+                moduleDto.getScript().setCode(fullClassname);
+            }
+        }
+
         handleMissingParameters();
 
         Provider provider = currentUser.getProvider();
@@ -182,8 +193,15 @@ public class ModuleApi extends BaseApi {
             throw new EntityAlreadyExistsException(MeveoModule.class, moduleDto.getCode());
         }
         MeveoModule meveoModule = new MeveoModule();
-        meveoModule.setCode(moduleDto.getCode());
-        parseModuleFromDto(meveoModule, moduleDto, currentUser);
+        if (moduleDto instanceof BusinessOfferModelDto) {
+            meveoModule = new BusinessOfferModel();
+        } else if (moduleDto instanceof BusinessServiceModelDto) {
+            meveoModule = new BusinessServiceModel();
+        } else if (moduleDto instanceof BusinessAccountModelDto) {
+            meveoModule = new BusinessAccountModel();
+        }
+
+        parseModuleInfoOnlyFromDto(meveoModule, moduleDto, currentUser);
 
         meveoModuleService.create(meveoModule, currentUser);
     }
@@ -198,6 +216,33 @@ public class ModuleApi extends BaseApi {
         }
         if (StringUtils.isBlank(moduleDto.getLicense())) {
             missingParameters.add("module license is null");
+        }
+
+        if (moduleDto instanceof BusinessOfferModelDto
+                && (((BusinessOfferModelDto) moduleDto).getOfferTemplate() == null || StringUtils.isBlank(((BusinessOfferModelDto) moduleDto).getOfferTemplate().getCode()))) {
+            missingParameters.add("offerTemplate.code");
+
+        } else if (moduleDto instanceof BusinessServiceModelDto
+                && (((BusinessServiceModelDto) moduleDto).getServiceTemplate() == null || StringUtils.isBlank(((BusinessServiceModelDto) moduleDto).getServiceTemplate().getCode()))) {
+            missingParameters.add("serviceTemplate.code");
+
+        } else if (moduleDto instanceof BusinessAccountModelDto && ((BusinessAccountModelDto) moduleDto).getType() == null) {
+            missingParameters.add("type");
+        }
+
+        if (moduleDto.getScript() != null) {
+            // If script was passed code is needed if script source was not passed.
+            if (StringUtils.isBlank(moduleDto.getScript().getCode()) && StringUtils.isBlank(moduleDto.getScript().getScript())) {
+                missingParameters.add("script.code");
+
+                // Otherwise code is calculated from script source by combining package and classname
+            } else if (!StringUtils.isBlank(moduleDto.getScript().getScript())) {
+                String fullClassname = ScriptInstanceService.getFullClassname(moduleDto.getScript().getScript());
+                if (!StringUtils.isBlank(moduleDto.getScript().getCode()) && !moduleDto.getScript().getCode().equals(fullClassname)) {
+                    throw new BusinessApiException("The code and the canonical script class name must be identical");
+                }
+                moduleDto.getScript().setCode(fullClassname);
+            }
         }
 
         handleMissingParameters();
@@ -215,7 +260,7 @@ public class ModuleApi extends BaseApi {
                 itr.remove();
             }
         }
-        parseModuleFromDto(meveoModule, moduleDto, currentUser);
+        parseModuleInfoOnlyFromDto(meveoModule, moduleDto, currentUser);
         meveoModuleService.update(meveoModule, currentUser);
     }
 
@@ -231,7 +276,7 @@ public class ModuleApi extends BaseApi {
 
     }
 
-    public List<ModuleDto> list(User currentUser) throws MeveoApiException {
+    public List<ModuleDto> list(User currentUser) throws MeveoApiException, BusinessException {
         Provider provider = currentUser.getProvider();
         List<MeveoModule> meveoModules = meveoModuleService.list(provider);
         List<ModuleDto> result = new ArrayList<ModuleDto>();
@@ -243,7 +288,7 @@ public class ModuleApi extends BaseApi {
         return result;
     }
 
-    public ModuleDto get(String code, Class<? extends MeveoModule> moduleClass, User currentUser) throws MeveoApiException {
+    public ModuleDto get(String code, Class<? extends MeveoModule> moduleClass, User currentUser) throws MeveoApiException, BusinessException {
         Provider provider = currentUser.getProvider();
 
         if (moduleClass == null) {
@@ -269,7 +314,18 @@ public class ModuleApi extends BaseApi {
         }
     }
 
-    private void parseBOMFromDto(BusinessOfferModel bom, BusinessOfferModelDto bomDto, User currentUser) throws MeveoApiException, BusinessException {
+    public void install(ModuleDto moduleDto, User currentUser) throws MeveoApiException, BusinessException {
+        MeveoModule meveoModule = meveoModuleService.findByCode(moduleDto.getCode(), currentUser.getProvider());
+        if (meveoModule == null) {
+            create(moduleDto, currentUser);
+            meveoModule = meveoModuleService.findByCode(moduleDto.getCode(), currentUser.getProvider());
+        }
+
+        unpackAndInstallModule(meveoModule, moduleDto, currentUser);
+
+    }
+
+    private void unpackAndInstallBOM(BusinessOfferModel bom, BusinessOfferModelDto bomDto, User currentUser) throws MeveoApiException, BusinessException {
 
         // Should create it or update offerTemplate only if it has full information only
         if (!bomDto.getOfferTemplate().isCodeOnly()) {
@@ -280,25 +336,10 @@ public class ModuleApi extends BaseApi {
             throw new EntityDoesNotExistsException(OfferTemplate.class, bomDto.getOfferTemplate().getCode());
         }
 
-        OfferModelScript scriptInstance = null;
-        // Should create it or update script only if it has full information only
-        if (bomDto.getScript() != null) {
-            if (!bomDto.getScript().isCodeOnly()) {
-                offerModelScriptApi.createOrUpdate(bomDto.getScript(), currentUser);
-            }
-
-            scriptInstance = offerModelScriptService.findByCode(bomDto.getScript().getCode(), currentUser.getProvider());
-            if (scriptInstance == null) {
-                throw new EntityDoesNotExistsException(OfferModelScript.class, bomDto.getScript().getCode());
-            }
-        }
-
         bom.setOfferTemplate(offerTemplate);
-        bom.setScript(scriptInstance);
-
     }
 
-    private void parseBSMFromDto(BusinessServiceModel bsm, BusinessServiceModelDto bsmDto, User currentUser) throws MeveoApiException, BusinessException {
+    private void unpackAndInstallBSM(BusinessServiceModel bsm, BusinessServiceModelDto bsmDto, User currentUser) throws MeveoApiException, BusinessException {
 
         bsm.setDuplicatePricePlan(bsmDto.isDuplicatePricePlan());
         bsm.setDuplicateService(bsmDto.isDuplicateService());
@@ -312,25 +353,51 @@ public class ModuleApi extends BaseApi {
             throw new EntityDoesNotExistsException(ServiceTemplate.class, bsmDto.getServiceTemplate().getCode());
         }
 
-        ServiceModelScript scriptInstance = null;
-        // Should create it or update script only if it has full information only
-        if (bsmDto.getScript() != null) {
-            if (!bsmDto.getScript().isCodeOnly()) {
-                serviceModelScriptApi.createOrUpdate(bsmDto.getScript(), currentUser);
-            }
-
-            scriptInstance = serviceModelScriptService.findByCode(bsmDto.getScript().getCode(), currentUser.getProvider());
-            if (scriptInstance == null) {
-                throw new EntityDoesNotExistsException(ServiceModelScript.class, bsmDto.getScript().getCode());
-            }
-        }
-
-        bsm.setScript(scriptInstance);
         bsm.setServiceTemplate(serviceTemplate);
     }
 
+    public void parseModuleInfoOnlyFromDto(MeveoModule meveoModule, ModuleDto moduleDto, User currentUser) throws MeveoApiException, BusinessException {
+        meveoModule.setCode(moduleDto.getCode());
+        meveoModule.setDescription(moduleDto.getDescription());
+        meveoModule.setLicense(moduleDto.getLicense());
+        meveoModule.setLogoPicture(moduleDto.getLogoPicture());
+        if (!StringUtils.isBlank(moduleDto.getLogoPicture()) && moduleDto.getLogoPictureFile() != null) {
+            writeModulePicture(currentUser, moduleDto.getLogoPicture(), moduleDto.getLogoPictureFile());
+        }
+        if (meveoModule.isTransient()) {
+            meveoModule.setInstalled(false);
+        }
+
+        // Extract module script used for installation and module activation
+        ScriptInstance scriptInstance = null;
+        // Should create it or update script only if it has full information only
+        if (moduleDto.getScript() != null) {
+            if (!moduleDto.getScript().isCodeOnly()) {
+                scriptInstanceApi.createOrUpdate(moduleDto.getScript(), currentUser);
+            }
+
+            scriptInstance = scriptInstanceService.findByCode(moduleDto.getScript().getCode(), currentUser.getProvider());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, moduleDto.getScript().getCode());
+            }
+        }
+        meveoModule.setScript(scriptInstance);
+
+        // Store module DTO into DB to be used later for installation
+        try {
+            Marshaller m = JAXBContext.newInstance(ModuleDto.class).createMarshaller();
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            StringWriter w = new StringWriter();
+            m.marshal(moduleDto, w);
+            meveoModule.setModuleSource(w.toString());
+
+        } catch (JAXBException e) {
+            throw new BusinessException(e);
+        }
+    }
+
     @SuppressWarnings("rawtypes")
-    public void parseModuleFromDto(MeveoModule meveoModule, ModuleDto moduleDto, User currentUser) throws MeveoApiException, BusinessException {
+    private void unpackAndInstallModule(MeveoModule meveoModule, ModuleDto moduleDto, User currentUser) throws MeveoApiException, BusinessException {
 
         meveoModule.setCode(moduleDto.getCode());
         meveoModule.setDescription(moduleDto.getDescription());
@@ -342,16 +409,16 @@ public class ModuleApi extends BaseApi {
 
         // Converting subclasses of MeveoModuleDto class
         if (moduleDto instanceof BusinessServiceModelDto) {
-            parseBSMFromDto((BusinessServiceModel) meveoModule, (BusinessServiceModelDto) moduleDto, currentUser);
+            unpackAndInstallBSM((BusinessServiceModel) meveoModule, (BusinessServiceModelDto) moduleDto, currentUser);
 
         } else if (moduleDto instanceof BusinessOfferModelDto) {
-            parseBOMFromDto((BusinessOfferModel) meveoModule, (BusinessOfferModelDto) moduleDto, currentUser);
+            unpackAndInstallBOM((BusinessOfferModel) meveoModule, (BusinessOfferModelDto) moduleDto, currentUser);
         }
 
         if (meveoModule.getModuleItems() != null) {
             meveoModule.getModuleItems().clear();
         }
-      
+
         if (moduleDto.getModuleItems() == null) {
             return;
         }
@@ -398,14 +465,6 @@ public class ModuleApi extends BaseApi {
                 notificationApi.createOrUpdate((NotificationDto) dto, currentUser);
                 meveoModule.addModuleItem(new MeveoModuleItem(((NotificationDto) dto).getCode(), ScriptNotification.class.getName(), null));
 
-            } else if (dto instanceof BusinessServiceModelDto) {
-                businessServiceModelApi.createOrUpdate((BusinessServiceModelDto) dto, currentUser);
-                meveoModule.addModuleItem(new MeveoModuleItem(((BusinessServiceModelDto) dto).getCode(), BusinessServiceModel.class.getName(), null));
-
-            } else if (dto instanceof BusinessOfferModelDto) {
-                businessOfferModelApi.createOrUpdate((BusinessOfferModelDto) dto, currentUser);
-                meveoModule.addModuleItem(new MeveoModuleItem(((BusinessOfferModelDto) dto).getCode(), BusinessOfferModel.class.getName(), null));
-
             } else if (dto instanceof ModuleDto) {
                 createOrUpdate((ModuleDto) dto, currentUser);
                 meveoModule.addModuleItem(new MeveoModuleItem(((ModuleDto) dto).getCode(), MeveoModule.class.getName(), null));
@@ -422,15 +481,6 @@ public class ModuleApi extends BaseApi {
             } else if (dto instanceof CounterTemplateDto) {
                 counterTemplateApi.createOrUpdate((CounterTemplateDto) dto, currentUser);
                 meveoModule.addModuleItem(new MeveoModuleItem(((CounterTemplateDto) dto).getCode(), CounterTemplate.class.getName(), null));
-
-            } else if (dto instanceof BusinessServiceModelDto) {
-                businessServiceModelApi.createOrUpdate((BusinessServiceModelDto) dto, currentUser);
-                meveoModule.addModuleItem(new MeveoModuleItem(((BusinessServiceModelDto) dto).getCode(), BusinessServiceModel.class.getName(), null));
-
-            } else if (dto instanceof BusinessOfferModelDto) {
-                businessOfferModelApi.createOrUpdate((BusinessOfferModelDto) dto, currentUser);
-                meveoModule.addModuleItem(new MeveoModuleItem(((BusinessOfferModelDto) dto).getCode(), BusinessOfferModel.class.getName(), null));
-
             }
         }
     }

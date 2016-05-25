@@ -12,8 +12,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.scripts.EntityActionScript;
 
 /**
  * @author Andrius Karpavicius
@@ -40,7 +40,7 @@ public class CustomEntityTemplateDto extends BaseDto {
 
     @XmlElementWrapper(name = "actions")
     @XmlElement(name = "action")
-    private List<EntityActionScriptDto> actions;
+    private List<EntityCustomActionDto> actions;
 
     public CustomEntityTemplateDto() {
 
@@ -78,11 +78,11 @@ public class CustomEntityTemplateDto extends BaseDto {
         this.fields = fields;
     }
 
-    public List<EntityActionScriptDto> getActions() {
+    public List<EntityCustomActionDto> getActions() {
         return actions;
     }
 
-    public void setActions(List<EntityActionScriptDto> actions) {
+    public void setActions(List<EntityCustomActionDto> actions) {
         this.actions = actions;
     }
 
@@ -94,7 +94,7 @@ public class CustomEntityTemplateDto extends BaseDto {
      * @param cetActions Actions (EntityActionScript) available on CustomEntityTemplate
      * @return A CustomEntityTemplateDto object with fields set
      */
-    public static CustomEntityTemplateDto toDTO(CustomEntityTemplate cet, Collection<CustomFieldTemplate> cetFields, Collection<EntityActionScript> cetActions) {
+    public static CustomEntityTemplateDto toDTO(CustomEntityTemplate cet, Collection<CustomFieldTemplate> cetFields, Collection<EntityCustomAction> cetActions) {
         CustomEntityTemplateDto dto = new CustomEntityTemplateDto();
         dto.setCode(cet.getCode());
         dto.setName(cet.getName());
@@ -109,9 +109,9 @@ public class CustomEntityTemplateDto extends BaseDto {
         }
 
         if (cetActions != null) {
-            List<EntityActionScriptDto> actions = new ArrayList<EntityActionScriptDto>();
-            for (EntityActionScript action : cetActions) {
-                actions.add(new EntityActionScriptDto(action));
+            List<EntityCustomActionDto> actions = new ArrayList<EntityCustomActionDto>();
+            for (EntityCustomAction action : cetActions) {
+                actions.add(new EntityCustomActionDto(action));
             }
             dto.setActions(actions);
         }

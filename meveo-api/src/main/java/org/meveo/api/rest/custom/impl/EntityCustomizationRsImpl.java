@@ -7,17 +7,17 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.CustomEntityApi;
 import org.meveo.api.CustomFieldTemplateApi;
+import org.meveo.api.EntityCustomActionApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.ScriptInstanceApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
-import org.meveo.api.dto.EntityActionScriptDto;
+import org.meveo.api.dto.EntityCustomActionDto;
 import org.meveo.api.dto.EntityCustomizationDto;
 import org.meveo.api.dto.response.CustomEntityTemplateResponseDto;
 import org.meveo.api.dto.response.CustomEntityTemplatesResponseDto;
-import org.meveo.api.dto.response.EntityActionScriptResponseDto;
+import org.meveo.api.dto.response.EntityCustomActionResponseDto;
 import org.meveo.api.dto.response.EntityCustomizationResponseDto;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 import org.meveo.api.exception.MeveoApiException;
@@ -39,7 +39,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     private CustomFieldTemplateApi customFieldTemplateApi;
 
     @Inject
-    private ScriptInstanceApi scriptInstanceApi;
+    private EntityCustomActionApi entityCustomActionApi;
 
     @Override
     public ActionStatus createEntityTemplate(CustomEntityTemplateDto dto) {
@@ -311,11 +311,11 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    public ActionStatus createAction(EntityActionScriptDto dto) {
+    public ActionStatus createAction(EntityCustomActionDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            scriptInstanceApi.create(dto, null, getCurrentUser());
+            entityCustomActionApi.create(dto, null, getCurrentUser());
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -332,11 +332,11 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    public ActionStatus updateAction(EntityActionScriptDto dto) {
+    public ActionStatus updateAction(EntityCustomActionDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            scriptInstanceApi.update(dto, null, getCurrentUser());
+            entityCustomActionApi.update(dto, null, getCurrentUser());
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -358,7 +358,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            scriptInstanceApi.removeEntityAction(actionCode, appliesTo, getCurrentUser());
+            entityCustomActionApi.removeEntityAction(actionCode, appliesTo, getCurrentUser());
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -375,12 +375,12 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    public EntityActionScriptResponseDto findAction(String actionCode, String appliesTo) {
+    public EntityCustomActionResponseDto findAction(String actionCode, String appliesTo) {
 
-        EntityActionScriptResponseDto result = new EntityActionScriptResponseDto();
+        EntityCustomActionResponseDto result = new EntityCustomActionResponseDto();
 
         try {
-            result.setEntityAction(scriptInstanceApi.findEntityAction(actionCode, appliesTo, getCurrentUser()));
+            result.setEntityAction(entityCustomActionApi.findEntityAction(actionCode, appliesTo, getCurrentUser()));
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -397,12 +397,12 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    public ActionStatus createOrUpdateAction(EntityActionScriptDto dto) {
+    public ActionStatus createOrUpdateAction(EntityCustomActionDto dto) {
 
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            scriptInstanceApi.createOrUpdate(dto, null, getCurrentUser());
+            entityCustomActionApi.createOrUpdate(dto, null, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

@@ -1,11 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:p="http://primefaces.org/ui"
-    template="/layout/template.xhtml">
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
             <f:viewParam name="objectId" value="#{businessOfferModelBean.objectId}" />
-            <f:viewParam name="tab" value="#{businessOfferModelBean.activeTab}" />
         </f:metadata>
     </ui:define>
 
@@ -14,16 +12,11 @@
     </ui:define>
 
     <ui:define name="body">
-        <hftl:entityPopup id="creationScriptPopup" header="#{messages['businessOffer.search']}" backingBean="#{scriptInstanceListBean}"
-            searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" searchField2Label="#{messages['BusinessEntity.description']}" searchField2="description"
-            column1Label="#{messages['BusinessEntity.code']}" column1="code" column2Label="#{messages['BusinessEntity.description']}" column2="description"
-            selection="#{businessOfferModelBean.entity.creationScript}" updateField=":formId:tabView:creationScriptId :formId:tabView:creationScriptId_text">
-        </hftl:entityPopup>
 
-        <hftl:entityPopup id="offerTemplatePopup" header="#{messages['offerTemplate.title']}"
-            updateField=":formId:tabView:offerSelectId :formId:tabView:offerSelectId_text :businessServiceTemplates" selection="#{businessOfferModelBean.entity.offerTemplate}"
-            backingBean="#{offerTemplateListBean}" dataModel="#{offerTemplateListBean.lazyDataModelNoBSM}" searchField1Label="#{messages['businessEntity.code']}"
-            searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
+        <hftl:entityPopup id="offerTemplatePopup" header="#{messages['offerTemplate.title']}" updateField=":moduleForm:offerSelectId_entity :businessServiceTemplates"
+            selection="#{businessOfferModelBean.entity.offerTemplate}" backingBean="#{offerTemplateListBean}" dataModel="#{offerTemplateListBean.lazyDataModelNoBSM}"
+            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description">
         </hftl:entityPopup>
 
         <p:panel>
@@ -36,23 +29,24 @@
         </p:panel>
 
 
-        <ui:include src="../../admin/module/moduleTreeSearches.xhtml">
+        <ui:include src="../../admin/module/modulePopups.xhtml">
             <ui:param name="backingBean" value="#{businessOfferModelBean}" />
         </ui:include>
 
-        <hftl:formPanel ajaxSubmit="true" submitPartialProcess=":formId:tabView" label="#{messages['businessOffer.title']}" backingBean="#{businessOfferModelBean}"
-            showEnableDisableButton="true">
+        <hftl:formPanel formId="moduleForm" label="#{messages['businessOffer.title']}" backingBean="#{businessOfferModelBean}"
+            showEnableDisableButton="#{businessOfferModelBean.entity.installed}">
 
-            <p:tabView id="tabView" activeIndex="#{businessOfferModelBean.activeTab}">
-                <p:tab title="#{messages['commons.information']}">
-                    <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />
-                    <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description" />
-                    <hftl:formField id="offerSelectId" label="#{messages['pricePlanMatrix.offerCode']}" field="offerTemplate" valueLabelField="code" required="true" popup="true"
-                        popupId="offerTemplatePopup" />
-                    <hftl:formField id="creationScriptId" label="#{messages['businessOffer.creationScript']}" field="creationScript" valueLabelField="code" required="false"
-                        popup="true" popupId="creationScriptPopup" newLine="true" />
-                </p:tab>
-            </p:tabView>
+            <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />
+            <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description" />
+            <hftl:formField id="offerSelectId" label="#{messages['pricePlanMatrix.offerCode']}" field="offerTemplate" valueLabelField="code" required="true" popup="true"
+                popupId="offerTemplatePopup" />
+            <hftl:formField id="script" label="#{messages['meveoModule.script']}" field="script" valueLabelField="code" componentWidth="30" popup="true" popupId="moduleScriptPopup"
+                createEditPopup="true" createEditPopupId="scriptDialog" createEditPopupListenerBean="#{businessOfferModelBean}" createEditPopupListenerViewMethod="viewEditScript"
+                createEditPopupListenerNewMethod="newScript" createEditPopupListenerUpdate=":scriptForm" />
+            <hftl:formField label="#{messages['meveoModule.installed']}" doNotShowOnNew="true" allowEdit="false" field="installed" isMessage="true"
+                rendered="#{businessOfferModelBean.entity.moduleSource!=null}" />
+            <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true"
+                rendered="#{businessOfferModelBean.entity.installed}" />
 
             <ui:include src="../../admin/module/moduleTree.xhtml">
                 <ui:param name="backingBean" value="#{businessOfferModelBean}" />
@@ -75,136 +69,10 @@
             </p:panel>
         </h:form>
 
-        <h:form id="scriptMainForm">
-            <p:panel width="100" header="#{messages['offerModelScript']}" rendered="#{!businessOfferModelBean.entity.transient}">
-                <p:dataTable id="offerModelScript" var="entity" value="#{businessOfferModelBean.offerModelScripts}" paginator="true" rows="10" sortBy="#{entity.code}"
-                    paginatorAlwaysVisible="false" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                    rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid" reflow="true">
-                    <p:column headerText="#{messages['BusinessEntity.description']}">
-                        <h:outputText value="#{entity.descriptionOrCode}" />
-                    </p:column>
-                    <hftl:column label="#{messages['scriptInstance.error']}" field="error" isMessage="true" width="15%" />
-                    <p:column headerText="#{messages['enableEntity.active']}" width="10%">
-                        <h:outputText value="#{messages['commons.yes']}" rendered="#{entity.active != null and entity.active.toString() == 'true'}" />
-                        <h:outputText value="#{messages['commons.no']}" rendered="#{entity.active != null and entity.active.toString() == 'false'}" />
-                    </p:column>
-
-                    <p:column headerText="#{messages['commons.actions']}" width="10%">
-                        <p:commandButton id="editActionBtn" icon="ui-icon-document" oncomplete="PF('scriptDialog').show()" action="#{offerModelScriptBean.initEntity(entity.id)}"
-                            update=":scriptForm">
-                            <f:setPropertyActionListener target="#{offerModelScriptBean.backViewSave}" value="businessOfferModelDetail" />
-                            <f:setPropertyActionListener target="#{offerModelScriptBean.bomId}" value="#{businessOfferModelBean.entity.id}" />
-                        </p:commandButton>
-
-                        <p:tooltip for="deleteActionlink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-                        <p:commandButton id="deleteActionlink" icon="ui-icon-trash" oncomplete="scriptDoDelete()">
-                            <f:setPropertyActionListener target="#{offerModelScriptBean.entity}" value="#{entity}" />
-                            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
-                        </p:commandButton>
-                    </p:column>
-
-                    <f:facet name="footer">
-                        <p:commandButton id="addScript" value="#{messages['businessOfferModel.addScript']}" oncomplete="PF('scriptDialog').show()"
-                            actionListener="#{offerModelScriptBean.newEntity()}" update=":scriptForm"
-                            rendered="#{(businessOfferModelBean.offerModelScripts eq null or businessOfferModelBean.offerModelScripts.size() eq 0) and not businessOfferModelBean.entity.transient}">
-                            <f:setPropertyActionListener target="#{offerModelScriptBean.bomId}" value="#{businessOfferModelBean.entity.id}" />
-                            <f:setPropertyActionListener target="#{offerModelScriptBean.backViewSave}" value="businessOfferModelDetail" />
-                        </p:commandButton>
-                    </f:facet>
-                </p:dataTable>
-            </p:panel>
-
-            <p:remoteCommand id="remoteDeleteActionButton" actionListener="#{offerModelScriptBean.deleteInlist}" action="#{businessOfferModelBean.refreshScript}"
-                name="scriptDoDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form :scriptMainForm:offerModelScript" />
-
-
-            <p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmCanotDelete']}" header="" severity="alert"
-                widgetVar="scriptConfirmCanotDeleteWidget" appendTo="@(body)">
-                <p:panel styleClass="confirm-dialog-content">
-                    <p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}" oncomplete="PF('scriptConfirmCanotDeleteWidget').hide()" update="@this" />
-                </p:panel>
-            </p:confirmDialog>
-
-            <script type="text/javascript">
-													//<![CDATA[
-													function handleDeleteComplete(
-															xhr, status, args) {
-														var result = args.result;
-														if (typeof (result) != "undefined"
-																&& !result) {
-															PF(
-																	'scriptConfirmCanotDeleteWidget')
-																	.show();
-														}
-													}
-													//]]>
-												</script>
-        </h:form>
-
-        <p:dialog id="scriptDialog" header="#{messages['businessOfferModel.scriptHeader']}" modal="true" closeOnEscape="false" maximizable="true" closable="false"
-            widgetVar="scriptDialog" width="90%" height="550px">
-
-            <p:scrollPanel mode="native" style="max-height:550px">
-                <hftl:formPanel formId="scriptForm" label="#{messages['businessOfferModel.scriptHeader']}" backingBean="#{offerModelScriptBean}" showFormButtons="false">
-                    <h:panelGroup rendered="#{offerModelScriptBean.entity.isError()}">
-                        <div class="ui-messages ui-widget">
-                            <div class="ui-messages-error ui-corner-all">
-                                <span class="ui-messages-error-icon"></span>
-                                <ul>
-                                    <li><h:outputText value="#{messages['scriptInstance.compilationFailed']}" styleClass="ui-messages-error-summary" /></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </h:panelGroup>
-
-                    <hftl:formField label="#{messages['BusinessEntity.code']}" disabled="true" field="code" required="true" allowEdit="false" componentWidth="15" />
-                    <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" required="false" componentWidth="15" />
-                    <hftl:formField label="#{messages['scriptInstance.sourceTypeEnum']}" field="sourceTypeEnum" />
-                    <hftl:decorateFormField fieldId="codeMirror" label="#{messages['customizedEntities.actionScriptSrc']}" newLine="true" componentWidth="100">
-                        <pe:codeMirror id="codeMirror" theme="eclipse" mode="text/x-java" value="#{offerModelScriptBean.entity.script}" lineNumbers="true" required="true" />
-                    </hftl:decorateFormField>
-                    <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
-
-                    <h:panelGroup id="scriptErrors" rendered="#{offerModelScriptBean.entity.isError()}">
-                        <hftl:decorateFormField label="#{messages['scriptInstance.compilationErrors']}" componentWidth="100" newLine="true"
-                            rendered="#{offerModelScriptBean.entity.isError()}">
-                            <p:dataTable id="entityScripts" var="entity" value="#{offerModelScriptBean.entity.scriptErrors}" paginator="true" rows="10"
-                                sortBy="#{entity.lineNumber}" sortField="lineNumber" paginatorAlwaysVisible="false"
-                                paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid" reflow="true">
-                                <hftl:column label="#{messages['scriptInstance.compilation.lineNumber']}" field="lineNumber" width="10%" />
-                                <hftl:column label="#{messages['scriptInstance.compilation.columnNumber']}" field="columnNumber" width="15%" />
-                                <hftl:column label="#{messages['scriptInstance.compilation.message']}" field="message" />
-                            </p:dataTable>
-                        </hftl:decorateFormField>
-                    </h:panelGroup>
-
-                    <ui:param name="buttons" value="true" />
-                    <ui:define name="buttons">
-                        <hf:formButtons backingBean="#{offerModelScriptBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :scriptMainForm:offerModelScript"
-                            edit="true" killConversationOnSave="false">
-                            <p:commandButton value="#{messages['scriptInstance.testCompilation']}" action="#{offerModelScriptBean.testCompilation}" update="@form" />
-                            <p:commandButton value="#{messages['commons.disable']}" rendered="#{not empty offerModelScriptBean.entity.id and offerModelScriptBean.entity.active}"
-                                actionListener="#{businessOfferModelBean.refreshScript}" action="#{offerModelScriptBean.disable}" update="@form">
-                                <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
-                            </p:commandButton>
-                            <p:commandButton value="#{messages['commons.enable']}" rendered="#{not empty offerModelScriptBean.entity.id and offerModelScriptBean.entity.disabled}"
-                                actionListener="#{businessOfferModelBean.refreshScript}" action="#{offerModelScriptBean.enable}" update="@form">
-                                <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
-                            </p:commandButton>
-
-                            <p:commandButton value="#{messages['commons.close']}" oncomplete="PF('scriptDialog').hide()" actionListener="#{businessOfferModelBean.refreshScript}"
-                                update=":scriptMainForm" />
-                        </hf:formButtons>
-                    </ui:define>
-                </hftl:formPanel>
-            </p:scrollPanel>
-        </p:dialog>
-
         <h:panelGroup layout="block" styleClass="form-panel-actions" rendered="#{!businessOfferModelBean.entity.isTransient()}">
             <p:commandButton actionListener="#{businessOfferModelBean.createOfferFromBOMPopup()}" icon="ui-icon-extlink" value="#{messages['action.createOfferFromBOM']}">
                 <f:param name="objectId" value="#{businessOfferModelBean.entity.id}"></f:param>
-                <p:ajax event="dialogReturn" listener="#{businessOfferModelBean.onBOMOfferCreation}" update="formId:messages" />
+                <p:ajax event="dialogReturn" listener="#{businessOfferModelBean.onBOMOfferCreation}" update=":moduleForm:messages" />
             </p:commandButton>
         </h:panelGroup>
     </ui:define>

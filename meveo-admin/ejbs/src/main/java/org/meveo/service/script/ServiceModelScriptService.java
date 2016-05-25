@@ -2,27 +2,19 @@ package org.meveo.service.script;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidScriptException;
-import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.crm.Provider;
-import org.meveo.model.scripts.CustomScript;
-import org.meveo.model.scripts.ScriptSourceTypeEnum;
-import org.meveo.model.scripts.ServiceModelScript;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.script.service.ServiceScript;
 import org.meveo.service.script.service.ServiceScriptInterface;
 
@@ -31,68 +23,7 @@ import org.meveo.service.script.service.ServiceScriptInterface;
  **/
 @Singleton
 @Startup
-public class ServiceModelScriptService extends CustomScriptService<ServiceModelScript, ServiceScriptInterface> {
-
-    @Inject
-    private ResourceBundle resourceMessages;
-
-    @Override
-    public void create(ServiceModelScript serviceModelScript, User creator) throws BusinessException {
-
-        String className = getClassName(serviceModelScript.getScript());
-        if (className == null) {
-            throw new BusinessException(resourceMessages.getString("message.ServiceModelScript.sourceInvalid"));
-        }
-        serviceModelScript.setCode(getFullClassname(serviceModelScript.getScript()));
-
-        super.create(serviceModelScript, creator);
-    }
-
-    @Override
-    public ServiceModelScript update(ServiceModelScript serviceModelScript, User updater) throws BusinessException {
-
-        String className = getClassName(serviceModelScript.getScript());
-        if (className == null) {
-            throw new BusinessException(resourceMessages.getString("message.ServiceModelScript.sourceInvalid"));
-        }
-        serviceModelScript.setCode(getFullClassname(serviceModelScript.getScript()));
-
-        serviceModelScript = super.update(serviceModelScript, updater);
-
-        return serviceModelScript;
-    }
-
-    
-    @Override
-    public void remove(ServiceModelScript e) {
-
-        if (e.getBusinessServiceModel()!=null){
-            BusinessServiceModel bsm =  e.getBusinessServiceModel();
-            bsm.setScript(null);
-        }
-        super.remove(e);
-    }
-    
-    
-    /**
-     * Get all ServiceModelScripts with error for a provider
-     * 
-     * @param provider
-     * @return
-     */
-    public List<CustomScript> getServiceModelScriptsWithError(Provider provider) {
-        return ((List<CustomScript>) getEntityManager().createNamedQuery("CustomScript.getServiceModelScriptOnError", CustomScript.class).setParameter("isError", Boolean.TRUE)
-            .setParameter("provider", provider).getResultList());
-    }
-
-    /**
-     * Compile all ServiceModelScripts
-     */
-    @PostConstruct
-    void compileAll() {
-        List<ServiceModelScript> ServiceModelScripts = findByType(ScriptSourceTypeEnum.JAVA);
-        compile(ServiceModelScripts);
-    }
+public class ServiceModelScriptService extends CustomScriptService<ScriptInstance, ServiceScriptInterface> {
 
     // Interface methods
 

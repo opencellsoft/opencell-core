@@ -139,9 +139,10 @@ public class InvoiceCategoryApi extends BaseApi {
         }
 
         invoiceCategoryService.update(invoiceCategory, currentUser);
+        
         // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), invoiceCategory, true, currentUser, true);
+            populateCustomFields(postData.getCustomFields(), invoiceCategory, false, currentUser, true);
 
         } catch (IllegalArgumentException | IllegalAccessException e) {
             log.error("Failed to associate custom field instance to an entity", e);

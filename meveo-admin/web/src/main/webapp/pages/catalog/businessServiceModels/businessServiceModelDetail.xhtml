@@ -1,11 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:p="http://primefaces.org/ui"
-    template="/layout/template.xhtml">
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
             <f:viewParam name="objectId" value="#{businessServiceModelBean.objectId}" />
-            <f:viewParam name="tab" value="#{businessServiceModelBean.activeTab}" />
         </f:metadata>
     </ui:define>
 
@@ -15,10 +13,10 @@
 
     <ui:define name="body">
 
-        <hftl:entityPopup id="serviceTemplatePopup" header="#{messages['businessServiceModel.serviceTemplate']}"
-            updateField=":formId:tabView:serviceSelectId :formId:tabView:serviceSelectId_text" selection="#{businessServiceModelBean.entity.serviceTemplate}"
-            backingBean="#{serviceTemplateListBean}" dataModel="#{serviceTemplateListBean.lazyDataModelNoBSM}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
-            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
+        <hftl:entityPopup id="serviceTemplatePopup" header="#{messages['businessServiceModel.serviceTemplate']}" updateField=":moduleForm:serviceSelectId_entity"
+            selection="#{businessServiceModelBean.entity.serviceTemplate}" backingBean="#{serviceTemplateListBean}" dataModel="#{serviceTemplateListBean.lazyDataModelNoBSM}"
+            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description">
         </hftl:entityPopup>
 
         <p:panel>
@@ -30,21 +28,24 @@
             </h:form>
         </p:panel>
 
-        <ui:include src="../../admin/module/moduleTreeSearches.xhtml">
+        <ui:include src="../../admin/module/modulePopups.xhtml">
             <ui:param name="backingBean" value="#{businessServiceModelBean}" />
         </ui:include>
 
-        <hftl:formPanel label="#{messages['businessServiceModel.title']}" backingBean="#{businessServiceModelBean}" showEnableDisableButton="true">
-
-            <p:tabView id="tabView" activeIndex="#{businessOfferModelBean.activeTab}">
-                <p:tab title="#{messages['commons.information']}">
-                    <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />
-                    <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description" maxlength="50" />
-                    <hftl:formField label="#{messages['meveoModule.license']}" required="true" field="license" id="license" isMessage="true" newLine="true" />
-                    <hftl:formField id="serviceSelectId" required="true" label="#{messages['businessServiceModel.serviceTemplate']}" field="serviceTemplate" valueLabelField="code"
-                        popup="true" popupId="serviceTemplatePopup" />
-                </p:tab>
-            </p:tabView>
+        <hftl:formPanel formId="moduleForm" label="#{messages['businessServiceModel.title']}" backingBean="#{businessServiceModelBean}"
+            showEnableDisableButton="#{businessServiceModelBean.entity.installed}">
+            <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />
+            <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description" maxlength="50" />
+            <hftl:formField label="#{messages['meveoModule.license']}" required="true" field="license" id="license" isMessage="true" newLine="true" />
+            <hftl:formField id="serviceSelectId" required="true" label="#{messages['businessServiceModel.serviceTemplate']}" field="serviceTemplate" valueLabelField="code"
+                popup="true" popupId="serviceTemplatePopup" />
+            <hftl:formField id="script" label="#{messages['meveoModule.script']}" field="script" valueLabelField="code" componentWidth="30" popup="true" popupId="moduleScriptPopup"
+                createEditPopup="true" createEditPopupId="scriptDialog" createEditPopupListenerBean="#{businessServiceModelBean}" createEditPopupListenerViewMethod="viewEditScript"
+                createEditPopupListenerNewMethod="newScript" createEditPopupListenerUpdate=":scriptForm" />
+            <hftl:formField label="#{messages['meveoModule.installed']}" doNotShowOnNew="true" allowEdit="false" field="installed" isMessage="true"
+                rendered="#{businessServiceModelBean.entity.moduleSource!=null}" />
+            <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true"
+                rendered="#{businessServiceModelBean.entity.installed}" />
 
             <ui:include src="../../admin/module/moduleTree.xhtml">
                 <ui:param name="backingBean" value="#{businessServiceModelBean}" />
@@ -52,135 +53,7 @@
 
         </hftl:formPanel>
 
-        <h:form id="scriptMainForm">
-            <p:panel width="100" header="#{messages['serviceModelScript']}" rendered="#{!businessServiceModelBean.entity.transient}">
-                <p:dataTable id="serviceModelScript" var="entity" value="#{businessServiceModelBean.serviceModelScripts}" paginator="true" rows="10" sortBy="#{entity.code}"
-                    paginatorAlwaysVisible="false" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                    rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid" reflow="true">
-                    <p:column headerText="#{messages['BusinessEntity.description']}">
-                        <h:outputText value="#{entity.descriptionOrCode}" />
-                    </p:column>
-                    <hftl:column label="#{messages['scriptInstance.error']}" field="error" isMessage="true" width="15%" />
-                    <p:column headerText="#{messages['enableEntity.active']}" width="10%">
-                        <h:outputText value="#{messages['commons.yes']}" rendered="#{entity.active != null and entity.active.toString() == 'true'}" />
-                        <h:outputText value="#{messages['commons.no']}" rendered="#{entity.active != null and entity.active.toString() == 'false'}" />
-                    </p:column>
 
-                    <p:column headerText="#{messages['commons.actions']}" width="10%">
-                        <p:commandButton id="editActionBtn" icon="ui-icon-document" oncomplete="PF('scriptDialog').show()" action="#{serviceModelScriptBean.initEntity(entity.id)}"
-                            update=":scriptForm">
-                            <f:setPropertyActionListener target="#{serviceModelScriptBean.somId}" value="#{businessServiceModelBean.entity.id}" />
-                            <f:setPropertyActionListener target="#{serviceModelScriptBean.backViewSave}" value="businessServiceModelDetail" />
-                        </p:commandButton>
-
-                        <p:tooltip for="deleteScriptLink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-                        <p:commandButton id="deleteScriptLink" icon="ui-icon-trash" oncomplete="scriptDoDelete()">
-                            <f:setPropertyActionListener target="#{serviceModelScriptBean.entity}" value="#{entity}" />
-                            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
-                        </p:commandButton>
-                    </p:column>
-
-                    <f:facet name="footer">
-                        <p:commandButton id="addScript" value="#{messages['businessServiceModel.addScript']}" oncomplete="PF('scriptDialog').show()"
-                            actionListener="#{serviceModelScriptBean.newEntity()}" update=":scriptForm"
-                            rendered="#{(businessServiceModelBean.serviceModelScripts eq null or businessServiceModelBean.serviceModelScripts.size() eq 0) and not businessServiceModelBean.entity.transient}">
-                            <f:setPropertyActionListener target="#{serviceModelScriptBean.somId}" value="#{businessServiceModelBean.entity.id}" />
-                            <f:setPropertyActionListener target="#{serviceModelScriptBean.backViewSave}" value="businessServiceModelDetail" />
-                        </p:commandButton>
-                    </f:facet>
-                </p:dataTable>
-            </p:panel>
-
-            <p:remoteCommand id="remoteDeleteScriptButton" actionListener="#{serviceModelScriptBean.deleteInlist}" action="#{businessServiceModelBean.refreshScript}"
-                name="scriptDoDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form :scriptMainForm:serviceModelScript" />
-
-
-            <p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmCanotDelete']}"
-                header="#{messages['commons.confirmCanotDeleteHeader']}" severity="alert" widgetVar="scriptConfirmCanotDeleteWidget" appendTo="@(body)">
-                <p:panel styleClass="confirm-dialog-content">
-                    <p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}" oncomplete="PF('scriptConfirmCanotDeleteWidget').hide()" update="@this" />
-                </p:panel>
-            </p:confirmDialog>
-
-            <script type="text/javascript">
-													//<![CDATA[
-													function handleDeleteComplete(
-															xhr, status, args) {
-														var result = args.result;
-														if (typeof (result) != "undefined"
-																&& !result) {
-															PF(
-																	'scriptConfirmCanotDeleteWidget')
-																	.show();
-														}
-													}
-													//]]>
-												</script>
-        </h:form>
-
-        <p:dialog id="scriptDialog" header="#{messages['businessServiceModel.scriptHeader']}" modal="true" closeOnEscape="false" maximizable="true" closable="false"
-            widgetVar="scriptDialog" width="90%" height="550px">
-
-            <p:scrollPanel mode="native" style="max-height:550px">
-                <hftl:formPanel formId="scriptForm" label="#{messages['businessServiceModel.scriptHeader']}" backingBean="#{serviceModelScriptBean}" showFormButtons="false">
-
-                    <h:panelGroup rendered="#{serviceModelScriptBean.entity.isError()}">
-                        <div class="ui-messages ui-widget">
-                            <div class="ui-messages-error ui-corner-all">
-                                <span class="ui-messages-error-icon"></span>
-                                <ul>
-                                    <li><h:outputText value="#{messages['scriptInstance.compilationFailed']}" styleClass="ui-messages-error-summary" /></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </h:panelGroup>
-
-                    <hftl:formField label="#{messages['BusinessEntity.code']}" disabled="true" field="code" required="true" allowEdit="false" componentWidth="15" />
-                    <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" required="false" componentWidth="15" />
-                    <hftl:formField label="#{messages['scriptInstance.sourceTypeEnum']}" field="sourceTypeEnum" />
-                    <hftl:decorateFormField fieldId="codeMirror" label="#{messages['customizedEntities.actionScriptSrc']}" newLine="true" componentWidth="100">
-                        <pe:codeMirror id="codeMirror" theme="eclipse" mode="text/x-java" value="#{serviceModelScriptBean.entity.script}" lineNumbers="true" required="true" />
-                    </hftl:decorateFormField>
-                    <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
-
-                    <h:panelGroup id="scriptErrors" rendered="#{serviceModelScriptBean.entity.isError()}">
-                        <hftl:decorateFormField label="#{messages['scriptInstance.compilationErrors']}" componentWidth="100" newLine="true"
-                            rendered="#{serviceModelScriptBean.entity.isError()}">
-                            <p:dataTable id="entityScripts" var="entity" value="#{serviceModelScriptBean.entity.scriptErrors}" paginator="true" rows="10"
-                                sortBy="#{entity.lineNumber}" sortField="lineNumber" paginatorAlwaysVisible="false"
-                                paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid" reflow="true">
-                                <hftl:column label="#{messages['scriptInstance.compilation.lineNumber']}" field="lineNumber" width="10%" />
-                                <hftl:column label="#{messages['scriptInstance.compilation.columnNumber']}" field="columnNumber" width="15%" />
-                                <hftl:column label="#{messages['scriptInstance.compilation.message']}" field="message" />
-                            </p:dataTable>
-                        </hftl:decorateFormField>
-                    </h:panelGroup>
-
-                    <ui:param name="buttons" value="true" />
-                    <ui:define name="buttons">
-                        <hf:formButtons backingBean="#{serviceModelScriptBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :scriptMainForm:serviceModelScript"
-                            edit="true" killConversationOnSave="false">
-                            <p:commandButton value="#{messages['scriptInstance.testCompilation']}" action="#{serviceModelScriptBean.testCompilation}" update="@form" />
-                            <p:commandButton value="#{messages['commons.disable']}"
-                                rendered="#{not empty serviceModelScriptBean.entity.id and serviceModelScriptBean.entity.active}"
-                                actionListener="#{businessServiceModelBean.refreshScript}" action="#{serviceModelScriptBean.disable}" update="@form">
-                                <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
-                            </p:commandButton>
-                            <p:commandButton value="#{messages['commons.enable']}"
-                                rendered="#{not empty serviceModelScriptBean.entity.id and serviceModelScriptBean.entity.disabled}"
-                                actionListener="#{businessServiceModelBean.refreshScript}" action="#{serviceModelScriptBean.enable}" update="@form">
-                                <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
-                            </p:commandButton>
-
-                            <p:commandButton value="#{messages['commons.close']}" oncomplete="PF('scriptDialog').hide()" actionListener="#{businessServiceModelBean.refreshScript}"
-                                update=":scriptMainForm" />
-                        </hf:formButtons>
-                    </ui:define>
-
-                </hftl:formPanel>
-            </p:scrollPanel>
-        </p:dialog>
 
     </ui:define>
 </ui:composition>

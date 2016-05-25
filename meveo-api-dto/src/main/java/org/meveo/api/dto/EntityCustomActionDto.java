@@ -6,17 +6,22 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.script.CustomScriptDto;
-import org.meveo.model.scripts.EntityActionScript;
+import org.meveo.model.crm.custom.EntityCustomAction;
 
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "EntityActionScript")
+@XmlRootElement(name = "EntityCustomAction")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EntityActionScriptDto extends CustomScriptDto {
+public class EntityCustomActionDto extends BaseDto {
 
     private static final long serialVersionUID = -2916923287316823939L;
+
+    @XmlAttribute(required = true)
+    private String code;
+
+    @XmlAttribute()
+    private String description;
 
     @XmlAttribute(required = false)
     protected String appliesTo;
@@ -27,20 +32,41 @@ public class EntityActionScriptDto extends CustomScriptDto {
     @XmlElement(required = false)
     private String label;
 
-    public EntityActionScriptDto() {
+    private ScriptInstanceDto script;
+
+    public EntityCustomActionDto() {
         super();
     }
 
-    public EntityActionScriptDto(EntityActionScript e) {
-        super(e.getLocalCodeForRead(), e.getDescription(), e.getSourceTypeEnum(), e.getScript());
+    public EntityCustomActionDto(EntityCustomAction e) {
+        this.code = e.getLocalCodeForRead();
+        this.description = e.getDescription();
 
         this.appliesTo = e.getAppliesTo();
         this.applicableOnEl = e.getApplicableOnEl();
         this.label = e.getLabel();
+
+        this.setScript(new ScriptInstanceDto(e.getScript()));
     }
 
     public String getFullCode() {
-        return EntityActionScript.composeCode(getCode(), appliesTo);
+        return EntityCustomAction.composeCode(getCode(), appliesTo);
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getAppliesTo() {
@@ -67,9 +93,17 @@ public class EntityActionScriptDto extends CustomScriptDto {
         this.label = label;
     }
 
+    public ScriptInstanceDto getScript() {
+        return script;
+    }
+
+    public void setScript(ScriptInstanceDto script) {
+        this.script = script;
+    }
+
     @Override
     public String toString() {
-        return String.format("EntityActionScriptDto [appliesTo=%s, code=%s, description=%s, type=%s, applicableOnEl=%s, label=%s]", appliesTo, getCode(), getDescription(),
-            getType(), applicableOnEl, label, getCode(), getDescription(), getType());
+        return String.format("EntityCustomActionDto [code=%s, description=%s, appliesTo=%s, applicableOnEl=%s, label=%s, script=%s]", code, description, appliesTo, applicableOnEl,
+            label, script);
     }
 }

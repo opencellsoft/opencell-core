@@ -13,7 +13,7 @@ import javax.persistence.UniqueConstraint;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.scripts.RevenueRecognitionDelayUnitEnum;
 import org.meveo.model.scripts.RevenueRecognitionEventEnum;
-import org.meveo.model.scripts.RevenueRecognitionScriptEntity;
+import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
 @Table(name = "AR_REVENUE_RECOG_RULE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
@@ -24,7 +24,7 @@ public class RevenueRecognitionRule extends BusinessEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "SCRIPT_INSTANCE_ID")
-	private RevenueRecognitionScriptEntity script;
+	private ScriptInstance script;
 
 	@Column(name = "START_DELAY")
 	private Integer startDelay = 0;
@@ -48,11 +48,11 @@ public class RevenueRecognitionRule extends BusinessEntity {
 	@Column(name = "STOP_EVENT")
 	private RevenueRecognitionEventEnum stopEvent;
 
-	public RevenueRecognitionScriptEntity getScript() {
+	public ScriptInstance getScript() {
 		return script;
 	}
 
-	public void setScript(RevenueRecognitionScriptEntity script) {
+	public void setScript(ScriptInstance script) {
 		this.script = script;
 	}
 

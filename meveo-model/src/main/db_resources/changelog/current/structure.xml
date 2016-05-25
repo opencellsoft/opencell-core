@@ -1879,6 +1879,96 @@
             <column name="CHE_FIELDS" type="VARCHAR(500)"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#1508_20160519" author="AndriusKarpavicius">
+    
+        <addColumn tableName="MEVEO_MODULE">        
+            <column name="SCRIPT_INSTANCE_ID" type="BIGINT" />
+            <column name="INSTALLED" type="BOOL" defaultValueBoolean="false"/>
+            <column name="MODULE_SOURCE" type="TEXT" />
+        </addColumn>
+        
+        <sql>update meveo_module set script_instance_id=(select script_instance_id from cat_business_offer_model where meveo_module.id=cat_business_offer_model.id)</sql>
+        <sql>update meveo_module set script_instance_id=(select script_instance_id from cat_business_serv_model where meveo_module.id=cat_business_serv_model.id)</sql>
+        <sql>update meveo_module set script_instance_id=(select script_instance_id from crm_business_account_model where meveo_module.id=crm_business_account_model.id)</sql>
+        <sql>update meveo_module set installed=false</sql>
+        
+        <addForeignKeyConstraint baseColumnNames="script_instance_id"
+            baseTableName="MEVEO_MODULE" constraintName="fk_meveo_module_script_instance"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+    
+        <dropColumn tableName="cat_business_offer_model" columnName="script_instance_id"/>
+        <dropColumn tableName="cat_business_serv_model" columnName="script_instance_id"/>
+        <dropColumn tableName="crm_business_account_model" columnName="script_instance_id"/>    
+        <addNotNullConstraint tableName="MEVEO_MODULE" columnName="INSTALLED"/>
+    
+    </changeSet>
+
+    <changeSet author="AndriusKarpavicius" id="#1734_20150523">
+        <createTable tableName="crm_custom_action">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="creator_id" type="BIGINT" />
+            <column name="updater_id" type="BIGINT" />
+            <column name="code" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="VARCHAR(100)" />
+            <column name="APPLIES_TO" type="varchar(100)"/>
+            <column name="APPLICABLE_ON_EL" type="varchar(2000)"/>
+            <column name="LABEL" type="varchar(50)"/>   
+            <column name="SCRIPT_INSTANCE_ID" type="BIGINT" />
+        </createTable>
+        
+        <addPrimaryKey columnNames="id" constraintName="crm_custom_action_pkey"
+            tableName="crm_custom_action" />
+
+        <addForeignKeyConstraint baseColumnNames="provider_id"
+            baseTableName="crm_custom_action" constraintName="fk_crm_custom_action_crm_provider"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+        
+        <addForeignKeyConstraint baseColumnNames="creator_id"
+            baseTableName="crm_custom_action" constraintName="fk_creator_crm_custom_action_adm_user"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+        
+        <addForeignKeyConstraint baseColumnNames="updater_id"
+            baseTableName="crm_custom_action" constraintName="fk_updater_crm_custom_action_adm_user"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+        
+        <addForeignKeyConstraint baseColumnNames="script_instance_id"
+            baseTableName="crm_custom_action" constraintName="fk_meveo_module_script_instance"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+        
+        <addNotNullConstraint tableName="crm_custom_action" columnName="APPLIES_TO"/>
+        <addNotNullConstraint tableName="crm_custom_action" columnName="script_instance_id"/>
+                
+        <createSequence sequenceName="crm_custom_action_seq" />
+        
+        <sql>insert into crm_custom_action (id, version, disabled, created, updated, provider_id, creator_id, updater_id, code, description, applies_to, applicable_on_el, label, script_instance_id)
+                 (select nextval('crm_custom_action_seq'), version, disabled, created, updated, provider_id, creator_id, updater_id, code, description, applies_to, applicable_on_el, label, id from meveo_script_instance where script_type='EntityAction' )
+        </sql>
+        
+        <dropColumn tableName="meveo_script_instance" columnName="script_type"/>
+        <dropColumn tableName="meveo_script_instance" columnName="APPLIES_TO"/>
+        <dropColumn tableName="meveo_script_instance" columnName="APPLICABLE_ON_EL"/>
+        <dropColumn tableName="meveo_script_instance" columnName="label"/>
+    </changeSet>
+
 	<changeSet author="anasseh" id="#1688_20160520">
      	<modifyDataType columnName="DESCRIPTION" newDataType="VARCHAR(600)"   tableName="BILLING_INVOICE_AGREGATE"/>
      </changeSet>    

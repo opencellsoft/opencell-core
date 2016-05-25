@@ -8,11 +8,11 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
-import org.meveo.api.dto.EntityActionScriptDto;
+import org.meveo.api.dto.EntityCustomActionDto;
 import org.meveo.api.dto.EntityCustomizationDto;
 import org.meveo.api.dto.response.CustomEntityInstanceResponseDto;
 import org.meveo.api.dto.response.CustomEntityTemplateResponseDto;
-import org.meveo.api.dto.response.EntityActionScriptResponseDto;
+import org.meveo.api.dto.response.EntityCustomActionResponseDto;
 import org.meveo.api.dto.response.EntityCustomizationResponseDto;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 
@@ -76,19 +76,19 @@ public interface EntityCustomizationWs extends IBaseWs {
     // Entity actions
 
     @WebMethod
-    public ActionStatus createAction(@WebParam(name = "entityAction") EntityActionScriptDto dto);
+    public ActionStatus createAction(@WebParam(name = "entityAction") EntityCustomActionDto dto);
 
     @WebMethod
-    public ActionStatus updateAction(@WebParam(name = "entityAction") EntityActionScriptDto dto);
+    public ActionStatus updateAction(@WebParam(name = "entityAction") EntityCustomActionDto dto);
 
     @WebMethod
     public ActionStatus removeAction(@WebParam(name = "actionCode") String actionCode, @WebParam(name = "appliesTo") String appliesTo);
 
     @WebMethod
-    public EntityActionScriptResponseDto findAction(@WebParam(name = "actionCode") String actionCode, @WebParam(name = "appliesTo") String appliesTo);
+    public EntityCustomActionResponseDto findAction(@WebParam(name = "actionCode") String actionCode, @WebParam(name = "appliesTo") String appliesTo);
 
     @WebMethod
-    public ActionStatus createOrUpdateAction(@WebParam(name = "entityAction") EntityActionScriptDto dto);
+    public ActionStatus createOrUpdateAction(@WebParam(name = "entityAction") EntityCustomActionDto dto);
 
     @WebMethod
     public ActionStatus customizeEntity(@WebParam(name = "entityCustomization") EntityCustomizationDto dto);

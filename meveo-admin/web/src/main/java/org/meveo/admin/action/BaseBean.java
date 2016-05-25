@@ -59,8 +59,8 @@ import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.filter.Filter;
-import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -411,6 +411,21 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
+     * Save method when used in popup - no return value. Sets validation to failed if saveOrUpdate method called does not return a value.
+     * 
+     * @return
+     * @throws BusinessException
+     */
+    @ActionMethod
+    public void saveOrUpdateForPopup() throws BusinessException {
+        String result = saveOrUpdate(false);
+        if (result == null) {
+            FacesContext.getCurrentInstance().validationFailed();
+        }
+        return;
+    }
+
+    /**
      * Save or update entity depending on if entity is transient.
      * 
      * @param entity Entity to save.
@@ -629,7 +644,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Get new instance for backing bean class.  
+     * Get new instance for backing bean class.
      * 
      * @return New instance.
      * 
@@ -1089,7 +1104,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @return A list of entity action scripts
      */
-    public List<EntityActionScript> getCustomActions() {
+    public List<EntityCustomAction> getCustomActions() {
         return null;
     }
 
@@ -1128,7 +1143,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         values.remove(event.getOldValue());
         values.add(event.getNewValue());
 
-        // Unpredictable results when changing several values at a time, as Set does not guarantee same value oder - could be used only in Ajax and only with refresh
+        // Unpredictable results when changing several values at a time, as Set does not guarantee same value order - could be used only in Ajax and only with refresh
         // int itemIndex = (int) event.getComponent().getAttributes().get("itemIndex");
         // log.error("AKK changing value from {} to {} in index {} values {}", event.getOldValue(), event.getNewValue(), itemIndex, values.toArray());
         // ArrayList newValues = new ArrayList();

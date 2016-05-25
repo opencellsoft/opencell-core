@@ -37,6 +37,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.ServiceBasedLazyDataModel;
+import org.meveo.admin.action.admin.ViewBean;
+import org.meveo.admin.action.catalog.ScriptInstanceBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -78,6 +80,10 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
      */
     @Inject
     protected MeveoModuleService meveoModuleService;
+
+    @Inject
+    @ViewBean
+    protected ScriptInstanceBean scriptInstanceBean;
 
     private CustomEntityTemplate customEntity;
     private CustomFieldTemplate customField;
@@ -527,5 +533,29 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
         TreeNode node = new DefaultTreeNode(classname, ReflectionUtils.getHumanClassName(classname), root);
         node.setExpanded(true);
         return node;
+    }
+
+    public void refreshScript() {
+        entity.setScript(scriptInstanceBean.getEntity());
+    }
+
+    /**
+     * Prepare to show a popup to view or edit script
+     */
+    public void viewEditScript() {
+        if (entity.getScript() != null) {
+            scriptInstanceBean.initEntity(entity.getScript().getId());
+        } else {
+            scriptInstanceBean.newEntity();
+        }
+        scriptInstanceBean.setBackViewSave(this.getEditViewName());
+    }
+
+    /**
+     * Prepare to show a popup to enter new script
+     */
+    public void newScript() {
+        scriptInstanceBean.newEntity();
+        scriptInstanceBean.setBackViewSave(this.getEditViewName());
     }
 }

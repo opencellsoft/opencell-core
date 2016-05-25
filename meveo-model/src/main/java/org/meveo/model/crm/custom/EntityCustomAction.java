@@ -1,18 +1,25 @@
-package org.meveo.model.scripts;
+package org.meveo.model.crm.custom;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
 @ExportIdentifier({ "code", "appliesTo", "provider" })
-@DiscriminatorValue("EntityAction")
-public class EntityActionScript extends CustomScript {
+@Table(name = "CRM_CUSTOM_ACTION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "APPLIES_TO", "PROVIDER_ID" }))
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_ACTION_SEQ")
+public class EntityCustomAction extends BusinessEntity {
 
     private static final long serialVersionUID = -1640429569087958881L;
 
@@ -37,8 +44,12 @@ public class EntityActionScript extends CustomScript {
     @Size(max = 50)
     private String label;
 
+    @ManyToOne()
+    @JoinColumn(name = "SCRIPT_INSTANCE_ID")
+    private ScriptInstance script;
+
     public void setCode(String localCode, String appliesTo) {
-        super.setCode(EntityActionScript.composeCode(localCode, appliesTo));
+        super.setCode(EntityCustomAction.composeCode(localCode, appliesTo));
         this.localCode = localCode;
     }
 
@@ -82,6 +93,14 @@ public class EntityActionScript extends CustomScript {
         this.label = label;
     }
 
+    public void setScript(ScriptInstance script) {
+        this.script = script;
+    }
+
+    public ScriptInstance getScript() {
+        return script;
+    }
+
     @Override
     public boolean equals(Object obj) {
 
@@ -91,11 +110,11 @@ public class EntityActionScript extends CustomScript {
 
         if (obj == null) {
             return false;
-        } else if (!(obj instanceof EntityActionScript)) { // Fails with proxed objects: getClass() != obj.getClass()){
+        } else if (!(obj instanceof EntityCustomAction)) { // Fails with proxed objects: getClass() != obj.getClass()){
             return false;
         }
 
-        EntityActionScript other = (EntityActionScript) obj;
+        EntityCustomAction other = (EntityCustomAction) obj;
 
         if (getId() != null && other.getId() != null && getId() == other.getId()) {
             // return true;

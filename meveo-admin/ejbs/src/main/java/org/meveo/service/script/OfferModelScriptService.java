@@ -2,24 +2,19 @@ package org.meveo.service.script;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidScriptException;
-import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.scripts.OfferModelScript;
-import org.meveo.model.scripts.ScriptSourceTypeEnum;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.script.offer.OfferScript;
 import org.meveo.service.script.offer.OfferScriptInterface;
 
@@ -28,68 +23,7 @@ import org.meveo.service.script.offer.OfferScriptInterface;
  **/
 @Singleton
 @Startup
-public class OfferModelScriptService extends CustomScriptService<OfferModelScript, OfferScriptInterface> {
-
-    @Inject
-    private ResourceBundle resourceMessages;
-
-    @Override
-    public void create(OfferModelScript offerModelScript, User creator) throws BusinessException {
-
-        String className = getClassName(offerModelScript.getScript());
-        if (className == null) {
-            throw new BusinessException(resourceMessages.getString("message.OfferModelScript.sourceInvalid"));
-        }
-        offerModelScript.setCode(getFullClassname(offerModelScript.getScript()));
-
-        super.create(offerModelScript, creator);
-    }
-
-    @Override
-    public OfferModelScript update(OfferModelScript offerModelScript, User updater) throws BusinessException {
-
-        String className = getClassName(offerModelScript.getScript());
-        if (className == null) {
-            throw new BusinessException(resourceMessages.getString("message.OfferModelScript.sourceInvalid"));
-        }
-        offerModelScript.setCode(getFullClassname(offerModelScript.getScript()));
-
-        offerModelScript = super.update(offerModelScript, updater);
-
-        return offerModelScript;
-    }
-
-    @Override
-    public void remove(OfferModelScript e) {
-
-        if (e.getBusinessOfferModel() != null) {
-            e.getBusinessOfferModel().setScript(null);
-        }
-        super.remove(e);
-    }
-
-    /**
-     * Get all OfferModelScripts with error for a provider
-     * 
-     * @param provider
-     * @return
-     */
-	// public List<CustomScript> getOfferModelScriptsWithError(Provider
-	// provider) {
-	// return ((List<CustomScript>)
-	// getEntityManager().createNamedQuery("CustomScript.getOfferModelScriptOnError",
-	// CustomScript.class).setParameter("isError", Boolean.TRUE)
-	// .setParameter("provider", provider).getResultList());
-	// }
-
-    /**
-     * Compile all OfferModelScripts
-     */
-    @PostConstruct
-    void compileAll() {
-        List<OfferModelScript> offerModelScripts = findByType(ScriptSourceTypeEnum.JAVA);
-        compile(offerModelScripts);
-    }
+public class OfferModelScriptService extends CustomScriptService<ScriptInstance, OfferScriptInterface> {
 
     // Interface methods
 

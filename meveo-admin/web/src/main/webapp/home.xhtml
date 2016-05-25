@@ -982,24 +982,9 @@
 												<f:facet name="header">
 													<h:outputText value="Actions" />
 												</f:facet>
-                                                <p:button id="scriptInstancesButton" rendered="#{entity.discriminatorValue eq 'ScriptInstance'}" outcome="scriptInstanceDetail"
+                                                <p:button id="scriptInstancesButton" outcome="scriptInstanceDetail"
                                                     icon="ui-icon-search">
                                                     <f:param name="objectId" value="#{entity.id}" />
-                                                    <f:param name="backView" value="home" />
-                                                </p:button>
-                                                <p:button id="offerModelScriptButton" rendered="#{entity.discriminatorValue eq 'OfferModel'}" outcome="businessOfferModelDetail"
-                                                    icon="ui-icon-search">
-                                                    <f:param name="objectId" value="#{entity.businessOfferModel.id}" />
-                                                    <f:param name="backView" value="home" />
-                                                </p:button>
-                                                <p:button id="serviceModelScriptButton" rendered="#{entity.discriminatorValue eq 'ServiceModel'}"
-                                                    outcome="businessServiceModelDetail" icon="ui-icon-search">
-                                                    <f:param name="objectId" value="#{entity.businessServiceModel.id}" />
-                                                    <f:param name="backView" value="home" />
-                                                </p:button>
-                                                <p:button id="entityActionScriptButton" rendered="#{entity.discriminatorValue eq 'EntityAction'}" outcome="customizedEntity"
-                                                    icon="ui-icon-search">
-                                                    <f:param name="appliesTo" value="#{entity.appliesTo}" />
                                                     <f:param name="backView" value="home" />
                                                 </p:button>
                                             </p:column>

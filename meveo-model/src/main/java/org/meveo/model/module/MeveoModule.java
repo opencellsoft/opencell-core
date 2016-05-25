@@ -12,6 +12,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -22,6 +24,7 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * meveo module has CETs, CFTs, filters, scripts, jobs, notifications
@@ -51,6 +54,16 @@ public class MeveoModule extends BusinessEntity implements Serializable {
     @Column(name = "LOGO_PICTURE", length = 255)
     @Size(max = 255)
     private String logoPicture;
+
+    @Column(name = "INSTALLED")
+    private boolean installed;
+
+    @Column(name = "MODULE_SOURCE", nullable = false, columnDefinition = "TEXT")
+    private String moduleSource;
+
+    @ManyToOne()
+    @JoinColumn(name = "SCRIPT_INSTANCE_ID")
+    private ScriptInstance script;
 
     public List<MeveoModuleItem> getModuleItems() {
         return moduleItems;
@@ -86,4 +99,27 @@ public class MeveoModule extends BusinessEntity implements Serializable {
         this.logoPicture = logoPicture;
     }
 
+    public boolean isInstalled() {
+        return installed;
+    }
+
+    public void setInstalled(boolean installed) {
+        this.installed = installed;
+    }
+
+    public void setScript(ScriptInstance script) {
+        this.script = script;
+    }
+
+    public ScriptInstance getScript() {
+        return script;
+    }
+
+    public void setModuleSource(String moduleSource) {
+        this.moduleSource = moduleSource;
+    }
+
+    public String getModuleSource() {
+        return moduleSource;
+    }
 }

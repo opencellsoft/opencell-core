@@ -1,5 +1,8 @@
 package org.meveo.api.ws.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
@@ -9,7 +12,6 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.account.AccessApi;
 import org.meveo.api.account.AccountHierarchyApi;
 import org.meveo.api.account.BillingAccountApi;
-import org.meveo.api.account.BusinessAccountModelApi;
 import org.meveo.api.account.CustomerAccountApi;
 import org.meveo.api.account.CustomerApi;
 import org.meveo.api.account.TitleApi;
@@ -29,6 +31,7 @@ import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
+import org.meveo.api.dto.module.ModuleDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
@@ -54,8 +57,10 @@ import org.meveo.api.dto.response.account.UserAccountsResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
+import org.meveo.api.module.ModuleApi;
 import org.meveo.api.payment.AccountOperationApi;
 import org.meveo.api.ws.AccountWs;
+import org.meveo.model.crm.BusinessAccountModel;
 
 /**
  * @author Edward P. Legaspi
@@ -63,9 +68,9 @@ import org.meveo.api.ws.AccountWs;
 @WebService(serviceName = "AccountWs", endpointInterface = "org.meveo.api.ws.AccountWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class AccountWsImpl extends BaseWs implements AccountWs {
-	
-	@Inject
-	private BusinessAccountModelApi businessAccountModelApi;
+
+    @Inject
+    private ModuleApi moduleApi;
 
     @Inject
     private AccountOperationApi accountOperationApi;
@@ -1363,142 +1368,146 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         return result;
     }
 
-	@Override
-	public ActionStatus createBusinessAccountModel(BusinessAccountModelDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createBusinessAccountModel(BusinessAccountModelDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			businessAccountModelApi.create(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			log.error("Failed to execute API", e);
-			result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            moduleApi.create(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus updateBusinessAccountModel(BusinessAccountModelDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus updateBusinessAccountModel(BusinessAccountModelDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			businessAccountModelApi.update(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			log.error("Failed to execute API", e);
-			result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            moduleApi.update(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public BusinessAccountModelResponseDto findBusinessAccountModel(String bamCode) {
-		BusinessAccountModelResponseDto result = new BusinessAccountModelResponseDto();
+    @Override
+    public BusinessAccountModelResponseDto findBusinessAccountModel(String bamCode) {
+        BusinessAccountModelResponseDto result = new BusinessAccountModelResponseDto();
 
-		try {
-			result.setBusinessAccountModel(businessAccountModelApi.find(bamCode, getCurrentUser()));
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		} catch (Exception e) {
-			log.error("Failed to execute API", e);
-			result.getActionStatus()
-					.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		}
+        try {
+            result.setBusinessAccountModel((BusinessAccountModelDto) moduleApi.get(bamCode, BusinessAccountModel.class, getCurrentUser()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus removeBusinessAccountModel(String bamCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus removeBusinessAccountModel(String bamCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			businessAccountModelApi.remove(bamCode, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			log.error("Failed to execute API", e);
-			result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            moduleApi.delete(bamCode, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public BusinessAccountModelsResponseDto listBusinessAccountModel() {
-		BusinessAccountModelsResponseDto result = new BusinessAccountModelsResponseDto();
+    @Override
+    public BusinessAccountModelsResponseDto listBusinessAccountModel() {
+        BusinessAccountModelsResponseDto result = new BusinessAccountModelsResponseDto();
 
-		try {
-			result.setBusinessAccountModels(businessAccountModelApi.list());
-		} catch (Exception e) {
-			log.error("Failed to execute API", e);
-			result.getActionStatus()
-					.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		}
+        try {
+            List<BusinessAccountModelDto> bamDtos = new ArrayList<>();
+            List<ModuleDto> dtosFound = moduleApi.list(getCurrentUser());
+            for (ModuleDto moduleDto : dtosFound) {
+                bamDtos.add((BusinessAccountModelDto) moduleDto);
+            }
+            result.setBusinessAccountModels(bamDtos);
 
-		return result;
-	}
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
 
-	@Override
-	public ActionStatus terminateCRMAccountHierarchy(CRMAccountHierarchyDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        return result;
+    }
 
-		try {
-			accountHierarchyApi.terminateCRMAccountHierarchy(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			log.error("Failed to execute API", e);
-			result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+    @Override
+    public ActionStatus terminateCRMAccountHierarchy(CRMAccountHierarchyDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		return result;
-	}
+        try {
+            accountHierarchyApi.terminateCRMAccountHierarchy(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-	@Override
-	public ActionStatus closeCRMAccountHierarchy(CRMAccountHierarchyDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        return result;
+    }
 
-		try {
-			accountHierarchyApi.closeCRMAccountHierarchy(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			log.error("Failed to execute API", e);
-			result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+    @Override
+    public ActionStatus closeCRMAccountHierarchy(CRMAccountHierarchyDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		return result;
-	}
+        try {
+            accountHierarchyApi.closeCRMAccountHierarchy(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+    }
 
 }

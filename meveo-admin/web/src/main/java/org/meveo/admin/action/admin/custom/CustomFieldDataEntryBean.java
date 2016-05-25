@@ -40,17 +40,18 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValueHolder;
+import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
+import org.meveo.service.custom.EntityCustomActionService;
 import org.meveo.service.script.CustomScriptService;
-import org.meveo.service.script.EntityActionScriptService;
 import org.meveo.service.script.Script;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +74,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Custom actions applicable to the entity
      */
-    private Map<String, List<EntityActionScript>> customActions = new HashMap<String, List<EntityActionScript>>();
+    private Map<String, List<EntityCustomAction>> customActions = new HashMap<String, List<EntityCustomAction>>();
 
     /**
      * Custom field values and new value GUI data entry values
@@ -90,7 +91,10 @@ public class CustomFieldDataEntryBean implements Serializable {
     private ResourceBundle resourceMessages;
 
     @Inject
-    private EntityActionScriptService entityActionScriptService;
+    private EntityCustomActionService entityActionScriptService;
+
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     @Inject
     private CustomEntityInstanceService customEntityInstanceService;
@@ -143,7 +147,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param entity Entity to load action definitions
      * @return A list of actions
      */
-    public List<EntityActionScript> getCustomActions(IEntity entity) {
+    public List<EntityCustomAction> getCustomActions(IEntity entity) {
 
         if (!(entity instanceof ICustomFieldEntity)) {
             return null;
@@ -172,9 +176,9 @@ public class CustomFieldDataEntryBean implements Serializable {
      */
     private void initCustomActions(ICustomFieldEntity entity) {
 
-        Map<String, EntityActionScript> actions = entityActionScriptService.findByAppliesTo(entity, currentProvider);
+        Map<String, EntityCustomAction> actions = entityActionScriptService.findByAppliesTo(entity, currentProvider);
 
-        List<EntityActionScript> actionList = new ArrayList<EntityActionScript>(actions.values());
+        List<EntityCustomAction> actionList = new ArrayList<EntityCustomAction>(actions.values());
         customActions.put(entity.getUuid(), actionList);
     }
 
@@ -542,10 +546,14 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
      * @return A script execution result value from Script.RESULT_GUI_OUTCOME variable
      */
-    public String executeCustomAction(ICustomFieldEntity entity, EntityActionScript action, String encodedParameters) {
+    public String executeCustomAction(ICustomFieldEntity entity, EntityCustomAction action, String encodedParameters) {
 
         try {
-            Map<String, Object> result = entityActionScriptService.execute((IEntity) entity, action.getCode(), encodedParameters, currentUser);
+
+            Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
+            context.put(Script.CONTEXT_ACTION, action.getCode());
+
+            Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context, currentUser);
 
             // Display a message accordingly on what is set in result
             if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
@@ -579,14 +587,15 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
      * @return A script execution result value from Script.RESULT_GUI_OUTCOME variable
      */
-    public String executeCustomActionOnChildEntity(ICustomFieldEntity parentEntity, ICustomFieldEntity childEntity, EntityActionScript action, String encodedParameters) {
+    public String executeCustomActionOnChildEntity(ICustomFieldEntity parentEntity, ICustomFieldEntity childEntity, EntityCustomAction action, String encodedParameters) {
 
         try {
 
             Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
             context.put(Script.CONTEXT_PARENT_ENTITY, parentEntity);
+            context.put(Script.CONTEXT_ACTION, action.getCode());
 
-            Map<String, Object> result = entityActionScriptService.execute((IEntity) childEntity, action.getCode(), context, currentUser);
+            Map<String, Object> result = scriptInstanceService.execute((IEntity) childEntity, action.getScript().getCode(), context, currentUser);
 
             // Display a message accordingly on what is set in result
             if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {

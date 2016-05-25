@@ -6,7 +6,6 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.catalog.BusinessOfferModelApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
@@ -26,9 +25,6 @@ import org.meveo.model.catalog.BusinessOfferModel;
 public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferModelRs {
 
     @Inject
-    private BusinessOfferModelApi bomApi;
-
-    @Inject
     private ModuleApi moduleApi;
 
     @Override
@@ -36,7 +32,7 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            bomApi.create(postData, getCurrentUser());
+            moduleApi.create(postData, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -56,7 +52,7 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            bomApi.update(postData, getCurrentUser());
+            moduleApi.update(postData, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -96,7 +92,7 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            bomApi.remove(businessOfferModelCode, getCurrentUser().getProvider());
+            moduleApi.delete(businessOfferModelCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -116,7 +112,7 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            bomApi.createOrUpdate(postData, getCurrentUser());
+            moduleApi.createOrUpdate(postData, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

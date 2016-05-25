@@ -16,14 +16,14 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
+import org.meveo.service.custom.EntityCustomActionService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
-import org.meveo.service.script.EntityActionScriptService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -67,15 +67,15 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     private TreeNode selectedFieldGrouping;
 
-    private List<EntityActionScript> entityActions;
+    private List<EntityCustomAction> entityActions;
 
-    private EntityActionScript selectedEntityAction;
+    private EntityCustomAction selectedEntityAction;
 
     @Inject
     private CustomEntityTemplateService customEntityTemplateService;
 
     @Inject
-    private EntityActionScriptService entityActionScriptService;
+    private EntityCustomActionService entityActionScriptService;
 
     @Inject
     private JobInstanceService jobInstanceService;
@@ -206,15 +206,15 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         return groupedFields;
     }
 
-    public List<EntityActionScript> getEntityActions() {
+    public List<EntityCustomAction> getEntityActions() {
 
         if (entityActions != null || cetPrefix == null) {
             return entityActions;
         }
 
-        Map<String, EntityActionScript> scripts = entityActionScriptService.findByAppliesTo(cetPrefix, getCurrentProvider());
+        Map<String, EntityCustomAction> scripts = entityActionScriptService.findByAppliesTo(cetPrefix, getCurrentProvider());
 
-        entityActions = new ArrayList<EntityActionScript>();
+        entityActions = new ArrayList<EntityCustomAction>();
         entityActions.addAll(scripts.values());
 
         return entityActions;
@@ -236,11 +236,11 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         return selectedFieldGrouping;
     }
 
-    public void setSelectedEntityAction(EntityActionScript selectedEntityAction) {
+    public void setSelectedEntityAction(EntityCustomAction selectedEntityAction) {
         this.selectedEntityAction = selectedEntityAction;
     }
 
-    public EntityActionScript getSelectedEntityAction() {
+    public EntityCustomAction getSelectedEntityAction() {
         return selectedEntityAction;
     }
 

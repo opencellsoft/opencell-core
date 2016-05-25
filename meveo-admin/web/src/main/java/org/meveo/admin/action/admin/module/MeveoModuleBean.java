@@ -54,12 +54,6 @@ public class MeveoModuleBean extends GenericModuleBean<MeveoModule> {
 
     }
 
-    //
-    // @PostConstruct
-    // public void init() {
-    // root = new DefaultTreeNode("Root");
-    // }
-
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
@@ -67,5 +61,4 @@ public class MeveoModuleBean extends GenericModuleBean<MeveoModule> {
     protected IPersistenceService<MeveoModule> getPersistenceService() {
         return meveoModuleService;
     }
-
 }

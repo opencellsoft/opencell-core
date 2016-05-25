@@ -156,8 +156,8 @@ public class Invoice extends AuditableEntity  implements ICustomFieldEntity{
 	@JoinColumn(name = "INVOICE_TYPE_ID")
 	private InvoiceType invoiceType;
 	
-    @Column(name = "UUID", nullable = false, updatable = false, length = 50)
-    @Size(max = 50)
+    @Column(name = "UUID", nullable = false, updatable = false, length = 60)
+    @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();	
 

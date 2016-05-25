@@ -12,29 +12,42 @@
 
         <!-- Show a popup to select entity from a list -->
         <c:if test="#{popup}">
-            <c:if test="#{edit}">
-                <c:if test="#{empty fieldItem}">
-                	<p:inputText id="#{id}_text" value="#{fieldItem}" disabled="true" />
-                	<p:inputText id="#{id}" type="hidden" value="#{fieldItem}" required="#{required}" />
-                </c:if>
-                <c:if test="#{! empty fieldItem}">
-                	<p:inputText id="#{id}_text" value="#{fieldItem[valueLabelField]}" size="#{size}" disabled="true" />
-                	<p:inputText id="#{id}" type="hidden" value="#{fieldItem[valueLabelField]}" required="#{required}" />
-                </c:if>
-                <p:commandButton immediate="true" rendered="#{((!showPopupOnlyOnNew) or (showPopupOnlyOnNew and newEntity)) and !disabled}" id="#{id}_selectLink" onclick="PF('dlg_#{popupId}').show()"
-                    icon="ui-icon-search" type="button" />
-                <p:tooltip for="#{id}_selectLink" value="#{messages['commons.search']}" />
+            <h:panelGroup id="#{id}_entity">
+                <c:if test="#{edit}">
+                    <c:if test="#{empty fieldItem}">
+                        <p:inputText id="#{id}_text" value="#{fieldItem}" disabled="true" />
+                        <p:inputText id="#{id}" type="hidden" value="#{fieldItem}" required="#{required}" />
+                    </c:if>
+                    <c:if test="#{! empty fieldItem}">
+                        <p:inputText id="#{id}_text" value="#{fieldItem[valueLabelField]}" size="#{size}" disabled="true" />
+                        <p:inputText id="#{id}" type="hidden" value="#{fieldItem[valueLabelField]}" required="#{required}" />
+                    </c:if>
+                    <p:commandButton immediate="true" rendered="#{((!showPopupOnlyOnNew) or (showPopupOnlyOnNew and newEntity)) and !disabled}" id="#{id}_selectLink"
+                        onclick="PF('dlg_#{popupId}').show()" icon="ui-icon-search" type="button" />
+                    <p:tooltip for="#{id}_selectLink" value="#{messages['commons.search']}" />
 
-            </c:if>
+                    <c:if test="#{createEditPopup}">
+                        <p:commandButton immediate="true" rendered="#{((!showPopupOnlyOnNew) or (showPopupOnlyOnNew and newEntity)) and !disabled and fieldItem!=null}"
+                            id="#{id}_viewEditLink" oncomplete="PF('#{createEditPopupId}').show()" icon="ui-icon-document"
+                            actionListener="#{createEditPopupListenerBean[createEditPopupListenerViewMethod]}" update="#{createEditPopupListenerUpdate}" />
+                        <p:tooltip for="#{id}_viewEditLink" value="#{messages['commons.viewEdit']}" />
+                        <p:commandButton immediate="true" rendered="#{((!showPopupOnlyOnNew) or (showPopupOnlyOnNew and newEntity)) and !disabled}" id="#{id}_addLink"
+                            oncomplete="PF('#{createEditPopupId}').show()" icon="ui-icon-plus" actionListener="#{createEditPopupListenerBean[createEditPopupListenerNewMethod]}"
+                            update="#{createEditPopupListenerUpdate}" />
+                        <p:tooltip for="#{id}_addLink" value="#{messages['commons.addNew']}" />
+                    </c:if>
 
-            <c:if test="#{! edit}">
-            	<c:if test="#{empty fieldItem}">
-                	<h:outputText id="#{id}" value="" styleClass="field-value" />
                 </c:if>
-                <c:if test="#{! empty fieldItem}">
-                	<h:outputText id="#{id}" value="#{fieldItem[valueLabelField]}" styleClass="field-value" />
+
+                <c:if test="#{! edit}">
+                    <c:if test="#{empty fieldItem}">
+                        <h:outputText id="#{id}" value="" styleClass="field-value" />
+                    </c:if>
+                    <c:if test="#{! empty fieldItem}">
+                        <h:outputText id="#{id}" value="#{fieldItem[valueLabelField]}" styleClass="field-value" />
+                    </c:if>
                 </c:if>
-            </c:if>
+            </h:panelGroup>
         </c:if>
 
 

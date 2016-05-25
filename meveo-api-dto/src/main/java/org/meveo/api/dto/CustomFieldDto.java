@@ -14,8 +14,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.meveo.model.crm.CustomFieldInstance;
-import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 
@@ -60,59 +58,12 @@ public class CustomFieldDto {
 
     @XmlElement()
     protected EntityReferenceDto entityReferenceValue;
-    
+
     // A transient object. Contains a converted value from DTO to some object when it is applicable
     @XmlTransient
     protected Object valueConverted;
 
     public CustomFieldDto() {
-    }
-
-    public static CustomFieldDto toDTO(CustomFieldInstance cfi) {
-
-        CustomFieldDto dto = new CustomFieldDto();
-        dto.setCode(cfi.getCode());
-        dto.setValuePeriodStartDate(cfi.getPeriodStartDate());
-        dto.setValuePeriodEndDate(cfi.getPeriodEndDate());
-        if (cfi.getPriority() > 0) {
-            dto.setValuePeriodPriority(cfi.getPriority());
-        }
-        dto.setStringValue(cfi.getCfValue().getStringValue());
-        dto.setDateValue(cfi.getCfValue().getDateValue());
-        dto.setLongValue(cfi.getCfValue().getLongValue());
-        dto.setDoubleValue(cfi.getCfValue().getDoubleValue());
-        dto.setListValue(CustomFieldValueDto.toDTO(cfi.getCfValue().getListValue()));
-        dto.setMapValue(CustomFieldValueDto.toDTO(cfi.getCfValue().getMapValue()));
-        if (cfi.getCfValue().getEntityReferenceValue() != null) {
-            dto.setEntityReferenceValue(new EntityReferenceDto(cfi.getCfValue().getEntityReferenceValue()));
-        }
-
-        return dto;
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static CustomFieldDto toDTO(String code, Object value) {
-
-        CustomFieldDto dto = new CustomFieldDto();
-        dto.setCode(code);
-        if (value instanceof String) {
-            dto.setStringValue((String) value);
-        } else if (value instanceof Date) {
-            dto.setDateValue((Date) value);
-        } else if (value instanceof Long) {
-            dto.setLongValue((Long) value);
-        } else if (value instanceof Double) {
-            dto.setDoubleValue((Double) value);
-        } else if (value instanceof List) {
-            dto.setListValue(CustomFieldValueDto.toDTO((List) value));
-        } else if (value instanceof Map) {
-            dto.setMapValue(CustomFieldValueDto.toDTO((Map) value));
-        } else if (value instanceof EntityReferenceWrapper) {
-            dto.setEntityReferenceValue(new EntityReferenceDto((EntityReferenceWrapper) value));
-            // TODO add to handle child entity
-        }
-
-        return dto;
     }
 
     public String getCode() {
@@ -302,31 +253,8 @@ public class CustomFieldDto {
         return true;
     }
 
-    /**
-     * Get a value converted from DTO a proper Map, List, EntityWrapper, Date, Long, Double or String value
-     * 
-     * @return
-     */
     public Object getValueConverted() {
-
-        // TODO add implementation for child entity value
-
-        if (mapValue != null && !mapValue.isEmpty()) {
-            return CustomFieldValueDto.fromDTO(mapValue);
-        } else if (listValue != null && !listValue.isEmpty()) {
-            return CustomFieldValueDto.fromDTO(listValue);
-        } else if (stringValue != null) {
-            return stringValue;
-        } else if (dateValue != null) {
-            return dateValue;
-        } else if (doubleValue != null) {
-            return doubleValue;
-        } else if (longValue != null) {
-            return longValue;
-        } else if (entityReferenceValue != null) {
-            return entityReferenceValue.fromDTO();
-        }
-        return null;
+        return valueConverted;
     }
 
     public void setValueConverted(Object valueConverted) {

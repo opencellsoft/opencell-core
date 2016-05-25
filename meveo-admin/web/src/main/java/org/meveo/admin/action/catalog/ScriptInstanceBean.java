@@ -28,6 +28,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.scripts.CustomScript;
@@ -36,6 +37,7 @@ import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.script.CustomScriptService;
 import org.meveo.service.script.GenericScriptService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.omnifaces.cdi.ViewScoped;
@@ -47,6 +49,7 @@ import org.primefaces.model.DualListModel;
  */
 @Named
 @ViewScoped
+@ViewBean
 public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     private static final long serialVersionUID = 1L;
     /**
@@ -145,7 +148,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
      */
     @Override
     protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider");
+        return Arrays.asList("provider", "executionRoles", "sourcingRoles");
     }
 
     @Override
@@ -156,40 +159,39 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        String result = getListViewName();
-        try {
-			// check duplicate script
-            String code = scriptInstanceService.getFullClassname(entity.getScript());
-	        CustomScript scriptDuplicate =  genericScriptService.findByCode(code, getCurrentProvider());
-	        if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
-	            messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), code);
-	            return null;
-	        }			
-    		
-            // Update roles
-            getEntity().getExecutionRoles().clear();
+
+        // check duplicate script
+        String code = CustomScriptService.getFullClassname(entity.getScript());
+        CustomScript scriptDuplicate = genericScriptService.findByCode(code, getCurrentProvider());
+        if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
+            messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), code);
+            return null;
+        }
+
+        // Update roles
+        getEntity().getExecutionRoles().clear();
+        if (execRolesDM != null) {
             getEntity().getExecutionRoles().addAll(roleService.refreshOrRetrieve(execRolesDM.getTarget()));
+        }
 
-            // Update roles
-            getEntity().getSourcingRoles().clear();
+        // Update roles
+        getEntity().getSourcingRoles().clear();
+        if (sourcRolesDM != null) {
             getEntity().getSourcingRoles().addAll(roleService.refreshOrRetrieve(sourcRolesDM.getTarget()));
+        }
 
-            super.saveOrUpdate(killConversation);
+        String result = super.saveOrUpdate(killConversation);
 
-            if (entity.isError().booleanValue()) {
-                // if (entity.isError()) {
-                // messages.error(new BundleKey("messages", "scriptInstance.compilationFailed"));
-                // }
-
-                result = null;
-            }
-            if (killConversation) {
-                endConversation();
-            }
-        } catch (Exception e) {
-            messages.error(e.getMessage());
+        if (entity.isError().booleanValue()) {
+            // if (entity.isError()) {
+            // messages.error(new BundleKey("messages", "scriptInstance.compilationFailed"));
+            // }
             result = null;
         }
+        if (killConversation) {
+            endConversation();
+        }
+
         return result;
     }
 

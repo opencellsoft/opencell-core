@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.module.ModuleDto;
-import org.meveo.api.dto.script.ServiceModelScriptDto;
 import org.meveo.model.module.MeveoModule;
 
 @XmlRootElement(name = "BusinessServiceModel")
@@ -19,8 +18,6 @@ public class BusinessServiceModelDto extends ModuleDto {
     @NotNull
     @XmlElement(required = true)
     private ServiceTemplateDto serviceTemplate;
-
-    private ServiceModelScriptDto script;
 
     private boolean duplicateService;
 
@@ -41,14 +38,6 @@ public class BusinessServiceModelDto extends ModuleDto {
         return serviceTemplate;
     }
 
-    public void setScript(ServiceModelScriptDto script) {
-        this.script = script;
-    }
-
-    public ServiceModelScriptDto getScript() {
-        return script;
-    }
-
     public boolean isDuplicateService() {
         return duplicateService;
     }
@@ -67,8 +56,8 @@ public class BusinessServiceModelDto extends ModuleDto {
 
     @Override
     public String toString() {
-        return "BusinessServiceModelDto [serviceTemplate=" + serviceTemplate + ", script=" + script + ", duplicateService=" + duplicateService + ", duplicatePricePlan="
-                + duplicatePricePlan + ", toString()=" + super.toString() + "]";
+        return "BusinessServiceModelDto [serviceTemplate=" + serviceTemplate + ", duplicateService=" + duplicateService + ", duplicatePricePlan=" + duplicatePricePlan
+                + ", toString()=" + super.toString() + "]";
     }
 
 }
