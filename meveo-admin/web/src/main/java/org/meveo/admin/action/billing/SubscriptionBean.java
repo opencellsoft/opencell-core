@@ -19,11 +19,15 @@
 package org.meveo.admin.action.billing;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -49,6 +53,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
@@ -802,4 +807,23 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         recurringChargeInstances = null;
         usageChargeInstances = null;
     }
+     
+    public boolean filterByDate(Object value, Object filter, Locale locale) throws ParseException { 
+        String filterText = (filter == null) ? null : filter.toString().trim();
+        if (filterText == null || filterText.isEmpty()) {
+            return true;
+        }
+        if (value == null) {
+            return false;
+        }
+        Date filterDate = (Date) value;
+        Date dateFrom;
+        Date dateTo;
+        String fromPart = filterText.substring(0, filterText.indexOf("-"));
+		String toPart = filterText.substring(filterText.indexOf("-") + 1);
+		dateFrom =  fromPart.isEmpty() ? null : DateUtils.parseDateWithPattern(fromPart, "dd/MM/yyyy");
+		dateTo   =  toPart.isEmpty() ? null : DateUtils.parseDateWithPattern(toPart, "dd/MM/yyyy");
+		return (dateFrom == null || filterDate.after(dateFrom)) && (dateTo == null || filterDate.before(dateTo));
+    }
+ 
 }

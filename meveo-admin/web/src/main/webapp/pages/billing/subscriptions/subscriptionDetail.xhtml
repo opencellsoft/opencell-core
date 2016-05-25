@@ -1113,19 +1113,30 @@
 <!-- 					<h:panelGroup rendered="#{not empty subscriptionBean.recurringWalletOperations}"> -->
 						<h:outputText
 							value="#{subscriptionBean.recurringWalletOperations.size()} #{messages['commons.itemsFound']}" />
-						<p:dataTable id="recurringWalletOperationTable"
+							<h:form>
+						<p:dataTable id="recurringWalletOperationTable" widgetVar="dateRangeWidget"
 							value="#{subscriptionBean.recurringWalletOperations}"
 							var="shotApplication" paginator="true" rows="10" resizableColumns="true"
 							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 							rowsPerPageTemplate="10,20,30" styleClass="custom-grid">
-							<p:column>
-								<f:facet name="header">
-									<h:outputText
-										value="#{messages['walletOperation.operationDate']}" />
-								</f:facet>
-								<h:outputText value="#{shotApplication.operationDate}">
-									<f:convertDateTime pattern="dd/MM/yyyy" />
-								</h:outputText>
+							 
+							<p:column headerText="date" filterBy="#{shotApplication.operationDate}" filterFunction="#{subscriptionBean.filterByDate}">
+							<f:facet name="filter">
+							<h:inputHidden id="filter" />
+							</f:facet>
+							<f:facet name="header">
+							<p:outputLabel value="#{messages['walletOperation.operationDate']}" />
+							<br />
+							<p:calendar id="from" pattern="dd/MM/yyyy" size="7">
+							<p:ajax event="dateSelect" onstart="$(PrimeFaces.escapeClientId('#{p:component('filter')}'))[0].value = $(PrimeFaces.escapeClientId('#{p:component('from')}_input'))[0].value + '-' + $(PrimeFaces.escapeClientId('#{p:component('to')}_input'))[0].value" oncomplete="PF('dateRangeWidget').filter()" />
+							</p:calendar>
+							<p:calendar id="to" pattern="dd/MM/yyyy" size="7" >
+							<p:ajax event="dateSelect" onstart="$(PrimeFaces.escapeClientId('#{p:component('filter')}'))[0].value = $(PrimeFaces.escapeClientId('#{p:component('from')}_input'))[0].value + '-' + $(PrimeFaces.escapeClientId('#{p:component('to')}_input'))[0].value" oncomplete="PF('dateRangeWidget').filter()" />
+							</p:calendar>
+							</f:facet>
+							<h:outputText value="#{shotApplication.operationDate}">
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+							</h:outputText>
 							</p:column>
 							<p:column>
 								<f:facet name="header">
@@ -1141,7 +1152,7 @@
 								</f:facet>
 								<h:outputText value="#{shotApplication.endDate}">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
-								</h:outputText>
+								</h:outputText> 
 							</p:column>
 							<p:column>
 								<f:facet name="header">
@@ -1150,7 +1161,7 @@
 								<h:outputText value="#{shotApplication.quantity}">
 								</h:outputText>
 							</p:column>
-							<p:column>
+							<p:column filterBy="#{shotApplication.description}" footerText="contains" filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText
 										value="#{messages['walletOperation.description']}" />
@@ -1186,6 +1197,7 @@
 								<h:outputText value="#{messages[shotApplication.status.label]}" />
 							</p:column>
 						</p:dataTable>
+						</h:form>
 <!-- 					</h:panelGroup> -->
 				</p:outputPanel>
 			</p:outputPanel>
