@@ -1974,7 +1974,7 @@
      </changeSet>  
      
      <changeSet author="anasseh" id="#1685_20160510_2">	   		
-		 <renameColumn   newColumnName="prefix"  oldColumnName="prefix_el"  tableName="billing_invoice_type"/>
+		 <renameColumn   newColumnName="prefix_el"  oldColumnName="prefix"  tableName="billing_invoice_type"/>
      </changeSet>
      		
 </databaseChangeLog>
