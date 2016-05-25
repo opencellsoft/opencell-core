@@ -332,16 +332,23 @@ public class ProviderApi extends BaseApi {
         provider.setDisplayFreeTransacInInvoice(postData.isDisplayFreeTransacInInvoice());
         provider.setEntreprise(postData.isEnterprise());
         provider.setInvoicePrefix(postData.getInvoicePrefix());
-        provider.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
-
+        if((provider.getCurrentInvoiceNb()!=null && postData.getCurrentInvoiceNb()!=null) 
+				&& postData.getCurrentInvoiceNb()<provider.getCurrentInvoiceNb()){
+			throw new MeveoApiException("currentInvoiceNb value must be greater than current value");
+		}
+        if (postData.getCurrentInvoiceNb() != null) {
+        	provider.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
+        }
         if (postData.getInvoiceSequenceSize() != null) {
             provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
         }
-
         if (postData.getInvoiceAdjustmentPrefix() != null) {
             provider.setInvoiceAdjustmentPrefix(postData.getInvoiceAdjustmentPrefix());
         }
-
+        if((provider.getCurrentInvoiceAdjustmentNb()!=null && postData.getCurrentInvoiceAdjustmentNb()!=null) 
+				&& postData.getCurrentInvoiceAdjustmentNb()<provider.getCurrentInvoiceAdjustmentNb()){
+			throw new MeveoApiException("currentInvoiceAdjustmentNb value must be greater than current value.");
+		}
         if (postData.getCurrentInvoiceAdjustmentNb() != null) {
             provider.setCurrentInvoiceAdjustmentNb(postData.getCurrentInvoiceAdjustmentNb());
         }
