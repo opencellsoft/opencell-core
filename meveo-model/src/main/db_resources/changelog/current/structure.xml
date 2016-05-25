@@ -819,7 +819,7 @@
         <dropColumn tableName="CUST_CEI" columnName="CFF_ID"/>
     
         <sql>insert into CRM_CUSTOM_FIELD_INST (id, version, provider_id, APPLIES_TO_UUID, disabled, created, updated, code, date_value, double_value, long_value, string_value, creator_id, updater_id, serialized_value, priority, period_end_date, period_start_date)
-            (select nextval('crm_custom_field_inst_seq'), 0, cfi.provider_id, cfi.APPLIES_TO_UUID, cfi.disabled, cfi.created, cfi.updated, cfi.code, cfi.date_value, cfi.double_value, cfi.long_value, cfi.string_value, cfi.creator_id, cfi.updater_id, cfi.serialized_value, cfp.priority, cfp.period_end_date, cfp.period_start_date from crm_custom_field_inst cfi join crm_custom_field_period cfp on cfi.id=cfp.cf_instance_id)        
+            (select nextval('crm_custom_field_inst_seq'), 0, cfi.provider_id, cfi.APPLIES_TO_UUID, cfi.disabled, cfi.created, cfi.updated, cfi.code, cfp.date_value, cfp.double_value, cfp.long_value, cfp.string_value, cfi.creator_id, cfi.updater_id, cfp.serialized_value, cfp.priority, cfp.period_end_date, cfp.period_start_date from crm_custom_field_inst cfi join crm_custom_field_period cfp on cfi.id=cfp.cf_instance_id)
         </sql>
     
         <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_INST" columnName="APPLIES_TO_UUID"/>
