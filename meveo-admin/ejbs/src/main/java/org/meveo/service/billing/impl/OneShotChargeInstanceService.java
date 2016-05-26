@@ -174,6 +174,13 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 			String walletCode, Date effetDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
 			BigDecimal quantity, String criteria1, String criteria2, String criteria3, User creator,boolean applyCharge)
 			throws BusinessException {
+		return oneShotChargeApplication(subscription, chargetemplate, walletCode, effetDate, amoutWithoutTax,
+				amoutWithoutTx2, quantity, criteria1, criteria2, criteria3, null,creator,true);
+	}
+	public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargetemplate,
+			String walletCode, Date effetDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
+			BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description,User creator,boolean applyCharge)
+			throws BusinessException {
 
 		if (quantity == null) {
 			quantity = BigDecimal.ONE;
@@ -183,7 +190,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		quantity = NumberUtil.getInChargeUnit(quantity, chargetemplate.getUnitMultiplicator(), chargetemplate.getUnitNbDecimal(),chargetemplate.getRoundingMode());
 
 		OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(chargetemplate.getCode(),
-				chargetemplate.getDescription(), effetDate, amoutWithoutTax, amoutWithoutTx2, subscription,
+				description!=null?description:chargetemplate.getDescription(), effetDate, amoutWithoutTax, amoutWithoutTx2, subscription,
 				chargetemplate);
 		oneShotChargeInstance.setCriteria1(criteria1);
 		oneShotChargeInstance.setCriteria2(criteria2);

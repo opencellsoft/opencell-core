@@ -509,7 +509,7 @@ public class SubscriptionApi extends BaseApi {
         try {
             oneShotChargeInstanceService.oneShotChargeApplication(subscription, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                 postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),
-                currentUser, true);
+                postData.getDescription(),currentUser, true);
         } catch (BusinessException e) {
             throw new MeveoApiException(e.getMessage());
         }
