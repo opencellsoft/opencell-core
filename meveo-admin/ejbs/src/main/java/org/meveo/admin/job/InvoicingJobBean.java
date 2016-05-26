@@ -42,8 +42,8 @@ public class InvoicingJobBean {
 			Provider provider = currentUser.getProvider();
 			List<BillingRun> billingRuns = billingRunService.getbillingRuns(provider, BillingRunStatusEnum.NEW,
 					BillingRunStatusEnum.PREVALIDATED, BillingRunStatusEnum.POSTVALIDATED);
-
 			log.info("billingRuns to process={}", billingRuns.size());
+			result.setNbItemsToProcess(billingRuns.size());
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{

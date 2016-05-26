@@ -56107,7 +56107,667 @@
          </offerTemplateCategory>\r
       </ws:createOfferTemplateCategory>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOfferTemplateCategory"/></con:call></con:operation></con:interface><con:testSuite id="f37ac3d6-bd0a-4c30-bdb3-b3a6aed39b74" name="Create Settings"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="068d579b-cc32-4b5b-a366-8223bf24e711" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SOAPUI Configuration" searchProperties="true"><con:settings/><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOfferTemplateCategory"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndPoint}/InvoiceWs?wsdl" id="2faf849c-ec21-4c8d-bc7e-8aae933b8b8a" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/InvoiceWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/InvoiceWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="InvoiceWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:import location="http://localhost:8080/meveo/InvoiceWs?wsdl=InvoiceWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
+  <wsdl:binding name="InvoiceWsSoapBinding" type="ns1:InvoiceWs">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="findXMLInvoice">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findXMLInvoice">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findXMLInvoiceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="generateInvoiceData">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="generateInvoiceData">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="generateInvoiceDataResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="index">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="indexResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findInvoice">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findInvoice">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findInvoiceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findPdfInvoiceWithType">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findPdfInvoiceWithType">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findPdfInvoiceWithTypeResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findXMLInvoiceWithType">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findXMLInvoiceWithType">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findXMLInvoiceWithTypeResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findPdfInvoice">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findPdfInvoice">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findPdfInvoiceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createInvoice">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createInvoice">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createInvoiceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="InvoiceWs">
+    <wsdl:port binding="tns:InvoiceWsSoapBinding" name="InvoiceWsImplPort">
+      <soap:address location="http://localhost:8080/meveo/InvoiceWs"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/InvoiceWs?wsdl=InvoiceWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="InvoiceWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
+      <xs:element name="AccountOperation" type="tns:accountOperationDto"/>
+      <xs:element name="ActionStatus" type="tns:actionStatus"/>
+      <xs:element name="CustomerInvoicesResponse" type="tns:customerInvoicesResponse"/>
+      <xs:element name="GenerateInvoiceRequest" type="tns:generateInvoiceRequestDto"/>
+      <xs:element name="GenerateInvoiceResponse" type="tns:generateInvoiceResponseDto"/>
+      <xs:element name="GenerateInvoiceResult" type="tns:generateInvoiceResultDto"/>
+      <xs:element name="GetPdfInvoiceResponse" type="tns:getPdfInvoiceResponseDto"/>
+      <xs:element name="GetXmlInvoiceResponse" type="tns:getXmlInvoiceResponseDto"/>
+      <xs:element name="Invoice" type="tns:invoiceDto"/>
+      <xs:element name="MatchingAmount" type="tns:matchingAmountDto"/>
+      <xs:element name="MatchingAmounts" type="tns:matchingAmountsDto"/>
+      <xs:element name="MatchingCode" type="tns:matchingCodeDto"/>
+      <xs:element name="MatchingCodes" type="tns:matchingCodesDto"/>
+      <xs:element name="PdfInvoiceResponse" type="tns:invoiceCreationResponse"/>
+      <xs:element name="RatedTransaction" type="tns:ratedTransactionDto"/>
+      <xs:element name="SubCategoryInvoiceAgregate" type="tns:subCategoryInvoiceAgregateDto"/>
+      <xs:element name="createInvoice" type="tns:createInvoice"/>
+      <xs:element name="createInvoiceResponse" type="tns:createInvoiceResponse"/>
+      <xs:element name="findInvoice" type="tns:findInvoice"/>
+      <xs:element name="findInvoiceResponse" type="tns:findInvoiceResponse"/>
+      <xs:element name="findPdfInvoice" type="tns:findPdfInvoice"/>
+      <xs:element name="findPdfInvoiceResponse" type="tns:findPdfInvoiceResponse"/>
+      <xs:element name="findPdfInvoiceWithType" type="tns:findPdfInvoiceWithType"/>
+      <xs:element name="findPdfInvoiceWithTypeResponse" type="tns:findPdfInvoiceWithTypeResponse"/>
+      <xs:element name="findXMLInvoice" type="tns:findXMLInvoice"/>
+      <xs:element name="findXMLInvoiceResponse" type="tns:findXMLInvoiceResponse"/>
+      <xs:element name="findXMLInvoiceWithType" type="tns:findXMLInvoiceWithType"/>
+      <xs:element name="findXMLInvoiceWithTypeResponse" type="tns:findXMLInvoiceWithTypeResponse"/>
+      <xs:element name="generateInvoiceData" type="tns:generateInvoiceData"/>
+      <xs:element name="generateInvoiceDataResponse" type="tns:generateInvoiceDataResponse"/>
+      <xs:element name="index" type="tns:index"/>
+      <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:complexType name="generateInvoiceData">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="generateInvoiceRequest" type="tns:generateInvoiceRequestDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="generateInvoiceRequestDto">
+        <xs:sequence>
+          <xs:element name="billingAccountCode" type="xs:string"/>
+          <xs:element name="invoicingDate" type="xs:dateTime"/>
+          <xs:element name="lastTransactionDate" type="xs:dateTime"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="generateInvoiceDataResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:generateInvoiceResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="generateInvoiceResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="generateInvoiceResultDto" type="tns:generateInvoiceResultDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="generateInvoiceResultDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="invoiceNumber" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="actionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findXMLInvoice">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="invoiceNumber" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findXMLInvoiceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getXmlInvoiceResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getXmlInvoiceResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="xmlContent" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="index">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="indexResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findPdfInvoiceWithType">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="invoiceNumber" type="xs:string"/>
+          <xs:element minOccurs="0" name="invoiceType" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findPdfInvoiceWithTypeResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getPdfInvoiceResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getPdfInvoiceResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="pdfContent" type="xs:base64Binary"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="findInvoice">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerAccountCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findInvoiceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:customerInvoicesResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customerInvoicesResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="CustomerInvoiceDtoList" nillable="true" type="tns:invoiceDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="invoiceDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="billingAccountCode" type="xs:string"/>
+              <xs:element name="dueDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="invoiceNumber" type="xs:string"/>
+              <xs:element minOccurs="0" name="invoiceDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="discount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="paymentMathod" type="xs:string"/>
+              <xs:element name="PDFpresent" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="type" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="subCategoryInvoiceAgregates" nillable="true" type="tns:subCategoryInvoiceAgregateDto"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="accountOperations" nillable="true" type="tns:accountOperationDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="subCategoryInvoiceAgregateDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="type" type="xs:string"/>
+          <xs:element minOccurs="0" name="itemNumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="accountingCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+          <xs:element minOccurs="0" name="taxPercent" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="discount" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="amountTax" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="invoiceSubCategoryCode" type="xs:string"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="taxesCodes" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="userAccountCode" type="xs:string"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="ratedTransactions" nillable="true" type="tns:ratedTransactionDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ratedTransactionDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="usageDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="unitAmountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="unitAmountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="unitAmountTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="code" type="xs:string"/>
+              <xs:element minOccurs="0" name="description" type="xs:string"/>
+              <xs:element minOccurs="0" name="unityDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="priceplanCode" type="xs:string"/>
+              <xs:element name="doNotTriggerInvoicing" type="xs:boolean"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="accountOperationDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="id" type="xs:long"/>
+              <xs:element minOccurs="0" name="dueDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="type" type="xs:string"/>
+              <xs:element minOccurs="0" name="transactionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="transactionCategory" type="xs:string"/>
+              <xs:element minOccurs="0" name="reference" type="xs:string"/>
+              <xs:element minOccurs="0" name="accountCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="accountCodeClientSide" type="xs:string"/>
+              <xs:element minOccurs="0" name="amount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="matchingAmount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="unMatchingAmount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="matchingStatus" type="xs:string"/>
+              <xs:element minOccurs="0" name="occCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="occDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="customerAccount" type="xs:string"/>
+              <xs:element minOccurs="0" name="excludedFromDunning" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="matchingAmounts" type="tns:matchingAmountsDto"/>
+              <xs:element minOccurs="0" name="otherCreditAndCharge" type="tns:OtherCreditAndCharge"/>
+              <xs:element minOccurs="0" name="recordedInvoice" type="tns:RecordedInvoice"/>
+              <xs:element minOccurs="0" name="rejectedPayment" type="tns:RejectedPayment"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="matchingAmountsDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="matchingAmount" nillable="true" type="tns:matchingAmountDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="matchingAmountDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="matchingCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="matchingAmount" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="matchingCodes" type="tns:matchingCodesDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="matchingCodesDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="matchingCode" nillable="true" type="tns:matchingCodeDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="matchingCodeDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="matchingType" type="xs:string"/>
+          <xs:element minOccurs="0" name="matchingDate" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="matchingAmountCredit" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="matchingAmountDebit" type="xs:decimal"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="OtherCreditAndCharge">
+        <xs:complexContent>
+          <xs:extension base="tns:accountOperationDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="operationDate" type="xs:dateTime"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="RecordedInvoice">
+        <xs:complexContent>
+          <xs:extension base="tns:accountOperationDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="productionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="invoiceDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="taxAmount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="netToPay" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="paymentMethod" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo1" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo2" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo3" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo4" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo5" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo6" type="xs:string"/>
+              <xs:element minOccurs="0" name="billingAccountName" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="RejectedPayment">
+        <xs:complexContent>
+          <xs:extension base="tns:accountOperationDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="rejectedType" type="xs:string"/>
+              <xs:element minOccurs="0" name="bankLot" type="xs:string"/>
+              <xs:element minOccurs="0" name="bankReference" type="xs:string"/>
+              <xs:element minOccurs="0" name="rejectedDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="rejectedDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="rejectedCode" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="findXMLInvoiceWithType">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="invoiceNumber" type="xs:string"/>
+          <xs:element minOccurs="0" name="invoiceType" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findXMLInvoiceWithTypeResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getXmlInvoiceResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findPdfInvoice">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="invoiceNumber" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findPdfInvoiceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getPdfInvoiceResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createInvoice">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="invoice" type="tns:invoiceDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createInvoiceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:invoiceCreationResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="invoiceCreationResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="invoiceNumber" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:simpleType name="actionStatusEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SUCCESS"/>
+          <xs:enumeration value="FAIL"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="findXMLInvoiceWithTypeResponse">
+    <wsdl:part element="ns1:findXMLInvoiceWithTypeResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="generateInvoiceDataResponse">
+    <wsdl:part element="ns1:generateInvoiceDataResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findInvoiceResponse">
+    <wsdl:part element="ns1:findInvoiceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createInvoice">
+    <wsdl:part element="ns1:createInvoice" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findPdfInvoiceResponse">
+    <wsdl:part element="ns1:findPdfInvoiceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createInvoiceResponse">
+    <wsdl:part element="ns1:createInvoiceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findXMLInvoice">
+    <wsdl:part element="ns1:findXMLInvoice" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="generateInvoiceData">
+    <wsdl:part element="ns1:generateInvoiceData" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findPdfInvoice">
+    <wsdl:part element="ns1:findPdfInvoice" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findPdfInvoiceWithTypeResponse">
+    <wsdl:part element="ns1:findPdfInvoiceWithTypeResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findXMLInvoiceResponse">
+    <wsdl:part element="ns1:findXMLInvoiceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findInvoice">
+    <wsdl:part element="ns1:findInvoice" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findXMLInvoiceWithType">
+    <wsdl:part element="ns1:findXMLInvoiceWithType" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findPdfInvoiceWithType">
+    <wsdl:part element="ns1:findPdfInvoiceWithType" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="indexResponse">
+    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="InvoiceWs">
+    <wsdl:operation name="generateInvoiceData">
+      <wsdl:input message="ns1:generateInvoiceData" name="generateInvoiceData"></wsdl:input>
+      <wsdl:output message="ns1:generateInvoiceDataResponse" name="generateInvoiceDataResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findXMLInvoice">
+      <wsdl:input message="ns1:findXMLInvoice" name="findXMLInvoice"></wsdl:input>
+      <wsdl:output message="ns1:findXMLInvoiceResponse" name="findXMLInvoiceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <wsdl:input message="ns1:index" name="index"></wsdl:input>
+      <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findPdfInvoiceWithType">
+      <wsdl:input message="ns1:findPdfInvoiceWithType" name="findPdfInvoiceWithType"></wsdl:input>
+      <wsdl:output message="ns1:findPdfInvoiceWithTypeResponse" name="findPdfInvoiceWithTypeResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findInvoice">
+      <wsdl:input message="ns1:findInvoice" name="findInvoice"></wsdl:input>
+      <wsdl:output message="ns1:findInvoiceResponse" name="findInvoiceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findXMLInvoiceWithType">
+      <wsdl:input message="ns1:findXMLInvoiceWithType" name="findXMLInvoiceWithType"></wsdl:input>
+      <wsdl:output message="ns1:findXMLInvoiceWithTypeResponse" name="findXMLInvoiceWithTypeResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findPdfInvoice">
+      <wsdl:input message="ns1:findPdfInvoice" name="findPdfInvoice"></wsdl:input>
+      <wsdl:output message="ns1:findPdfInvoiceResponse" name="findPdfInvoiceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createInvoice">
+      <wsdl:input message="ns1:createInvoice" name="createInvoice"></wsdl:input>
+      <wsdl:output message="ns1:createInvoiceResponse" name="createInvoiceResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://i.meveo.info/meveo/InvoiceWs</con:endpoint><con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="createInvoice" bindingOperationName="createInvoice" type="Request-Response" outputName="createInvoiceResponse" inputName="createInvoice" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="b841369a-49b6-4f1d-aa43-98603d50ab97"><con:settings/><con:call name="Request 1" id="ad6de239-536b-4a3c-a0e0-2b125dcf1fbd"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:create>
+         <!--Optional:-->
+         <invoice>
+            <billingAccountCode>?</billingAccountCode>
+            <dueDate>?</dueDate>
+            <!--Optional:-->
+            <invoiceNumber>?</invoiceNumber>
+            <!--Optional:-->
+            <invoiceDate>?</invoiceDate>
+            <!--Optional:-->
+            <discount>?</discount>
+            <!--Optional:-->
+            <amountWithoutTax>?</amountWithoutTax>
+            <!--Optional:-->
+            <amountTax>?</amountTax>
+            <!--Optional:-->
+            <amountWithTax>?</amountWithTax>
+            <!--Optional:-->
+            <paymentMathod>?</paymentMathod>
+            <PDFpresent>?</PDFpresent>
+            <!--Zero or more repetitions:-->
+            <subCategoryInvoiceAgregates>
+               <!--Optional:-->
+               <type>?</type>
+               <!--Optional:-->
+               <itemNumber>?</itemNumber>
+               <!--Optional:-->
+               <accountingCode>?</accountingCode>
+               <!--Optional:-->
+               <description>?</description>
+               <!--Optional:-->
+               <taxPercent>?</taxPercent>
+               <!--Optional:-->
+               <quantity>?</quantity>
+               <!--Optional:-->
+               <discount>?</discount>
+               <!--Optional:-->
+               <amountWithoutTax>?</amountWithoutTax>
+               <!--Optional:-->
+               <amountTax>?</amountTax>
+               <!--Optional:-->
+               <amountWithTax>?</amountWithTax>
+               <!--Optional:-->
+               <invoiceSubCategoryCode>?</invoiceSubCategoryCode>
+               <!--Zero or more repetitions:-->
+               <taxesCodes>?</taxesCodes>
+               <!--Zero or more repetitions:-->
+               <ratedTransactions>
+                  <!--Optional:-->
+                  <usageDate>?</usageDate>
+                  <!--Optional:-->
+                  <unitAmountWithoutTax>?</unitAmountWithoutTax>
+                  <!--Optional:-->
+                  <unitAmountWithTax>?</unitAmountWithTax>
+                  <!--Optional:-->
+                  <unitAmountTax>?</unitAmountTax>
+                  <!--Optional:-->
+                  <quantity>?</quantity>
+                  <!--Optional:-->
+                  <amountWithoutTax>?</amountWithoutTax>
+                  <!--Optional:-->
+                  <amountWithTax>?</amountWithTax>
+                  <!--Optional:-->
+                  <amountTax>?</amountTax>
+                  <!--Optional:-->
+                  <code>?</code>
+                  <!--Optional:-->
+                  <description>?</description>
+                  <!--Optional:-->
+                  <unityDescription>?</unityDescription>
+                  <!--Optional:-->
+                  <priceplanCode>?</priceplanCode>
+                  <doNotTriggerInvoicing>?</doNotTriggerInvoicing>
+               </ratedTransactions>
+            </subCategoryInvoiceAgregates>
+         </invoice>
+      </ws:create>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoiceWs/create"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findInvoice" bindingOperationName="findInvoice" type="Request-Response" outputName="findInvoiceResponse" inputName="findInvoice" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="4bdfd5fb-0ba6-462a-892b-57539e7dd471"><con:settings/><con:call name="Request 1" id="c0d49858-521b-46ee-b689-5d00d99a7876"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:find>
+         <!--Optional:-->
+         <customerAccountCode>?</customerAccountCode>
+      </ws:find>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoiceWs/find"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="generateInvoiceData" bindingOperationName="generateInvoiceData" type="Request-Response" outputName="generateInvoiceDataResponse" inputName="generateInvoiceData" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="cecfee5a-2b79-4d94-91df-d22470aa0b07"><con:settings/><con:call name="Request 1" id="7cc1a7d9-2a08-4347-bffa-a19492b7400b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:generateInvoiceData>
+         <!--Optional:-->
+         <generateInvoiceRequest>
+            <billingAccountCode>?</billingAccountCode>
+            <invoicingDate>?</invoicingDate>
+            <lastTransactionDate>?</lastTransactionDate>
+         </generateInvoiceRequest>
+      </ws:generateInvoiceData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoiceWs/generateInvoice"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findPdfInvoice" bindingOperationName="findPdfInvoice" type="Request-Response" outputName="findPdfInvoiceResponse" inputName="findPdfInvoice" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="8ad4147a-f3bb-4038-b742-4489a7548ace"><con:settings/><con:call name="Request 1" id="e1c5a55f-81d3-4222-aae0-dbb571ea3f80"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:getPdfInvoice>
+         <!--Optional:-->
+         <invoiceNumber>?</invoiceNumber>
+      </ws:getPdfInvoice>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoiceWs/getPdfInvoice"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findXMLInvoice" bindingOperationName="findXMLInvoice" type="Request-Response" outputName="findXMLInvoiceResponse" inputName="findXMLInvoice" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="8d1da3a1-b3f6-459e-ae71-c25da7e7b054"><con:settings/><con:call name="Request 1" id="0c75234b-cda3-4509-a6bc-0ba802efae9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findXMLInvoice>
+         <!--Optional:-->
+         <invoiceNumber>?</invoiceNumber>
+      </ws:findXMLInvoice>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoiceWs/getXMLInvoice"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="2b1fe99f-72a0-4c8d-b8cd-aa98b7c7342b"><con:settings/><con:call name="Request 1" id="7442b70a-077c-45d7-a60f-2fad0a0662f2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:index/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoiceWs/index"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findXMLInvoiceWithType" bindingOperationName="findXMLInvoiceWithType" type="Request-Response" outputName="findXMLInvoiceWithTypeResponse" inputName="findXMLInvoiceWithType" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="4d702489-699a-4508-b7bb-671ee190b7f4"><con:settings/><con:call name="Request 1" id="1ed1bc75-8e02-45c5-8fe0-f5d0e5427227"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findXMLInvoiceWithType>\r
+         <!--Optional:-->\r
+         <invoiceNumber>?</invoiceNumber>\r
+         <!--Optional:-->\r
+         <invoiceType>?</invoiceType>\r
+      </ws:findXMLInvoiceWithType>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoiceWs/findXMLInvoiceWithType"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findPdfInvoiceWithType" bindingOperationName="findPdfInvoiceWithType" type="Request-Response" outputName="findPdfInvoiceWithTypeResponse" inputName="findPdfInvoiceWithType" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="3a14c30c-aa7f-421f-8a01-413f007f381f"><con:settings/><con:call name="Request 1" id="cfb2e613-685e-4d66-b216-08aab0926f6c"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findPdfInvoiceWithType>\r
+         <!--Optional:-->\r
+         <invoiceNumber>?</invoiceNumber>\r
+         <!--Optional:-->\r
+         <invoiceType>?</invoiceType>\r
+      </ws:findPdfInvoiceWithType>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoiceWs/findPdfInvoiceWithType"/></con:call></con:operation></con:interface><con:testSuite id="f37ac3d6-bd0a-4c30-bdb3-b3a6aed39b74" name="Create Settings"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="068d579b-cc32-4b5b-a366-8223bf24e711" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SOAPUI Configuration" searchProperties="true"><con:settings/><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
 import com.eviware.soapui.support.types.*;
 
 StringToStringMap headers = new StringToStringMap();
@@ -58133,7 +58793,21 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4dea367e-1e93-404d-9e7a-027eea668f81"/><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="MediationJob" searchProperties="true" id="1de59634-43d8-4575-8e66-554ec07c2139"><con:settings/><con:testStep type="request" name="execute" id="b75be6bd-2035-4a1b-a09a-b7e6b0e00855"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="execute" id="fe0e22f5-df04-41a7-9ef6-2358d68ef719"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting><con:setting id="com.eviware.soapui.impl.support.AbstractHttpRequest@max-size">0</con:setting><con:setting id="com.eviware.soapui.settings.CommonSettings@entitizeProperties">false</con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4dea367e-1e93-404d-9e7a-027eea668f81"/><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create BillingRun" id="146304f2-67cc-4eb1-b6fe-fbc2693d9039"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>findXMLInvoice</con:operation><con:request name="Create BillingRun" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/InvoicingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingRun>
+         <!--Optional:-->
+         <createBillingRunRequest billingCycleCode="CYC_INV_MT_1" billingRunTypeEnum="AUTOMATIC">
+            <!--Optional:-->
+            <!--Optional:-->
+            <invoiceDate>2016-04-25</invoiceDate>
+            <!--Optional:-->
+            <lastTransactionDate>2016-05-20</lastTransactionDate>
+         </createBillingRunRequest>
+      </ws:createBillingRun>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="MediationJob" searchProperties="true" id="1de59634-43d8-4575-8e66-554ec07c2139"><con:settings/><con:testStep type="request" name="execute" id="b75be6bd-2035-4a1b-a09a-b7e6b0e00855"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="execute" id="fe0e22f5-df04-41a7-9ef6-2358d68ef719"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting><con:setting id="com.eviware.soapui.impl.support.AbstractHttpRequest@max-size">0</con:setting><con:setting id="com.eviware.soapui.settings.CommonSettings@entitizeProperties">false</con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:execute>
@@ -58485,4 +59159,4 @@ for( item in holder.getNodeValues( "//message" )) {
          <jobExecutionResultId>${#TestSuite#jobInstance}</jobExecutionResultId>\r
       </ws:findJobExecutionResult>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="f90c6791-9d1b-4c6b-9ce7-552667587513"><con:configuration/></con:assertion><con:assertion type="Simple Contains" id="0e9fa56f-0173-4d0e-91ea-d9a99ab4f69a" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="SOAP Response" id="ad0b30ce-c5cf-4ea5-9bf6-fddb34d25329" name="SOAP Response"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1452</con:value></con:property><con:property><con:name>jobInstance</con:name><con:value>13</con:value></con:property></con:properties></con:testSuite><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>provider</con:name><con:value>DEMO</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="f90c6791-9d1b-4c6b-9ce7-552667587513"><con:configuration/></con:assertion><con:assertion type="Simple Contains" id="0e9fa56f-0173-4d0e-91ea-d9a99ab4f69a" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="SOAP Response" id="ad0b30ce-c5cf-4ea5-9bf6-fddb34d25329" name="SOAP Response"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1452</con:value></con:property><con:property><con:name>jobInstance</con:name><con:value>14</con:value></con:property></con:properties></con:testSuite><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>provider</con:name><con:value>DEMO</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
