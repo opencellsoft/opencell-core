@@ -21,6 +21,8 @@ import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.service.base.BusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +34,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     private CustomFieldsCacheContainerProvider customFieldsCache;
 
     private ParamBean paramBean = ParamBean.getInstance();
-
+    
     /**
      * Find a list of custom field templates corresponding to a given entity
      * 
@@ -152,9 +154,17 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
             return null;
         }
     }
-
     @Override
     public void create(CustomFieldTemplate cft, User creator) throws BusinessException {
+    	 
+        if("INVOICE_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType()!=CustomFieldTypeEnum.LONG || cft.getStorageType()!=CustomFieldStorageTypeEnum.SINGLE
+        		|| !cft.isVersionable() || cft.getCalendar() == null)){ 
+        	throw new BusinessException("invoice_sequence CF must be versionnable,Long,Single value and must have a Calendar"); 
+        }
+        if("INVOICE_ADJUSTMENT_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType()!=CustomFieldTypeEnum.LONG || cft.getStorageType()!=CustomFieldStorageTypeEnum.SINGLE
+        		|| !cft.isVersionable() || cft.getCalendar()==null)){
+        	throw new BusinessException("invoice_adjustement_sequence CF must be versionnable,Long,Single value and must have a Calendar");
+        } 
         super.create(cft, creator);
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
     }
