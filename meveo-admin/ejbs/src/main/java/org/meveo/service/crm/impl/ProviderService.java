@@ -24,6 +24,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -67,4 +68,18 @@ public class ProviderService extends PersistenceService<Provider> {
             return null;
         }
     }
+    
+    @Override
+	public Provider update(Provider provider, User updater) throws BusinessException { 
+    	Provider provToUpdate=findById(provider.getId()); 
+        if((provToUpdate.getCurrentInvoiceNb()!=null && provider.getCurrentInvoiceNb()!=null) 
+				&& provider.getCurrentInvoiceNb()<provToUpdate.getCurrentInvoiceNb()){
+			throw new BusinessException("'Current invoice number' must be greater than current value.");
+		}
+		if((provToUpdate.getCurrentInvoiceAdjustmentNb()!=null && provider.getCurrentInvoiceAdjustmentNb()!=null)
+				&& provider.getCurrentInvoiceAdjustmentNb()<provToUpdate.getCurrentInvoiceAdjustmentNb()){
+			throw new BusinessException("'Current Invoice Adjustment number' must be greater than current value.");
+		}
+		return super.update(provider, updater);
+	} 
 }

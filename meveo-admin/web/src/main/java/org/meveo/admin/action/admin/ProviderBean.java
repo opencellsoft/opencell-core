@@ -121,14 +121,6 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         if (isNew) {
             entity.getInvoiceConfiguration().setProvider(entity);
         }
-        if((initEntity().getCurrentInvoiceNb()!=null && entity.getCurrentInvoiceNb()!=null) 
-				&& entity.getCurrentInvoiceNb()<initEntity().getCurrentInvoiceNb()){
-			throw new ValidatorException(new FacesMessage(resourceMessages.getString("'Current invoice number' must be greater than current value.")));
-		}
-		if((initEntity().getCurrentInvoiceAdjustmentNb()!=null && entity.getCurrentInvoiceAdjustmentNb()!=null)
-				&& entity.getCurrentInvoiceAdjustmentNb()<initEntity().getCurrentInvoiceAdjustmentNb()){
-			throw new ValidatorException(new FacesMessage(resourceMessages.getString("'Current Invoice Adjustment number' must be greater than current value.")));
-		}
         entity = super.saveOrUpdate(entity);
         return entity;
     }

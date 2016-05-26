@@ -25,8 +25,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
@@ -77,5 +79,18 @@ public class SellerService extends PersistenceService<Seller> {
 			return false;
 		}
 	}
-
+	
+	@Override
+	public Seller update(Seller seller, User updater) throws BusinessException {
+		Seller sellerToUpdate=findById(seller.getId()); 
+		if((sellerToUpdate.getCurrentInvoiceNb()!=null && seller.getCurrentInvoiceNb()!=null) 
+				&& seller.getCurrentInvoiceNb()<sellerToUpdate.getCurrentInvoiceNb()){
+			throw new BusinessException("'Current invoice number' must be greater than current value");
+		}
+		if((sellerToUpdate.getCurrentInvoiceAdjustmentNb()!=null && seller.getCurrentInvoiceAdjustmentNb()!=null)
+				&& seller.getCurrentInvoiceAdjustmentNb()<sellerToUpdate.getCurrentInvoiceAdjustmentNb()){
+			throw new BusinessException("'Current Invoice Adjustment number' must be greater than current value");
+		}
+		return super.update(seller, updater);
+	}
 }

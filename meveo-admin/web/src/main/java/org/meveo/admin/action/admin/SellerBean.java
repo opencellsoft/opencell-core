@@ -89,14 +89,6 @@ public class SellerBean extends CustomFieldBean<Seller> {
 	@Override
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		if((initEntity().getCurrentInvoiceNb()!=null && entity.getCurrentInvoiceNb()!=null) 
-				&& entity.getCurrentInvoiceNb()<initEntity().getCurrentInvoiceNb()){
-			throw new ValidatorException(new FacesMessage(resourceMessages.getString("'Current invoice number' must be greater than current value.")));
-		}
-		if((initEntity().getCurrentInvoiceAdjustmentNb()!=null && entity.getCurrentInvoiceAdjustmentNb()!=null)
-				&& entity.getCurrentInvoiceAdjustmentNb()<initEntity().getCurrentInvoiceAdjustmentNb()){
-			throw new ValidatorException(new FacesMessage(resourceMessages.getString("'Current Invoice Adjustment number' must be greater than current value.")));
-		}
 		// prefix must be set
 		if (entity.getCurrentInvoiceNb() != null && StringUtils.isBlank(entity.getInvoicePrefix())) {
 			messages.error(new BundleKey("messages", "message.error.seller.invoicePrefix.required"));
