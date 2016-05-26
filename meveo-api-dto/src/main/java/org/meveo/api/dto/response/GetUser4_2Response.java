@@ -31,7 +31,7 @@ public class GetUser4_2Response extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetUser4_3Response [user=" + user + ", toString()=" + super.toString() + "]";
+		return "GetUserResponse [user=" + user + ", toString()=" + super.toString() + "]";
 	}
 
 }

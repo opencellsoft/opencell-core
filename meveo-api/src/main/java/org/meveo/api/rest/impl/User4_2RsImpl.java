@@ -18,7 +18,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.User4_2Rs;
 
 /**
- * @author Mohamed Hamidi
+ * @author Edward P. Legaspi
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -89,10 +89,10 @@ public class User4_2RsImpl extends BaseRs implements User4_2Rs {
 
     @Override
     public GetUser4_2Response find(@QueryParam("username") String username) {
-    	GetUser4_2Response result = new GetUser4_2Response();
+        GetUser4_2Response result = new GetUser4_2Response();
 
         try {
-            result.setUser(new User4_2Dto(userApi.find(username)));
+            result.setUser(userApi.find(username));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

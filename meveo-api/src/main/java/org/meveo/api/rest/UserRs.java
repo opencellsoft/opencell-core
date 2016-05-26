@@ -17,11 +17,12 @@ import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
- * Web service for managing {@link org.meveo.model.admin.User}. User has a unique username that is use for update, search and remove operation.
+ * Web service for managing {@link org.meveo.model.admin.User}. 
+ * User has a unique username that is use for update, search and remove operation.
  * 
- * @author Edward P. Legaspi
+ * @author Mohamed Hamidi
  **/
-@Path("/user")
+@Path("/user4_2")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured

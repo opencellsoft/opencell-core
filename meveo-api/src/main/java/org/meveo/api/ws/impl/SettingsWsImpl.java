@@ -44,8 +44,8 @@ import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
-import org.meveo.api.dto.User4_2Dto;
 import org.meveo.api.dto.UserDto;
+import org.meveo.api.dto.User4_2Dto;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
@@ -71,8 +71,8 @@ import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTaxesResponse;
 import org.meveo.api.dto.response.GetTerminationReasonResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
-import org.meveo.api.dto.response.GetUser4_2Response;
 import org.meveo.api.dto.response.GetUserResponse;
+import org.meveo.api.dto.response.GetUser4_2Response;
 import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.PermissionResponseDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
@@ -1024,8 +1024,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public GetUserResponse findUser(String username) {
-        GetUserResponse result = new GetUserResponse();
+    public GetUser4_2Response findUser4_2(String username) {
+        GetUser4_2Response result = new GetUser4_2Response();
 
         try {
             result.setUser(userApi.find(username));
@@ -1044,11 +1044,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
     
     @Override
-    public GetUser4_2Response findUser4_2(String username) {
-    	GetUser4_2Response result = new GetUser4_2Response();
+    public GetUserResponse findUser(String username) {
+    	GetUserResponse result = new GetUserResponse();
 
         try {
-            result.setUser(new User4_2Dto(userApi.find(username)));
+            result.setUser(new UserDto(userApi.find(username)));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1710,6 +1710,26 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     @Override
     public ActionStatus createOrUpdateUser(UserDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            userApi.createOrUpdate(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+    }
+    
+    @Override
+    public ActionStatus createOrUpdateUser4_2(User4_2Dto postData) {
+    	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             userApi.createOrUpdate(postData, getCurrentUser());

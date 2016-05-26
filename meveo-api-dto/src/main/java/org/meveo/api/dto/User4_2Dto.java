@@ -6,15 +6,15 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 
 /**
- * @author Mohamed Hamidi
- * @since Mai 23, 2016
+ * @author Edward P. Legaspi
+ * @since Oct 11, 2013
  **/
 @XmlRootElement(name = "User")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -32,13 +32,15 @@ public class User4_2Dto extends BaseDto {
 	private String email;
 
 	@XmlElement(required = true)
+	private String role;
+
+	@XmlElement(required = true)
 	private String provider;
 
 	private String firstName;
 	private String lastName;
 
-	@XmlElementWrapper
-    @XmlElement(name="role")
+	@XmlTransient
 	private List<String> roles;
 
 	public String getEmail() {
@@ -49,15 +51,8 @@ public class User4_2Dto extends BaseDto {
 		this.email = email;
 	}
 
-	public User4_2Dto() {}
-	
-	public User4_2Dto(UserDto userdto) {
-		firstName = userdto.getFirstName();
-		lastName = userdto.getLastName();	
-		username = userdto.getUsername();
-		provider = userdto.getProvider();
-		email=userdto.getEmail();
-		roles = userdto.getRoles();
+	public User4_2Dto() {
+
 	}
 
 	public User4_2Dto(User user) {
@@ -109,6 +104,14 @@ public class User4_2Dto extends BaseDto {
 		this.password = password;
 	}
 
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
 	public String getProvider() {
 		return provider;
 	}
@@ -127,9 +130,8 @@ public class User4_2Dto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "User4_3Dto [username=" + username + ", password=" + password + ", email=" + email
-				+ ", provider=" + provider + ", firstName=" + firstName + ", lastName=" 
-				+ lastName + ", roles=" + roles
+		return "UserDto [username=" + username + ", password=" + password + ", email=" + email + ", role=" + role
+				+ ", provider=" + provider + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles
 				+ "]";
 	}
 

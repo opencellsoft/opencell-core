@@ -9,8 +9,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.User4_2Dto;
 import org.meveo.api.dto.UserDto;
+import org.meveo.api.dto.User4_2Dto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -38,7 +38,7 @@ public class UserApi extends BaseApi {
     @Inject
     private UserService userService;
 
-    public void create(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void create4_2(User4_2Dto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getUsername())) {
             missingParameters.add("username");
@@ -90,7 +90,7 @@ public class UserApi extends BaseApi {
         userService.create(user, currentUser);
     }
     
-    public void create4_2(User4_2Dto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getUsername())) {
             missingParameters.add("username");
@@ -143,7 +143,7 @@ public class UserApi extends BaseApi {
         userService.create(user, currentUser);
     }
 
-    public void update(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update4_2(User4_2Dto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getUsername())) {
             missingParameters.add("username");
@@ -194,7 +194,7 @@ public class UserApi extends BaseApi {
         userService.update(user, currentUser);
     }
     
-    public void update4_2(User4_2Dto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getUsername())) {
             missingParameters.add("username");
@@ -258,33 +258,33 @@ public class UserApi extends BaseApi {
         userService.remove(user);
     }
 
-    public UserDto find(String username) throws MeveoApiException {
+    public User4_2Dto find(String username) throws MeveoApiException {
         User user = userService.findByUsernameWithFetch(username, Arrays.asList("provider", "roles"));
 
         if (user == null) {
             throw new EntityDoesNotExistsException(User.class, username, "username");
         }
 
-        UserDto result = new UserDto(user);
+        User4_2Dto result = new User4_2Dto(user);
 
         return result;
     }
 
-    public void createOrUpdate(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        User user = userService.findByUsername(postData.getUsername());
-        if (user == null) {
-            create(postData, currentUser);
-        } else {
-            update(postData, currentUser);
-        }
-    }
-    
     public void createOrUpdate(User4_2Dto postData, User currentUser) throws MeveoApiException, BusinessException {
         User user = userService.findByUsername(postData.getUsername());
         if (user == null) {
             create4_2(postData, currentUser);
         } else {
             update4_2(postData, currentUser);
+        }
+    }
+    
+    public void createOrUpdate(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
+        User user = userService.findByUsername(postData.getUsername());
+        if (user == null) {
+            create(postData, currentUser);
+        } else {
+            update(postData, currentUser);
         }
     }
 }
