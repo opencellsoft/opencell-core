@@ -132,21 +132,16 @@ public class ImportCustomersJobBean {
 		List<File> files = getFilesToProcess(dir, prefix, ext);
 		int numberOfFiles = files.size();
 		log.info("InputFiles job " + numberOfFiles + " to import");
-		result.setNbItemsToProcess(numberOfFiles);
 
 		for (File file : files) {
 			File currentFile = null;
 			try {
 				log.info("InputFiles job " + file.getName() + " in progres");
 				currentFile = FileUtils.addExtension(file, ".processing");
-
 				importFile(currentFile, file.getName(), currentUser);
-
 				FileUtils.moveFile(dirOK, currentFile, file.getName());
 				log.info("InputFiles job " + file.getName() + " done");
-				result.registerSucces();
 			} catch (Exception e) {
-				result.registerError(e.getMessage());
 				log.info("InputFiles job " + file.getName() + " failed");
 				FileUtils.moveFile(dirKO, currentFile, file.getName());
 				log.error("failed to import file",e);
@@ -155,6 +150,11 @@ public class ImportCustomersJobBean {
 					currentFile.delete();
 			}
 		}
+		
+		result.setNbItemsToProcess(nbCustomers);
+		result.setNbItemsCorrectlyProcessed(nbCustomersCreated);
+		result.setNbItemsProcessedWithError(nbCustomersError);
+		result.setNbItemsProcessedWithWarning(nbCustomersWarning);
 	}
 
 	private List<File> getFilesToProcess(File dir, String prefix, String ext) {
@@ -249,6 +249,7 @@ public class ImportCustomersJobBean {
 						continue;
 					}
 
+					nbCustomers++;
 					createCustomer(fileName, currentUser, seller, sell, cust, i);
 				}
 			} catch (Exception e) {
@@ -346,8 +347,8 @@ public class ImportCustomersJobBean {
 				customer = customerImportService.updateCustomer(customer, currentUser, seller, sell, cust);
 				log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Updated");
 			} else {
-				nbCustomersCreated++;
 				customer = customerImportService.createCustomer(currentUser, seller, sell, cust);
+				nbCustomersCreated++;
 				log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Created");
 			}
 

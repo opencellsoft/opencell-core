@@ -63,6 +63,7 @@ public class RecurringRatingJobBean implements Serializable {
 			Date maxDate = DateUtils.addDaysToDate(new Date(), 1);
 			List<Long> ids = recurringChargeInstanceService.findIdsByStatus(InstanceStatusEnum.ACTIVE, maxDate,currentProvider);
 			int inputSize =  ids.size();
+			result.setNbItemsToProcess(inputSize);
 			log.info("in job - charges to rate={}", inputSize);
 			
 			Long nbRuns = new Long(1);		

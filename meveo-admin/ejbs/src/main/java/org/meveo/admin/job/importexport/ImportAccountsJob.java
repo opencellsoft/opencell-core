@@ -50,6 +50,8 @@ public class ImportAccountsJob extends Job {
                 }
             } catch (Exception e) {
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(),e);
+                nbRuns = new Long(1);
+                waitingMillis = new Long(0);
             }
 
             List<Future<String>> futures = new ArrayList<Future<String>>();

@@ -54,7 +54,7 @@ public class UsageRatingJobBean {
 			
 			List<Long> ids = edrService.getEDRidsToRate(currentUser.getProvider());		
 			log.debug("edr to rate:" + ids.size());
-			
+			result.setNbItemsToProcess(ids.size());
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{

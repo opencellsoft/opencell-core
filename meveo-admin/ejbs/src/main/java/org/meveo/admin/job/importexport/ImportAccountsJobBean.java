@@ -103,8 +103,6 @@ public class ImportAccountsJobBean {
 
 		log.info("InputFiles job " + numberOfFiles + " to import");
 
-		result.setNbItemsToProcess(numberOfFiles);
-
 		for (File file : files) {
 			File currentFile = null;
 			try {
@@ -115,9 +113,7 @@ public class ImportAccountsJobBean {
 
 				FileUtils.moveFile(dirOK, currentFile, file.getName());
 				log.info("InputFiles job " + file.getName() + " done");
-				result.registerSucces();
 			} catch (Exception e) {
-				result.registerError(e.getMessage());
 				log.error("InputFiles job " + file.getName() + " failed", e);
 				FileUtils.moveFile(dirKO, currentFile, file.getName());
 				
@@ -127,6 +123,11 @@ public class ImportAccountsJobBean {
 				}
 			}
 		}
+		
+		result.setNbItemsToProcess(nbBillingAccounts);
+		result.setNbItemsCorrectlyProcessed(nbBillingAccountsCreated + nbBillingAccountsUpdated + nbBillingAccountsIgnored);
+		result.setNbItemsProcessedWithError(nbBillingAccountsError);
+		result.setNbItemsProcessedWithWarning(nbBillingAccountsWarning);
 	}
 
 	private List<File> getFilesToProcess(File dir, String prefix, String ext) {
