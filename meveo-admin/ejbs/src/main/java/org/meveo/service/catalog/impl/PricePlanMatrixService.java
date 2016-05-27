@@ -71,15 +71,15 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 	}
 
 	@Override
-	public PricePlanMatrix disable(PricePlanMatrix pricePlan) {
-		pricePlan = super.disable(pricePlan);
+	public PricePlanMatrix disable(PricePlanMatrix pricePlan, User currentUser) throws BusinessException {
+		pricePlan = super.disable(pricePlan, currentUser);
 		ratingCacheContainerProvider.removePricePlanFromCache(pricePlan);
 		return pricePlan;
 	}
 
 	@Override
-	public PricePlanMatrix enable(PricePlanMatrix pricePlan) {
-		pricePlan = super.enable(pricePlan);
+	public PricePlanMatrix enable(PricePlanMatrix pricePlan, User currentUser) throws BusinessException {
+		pricePlan = super.enable(pricePlan, currentUser);
 		ratingCacheContainerProvider.addPricePlanToCache(pricePlan);
 		return pricePlan;
 	}

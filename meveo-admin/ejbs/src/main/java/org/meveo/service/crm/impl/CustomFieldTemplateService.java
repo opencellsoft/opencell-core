@@ -193,15 +193,15 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     @Override
-    public CustomFieldTemplate enable(CustomFieldTemplate cft) {
-        cft = super.enable(cft);
+    public CustomFieldTemplate enable(CustomFieldTemplate cft, User currentUser) throws BusinessException {
+        cft = super.enable(cft, currentUser);
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
         return cft;
     }
     
     @Override
-    public CustomFieldTemplate disable(CustomFieldTemplate cft) {
-        cft =  super.disable(cft);
+    public CustomFieldTemplate disable(CustomFieldTemplate cft, User currentUser) throws BusinessException {
+        cft =  super.disable(cft, currentUser);
         customFieldsCache.removeCustomFieldTemplate(cft);
         return cft;
     }

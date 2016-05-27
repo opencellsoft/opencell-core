@@ -174,9 +174,9 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
     }
 
     public void remove(JobInstance entity) {// FIXME: throws BusinessException{
-        log.info("remove timer {}, id={}", entity.getJobTemplate(), entity.getId());
+        log.info("remove jobInstance {}, id={}", entity.getJobTemplate(), entity.getId());
         if (entity.getId() == null) {
-            log.info("removing timer entity with null id, something is wrong");
+            log.info("removing jobInstance entity with null id, something is wrong");
         } else if (jobTimers.containsKey(entity.getId())) {
             try {
                 Timer timer = jobTimers.get(entity.getId());
@@ -186,14 +186,14 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
             }
             jobTimers.remove(entity.getId());
         } else {
-            log.info("timer not found, cannot remove it");
+            log.info("jobInstance timer not found, cannot remove it");
         }
         super.remove(entity);
     }
 
     @Override
-    public JobInstance enable(JobInstance jobInstance) {
-        jobInstance = super.enable(jobInstance);
+    public JobInstance enable(JobInstance jobInstance, User currentUser) throws BusinessException {
+        jobInstance = super.enable(jobInstance, currentUser);
 
         log.info("Enabling jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
         scheduleUnscheduleJob(jobInstance);
@@ -202,8 +202,8 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
     }
 
     @Override
-    public JobInstance disable(JobInstance jobInstance) {
-        jobInstance = super.disable(jobInstance);
+    public JobInstance disable(JobInstance jobInstance, User currentUser) throws BusinessException {
+        jobInstance = super.disable(jobInstance, currentUser);
 
         log.info("Disabling jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
         scheduleUnscheduleJob(jobInstance);

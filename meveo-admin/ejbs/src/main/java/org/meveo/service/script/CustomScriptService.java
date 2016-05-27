@@ -313,7 +313,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             }
             compileScript(script, false);
             if (script.isError()) {
-                log.debug("ScriptInstance {} failed to compile", scriptCode);
+                log.debug("ScriptInstance {} failed to compile. Errors: {}", scriptCode, script.getScriptErrors());
                 throw new InvalidScriptException(scriptCode, getEntityClass().getName());
             }
             result = allScriptInterfaces.get(provider.getCode()).get(scriptCode);

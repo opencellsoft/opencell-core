@@ -75,6 +75,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
+import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -94,12 +95,26 @@ import org.meveo.model.notification.WebHook;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.EntityCustomActionService;
+import org.meveo.service.filter.FilterService;
+import org.meveo.service.job.JobInstanceService;
+import org.meveo.service.job.TimerEntityService;
+import org.meveo.service.notification.EmailNotificationService;
+import org.meveo.service.notification.JobTriggerService;
+import org.meveo.service.notification.NotificationService;
+import org.meveo.service.notification.WebHookService;
+import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.module.ModuleScriptService;
 import org.meveocrm.model.dwh.BarChart;
+import org.meveocrm.model.dwh.Chart;
 import org.meveocrm.model.dwh.LineChart;
 import org.meveocrm.model.dwh.MeasurableQuantity;
 import org.meveocrm.model.dwh.PieChart;
+import org.meveocrm.services.dwh.ChartService;
+import org.meveocrm.services.dwh.MeasurableQuantityService;
 
 @Stateless
 public class MeveoModuleService extends BusinessService<MeveoModule> {
@@ -112,6 +127,47 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 
     @Inject
     private EntityCustomActionService entityActionScriptService;
+
+    @Inject
+    private ModuleScriptService moduleScriptService;
+
+    @Inject
+    private CustomEntityTemplateService customEntityTemplateService;
+
+    @Inject
+    private FilterService filterService;
+
+    @Inject
+    private TimerEntityService timerEntityService;
+
+    @Inject
+    private JobInstanceService jobInstanceService;
+
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
+
+    @Inject
+    private EmailNotificationService emailNotificationService;
+
+    @Inject
+    private JobTriggerService jobTriggerService;
+
+    @Inject
+    private WebHookService webhookNotificationService;
+
+    @Inject
+    private NotificationService scriptNotificationService;
+
+    @Inject
+    private MeasurableQuantityService measurableQuantityService;
+
+    @SuppressWarnings("rawtypes")
+    @Inject
+    private ChartService chartService;
+
+    @SuppressWarnings("rawtypes")
+    @Inject
+    private CounterTemplateService counterTemplateService;
 
     /**
      * import module from remote meveo instance
@@ -415,7 +471,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 
         BusinessEntity entity = null;
         if (CustomFieldTemplate.class.getName().equals(item.getItemClass())) {
-            entity = customFieldTemplateService.findByCode(item.getItemCode(), provider);
+            entity = customFieldTemplateService.findByCodeAndAppliesTo(item.getItemCode(), item.getAppliesTo(), provider);
 
         } else {
 
@@ -464,5 +520,312 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         ModuleDto moduleDto = (ModuleDto) JAXBContext.newInstance(dtoClass).createUnmarshaller().unmarshal(new StringReader(module.getModuleSource()));
 
         return moduleDto;
+    }
+
+    public MeveoModule uninstall(MeveoModule module, User currentUser) throws BusinessException {
+        return uninstall(module, currentUser, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    private MeveoModule uninstall(MeveoModule module, User currentUser, boolean childModule) throws BusinessException {
+
+        if (!module.isInstalled()) {
+            throw new BusinessException("Module is not installed");
+        }
+
+        if (module.getScript() != null) {
+            moduleScriptService.preUninstallModule(module.getScript().getCode(), module, currentUser);
+        }
+
+        for (MeveoModuleItem item : module.getModuleItems()) {
+            loadModuleItem(item, currentUser.getProvider());
+            Object itemEntity = item.getItemEntity();
+            if (itemEntity == null) {
+                continue;
+            }
+
+            if (itemEntity instanceof CustomEntityTemplate) {
+                // try {
+                // customEntityTemplateService.remove((CustomEntityTemplate) itemEntity);
+                // } catch (Exception e) {
+                customEntityTemplateService.disable((CustomEntityTemplate) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof CustomFieldTemplate) {
+                // try {
+                // customFieldTemplateService.remove((CustomFieldTemplate) itemEntity);
+                // } catch (Exception e) {
+                customFieldTemplateService.disable((CustomFieldTemplate) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof Filter) {
+                // try {
+                // filterService.remove((Filter) itemEntity);
+                // } catch (Exception e) {
+                filterService.disable((Filter) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof TimerEntity) {
+                // try {
+                // timerEntityService.remove((TimerEntity) itemEntity);
+                // } catch (Exception e) {
+                timerEntityService.disable((TimerEntity) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof JobInstance) {
+                // try {
+                // jobInstanceService.remove((JobInstance) itemEntity);
+                // } catch (Exception e) {
+                jobInstanceService.disable((JobInstance) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof ScriptInstance) {
+                // try {
+                // scriptInstanceService.remove((ScriptInstance) itemEntity);
+                // } catch (Exception e) {
+                scriptInstanceService.disable((ScriptInstance) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof EmailNotification) {
+                // try {
+                // emailNotificationService.remove((EmailNotification) itemEntity);
+                // } catch (Exception e) {
+                emailNotificationService.disable((EmailNotification) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof JobTrigger) {
+                // try {
+                // jobTriggerService.remove((JobTrigger) itemEntity);
+                // } catch (Exception e) {
+                jobTriggerService.disable((JobTrigger) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof WebHook) {
+                // try {
+                // webhookNotificationService.remove((WebHook) itemEntity);
+                // } catch (Exception e) {
+                webhookNotificationService.disable((WebHook) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof ScriptNotification) {
+                // try {
+                // scriptNotificationService.remove((ScriptNotification) itemEntity);
+                // } catch (Exception e) {
+                scriptNotificationService.disable((ScriptNotification) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof MeveoModule) {
+                uninstall((MeveoModule) itemEntity, currentUser, true);
+
+            } else if (itemEntity instanceof MeasurableQuantity) {
+                // try {
+                // measurableQuantityService.remove((MeasurableQuantity) itemEntity);
+                // } catch (Exception e) {
+                measurableQuantityService.disable((MeasurableQuantity) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof Chart) {
+                // try {
+                // chartService.remove((Chart) itemEntity);
+                // } catch (Exception e) {
+                chartService.disable((Chart) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof CounterTemplate) {
+                // try {
+                // counterTemplateService.remove((CounterTemplate) itemEntity);
+                // } catch (Exception e) {
+                counterTemplateService.disable((CounterTemplate) itemEntity, currentUser);
+                // }
+            }
+        }
+
+        if (module.getScript() != null) {
+            moduleScriptService.postUninstallModule(module.getScript().getCode(), module, currentUser);
+        }
+
+        // Remove if it is a child module
+        if (childModule) {
+            remove(module);
+            return null;
+
+            // Otherwise mark it uninstalled and clear module items
+        } else {
+            module.setInstalled(false);
+            module.getModuleItems().clear();
+            return update(module, currentUser);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public MeveoModule disable(MeveoModule module, User currentUser) throws BusinessException {
+
+        // if module is local module (was not downloaded) just disable as any other entity without iterating module items
+        if (!module.isDownloaded()) {
+            return super.disable(module, currentUser);
+        }
+
+        if (!module.isInstalled()) {
+            // throw new BusinessException("Module is not installed");
+            return module;
+        }
+
+        if (module.getScript() != null) {
+            moduleScriptService.preDisableModule(module.getScript().getCode(), module, currentUser);
+        }
+
+        for (MeveoModuleItem item : module.getModuleItems()) {
+            loadModuleItem(item, currentUser.getProvider());
+            Object itemEntity = item.getItemEntity();
+            if (itemEntity == null) {
+                continue;
+            }
+
+            if (itemEntity instanceof CustomEntityTemplate) {
+                customEntityTemplateService.disable((CustomEntityTemplate) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof CustomFieldTemplate) {
+                customFieldTemplateService.disable((CustomFieldTemplate) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof Filter) {
+                filterService.disable((Filter) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof TimerEntity) {
+                timerEntityService.disable((TimerEntity) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof JobInstance) {
+                jobInstanceService.disable((JobInstance) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof ScriptInstance) {
+                scriptInstanceService.disable((ScriptInstance) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof EmailNotification) {
+                emailNotificationService.disable((EmailNotification) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof JobTrigger) {
+                jobTriggerService.disable((JobTrigger) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof WebHook) {
+                webhookNotificationService.disable((WebHook) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof ScriptNotification) {
+                scriptNotificationService.disable((ScriptNotification) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof MeveoModule) {
+                disable((MeveoModule) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof MeasurableQuantity) {
+                measurableQuantityService.disable((MeasurableQuantity) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof Chart) {
+                chartService.disable((Chart) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof CounterTemplate) {
+                counterTemplateService.disable((CounterTemplate) itemEntity, currentUser);
+            }
+        }
+
+        if (module.getScript() != null) {
+            moduleScriptService.postDisableModule(module.getScript().getCode(), module, currentUser);
+        }
+
+        return super.disable(module, currentUser);
+    }
+
+    @SuppressWarnings("unchecked")
+    public MeveoModule enable(MeveoModule module, User currentUser) throws BusinessException {
+
+        // if module is local module (was not downloaded) just disable as any other entity without iterating module items
+        if (!module.isDownloaded()) {
+            return super.enable(module, currentUser);
+        }
+
+        if (!module.isInstalled()) {
+            // throw new BusinessException("Module is not installed");
+            return module;
+        }
+
+        if (module.getScript() != null) {
+            moduleScriptService.preEnableModule(module.getScript().getCode(), module, currentUser);
+        }
+
+        for (MeveoModuleItem item : module.getModuleItems()) {
+            loadModuleItem(item, currentUser.getProvider());
+            Object itemEntity = item.getItemEntity();
+            if (itemEntity == null) {
+                continue;
+            }
+
+            if (itemEntity instanceof CustomEntityTemplate) {
+                customEntityTemplateService.enable((CustomEntityTemplate) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof CustomFieldTemplate) {
+                customFieldTemplateService.enable((CustomFieldTemplate) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof Filter) {
+                filterService.enable((Filter) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof TimerEntity) {
+                timerEntityService.enable((TimerEntity) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof JobInstance) {
+                jobInstanceService.enable((JobInstance) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof ScriptInstance) {
+                scriptInstanceService.enable((ScriptInstance) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof EmailNotification) {
+                emailNotificationService.enable((EmailNotification) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof JobTrigger) {
+                jobTriggerService.enable((JobTrigger) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof WebHook) {
+                webhookNotificationService.enable((WebHook) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof ScriptNotification) {
+                scriptNotificationService.enable((ScriptNotification) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof MeveoModule) {
+                enable((MeveoModule) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof MeasurableQuantity) {
+                measurableQuantityService.enable((MeasurableQuantity) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof Chart) {
+                chartService.enable((Chart) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof CounterTemplate) {
+                counterTemplateService.enable((CounterTemplate) itemEntity, currentUser);
+            }
+        }
+
+        if (module.getScript() != null) {
+            moduleScriptService.postEnableModule(module.getScript().getCode(), module, currentUser);
+        }
+
+        return super.enable(module, currentUser);
+    }
+
+    @Override
+    public void remove(MeveoModule module) {
+
+        // If module was downloaded, remove all submodules as well
+        if (module.isDownloaded() && module.getModuleItems() != null) {
+
+            for (MeveoModuleItem item : module.getModuleItems()) {
+                try {
+                    if (MeveoModule.class.isAssignableFrom(Class.forName(item.getItemClass()))) {
+                        loadModuleItem(item, module.getProvider());
+                        MeveoModule itemModule = (MeveoModule) item.getItemEntity();
+                        remove(itemModule);
+                    }
+                } catch (Exception e) {
+                    log.error("Failed to delete a submodule", e);
+                }
+            }
+        }
+
+        super.remove(module);
     }
 }

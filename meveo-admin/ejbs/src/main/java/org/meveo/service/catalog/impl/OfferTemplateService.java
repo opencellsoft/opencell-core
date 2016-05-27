@@ -32,7 +32,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.script.OfferModelScriptService;
+import org.meveo.service.script.offer.OfferModelScriptService;
 
 /**
  * Offer Template service implementation.

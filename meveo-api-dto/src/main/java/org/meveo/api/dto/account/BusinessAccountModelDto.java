@@ -2,7 +2,7 @@ package org.meveo.api.dto.account;
 
 import org.meveo.api.dto.module.ModuleDto;
 import org.meveo.model.crm.AccountHierarchyTypeEnum;
-import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.module.MeveoModule;
 
 /**
  * @author Edward P. Legaspi
@@ -17,8 +17,8 @@ public class BusinessAccountModelDto extends ModuleDto {
 
     }
 
-    public BusinessAccountModelDto(BusinessAccountModel e) {
-        super(e);
+    public BusinessAccountModelDto(MeveoModule module) {
+        super(module);
     }
 
     public AccountHierarchyTypeEnum getType() {

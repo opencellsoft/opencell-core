@@ -15,10 +15,10 @@ public interface RevenueRecognitionScriptInterface extends ScriptInterface {
     /**
      * Called to create the Revenue Schedule of a charge
      * @param chargeInstance the charge whose revenue is to be recognized
-     * @param currentUser Current user
+     * @param user Current user
      * @throws BusinessException
      */
-	public void createRevenueSchedule(ChargeInstance chargeInstance,User currentUser) throws BusinessException;
+	public void createRevenueSchedule(ChargeInstance chargeInstance,User user) throws BusinessException;
 		
 	
     /**
@@ -28,9 +28,9 @@ public interface RevenueRecognitionScriptInterface extends ScriptInterface {
      * @param chargeInstance the charge whose revenue is to be recognized
      * @param startDate Contract's start date
      * @param endDate Contract's end date
-     * @param currentUser Current user
+     * @param user Current user
      * @throws BusinessException
      */
-    public List<RevenueSchedule> scheduleRevenue(ChargeInstance chargeInstance,List<WalletOperation> woList,Date startDate,Date endDate, User currentUser) throws BusinessException;
+    public List<RevenueSchedule> scheduleRevenue(ChargeInstance chargeInstance,List<WalletOperation> woList,Date startDate,Date endDate, User user) throws BusinessException;
 
 }

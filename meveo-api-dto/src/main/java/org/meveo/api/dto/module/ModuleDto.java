@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
@@ -170,5 +171,10 @@ public class ModuleDto extends BaseDataModelDto {
         final int maxLen = 10;
         return String.format("ModuleDto [code=%s, license=%s, description=%s, logoPicture=%s, logoPictureFile=%s, moduleItems=%s, script=%s]", code, license, description,
             logoPicture, logoPictureFile, moduleItems != null ? moduleItems.subList(0, Math.min(moduleItems.size(), maxLen)) : null, script);
+    }
+
+    public boolean isCodeOnly() {
+        return StringUtils.isBlank(description) && license == null && StringUtils.isBlank(logoPicture) && logoPictureFile == null && script == null
+                && (moduleItems == null || moduleItems.isEmpty());
     }
 }

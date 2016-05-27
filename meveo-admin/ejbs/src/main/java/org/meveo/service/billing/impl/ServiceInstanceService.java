@@ -51,7 +51,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
-import org.meveo.service.script.ServiceModelScriptService;
+import org.meveo.service.script.service.ServiceModelScriptService;
 
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {

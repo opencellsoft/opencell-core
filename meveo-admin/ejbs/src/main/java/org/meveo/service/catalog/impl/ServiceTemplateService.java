@@ -32,7 +32,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.script.ServiceModelScriptService;
+import org.meveo.service.script.service.ServiceModelScriptService;
 
 /**
  * Service Template service implementation.

@@ -268,18 +268,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#disable(java.lang.Long)
+     * @see org.meveo.service.base.local.IPersistenceService#disable(java.lang.Long, org.meveo.model.admin.User)
      */
     @Override
-    public void disable(Long id) {
+    public void disable(Long id, User currentUser) throws BusinessException {
         E e = findById(id);
         if (e != null) {
-            disable(e);
+            disable(e, currentUser);
         }
     }
 
     @Override
-    public E disable(E e) {
+    public E disable(E e, User currentUser) throws BusinessException {
         if (e instanceof EnableEntity && ((EnableEntity) e).isActive()) {
             log.trace("start of disable {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
             ((EnableEntity) e).setDisabled(true);
@@ -297,18 +297,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#enable(java.lang.Long)
+     * @see org.meveo.service.base.local.IPersistenceService#enable(java.lang.Long, org.meveo.model.admin.User)
      */
     @Override
-    public void enable(Long id) {
+    public void enable(Long id, User currentUser) throws BusinessException {
         E e = findById(id);
         if (e != null) {
-            enable(e);
+            enable(e, currentUser);
         }
     }
 
     @Override
-    public E enable(E e) {
+    public E enable(E e, User currentUser) throws BusinessException {
         if (e instanceof EnableEntity && ((EnableEntity) e).isDisabled()) {
             log.trace("start of enable {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
             ((EnableEntity) e).setDisabled(false);
@@ -718,8 +718,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             // if not ranged search
                         } else {
                             if (filter instanceof String && SEARCH_IS_NULL.equals(filter)) {
-                                queryBuilder.addSql("a." + fieldName+" is null ");
-                                
+                                queryBuilder.addSql("a." + fieldName + " is null ");
+
                             } else if (filter instanceof String) {
 
                                 // if contains dot, that means join is needed

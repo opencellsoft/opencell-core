@@ -33,7 +33,7 @@
             </p:column>
             <hftl:column label="#{messages['meveoModule.license']}" field="license.label" isMessage="true" />
             <p:column headerText="#{messages['commons.status']}">
-                <h:outputText value="#{messages[!entity.installed?'meveoModule.downloaded':entity.active?'meveoModule.installedAndActive':'meveoModule.installedAndDisabled']}"
+                <h:outputText value="#{messages[!entity.installed?'meveoModule.downloaded':entity.active?'meveoModule.installedAndEnabled':'meveoModule.installedAndDisabled']}"
                     rendered="#{entity.moduleSource!=null}" />
             </p:column>
             <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" renderEnableLink="false" />
@@ -83,13 +83,13 @@
                 <ui:define name="fields">
 
                     <hftl:decorateFormField label="#{messages['businessEntity.code']}" componentWidth="25">
-                        <h:outputText value="#{meveoModuleListBean.selectedModuleDto.code}" />
+                        <h:outputText value="#{meveoModuleListBean.selectedModuleDto.code}" styleClass="field-value" />
                     </hftl:decorateFormField>
                     <hftl:decorateFormField label="#{messages['businessEntity.description']}" componentWidth="50">
-                        <h:outputText value="#{meveoModuleListBean.selectedModuleDto.description}" />
+                        <h:outputText value="#{meveoModuleListBean.selectedModuleDto.description}" styleClass="field-value" />
                     </hftl:decorateFormField>
                     <hftl:decorateFormField label="#{messages['meveoModule.license']}" componentWidth="25">
-                        <h:outputText value="#{messages[meveoModuleListBean.selectedModuleDto.license.label]}" />
+                        <h:outputText value="#{messages[meveoModuleListBean.selectedModuleDto.license.label]}" styleClass="field-value" />
                     </hftl:decorateFormField>
 
                     <hftl:decorateFormField label="#{messages['meveoModule.items']}" componentWidth="100" displayOneLine="false" newLine="true">
@@ -114,7 +114,7 @@
                         oncomplete="PF('meveoModuleDialog').hide();PF('meveoModulesDialog').show()" process="@this" action="#{meveoModuleListBean.downloadModule}"
                         update="@this :#{p:component('meveoModulesDialog')}">
                     </p:commandButton>
-                    <p:commandButton id="downloadAndInstall" value="#{messages['meveoModule.install']}" rendered="#{meveoModuleListBean.canUserUpdateEntity()}"
+                    <p:commandButton id="downloadAndInstall" value="#{messages['meveoModule.downloadAndInstall']}" rendered="#{meveoModuleListBean.canUserUpdateEntity()}"
                         oncomplete="PF('meveoModuleDialog').hide();PF('meveoModulesDialog').show()" process="@this" action="#{meveoModuleListBean.downloadAndInstallModule}"
                         update="@this :#{p:component('meveoModulesDialog')}">
                     </p:commandButton>

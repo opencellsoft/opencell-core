@@ -699,7 +699,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void disable() {
         try {
             log.info("Disabling entity {} with id = {}", clazz.getName(), entity.getId());
-            entity = getPersistenceService().disable(entity);
+            entity = getPersistenceService().disable(entity, getCurrentUser());
             messages.info(new BundleKey("messages", "disabled.successful"));
 
         } catch (Exception t) {
@@ -717,7 +717,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void disable(Long id) {
         try {
             log.info("Disabling entity {} with id = {}", clazz.getName(), id);
-            getPersistenceService().disable(id);
+            getPersistenceService().disable(id, getCurrentUser());
             messages.info(new BundleKey("messages", "disabled.successful"));
 
         } catch (Throwable t) {
@@ -735,7 +735,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void enable() {
         try {
             log.info("Enabling entity {} with id = {}", clazz.getName(), entity.getId());
-            entity = getPersistenceService().enable(entity);
+            entity = getPersistenceService().enable(entity, getCurrentUser());
             messages.info(new BundleKey("messages", "enabled.successful"));
 
         } catch (Exception t) {
@@ -753,7 +753,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void enable(Long id) {
         try {
             log.info("Enabling entity {} with id = {}", clazz.getName(), id);
-            getPersistenceService().enable(id);
+            getPersistenceService().enable(id, getCurrentUser());
             messages.info(new BundleKey("messages", "enabled.successful"));
 
         } catch (Throwable t) {

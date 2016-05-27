@@ -49,15 +49,15 @@ public abstract class NotificationInstanceService<T extends Notification> extend
     }
 
     @Override
-    public T disable(T notification) {
-        notification = super.disable(notification);
+    public T disable(T notification, User currentUser) throws BusinessException {
+        notification = super.disable(notification, currentUser);
         notificationCacheContainerProvider.removeNotificationFromCache(notification);
         return notification;
     }
 
     @Override
-    public T enable(T notification) {
-        notification = super.enable(notification);
+    public T enable(T notification, User currentUser) throws BusinessException {
+        notification = super.enable(notification, currentUser);
         notificationCacheContainerProvider.addNotificationToCache(notification);
         return notification;
     }

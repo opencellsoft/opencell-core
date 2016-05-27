@@ -44,7 +44,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.medina.impl.AccessService;
-import org.meveo.service.script.OfferModelScriptService;
+import org.meveo.service.script.offer.OfferModelScriptService;
 
 @Stateless
 public class SubscriptionService extends BusinessService<Subscription> {

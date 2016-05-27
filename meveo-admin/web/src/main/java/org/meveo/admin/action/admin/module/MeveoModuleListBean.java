@@ -30,7 +30,6 @@ import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.module.ModuleDto;
 import org.meveo.api.module.ModuleApi;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.module.MeveoModule;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -43,6 +42,7 @@ public class MeveoModuleListBean extends MeveoModuleBean {
 
     @Inject
     private ModuleApi moduleApi;
+    
     @Inject
     private MeveoModuleService meveoModuleService;
 
@@ -118,27 +118,6 @@ public class MeveoModuleListBean extends MeveoModuleBean {
                 messages.error(new BundleKey("messages", "meveoModule.installFailed"), selectedModuleDto.getCode(),
                     (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
             }
-        }
-    }
-
-    public void installModule(MeveoModule module) {
-        try {
-
-            if (module.getModuleSource() == null) {
-                return;
-            } else if (module.isInstalled()) {
-                messages.warn(new BundleKey("messages", "meveoModule.installedAlready"));
-                return;
-            }
-
-            ModuleDto moduleDto = MeveoModuleService.moduleSourceToDto(module);
-
-            moduleApi.install(moduleDto, currentUser);
-            messages.info(new BundleKey("messages", "meveoModule.installSuccess"), moduleDto.getCode());
-
-        } catch (Exception e) {
-            log.error("Failed to install meveo module {} ", module.getCode(), e);
-            messages.error(new BundleKey("messages", "meveoModule.installFailed"), module.getCode(), (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
         }
     }
 

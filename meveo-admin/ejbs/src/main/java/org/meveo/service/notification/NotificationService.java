@@ -55,15 +55,15 @@ public class NotificationService extends BusinessService<ScriptNotification> {
     }
 
     @Override
-    public ScriptNotification disable(ScriptNotification scriptNotification) {
-    	scriptNotification = super.disable(scriptNotification);
+    public ScriptNotification disable(ScriptNotification scriptNotification, User currentUser) throws BusinessException {
+    	scriptNotification = super.disable(scriptNotification, currentUser);
         notificationCacheContainerProvider.removeNotificationFromCache(scriptNotification);
         return scriptNotification;
     }
 
     @Override
-    public ScriptNotification enable(ScriptNotification scriptNotification) {
-    	scriptNotification = super.enable(scriptNotification);
+    public ScriptNotification enable(ScriptNotification scriptNotification, User currentUser) throws BusinessException {
+    	scriptNotification = super.enable(scriptNotification, currentUser);
         notificationCacheContainerProvider.addNotificationToCache(scriptNotification);
         return scriptNotification;
     }

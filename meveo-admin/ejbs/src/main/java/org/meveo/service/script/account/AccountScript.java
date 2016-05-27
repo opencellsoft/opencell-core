@@ -1,9 +1,10 @@
-package org.meveo.service.script;
+package org.meveo.service.script.account;
 
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
+import org.meveo.service.script.Script;
 
 /**
  * @author Edward P. Legaspi

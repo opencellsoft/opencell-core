@@ -22,7 +22,7 @@ public class ActionForbiddenException extends MeveoApiException {
 
     @SuppressWarnings("rawtypes")
     public ActionForbiddenException(Class entityClass, String entityCode, String action, String reason) {
-        super("Action '" + action + "' on entity '" + entityClass.getName() + "' with code '" + entityCode + "' is not allowed  for reason" + reason + "'");
+        super("Action '" + action + "' on entity '" + entityClass.getName() + "' with code '" + entityCode + "' is not allowed  for reason: " + reason + "'");
 
         setErrorCode(MeveoApiErrorCodeEnum.ACTION_FORBIDDEN);
     }

@@ -106,37 +106,40 @@ public interface IPersistenceService<E extends IEntity> {
      * Disable an entity.
      * 
      * @param id Entity id which has to be disabled.
+     * @param currentUser
      * 
      * @throws BusinessException
      */
-    public void disable(Long id);
+    public void disable(Long id, User currentUser) throws BusinessException;
 
     /**
      * Disable an entity.
      * 
      * @param id Entity to be disabled.
+     * @param currentUser
      * 
      * @throws BusinessException
      */
-    public E disable(E e);
+    public E disable(E e, User currentUser) throws BusinessException;
 
     /**
      * Enable an entity.
      * 
      * @param id Entity id which has to be enabled.
+     * @param currentUser
      * 
      * @throws BusinessException
      */
-    public void enable(Long id);
+    public void enable(Long id, User currentUser) throws BusinessException;
 
     /**
      * Enable an entity.
      * 
      * @param id Entity to be enabled.
-     * 
+     * @param currentUser
      * @throws BusinessException
      */
-    public E enable(E e);
+    public E enable(E e, User currentUser) throws BusinessException;
 
     /**
      * Delete an entity.

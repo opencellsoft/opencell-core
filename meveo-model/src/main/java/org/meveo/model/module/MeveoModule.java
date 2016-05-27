@@ -21,6 +21,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
@@ -121,5 +122,9 @@ public class MeveoModule extends BusinessEntity implements Serializable {
 
     public String getModuleSource() {
         return moduleSource;
+    }
+
+    public boolean isDownloaded() {
+        return !StringUtils.isBlank(moduleSource);
     }
 }
