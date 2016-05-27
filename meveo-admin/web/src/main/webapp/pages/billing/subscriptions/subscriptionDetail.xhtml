@@ -407,14 +407,18 @@
 																	label="#{messages['chargeApplication.status']}"
 																	field="status" />
 																<hftl:column
-																	label="#{messages['oneShotChargeInstance.criteria1']}"
-																	field="criteria1" />
+																	label="#{messages['oneShotChargeInstance.chargeDate']}"
+																	field="chargeDate" />
 																<hftl:column
-																	label="#{messages['oneShotChargeInstance.criteria2']}"
-																	field="criteria2" />
-																<hftl:column
-																	label="#{messages['oneShotChargeInstance.criteria3']}"
-																	field="criteria3" />
+																	label="#{messages['pricePlanMatrix.amountWithoutTax']}"
+																	field="amountWithoutTax" isMessage="false" />
+																<p:column
+																	headerText="#{messages['pricePlanMatrix.amountWithTax']}"
+																	rendered="#{!subscriptionBean.entity.provider.entreprise}">
+																	<h:outputText value="#{entity.amountWithTax}"
+																				  converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
+																</p:column>
+
 
 																<p:column styleClass="actions-column">
 																	<f:facet name="header">
@@ -496,15 +500,16 @@
 																			fieldId="chargeTemplateSelectId_text"
 																			label="#{messages['businessEntity.code']}">
 																			<p:inputText id="chargeTemplateSelectId_text"
-																				required="true"
-																				value="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.code}"
-																				disabled="true" />
+																				 required="true"
+																				 value="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.code}"
+																				 disabled="true" />
 																			<p:commandButton
 																				id="chargeTemplateSelectId_selectLink"
 																				onclick="PF('dlg_oneShotChargeTmpPopup').show()"
+																				rendered="#{subscriptionBean.oneShotChargeInstance.isTransient()}"
 																				icon="ui-icon-search" type="button" />
 																			<p:tooltip for="chargeTemplateSelectId_selectLink"
-																				value="#{messages['commons.search']}" />
+																					   value="#{messages['commons.search']}" />
 																		</hftl:decorateFormField>
 																	</h:panelGroup>
 
@@ -803,14 +808,20 @@
 																label="#{messages['chargeApplication.status']}"
 																field="status" />
 															<hftl:column
-																label="#{messages['oneShotChargeInstance.criteria1']}"
-																field="criteria1" isMessage="true" />
-															<hftl:column
 																label="#{messages['oneShotChargeInstance.chargeDate']}"
 																field="chargeDate" isDate="true" />
 															<hftl:column
 																label="#{messages['recurringChargeInstance.nextChargeDate']}"
 																field="nextChargeDate" isDate="true" />
+															<hftl:column
+																label="#{messages['pricePlanMatrix.amountWithoutTax']}"
+																field="amountWithoutTax" isMessage="false" />
+															<p:column
+																headerText="#{messages['pricePlanMatrix.amountWithTax']}"
+																rendered="#{!subscriptionBean.entity.provider.entreprise}">
+																<h:outputText value="#{entity.amountWithTax}"
+																	  converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
+															</p:column>
 
 															<p:column styleClass="actions-column">
 																<f:facet name="header">
@@ -862,8 +873,11 @@
 															label="#{messages['BusinessEntity.description']}"
 															field="description" isMessage="false" />
 														<hftl:column
-															label="#{messages['chargeApplication.status']}"
+															label="#{messages['serviceInstance.status']}"
 															field="status" />
+														<hftl:column
+															label="#{messages['chargeInstance.chargeDate']}"
+															field="chargeDate" isDate="true" />
 														<hftl:column
 															label="#{messages['pricePlanMatrix.amountWithoutTax']}"
 															field="amountWithoutTax" isMessage="false" />
@@ -873,15 +887,6 @@
 															<h:outputText value="#{entity.amountWithTax}"
 																converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
 														</p:column>
-														<hftl:column
-															label="#{messages['oneShotChargeInstance.criteria1']}"
-															field="criteria1" isMessage="false" />
-														<hftl:column
-															label="#{messages['oneShotChargeInstance.criteria2']}"
-															field="criteria2" isMessage="false" />
-														<hftl:column
-															label="#{messages['oneShotChargeInstance.criteria3']}"
-															field="criteria3" isMessage="false" />
 														<hftl:column label="#{messages['counterTemplate.title']}"
 															field="counter.description" />
 														<p:column styleClass="actions-column">
@@ -1012,25 +1017,28 @@
 							field="chargeTemplate" valueLabelField="code" edit="false" />
 						<hftl:formField label="#{messages['businessEntity.description']}"
 							field="description" edit="false" />
-                            
-						<hftl:formField rendered="#{!subscriptionBean.entity.provider.entreprise}"
-							label="#{messages['oneShotChargeInstance.amountWithTax']}"
-							field="amountWithTax" edit="true" newLine="true"/>
+						<hftl:formField label="#{messages['commons.status']}"
+							field="status" edit="false" />
+
 						<hftl:formField
-							label="#{messages['oneShotChargeInstance.amountWithoutTax']}"
-							field="amountWithoutTax" edit="true" newLine="#{subscriptionBean.entity.provider.entreprise}"/>
-						<!--<hftl:formField
-							label="#{messages['oneShotChargeInstance.criteria1']}"
-							field="criteria1" edit="false" isMessage="false" />
+							label="#{messages['chargeInstance.criteria1']}"
+							field="criteria1" edit="false" isMessage="false" newLine="true" />
 						<hftl:formField
-							label="#{messages['oneShotChargeInstance.criteria2']}"
+							label="#{messages['chargeInstance.criteria2']}"
 							field="criteria2" edit="false" isMessage="false" />
 						<hftl:formField
-							label="#{messages['oneShotChargeInstance.criteria3']}"
-							field="criteria3" edit="false" isMessage="false" />-->
+							label="#{messages['chargeInstance.criteria3']}"
+							field="criteria3" edit="false" isMessage="false" />
+
+						<hftl:formField rendered="#{!subscriptionBean.entity.provider.entreprise}"
+							label="#{messages['chargeInstance.amountWithTax']}"
+							field="amountWithTax" edit="true" newLine="true"/>
+						<hftl:formField
+							label="#{messages['chargeInstance.amountWithoutTax']}"
+							field="amountWithoutTax" edit="true" newLine="#{subscriptionBean.entity.provider.entreprise}"/>
 						<hftl:formField label="#{messages['counterTemplate.title']}"
-							field="counter" valueLabelField="descriptionOrCode" edit="false" />
-                       
+									field="counter" valueLabelField="descriptionOrCode" edit="false" />
+
                         <ui:param name="buttons" value="true"/>
                         <ui:define name="buttons">    
     						<p:commandButton
@@ -1040,7 +1048,12 @@
     							update=":#{p:component('OS_usage_results_form')}"
     							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_usageChgPopup').hide()" />
     						<p:button value="#{messages['action.cancel']}"
-    							onclick="PF('dlg_usageChgPopup').hide()" type="button" />
+								onclick="PF('dlg_usageChgPopup').hide()">
+								<f:param name="subscriptionId" value="#{subscriptionBean.entity.id}" />
+								<f:param name="mainTab" value="4" />
+								<f:param name="tab" value="0" />
+								<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+							</p:button>
                         </ui:define>
 				</hftl:formPanel>
 			</p:outputPanel>
@@ -1059,7 +1072,7 @@
 						<hftl:formField id="RCchargeTemplateSelectId"
 							label="#{messages['businessEntity.code']}" field="chargeTemplate"
 							valueLabelField="code" popup="true" popupId="recurringChargeTmpPopup"
-							edit="true" />
+							edit="false" />
 						<hftl:formField label="#{messages['businessEntity.description']}"
 							field="description" size="50" maxlength="50" disabled="true" />
 						<hftl:formField
@@ -1102,8 +1115,15 @@
     							value="#{messages['action.save']}" 
     							rendered="#{subscriptionBean.canUserUpdateEntity()}"
     							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_recurringChgPopup').hide()" />
-    						<p:button value="#{messages['action.cancel']}"
-    							onclick="PF('dlg_recurringChgPopup').hide()" type="button" />
+    						<!--<p:button value="#{messages['action.cancel']}"
+    							onclick="PF('dlg_recurringChgPopup').hide()" type="button" />-->
+							<p:button value="#{messages['action.cancel']}"
+									  onclick="PF('dlg_recurringChgPopup').hide()">
+								<f:param name="subscriptionId" value="#{subscriptionBean.entity.id}" />
+								<f:param name="mainTab" value="3" />
+								<f:param name="tab" value="0" />
+								<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+							</p:button>
 						</ui:define>
 				</hftl:formPanel>
 				<p:outputPanel id="recurringWalletOperationsPanel">
