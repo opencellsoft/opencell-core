@@ -156,7 +156,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
     @Override
     public void create(CustomFieldTemplate cft, User creator) throws BusinessException {
-    	 
+   
         if("INVOICE_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType()!=CustomFieldTypeEnum.LONG || cft.getStorageType()!=CustomFieldStorageTypeEnum.SINGLE
         		|| !cft.isVersionable() || cft.getCalendar() == null)){ 
         	throw new BusinessException("invoice_sequence CF must be versionnable,Long,Single value and must have a Calendar"); 
@@ -171,7 +171,15 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     @Override
     public CustomFieldTemplate update(CustomFieldTemplate cft, User updater) throws BusinessException {
-
+    	
+    	 if("INVOICE_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType()!=CustomFieldTypeEnum.LONG || cft.getStorageType()!=CustomFieldStorageTypeEnum.SINGLE
+         		|| !cft.isVersionable() || cft.getCalendar() == null)){ 
+         	throw new BusinessException("invoice_sequence CF must be versionnable,Long,Single value and must have a Calendar"); 
+         }
+         if("INVOICE_ADJUSTMENT_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType()!=CustomFieldTypeEnum.LONG || cft.getStorageType()!=CustomFieldStorageTypeEnum.SINGLE
+         		|| !cft.isVersionable() || cft.getCalendar()==null)){
+         	throw new BusinessException("invoice_adjustement_sequence CF must be versionnable,Long,Single value and must have a Calendar");
+         }
         CustomFieldTemplate cftUpdated = super.update(cft, updater);
         customFieldsCache.addUpdateCustomFieldTemplate(cftUpdated);
 
