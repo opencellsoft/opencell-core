@@ -22,7 +22,7 @@ import org.meveo.api.rest.security.RSSecured;
  * 
  * @author Mohamed Hamidi
  **/
-@Path("/user4_2")
+@Path("/user")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured
