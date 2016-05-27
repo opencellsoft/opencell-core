@@ -17,37 +17,37 @@ public class ServiceScript extends Script implements ServiceScriptInterface {
     public static String CONTEXT_TERMINATION_REASON = "CONTEXT_TERMINATION_REASON";
 
     @Override
-    public void createServiceTemplate(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+    public void createServiceTemplate(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
 
     @Override
-    public void updateServiceTemplate(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+    public void updateServiceTemplate(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
 
     @Override
-    public void instantiateServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+    public void instantiateServiceInstance(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
 
     @Override
-    public void activateServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+    public void activateServiceInstance(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
 
     @Override
-    public void suspendServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+    public void suspendServiceInstance(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
 
     @Override
-    public void reactivateServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+    public void reactivateServiceInstance(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
 
     @Override
-    public void terminateServiceInstance(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+    public void terminateServiceInstance(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
 }

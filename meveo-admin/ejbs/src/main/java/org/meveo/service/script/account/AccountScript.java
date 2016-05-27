@@ -14,26 +14,22 @@ public class AccountScript extends Script implements AccountScriptInterface {
 	public static String CONTEXT_SELLER = "CONTEXT_SELLER";
 
 	@Override
-	public void createAccount(Map<String, Object> methodContext, User currentUser) throws BusinessException {
-		// TODO Auto-generated method stub
+	public void createAccount(Map<String, Object> methodContext, User user) throws BusinessException {
 		
 	}
 
 	@Override
-	public void updateAccount(Map<String, Object> methodContext, User currentUser) throws BusinessException {
-		// TODO Auto-generated method stub
+	public void updateAccount(Map<String, Object> methodContext, User user) throws BusinessException {
 		
 	}
 
 	@Override
-	public void terminateAccount(Map<String, Object> methodContext, User currentUser) throws BusinessException {
-		// TODO Auto-generated method stub
+	public void terminateAccount(Map<String, Object> methodContext, User user) throws BusinessException {
 		
 	}
 
 	@Override
-	public void closeAccount(Map<String, Object> methodContext, User currentUser) throws BusinessException {
-		// TODO Auto-generated method stub
+	public void closeAccount(Map<String, Object> methodContext, User user) throws BusinessException {
 		
 	}
 
