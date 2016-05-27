@@ -150,22 +150,8 @@ public class SellerApi extends BaseApi {
         seller.setInvoiceAdjustmentPrefix(postData.getInvoiceAdjustmentPrefix());
         seller.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
         seller.setInvoiceAdjustmentSequenceSize(postData.getInvoiceAdjustmentSequenceSize());
-        
-        if((seller.getCurrentInvoiceNb()!=null && postData.getCurrentInvoiceNb()!=null) 
-				&& postData.getCurrentInvoiceNb()<seller.getCurrentInvoiceNb()){
-			throw new MeveoApiException("currentInvoiceNb value must be greater than current value");
-		}
-        if(postData.getCurrentInvoiceNb()!=null){
-        	seller.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
-        }
-        if((seller.getCurrentInvoiceAdjustmentNb()!=null && postData.getCurrentInvoiceAdjustmentNb()!=null) 
-				&& postData.getCurrentInvoiceAdjustmentNb()<seller.getCurrentInvoiceAdjustmentNb()){
-			throw new MeveoApiException("currentInvoiceAdjustmentNb value must be greater than current value");
-		}
-        if(postData.getCurrentInvoiceAdjustmentNb()!=null){
-        	seller.setCurrentInvoiceAdjustmentNb(postData.getCurrentInvoiceAdjustmentNb());
-        }
-        
+        seller.setCurrentInvoiceAdjustmentNb(postData.getCurrentInvoiceAdjustmentNb());
+        seller.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
         // check trading entities
         if (!StringUtils.isBlank(postData.getCurrencyCode())) {
             TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode(), provider);
