@@ -29,6 +29,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  * @author R.AITYAAZZA
  * 
  */
+@Deprecated
 @XmlRootElement(name = "Invoice4_2")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Invoice4_2Dto extends BaseDto {

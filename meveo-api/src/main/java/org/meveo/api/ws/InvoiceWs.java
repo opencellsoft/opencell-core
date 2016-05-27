@@ -4,13 +4,14 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
-import org.meveo.api.dto.response.InvoiceCreationResponse;
 
 /**
  * @author Edward P. Legaspi
@@ -19,7 +20,7 @@ import org.meveo.api.dto.response.InvoiceCreationResponse;
 public interface InvoiceWs extends IBaseWs {
 
 	@WebMethod
-	public InvoiceCreationResponse createInvoice(@WebParam(name = "invoice") InvoiceDto invoiceDto);
+	public CreateInvoiceResponseDto createInvoice(@WebParam(name = "invoice") InvoiceDto invoiceDto);
 
 	@WebMethod
 	public CustomerInvoicesResponse findInvoice(@WebParam(name = "customerAccountCode") String customerAccountCode);
@@ -41,5 +42,11 @@ public interface InvoiceWs extends IBaseWs {
 	@WebMethod
 	public GetPdfInvoiceResponseDto findPdfInvoiceWithType(@WebParam(name = "invoiceNumber") String invoiceNumber,
 			@WebParam(name = "invoiceType") String invoiceType);
+	
+	@WebMethod
+	public ActionStatus cancelInvoice(@WebParam(name = "invoiceId") Long invoiceId);
+	
+	@WebMethod
+	public ActionStatus validateInvoice(@WebParam(name = "invoiceId") Long invoiceId);	
 
 }

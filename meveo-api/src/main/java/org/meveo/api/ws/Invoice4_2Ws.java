@@ -15,6 +15,8 @@ import org.meveo.api.dto.response.InvoiceCreationResponse;
 /**
  * @author Edward P. Legaspi
  **/
+
+@Deprecated
 @WebService
 public interface Invoice4_2Ws extends IBaseWs {
 

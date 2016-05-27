@@ -67,6 +67,7 @@ import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.util.MeveoParamBean;
 
+@Deprecated
 @Stateless
 public class Invoice4_2Api extends BaseApi {
 
@@ -476,22 +477,24 @@ public class Invoice4_2Api extends BaseApi {
         return generateInvoiceResultDto;
     }
 
-    public String getXMLInvoice(String invoiceNumber, String invoiceType, User currentUser) throws FileNotFoundException, MissingParameterException, EntityDoesNotExistsException,
+    public String getXMLInvoice(String invoiceNumber, String invoiceTypeCode, User currentUser) throws FileNotFoundException, MissingParameterException, EntityDoesNotExistsException,
             BusinessException, InvalidEnumValueException {
         log.debug("getXMLInvoice  invoiceNumber:{}", invoiceNumber);
         if (StringUtils.isBlank(invoiceNumber)) {
-            missingParameters.add("invoiceNumber");
-            handleMissingParameters();
+            missingParameters.add("invoiceNumber");           
         }
+		if (StringUtils.isBlank(invoiceTypeCode)) {
+			missingParameters.add("invoiceTypeCode");
+		}
+		handleMissingParameters();
 
-        InvoiceTypeEnum invoiceTypeEnum = InvoiceTypeEnum.COMMERCIAL;
-        try {
-            invoiceTypeEnum = InvoiceTypeEnum.valueOf(invoiceType);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidEnumValueException(InvoiceTypeEnum.class.getName(), invoiceType);
-        }
-
-        Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceTypeEnum, currentUser.getProvider());
+		InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode, currentUser.getProvider());
+		if (invoiceType == null) {
+			throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
+		}	
+		
+      
+        Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType, currentUser.getProvider());
         if (invoice == null) {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber);
         }
@@ -518,21 +521,22 @@ public class Invoice4_2Api extends BaseApi {
         return xmlContent;
     }
 
-    public byte[] getPdfInvoince(String invoiceNumber, String invoiceType, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, Exception {
+    public byte[] getPdfInvoince(String invoiceNumber, String invoiceTypeCode, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, Exception {
         log.debug("getPdfInvoince  invoiceNumber:{}", invoiceNumber);
         if (StringUtils.isBlank(invoiceNumber)) {
-            missingParameters.add("invoiceNumber");
-            handleMissingParameters();
+            missingParameters.add("invoiceNumber");           
         }
+		if (StringUtils.isBlank(invoiceTypeCode)) {
+			missingParameters.add("invoiceTypeCode");
+		}
+		handleMissingParameters();
 
-        InvoiceTypeEnum invoiceTypeEnum = InvoiceTypeEnum.COMMERCIAL;
-        try {
-            invoiceTypeEnum = InvoiceTypeEnum.valueOf(invoiceType);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidEnumValueException(InvoiceTypeEnum.class.getName(), invoiceType);
-        }
-
-        Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceTypeEnum, currentUser.getProvider());
+		InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode, currentUser.getProvider());
+		if (invoiceType == null) {
+			throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
+		}
+       
+        Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType, currentUser.getProvider());
         if (invoice == null) {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber);
         }

@@ -22,9 +22,9 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -38,9 +38,11 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 
 	@Inject
 	OCCTemplateService oCCTemplateService;
+	
+	ParamBean param  = ParamBean.getInstance();
 
-	public InvoiceType getDefaultType(InvoiceTypeEnum invoiceTypeEnum, User currentUser) throws BusinessException {
-		InvoiceType defaultInvoiceType = findByCode(invoiceTypeEnum.name(), currentUser.getProvider());
+	public InvoiceType getDefaultType(String typeCode, User currentUser) throws BusinessException {
+		InvoiceType defaultInvoiceType = findByCode(typeCode, currentUser.getProvider());
 		if (defaultInvoiceType != null) {
 			return defaultInvoiceType;
 		}
@@ -49,7 +51,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 
 		String occCode = "accountOperationsGenerationJob.occCode";
 		String occCodeDefaultValue = "FA_FACT";
-		if (InvoiceTypeEnum.CREDIT_NOTE_ADJUST == invoiceTypeEnum || InvoiceTypeEnum.DEBIT_NODE_ADJUST == invoiceTypeEnum || InvoiceTypeEnum.SELF_BILLED_CREDIT_NOTE == invoiceTypeEnum) {
+		if (param.getProperty("invoiceType.adjustement.code", "ADJ").equals(typeCode)) {
 
 			occCode = "accountOperationsGenerationJob.occCodeAdjustement";
 			occCodeDefaultValue = "FA_ADJ";
@@ -69,22 +71,18 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 		}
 
 		defaultInvoiceType = new InvoiceType();
-		defaultInvoiceType.setCode(invoiceTypeEnum.name());
-		defaultInvoiceType.setInvoiceTypeEnum(invoiceTypeEnum);
+		defaultInvoiceType.setCode(typeCode);
 		defaultInvoiceType.setOccTemplate(occTemplate);
 		create(defaultInvoiceType, currentUser);
 		return defaultInvoiceType;
 	}
 
-	public InvoiceType getDefaultCommertial(){
-		return null;
-	}
 	public InvoiceType getDefaultAdjustement(User currentUser) throws BusinessException {
-		return getDefaultType(InvoiceTypeEnum.CREDIT_NOTE_ADJUST, currentUser);
+		return getDefaultType(param.getProperty("invoiceType.adjustement.code", "ADJ"), currentUser);
 	}
 
 	public InvoiceType getDefaultCommertial(User currentUser) throws BusinessException {
-		return getDefaultType(InvoiceTypeEnum.COMMERCIAL, currentUser);
+		return getDefaultType(param.getProperty("invoiceType.commercial.code", "COM"), currentUser);
 	}
 
 }

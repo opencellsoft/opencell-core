@@ -161,11 +161,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 	}
 	
-	public Invoice findByInvoiceNumberAndType(String invoiceNumber, InvoiceTypeEnum type, Provider provider)
+	public Invoice findByInvoiceNumberAndType(String invoiceNumber, InvoiceType invoiceType, Provider provider)
 			throws BusinessException {
 		QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null, provider);
-		qb.addCriterion("invoiceNumber", "=", invoiceNumber, true);
-		qb.addCriterionEnum("invoice.invoiceTypeEnum", type);
+		qb.addCriterion("i.invoiceNumber", "=", invoiceNumber, true);
+		qb.addCriterionEntity("i.invoiceType", invoiceType);
 		try {
 			return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
