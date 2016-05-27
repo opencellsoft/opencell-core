@@ -630,6 +630,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				VirtualFile vfDir = VFS.getChild("/content/"
 						+ ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")
 						+ ".war/WEB-INF/classes/jasper");
+				log.info("default jaspers path :"+vfDir.getPathName());
 				URL vfPath = VFSUtils.getPhysicalURL(vfDir);
 				sourceFile = new File(vfPath.getPath());
 				if (!sourceFile.exists()) {
