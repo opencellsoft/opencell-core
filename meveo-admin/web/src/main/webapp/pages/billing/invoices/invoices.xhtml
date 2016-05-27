@@ -45,7 +45,7 @@
 		        valueLabelField="code" popup="true" popupId="searchBillingAccountPopup" clearButton="true" />
 			<hftl:searchField label="#{messages['invoice.invoiceNumber']}"
 				field="invoiceNumber" /> 
-			<hftl:searchField label="#{messages['invoice.invoiceType']}" field="invoiceTypeEnum"  />	
+			<hftl:searchField label="#{messages['invoice.invoiceType']}" field="invoiceType"  />	
 			<hftl:searchField label="#{messages['invoice.invoiceDate']}"
 				field="invoiceDate" />
 			<hftl:searchField label="#{messages['invoice.dueDate']}"
@@ -60,7 +60,7 @@
 			backingBean="#{invoiceBean}" id="datatable_invoicesId" >
 			<hftl:column label="#{messages['invoice.invoiceNumber']}" field="invoiceNumber" valueIdField="id" entityView="invoiceDetail"/>
 			<hftl:column label="#{messages['invoice.billingAccount']}" field="billingAccount.code" valueIdField="billingAccount.id" entityView="billingAccountDetail" backView="invoices" width="15%"/>
-			<hftl:column label="#{messages['invoice.invoiceType']}" field="invoiceTypeEnum.label" isMessage="true" />
+			<hftl:column label="#{messages['invoice.invoiceType']}" field="invoiceType.code"  />
 			<hftl:column label="#{messages['invoice.invoiceDate']}" field="invoiceDate" isDate="true" />
 			<hftl:column label="#{messages['invoice.dueDate']}" field="dueDate" isDate="true" /> 
 			<hftl:column label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" converterParam="4digits" wrapHeader="true"  />

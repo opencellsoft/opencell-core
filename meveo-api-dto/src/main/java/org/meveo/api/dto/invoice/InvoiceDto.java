@@ -8,6 +8,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
@@ -54,8 +55,10 @@ public class InvoiceDto extends BaseDto {
     private boolean PDFpresent;
     private String invoiceType;
     private byte[] pdf;
+	@XmlElementWrapper
+    @XmlElement(name="categoryInvoiceAgregate")
     private List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregateDto>();
-    private List<AccountOperationDto> accountOperations = new ArrayList<AccountOperationDto>();
+    
     
     private boolean autoValidation =  false;
     private boolean returnXml = false;
@@ -252,13 +255,6 @@ public class InvoiceDto extends BaseDto {
 		this.invoiceType = invoiceType;
 	}
 
-	public List<AccountOperationDto> getAccountOperations() {
-        return accountOperations;
-    }
-
-    public void setAccountOperations(List<AccountOperationDto> accountOperations) {
-        this.accountOperations = accountOperations;
-    }
 
     public byte[] getPdf() {
         return pdf;
