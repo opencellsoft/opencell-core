@@ -54,7 +54,10 @@
             </hftl:decorateFormField>
 
             <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true"
-                rendered="#{!meveoModuleBean.entity.downloaded}" />
+                rendered="#{!meveoModuleBean.entity.downloaded}" newLine="true" />
+            <hftl:decorateFormField label="#{messages['meveoModule.meveoModules']}" rendered="#{!meveoModuleBean.entity.transient}">
+                <h:outputText value="#{meveoModuleBean.selectedModules}" />
+            </hftl:decorateFormField>
 
             <ui:include src="moduleTree.xhtml">
                 <ui:param name="backingBean" value="#{meveoModuleBean}" />

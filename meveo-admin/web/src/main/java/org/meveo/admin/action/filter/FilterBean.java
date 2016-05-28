@@ -16,6 +16,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.XmlUtil;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.MeveoModuleUtil;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.filter.AndCompositeFilterCondition;
@@ -26,6 +27,7 @@ import org.meveo.model.filter.NativeFilterCondition;
 import org.meveo.model.filter.OrCompositeFilterCondition;
 import org.meveo.model.filter.OrderCondition;
 import org.meveo.model.filter.PrimitiveFilterCondition;
+import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.filter.FilterSelectorService;
 import org.meveo.service.filter.FilterService;
@@ -47,9 +49,27 @@ public class FilterBean extends BaseBean<Filter> {
 
 	@Inject
 	private Validator validator;
+	
+	@Inject
+	private MeveoModuleService meveoModuleService;
+	
+	private String selectedModules;
 
 	public FilterBean() {
 		super(Filter.class);
+	}
+
+	@Override
+	public Filter initEntity() {
+		entity=super.initEntity();
+		initSelectedModules();
+		return entity;
+	}
+
+	private void initSelectedModules() {
+		if(entity!=null&&!entity.isTransient()){
+			this.selectedModules=MeveoModuleUtil.generateModules(meveoModuleService, entity.getCode(), Filter.class.getName(), null);
+		}
 	}
 
 	@Override
@@ -175,6 +195,14 @@ public class FilterBean extends BaseBean<Filter> {
 				throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
 			}
 		}
+	}
+
+	public String getSelectedModules() {
+		return selectedModules;
+	}
+
+	public void setSelectedModules(String selectedModules) {
+		this.selectedModules = selectedModules;
 	}
 	
 }

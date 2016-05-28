@@ -31,9 +31,11 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.MeveoModuleUtil;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.security.Role;
+import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -66,8 +68,20 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 
     private DualListModel<Role> execRolesDM;
     private DualListModel<Role> sourcRolesDM;
+    
+    @Inject
+    private MeveoModuleService meveoModuleService;
+    
+    private String selectedModules;
 
-    public void initCompilationErrors() {
+    @Override
+	public ScriptInstance initEntity() {
+		super.initEntity();
+		initSelectedModules();
+		return entity;
+	}
+
+	public void initCompilationErrors() {
         if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
             return;
         }
@@ -214,4 +228,19 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
             messages.info(new BundleKey("messages", "scriptInstance.compilationSuccessfull"));
         }
     }
+
+	public String getSelectedModules() {
+		return selectedModules;
+	}
+
+	public void setSelectedModules(String selectedModules) {
+		this.selectedModules = selectedModules;
+	}
+	
+	private void initSelectedModules(){
+		if(entity!=null&&!entity.isTransient()){
+			selectedModules=MeveoModuleUtil.generateModules(meveoModuleService, entity.getCode(), ScriptInstance.class.getName(), null);
+		}
+	}
+    
 }

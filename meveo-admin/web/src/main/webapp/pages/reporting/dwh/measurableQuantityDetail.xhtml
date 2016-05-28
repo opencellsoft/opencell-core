@@ -61,6 +61,10 @@
 			<hftl:formField
 				label="#{messages['entity.measurablequantity.additive']}"
 				field="additive" />
+			<hftl:decorateFormField label="#{messages['meveoModule.meveoModules']}" rendered="#{!measurableQuantityBean.entity.transient}" newLine="true">
+                <h:outputText value="#{measurableQuantityBean.selectedModules}" />
+            </hftl:decorateFormField>
+			
 		</hftl:formPanel>
 
 	</ui:define>

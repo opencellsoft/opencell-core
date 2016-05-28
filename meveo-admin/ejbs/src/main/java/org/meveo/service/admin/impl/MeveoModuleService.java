@@ -20,6 +20,7 @@ package org.meveo.service.admin.impl;
 
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -827,5 +828,13 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         }
 
         super.remove(module);
+    }
+    @SuppressWarnings("unchecked")
+   	public List<MeveoModule> findModuleByItemCodeAndClazzAppliesTo(String itemCode,String itemClazz,String appliesTo){
+       	QueryBuilder qb=new QueryBuilder(MeveoModule.class,"m",Arrays.asList("moduleItems as i"),null);
+       	qb.addCriterion("i.itemCode", "=", itemCode,true);
+       	qb.addCriterion("i.itemClass", "=", itemClazz, false);
+       	qb.addCriterion("i.appliesTo", "=", appliesTo, false);
+       	return qb.getQuery(getEntityManager()).getResultList();
     }
 }
