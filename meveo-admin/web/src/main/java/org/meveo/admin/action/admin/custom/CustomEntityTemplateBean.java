@@ -66,6 +66,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     private SortedTreeNode groupedFields;
 
     private TreeNode selectedFieldGrouping;
+    private TreeNode selectedField;
 
     private List<EntityCustomAction> entityActions;
 
@@ -220,9 +221,6 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         return entityActions;
     }
 
-    public void refreshFields() {
-        groupedFields = null;
-    }
 
     public void refreshActions() {
         entityActions = null;
@@ -236,7 +234,15 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         return selectedFieldGrouping;
     }
 
-    public void setSelectedEntityAction(EntityCustomAction selectedEntityAction) {
+    public TreeNode getSelectedField() {
+		return selectedField;
+	}
+
+	public void setSelectedField(TreeNode selectedField) {
+		this.selectedField = selectedField;
+	}
+
+	public void setSelectedEntityAction(EntityCustomAction selectedEntityAction) {
         this.selectedEntityAction = selectedEntityAction;
     }
 
@@ -311,13 +317,21 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                 customFieldTemplateService.remove(((CustomFieldTemplate) childNode.getData()).getId());
             } else if (childNode.getType().equals(GroupedCustomField.TYPE_FIELD_GROUP)) {
                 for (TreeNode childChildNode : childNode.getChildren()) {
-                    customFieldTemplateService.remove((CustomFieldTemplate) childChildNode.getData());
+                    customFieldTemplateService.remove(((CustomFieldTemplate) childChildNode.getData()).getId());
                 }
             }
         }
 
         selectedFieldGrouping.getParent().getChildren().remove(selectedFieldGrouping);
 
+    }
+    public void removeField(){
+    	if(selectedField!=null){
+    		CustomFieldTemplate cft=customFieldTemplateService.findById(((CustomFieldTemplate) selectedField.getData()).getId());
+    		if(cft==null){
+    			selectedField.getParent().getChildren().remove(selectedField);
+    		}
+    	}
     }
 
     public void moveUp(SortedTreeNode node) {
@@ -418,6 +432,9 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                     String guiPosition = currentPosition + ";" + CustomFieldTemplate.POSITION_FIELD + ":" + sortedChildNode.getIndexInParent();
                     CustomFieldTemplate cft = (CustomFieldTemplate) sortedChildNode.getData();
                     cft = customFieldTemplateService.refreshOrRetrieve(cft);
+                    if(cft==null){
+                    	continue;
+                    }
                     if (!guiPosition.equals(cft.getGuiPosition())) {
                         cft.setGuiPosition(guiPosition);
                         cft = customFieldTemplateService.update(cft, getCurrentUser());

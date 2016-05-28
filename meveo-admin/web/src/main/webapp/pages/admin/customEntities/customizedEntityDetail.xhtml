@@ -168,11 +168,12 @@
 
 
 
-                            <p:remoteCommand id="remoteDeleteButton" actionListener="#{customFieldTemplateBean.deleteInlist}" action="#{customEntityTemplateBean.refreshFields}"
-                                name="fieldsDoDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form" />
+                            <p:remoteCommand id="remoteDeleteButton" actionListener="#{customFieldTemplateBean.deleteInlist}" action="#{customEntityTemplateBean.removeField}"
+                                name="fieldsDoDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form" process="@this"/>
                             <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-                            <p:commandButton id="deletelink" icon="ui-icon-trash" oncomplete="fieldsDoDelete()">
+                            <p:commandButton id="deletelink" icon="ui-icon-trash" oncomplete="fieldsDoDelete()" update=":fieldsForm:fields">
                                 <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
+                                <f:setPropertyActionListener target="#{customEntityTemplateBean.selectedField}" value="#{node}" />
                                 <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
                             </p:commandButton>
 
