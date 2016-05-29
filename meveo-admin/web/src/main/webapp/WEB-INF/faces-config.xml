@@ -598,6 +598,11 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>invoiceAggregatedDetail</from-outcome>
+			<to-view-id>/pages/billing/invoices/invoiceAggregatedDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>wallets</from-outcome>
 			<to-view-id>/pages/billing/wallets/wallets.xhtml</to-view-id>
 			<redirect />

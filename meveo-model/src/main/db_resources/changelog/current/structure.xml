@@ -1979,6 +1979,17 @@
 		 <renameColumn   newColumnName="prefix_el"  oldColumnName="prefix"  tableName="billing_invoice_type"/>
      </changeSet>
      
+	<changeSet author="EdwardLegaspi" id="#1689_20160526">
+		<createTable tableName="BILLING_LINKED_INVOICES">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="linked_invoice_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>    
+     
     <changeSet author="anasseh (generated)" id="#1685_20160530-2">
         <createTable tableName="billing_seq_invtyp_sell">
             <column name="invoicetype_id" type="BIGINT">

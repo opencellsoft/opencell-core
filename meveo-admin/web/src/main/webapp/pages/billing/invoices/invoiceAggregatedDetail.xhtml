@@ -1,0 +1,211 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<c:if test="#{invoiceBean.edit}">
+			<hftl:entityPopup id="billingAccountPopup"
+				header="#{messages['billingAccount']}"
+				updateField=":tabView:formId:billingAccountSelectedId :tabView:formId:billingAccountSelectedId_text"
+				selection="#{invoiceBean.entity.billingAccount}"
+				backingBean="#{billingAccountBean}"
+				searchField1Label="#{messages['billingAccount.code']}"
+				searchField1="code"
+				column1Label="#{messages['billingAccount.code']}" column1="code"
+				column2Label="#{messages['BusinessEntity.description']}"
+				column2="description">
+			</hftl:entityPopup>
+
+			<hftl:entityPopup id="invoicePopup" header="#{messages['invoice']}"
+				updateField=":tabView:datatable_selectedLinkedInvoice"
+				selection="#{invoiceBean.invoiceToAdd}" backingBean="#{invoiceBean}"
+				searchField1Label="#{messages['invoice.invoiceNumber']}"
+				searchField1="invoiceNumber"
+				column1Label="#{messages['invoice.invoiceNumber']}"
+				column1="invoiceNumber"
+				column2Label="#{messages['invoice.amountWithTax']}"
+				column2="amountWithTax">
+			</hftl:entityPopup>
+		</c:if>
+
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+
+		<p:panel header="#{messages['invoice.aggregated']}">
+
+			<p:growl id="growl"></p:growl>
+
+			<p:tabView id="tabView" activeIndex="#{invoiceBean.activeTab}">
+				<p:tab title="#{messages['menu.invoice']}">
+					<hftl:formPanel ajaxSubmit="true"
+						submitPartialProcess=":tabView:formId"
+						backingBean="#{invoiceBean}" showEnableDisableButton="true">
+						<hftl:formField field="invoiceType"
+							label="#{messages['invoice.invoiceType']}" valueLabelField="code"
+							listBean="#{invoiceTypeBean}"></hftl:formField>
+						<hftl:formField id="billingAccountSelectedId"
+							label="#{messages['billingAccount']}" field="billingAccount"
+							valueLabelField="code" popup="true" popupId="billingAccountPopup"
+							required="true" showPopupOnlyOnNew="true" />
+					</hftl:formPanel>
+
+					<hftl:dataList label="#{messages['invoice.linkedInvoices']}"
+						noClose="false" backingBean="#{invoiceBean}"
+						dataModel="#{invoiceBean.entity.linkedInvoices}"
+						resultsId="selectedLinkedInvoice">
+						<hftl:column label="#{messages['invoice.invoiceNumber']}"
+							field="invoiceNumber" />
+						<hftl:column label="#{messages['invoice.invoiceDate']}"
+							field="invoiceDate" />
+						<hftl:column label="#{messages['invoice.amountWithTax']}"
+							field="amountWithTax" />
+						<p:column>
+							<p:commandButton icon="ui-icon-trash"
+								action="#{invoiceBean.deleteLinkedInvoice}"
+								update="datatable_selectedLinkedInvoice">
+								<f:setPropertyActionListener value="#{entity}"
+									target="#{invoiceBean.selectedInvoice}" />
+								<p:confirm header="#{messages['commons.confirmationHeader']}"
+									message="#{messages['commons.confirmDelete']}"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+						</p:column>
+					</hftl:dataList>
+
+					<p:commandButton value="#{messages['action.add']}" type="button"
+						onclick="PF('dlg_invoicePopup').show();" />
+
+					<p:commandButton value="#{messages['action.deleteAll']}"
+						action="#{invoiceBean.deleteAllLinkedInvoice}"
+						update=":tabView:datatable_selectedLinkedInvoice" />
+
+					<!-- aggregated lines here -->
+					<h:form id="aggregatedInvoiceForm">
+						<p:outputPanel id="aggregatedInvoicePanel">
+							<p:dataTable var="entity" editable="true" editMode="cell"
+								value="#{invoiceBean.categoryInvoiceAggregates}">
+
+								<f:facet name="header">#{messages['invoice.aggregates']}</f:facet>
+
+								<p:ajax event="cellEdit" update="growl"
+									listener="#{invoiceBean.onCellEdit}">
+								</p:ajax>
+
+								<p:columnGroup type="header">
+									<p:row>
+										<p:column style="width: 200px;"
+											headerText="#{messages['invoice.category']}" />
+										<p:column headerText="#{messages['invoice.subCategory']}" />
+									</p:row>
+								</p:columnGroup>
+
+								<p:column>
+									<h:outputText value="#{entity.invoiceCategory.code}" />
+									<p:cellEditor>
+										<f:facet name="output">
+											<h:outputText value="#{entity.invoiceCategory.description}" />
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText value="#{entity.invoiceCategory.description}"></p:inputText>
+										</f:facet>
+									</p:cellEditor>
+									<span style="width: 5px;"> </span>
+									<p:commandButton icon="ui-icon-trash"
+										action="#{invoiceBean.deleteLinkedInvoiceCategory}"
+										update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel">
+										<f:param name="cid"
+											value="#{javax.enterprise.context.conversation.id}" />
+										<f:setPropertyActionListener value="#{entity}"
+											target="#{invoiceBean.selectedCategoryInvoiceAgregate}" />
+									</p:commandButton>
+								</p:column>
+
+								<p:column>
+									<p:dataTable editable="true" editMode="cell" id="subCategories"
+										var="subCat"
+										value="#{invoiceBean.getSubCategoryInvoiceAggregates(entity)}">
+
+										<p:ajax event="cellEdit" update="growl" />
+
+										<p:columnGroup type="header">
+											<p:row>
+												<p:column headerText="#{messages['BusinessEntity.code']}" />
+												<p:column
+													headerText="#{messages['BusinessEntity.description']}" />
+												<p:column
+													headerText="#{messages['invoice.amountWithoutTax']}" />
+												<p:column headerText="#{messages['invoice.quantity']}" />
+												<p:column headerText="#{messages['commons.actions']}" />
+											</p:row>
+										</p:columnGroup>
+
+										<p:column>
+											<h:outputText value="#{subCat.invoiceSubCategory.code}" />
+										</p:column>
+										<p:column>
+											<p:cellEditor>
+												<f:facet name="output">
+													<h:outputText value="#{subCat.description}" />
+												</f:facet>
+												<f:facet name="input">
+													<p:inputText id="description" value="#{subCat.description}" />
+												</f:facet>
+											</p:cellEditor>
+										</p:column>
+										<p:column>
+											<h:outputText value="#{subCat.amountWithoutTax}" />
+										</p:column>
+										<p:column>
+											<p:cellEditor>
+												<f:facet name="output">
+													<h:outputText value="#{subCat.quantity}" />
+												</f:facet>
+												<f:facet name="input">
+													<p:spinner value="#{subCat.quantity}"></p:spinner>
+												</f:facet>
+											</p:cellEditor>
+										</p:column>
+										<p:column>
+											<p:commandButton icon="ui-icon-trash"
+												action="#{invoiceBean.deleteLinkedInvoiceSubCategory}"
+												update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel">
+												<f:param name="cid"
+													value="#{javax.enterprise.context.conversation.id}" />
+												<f:setPropertyActionListener value="#{subCat}"
+													target="#{invoiceBean.selectedSubCategoryInvoiceAgregate}" />
+											</p:commandButton>
+										</p:column>
+
+									</p:dataTable>
+								</p:column>
+
+							</p:dataTable>
+						</p:outputPanel>
+					</h:form>
+
+					<p:commandButton
+						value="#{messages['action.invoice.importFromLinkedInvoices']}"
+						action="#{invoiceBean.importFromLinkedInvoices}"
+						update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel" />
+
+				</p:tab>
+			</p:tabView>
+
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>
