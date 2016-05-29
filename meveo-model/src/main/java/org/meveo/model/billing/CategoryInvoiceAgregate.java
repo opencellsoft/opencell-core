@@ -84,5 +84,15 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
 			subCategoryInvoiceAgregates.add(subCategoryInvoiceAgregate);
 		}
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof CategoryInvoiceAgregate) {
+			CategoryInvoiceAgregate temp = (CategoryInvoiceAgregate) obj;
+			return invoiceCategory.getCode().equals(temp.getInvoiceCategory().getCode());
+		}
+		
+		return false;
+	}
 
 }
