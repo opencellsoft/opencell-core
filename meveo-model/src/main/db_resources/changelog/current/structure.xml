@@ -1988,7 +1988,7 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-	</changeSet>    
+	</changeSet>
      
     <changeSet author="anasseh (generated)" id="#1685_20160530-2">
         <createTable tableName="billing_seq_invtyp_sell">
