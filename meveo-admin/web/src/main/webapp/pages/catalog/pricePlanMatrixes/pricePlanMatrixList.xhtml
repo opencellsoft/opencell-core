@@ -26,7 +26,9 @@
 			<f:facet name="header">
 				<p:commandButton id="toggler1" type="button" style="float:right" disabled="#{pricePlanMatrixListBean.lazyDataModel.size==0?'true':'false'}"
 					icon="ui-icon-calculator"/>
-				<p:columnToggler datasource="datatable_pp_results_omitFromSubmit" trigger="toggler1" />
+				<p:columnToggler datasource="datatable_pp_results_omitFromSubmit" trigger="toggler1" >
+					<p:ajax event="toggle" listener="#{pricePlanMatrixColumnSelectorBean.onToggle}" />
+				</p:columnToggler>
 			</f:facet>
 			<p:column exportable="true" toggleable="false">
 				<f:facet name="header">
@@ -74,7 +76,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" >
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[4]}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.offerCode']}" />
 				</f:facet>
@@ -93,7 +95,7 @@
 				</p:cellEditor>
 			</p:column>
 
-			<p:column exportable="true">
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[5]}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['seller.title']}" />
 				</f:facet>
@@ -112,6 +114,7 @@
 				</p:cellEditor>
 			</p:column>
 			<p:column exportable="true" toggleable="#{chargeTemplateBean.entity.provider.entreprise}"
+				visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[6]}"
 				rendered="#{!chargeTemplateBean.entity.provider.entreprise}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.amountWithTax']}" />
@@ -144,7 +147,7 @@
 				</p:cellEditor>
 			</p:column>
 			
-			<p:column exportable="true" visible="false">
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[7]}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.amountWithoutTax']} EL" />
 				</f:facet>
@@ -159,7 +162,7 @@
 				</p:cellEditor>
 			</p:column>
 			
-			<p:column exportable="true" visible="false">
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[8]}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.amountWithTax']} EL" />
 				</f:facet>
@@ -173,7 +176,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" visible="false">
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[9]}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.ratingDate']}" />
 				</f:facet>
@@ -202,7 +205,7 @@
 				</p:cellEditor>
 			</p:column>
 
-			<p:column exportable="true" visible="false">
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[10]}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.criteriaEL']}" />
 				</f:facet>
@@ -216,7 +219,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" visible="false">
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[11]}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['tradingCountry.tradingCountry']}" />
 				</f:facet>
@@ -235,7 +238,7 @@
 				</p:cellEditor>
 			</p:column>
 
-			<p:column exportable="true" visible="false">
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[12]}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['currency.codeCurrency']}" />
 				</f:facet>
@@ -253,7 +256,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" visible="false">
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[13]}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.criteria1Value']}" />
 				</f:facet>
@@ -267,7 +270,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" visible="false">
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[14]}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.criteria2Value']}" />
 				</f:facet>
@@ -281,7 +284,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" visible="false">
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[15]}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.criteria3Value']}" />
 				</f:facet>
@@ -295,7 +298,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" visible="false">
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[16]}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.priority']}" />
 				</f:facet>
@@ -308,7 +311,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" visible="false">
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[17]}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.quantity']}" />
 				</f:facet>
@@ -325,7 +328,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" visible="false">
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[18]}">
 				<f:facet name="header">
 					<h:outputText
 						value="#{messages['pricePlanMatrix.subscriptionDate']}" />
@@ -354,7 +357,7 @@
 				</p:cellEditor>
 			</p:column>
 
-			<p:column exportable="true" visible="false">
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[19]}">
 				<f:facet name="header">
 					<h:outputText
 						value="#{messages['pricePlanMatrix.subscriptionAgeInMonth']}" />
@@ -371,7 +374,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" visible="false">
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[20]}">
 				<f:facet name="header">
 					<h:outputText
 						value="#{messages['pricePlanMatrix.validityCalendar']}" />
