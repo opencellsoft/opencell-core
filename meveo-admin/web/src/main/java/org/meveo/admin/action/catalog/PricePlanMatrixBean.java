@@ -46,6 +46,7 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.ToggleEvent;
 import org.primefaces.model.LazyDataModel;
@@ -58,7 +59,7 @@ import org.primefaces.model.Visibility;
  * Manaty custom JSF components.
  */
 @Named
-@ApplicationScoped
+@ViewScoped
 public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 
 	private static final long serialVersionUID = -7046887530976683885L;
