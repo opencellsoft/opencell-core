@@ -11,12 +11,14 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.admin.module.GenericModuleBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.ServiceCodeDto;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.module.MeveoModuleItem;
+import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
@@ -182,5 +184,17 @@ public class BusinessOfferModelBean extends GenericModuleBean<BusinessOfferModel
 
     public void setBomOfferInstancePrefix(String bomOfferInstancePrefix) {
         this.bomOfferInstancePrefix = bomOfferInstancePrefix;
+    }
+
+    public String getOfferTemplateCodeFromModuleSource() {
+        try {
+            BusinessOfferModelDto dto = (BusinessOfferModelDto) MeveoModuleService.moduleSourceToDto(entity);
+            return dto.getOfferTemplate().getCode();
+
+        } catch (Exception e) {
+            log.error("Failed to load module source {}", entity.getCode(), e);
+            // throw new BusinessException("Failed to load module source", e);
+        }
+        return null;
     }
 }

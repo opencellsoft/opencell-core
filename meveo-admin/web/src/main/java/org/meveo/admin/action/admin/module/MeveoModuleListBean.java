@@ -42,7 +42,7 @@ public class MeveoModuleListBean extends MeveoModuleBean {
 
     @Inject
     private ModuleApi moduleApi;
-    
+
     @Inject
     private MeveoModuleService meveoModuleService;
 
@@ -128,8 +128,8 @@ public class MeveoModuleListBean extends MeveoModuleBean {
 
     private TreeNode getOrCreateNodeByClass(String classname) {
 
-        classname.replaceAll("Dto", "");
-        classname.replaceAll("DTO", "");
+        classname = classname.replaceAll("Dto", "");
+        classname = classname.replaceAll("DTO", "");
         for (TreeNode node : selectedModuleItems.getChildren()) {
             if (classname.equals(node.getType())) {
                 return node;

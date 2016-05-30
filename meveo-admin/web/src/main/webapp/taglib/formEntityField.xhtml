@@ -44,7 +44,15 @@
                         <h:outputText id="#{id}" value="" styleClass="field-value" />
                     </c:if>
                     <c:if test="#{! empty fieldItem}">
-                        <h:outputText id="#{id}" value="#{fieldItem[valueLabelField]}" styleClass="field-value" />
+                        <c:if test="#{!createEditPopup}">
+                            <h:outputText id="#{id}" value="#{fieldItem[valueLabelField]}" styleClass="field-value" />
+                        </c:if>
+
+                        <c:if test="#{createEditPopup}">
+                            <p:commandLink id="#{id}" value="#{fieldItem[valueLabelField]}" immediate="true" oncomplete="PF('#{createEditPopupId}').show()"
+                                actionListener="#{createEditPopupListenerBean[createEditPopupListenerViewMethod]}" update="#{createEditPopupListenerUpdate}" />
+                            <p:tooltip for="#{id}" value="#{messages['commons.viewEdit']}" styleClass="field-value" />
+                        </c:if>
                     </c:if>
                 </c:if>
             </h:panelGroup>

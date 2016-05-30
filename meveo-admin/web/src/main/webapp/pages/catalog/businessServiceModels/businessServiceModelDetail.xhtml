@@ -32,25 +32,57 @@
             <ui:param name="backingBean" value="#{businessServiceModelBean}" />
         </ui:include>
 
-        <hftl:formPanel formId="moduleForm" label="#{messages['businessServiceModel.title']}" backingBean="#{businessServiceModelBean}"
-            showEnableDisableButton="#{businessServiceModelBean.entity.installed}">
+        <hftl:formPanel formId="moduleForm" label="#{messages['businessServiceModel.title']}" backingBean="#{businessServiceModelBean}" showFormButtons="false"
+            edit="#{!businessServiceModelBean.entity.downloaded}">
             <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />
             <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description" maxlength="50" />
             <hftl:formField label="#{messages['meveoModule.license']}" required="true" field="license" id="license" isMessage="true" newLine="true" />
             <hftl:formField id="serviceSelectId" required="true" label="#{messages['businessServiceModel.serviceTemplate']}" field="serviceTemplate" valueLabelField="code"
-                popup="true" popupId="serviceTemplatePopup" />
+                popup="true" popupId="serviceTemplatePopup" rendered="#{!businessServiceModelBean.entity.downloaded}" />
+            <hftl:decorateFormField fieldId="serviceId" label="#{messages['businessServiceModel.serviceTemplate']}" required="true"
+                rendered="#{businessServiceModelBean.entity.downloaded}">
+                <h:outputText id="serviceId" value="#{businessServiceModelBean.serviceTemplateCodeFromModuleSource}" styleClass="field-value" />
+            </hftl:decorateFormField>
             <hftl:formField id="script" label="#{messages['meveoModule.script']}" field="script" valueLabelField="code" componentWidth="30" popup="true" popupId="moduleScriptPopup"
                 createEditPopup="true" createEditPopupId="scriptDialog" createEditPopupListenerBean="#{businessServiceModelBean}" createEditPopupListenerViewMethod="viewEditScript"
                 createEditPopupListenerNewMethod="newScript" createEditPopupListenerUpdate=":scriptForm" />
-            <hftl:formField label="#{messages['meveoModule.installed']}" doNotShowOnNew="true" allowEdit="false" field="installed" isMessage="true"
-                rendered="#{businessServiceModelBean.entity.moduleSource!=null}" />
+            <hftl:decorateFormField fiedlId="status" label="#{messages['commons.status']}" rendered="#{businessServiceModelBean.entity.downloaded}" newLine="true">
+                <h:outputText
+                    value="#{messages[!businessServiceModelBean.entity.installed?'meveoModule.downloaded':businessServiceModelBean.entity.active?'meveoModule.installedAndEnabled':'meveoModule.installedAndDisabled']}"
+                    styleClass="field-value" rendered="#{businessServiceModelBean.entity.downloaded}" />
+            </hftl:decorateFormField>
             <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true"
-                rendered="#{businessServiceModelBean.entity.installed}" />
+                rendered="#{!businessServiceModelBean.entity.downloaded}" newLine="true" />
 
             <ui:include src="../../admin/module/moduleTree.xhtml">
                 <ui:param name="backingBean" value="#{businessServiceModelBean}" />
             </ui:include>
 
+            <ui:param name="buttons" value="true" />
+            <ui:define name="buttons">
+                <hf:formButtons backingBean="#{businessServiceModelBean}" edit="true" showEditButton="#{!businessServiceModelBean.entity.downloaded}"
+                    showEnableDisableButton="#{!businessServiceModelBean.entity.downloaded}" showDeleteButton="#{!businessServiceModelBean.entity.downloaded}" formId="moduleId">
+
+                    <p:commandButton value="#{messages['meveoModule.install']}" action="#{businessServiceModelBean.install}" update="@form"
+                        rendered="#{businessServiceModelBean.entity.downloaded and !businessServiceModelBean.entity.installed}" />
+                    <p:commandButton value="#{messages['meveoModule.uninstall']}" action="#{businessServiceModelBean.uninstall}" update="@form"
+                        rendered="#{businessServiceModelBean.entity.downloaded and businessServiceModelBean.entity.installed}">
+                        <p:confirm header="#{messages['meveoModule.uninstall']}" message="#{messages['meveoModule.confirmUninstall']}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{messages['commons.disable']}"
+                        rendered="#{businessServiceModelBean.entity.downloaded and businessServiceModelBean.entity.installed and businessServiceModelBean.entity.active}"
+                        action="#{businessServiceModelBean.disable}" update="@form">
+                        <p:confirm header="#{messages['commons.disable']}" message="#{messages['meveoModule.confirmDisableAllModule']}" />
+                    </p:commandButton>
+
+                    <p:commandButton value="#{messages['commons.enable']}"
+                        rendered="#{businessServiceModelBean.entity.downloaded and businessServiceModelBean.entity.installed and businessServiceModelBean.entity.disabled}"
+                        action="#{businessServiceModelBean.enable}" update="@form">
+                        <p:confirm header="#{messages['commons.disable']}" message="#{messages['meveoModule.confirmEnableAllModule']}" />
+                    </p:commandButton>
+
+                </hf:formButtons>
+            </ui:define>
         </hftl:formPanel>
 
 
