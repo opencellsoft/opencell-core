@@ -60,7 +60,8 @@
         width="90%" height="550px">
 
         <p:scrollPanel mode="native" style="max-height:550px">
-            <hftl:formPanel formId="scriptForm" label="#{messages['meveoModule.scriptHeader']}" backingBean="#{scriptInstanceBean}" showFormButtons="false">
+            <hftl:formPanel formId="scriptForm" label="#{messages['meveoModule.scriptHeader']}" backingBean="#{scriptInstanceBean}" showFormButtons="false"
+                edit="#{!mainBackingBean.entity.downloaded}">
                 <h:panelGroup rendered="#{scriptInstanceBean.entity.isError()}">
                     <div class="ui-messages ui-widget">
                         <div class="ui-messages-error ui-corner-all">
@@ -100,14 +101,18 @@
                     <p:remoteCommand action="#{mainBackingBean.refreshScript}" name="refreshScript" update=":moduleForm:script_entity" />
 
                     <p:commandButton value="#{messages['action.save']}" action="#{scriptInstanceBean.saveOrUpdateForPopup}"
-                        oncomplete="refreshScript(); if (args &amp;&amp; !args.validationFailed) PF('scriptDialog').hide()" update="@form :moduleForm:messages">
+                        oncomplete="refreshScript(); if (args &amp;&amp; !args.validationFailed) PF('scriptDialog').hide()" update="@form :moduleForm:messages"
+                        rendered="#{!mainBackingBean.entity.downloaded}">
                     </p:commandButton>
-                    <p:commandButton value="#{messages['scriptInstance.testCompilation']}" action="#{scriptInstanceBean.testCompilation}" update="@form" />
-                    <p:commandButton value="#{messages['commons.disable']}" rendered="#{not empty scriptInstanceBean.entity.id and scriptInstanceBean.entity.active}"
+                    <p:commandButton value="#{messages['scriptInstance.testCompilation']}" action="#{scriptInstanceBean.testCompilation}" update="@form"
+                        rendered="#{!mainBackingBean.entity.downloaded}" />
+                    <p:commandButton value="#{messages['commons.disable']}"
+                        rendered="#{not empty scriptInstanceBean.entity.id and scriptInstanceBean.entity.active and !mainBackingBean.entity.downloaded}"
                         action="#{scriptInstanceBean.disable}" update="@form">
                         <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
                     </p:commandButton>
-                    <p:commandButton value="#{messages['commons.enable']}" rendered="#{not empty scriptInstanceBean.entity.id and scriptInstanceBean.entity.disabled}"
+                    <p:commandButton value="#{messages['commons.enable']}"
+                        rendered="#{not empty scriptInstanceBean.entity.id and scriptInstanceBean.entity.disabled and !mainBackingBean.entity.downloaded}"
                         action="#{scriptInstanceBean.enable}" update="@form">
                         <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
                     </p:commandButton>

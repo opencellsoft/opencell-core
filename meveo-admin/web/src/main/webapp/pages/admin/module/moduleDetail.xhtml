@@ -28,7 +28,7 @@
         </ui:include>
 
 
-        <hftl:formPanel formId="moduleForm" label="#{messages['meveoModule.title']}" showFormButtons="false" backingBean="#{meveoModuleBean}">
+        <hftl:formPanel formId="moduleForm" label="#{messages['meveoModule.title']}" showFormButtons="false" backingBean="#{meveoModuleBean}" edit="#{!meveoModuleBean.entity.downloaded}">
             <hftl:formField label="#{messages['businessEntity.code']}" field="code" maxlength="35" required="true" validateUnique="true" />
             <hftl:formField label="#{messages['businessEntity.description']}" field="description" required="true" id="description" maxlength="100" />
             <hftl:formField label="#{messages['meveoModule.license']}" required="true" field="license" id="license" isMessage="true" newLine="true" />
@@ -41,7 +41,7 @@
                         <f:attribute name="width" value="30"></f:attribute>
                     </p:graphicImage>
                     <p:commandButton value="#{messages['commons.upload']}" partialSubmit="true" process="@this" oncomplete="PF('uploadPictureDialog').show()"
-                        rendered="#{!meveoModuleBean.entity.transient}"></p:commandButton>
+                        rendered="#{!meveoModuleBean.entity.downloaded and !meveoModuleBean.entity.transient}"></p:commandButton>
                 </h:panelGrid>
             </hftl:decorateFormField>
             <hftl:formField id="script" label="#{messages['meveoModule.script']}" field="script" valueLabelField="code" componentWidth="30" popup="true" popupId="moduleScriptPopup"
@@ -52,7 +52,6 @@
                     value="#{messages[!meveoModuleBean.entity.installed?'meveoModule.downloaded':meveoModuleBean.entity.active?'meveoModule.installedAndEnabled':'meveoModule.installedAndDisabled']}"
                     styleClass="field-value" rendered="#{meveoModuleBean.entity.downloaded}" />
             </hftl:decorateFormField>
-
             <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true"
                 rendered="#{!meveoModuleBean.entity.downloaded}" newLine="true" />
             <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!meveoModuleBean.entity.transient}">
@@ -89,7 +88,7 @@
                 </hf:formButtons>
 
                 <p:commandButton id="publishModuleButton" update=":#{p:component('publishModuleDialog')}" value="#{messages['meveoModule.publishModule']}"
-                    rendered="#{not meveoModuleBean.entity.transient}" oncomplete="PF('publishModuleDialog').show()">
+                    rendered="#{not meveoModuleBean.entity.transient}" oncomplete="PF('publishModuleDialog').show()" style="margin-top:10px">
                     <f:setPropertyActionListener value="#{null}" target="#{meveoModuleBean.meveoInstance}" />
                 </p:commandButton>
 

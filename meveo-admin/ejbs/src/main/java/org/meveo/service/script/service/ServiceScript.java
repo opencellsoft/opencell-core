@@ -4,12 +4,12 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
-import org.meveo.service.script.Script;
+import org.meveo.service.script.module.ModuleScript;
 
 /**
  * @author Edward P. Legaspi
  **/
-public class ServiceScript extends Script implements ServiceScriptInterface {
+public class ServiceScript extends ModuleScript implements ServiceScriptInterface {
 
     public static String CONTEXT_ACTIVATION_DATE = "CONTEXT_ACTIVATION_DATE";
     public static String CONTEXT_SUSPENSION_DATE = "CONTEXT_SUSPENSION_DATE";

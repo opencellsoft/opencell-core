@@ -97,6 +97,8 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.EntityCustomActionService;
@@ -170,6 +172,12 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
     @Inject
     private CounterTemplateService counterTemplateService;
 
+    @Inject
+    private ServiceTemplateService serviceTemplateService;
+
+    @Inject
+    private OfferTemplateService offerTemplateService;
+
     /**
      * import module from remote meveo instance
      * 
@@ -234,6 +242,8 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         final String url = "api/rest/module/createOrUpdate";
 
         try {
+
+            module = refreshOrRetrieve(module);
             ModuleDto moduleDto = moduleToDto(module, currentUser.getProvider());
             log.debug("export module dto {}", moduleDto);
             Response response = publishDto2MeveoInstance(url, meveoInstance, moduleDto);
@@ -258,7 +268,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
      */
     public ModuleDto moduleToDto(MeveoModule module, Provider provider) throws BusinessException {
 
-        if (module.getModuleSource() != null && !module.isInstalled()) {
+        if (module.isDownloaded() && !module.isInstalled()) {
             try {
                 return MeveoModuleService.moduleSourceToDto(module);
             } catch (Exception e) {
@@ -538,6 +548,12 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
             moduleScriptService.preUninstallModule(module.getScript().getCode(), module, currentUser);
         }
 
+        if (module instanceof BusinessServiceModel) {
+            serviceTemplateService.disable(((BusinessServiceModel) module).getServiceTemplate(), currentUser);
+        } else if (module instanceof BusinessOfferModel) {
+            offerTemplateService.disable(((BusinessOfferModel) module).getOfferTemplate(), currentUser);
+        }
+
         for (MeveoModuleItem item : module.getModuleItems()) {
             loadModuleItem(item, currentUser.getProvider());
             Object itemEntity = item.getItemEntity();
@@ -675,6 +691,12 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
             moduleScriptService.preDisableModule(module.getScript().getCode(), module, currentUser);
         }
 
+        if (module instanceof BusinessServiceModel) {
+            serviceTemplateService.disable(((BusinessServiceModel) module).getServiceTemplate(), currentUser);
+        } else if (module instanceof BusinessOfferModel) {
+            offerTemplateService.disable(((BusinessOfferModel) module).getOfferTemplate(), currentUser);
+        }
+
         for (MeveoModuleItem item : module.getModuleItems()) {
             loadModuleItem(item, currentUser.getProvider());
             Object itemEntity = item.getItemEntity();
@@ -748,6 +770,12 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 
         if (module.getScript() != null) {
             moduleScriptService.preEnableModule(module.getScript().getCode(), module, currentUser);
+        }
+
+        if (module instanceof BusinessServiceModel) {
+            serviceTemplateService.enable(((BusinessServiceModel) module).getServiceTemplate(), currentUser);
+        } else if (module instanceof BusinessOfferModel) {
+            offerTemplateService.enable(((BusinessOfferModel) module).getOfferTemplate(), currentUser);
         }
 
         for (MeveoModuleItem item : module.getModuleItems()) {
@@ -829,6 +857,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 
         super.remove(module);
     }
+
     @SuppressWarnings("unchecked")
    	public String getRelatedModulesAsString(String itemCode,String itemClazz,String appliesTo){
        	QueryBuilder qb=new QueryBuilder(MeveoModule.class,"m",Arrays.asList("moduleItems as i"),null);
