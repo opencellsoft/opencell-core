@@ -22,6 +22,7 @@ import org.meveo.admin.exception.InactiveUserException;
 import org.meveo.admin.exception.LoginException;
 import org.meveo.admin.exception.PasswordExpiredException;
 import org.meveo.admin.exception.UnknownUserException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InboundRequestReceived;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -57,9 +58,6 @@ public class InboundServlet extends HttpServlet {
 	@InboundRequestReceived
 	protected Event<InboundRequest> eventProducer;
 
-	@SuppressWarnings("unused")
-	private User currentUser;
-
 	public static int readInputStreamWithTimeout(InputStream is, byte[] b, int timeoutMillis) throws IOException {
 		int bufferOffset = 0;
 		long maxTimeMillis = System.currentTimeMillis() + timeoutMillis;
@@ -75,74 +73,77 @@ public class InboundServlet extends HttpServlet {
 	}
 
 	@SuppressWarnings("unused")
-	private void authenticateRequest(HttpServletRequest req, HttpServletResponse res) {
-		final String authorization = req.getHeader("Authorization");
+	private User authenticateRequest(HttpServletRequest req) {
+        final String authorization = req.getHeader("Authorization");
+        User user = null;
+        // If no authorization information present; block access
+        if (authorization == null || authorization.isEmpty()) {
+            log.error("Missing Authorization header");
+        } else {
+            final String encodedUserPassword = authorization.replaceFirst(AUTHENTICATION_SCHEME + " ", "");
 
-		// If no authorization information present; block access
-		if (authorization == null || authorization.isEmpty()) {
-			res.setStatus(401);
-			log.error("Missing Authorization header");
-			return;
-		}
+            // Decode username and password
+            String usernameAndPassword = null;
+            try {
+                usernameAndPassword = new String(Base64.decode(encodedUserPassword));
+            } catch (IOException e) {
+                log.error("Failed to decode authorization string.");
+            }
+            if (usernameAndPassword != null) {
+                // Split username and password tokens
+                final StringTokenizer tokenizer = new StringTokenizer(usernameAndPassword, ":");
+                String username = tokenizer.nextToken();
+                String password = tokenizer.nextToken();
 
-		final String encodedUserPassword = authorization.replaceFirst(AUTHENTICATION_SCHEME + " ", "");
+                log.debug("InboundServlet call basic authentication. Username={}", username);
 
-		// Decode username and password
-		String usernameAndPassword = null;
-		try {
-			usernameAndPassword = new String(Base64.decode(encodedUserPassword));
-		} catch (IOException e) {
-			res.setStatus(401);
-			return;
-		}
-
-		// Split username and password tokens
-		final StringTokenizer tokenizer = new StringTokenizer(usernameAndPassword, ":");
-		String username = tokenizer.nextToken();
-		String password = tokenizer.nextToken();
-
-		log.debug("InboundServlet call basic authentication. Username={}", username);
-
-		try {
-			currentUser = userService.loginChecks(username, password, false);
-			log.debug("REST login successfull with username={}", username);
-
-		} catch (LoginException e) {
-			log.error("Login failed for the user {} for reason {} {}", new Object[] { username, e.getClass().getName(), e.getMessage() });
-			if (e instanceof InactiveUserException) {
-				log.error("login failed with username=" + username + " and password=" + password + " : cause Business Account or user is not active");
-			} else if (e instanceof UnknownUserException) {
-				log.error("login failed with username=" + username + " and password=" + password + " : cause unknown username/password");
-			} else if (e instanceof PasswordExpiredException) {
-				log.error("The password of user " + username + " has expired.");
-			}
-
-			currentUser = null;
-
-			res.setStatus(401);
-			return;
-		}
+                try {
+                    user = userService.loginChecks(username, password, false);
+                    log.debug("REST login successfull with username={}", username);
+                } catch (LoginException e) {
+                    log.error("Login failed for the user {} for reason {} {}", new Object[]{username, e.getClass().getName(), e.getMessage()});
+                    if (e instanceof InactiveUserException) {
+                        log.error("login failed with username=" + username + " and password=" + password + " : cause Business Account or user is not active");
+                    } else if (e instanceof UnknownUserException) {
+                        log.error("login failed with username=" + username + " and password=" + password + " : cause unknown username/password");
+                    } else if (e instanceof PasswordExpiredException) {
+                        log.error("The password of user " + username + " has expired.");
+                    }
+                }
+            }
+        }
+        return user;
 	}
 
 	private void doService(HttpServletRequest req, HttpServletResponse res) {
 		log.debug("received request for method {} ", req.getMethod());
-		Provider provider = null;
-		String path = req.getPathInfo();
-		if (path.startsWith("/")) {
-			path = path.substring(1);
-		}
-		String providerCode = null;
-		try {
-			providerCode = path.substring(0, path.indexOf('/'));
-			provider = providerService.findByCode(providerCode);
-		} catch (Exception e) {
-		}
+        User user = authenticateRequest(req);
+        if(user == null){
+            res.setStatus(403);
+            return;
+        }
 
-		if (provider == null) {
-			log.debug("Request has invalid provider code {} ", providerCode);
-			res.setStatus(404);
-			return;
-		}
+        String path = req.getPathInfo();
+        Provider provider = null;
+        String providerCode = null;
+
+        if (path.startsWith("/")) {
+            providerCode = path.substring(1);
+        }
+
+        if(providerCode.endsWith("/")){
+            providerCode = providerCode.substring(0, providerCode.indexOf('/'));
+        }
+
+        if(!StringUtils.isBlank(providerCode)){
+            provider = providerService.findByCode(providerCode);
+            if (provider == null || !provider.getCode().equals(user.getProvider().getCode())) {
+                log.debug("Request has invalid provider code {} ", providerCode);
+                res.setStatus(404);
+                return;
+            }
+        }
+
 		InboundRequest inReq = new InboundRequest();
 		inReq.setProvider(provider);
 		inReq.setCode(req.getRemoteAddr() + ":" + req.getRemotePort() + "_" + req.getMethod() + "_" + System.nanoTime());
@@ -235,6 +236,7 @@ public class InboundServlet extends HttpServlet {
 
 		try {
 			inboundRequestService.create(inReq, null);
+            res.setStatus(200);
 		} catch (BusinessException e1) {
 			log.error("Failed to create InboundRequest ", e1);
 		}
