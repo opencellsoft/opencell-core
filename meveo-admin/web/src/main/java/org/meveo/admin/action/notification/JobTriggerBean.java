@@ -27,7 +27,6 @@ import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
-import org.meveo.commons.utils.MeveoModuleUtil;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.ObservableEntity;
@@ -36,7 +35,6 @@ import org.meveo.model.notification.JobTrigger;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.notification.JobTriggerService;
@@ -59,9 +57,6 @@ public class JobTriggerBean extends UpdateMapTypeFieldBean<JobTrigger> {
 	
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
-	@Inject
-	private MeveoModuleService meveoModuleService;
-	private String selectedModules;
 
 	ParamBean paramBean = ParamBean.getInstance();
 
@@ -96,7 +91,6 @@ public class JobTriggerBean extends UpdateMapTypeFieldBean<JobTrigger> {
     	JobTrigger jobTrigger = super.initEntity();
         extractMapTypeFieldFromEntity(jobTrigger.getJobParams(), "jobParams");
         extractMapTypeFieldFromEntity(jobTrigger.getParams(), "params");
-        initSelectedModules();
         return jobTrigger;
     }
 
@@ -338,15 +332,4 @@ public class JobTriggerBean extends UpdateMapTypeFieldBean<JobTrigger> {
             }
         }
     }
-    private void initSelectedModules(){
-		if(entity!=null&&!entity.isTransient()){
-			selectedModules=MeveoModuleUtil.generateModules(meveoModuleService, entity.getCode(), JobTrigger.class.getName(), null);
-		}
-	}
-	public String getSelectedModules() {
-		return selectedModules;
-	}
-	public void setSelectedModules(String selectedModules) {
-		this.selectedModules = selectedModules;
-	}
 }

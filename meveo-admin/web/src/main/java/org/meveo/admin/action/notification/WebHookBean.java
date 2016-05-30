@@ -23,7 +23,6 @@ import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
-import org.meveo.commons.utils.MeveoModuleUtil;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.notification.NotificationEventTypeEnum;
@@ -31,7 +30,6 @@ import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.WebHookService;
@@ -60,10 +58,6 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
     
     @Inject
     ScriptInstanceService scriptInstanceService;
-    
-    @Inject
-    private MeveoModuleService meveoModuleService;
-    private String selectedModules;
     
     ParamBean paramBean = ParamBean.getInstance();
     
@@ -108,7 +102,6 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
         extractMapTypeFieldFromEntity(webhook.getHeaders(), "headers");
         extractMapTypeFieldFromEntity(webhook.getParams(), "params");
         extractMapTypeFieldFromEntity(webhook.getWebhookParams(), "webhookParams");
-        initSelectedModules();
         return webhook;
     }
 
@@ -367,18 +360,4 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
 	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
 		this.strategyImportType = strategyImportType;
 	}
-	private void initSelectedModules(){
-		if(entity!=null&&!entity.isTransient()){
-			selectedModules=MeveoModuleUtil.generateModules(meveoModuleService, entity.getCode(), WebHook.class.getName(), null);
-		}
-	}
-
-	public String getSelectedModules() {
-		return selectedModules;
-	}
-
-	public void setSelectedModules(String selectedModules) {
-		this.selectedModules = selectedModules;
-	}
-
 }

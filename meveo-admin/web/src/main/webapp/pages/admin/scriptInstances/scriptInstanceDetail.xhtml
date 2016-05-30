@@ -60,8 +60,8 @@
                 valueLabelField="name" componentWidth="50" />
             <hftl:formField label="#{messages['scriptInstance.sourcingRoles']}" field="sourcingRoles" listType="pickUpList" dualListModel="#{scriptInstanceBean.sourcRolesDM}"
                 valueLabelField="name" componentWidth="50" />
-            <hftl:decorateFormField label="#{messages['meveoModule.meveoModules']}" rendered="#{!scriptInstanceBean.entity.transient}">
-                <h:outputText value="#{scriptInstanceBean.selectedModules}" />
+            <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!scriptInstanceBean.entity.transient}">
+                <h:outputText value="#{scriptInstanceBean.getPartOfModules()}" />
             </hftl:decorateFormField>
             
             <hf:formButtons backingBean="#{scriptInstanceBean}" edit="#{scriptInstanceBean.edit}" ajaxSubmit="true"

@@ -37,12 +37,10 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
-import org.meveo.commons.utils.MeveoModuleUtil;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveocrm.model.dwh.MeasurableQuantity;
 import org.meveocrm.model.dwh.MeasurementPeriodEnum;
@@ -60,10 +58,6 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 	
 	@Inject
 	MeasurableQuantityService measurableQuantityService;
-	@Inject
-	private MeveoModuleService meveoModuleService;
-	
-	private String selectedModules;
 	
 	CsvReader csvReader = null;
 	CsvBuilder csv = null;
@@ -86,13 +80,6 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 
 	public MeasurableQuantityBean() {
 		super(MeasurableQuantity.class);
-	}
-
-	@Override
-	public MeasurableQuantity initEntity() {
-		super.initEntity();
-		initSelectedModules();
-		return entity;
 	}
 
 	@Override
@@ -251,19 +238,4 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
 		this.strategyImportType = strategyImportType;
 	}
-
-	private void initSelectedModules(){
-		if(entity!=null&&!entity.isTransient()){
-			selectedModules=MeveoModuleUtil.generateModules(meveoModuleService, entity.getCode(), MeasurableQuantity.class.getName(), null);
-		}
-	}
-
-	public String getSelectedModules() {
-		return selectedModules;
-	}
-
-	public void setSelectedModules(String selectedModules) {
-		this.selectedModules = selectedModules;
-	}
-	
 }

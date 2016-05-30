@@ -24,6 +24,7 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.scripts.ScriptInstance;
 
@@ -36,6 +37,7 @@ import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
 @ObservableEntity
+@ModuleItem
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "MEVEO_MODULE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_MODULE_SEQ")

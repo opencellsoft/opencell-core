@@ -41,8 +41,8 @@
 							showOnlyOnNew="true"
 							rendered="#{filterBean.entity != null and filterBean.entity.auditable.creator.id == filterBean.getCurrentUser().id}"
 							field="shared" label="#{messages['filter.shared']}"/>
-						<hftl:decorateFormField label="#{messages['meveoModule.meveoModules']}" rendered="#{!filterBean.entity.transient}">
-                			<h:outputText value="#{filterBean.selectedModules}" />
+						<hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!filterBean.entity.transient}">
+                			<h:outputText value="#{filterBean.getPartOfModules()}" />
                			</hftl:decorateFormField>
 
 						<hftl:decorateFormField fieldId="inputXml"

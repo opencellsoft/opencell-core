@@ -20,14 +20,12 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
-import org.meveo.commons.utils.MeveoModuleUtil;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.EmailNotificationService;
@@ -59,10 +57,6 @@ public class EmailNotificationBean extends UpdateMapTypeFieldBean<EmailNotificat
     @Inject
     ScriptInstanceService scriptInstanceService;
     
-    @Inject
-    private MeveoModuleService meveoModuleService;
-    private String selectedModules;
-    
     CsvBuilder csv = null;
    	private String providerDir=paramBean.getProperty("providers.rootDir","/tmp/meveo_integr");
    	private String existingEntitiesCsvFile=null;
@@ -89,13 +83,6 @@ public class EmailNotificationBean extends UpdateMapTypeFieldBean<EmailNotificat
 
 	public EmailNotificationBean() {
 		super(EmailNotification.class);
-	}
-
-	@Override
-	public EmailNotification initEntity() {
-		super.initEntity();
-		initSelectedModules();
-		return entity;
 	}
 
 	@Override
@@ -262,16 +249,5 @@ public class EmailNotificationBean extends UpdateMapTypeFieldBean<EmailNotificat
 
 	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
 		this.strategyImportType = strategyImportType;
-	}
-	private void initSelectedModules(){
-		if(entity!=null&&!entity.isTransient()){
-			selectedModules=MeveoModuleUtil.generateModules(meveoModuleService, entity.getCode(), EmailNotification.class.getName(), null);
-		}
-	}
-	public String getSelectedModules() {
-		return selectedModules;
-	}
-	public void setSelectedModules(String selectedModules) {
-		this.selectedModules = selectedModules;
 	}
 }

@@ -25,7 +25,6 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.api.dto.module.ModuleDto;
 import org.meveo.api.module.ModuleApi;
-import org.meveo.commons.utils.MeveoModuleUtil;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.PersistenceService;
@@ -50,7 +49,6 @@ public class MeveoModuleBean extends GenericModuleBean<MeveoModule> {
      */
     @Inject
     private MeveoModuleService meveoModuleService;
-    private String selectedModules;
 
     @Inject
     private ModuleApi moduleApi;
@@ -62,13 +60,6 @@ public class MeveoModuleBean extends GenericModuleBean<MeveoModule> {
         super(MeveoModule.class);
 
     }
-
-    @Override
-	public MeveoModule initEntity() {
-		super.initEntity();
-		initSelectedModules();
-		return entity;
-	}
 
 	/**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
@@ -125,18 +116,5 @@ public class MeveoModuleBean extends GenericModuleBean<MeveoModule> {
             messages.error(new BundleKey("messages", "meveoModule.uninstallFailed"), entity.getCode(), (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
         }
     }
-    private void initSelectedModules(){
-    	if(entity!=null&&!entity.isTransient()){
-			selectedModules=MeveoModuleUtil.generateModules(meveoModuleService, entity.getCode(), MeveoModule.class.getName(), null);
-		}
-    }
 
-	public String getSelectedModules() {
-		return selectedModules;
-	}
-
-	public void setSelectedModules(String selectedModules) {
-		this.selectedModules = selectedModules;
-	}
-    
 }

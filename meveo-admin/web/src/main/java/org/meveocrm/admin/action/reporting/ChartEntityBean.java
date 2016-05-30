@@ -14,7 +14,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.commons.utils.MeveoModuleUtil;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveocrm.model.dwh.BarChart;
@@ -50,29 +49,12 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 
 	private static final long serialVersionUID = 5241132812597358412L;
 	
-	@Inject
-	protected MeveoModuleService meveoModuleService;
-	private String selectedModules;
-
 	public ChartEntityBean() {
 		super();
 	}
 
 	public ChartEntityBean(Class<T> clazz) {
 		super(clazz);
-	}
-
-	@Override
-	public T initEntity() {
-		super.initEntity();
-		initSelectedModules();
-		return entity;
-	}
-
-	private void initSelectedModules() {
-		if(entity!=null&&!entity.isTransient()){
-			selectedModules=MeveoModuleUtil.generateModules(meveoModuleService, entity.getCode(), entity.getClass().getName(), null);
-		}
 	}
 
 	@Override
@@ -380,12 +362,4 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		chartModel.setLegendRows(pieChart.getLegendRows());
 	}
 
-	public String getSelectedModules() {
-		return selectedModules;
-	}
-
-	public void setSelectedModules(String selectedModules) {
-		this.selectedModules = selectedModules;
-	}
-	
 }

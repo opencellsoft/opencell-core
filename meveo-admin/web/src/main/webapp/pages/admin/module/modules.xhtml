@@ -55,7 +55,7 @@
                             <p:ajax event="valueChange" update="@form" listener="#{meveoModuleListBean.loadModulesFromInstance}" />
                         </p:selectOneMenu>
                     </hftl:decorateFormField>
-                    <hftl:decorateFormField label="#{messages['meveoModule.meveoModules']}" componentWidth="100" newLine="true">
+                    <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" componentWidth="100" newLine="true">
                         <p:dataTable id="dtos" value="#{meveoModuleListBean.moduleDtos}" paginator="true" rows="10" widgetVar="dtoWgt" var="module" lazy="true"
                             selection="#{meveoModuleListBean.selectedModuleDto}"
                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"

@@ -15,14 +15,10 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.MeveoModuleUtil;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.module.MeveoModule;
-import org.meveo.model.notification.EmailNotification;
-import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.job.Job;
@@ -44,11 +40,6 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     @Inject
     private CustomFieldDataEntryBean customFieldDataEntryBean;
     
-    @Inject
-    private MeveoModuleService meveoModuleService;
-    
-    private String selectedModules;
-
     public JobInstanceBean() {
         super(JobInstance.class);
     }
@@ -61,7 +52,6 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         } catch (BusinessException e){
             log.error("Failed to create missing custom field templates", e);
         }
-        initSelectedModules();
         return entity;
     }
 
@@ -163,18 +153,5 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
         createMissingCustomFieldTemplates();
         customFieldDataEntryBean.refreshFieldsAndActions(entity);
-    }
-
-	public String getSelectedModules() {
-		return selectedModules;
-	}
-
-	public void setSelectedModules(String selectedModules) {
-		this.selectedModules = selectedModules;
-	}
-    private void initSelectedModules(){
-    	if(entity!=null&&!entity.isTransient()){
-    		selectedModules=MeveoModuleUtil.generateModules(meveoModuleService, entity.getCode(), JobInstance.class.getName(), null);
-		}
     }
 }

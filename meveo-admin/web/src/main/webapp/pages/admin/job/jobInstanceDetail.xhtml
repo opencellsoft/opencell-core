@@ -63,8 +63,8 @@
                                 <f:selectItems value="#{jobInstanceBean.getTimerEntityList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
                             </p:selectOneMenu>
                         </hftl:decorateFormField>
-                        <hftl:decorateFormField label="#{messages['meveoModule.meveoModules']}" rendered="#{!jobInstanceBean.entity.transient}">
-                			<h:outputText value="#{jobInstanceBean.selectedModules}" />
+                        <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!jobInstanceBean.entity.transient}">
+                			<h:outputText value="#{jobInstanceBean.getPartOfModules()}" />
                			</hftl:decorateFormField>
                         <hftl:formField label="#{messages['enableEntity.disabled']}" allowEdit="false" doNotShowOnNew="true" field="disabled" isMessage="true" newLine="true" />
                     </p:tab>

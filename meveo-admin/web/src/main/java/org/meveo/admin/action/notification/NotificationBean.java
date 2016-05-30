@@ -27,7 +27,6 @@ import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
-import org.meveo.commons.utils.MeveoModuleUtil;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.ObservableEntity;
@@ -35,7 +34,6 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.ScriptNotification;
 import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.notification.NotificationService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -55,9 +53,6 @@ public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification>
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
 	
-	@Inject
-	private MeveoModuleService meveoModuleService;
-
 	ParamBean paramBean = ParamBean.getInstance();
 
 	CsvReader csvReader = null;
@@ -72,8 +67,6 @@ public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification>
 
 	private StrategyImportTypeEnum strategyImportType;
 	
-	private String selectedModules;
-
 	CsvBuilder csv = null;
 	private String providerDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo_integr");
 	private String existingEntitiesCsvFile = null;
@@ -91,8 +84,6 @@ public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification>
     public ScriptNotification initEntity() {
     	ScriptNotification scriptNotification = super.initEntity();
         extractMapTypeFieldFromEntity(scriptNotification.getParams(), "params");
-
-        initSelectedModules();
         return scriptNotification;
     }
 
@@ -334,18 +325,5 @@ public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification>
     @Override
 	protected String getListViewName() {
 		return "notifications";
-	}
-
-	public String getSelectedModules() {
-		return selectedModules;
-	}
-
-	public void setSelectedModules(String selectedModules) {
-		this.selectedModules = selectedModules;
-	}
-	private void initSelectedModules(){
-		if(entity!=null&&!entity.isTransient()){
-			selectedModules=MeveoModuleUtil.generateModules(meveoModuleService, entity.getCode(), ScriptNotification.class.getName(), null);
-		}
 	}
 }

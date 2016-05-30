@@ -53,8 +53,8 @@
 				
             <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
                 field="disabled" isMessage="true" />
-            <hftl:decorateFormField label="#{messages['meveoModule.meveoModules']}" rendered="#{!notificationInstanceBean.entity.transient}">
-               <h:outputText value="#{notificationInstanceBean.selectedModules}" />
+            <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!notificationBean.entity.transient}">
+               <h:outputText value="#{notificationBean.getPartOfModules()}" />
             </hftl:decorateFormField>    
 		</hftl:formPanel>
 

@@ -46,4 +46,5 @@ public class EnableEntity extends BaseEntity implements IEnable {
 	public void setActive(boolean active) {
 		setDisabled(!active);
 	}
+
 }

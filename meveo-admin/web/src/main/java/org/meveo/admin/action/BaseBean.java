@@ -53,6 +53,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.IAuditable;
 import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
+import org.meveo.model.ModuleItem;
 import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
@@ -61,6 +62,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.filter.Filter;
+import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -145,6 +147,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     // private boolean editSaved;
 
     protected int dataTableFirstAttribute;
+
+    @Inject
+    private MeveoModuleService meveoModuleService;
+    private String partOfModules;
 
     /**
      * Request parameter. A custom back view page instead of a regular list page
@@ -256,6 +262,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             }
 
             loadMultiLanguageFields();
+            loadPartOfModules();
 
             // getPersistenceService().detach(entity);
         } else {
@@ -312,6 +319,18 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         for (CatMessages msg : catMessagesService.getCatMessagesList(clazz.getSimpleName() + "_" + entity.getId())) {
             languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
         }
+    }
+    private boolean isPartOfModules(){
+    	return clazz.isAnnotationPresent(ModuleItem.class);
+    }
+    private void loadPartOfModules(){
+    	log.debug("start to load partOfModules...");
+    	if((entity instanceof BusinessEntity) && isPartOfModules()){
+    		log.debug("can load partOfModules");
+    		BusinessEntity businessEntity=(BusinessEntity)entity;
+			partOfModules=meveoModuleService.getRelatedModulesAsString( businessEntity.getCode(), clazz.getName(), null);
+			log.debug("load modules {}",partOfModules);
+		}
     }
 
     /**
@@ -1204,4 +1223,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         }
         return writeAccessMap.get(requestURI);
     }
+
+	public String getPartOfModules() {
+		log.debug("getPartOfModules {}",partOfModules);
+		return partOfModules;
+	}
+
+	public void setPartOfModules(String partOfModules) {
+		this.partOfModules = partOfModules;
+	}
+    
 }

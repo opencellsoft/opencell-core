@@ -15,10 +15,12 @@ import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 
 @Entity
+@ModuleItem
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "DWH_CHART", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @Inheritance(strategy = InheritanceType.JOINED)

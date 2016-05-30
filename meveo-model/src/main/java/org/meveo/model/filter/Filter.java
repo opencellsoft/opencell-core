@@ -15,11 +15,13 @@ import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Entity
+@ModuleItem
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "MEVEO_FILTER")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_FILTER_SEQ")
