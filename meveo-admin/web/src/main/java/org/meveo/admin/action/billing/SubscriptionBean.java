@@ -19,7 +19,6 @@
 package org.meveo.admin.action.billing;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -67,6 +67,7 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.component.datatable.DataTable;
 import org.slf4j.Logger;
 
 /**
@@ -816,14 +817,25 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         if (value == null) {
             return false;
         }
-        Date filterDate = (Date) value;
+        Date filterDate;
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String filterFormat=formatter.format((Date)value);
         Date dateFrom;
         Date dateTo;
         String fromPart = filterText.substring(0, filterText.indexOf("-"));
 		String toPart = filterText.substring(filterText.indexOf("-") + 1);
+		filterDate =    DateUtils.parseDateWithPattern(filterFormat, "dd/MM/yyyy");
 		dateFrom =  fromPart.isEmpty() ? null : DateUtils.parseDateWithPattern(fromPart, "dd/MM/yyyy");
 		dateTo   =  toPart.isEmpty() ? null : DateUtils.parseDateWithPattern(toPart, "dd/MM/yyyy");
-		return (dateFrom == null || filterDate.after(dateFrom)) && (dateTo == null || filterDate.before(dateTo));
+		return (dateFrom == null || filterDate.after(dateFrom) || filterDate.equals(dateFrom)) && (dateTo == null || filterDate.before(dateTo) || filterDate.equals(dateTo));
+	    
+    }
+    public void resetFilters() {
+        DataTable dataTable = (DataTable) FacesContext.getCurrentInstance().getViewRoot()
+             .findComponent("recurringWalletForm:recurringWalletOperationTable");
+        if (dataTable != null) {
+            dataTable.reset();
+        }
     }
  
 }
