@@ -1,6 +1,7 @@
 package org.meveo.api.account;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -22,6 +23,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
@@ -431,5 +433,21 @@ public class BillingAccountApi extends AccountApi {
 		}
 		
 		return billingAccount;
+	}
+	
+	public List<CounterInstance> filterCountersByPeriod(String billingAccountCode, Date date, Provider provider) 
+			throws MeveoApiException, BusinessException {
+		
+		BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, provider);
+		
+		if (billingAccount == null) {
+			throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
+		}
+		
+		if(StringUtils.isBlank(date)) {
+			throw new MeveoApiException("date is null");
+		}
+		
+		return new ArrayList<>(billingAccountService.filterCountersByPeriod(billingAccount.getCounters(), date).values());
 	}
 }

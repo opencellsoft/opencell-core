@@ -1,5 +1,7 @@
 package org.meveo.api.account;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -19,6 +21,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Provider;
@@ -243,6 +246,22 @@ public class UserAccountApi extends AccountApi {
 		userAccountService.userAccountTermination(userAccount, postData.getTerminationDate(), terminationReason, currentUser);
 		
 		return userAccount;
+	}
+	
+	public List<CounterInstance> filterCountersByPeriod(String userAccountCode, Date date, Provider provider) 
+			throws MeveoApiException, BusinessException {
+		
+		UserAccount userAccount = userAccountService.findByCode(userAccountCode, provider);
+		
+		if (userAccount == null) {
+			throw new EntityDoesNotExistsException(UserAccount.class, userAccountCode);
+		}
+		
+		if(StringUtils.isBlank(date)) {
+			throw new MeveoApiException("date is null");
+		}
+		
+		return new ArrayList<>(userAccountService.filterCountersByPeriod(userAccount.getCounters(), date).values());
 	}
 
 }

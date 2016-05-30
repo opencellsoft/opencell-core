@@ -1,6 +1,7 @@
 package org.meveo.api.ws.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,6 +32,7 @@ import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
+import org.meveo.api.dto.billing.CounterInstanceDto;
 import org.meveo.api.dto.module.ModuleDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
@@ -54,12 +56,14 @@ import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
 import org.meveo.api.dto.response.account.TitleResponseDto;
 import org.meveo.api.dto.response.account.TitlesResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
+import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.ModuleApi;
 import org.meveo.api.payment.AccountOperationApi;
 import org.meveo.api.ws.AccountWs;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.BusinessAccountModel;
 
 /**
@@ -1508,6 +1512,52 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         }
 
         return result;
+    }
+    
+    @Override
+    public GetCountersInstancesResponseDto filterBillingAccountCountersByPeriod(String billingAccountCode, Date date) {
+    	GetCountersInstancesResponseDto result = new GetCountersInstancesResponseDto();
+    	
+    	try {
+    		List<CounterInstance> counters = billingAccountApi.filterCountersByPeriod(billingAccountCode, date, getCurrentUser().getProvider());
+    		for(CounterInstance ci : counters) {
+    			result.getCountersInstances().getCounterInstance().add(new CounterInstanceDto(ci));
+    		}
+		} catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+    	
+    	return result;
+    }
+    
+    @Override
+    public GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(String userAccountCode, Date date) {
+    	GetCountersInstancesResponseDto result = new GetCountersInstancesResponseDto();
+    	
+    	try {
+    		List<CounterInstance> counters = userAccountApi.filterCountersByPeriod(userAccountCode, date, getCurrentUser().getProvider());
+    		for(CounterInstance ci : counters) {
+    			result.getCountersInstances().getCounterInstance().add(new CounterInstanceDto(ci));
+    		}
+		} catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+    	
+    	return result;
     }
 
 }

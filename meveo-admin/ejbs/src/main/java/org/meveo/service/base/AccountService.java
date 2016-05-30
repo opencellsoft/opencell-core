@@ -19,6 +19,7 @@
 package org.meveo.service.base;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -143,17 +144,18 @@ public abstract class AccountService<P extends AccountEntity> extends BusinessSe
 	 */
 	public Map<String, CounterInstance> filterCountersByPeriod(Map<String, CounterInstance> counters, Date date) throws BusinessException {
 		Iterator<Map.Entry<String, CounterInstance>> countersIterator = counters.entrySet().iterator();
+		Map<String, CounterInstance> result = new HashMap<String, CounterInstance>();
 		while(countersIterator.hasNext()) {
 			Map.Entry<String, CounterInstance> counterEntry = countersIterator.next();
 			CounterInstance ci = counterEntry.getValue();
 			for(CounterPeriod cp : ci.getCounterPeriods()) {
-				if(!DateUtils.isDateWithinPeriod(date, cp.getPeriodStartDate(), cp.getPeriodEndDate())) {
-					counters.remove(counterEntry.getKey());
+				if(DateUtils.isDateWithinPeriod(date, cp.getPeriodStartDate(), cp.getPeriodEndDate())) {
+					result.put(counterEntry.getKey(), counterEntry.getValue());
 				}
 			}
 		}
 		
-		return counters;
+		return result;
 	}
 
 }

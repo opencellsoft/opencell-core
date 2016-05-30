@@ -1,5 +1,7 @@
 package org.meveo.api.ws;
 
+import java.util.Date;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -40,6 +42,7 @@ import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
 import org.meveo.api.dto.response.account.TitleResponseDto;
 import org.meveo.api.dto.response.account.TitlesResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
+import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 
 /**
@@ -299,5 +302,13 @@ public interface AccountWs extends IBaseWs {
 	
 	@WebMethod
 	ActionStatus closeCRMAccountHierarchy(@WebParam(name = "crmAccountHierarchy") CRMAccountHierarchyDto postData);
+	
+	@WebMethod
+	GetCountersInstancesResponseDto filterBillingAccountCountersByPeriod(@WebParam(name = "billingAccountCode") String billingAccountCode, 
+			@WebParam(name = "date") Date date);
+	
+	@WebMethod
+	GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(@WebParam(name = "userAccountCode") String userAccountCode, 
+			@WebParam(name = "date") Date date);
 
 }

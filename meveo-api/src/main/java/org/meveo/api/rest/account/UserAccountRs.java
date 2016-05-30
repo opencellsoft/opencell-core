@@ -1,5 +1,7 @@
 package org.meveo.api.rest.account;
 
+import java.util.Date;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -15,6 +17,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
+import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -62,5 +65,16 @@ public interface UserAccountRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(UserAccountDto postData);
+    
+    /**
+     * filter counters by period date
+     * @param userAccountCode
+     * @param date
+     * @return
+     */
+    @GET
+    @Path("/filterCountersByPeriod")
+	GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(@QueryParam("userAccountCode") String userAccountCode, 
+			@QueryParam("date") Date date);
 
 }

@@ -1,5 +1,8 @@
 package org.meveo.api.rest.account.impl;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -10,12 +13,15 @@ import org.meveo.api.account.UserAccountApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.UserAccountDto;
+import org.meveo.api.dto.billing.CounterInstanceDto;
 import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
+import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.UserAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.billing.CounterInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -145,5 +151,28 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         }
 
         return result;
+    }
+    
+    @Override
+    public GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(String userAccountCode, Date date) {
+    	GetCountersInstancesResponseDto result = new GetCountersInstancesResponseDto();
+    	
+    	try {
+    		List<CounterInstance> counters = userAccountApi.filterCountersByPeriod(userAccountCode, date, getCurrentUser().getProvider());
+    		for(CounterInstance ci : counters) {
+    			result.getCountersInstances().getCounterInstance().add(new CounterInstanceDto(ci));
+    		}
+		} catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+    	
+    	return result;
     }
 }
