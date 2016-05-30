@@ -630,37 +630,39 @@ public class CustomFieldDataEntryBean implements Serializable {
     public void saveCustomFieldsToEntity(ICustomFieldEntity entity, boolean isNewEntity) throws BusinessException {
 
         CustomFieldValueHolder entityFieldsValues = getFieldsValuesByUUID(entity.getUuid());
-        for (CustomFieldTemplate cft : groupedFieldTemplates.get(entity.getUuid()).getFields()) {
-            List<CustomFieldInstance> cfis = entityFieldsValues.getValues(cft);
-
-            for (CustomFieldInstance cfi : cfis) {
-                // Not saving empty values unless template has a default value or is versionable (to prevent that for SINGLE type CFT with a default value, value is
-                // instantiates automatically)
-                // Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
-                if ((cfi.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
-                        || ((isNewEntity && cft.isHideOnNew()) || !ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity))) {
-                    if (!cfi.isTransient()) {
-                        customFieldInstanceService.remove(cfi, (ICustomFieldEntity) entity);
-                        log.trace("Remove empty cfi value {}", cfi);
-                    } else {
-                        log.trace("Will ommit from saving cfi {}", cfi);
-                    }
-
-                    // Do not update existing CF value if it is not updatable
-                } else if (!isNewEntity && !cft.isAllowEdit()) {
-                    continue;
-
-                    // Existing value update
-                } else {
-                    serializeFromGUI(entity, cfi.getCfValue(), cft);
-                    if (cfi.isTransient()) {
-                        customFieldInstanceService.create(cfi, (ICustomFieldEntity) entity, currentUser);
-                    } else {
-                        customFieldInstanceService.update(cfi, (ICustomFieldEntity) entity, currentUser);
-                    }
-                    saveChildEntities(entity, cfi.getCfValue(), cft);
-                }
-            }
+        if(groupedFieldTemplates.get(entity.getUuid()) != null) {
+        	for (CustomFieldTemplate cft : groupedFieldTemplates.get(entity.getUuid()).getFields()) {
+        		List<CustomFieldInstance> cfis = entityFieldsValues.getValues(cft);
+        		
+        		for (CustomFieldInstance cfi : cfis) {
+        			// Not saving empty values unless template has a default value or is versionable (to prevent that for SINGLE type CFT with a default value, value is
+        			// instantiates automatically)
+        			// Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
+        			if ((cfi.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
+        					|| ((isNewEntity && cft.isHideOnNew()) || !ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity))) {
+        				if (!cfi.isTransient()) {
+        					customFieldInstanceService.remove(cfi, (ICustomFieldEntity) entity);
+        					log.trace("Remove empty cfi value {}", cfi);
+        				} else {
+        					log.trace("Will ommit from saving cfi {}", cfi);
+        				}
+        				
+        				// Do not update existing CF value if it is not updatable
+        			} else if (!isNewEntity && !cft.isAllowEdit()) {
+        				continue;
+        				
+        				// Existing value update
+        			} else {
+        				serializeFromGUI(entity, cfi.getCfValue(), cft);
+        				if (cfi.isTransient()) {
+        					customFieldInstanceService.create(cfi, (ICustomFieldEntity) entity, currentUser);
+        				} else {
+        					customFieldInstanceService.update(cfi, (ICustomFieldEntity) entity, currentUser);
+        				}
+        				saveChildEntities(entity, cfi.getCfValue(), cft);
+        			}
+        		}
+        	}
         }
     }
 
