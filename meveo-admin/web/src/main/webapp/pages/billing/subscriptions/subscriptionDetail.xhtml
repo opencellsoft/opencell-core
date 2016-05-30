@@ -1015,10 +1015,10 @@
 					formId="usageChgForm1" showFormButtons="false" ajaxSubmit="true" rendered="#{subscriptionBean.usageChargeInstance!=null}">
 						<hftl:formField id="USchargeTemplateSelectId" label="#{messages['businessEntity.code']}"
 							field="chargeTemplate" valueLabelField="code" edit="false" />
-						<hftl:formField label="#{messages['businessEntity.description']}"
-							field="description" edit="false" />
 						<hftl:formField label="#{messages['commons.status']}"
 							field="status" edit="false" />
+						<hftl:formField label="#{messages['businessEntity.description']}"
+							field="description" edit="false" />
 
 						<hftl:formField
 							label="#{messages['chargeInstance.criteria1']}"
@@ -1030,14 +1030,19 @@
 							label="#{messages['chargeInstance.criteria3']}"
 							field="criteria3" edit="false" isMessage="false" />
 
+
+						<hftl:formField
+							label="#{messages['chargeInstance.chargeDate']}"
+							field="chargeDate" edit="false" newLine="true" />
+						<hftl:formField label="#{messages['counterTemplate.title']}"
+							field="counter" valueLabelField="descriptionOrCode" edit="false" />
 						<hftl:formField rendered="#{!subscriptionBean.entity.provider.entreprise}"
 							label="#{messages['chargeInstance.amountWithTax']}"
-							field="amountWithTax" edit="true" newLine="true"/>
+							field="amountWithTax" edit="true" newLine="true" />
 						<hftl:formField
 							label="#{messages['chargeInstance.amountWithoutTax']}"
 							field="amountWithoutTax" edit="true" newLine="#{subscriptionBean.entity.provider.entreprise}"/>
-						<hftl:formField label="#{messages['counterTemplate.title']}"
-									field="counter" valueLabelField="descriptionOrCode" edit="false" />
+
 
                         <ui:param name="buttons" value="true"/>
                         <ui:define name="buttons">    
@@ -1047,13 +1052,9 @@
     							value="#{messages['action.save']}"
     							update=":#{p:component('OS_usage_results_form')}"
     							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_usageChgPopup').hide()" />
-    						<p:button value="#{messages['action.cancel']}"
-								onclick="PF('dlg_usageChgPopup').hide()">
-								<f:param name="subscriptionId" value="#{subscriptionBean.entity.id}" />
-								<f:param name="mainTab" value="4" />
-								<f:param name="tab" value="0" />
-								<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-							</p:button>
+							<p:commandButton value="#{messages['action.cancel']}"
+								 onclick="PF('dlg_usageChgPopup').hide()"
+								 type="button" />
                         </ui:define>
 				</hftl:formPanel>
 			</p:outputPanel>
@@ -1114,16 +1115,10 @@
     							action="#{subscriptionBean.saveRecurringChargeIns}"
     							value="#{messages['action.save']}" 
     							rendered="#{subscriptionBean.canUserUpdateEntity()}"
-    							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_recurringChgPopup').hide()" />
-    						<!--<p:button value="#{messages['action.cancel']}"
-    							onclick="PF('dlg_recurringChgPopup').hide()" type="button" />-->
-							<p:button value="#{messages['action.cancel']}"
-									  onclick="PF('dlg_recurringChgPopup').hide()">
-								<f:param name="subscriptionId" value="#{subscriptionBean.entity.id}" />
-								<f:param name="mainTab" value="3" />
-								<f:param name="tab" value="0" />
-								<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-							</p:button>
+								oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_recurringChgPopup').hide()" />
+							<p:commandButton value="#{messages['action.cancel']}"
+								onclick="PF('dlg_recurringChgPopup').hide()"
+								type="button" />
 						</ui:define>
 				</hftl:formPanel>
 				<p:outputPanel id="recurringWalletOperationsPanel">
