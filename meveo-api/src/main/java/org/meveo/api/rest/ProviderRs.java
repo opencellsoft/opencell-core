@@ -108,4 +108,13 @@ public interface ProviderRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(ProviderDto postData);
+    
+    @PUT
+    @Path("/updateProviderCF")
+    ActionStatus updateProviderCF(ProviderDto postData);
+    
+    @GET
+    @Path("/findProviderCF")
+    GetProviderResponse findProviderCF(@QueryParam("providerCode") String providerCode);
+    
 }

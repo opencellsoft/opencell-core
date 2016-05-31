@@ -66,19 +66,25 @@ public interface SettingsWs extends IBaseWs {
 
 	@Deprecated
 	@WebMethod
-	public ActionStatus createProvider(@WebParam(name = "provider") ProviderDto postData);
+	ActionStatus createProvider(@WebParam(name = "provider") ProviderDto postData);
 
 	@Deprecated
 	@WebMethod
-	public GetProviderResponse findProvider(@WebParam(name = "providerCode") String providerCode);
+	GetProviderResponse findProvider(@WebParam(name = "providerCode") String providerCode);
 
 	@Deprecated
 	@WebMethod
-	public ActionStatus updateProvider(@WebParam(name = "provider") ProviderDto postData);
+	ActionStatus updateProvider(@WebParam(name = "provider") ProviderDto postData);
 
 	@Deprecated
 	@WebMethod
-	public ActionStatus createOrUpdateProvider(@WebParam(name = "provider") ProviderDto postData);
+	ActionStatus createOrUpdateProvider(@WebParam(name = "provider") ProviderDto postData);
+	
+	@WebMethod
+	ActionStatus updateProviderCF(@WebParam(name = "provider") ProviderDto postData);
+	
+	@WebMethod
+	GetProviderResponse findProviderCF(@WebParam(name = "providerCode") String providerCode);
 
 	// configuration
 
@@ -97,76 +103,76 @@ public interface SettingsWs extends IBaseWs {
 	// user
 
 	@WebMethod
-	public ActionStatus createUser4_2(@WebParam(name = "user") User4_2Dto postData);
+	ActionStatus createUser4_2(@WebParam(name = "user") User4_2Dto postData);
 	
 	@WebMethod
-	public ActionStatus createUser(@WebParam(name = "user") UserDto postData);
+	ActionStatus createUser(@WebParam(name = "user") UserDto postData);
 
 	@WebMethod
-	public ActionStatus updateUser4_2(@WebParam(name = "user") User4_2Dto postData);
+	ActionStatus updateUser4_2(@WebParam(name = "user") User4_2Dto postData);
 	
 	@WebMethod
-	public ActionStatus updateUser(@WebParam(name = "user") UserDto postData);
+	ActionStatus updateUser(@WebParam(name = "user") UserDto postData);
 
 	@WebMethod
-	public ActionStatus removeUser(@WebParam(name = "username") String username);
+	ActionStatus removeUser(@WebParam(name = "username") String username);
 
 	@WebMethod
-	public GetUserResponse findUser(@WebParam(name = "username") String username);
+	GetUserResponse findUser(@WebParam(name = "username") String username);
 	
 	@WebMethod
-	public GetUser4_2Response findUser4_2(@WebParam(name = "username") String username);
+	GetUser4_2Response findUser4_2(@WebParam(name = "username") String username);
 
 	@WebMethod
-	public ActionStatus createOrUpdateUser4_2(@WebParam(name = "user") User4_2Dto postData);
+	ActionStatus createOrUpdateUser4_2(@WebParam(name = "user") User4_2Dto postData);
 	
 	@WebMethod
-	public ActionStatus createOrUpdateUser(@WebParam(name = "user") UserDto postData);
+	ActionStatus createOrUpdateUser(@WebParam(name = "user") UserDto postData);
 
 	// seller
 
 	@WebMethod
-	public ActionStatus createSeller(@WebParam(name = "seller") SellerDto postData);
+	ActionStatus createSeller(@WebParam(name = "seller") SellerDto postData);
 
 	@WebMethod
-	public ActionStatus updateSeller(@WebParam(name = "seller") SellerDto postData);
+	ActionStatus updateSeller(@WebParam(name = "seller") SellerDto postData);
 
 	@WebMethod
-	public GetSellerResponse findSeller(@WebParam(name = "sellerCode") String sellerCode);
+	GetSellerResponse findSeller(@WebParam(name = "sellerCode") String sellerCode);
 
 	@WebMethod
-	public ActionStatus removeSeller(@WebParam(name = "sellerCode") String sellerCode);
+	ActionStatus removeSeller(@WebParam(name = "sellerCode") String sellerCode);
 
 	@WebMethod
-	public SellerResponseDto listSeller();
+	SellerResponseDto listSeller();
 
 	@WebMethod
 	SellerCodesResponseDto listSellerCodes();
 
 	@WebMethod
-	public ActionStatus createOrUpdateSeller(@WebParam(name = "seller") SellerDto postData);
+	ActionStatus createOrUpdateSeller(@WebParam(name = "seller") SellerDto postData);
 
 	// tradingLanguage
 
 	@Deprecated
 	@WebMethod
-	public ActionStatus createLanguage(@WebParam(name = "language") LanguageDto postData);
+	ActionStatus createLanguage(@WebParam(name = "language") LanguageDto postData);
 
 	@Deprecated
 	@WebMethod
-	public GetLanguageResponse findLanguage(@WebParam(name = "languageCode") String languageCode);
+	GetLanguageResponse findLanguage(@WebParam(name = "languageCode") String languageCode);
 
 	@Deprecated
 	@WebMethod
-	public ActionStatus removeLanguage(@WebParam(name = "languageCode") String languageCode);
+	ActionStatus removeLanguage(@WebParam(name = "languageCode") String languageCode);
 
 	@Deprecated
 	@WebMethod
-	public ActionStatus updateLanguage(@WebParam(name = "language") LanguageDto postData);
+	ActionStatus updateLanguage(@WebParam(name = "language") LanguageDto postData);
 
 	@Deprecated
 	@WebMethod
-	public ActionStatus createOrUpdateLanguage(@WebParam(name = "language") LanguageDto postData);
+	ActionStatus createOrUpdateLanguage(@WebParam(name = "language") LanguageDto postData);
 
 	// tradingCountry
 	@Deprecated
@@ -213,111 +219,111 @@ public interface SettingsWs extends IBaseWs {
 	// tax
 
 	@WebMethod
-	public ActionStatus createTax(@WebParam(name = "tax") TaxDto postData);
+	ActionStatus createTax(@WebParam(name = "tax") TaxDto postData);
 
 	@WebMethod
-	public ActionStatus updateTax(@WebParam(name = "tax") TaxDto postData);
+	ActionStatus updateTax(@WebParam(name = "tax") TaxDto postData);
 
 	@WebMethod
-	public GetTaxResponse findTax(@WebParam(name = "taxCode") String taxCode);
+	GetTaxResponse findTax(@WebParam(name = "taxCode") String taxCode);
 
 	@WebMethod
-	public ActionStatus removeTax(@WebParam(name = "taxCode") String taxCode);
+	ActionStatus removeTax(@WebParam(name = "taxCode") String taxCode);
 
 	@WebMethod
-	public ActionStatus createOrUpdateTax(@WebParam(name = "tax") TaxDto postData);
+	ActionStatus createOrUpdateTax(@WebParam(name = "tax") TaxDto postData);
 
 	@WebMethod
-	public GetTaxesResponse listTaxes();
+	GetTaxesResponse listTaxes();
 
 	// invoice category
 
 	@WebMethod
-	public ActionStatus createInvoiceCategory(@WebParam(name = "invoiceCategory") InvoiceCategoryDto postData);
+	ActionStatus createInvoiceCategory(@WebParam(name = "invoiceCategory") InvoiceCategoryDto postData);
 
 	@WebMethod
-	public ActionStatus updateInvoiceCategory(@WebParam(name = "invoiceCategory") InvoiceCategoryDto postData);
+	ActionStatus updateInvoiceCategory(@WebParam(name = "invoiceCategory") InvoiceCategoryDto postData);
 
 	@WebMethod
-	public GetInvoiceCategoryResponse findInvoiceCategory(@WebParam(name = "invoiceCategoryCode") String invoiceCategoryCode);
+	GetInvoiceCategoryResponse findInvoiceCategory(@WebParam(name = "invoiceCategoryCode") String invoiceCategoryCode);
 
 	@WebMethod
-	public ActionStatus removeInvoiceCategory(@WebParam(name = "invoiceCategoryCode") String invoiceCategoryCode);
+	ActionStatus removeInvoiceCategory(@WebParam(name = "invoiceCategoryCode") String invoiceCategoryCode);
 
 	@WebMethod
-	public ActionStatus createOrUpdateInvoiceCategory(@WebParam(name = "invoiceCategory") InvoiceCategoryDto postData);
+	ActionStatus createOrUpdateInvoiceCategory(@WebParam(name = "invoiceCategory") InvoiceCategoryDto postData);
 
 	// invoice sub category
 
 	@WebMethod
-	public ActionStatus createInvoiceSubCategory(@WebParam(name = "invoiceSubCategory") InvoiceSubCategoryDto postData);
+	ActionStatus createInvoiceSubCategory(@WebParam(name = "invoiceSubCategory") InvoiceSubCategoryDto postData);
 
 	@WebMethod
-	public ActionStatus updateInvoiceSubCategory(@WebParam(name = "invoiceSubCategory") InvoiceSubCategoryDto postData);
+	ActionStatus updateInvoiceSubCategory(@WebParam(name = "invoiceSubCategory") InvoiceSubCategoryDto postData);
 
 	@WebMethod
 	ActionStatus createOrUpdateInvoiceSubCategory(@WebParam(name = "invoiceSubCategory") InvoiceSubCategoryDto postData);
 
 	@WebMethod
-	public GetInvoiceSubCategoryResponse findInvoiceSubCategory(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode);
+	GetInvoiceSubCategoryResponse findInvoiceSubCategory(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode);
 
 	@WebMethod
-	public ActionStatus removeInvoiceSubCategory(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode);
+	ActionStatus removeInvoiceSubCategory(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode);
 
 	// invoice sub category country
 
 	@WebMethod
-	public ActionStatus createInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
+	ActionStatus createInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
 
 	@WebMethod
-	public ActionStatus updateInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
+	ActionStatus updateInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
 
 	@WebMethod
-	public GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode,
+	GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode,
 			@WebParam(name = "country") String country);
 
 	@WebMethod
-	public ActionStatus removeInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode, @WebParam(name = "country") String country);
+	ActionStatus removeInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode, @WebParam(name = "country") String country);
 
 	@WebMethod
-	public ActionStatus createOrUpdateInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
+	ActionStatus createOrUpdateInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
 
 	// calendar
 
 	@WebMethod
-	public ActionStatus createCalendar(@WebParam(name = "calendar") CalendarDto postData);
+	ActionStatus createCalendar(@WebParam(name = "calendar") CalendarDto postData);
 
 	@WebMethod
-	public ActionStatus updateCalendar(@WebParam(name = "calendar") CalendarDto postData);
+	ActionStatus updateCalendar(@WebParam(name = "calendar") CalendarDto postData);
 
 	@WebMethod
-	public GetCalendarResponse findCalendar(@WebParam(name = "calendarCode") String calendarCode);
+	GetCalendarResponse findCalendar(@WebParam(name = "calendarCode") String calendarCode);
 
 	@WebMethod
-	public ActionStatus removeCalendar(@WebParam(name = "calendarCode") String calendarCode);
+	ActionStatus removeCalendar(@WebParam(name = "calendarCode") String calendarCode);
 
 	@WebMethod
-	public ActionStatus createOrUpdateCalendar(@WebParam(name = "calendar") CalendarDto postData);
+	ActionStatus createOrUpdateCalendar(@WebParam(name = "calendar") CalendarDto postData);
 
 	@WebMethod
-	public ListCalendarResponse listCalendars();
+	ListCalendarResponse listCalendars();
 
 	// billing cycle
 
 	@WebMethod
-	public ActionStatus createBillingCycle(@WebParam(name = "billingCycle") BillingCycleDto postData);
+	ActionStatus createBillingCycle(@WebParam(name = "billingCycle") BillingCycleDto postData);
 
 	@WebMethod
-	public ActionStatus updateBillingCycle(@WebParam(name = "billingCycle") BillingCycleDto postData);
+	ActionStatus updateBillingCycle(@WebParam(name = "billingCycle") BillingCycleDto postData);
 
 	@WebMethod
-	public GetBillingCycleResponse findBillingCycle(@WebParam(name = "billingCycleCode") String billingCycleCode);
+	GetBillingCycleResponse findBillingCycle(@WebParam(name = "billingCycleCode") String billingCycleCode);
 
 	@WebMethod
-	public ActionStatus removeBillingCycle(@WebParam(name = "billingCycleCode") String billingCycleCode);
+	ActionStatus removeBillingCycle(@WebParam(name = "billingCycleCode") String billingCycleCode);
 
 	@WebMethod
-	public ActionStatus createOrUpdateBillingCycle(@WebParam(name = "billingCycle") BillingCycleDto postData);
+	ActionStatus createOrUpdateBillingCycle(@WebParam(name = "billingCycle") BillingCycleDto postData);
 
 	// occ template
 
@@ -362,78 +368,78 @@ public interface SettingsWs extends IBaseWs {
 	// role
 
 	@WebMethod
-	public ActionStatus createRole(@WebParam(name = "role") RoleDto postData);
+	ActionStatus createRole(@WebParam(name = "role") RoleDto postData);
 
 	@WebMethod
-	public ActionStatus updateRole(@WebParam(name = "role") RoleDto postData);
+	ActionStatus updateRole(@WebParam(name = "role") RoleDto postData);
 
 	@WebMethod
-	public ActionStatus removeRole(@WebParam(name = "role") String name);
+	ActionStatus removeRole(@WebParam(name = "role") String name);
 
 	@WebMethod
-	public GetRoleResponse findRole(@WebParam(name = "roleName") String name);
+	GetRoleResponse findRole(@WebParam(name = "roleName") String name);
 
 	@WebMethod
-	public ActionStatus createOrUpdateRole(@WebParam(name = "role") RoleDto postData);
+	ActionStatus createOrUpdateRole(@WebParam(name = "role") RoleDto postData);
 
 	// descriptions
 
 	@WebMethod
-	public ActionStatus createDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
+	ActionStatus createDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
 
 	@WebMethod
-	public ActionStatus updateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
+	ActionStatus updateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
 
 	@WebMethod
-	public GetDescriptionsResponse findDescriptions(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code,
+	GetDescriptionsResponse findDescriptions(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code,
 			@WebParam(name = "languageCode") String languageCode);
 
 	@WebMethod
-	public ActionStatus removeDescriptions(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code,
+	ActionStatus removeDescriptions(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code,
 			@WebParam(name = "languageCode") String languageCode);
 
 	@WebMethod
-	public ActionStatus createOrUpdateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
+	ActionStatus createOrUpdateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
 
 	@WebMethod
-	public DescriptionsResponseDto listDescriptions();
+	DescriptionsResponseDto listDescriptions();
 
 	/* termination reasons */
 
 	@WebMethod
-	public ActionStatus createTerminationReason(@WebParam(name = "terminationReason") TerminationReasonDto postData);
+	ActionStatus createTerminationReason(@WebParam(name = "terminationReason") TerminationReasonDto postData);
 
 	@WebMethod
-	public ActionStatus updateTerminationReason(@WebParam(name = "terminationReason") TerminationReasonDto postData);
+	ActionStatus updateTerminationReason(@WebParam(name = "terminationReason") TerminationReasonDto postData);
 
 	@WebMethod
-	public ActionStatus createOrUpdateTerminationReason(@WebParam(name = "terminationReason") TerminationReasonDto postData);
+	ActionStatus createOrUpdateTerminationReason(@WebParam(name = "terminationReason") TerminationReasonDto postData);
 
 	@WebMethod
-	public ActionStatus removeTerminationReason(@WebParam(name = "terminationReasonCode") String code);
+	ActionStatus removeTerminationReason(@WebParam(name = "terminationReasonCode") String code);
 
 	@WebMethod
-	public GetTerminationReasonResponse findTerminationReason(@WebParam(name = "terminationReasonCode") String code);
+	GetTerminationReasonResponse findTerminationReason(@WebParam(name = "terminationReasonCode") String code);
 
 	@WebMethod
-	public GetTerminationReasonResponse listTerminationReason();
+	GetTerminationReasonResponse listTerminationReason();
 
 	// InvoiceType
 	@WebMethod
-	public ActionStatus createInvoiceType(@WebParam(name = "invoiceType") InvoiceTypeDto invoiceTypeDto);
+	ActionStatus createInvoiceType(@WebParam(name = "invoiceType") InvoiceTypeDto invoiceTypeDto);
 
 	@WebMethod
-	public ActionStatus updateInvoiceType(@WebParam(name = "invoiceType") InvoiceTypeDto invoiceTypeDto);
+	ActionStatus updateInvoiceType(@WebParam(name = "invoiceType") InvoiceTypeDto invoiceTypeDto);
 
 	@WebMethod
-	public GetInvoiceTypeResponse findInvoiceType(@WebParam(name = "invoiceTypeCode") String invoiceTypeCode);
+	GetInvoiceTypeResponse findInvoiceType(@WebParam(name = "invoiceTypeCode") String invoiceTypeCode);
 
 	@WebMethod
-	public ActionStatus removeInvoiceType(@WebParam(name = "invoiceTypeCode") String invoiceTypeCode);
+	ActionStatus removeInvoiceType(@WebParam(name = "invoiceTypeCode") String invoiceTypeCode);
 
 	@WebMethod
-	public ActionStatus createOrUpdateInvoiceType(@WebParam(name = "invoiceType") InvoiceTypeDto invoiceTypeDto);
+	ActionStatus createOrUpdateInvoiceType(@WebParam(name = "invoiceType") InvoiceTypeDto invoiceTypeDto);
 
 	@WebMethod
-	public GetInvoiceTypesResponse listInvoiceTypes();
+	GetInvoiceTypesResponse listInvoiceTypes();
 }

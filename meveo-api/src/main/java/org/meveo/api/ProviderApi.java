@@ -254,7 +254,7 @@ public class ProviderApi extends BaseApi {
 
         Provider provider = providerService.findByCodeWithFetch(providerCode, Arrays.asList("currency", "country", "language"));
 		if (provider != null) {
-			if (provider.getId().equals(currentUser.getProvider().getId())) {
+			if (currentUser.hasPermission("superAdmin", "superAdminManagement") || provider.getId().equals(currentUser.getProvider().getId())) {
 				return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider));
 			} else {
 				throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
@@ -280,9 +280,9 @@ public class ProviderApi extends BaseApi {
             throw new EntityDoesNotExistsException(Provider.class, postData.getCode());
         }
         
-        if (!provider.getId().equals(currentUser.getProvider().getId())) {
+		if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && !provider.getId().equals(currentUser.getProvider().getId())) {
 			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
-        }
+		}
 
         provider.setDescription(postData.getDescription());
         provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
@@ -627,4 +627,48 @@ public class ProviderApi extends BaseApi {
             update(postData, currentUser);
         }
     }
+    
+	public void updateProviderCF(ProviderDto postData, User currentUser) throws MeveoApiException {
+		if (StringUtils.isBlank(postData.getCode())) {
+			missingParameters.add("code");
+		}
+
+		handleMissingParameters();
+
+		// search for provider
+		Provider provider = providerService.findByCodeWithFetch(postData.getCode(), Arrays.asList("currency", "country", "language"));
+		if (provider == null) {
+			throw new EntityDoesNotExistsException(Provider.class, postData.getCode());
+		}
+
+		if (!provider.getId().equals(currentUser.getProvider().getId())) {
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+		}
+
+		// populate customFields
+		try {
+			populateCustomFields(postData.getCustomFields(), provider, false, currentUser);
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			log.error("Failed to associate custom field instance to an entity", e);
+			throw new MeveoApiException("Failed to associate custom field instance to an entity");
+		}
+	}
+    
+	public ProviderDto findProviderCF(String providerCode, User currentUser) throws MeveoApiException {
+		if (StringUtils.isBlank(providerCode)) {
+			providerCode = currentUser.getProvider().getCode();
+		}
+
+		Provider provider = providerService.findByCode(providerCode);
+		if (provider != null) {
+			if (provider.getId().equals(currentUser.getProvider().getId())) {
+				return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider), false);
+			} else {
+				throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+			}
+		}
+
+		throw new EntityDoesNotExistsException(Provider.class, providerCode);
+	}
+    
 }

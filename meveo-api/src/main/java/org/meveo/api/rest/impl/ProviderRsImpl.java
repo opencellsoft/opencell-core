@@ -195,4 +195,46 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 
         return result;
     }
+    
+    @Override
+	public ActionStatus updateProviderCF(ProviderDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            providerApi.updateProviderCF(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+	}
+
+	@Override
+	public GetProviderResponse findProviderCF(String providerCode) {
+		GetProviderResponse result = new GetProviderResponse();
+
+        try {
+            result.setProvider(providerApi.findProviderCF(providerCode, getCurrentUser()));
+
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        return result;
+	}
+	
 }
