@@ -163,13 +163,6 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 	}
 
 	// apply a oneShotCharge on the postpaid wallet
-	public OneShotChargeInstance oneShotChargeApplication1(Subscription subscription, OneShotChargeTemplate chargetemplate,
-			Date effetDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2, BigDecimal quantity, String criteria1,
-			String criteria2, String criteria3, User creator) throws BusinessException {
-		return oneShotChargeApplication(subscription, chargetemplate, null, effetDate, amoutWithoutTax,
-				amoutWithoutTx2, quantity, criteria1, criteria2, criteria3, creator,true);
-	}
-	
 	public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargetemplate,
 			String walletCode, Date effetDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
 			BigDecimal quantity, String criteria1, String criteria2, String criteria3, User creator,boolean applyCharge)
@@ -185,6 +178,13 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		if (quantity == null) {
 			quantity = BigDecimal.ONE;
 		}
+		
+		if(!chargetemplate.getAmountEditable()){
+			amoutWithoutTax=null;
+			amoutWithoutTx2=null;
+			description=null;
+		}
+		
 		
 		BigDecimal inputQuantity = quantity;
 		quantity = NumberUtil.getInChargeUnit(quantity, chargetemplate.getUnitMultiplicator(), chargetemplate.getUnitNbDecimal(),chargetemplate.getRoundingMode());
@@ -266,7 +266,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 					(OneShotChargeTemplate) oneShotChargeTemplate,
 					wallet.getCode(), new Date(), balanceNoTax, balanceWithTax,
 					BigDecimal.ONE, null, null,
-					null, currentUser,false);
+					null,null, currentUser,false);
 		if(matchingCharge==null){
 			throw new BusinessException("Cannot find or create matching charge instance for code "+matchingChargeCode);
 		}		
