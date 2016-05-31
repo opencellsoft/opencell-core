@@ -859,24 +859,25 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
     }
 
     @SuppressWarnings("unchecked")
-   	public String getRelatedModulesAsString(String itemCode,String itemClazz,String appliesTo){
-       	QueryBuilder qb=new QueryBuilder(MeveoModule.class,"m",Arrays.asList("moduleItems as i"),null);
-       	qb.addCriterion("i.itemCode", "=", itemCode,true);
-       	qb.addCriterion("i.itemClass", "=", itemClazz, false);
-       	qb.addCriterion("i.appliesTo", "=", appliesTo, false);
-		List<MeveoModule> modules=qb.getQuery(getEntityManager()).getResultList();;
-		if(modules!=null){
-			StringBuilder sb=new StringBuilder();
-			int i=0;
-			for(MeveoModule module:modules){
-				if(i!=0){
-					sb.append(";");
-				}
-				sb.append(module.getCode());
-				i++;
-			}
-			return sb.toString();
-		}
-		return null;
-	}
+    public String getRelatedModulesAsString(String itemCode, String itemClazz, String appliesTo, Provider provider) {
+        QueryBuilder qb = new QueryBuilder(MeveoModule.class, "m", Arrays.asList("moduleItems as i"), provider);
+        qb.addCriterion("i.itemCode", "=", itemCode, true);
+        qb.addCriterion("i.itemClass", "=", itemClazz, false);
+        qb.addCriterion("i.appliesTo", "=", appliesTo, false);
+        List<MeveoModule> modules = qb.getQuery(getEntityManager()).getResultList();
+        
+        if (modules != null) {
+            StringBuilder sb = new StringBuilder();
+            int i = 0;
+            for (MeveoModule module : modules) {
+                if (i != 0) {
+                    sb.append(";");
+                }
+                sb.append(module.getCode());
+                i++;
+            }
+            return sb.toString();
+        }
+        return null;
+    }
 }

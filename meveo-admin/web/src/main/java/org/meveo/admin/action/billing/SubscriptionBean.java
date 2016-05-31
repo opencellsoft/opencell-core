@@ -664,6 +664,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	}
 
 	public List<Access> getAccess() {
+		if(entity.getId() == null)
+			return null;
 		return accessService.listBySubscription(entity);
 	}
 

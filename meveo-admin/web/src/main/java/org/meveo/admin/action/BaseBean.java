@@ -39,6 +39,7 @@ import javax.persistence.EntityExistsException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.seam.security.Identity;
@@ -49,6 +50,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IAuditable;
 import org.meveo.model.IEntity;
@@ -320,17 +322,25 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
         }
     }
-    private boolean isPartOfModules(){
-    	return clazz.isAnnotationPresent(ModuleItem.class);
+
+    private boolean isPartOfModules() {
+        return clazz.isAnnotationPresent(ModuleItem.class);
     }
-    private void loadPartOfModules(){
-    	log.debug("start to load partOfModules...");
-    	if((entity instanceof BusinessEntity) && isPartOfModules()){
-    		log.debug("can load partOfModules");
-    		BusinessEntity businessEntity=(BusinessEntity)entity;
-			partOfModules=meveoModuleService.getRelatedModulesAsString( businessEntity.getCode(), clazz.getName(), null);
-			log.debug("load modules {}",partOfModules);
-		}
+
+    private void loadPartOfModules() {
+        if ((entity instanceof BusinessEntity) && isPartOfModules()) {
+            BusinessEntity businessEntity = (BusinessEntity) entity;
+            String appliesTo = null;
+            if (ReflectionUtils.hasField(entity, "appliesTo")) {
+                try {
+                    appliesTo = (String) FieldUtils.readField(entity, "appliesTo", true);
+                } catch (IllegalAccessException e) {
+                    log.error("Failed to access 'appliesTo' field value", e);
+                }
+            }
+
+            partOfModules = meveoModuleService.getRelatedModulesAsString(businessEntity.getCode(), clazz.getName(), appliesTo, businessEntity.getProvider());
+        }
     }
 
     /**
@@ -1224,13 +1234,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return writeAccessMap.get(requestURI);
     }
 
-	public String getPartOfModules() {
-		log.debug("getPartOfModules {}",partOfModules);
-		return partOfModules;
-	}
+    public String getPartOfModules() {
+        return partOfModules;
+    }
 
-	public void setPartOfModules(String partOfModules) {
-		this.partOfModules = partOfModules;
-	}
-    
+    public void setPartOfModules(String partOfModules) {
+        this.partOfModules = partOfModules;
+    }
+
 }
