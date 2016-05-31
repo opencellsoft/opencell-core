@@ -50,11 +50,12 @@ public class PricePlanMatrixColumnSelectorBean implements Serializable {
 	 public void init() {
 		columnVisibilitylist = Arrays.asList(true, true, true, true, true, true, false, 
 	     		false, false, false, false, false, false, false, 
-	     		false, false, false, false, false, false, false, false);
+	     		false, false, false, false, false, false, false);
 	 }
 	 public List<Boolean> getColumnVisibilitylist() {
 	     return columnVisibilitylist;
 	 }
+	 
 	 public void onToggle(ToggleEvent e) {
 	 	columnVisibilitylist.set((Integer) e.getData(), e.getVisibility() == Visibility.VISIBLE);
 	 }
