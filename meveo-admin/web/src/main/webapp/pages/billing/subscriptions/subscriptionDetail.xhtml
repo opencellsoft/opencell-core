@@ -548,7 +548,7 @@
 																			value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}"
 																			size="5" converter="bigDecimalConverter"
 																			onkeyup="validateAmounts();"
-																			disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and subscriptionBean.oneShotChargeInstance.id != null}">
+																			disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
 																		</p:inputText>
 																	</hftl:decorateFormField>
 																	<hftl:decorateFormField fieldId="amountWithTax"
@@ -558,7 +558,7 @@
 																			value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
 																			size="5" converter="bigDecimalConverter"
 																			onkeyup="validateAmounts();"
-																			disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and subscriptionBean.oneShotChargeInstance.id != null}">
+																			disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
 																		</p:inputText>
 																	</hftl:decorateFormField>
 																	<hftl:formField
