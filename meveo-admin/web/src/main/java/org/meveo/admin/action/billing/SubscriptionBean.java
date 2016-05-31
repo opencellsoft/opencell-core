@@ -292,7 +292,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 oneShotChargeInstance.setCountry(entity.getUserAccount().getBillingAccount().getTradingCountry());
                 oneShotChargeInstanceService.oneShotChargeApplication(entity, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),selectedWalletTemplate.getCode(),
                     oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
-                    oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), getCurrentUser(), true);
+                    oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), oneShotChargeInstance.getDescription(), getCurrentUser(), true);
             }
 
             oneShotChargeInstance = null;
