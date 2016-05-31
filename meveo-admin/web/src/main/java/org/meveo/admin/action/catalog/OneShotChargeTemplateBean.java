@@ -18,9 +18,7 @@
  */
 package org.meveo.admin.action.catalog;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,6 +29,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -42,6 +41,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.LazyDataModel;
 
 /**
  * Standard backing bean for {@link OneShotChargeTemplate} (extends
@@ -232,5 +232,14 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 		return (getEntity() != null && !getEntity().isTransient() && (oneShotChargeTemplateService.findByCode(
 				getEntity().getCode(), getCurrentProvider()) != null)) ? true : false;
 	}
-	
+
+	public LazyDataModel<OneShotChargeTemplate> getOtherTypeCharges(){
+		if (filters == null){
+			filters = new HashMap<>();
+		}
+		filters.put("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.OTHER);
+		listFiltered = true;
+		return getLazyDataModel();
+	}
+
 }
