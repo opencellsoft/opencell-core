@@ -54,56 +54,63 @@ public class ProviderDto extends BaseDto {
 	public ProviderDto() {
 
 	}
-
+	
 	public ProviderDto(Provider e, CustomFieldsDto customFieldInstances) {
+		this(e, customFieldInstances, true);
+	}
+
+	public ProviderDto(Provider e, CustomFieldsDto customFieldInstances, boolean loadProviderData) {
 		code = e.getCode();
-		description = e.getDescription();
-		invoiceSequenceSize = e.getInvoiceSequenceSize();
-		if (e.getCurrency() != null) {
-			currency = e.getCurrency().getCurrencyCode();
-		}
-		if (e.getCountry() != null) {
-			country = e.getCountry().getCountryCode();
-		}
-		if (e.getLanguage() != null) {
-			language = e.getLanguage().getLanguageCode();
-		}
-		multiCurrency = e.getMulticurrencyFlag();
-		multiCountry = e.getMulticountryFlag();
-		multiLanguage = e.getMultilanguageFlag();
-		rounding = e.getRounding();
-		prepaidReservationExpirationDelayinMillisec = e.getPrepaidReservationExpirationDelayinMillisec();
-		discountAccountingCode = e.getDiscountAccountingCode();
-		email = e.getEmail();
+		
+		if (loadProviderData) {			
+			description = e.getDescription();
+			invoiceSequenceSize = e.getInvoiceSequenceSize();
+			if (e.getCurrency() != null) {
+				currency = e.getCurrency().getCurrencyCode();
+			}
+			if (e.getCountry() != null) {
+				country = e.getCountry().getCountryCode();
+			}
+			if (e.getLanguage() != null) {
+				language = e.getLanguage().getLanguageCode();
+			}
+			multiCurrency = e.getMulticurrencyFlag();
+			multiCountry = e.getMulticountryFlag();
+			multiLanguage = e.getMultilanguageFlag();
+			rounding = e.getRounding();
+			prepaidReservationExpirationDelayinMillisec = e.getPrepaidReservationExpirationDelayinMillisec();
+			discountAccountingCode = e.getDiscountAccountingCode();
+			email = e.getEmail();			
 
+			this.setEnterprise(e.isEntreprise());
+			this.setLevelDuplication(e.isLevelDuplication());
+			this.setInvoicePrefix(e.getInvoicePrefix());
+			this.setCurrentInvoiceNb(e.getCurrentInvoiceNb());
+			this.setDisplayFreeTransacInInvoice(e.isDisplayFreeTransacInInvoice());
+			this.setRecognizeRevenue(e.isRecognizeRevenue());
+
+			if (e.getInvoiceAdjustmentPrefix() != null) {
+				this.setInvoiceAdjustmentPrefix(e.getInvoiceAdjustmentPrefix());
+			}
+
+			if (e.getCurrentInvoiceAdjustmentNb() != null) {
+				this.setCurrentInvoiceAdjustmentNb(e.getCurrentInvoiceAdjustmentNb());
+			}
+
+			if (e.getInvoiceAdjustmentSequenceSize() != null) {
+				this.setInvoiceAdjustmentSequenceSize(e.getInvoiceAdjustmentSequenceSize());
+			}
+
+			if (e.getBankCoordinates() != null) {
+				this.setBankCoordinates(new BankCoordinatesDto(e.getBankCoordinates()));
+			}
+
+			if (e.getInvoiceConfiguration() != null) {
+				this.setInvoiceConfiguration(new InvoiceConfigurationDto(e.getInvoiceConfiguration()));
+			}
+		}
+		
 		customFields = customFieldInstances;
-
-		this.setEnterprise(e.isEntreprise());
-		this.setLevelDuplication(e.isLevelDuplication());
-		this.setInvoicePrefix(e.getInvoicePrefix());
-		this.setCurrentInvoiceNb(e.getCurrentInvoiceNb());
-		this.setDisplayFreeTransacInInvoice(e.isDisplayFreeTransacInInvoice());
-		this.setRecognizeRevenue(e.isRecognizeRevenue());
-
-		if (e.getInvoiceAdjustmentPrefix() != null) {
-			this.setInvoiceAdjustmentPrefix(e.getInvoiceAdjustmentPrefix());
-		}
-
-		if (e.getCurrentInvoiceAdjustmentNb() != null) {
-			this.setCurrentInvoiceAdjustmentNb(e.getCurrentInvoiceAdjustmentNb());
-		}
-
-		if (e.getInvoiceAdjustmentSequenceSize() != null) {
-			this.setInvoiceAdjustmentSequenceSize(e.getInvoiceAdjustmentSequenceSize());
-		}
-
-		if (e.getBankCoordinates() != null) {
-			this.setBankCoordinates(new BankCoordinatesDto(e.getBankCoordinates()));
-		}
-
-		if (e.getInvoiceConfiguration() != null) {
-			this.setInvoiceConfiguration(new InvoiceConfigurationDto(e.getInvoiceConfiguration()));
-		}
 	}
 
 	public String getCode() {
