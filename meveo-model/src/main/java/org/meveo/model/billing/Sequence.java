@@ -9,13 +9,13 @@ public class Sequence {
 	
 	@Column(name = "PREFIX_EL", length = 2000)
 	@Size(max = 2000)
-	private String prefixEL;
+	private String prefixEL = "";
 	
 	@Column(name = "SEQUENCE_SIZE")
-	private Integer sequenceSize=9;
+	private Integer sequenceSize= 9;
 	
     @Column(name = "CURRENT_INVOICE_NB")
-    private Long currentInvoiceNb;
+    private Long currentInvoiceNb = 0L;
 
 	public Sequence() {
 	}
