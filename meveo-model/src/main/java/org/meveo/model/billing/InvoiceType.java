@@ -62,7 +62,7 @@ public class InvoiceType extends BusinessEntity {
 	private List<InvoiceType> appliesTo = new ArrayList<InvoiceType>();
 	
 	@Embedded
-	Sequence sequence;
+	Sequence sequence = new Sequence();
 	
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "BILLING_SEQ_INVTYP_SELL") 

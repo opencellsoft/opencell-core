@@ -32,11 +32,11 @@
 		<hftl:formPanel formId="formInvoiceType" edit="#{invoiceTypeBean.edit}" label="#{messages['invoiceType.panel']}" backingBean="#{invoiceTypeBean}">
 			<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"  size="60" maxlength="60" />
 			<hftl:formField label="#{messages['businessEntity.description']}" id="description" field="description" useConverter="false" size="100" maxlength="100" />
-			<hftl:formField label="#{messages['invoice.invoiceType']}" field="invoiceTypeEnum" id="invoiceTypeEnum" />
 			<hftl:formField label="#{messages['invoiceType.occTemplate']}" id="occTemplateSelectedId" field="occTemplate"  valueLabelField="code"  
 							popup="true" popupId="searchOccTemplatePopup" clearButton="true" required="true"/>
-			<hftl:formField label="#{messages['invoiceType.prefix']}" field="prefix" id="prefix" textArea="true" rows="1" maxlength="2000" />
-			<hftl:formField label="#{messages['invoiceType.sequenceSize']}" field="sequenceSize" id="sequenceSize" />
+			<hftl:formField label="#{messages['invoiceType.prefix']}" field="sequence"  childField="prefixEL" id="prefix" textArea="true" rows="1" maxlength="2000" />
+			<hftl:formField label="#{messages['invoiceType.sequenceSize']}" field="sequence"  childField="sequenceSize" id="sequenceSize" />
+			<hftl:formField label="#{messages['seller.currentInvoiceNb']}" field="sequence"  childField="currentInvoiceNb" id="currentInvoiceNb" />
             <hftl:formField label="#{messages['invoiceType.appliesTo']}" field="appliesTo" listType="pickUpList" valueLabelField="code" dualListModel="#{invoiceTypeBean.dualListModel}" 
             newLine="true"  id="appliesTo"/>
 		</hftl:formPanel>

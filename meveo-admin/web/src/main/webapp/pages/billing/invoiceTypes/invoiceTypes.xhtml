@@ -28,7 +28,6 @@
 			backingBean="#{invoiceTypeListBean}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
-			<hftl:column label="#{messages['invoice.invoiceType']}" field="invoiceTypeEnum" />
 			<hftl:column label="#{messages['invoiceType.occTemplate']}" field="occTemplate.code" />
 			<hftl:column label="#{messages['invoiceType.appliesTo']}" field="appliesTo" isList="true" valueLabelField="code"
 				valueIdField="id" entityView="invoiceTypeDetail" />
