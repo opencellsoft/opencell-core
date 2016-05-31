@@ -1075,11 +1075,11 @@
 							valueLabelField="code" popup="true" popupId="recurringChargeTmpPopup"
 							edit="false" />
 						<hftl:formField label="#{messages['businessEntity.description']}"
-							field="description" size="50" maxlength="50" disabled="true" />
+							field="description" size="50" maxlength="50" disabled="true" componentWidth="40"/>
 						<hftl:formField
 							label="#{messages['recurringChargeInstance.subscriptionDate']}"
-							field="subscriptionDate" edit="false" />
-                        <hftl:decorateFormField fieldId="RCamountWithoutTax" label="#{messages['recurringChargeInstance.amountWithoutTax']}" >
+							field="subscriptionDate" edit="false" componentWidth="15"/>
+                        <hftl:decorateFormField fieldId="RCamountWithoutTax" label="#{messages['recurringChargeInstance.amountWithoutTax']}" componentWidth="15">
 							<p:inputText id="RCamountWithoutTax"
 								value="#{subscriptionBean.recurringChargeInstance.amountWithoutTax}"
 								size="5" converter="bigDecimalConverter"
@@ -1119,7 +1119,7 @@
 							<p:commandButton value="#{messages['commons.clean']}" process="@this" update="recurringWalletForm" action="#{subscriptionBean.resetFilters}">
 							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 							</p:commandButton>
-    						<p:button value="#{messages['action.cancel']}"
+    						<p:commandButton value="#{messages['action.cancel']}"
     							onclick="PF('dlg_recurringChgPopup').hide()" type="button" />
 						</ui:define>
 				</hftl:formPanel>
@@ -1137,26 +1137,30 @@
 							var="shotApplication" paginator="true" rows="5" resizableColumns="true"
 							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 							rowsPerPageTemplate="5,10,20,30" styleClass="custom-grid">
-							 
-							<p:column headerText="date" filterBy="#{shotApplication.operationDate}" filterFunction="#{subscriptionBean.filterByDate}">
-							<f:facet name="filter">
-							<h:inputHidden id="filter" />
-							</f:facet>
-							<f:facet name="header">
-							<p:outputLabel value="#{messages['walletOperation.operationDate']}" />
-							<br />
-							<p:calendar id="from" pattern="dd/MM/yyyy" size="7">
-							<p:ajax event="dateSelect" onstart="$(PrimeFaces.escapeClientId('#{p:component('filter')}'))[0].value = $(PrimeFaces.escapeClientId('#{p:component('from')}_input'))[0].value + '-' + $(PrimeFaces.escapeClientId('#{p:component('to')}_input'))[0].value" oncomplete="PF('recurringWidget').filter()" />
-							</p:calendar>
-							<p:calendar id="to" pattern="dd/MM/yyyy" size="7" >
-							<p:ajax event="dateSelect" onstart="$(PrimeFaces.escapeClientId('#{p:component('filter')}'))[0].value = $(PrimeFaces.escapeClientId('#{p:component('from')}_input'))[0].value + '-' + $(PrimeFaces.escapeClientId('#{p:component('to')}_input'))[0].value" oncomplete="PF('recurringWidget').filter()" />
-							</p:calendar>
-							</f:facet>
-							<h:outputText value="#{shotApplication.operationDate}">
-							<f:convertDateTime pattern="dd/MM/yyyy"/>
-							</h:outputText>
-							</p:column>
-							<p:column>
+
+                            <p:column headerText="date" filterBy="#{shotApplication.operationDate}" filterFunction="#{subscriptionBean.filterByDate}">
+                                <f:facet name="filter">
+                                    <h:inputHidden id="filter" />
+                                </f:facet>
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{messages['walletOperation.operationDate']}" />
+                                    <br />
+                                    <p:calendar id="from" pattern="dd/MM/yyyy" size="9" >
+                                        <p:ajax event="dateSelect"
+                                            onstart="$(PrimeFaces.escapeClientId('#{p:component('filter')}'))[0].value = $(PrimeFaces.escapeClientId('#{p:component('from')}_input'))[0].value + '-' + $(PrimeFaces.escapeClientId('#{p:component('to')}_input'))[0].value"
+                                            oncomplete="PF('recurringWidget').filter()" />
+                                    </p:calendar>
+                                    <p:calendar id="to" pattern="dd/MM/yyyy" size="9">
+                                        <p:ajax event="dateSelect"
+                                            onstart="$(PrimeFaces.escapeClientId('#{p:component('filter')}'))[0].value = $(PrimeFaces.escapeClientId('#{p:component('from')}_input'))[0].value + '-' + $(PrimeFaces.escapeClientId('#{p:component('to')}_input'))[0].value"
+                                            oncomplete="PF('recurringWidget').filter()" />
+                                    </p:calendar>
+                                </f:facet>
+                                <h:outputText value="#{shotApplication.operationDate}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column width="55">
 								<f:facet name="header">
 									<h:outputText value="#{messages['walletOperation.startDate']}" />
 								</f:facet>
@@ -1164,7 +1168,7 @@
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
 							</p:column>
-							<p:column>
+							<p:column width="55">
 								<f:facet name="header">
 									<h:outputText value="#{messages['walletOperation.endDate']}" />
 								</f:facet>
