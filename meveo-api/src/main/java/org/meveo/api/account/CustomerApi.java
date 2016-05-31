@@ -209,7 +209,7 @@ public class CustomerApi extends AccountApi {
             }
         }
 
-        customerService.updateAudit(customer, currentUser);
+        customer = customerService.update(customer, currentUser);
 
         // Validate and populate customFields
         try {

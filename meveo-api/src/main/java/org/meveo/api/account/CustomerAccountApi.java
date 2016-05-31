@@ -238,7 +238,11 @@ public class CustomerAccountApi extends AccountApi {
 			customerAccount.setExternalRef2(postData.getExternalRef2());
 		}
 
-		customerAccountService.updateAudit(customerAccount, currentUser);
+		try {
+			customerAccount = customerAccountService.update(customerAccount, currentUser);
+		} catch (BusinessException e1) {
+			throw new MeveoApiException(e1.getMessage());
+		}
 
 		// Validate and populate customFields
 		try {

@@ -41,6 +41,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 /**
  * @author Edward P. Legaspi
  **/
+@SuppressWarnings("deprecation")
 @Stateless
 public class BillingAccountApi extends AccountApi {
 
@@ -307,7 +308,11 @@ public class BillingAccountApi extends AccountApi {
 			billingAccount.setBankCoordinates(bankCoordinates);
 		}
 
-		billingAccountService.updateAudit(billingAccount, currentUser);
+		try {
+			billingAccount = billingAccountService.update(billingAccount, currentUser);
+		} catch (BusinessException e1) {
+			throw new MeveoApiException(e1.getMessage());
+		}
 
 		// Validate and populate customFields
 		try {

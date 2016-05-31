@@ -133,7 +133,11 @@ public class UserAccountApi extends AccountApi {
 
 		updateAccount(userAccount, postData, currentUser, checkCustomFields);
 
-		userAccountService.updateAudit(userAccount, currentUser);
+		try {
+			userAccount = userAccountService.update(userAccount, currentUser);
+		} catch (BusinessException e1) {
+			throw new MeveoApiException(e1.getMessage());
+		}
 
 		// Validate and populate customFields
 		try {
