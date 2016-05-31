@@ -81,7 +81,9 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
 		}
 
 		if (subCategoryInvoiceAgregate != null) {
-			subCategoryInvoiceAgregates.add(subCategoryInvoiceAgregate);
+			if (!subCategoryInvoiceAgregates.contains(subCategoryInvoiceAgregate)) {
+				subCategoryInvoiceAgregates.add(subCategoryInvoiceAgregate);
+			}
 		}
 	}
 	

@@ -11,11 +11,11 @@
 
 	<ui:define name="body">
 
-		<c:if test="#{invoiceBean.edit}">
+		<c:if test="#{aggregatedDetailInvoiceBean.edit}">
 			<hftl:entityPopup id="billingAccountPopup"
 				header="#{messages['billingAccount']}"
 				updateField=":tabView:formId:billingAccountSelectedId :tabView:formId:billingAccountSelectedId_text"
-				selection="#{invoiceBean.entity.billingAccount}"
+				selection="#{aggregatedDetailInvoiceBean.entity.billingAccount}"
 				backingBean="#{billingAccountBean}"
 				searchField1Label="#{messages['billingAccount.code']}"
 				searchField1="code"
@@ -26,7 +26,8 @@
 
 			<hftl:entityPopup id="invoicePopup" header="#{messages['invoice']}"
 				updateField=":tabView:datatable_selectedLinkedInvoice"
-				selection="#{invoiceBean.invoiceToAdd}" backingBean="#{invoiceBean}"
+				selection="#{aggregatedDetailInvoiceBean.invoiceToAdd}"
+				backingBean="#{aggregatedDetailInvoiceBean}"
 				searchField1Label="#{messages['invoice.invoiceNumber']}"
 				searchField1="invoiceNumber"
 				column1Label="#{messages['invoice.invoiceNumber']}"
@@ -48,11 +49,13 @@
 
 			<p:growl id="growl"></p:growl>
 
-			<p:tabView id="tabView" activeIndex="#{invoiceBean.activeTab}">
+			<p:tabView id="tabView"
+				activeIndex="#{aggregatedDetailInvoiceBean.activeTab}">
 				<p:tab title="#{messages['menu.invoice']}">
 					<hftl:formPanel ajaxSubmit="true"
 						submitPartialProcess=":tabView:formId"
-						backingBean="#{invoiceBean}" showEnableDisableButton="true">
+						backingBean="#{aggregatedDetailInvoiceBean}"
+						showEnableDisableButton="true">
 						<hftl:formField field="invoiceType"
 							label="#{messages['invoice.invoiceType']}" valueLabelField="code"
 							listBean="#{invoiceTypeBean}"></hftl:formField>
@@ -63,21 +66,21 @@
 					</hftl:formPanel>
 
 					<hftl:dataList label="#{messages['invoice.linkedInvoices']}"
-						noClose="false" backingBean="#{invoiceBean}"
-						dataModel="#{invoiceBean.entity.linkedInvoices}"
+						noClose="false" backingBean="#{aggregatedDetailInvoiceBean}"
+						dataModel="#{aggregatedDetailInvoiceBean.entity.linkedInvoices}"
 						resultsId="selectedLinkedInvoice">
 						<hftl:column label="#{messages['invoice.invoiceNumber']}"
 							field="invoiceNumber" />
 						<hftl:column label="#{messages['invoice.invoiceDate']}"
 							field="invoiceDate" />
-						<hftl:column label="#{messages['invoice.amountWithTax']}"
-							field="amountWithTax" />
+						<hftl:column label="#{messages['invoice.amountWithoutTax']}"
+							field="amountWithoutTax" />
 						<p:column>
 							<p:commandButton icon="ui-icon-trash"
-								action="#{invoiceBean.deleteLinkedInvoice}"
+								action="#{aggregatedDetailInvoiceBean.deleteLinkedInvoice}"
 								update="datatable_selectedLinkedInvoice">
 								<f:setPropertyActionListener value="#{entity}"
-									target="#{invoiceBean.selectedInvoice}" />
+									target="#{aggregatedDetailInvoiceBean.selectedInvoice}" />
 								<p:confirm header="#{messages['commons.confirmationHeader']}"
 									message="#{messages['commons.confirmDelete']}"
 									icon="ui-icon-alert" />
@@ -89,19 +92,19 @@
 						onclick="PF('dlg_invoicePopup').show();" />
 
 					<p:commandButton value="#{messages['action.deleteAll']}"
-						action="#{invoiceBean.deleteAllLinkedInvoice}"
+						action="#{aggregatedDetailInvoiceBean.deleteAllLinkedInvoice}"
 						update=":tabView:datatable_selectedLinkedInvoice" />
 
 					<!-- aggregated lines here -->
 					<h:form id="aggregatedInvoiceForm">
 						<p:outputPanel id="aggregatedInvoicePanel">
 							<p:dataTable var="entity" editable="true" editMode="cell"
-								value="#{invoiceBean.categoryInvoiceAggregates}">
+								value="#{aggregatedDetailInvoiceBean.categoryInvoiceAggregates}">
 
 								<f:facet name="header">#{messages['invoice.aggregates']}</f:facet>
 
 								<p:ajax event="cellEdit" update="growl"
-									listener="#{invoiceBean.onCellEdit}">
+									listener="#{aggregatedDetailInvoiceBean.onCellEdit}">
 								</p:ajax>
 
 								<p:columnGroup type="header">
@@ -123,20 +126,18 @@
 										</f:facet>
 									</p:cellEditor>
 									<span style="width: 5px;"> </span>
-									<p:commandButton icon="ui-icon-trash"
-										action="#{invoiceBean.deleteLinkedInvoiceCategory}"
-										update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel">
-										<f:param name="cid"
-											value="#{javax.enterprise.context.conversation.id}" />
+									<p:commandButton icon="ui-icon-trash" immediate="true"
+										action="#{aggregatedDetailInvoiceBean.deleteLinkedInvoiceCategory}"
+										update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary">
 										<f:setPropertyActionListener value="#{entity}"
-											target="#{invoiceBean.selectedCategoryInvoiceAgregate}" />
+											target="#{aggregatedDetailInvoiceBean.selectedCategoryInvoiceAgregate}" />
 									</p:commandButton>
 								</p:column>
 
 								<p:column>
 									<p:dataTable editable="true" editMode="cell" id="subCategories"
 										var="subCat"
-										value="#{invoiceBean.getSubCategoryInvoiceAggregates(entity)}">
+										value="#{aggregatedDetailInvoiceBean.getSubCategoryInvoiceAggregates(entity)}">
 
 										<p:ajax event="cellEdit" update="growl" />
 
@@ -180,12 +181,11 @@
 										</p:column>
 										<p:column>
 											<p:commandButton icon="ui-icon-trash"
-												action="#{invoiceBean.deleteLinkedInvoiceSubCategory}"
-												update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel">
-												<f:param name="cid"
-													value="#{javax.enterprise.context.conversation.id}" />
+												process=":tabView:aggregatedInvoicePanel"
+												action="#{aggregatedDetailInvoiceBean.deleteLinkedInvoiceSubCategory}"
+												update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary">
 												<f:setPropertyActionListener value="#{subCat}"
-													target="#{invoiceBean.selectedSubCategoryInvoiceAgregate}" />
+													target="#{aggregatedDetailInvoiceBean.selectedSubCategoryInvoiceAgregate}" />
 											</p:commandButton>
 										</p:column>
 
@@ -194,12 +194,77 @@
 
 							</p:dataTable>
 						</p:outputPanel>
+
+						<p:panel id="addAggregatedLine" style="float: right; width: 50%;">
+							<p:row>
+								<p:column>
+									<hftl:decorateFormField fieldId="selectedInvoiceCatOrSubCat"
+										label="#{messages['invoice.catOrSubCat']}">
+										<p:selectOneMenu id="selectedInvoiceCatOrSubCat"
+											value="#{aggregatedDetailInvoiceBean.selectedInvoiceCatSubCatModel}"
+											converter="omnifaces.SelectItemsConverter">
+											<f:selectItem itemLabel="" noSelectionOption="true" />
+											<f:selectItems var="e" itemLabel="#{e.label}"
+												itemValue="#{e}"
+												value="#{aggregatedDetailInvoiceBean.invoiceCatSubCats}" />
+										</p:selectOneMenu>
+									</hftl:decorateFormField>
+								</p:column>
+								<p:column>
+									<hftl:decorateFormField fieldId="description"
+										label="#{messages['BusinessEntity.description']}">
+										<p:inputText id="description"
+											value="#{aggregatedDetailInvoiceBean.selectedInvoiceCatSubCatModel.description}"></p:inputText>
+									</hftl:decorateFormField>
+								</p:column>
+								<p:column>
+									<hftl:decorateFormField fieldId="amountWithoutTax"
+										label="#{messages['invoice.amountWithoutTax']}">
+										<p:inputText id="amountWithoutTax" required="true"
+											value="#{aggregatedDetailInvoiceBean.selectedInvoiceCatSubCatModel.amountWithoutTax}"></p:inputText>
+									</hftl:decorateFormField>
+								</p:column>
+								<p:column>
+									<p:commandButton value="#{messages['action.invoice.addLine']}"
+										process="addAggregatedLine"
+										action="#{aggregatedDetailInvoiceBean.addAggregatedLine()}"
+										update=":tabView:aggregatedInvoiceForm :tabView:invoiceSummary"
+										style="margin-top: 20px;">
+									</p:commandButton>
+								</p:column>
+							</p:row>
+						</p:panel>
+
+						<div style="clear: both"></div>
+
 					</h:form>
 
 					<p:commandButton
 						value="#{messages['action.invoice.importFromLinkedInvoices']}"
-						action="#{invoiceBean.importFromLinkedInvoices}"
-						update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel" />
+						action="#{aggregatedDetailInvoiceBean.importFromLinkedInvoices}"
+						update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary" />
+
+					<p:outputPanel id="invoiceSummary">
+						<p:panelGrid style="float: right; width: 50%;"
+							rendered="#{aggregatedDetailInvoiceBean.entity.invoiceAgregates.size() > 0}">
+							<f:facet name="header">
+								<p:row>
+									<p:column>#{messages['invoice.summary.totalAmountWithoutTax']}</p:column>
+									<p:column>#{messages['invoice.summary.totalTaxAmount']}</p:column>
+									<p:column>#{messages['invoice.summary.totalAmountWithTax']}</p:column>
+									<p:column>#{messages['invoice.summary.netToPay']}</p:column>
+								</p:row>
+							</f:facet>
+							<p:row>
+								<p:column>#{aggregatedDetailInvoiceBean.computeTotalAmountWithoutTax}</p:column>
+								<p:column>#{aggregatedDetailInvoiceBean.computeTotalAmountTax}</p:column>
+								<p:column>#{aggregatedDetailInvoiceBean.computeTotalAmountWithTax}</p:column>
+								<p:column>#{aggregatedDetailInvoiceBean.netToPay}</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:outputPanel>
+
+					<div style="clear: both"></div>
 
 				</p:tab>
 			</p:tabView>
