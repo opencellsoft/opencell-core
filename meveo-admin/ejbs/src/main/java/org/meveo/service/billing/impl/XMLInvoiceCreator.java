@@ -504,6 +504,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					subscriptionTag.setAttribute("code", subscription.getCode() != null ? subscription.getCode() : "");
 					subscriptionTag.setAttribute("description",
 							subscription.getDescription() != null ? subscription.getDescription() : "");
+					subscriptionTag.setAttribute("offerCode", subscription.getOffer() != null ? subscription.getOffer().getCode() : "");
+					
 
 					Element subscriptionDateTag = doc.createElement("subscriptionDate");
 					Text subscriptionDateText = null;
