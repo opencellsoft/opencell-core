@@ -38,13 +38,17 @@
 
             <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />
             <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description" />
+           
             <hftl:formField id="offerSelectId" label="#{messages['pricePlanMatrix.offerCode']}" field="offerTemplate" valueLabelField="code" required="true" popup="true"
                 popupId="offerTemplatePopup" rendered="#{!businessOfferModelBean.entity.downloaded}" />
+                
             <hftl:decorateFormField fieldId="offerId" label="#{messages['pricePlanMatrix.offerCode']}" required="true" rendered="#{businessOfferModelBean.entity.downloaded}">
                 <h:outputText id="offerId" value="#{businessOfferModelBean.offerTemplateCodeFromModuleSource}" styleClass="field-value" />
             </hftl:decorateFormField>
-            <hftl:formField id="offerSelectId" label="#{messages['pricePlanMatrix.offerCode']}" field="offerTemplate" valueLabelField="code" required="true"
+            
+            <hftl:formField id="offerSelectId1" label="#{messages['pricePlanMatrix.offerCode']}" field="offerTemplate" valueLabelField="code" required="true"
                 rendered="#{!businessOfferModelBean.entity.downloaded}" />
+                
             <hftl:formField id="script" label="#{messages['meveoModule.script']}" field="script" valueLabelField="code" componentWidth="30" popup="true" popupId="moduleScriptPopup"
                 createEditPopup="true" createEditPopupId="scriptDialog" createEditPopupListenerBean="#{businessOfferModelBean}" createEditPopupListenerViewMethod="viewEditScript"
                 createEditPopupListenerNewMethod="newScript" createEditPopupListenerUpdate=":scriptForm" />
