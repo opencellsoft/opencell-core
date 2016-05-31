@@ -164,45 +164,35 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     }
 
     public TreeNode getFields() {
-        if(groupedFields==null&&cetPrefix!=null){
-        	Map<String, CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesToNoCache(cetPrefix, getCurrentProvider());
+        if (groupedFields != null || cetPrefix == null) {
+            return groupedFields;
+        }
 
-            GroupedCustomField groupedCFT = new GroupedCustomField(fields.values(), CustomEntityTemplate.class.isAssignableFrom(entityClass) ? entity.getName() : "Custom fields", true);
+        Map<String, CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesToNoCache(cetPrefix, getCurrentProvider());
 
-            groupedFields = new SortedTreeNode(groupedCFT.getType(), groupedCFT.getData(), null);
-            groupedFields.setExpanded(true);
+        GroupedCustomField groupedCFT = new GroupedCustomField(fields.values(), CustomEntityTemplate.class.isAssignableFrom(entityClass) ? entity.getName() : "Custom fields", true);
 
-            // Create through tabs
-            for (GroupedCustomField level1 : groupedCFT.getChildren()) {
-                SortedTreeNode level1Node = new SortedTreeNode(level1.getType(), level1.getData(), groupedFields);
-                level1Node.setExpanded(true);
+        groupedFields = new SortedTreeNode(groupedCFT.getType(), groupedCFT.getData(), null);
+        groupedFields.setExpanded(true);
 
-                // Create fields of field groups
-                for (GroupedCustomField level2 : level1.getChildren()) {
-                    SortedTreeNode level2Node = new SortedTreeNode(level2.getType(), level2.getData(), level1Node);
-                    if (level2.getType().equals(GroupedCustomField.TYPE_FIELD_GROUP)) {
-                        level2Node.setExpanded(true);
-                    }
-                    // Create fields
-                    for (GroupedCustomField level3 : level2.getChildren()) {
-                        new SortedTreeNode(level3.getType(), level3.getData(), level2Node);
-                    }
+        // Create through tabs
+        for (GroupedCustomField level1 : groupedCFT.getChildren()) {
+            SortedTreeNode level1Node = new SortedTreeNode(level1.getType(), level1.getData(), groupedFields);
+            level1Node.setExpanded(true);
+
+            // Create fields of field groups
+            for (GroupedCustomField level2 : level1.getChildren()) {
+                SortedTreeNode level2Node = new SortedTreeNode(level2.getType(), level2.getData(), level1Node);
+                if (level2.getType().equals(GroupedCustomField.TYPE_FIELD_GROUP)) {
+                    level2Node.setExpanded(true);
+                }
+                // Create fields
+                for (GroupedCustomField level3 : level2.getChildren()) {
+                    new SortedTreeNode(level3.getType(), level3.getData(), level2Node);
                 }
             }
         }
-        boolean isCFTabRoot=false;
-        List<TreeNode> children=groupedFields.getChildren();
-        for(TreeNode child:children){
-        	String data=child.getData().toString();
-        	if(data!=null&&data.indexOf("Custom fields")==0){
-        		isCFTabRoot=true;
-        		break;
-        	}
-        }
-        if(!isCFTabRoot){
-        	SortedTreeNode cfNode = new SortedTreeNode(GroupedCustomField.TYPE_TAB, "Custom fields", groupedFields);
-            cfNode.setExpanded(true);
-        }
+
         return groupedFields;
     }
 
