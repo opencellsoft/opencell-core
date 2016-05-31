@@ -273,7 +273,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return (prefix + invoiceNumber);
 	}
 
-	public Sequence getSequence(Invoice invoice ,Seller seller,int step,boolean increment,User currentUser)throws BusinessException{	
+	public synchronized Sequence getSequence(Invoice invoice ,Seller seller,int step,boolean increment,User currentUser)throws BusinessException{	
 		String cfName = "INVOICE_SEQUENCE";
 		Long currentNbFromCF = null;
 		
