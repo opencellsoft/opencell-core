@@ -1143,13 +1143,13 @@
                                     <p:outputLabel value="#{messages['walletOperation.operationDate']}" />
                                     <br />
                                     <p:calendar id="from" pattern="dd/MM/yyyy" size="9" readonly="true">
-									<p:watermark for="from" value="from" />
+									<p:watermark for="from" value="#{messages['commons.from']}" />
                                         <p:ajax event="dateSelect"
                                             onstart="$(PrimeFaces.escapeClientId('#{p:component('filter')}'))[0].value = $(PrimeFaces.escapeClientId('#{p:component('from')}_input'))[0].value + '-' + $(PrimeFaces.escapeClientId('#{p:component('to')}_input'))[0].value"
                                             oncomplete="PF('recurringWidget').filter()" />
                                     </p:calendar>
                                     <p:calendar id="to" pattern="dd/MM/yyyy" size="9" readonly="true">
-									<p:watermark for="to" value="to" />
+									<p:watermark for="to" value="#{messages['commons.to']}" />
                                         <p:ajax event="dateSelect"
                                             onstart="$(PrimeFaces.escapeClientId('#{p:component('filter')}'))[0].value = $(PrimeFaces.escapeClientId('#{p:component('from')}_input'))[0].value + '-' + $(PrimeFaces.escapeClientId('#{p:component('to')}_input'))[0].value"
                                             oncomplete="PF('recurringWidget').filter()" />
