@@ -936,60 +936,7 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 			Provider provider = currentUser.getProvider();
 
-			Seller seller = sellerService.findByCode(sellerDto.getCode(), provider);
-			if (seller == null) {
-				seller = new Seller();
-				seller.setCode(sellerDto.getCode());
-
-				seller.setDescription(sellerDto.getDescription());
-				seller.setInvoicePrefix(sellerDto.getInvoicePrefix());
-
-				seller.setProvider(provider);
-			} else {
-				if (!StringUtils.isBlank(sellerDto.getDescription())) {
-					seller.setDescription(sellerDto.getDescription());
-				}
-				if (!StringUtils.isBlank(sellerDto.getInvoicePrefix())) {
-					seller.setInvoicePrefix(sellerDto.getInvoicePrefix());
-				}
-			}
-
-			if (!StringUtils.isBlank(sellerDto.getCurrencyCode())) {
-				TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(sellerDto.getCurrencyCode(), provider);
-				if (tradingCurrency != null) {
-					seller.setTradingCurrency(tradingCurrency);
-				}
-			}
-
-			if (!StringUtils.isBlank(sellerDto.getCountryCode())) {
-				TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(sellerDto.getCountryCode(), provider);
-				if (tradingCountry != null) {
-					seller.setTradingCountry(tradingCountry);
-				}
-			}
-
-			if (!StringUtils.isBlank(sellerDto.getLanguageCode())) {
-				TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(sellerDto.getLanguageCode(), provider);
-				if (tradingLanguage != null) {
-					seller.setTradingLanguage(tradingLanguage);
-				}
-			}
-
-			boolean isNewSeller = seller.isTransient();
-			if (isNewSeller) {
-				sellerService.create(seller, currentUser);
-			} else {
-				sellerService.update(seller, currentUser);
-			}
-
-			// populate customFields
-			try {
-				populateCustomFields(sellerDto.getCustomFields(), seller, isNewSeller, currentUser);
-
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				log.error("Failed to associate custom field instance to a seller {}", sellerDto.getCode(), e);
-				throw new MeveoApiException("Failed to associate custom field instance to a seller " + sellerDto.getCode());
-			}
+            sellerApi.createOrUpdate(sellerDto, currentUser);
 
 			// customers
 			if (sellerDto.getCustomers() != null) {
@@ -1049,7 +996,7 @@ public class AccountHierarchyApi extends BaseApi {
 						}
 					}
 
-					customer.setSeller(seller);
+					customer.setSeller(sellerService.findByCode(sellerDto.getCode(), provider));
 
 					if (customerDto.getContactInformation() != null) {
 						if (!StringUtils.isBlank(customerDto.getContactInformation().getEmail())) {

@@ -19,7 +19,8 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.invoice.Invoice4_2Api;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.Invoice4_2Ws;
-import org.meveo.model.billing.InvoiceTypeEnum;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 
 @Deprecated
 @WebService(serviceName = "Invoice4_2Ws", endpointInterface = "org.meveo.api.ws.Invoice4_2Ws")
@@ -28,6 +29,9 @@ public class Invoice4_2WsImpl extends BaseWs implements Invoice4_2Ws {
 
     @Inject
     Invoice4_2Api invoiceApi;
+    
+    @Inject
+    InvoiceTypeService invoiceTypeService;
 
     @Override
     public InvoiceCreationResponse createInvoice(Invoice4_2Dto invoiceDto) {
@@ -97,7 +101,7 @@ public class Invoice4_2WsImpl extends BaseWs implements Invoice4_2Ws {
 
     @Override
     public GetXmlInvoiceResponseDto findXMLInvoice(String invoiceNumber) {
-        return findXMLInvoiceWithType(invoiceNumber, InvoiceTypeEnum.COMMERCIAL.name());
+        return findXMLInvoiceWithType(invoiceNumber, invoiceTypeService.getCommercialCode());
     }
 
     @Override
@@ -124,7 +128,7 @@ public class Invoice4_2WsImpl extends BaseWs implements Invoice4_2Ws {
 
     @Override
     public GetPdfInvoiceResponseDto findPdfInvoice(String invoiceNumber) {
-        return findPdfInvoiceWithType(invoiceNumber, InvoiceTypeEnum.COMMERCIAL.name());
+        return findPdfInvoiceWithType(invoiceNumber, invoiceTypeService.getCommercialCode());
     }
 
     @Override

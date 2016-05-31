@@ -73,7 +73,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.XMLInvoiceHeaderCategoryDTO;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -175,7 +174,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			Element invoiceTag = doc.createElement("invoice");
 			Element header = doc.createElement("header");
 			invoiceTag.setAttribute("number", invoice.getInvoiceNumber());
-			invoiceTag.setAttribute("type", invoice.getInvoiceType().getInvoiceTypeEnum().name());
+			invoiceTag.setAttribute("type", invoice.getInvoiceType().getCode());
 			invoiceTag.setAttribute("invoiceCounter", invoice.getAlias());
 			invoiceTag.setAttribute("id", invoice.getId().toString());
 			invoiceTag.setAttribute("customerId", invoice.getBillingAccount().getCustomerAccount().getCustomer()

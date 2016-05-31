@@ -23,8 +23,11 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.Sequence;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -78,11 +81,18 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 	}
 
 	public InvoiceType getDefaultAdjustement(User currentUser) throws BusinessException {
-		return getDefaultType(param.getProperty("invoiceType.adjustement.code", "ADJ"), currentUser);
+		return getDefaultType(getAdjustementCode(), currentUser);
 	}
 
 	public InvoiceType getDefaultCommertial(User currentUser) throws BusinessException {
-		return getDefaultType(param.getProperty("invoiceType.commercial.code", "COM"), currentUser);
+		return getDefaultType(getCommercialCode(), currentUser);
 	}
 
+	public String getCommercialCode() {
+		return param.getProperty("invoiceType.commercial.code", "COM");
+	}
+	
+	public String getAdjustementCode() {
+		return param.getProperty("invoiceType.adjustement.code", "ADJ");
+	}
 }

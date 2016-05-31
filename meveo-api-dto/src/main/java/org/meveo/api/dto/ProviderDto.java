@@ -1,5 +1,9 @@
 package org.meveo.api.dto;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -8,6 +12,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.invoice.InvoiceConfigurationDto;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.Sequence;
 import org.meveo.model.crm.Provider;
 
 /**
@@ -30,16 +36,10 @@ public class ProviderDto extends BaseDto {
 	private boolean multiCountry;
 	private boolean multiLanguage;
 	private String userAccount;
-	private Integer invoiceSequenceSize;
 
 	private boolean enterprise;
-	private boolean levelDuplication;
-	private String invoicePrefix;
-	private Long currentInvoiceNb;
+	private boolean levelDuplication;	
 	private boolean displayFreeTransacInInvoice;
-	private String invoiceAdjustmentPrefix;
-	private Long currentInvoiceAdjustmentNb;
-	private Integer invoiceAdjustmentSequenceSize;
 	private Integer rounding = 2;
 	private Long prepaidReservationExpirationDelayinMillisec;
 	private String discountAccountingCode;
@@ -50,6 +50,8 @@ public class ProviderDto extends BaseDto {
 
 	@XmlElement(required = false)
 	private CustomFieldsDto customFields;
+	
+	private Map<String,SequenceDto> invoiceTypeSequences = new HashMap<String,SequenceDto>();
 
 	public ProviderDto() {
 
@@ -63,8 +65,7 @@ public class ProviderDto extends BaseDto {
 		code = e.getCode();
 		
 		if (loadProviderData) {			
-			description = e.getDescription();
-			invoiceSequenceSize = e.getInvoiceSequenceSize();
+			description = e.getDescription();			
 			if (e.getCurrency() != null) {
 				currency = e.getCurrency().getCurrencyCode();
 			}
@@ -82,24 +83,16 @@ public class ProviderDto extends BaseDto {
 			discountAccountingCode = e.getDiscountAccountingCode();
 			email = e.getEmail();			
 
+			if(e.getInvoiceTypeSequence() != null){
+				for(Entry<InvoiceType, Sequence> entry : e.getInvoiceTypeSequence().entrySet() ){
+					invoiceTypeSequences.put(entry.getKey().getCode(), new SequenceDto(entry.getValue()));
+				}
+			}
 			this.setEnterprise(e.isEntreprise());
 			this.setLevelDuplication(e.isLevelDuplication());
-			this.setInvoicePrefix(e.getInvoicePrefix());
-			this.setCurrentInvoiceNb(e.getCurrentInvoiceNb());
+			
 			this.setDisplayFreeTransacInInvoice(e.isDisplayFreeTransacInInvoice());
 			this.setRecognizeRevenue(e.isRecognizeRevenue());
-
-			if (e.getInvoiceAdjustmentPrefix() != null) {
-				this.setInvoiceAdjustmentPrefix(e.getInvoiceAdjustmentPrefix());
-			}
-
-			if (e.getCurrentInvoiceAdjustmentNb() != null) {
-				this.setCurrentInvoiceAdjustmentNb(e.getCurrentInvoiceAdjustmentNb());
-			}
-
-			if (e.getInvoiceAdjustmentSequenceSize() != null) {
-				this.setInvoiceAdjustmentSequenceSize(e.getInvoiceAdjustmentSequenceSize());
-			}
 
 			if (e.getBankCoordinates() != null) {
 				this.setBankCoordinates(new BankCoordinatesDto(e.getBankCoordinates()));
@@ -193,13 +186,6 @@ public class ProviderDto extends BaseDto {
 		this.customFields = customFields;
 	}
 
-	public Integer getInvoiceSequenceSize() {
-		return invoiceSequenceSize;
-	}
-
-	public void setInvoiceSequenceSize(Integer invoiceSequenceSize) {
-		this.invoiceSequenceSize = invoiceSequenceSize;
-	}
 
 	public boolean isEnterprise() {
 		return enterprise;
@@ -217,21 +203,7 @@ public class ProviderDto extends BaseDto {
 		this.levelDuplication = levelDuplication;
 	}
 
-	public String getInvoicePrefix() {
-		return invoicePrefix;
-	}
-
-	public void setInvoicePrefix(String invoicePrefix) {
-		this.invoicePrefix = invoicePrefix;
-	}
-
-	public Long getCurrentInvoiceNb() {
-		return currentInvoiceNb;
-	}
-
-	public void setCurrentInvoiceNb(Long currentInvoiceNb) {
-		this.currentInvoiceNb = currentInvoiceNb;
-	}
+	
 
 	public boolean isDisplayFreeTransacInInvoice() {
 		return displayFreeTransacInInvoice;
@@ -239,31 +211,7 @@ public class ProviderDto extends BaseDto {
 
 	public void setDisplayFreeTransacInInvoice(boolean displayFreeTransacInInvoice) {
 		this.displayFreeTransacInInvoice = displayFreeTransacInInvoice;
-	}
-
-	public String getInvoiceAdjustmentPrefix() {
-		return invoiceAdjustmentPrefix;
-	}
-
-	public void setInvoiceAdjustmentPrefix(String invoiceAdjustmentPrefix) {
-		this.invoiceAdjustmentPrefix = invoiceAdjustmentPrefix;
-	}
-
-	public Long getCurrentInvoiceAdjustmentNb() {
-		return currentInvoiceAdjustmentNb;
-	}
-
-	public void setCurrentInvoiceAdjustmentNb(Long currentInvoiceAdjustmentNb) {
-		this.currentInvoiceAdjustmentNb = currentInvoiceAdjustmentNb;
-	}
-
-	public Integer getInvoiceAdjustmentSequenceSize() {
-		return invoiceAdjustmentSequenceSize;
-	}
-
-	public void setInvoiceAdjustmentSequenceSize(Integer invoiceAdjustmentSequenceSize) {
-		this.invoiceAdjustmentSequenceSize = invoiceAdjustmentSequenceSize;
-	}
+	}	
 
 	public BankCoordinatesDto getBankCoordinates() {
 		return bankCoordinates;
@@ -328,16 +276,29 @@ public class ProviderDto extends BaseDto {
 		this.recognizeRevenue = recognizeRevenue;
 	}
 
+	/**
+	 * @return the invoiceTypeSequences
+	 */
+	public Map<String, SequenceDto> getInvoiceTypeSequences() {
+		return invoiceTypeSequences;
+	}
+
+	/**
+	 * @param invoiceTypeSequences the invoiceTypeSequences to set
+	 */
+	public void setInvoiceTypeSequences(Map<String, SequenceDto> invoiceTypeSequences) {
+		this.invoiceTypeSequences = invoiceTypeSequences;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "ProviderDto [code=" + code + ", description=" + description + ", currency=" + currency + ", country=" + country + ", language=" + language + ", multiCurrency="
-				+ multiCurrency + ", multiCountry=" + multiCountry + ", multiLanguage=" + multiLanguage + ", userAccount=" + userAccount + ", invoiceSequenceSize="
-				+ invoiceSequenceSize + ", enterprise=" + enterprise + ", levelDuplication=" + levelDuplication + ", invoicePrefix=" + invoicePrefix + ", currentInvoiceNb="
-				+ currentInvoiceNb + ", displayFreeTransacInInvoice=" + displayFreeTransacInInvoice + ", invoiceAdjustmentPrefix=" + invoiceAdjustmentPrefix
-				+ ", currentInvoiceAdjustmentNb=" + currentInvoiceAdjustmentNb + ", invoiceAdjustmentSequenceSize=" + invoiceAdjustmentSequenceSize + ", rounding=" + rounding
-				+ ", prepaidReservationExpirationDelayinMillisec=" + prepaidReservationExpirationDelayinMillisec + ", discountAccountingCode=" + discountAccountingCode
-				+ ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", recognizeRevenue=" + recognizeRevenue + ", invoiceConfiguration=" + invoiceConfiguration
-				+ ", customFields=" + customFields + "]";
+		return "ProviderDto [code=" + code + ", description=" + description + ", currency=" + currency + ", country=" + country + ", language=" + language + ", multiCurrency=" + multiCurrency + ", multiCountry=" + multiCountry + ", multiLanguage=" + multiLanguage + ", userAccount=" + userAccount + ", enterprise=" + enterprise + ", levelDuplication=" + levelDuplication + ", displayFreeTransacInInvoice=" + displayFreeTransacInInvoice + ", rounding=" + rounding
+				+ ", prepaidReservationExpirationDelayinMillisec=" + prepaidReservationExpirationDelayinMillisec + ", discountAccountingCode=" + discountAccountingCode + ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", recognizeRevenue=" + recognizeRevenue + ", invoiceConfiguration=" + invoiceConfiguration + ", customFields=" + customFields + ", invoiceTypeSequences=" + invoiceTypeSequences + "]";
 	}
+
+	
 
 }

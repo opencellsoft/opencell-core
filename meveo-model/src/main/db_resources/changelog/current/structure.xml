@@ -1977,4 +1977,122 @@
 		 <renameColumn   newColumnName="prefix_el"  oldColumnName="prefix"  tableName="billing_invoice_type"/>
      </changeSet>
      		
+    <changeSet author="anasseh (generated)" id="#1685_20160530-1">
+        <createTable tableName="billing_seq_invtyp_prov">
+            <column name="invoicetype_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currentinvoicenb" type="BIGINT"/>
+            <column name="prefixel" type="VARCHAR(255)"/>
+            <column name="sequencesize" type="INT4"/>
+            <column name="provider_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-2">
+        <createTable tableName="billing_seq_invtyp_sell">
+            <column name="invoicetype_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currentinvoicenb" type="BIGINT"/>
+            <column name="prefixel" type="VARCHAR(255)"/>
+            <column name="sequencesize" type="INT4"/>
+            <column name="seller_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+ 
+    <changeSet author="anasseh (generated)" id="#1685_20160530-5">
+        <addColumn tableName="billing_invoice_type">
+            <column name="current_invoice_nb" type="int8"/>
+        </addColumn>
+    </changeSet>
+
+
+    <changeSet author="anasseh (generated)" id="#1685_20160530-10">
+        <addPrimaryKey columnNames="invoicetype_id, provider_id" constraintName="billing_seq_invtyp_prov_pkey" tableName="billing_seq_invtyp_prov"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-11">
+        <addPrimaryKey columnNames="invoicetype_id, seller_id" constraintName="billing_seq_invtyp_sell_pkey" tableName="billing_seq_invtyp_sell"/>
+    </changeSet>
+
+    <changeSet author="anasseh (generated)" id="#1685_20160530-23">
+        <addForeignKeyConstraint baseColumnNames="invoicetype_id" baseTableName="billing_seq_invtyp_sell" constraintName="fk_2rjk30cy77bs2jxqwsbrhk6qb" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type"/>
+    </changeSet>
+
+    <changeSet author="anasseh (generated)" id="#1685_20160530-43">
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_seq_invtyp_sell" constraintName="fk_ivmab13iml7v0n29giw9w8kor" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller"/>
+    </changeSet>
+
+    <changeSet author="anasseh (generated)" id="#1685_20160530-46">
+        <addForeignKeyConstraint baseColumnNames="invoicetype_id" baseTableName="billing_seq_invtyp_prov" constraintName="fk_obda28muhcodm36q8y6oryjx7" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type"/>
+    </changeSet>
+ 
+    <changeSet author="anasseh (generated)" id="#1685_20160530-49">
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="billing_seq_invtyp_prov" constraintName="fk_r55ewvyjj3tpuauck83pe3syw" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider"/>
+    </changeSet>
+   
+    <changeSet author="anasseh (generated)" id="#1685_20160530-80">
+        <dropColumn columnName="credit_note_prefix" tableName="crm_provider"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-81">
+        <dropColumn columnName="credit_note_prefix" tableName="crm_seller"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-82">
+        <dropColumn columnName="credit_note_sequence_size" tableName="crm_provider"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-83">
+        <dropColumn columnName="credit_note_sequence_size" tableName="crm_seller"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-84">
+        <dropColumn columnName="current_credit_note_nb" tableName="crm_provider"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-85">
+        <dropColumn columnName="current_credit_note_nb" tableName="crm_seller"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-86">
+        <dropColumn columnName="current_invoice_adjustment_nb" tableName="crm_provider"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-87">
+        <dropColumn columnName="current_invoice_adjustment_nb" tableName="crm_seller"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-88">
+        <dropColumn columnName="current_invoice_nb" tableName="crm_provider"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-89">
+        <dropColumn columnName="current_invoice_nb" tableName="crm_seller"/>
+    </changeSet>
+
+    <changeSet author="anasseh (generated)" id="#1685_20160530-92">
+        <dropColumn columnName="inv_type" tableName="billing_invoice_type"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-93">
+        <dropColumn columnName="invoice_adjustment_prefix" tableName="crm_provider"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-94">
+        <dropColumn columnName="invoice_adjustment_prefix" tableName="crm_seller"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-95">
+        <dropColumn columnName="invoice_adjustment_sequence_size" tableName="crm_provider"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-96">
+        <dropColumn columnName="invoice_adjustment_sequence_size" tableName="crm_seller"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-97">
+        <dropColumn columnName="invoice_prefix" tableName="crm_provider"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-98">
+        <dropColumn columnName="invoice_prefix" tableName="crm_seller"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-99">
+        <dropColumn columnName="invoice_sequence_size" tableName="crm_provider"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-100">
+        <dropColumn columnName="invoice_sequence_size" tableName="crm_seller"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1685_20160530-101">
+        <dropColumn columnName="invoice_type" tableName="billing_invoice"/>
+    </changeSet>   		
 </databaseChangeLog>

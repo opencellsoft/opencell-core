@@ -103,8 +103,7 @@ public class Seller {
 			tradingCountryCode=seller.getTradingCountry()==null?"":seller.getTradingCountry().getCountryCode();
 			tradingLanguageCode=seller.getTradingLanguage()==null?"":seller.getTradingLanguage().getLanguageCode();
 			address=new Address(seller.getAddress());
-			currentInvoiceNb=seller.getCurrentInvoiceNb();
-			invoicePrefix=seller.getInvoicePrefix();
+	
 		}
 	}
 

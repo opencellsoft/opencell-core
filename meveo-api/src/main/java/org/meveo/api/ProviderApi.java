@@ -2,6 +2,7 @@ package org.meveo.api;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -15,6 +16,7 @@ import org.meveo.api.dto.InvoiceCategoryDto;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.ProviderDto;
+import org.meveo.api.dto.SequenceDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
 import org.meveo.api.dto.account.CreditCategoryDto;
@@ -37,6 +39,7 @@ import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.Tax;
@@ -55,6 +58,7 @@ import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
@@ -129,6 +133,9 @@ public class ProviderApi extends BaseApi {
 
     @Inject
     private TitleService titleService;
+    
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
 
     public void create(ProviderDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
@@ -146,15 +153,23 @@ public class ProviderApi extends BaseApi {
         provider = new Provider();
         provider.setCode(postData.getCode().toUpperCase());
         provider.setDescription(postData.getDescription());
-        provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
-       
+    
+        if(postData.getInvoiceTypeSequences() != null){
+        	for(Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet() ){
+        		InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey(), currentUser.getProvider());
+        		if(invoiceType == null){
+        			 throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
+        		}
+        		provider.getInvoiceTypeSequence().put(invoiceType, entry.getValue().fromDto());
+        	}
+        }
+        
         provider.setMulticountryFlag(postData.isMultiCountry());
         provider.setMulticurrencyFlag(postData.isMultiCurrency());
         provider.setMultilanguageFlag(postData.isMultiLanguage());
 
         provider.setEntreprise(postData.isEnterprise());
-        provider.setInvoicePrefix(postData.getInvoicePrefix());
-        provider.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
+
         provider.setDisplayFreeTransacInInvoice(postData.isDisplayFreeTransacInInvoice());
         provider.setRounding(postData.getRounding());
         provider.setEmail(postData.getEmail());
@@ -212,12 +227,7 @@ public class ProviderApi extends BaseApi {
         invoiceConfiguration.setProvider(provider);
 
         provider.setInvoiceConfiguration(invoiceConfiguration);
-        provider.setInvoiceAdjustmentPrefix(postData.getInvoiceAdjustmentPrefix());
-        provider.setCurrentInvoiceAdjustmentNb(postData.getCurrentInvoiceAdjustmentNb());
 
-        if (postData.getInvoiceAdjustmentSequenceSize() != null) {
-            provider.setInvoiceAdjustmentSequenceSize(postData.getInvoiceAdjustmentSequenceSize());
-        }
         if (postData.getBankCoordinates() != null) {
             provider.getBankCoordinates().setBankCode(postData.getBankCoordinates().getBankCode());
             provider.getBankCoordinates().setBranchCode(postData.getBankCoordinates().getBranchCode());
@@ -284,8 +294,7 @@ public class ProviderApi extends BaseApi {
 			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
 		}
 
-        provider.setDescription(postData.getDescription());
-        provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
+        provider.setDescription(postData.getDescription());       
         provider.setMulticountryFlag(postData.isMultiCountry());
         provider.setMulticurrencyFlag(postData.isMultiCurrency());
         provider.setMultilanguageFlag(postData.isMultiLanguage());
@@ -294,6 +303,16 @@ public class ProviderApi extends BaseApi {
         provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
         provider.setPrepaidReservationExpirationDelayinMillisec(postData.getPrepaidReservationExpirationDelayinMillisec());
 
+        if(postData.getInvoiceTypeSequences() != null){
+        	for(Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet() ){
+        		InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey(), currentUser.getProvider());
+        		if(invoiceType == null){
+        			 throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
+        		}
+        		provider.getInvoiceTypeSequence().put(invoiceType, entry.getValue().fromDto());
+        	}
+        }
+        
         // search for country
         if (!StringUtils.isBlank(postData.getCountry())) {
             Country country = countryService.findByCode(postData.getCountry());
@@ -331,24 +350,7 @@ public class ProviderApi extends BaseApi {
 
         provider.setDisplayFreeTransacInInvoice(postData.isDisplayFreeTransacInInvoice());
         provider.setEntreprise(postData.isEnterprise());
-        provider.setInvoicePrefix(postData.getInvoicePrefix());
-        provider.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
-
-        if (postData.getInvoiceSequenceSize() != null) {
-            provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
-        }
-
-        if (postData.getInvoiceAdjustmentPrefix() != null) {
-            provider.setInvoiceAdjustmentPrefix(postData.getInvoiceAdjustmentPrefix());
-        }
-
-        if (postData.getCurrentInvoiceAdjustmentNb() != null) {
-            provider.setCurrentInvoiceAdjustmentNb(postData.getCurrentInvoiceAdjustmentNb());
-        }
-
-        if (postData.getInvoiceAdjustmentSequenceSize() != null) {
-            provider.setInvoiceAdjustmentSequenceSize(postData.getInvoiceAdjustmentSequenceSize());
-        }
+       
         BankCoordinates bankCoordinates = provider.getBankCoordinates() == null ? new BankCoordinates() : provider.getBankCoordinates();
         if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
         	bankCoordinates.setBankCode(postData.getBankCoordinates().getBankCode());

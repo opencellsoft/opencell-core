@@ -68,7 +68,7 @@ public class SellerRsTest extends BaseRsTest {
 		postData.setCurrencyCode("USD");
 		postData.setCountryCode("US");
 		postData.setLanguageCode("ENG");
-		postData.setInvoicePrefix("");
+		////postData.setInvoicePrefix("");
 		postData.setParentSeller("");
 
 		ActionStatus result = resource.create(postData);
@@ -87,7 +87,7 @@ public class SellerRsTest extends BaseRsTest {
 		postData.setCurrencyCode("USD-");
 		postData.setCountryCode("US");
 		postData.setLanguageCode("ENG");
-		postData.setInvoicePrefix("");
+		//postData.setInvoicePrefix("");
 		postData.setParentSeller("");
 
 		ActionStatus result = resource.create(postData);
@@ -106,7 +106,7 @@ public class SellerRsTest extends BaseRsTest {
 		postData.setCurrencyCode("USD");
 		postData.setCountryCode("US-");
 		postData.setLanguageCode("ENG");
-		postData.setInvoicePrefix("");
+		//postData.setInvoicePrefix("");
 		postData.setParentSeller("");
 
 		ActionStatus result = resource.create(postData);
@@ -125,7 +125,7 @@ public class SellerRsTest extends BaseRsTest {
 		postData.setCurrencyCode("USD");
 		postData.setCountryCode("US");
 		postData.setLanguageCode("ENG-");
-		postData.setInvoicePrefix("");
+		//postData.setInvoicePrefix("");
 		postData.setParentSeller("");
 
 		ActionStatus result = resource.create(postData);
@@ -144,7 +144,7 @@ public class SellerRsTest extends BaseRsTest {
 		postData.setCurrencyCode("USD");
 		postData.setCountryCode("US");
 		postData.setLanguageCode("ENG");
-		postData.setInvoicePrefix("");
+		//postData.setInvoicePrefix("");
 		postData.setParentSeller("-");
 
 		ActionStatus result = resource.create(postData);
@@ -163,7 +163,7 @@ public class SellerRsTest extends BaseRsTest {
 		postData.setCurrencyCode("USD");
 		postData.setCountryCode("US");
 		postData.setLanguageCode("ENG");
-		postData.setInvoicePrefix("");
+		//postData.setInvoicePrefix("");
 		postData.setParentSeller("");
 
 		ActionStatus result = resource.create(postData);
@@ -182,7 +182,7 @@ public class SellerRsTest extends BaseRsTest {
 		postData.setCurrencyCode("USD");
 		postData.setCountryCode("US");
 		postData.setLanguageCode("ENG");
-		postData.setInvoicePrefix("");
+		//postData.setInvoicePrefix("");
 		postData.setParentSeller("");
 
 		ActionStatus result = resource.update(postData);
@@ -201,7 +201,7 @@ public class SellerRsTest extends BaseRsTest {
 		postData.setCurrencyCode("USD-");
 		postData.setCountryCode("US");
 		postData.setLanguageCode("ENG");
-		postData.setInvoicePrefix("");
+		//postData.setInvoicePrefix("");
 		postData.setParentSeller("");
 
 		ActionStatus result = resource.update(postData);
@@ -220,7 +220,7 @@ public class SellerRsTest extends BaseRsTest {
 		postData.setCurrencyCode("USD");
 		postData.setCountryCode("US-");
 		postData.setLanguageCode("ENG");
-		postData.setInvoicePrefix("");
+		//postData.setInvoicePrefix("");
 		postData.setParentSeller("");
 
 		ActionStatus result = resource.update(postData);
@@ -239,7 +239,7 @@ public class SellerRsTest extends BaseRsTest {
 		postData.setCurrencyCode("USD");
 		postData.setCountryCode("US");
 		postData.setLanguageCode("ENG-");
-		postData.setInvoicePrefix("");
+		//postData.setInvoicePrefix("");
 		postData.setParentSeller("");
 
 		ActionStatus result = resource.update(postData);
@@ -258,7 +258,7 @@ public class SellerRsTest extends BaseRsTest {
 		postData.setCurrencyCode("USD");
 		postData.setCountryCode("US");
 		postData.setLanguageCode("ENG");
-		postData.setInvoicePrefix("");
+		//postData.setInvoicePrefix("");
 		postData.setParentSeller("-");
 
 		ActionStatus result = resource.update(postData);

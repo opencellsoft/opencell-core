@@ -20,18 +20,23 @@ package org.meveo.model.crm;
 
 import java.sql.Blob;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -52,7 +57,9 @@ import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceConfiguration;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.Language;
+import org.meveo.model.billing.Sequence;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -148,23 +155,6 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @Basic(fetch = FetchType.LAZY)
     private Blob logo;
 
-    @Column(name = "INVOICE_PREFIX", length = 2000)
-    @Size(max = 2000)
-    private String invoicePrefix;
-
-    @Column(name = "CURRENT_INVOICE_NB")
-    private Long currentInvoiceNb;
-
-    @Column(name = "INVOICE_ADJUSTMENT_PREFIX", length = 2000)
-    @Size(max = 2000)
-    private String invoiceAdjustmentPrefix;
-
-    @Column(name = "CURRENT_INVOICE_ADJUSTMENT_NB")
-    private Long currentInvoiceAdjustmentNb;
-
-    @Column(name = "INVOICE_ADJUSTMENT_SEQUENCE_SIZE")
-    private Integer invoiceAdjustmentSequenceSize = 9;
-
     @Column(name = "RATING_ROUNDING", columnDefinition = "int DEFAULT 2")
     private Integer rounding = 2;
 
@@ -215,11 +205,15 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @OneToOne(mappedBy = "provider", cascade= CascadeType.ALL)
     private InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
 	
-	@Column(name = "INVOICE_SEQUENCE_SIZE")
-	private Integer invoiceSequenceSize=9;	
 	
 	@Column(name = "RECOGNIZE_REVENUE")
 	private boolean recognizeRevenue;
+	
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "BILLING_SEQ_INVTYP_PROV") 
+	@MapKeyJoinColumn(name="INVOICETYPE_ID")
+	Map<InvoiceType,Sequence> invoiceTypeSequence = new HashMap<InvoiceType,Sequence>();
 
     public String getCode() {
         return code;
@@ -385,13 +379,6 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
         this.logo = logo;
     }
 
-    public String getInvoicePrefix() {
-        return invoicePrefix;
-    }
-
-    public void setInvoicePrefix(String invoicePrefix) {
-        this.invoicePrefix = invoicePrefix;
-    }
 
     public void setBankCoordinates(BankCoordinates bankCoordinates) {
         this.bankCoordinates = bankCoordinates;
@@ -409,13 +396,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
         this.entreprise = entreprise;
     }
 
-    public Long getCurrentInvoiceNb() {
-        return currentInvoiceNb;
-    }
 
-    public void setCurrentInvoiceNb(Long currentInvoiceNb) {
-        this.currentInvoiceNb = currentInvoiceNb;
-    }
 
     public InterBankTitle getInterBankTitle() {
         return interBankTitle;
@@ -589,43 +570,28 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
         return null;
     }
 
-    public String getInvoiceAdjustmentPrefix() {
-        return invoiceAdjustmentPrefix;
-    }
-
-    public void setInvoiceAdjustmentPrefix(String invoiceAdjustmentPrefix) {
-        this.invoiceAdjustmentPrefix = invoiceAdjustmentPrefix;
-    }
-
-    public Integer getInvoiceAdjustmentSequenceSize() {
-        return invoiceAdjustmentSequenceSize;
-    }
-
-    public void setInvoiceAdjustmentSequenceSize(Integer invoiceAdjustmentSequenceSize) {
-        this.invoiceAdjustmentSequenceSize = invoiceAdjustmentSequenceSize;
-    }
-
-    public Long getCurrentInvoiceAdjustmentNb() {
-        return currentInvoiceAdjustmentNb;
-    }
-
-    public void setCurrentInvoiceAdjustmentNb(Long currentInvoiceAdjustmentNb) {
-        this.currentInvoiceAdjustmentNb = currentInvoiceAdjustmentNb;
-    }
-	public Integer getInvoiceSequenceSize() {
-		return invoiceSequenceSize;
-	}
-
-	public void setInvoiceSequenceSize(Integer invoiceSequenceSize) {
-		this.invoiceSequenceSize = invoiceSequenceSize;
-	}
-
 	public boolean isRecognizeRevenue() {
 		return recognizeRevenue;
 	}
 
 	public void setRecognizeRevenue(boolean recognizeRevenue) {
 		this.recognizeRevenue = recognizeRevenue;
+	}
+	
+	
+
+	/**
+	 * @return the invoiceTypeSequence
+	 */
+	public Map<InvoiceType, Sequence> getInvoiceTypeSequence() {
+		return invoiceTypeSequence;
+	}
+
+	/**
+	 * @param invoiceTypeSequence the invoiceTypeSequence to set
+	 */
+	public void setInvoiceTypeSequence(Map<InvoiceType, Sequence> invoiceTypeSequence) {
+		this.invoiceTypeSequence = invoiceTypeSequence;
 	}
 
 	@Override

@@ -1,16 +1,23 @@
 package org.meveo.api.dto.billing;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.SequenceDto;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.InvoiceTypeEnum;
+import org.meveo.model.billing.Sequence;
+import org.meveo.model.crm.Provider;
 
 @XmlRootElement(name = "InvoiceType")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -24,14 +31,18 @@ public class InvoiceTypeDto  extends BaseDto{
 		private String description;
 		
 		@XmlElement(required = true)
-		private InvoiceTypeEnum invoiceTypeEnum;
-		
-		@XmlElement(required = true)
 		private String occTemplateCode;
 		
-		private String prefix;
+		private SequenceDto sequenceDto;
 		
-		private Integer sequenceSize;
+		@XmlElementWrapper
+	    @XmlElement(name="sellerSequence")
+		private Map<String,SequenceDto> sellerSequences = new HashMap<String,SequenceDto>();
+		
+		@XmlElementWrapper
+	    @XmlElement(name="providerSequence")
+		private Map<String,SequenceDto> providerSequences = new HashMap<String,SequenceDto>();
+		
 		
 		private List<String> appliesTo = new ArrayList<String>();
 		
@@ -43,18 +54,24 @@ public class InvoiceTypeDto  extends BaseDto{
 
 		public InvoiceTypeDto(InvoiceType invoiceType){
 			this.code = invoiceType.getCode();
-			this.description = invoiceType.getDescription();
-			this.invoiceTypeEnum = invoiceType.getInvoiceTypeEnum();
+			this.description = invoiceType.getDescription();			
 			this.occTemplateCode = invoiceType.getOccTemplate() != null ? invoiceType.getOccTemplate().getCode():null;
-			this.prefix = invoiceType.getPrefixEL();
-			this.sequenceSize = invoiceType.getSequenceSize();
+			this.sequenceDto = new SequenceDto(invoiceType.getSequence());
 			if(invoiceType.getAppliesTo() != null){				
 				for(InvoiceType tmpInvoiceType : invoiceType.getAppliesTo()){
 					this.getAppliesTo().add(tmpInvoiceType.getCode());
 				}
+			}			
+			for(Entry<Seller,Sequence> entry : invoiceType.getSellerSequence().entrySet()){
+				sellerSequences.put(entry.getKey().getCode(), new SequenceDto(entry.getValue()));
 			}
+			for(Entry<Provider,Sequence> entry : invoiceType.getProviderSequence().entrySet()){
+				providerSequences.put(entry.getKey().getCode(), new SequenceDto(entry.getValue()));
+			}			
 			this.matchingAuto = invoiceType.isMatchingAuto();
 		}
+		
+		
 		/**
 		 * @return the code
 		 */
@@ -97,34 +114,7 @@ public class InvoiceTypeDto  extends BaseDto{
 			this.occTemplateCode = occTemplateCode;
 		}
 
-		/**
-		 * @return the prefix
-		 */
-		public String getPrefix() {
-			return prefix;
-		}
-
-		/**
-		 * @param prefix the prefix to set
-		 */
-		public void setPrefix(String prefix) {
-			this.prefix = prefix;
-		}
-
-		/**
-		 * @return the sequenceSize
-		 */
-		public Integer getSequenceSize() {
-			return sequenceSize;
-		}
-
-		/**
-		 * @param sequenceSize the sequenceSize to set
-		 */
-		public void setSequenceSize(Integer sequenceSize) {
-			this.sequenceSize = sequenceSize;
-		}
-
+		
 		/**
 		 * @return the appliesTo
 		 */
@@ -152,31 +142,54 @@ public class InvoiceTypeDto  extends BaseDto{
 		public void setMatchingAuto(boolean matchingAuto) {
 			this.matchingAuto = matchingAuto;
 		}
-		
-		
 
 		/**
-		 * @return the invoiceTypeEnum
+		 * @return the sequenceDto
 		 */
-		public InvoiceTypeEnum getInvoiceTypeEnum() {
-			return invoiceTypeEnum;
+		public SequenceDto getSequenceDto() {
+			return sequenceDto;
 		}
 
 		/**
-		 * @param invoiceTypeEnum the invoiceTypeEnum to set
+		 * @param sequenceDto the sequenceDto to set
 		 */
-		public void setInvoiceTypeEnum(InvoiceTypeEnum invoiceTypeEnum) {
-			this.invoiceTypeEnum = invoiceTypeEnum;
+		public void setSequenceDto(SequenceDto sequenceDto) {
+			this.sequenceDto = sequenceDto;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#toString()
+		
+
+		/**
+		 * @return the sellerSequences
 		 */
+		public Map<String, SequenceDto> getSellerSequences() {
+			return sellerSequences;
+		}
+
+		/**
+		 * @param sellerSequences the sellerSequences to set
+		 */
+		public void setSellerSequences(Map<String, SequenceDto> sellerSequences) {
+			this.sellerSequences = sellerSequences;
+		}
+
+		/**
+		 * @return the providerSequences
+		 */
+		public Map<String, SequenceDto> getProviderSequences() {
+			return providerSequences;
+		}
+
+		/**
+		 * @param providerSequences the providerSequences to set
+		 */
+		public void setProviderSequences(Map<String, SequenceDto> providerSequences) {
+			this.providerSequences = providerSequences;
+		}
+
 		@Override
 		public String toString() {
-			return "InvoiceTypeDto [code=" + code + ", description=" + description + ", invoiceTypeEnum=" + invoiceTypeEnum + ", occTemplateCode=" + occTemplateCode + ", prefix=" + prefix + ", sequenceSize=" + sequenceSize + ", appliesTo=" + (appliesTo==null?"null":appliesTo) + ", matchingAuto=" + matchingAuto + "]";
+			return "InvoiceTypeDto [code=" + code + ", description=" + description + ", occTemplateCode=" + occTemplateCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", providerSequences=" + providerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto + "]";
 		}
 
-
-		
 }

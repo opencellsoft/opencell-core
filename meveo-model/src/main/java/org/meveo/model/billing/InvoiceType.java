@@ -19,24 +19,30 @@
 package org.meveo.model.billing;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 
 @Entity
@@ -47,10 +53,6 @@ public class InvoiceType extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "INV_TYPE")
-	private InvoiceTypeEnum invoiceTypeEnum;
-	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "OCC_TEMPLATE_ID")
 	private OCCTemplate occTemplate;
@@ -59,12 +61,19 @@ public class InvoiceType extends BusinessEntity {
 	@JoinTable(name = "BILLING_INVOICE_TYPE_APPLIES_TO", joinColumns = @JoinColumn(name = "INVOICE_TYPE_ID"), inverseJoinColumns = @JoinColumn(name = "APPLIES_TO_ID"))
 	private List<InvoiceType> appliesTo = new ArrayList<InvoiceType>();
 	
-	@Column(name = "PREFIX_EL", length = 2000)
-	@Size(max = 2000)
-	private String prefixEL;
+	@Embedded
+	Sequence sequence;
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "BILLING_SEQ_INVTYP_SELL") 
+	@MapKeyJoinColumn(name="SELLER_ID")
+	Map<Seller,Sequence> sellerSequence = new HashMap<Seller,Sequence>();
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "BILLING_SEQ_INVTYP_PROV") 
+	@MapKeyJoinColumn(name="PROVIDER_ID")
+	Map<Provider,Sequence> providerSequence = new HashMap<Provider,Sequence>();
 
-	@Column(name = "SEQUENCE_SIZE")
-	private Integer sequenceSize=9;
 	
 	@Column(name = "MATCHING_AUTO")
 	private boolean matchingAuto = false;
@@ -102,36 +111,6 @@ public class InvoiceType extends BusinessEntity {
 		this.appliesTo = appliesTo;
 	}
 
-	
-
-	/**
-	 * @return the prefixEL
-	 */
-	public String getPrefixEL() {
-		return prefixEL;
-	}
-
-	/**
-	 * @param prefixEL the prefixEL to set
-	 */
-	public void setPrefixEL(String prefixEL) {
-		this.prefixEL = prefixEL;
-	}
-
-	/**
-	 * @return the sequenceSize
-	 */
-	public Integer getSequenceSize() {
-		return sequenceSize;
-	}
-
-	/**
-	 * @param sequenceSize the sequenceSize to set
-	 */
-	public void setSequenceSize(Integer sequenceSize) {
-		this.sequenceSize = sequenceSize;
-	}
-
 	/**
 	 * @return the matchingAuto
 	 */
@@ -147,18 +126,47 @@ public class InvoiceType extends BusinessEntity {
 	}
 
 	/**
-	 * @return the invoiceTypeEnum
+	 * @return the sequence
 	 */
-	public InvoiceTypeEnum getInvoiceTypeEnum() {
-		return invoiceTypeEnum;
+	public Sequence getSequence() {
+		return sequence;
 	}
 
 	/**
-	 * @param invoiceTypeEnum the invoiceTypeEnum to set
+	 * @param sequence the sequence to set
 	 */
-	public void setInvoiceTypeEnum(InvoiceTypeEnum invoiceTypeEnum) {
-		this.invoiceTypeEnum = invoiceTypeEnum;
+	public void setSequence(Sequence sequence) {
+		this.sequence = sequence;
 	}
+
+	/**
+	 * @return the sellerSequence
+	 */
+	public Map<Seller, Sequence> getSellerSequence() {
+		return sellerSequence;
+	}
+
+	/**
+	 * @param sellerSequence the sellerSequence to set
+	 */
+	public void setSellerSequence(Map<Seller, Sequence> sellerSequence) {
+		this.sellerSequence = sellerSequence;
+	}
+
+	/**
+	 * @return the providerSequence
+	 */
+	public Map<Provider, Sequence> getProviderSequence() {
+		return providerSequence;
+	}
+
+	/**
+	 * @param providerSequence the providerSequence to set
+	 */
+	public void setProviderSequence(Map<Provider, Sequence> providerSequence) {
+		this.providerSequence = providerSequence;
+	}
+	
 	
 	
 }

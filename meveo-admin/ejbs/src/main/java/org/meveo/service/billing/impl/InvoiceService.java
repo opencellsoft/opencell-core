@@ -30,7 +30,6 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -85,9 +84,9 @@ import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RejectedBillingAccount;
+import org.meveo.model.billing.Sequence;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
@@ -160,24 +159,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			return null;
 		}
 	}
-	
-	public Invoice findByInvoiceNumberAndType(String invoiceNumber, InvoiceType invoiceType, Provider provider)
-			throws BusinessException {
-		QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null, provider);
-		qb.addCriterion("i.invoiceNumber", "=", invoiceNumber, true);
-		qb.addCriterionEntity("i.invoiceType", invoiceType);
-		try {
-			return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException e) {
-			log.info("Invoice with invoice number {} was not found for provider {}. Returning null.", invoiceNumber,provider.getCode());
-			return null;
-		} catch (NonUniqueResultException e) {
-			log.info("Multiple invoices with invoice number {} was found for provider {}. Returning null.", invoiceNumber,provider.getCode());
-			return null;
-		} catch (Exception e) {
-			return null;
-		}
-	}
+
 
 	public Invoice getInvoice(String invoiceNumber, CustomerAccount customerAccount) throws BusinessException {
 		return getInvoice(getEntityManager(), invoiceNumber, customerAccount);
@@ -202,23 +184,30 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 	}
 
-	public Invoice getInvoiceByNumber(String invoiceNumber) throws BusinessException {
-		return getInvoiceByNumber(invoiceNumber, InvoiceTypeEnum.COMMERCIAL);
+	public Invoice getInvoiceByNumber(String invoiceNumber,User user) throws BusinessException {
+		return getInvoiceByNumber(invoiceNumber, invoiceTypeService.getDefaultCommertial(user));
 	}
 
-	public Invoice getInvoiceByNumber(String invoiceNumber, InvoiceTypeEnum type) throws BusinessException {
-		QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null, null);
+	public Invoice findByInvoiceNumberAndType(String invoiceNumber, InvoiceType invoiceType, Provider provider)
+			throws BusinessException {
+		QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null, provider);
+		qb.addCriterion("i.invoiceNumber", "=", invoiceNumber, true);
+		qb.addCriterionEntity("i.invoiceType", invoiceType);
 		try {
-			qb.addCriterion("invoiceNumber", "=", invoiceNumber, true);
-			qb.addCriterionEnum("invoiceType.invoiceTypeEnum", type);
 			return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
-			log.info("Invoice with invoice number #0 was not found. Returning null.", invoiceNumber);
+			log.info("Invoice with invoice number {} was not found for provider {}. Returning null.", invoiceNumber,provider.getCode());
 			return null;
 		} catch (NonUniqueResultException e) {
-			log.info("Multiple invoices with invoice number #0 was found. Returning null.", invoiceNumber);
+			log.info("Multiple invoices with invoice number {} was found for provider {}. Returning null.", invoiceNumber,provider.getCode());
+			return null;
+		} catch (Exception e) {
 			return null;
 		}
+	}
+	
+	public Invoice getInvoiceByNumber(String invoiceNumber, InvoiceType invoiceType) throws BusinessException {
+		return findByInvoiceNumberAndType(invoiceNumber, invoiceType, invoiceType.getProvider());
 	}
 
 	public List<Invoice> getInvoices(BillingRun billingRun) throws BusinessException {
@@ -238,7 +227,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Invoice> getInvoices(BillingAccount billingAccount, String invoiceType) throws BusinessException {
+	public List<Invoice> getInvoices(BillingAccount billingAccount, InvoiceType invoiceType) throws BusinessException {
 		try {
 			Query q = getEntityManager().createQuery(
 					"from Invoice where billingAccount = :billingAccount and invoiceType=:invoiceType");
@@ -267,27 +256,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 	public String getInvoiceNumber(Invoice invoice, User currentUser) throws BusinessException {
 		Seller seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-		String prefix = seller.getInvoicePrefix();
-
-		if (prefix == null) {
-			prefix = seller.getProvider().getInvoicePrefix();
-		}
-		if (prefix == null) {
-			prefix = "";
-		}
+		
+        Sequence sequence = getSequence(invoice, seller,1,true,currentUser);
+		String prefix = sequence.getPrefixEL();
+		int sequenceSize = sequence.getSequenceSize();
 
 		if (prefix != null && !StringUtils.isBlank(prefix)) {
 			prefix = evaluatePrefixElExpression(prefix, invoice);
 		}
-		if (currentUser != null) {
-			seller.updateAudit(currentUser);
-		} else {
-			seller.updateAudit(seller.getAuditable().getCreator());
-		}
 
-		long nextInvoiceNb = getNextValue(seller, currentUser,invoice.getInvoiceDate());
-		int sequenceSize = getSequenceSize(seller, currentUser);
-
+		long nextInvoiceNb = sequence.getCurrentInvoiceNb();		
 		String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
 		// request to store invoiceNo in alias field
 		invoice.setAlias(invoiceNumber);
@@ -295,129 +273,70 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return (prefix + invoiceNumber);
 	}
 
-	public synchronized long getNextValue(Seller seller, User currentUser,Date invoiceDate) {
-		long result = 0;
-		if (seller != null) {
-			Object sequenceValObj = customFieldInstanceService.getCFValue(seller, INVOICE_SEQUENCE, invoiceDate, currentUser);
-			if (sequenceValObj != null) {
-				Long sequenceVal = 1L;
-				try {
-					sequenceVal = Long.parseLong(sequenceValObj.toString());
-				} catch (NumberFormatException e) {
-					sequenceVal = 1L;
+	public Sequence getSequence(Invoice invoice ,Seller seller,int step,boolean increment,User currentUser)throws BusinessException{	
+		String cfName = "INVOICE_SEQUENCE";
+		Long currentNbFromCF = null;
+		
+		if(!invoiceTypeService.getCommercialCode().equals(invoice.getInvoiceType().getCode())){
+			cfName = "INVOICE_ADJUSTMENT_SEQUENCE";
+		}
+		
+		Object currentValObj = customFieldInstanceService.getCFValue(seller, cfName, invoice.getInvoiceDate(), currentUser);
+		if(currentValObj != null){			
+			currentNbFromCF = (Long)currentValObj;
+			if(increment){
+				currentNbFromCF = currentNbFromCF + step;
+				 customFieldInstanceService.setCFValue(seller, cfName,currentNbFromCF, invoice.getInvoiceDate(), currentUser);
+			}
+		}else{
+			currentValObj = customFieldInstanceService.getCFValue(seller.getProvider(), cfName, invoice.getInvoiceDate(), currentUser);
+			if(currentValObj != null){
+				currentNbFromCF = (Long)currentValObj;
+				if(increment){
+					currentNbFromCF = currentNbFromCF + step;
+					 customFieldInstanceService.setCFValue(seller.getProvider(), cfName,currentNbFromCF, invoice.getInvoiceDate(), currentUser);
 				}
-				result = 1 + sequenceVal;
-                try {
-                    customFieldInstanceService.setCFValue(seller, INVOICE_SEQUENCE, result, invoiceDate, currentUser);
-                } catch (BusinessException e) {
-                    log.error("Failed to set custom field " + INVOICE_SEQUENCE + " value on provider", e);
-                }
-			} else if (seller.getCurrentInvoiceNb() != null) {
-				long currentInvoiceNbre = seller.getCurrentInvoiceNb();
-				result = 1 + currentInvoiceNbre;
-				seller.setCurrentInvoiceNb(result);
-			} else {
-				result = getNextValue(seller.getProvider(), currentUser,invoiceDate);
 			}
 		}
-		return result;
-	}
-
-	public synchronized long getInvoiceAdjustmentNextValue(Invoice invoiceAdjustment, Seller seller, User currentUser,Date dateInvoice) {
-		long result = 0;
-
-		if (seller != null) {
-            Object sequenceValObj = customFieldInstanceService.getCFValue(seller, INVOICE_ADJUSTMENT_SEQUENCE, dateInvoice, currentUser);
-			if (sequenceValObj != null) {
-				Long sequenceVal = 1L;
-				try {
-					sequenceVal = Long.parseLong(sequenceValObj.toString());
-				} catch (NumberFormatException e) {
-					sequenceVal = 1L;
-				}
-
-				result = 1+sequenceVal;
-                try {
-                    customFieldInstanceService.setCFValue(seller, INVOICE_ADJUSTMENT_SEQUENCE, result, dateInvoice, currentUser);
-                } catch (BusinessException e) {
-                    log.error("Failed to set custom field " + INVOICE_ADJUSTMENT_SEQUENCE + " value on provider", e);
-                }
-			} else if (seller.getCurrentInvoiceAdjustmentNb() != null) {
-				long currentInvoiceAdjustmentNo = seller.getCurrentInvoiceAdjustmentNb();
-				result = 1 + currentInvoiceAdjustmentNo;
-				seller.setCurrentInvoiceAdjustmentNb(result);
-			} else {
-				result = getInvoiceAdjustmentNextValue(invoiceAdjustment, seller.getProvider(), currentUser,dateInvoice);
+		
+		InvoiceType invoiceType = invoice.getInvoiceType();
+		Sequence sequence = null;
+		
+		if(invoiceType.getSellerSequence() != null && invoiceType.getSellerSequence().containsKey(seller)){
+			
+			sequence =  invoiceType.getSellerSequence().get(seller);
+			if(increment){
+				sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() +step);
+				invoiceType.getSellerSequence().put(seller,sequence);
+				invoiceTypeService.update(invoiceType,currentUser);
 			}
 		}
-
-		return result;
+		if(invoiceType.getProviderSequence() != null && invoiceType.getProviderSequence().containsKey(seller.getProvider())){
+			sequence =  invoiceType.getProviderSequence().get(seller.getProvider());
+			if(increment){
+				sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() +step);
+				invoiceType.getProviderSequence().put(seller.getProvider(),sequence);
+				invoiceTypeService.update(invoiceType,currentUser);
+			}
+		}
+		if(invoiceType.getSequence() != null){
+			sequence =  invoiceType.getSequence();
+			if(increment){
+				sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() +step);
+				invoiceType.setSequence(sequence);
+				invoiceTypeService.update(invoiceType,currentUser);
+			}
+		}
+		if(sequence == null){
+			throw new BusinessException("Cant found sequence for invoiceType:"+invoiceType.getCode());
+		}
+		if(currentNbFromCF != null){
+			sequence.setCurrentInvoiceNb(currentNbFromCF);
+		}
+		return sequence;		
 	}
 	
-	public synchronized long getNextValue(Provider provider, User currentUser,Date invoiceDate) {
-		long result = 0;
-		if (provider != null) {		    
-		    Object sequenceValObj = customFieldInstanceService.getCFValue(provider, INVOICE_SEQUENCE, invoiceDate, currentUser);
-			if (sequenceValObj != null) {
-				Long sequenceVal = 1L;
-				try {
-					sequenceVal = Long.parseLong(sequenceValObj.toString());
-				} catch (NumberFormatException e) {
-					sequenceVal = 1L;
-				}
-				result = 1 + sequenceVal;
-				try {
-                    customFieldInstanceService.setCFValue(provider, INVOICE_SEQUENCE, result, invoiceDate, currentUser);
-                } catch (BusinessException e) {
-                    log.error("Failed to set custom field " + INVOICE_SEQUENCE + " value on provider", e);
-                }
-			} else {   
-				long currentInvoiceNbre = provider.getCurrentInvoiceNb()!= null ? provider.getCurrentInvoiceNb() : 0;
-				result = 1 + currentInvoiceNbre;
-				provider.setCurrentInvoiceNb(result);
-			}
-			if (currentUser != null) {
-				provider.updateAudit(currentUser);
-			} else {
-				provider.updateAudit(provider.getAuditable().getCreator());
-			}
-		}
-		return result;
-	}
-
-	public synchronized long getInvoiceAdjustmentNextValue(Invoice invoiceAdjustment, Provider provider,User currentUser,Date dateInvoice) {
-		long result = 0;
-		if (provider != null) {
-		    Object sequenceValObj = customFieldInstanceService.getCFValue(provider, INVOICE_ADJUSTMENT_SEQUENCE, dateInvoice, currentUser);
-			if (sequenceValObj != null) {
-				Long sequenceVal = 1L;
-				try {
-					sequenceVal = Long.parseLong(sequenceValObj.toString());
-				} catch (NumberFormatException e) {
-					sequenceVal = 1L;
-				}
-				result = 1+sequenceVal;
-				try {
-                    customFieldInstanceService.setCFValue(provider, INVOICE_ADJUSTMENT_SEQUENCE, result, dateInvoice, currentUser);
-                } catch (BusinessException e) {
-                    log.error("Failed to set custom field " + INVOICE_ADJUSTMENT_SEQUENCE + " value on provider", e);
-                }
-			} else {
-				long currentInvoiceAdjustmentNo = provider.getCurrentInvoiceAdjustmentNb() != null ? provider
-						.getCurrentInvoiceAdjustmentNb() : 0;
-				result = 1 + currentInvoiceAdjustmentNo;
-				provider.setCurrentInvoiceAdjustmentNb(result);
-			}
-			if (currentUser != null) {
-				provider.updateAudit(currentUser);
-			} else {
-				provider.updateAudit(provider.getAuditable().getCreator());
-			}
-		}
-
-		return result;
-	}	
-
+	
 	public List<Invoice> getValidatedInvoicesWithNoPdf(BillingRun br, Provider provider) {
 		return getValidatedInvoicesWithNoPdf(getEntityManager(), br, provider);
 	}
@@ -796,65 +715,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		queryInvoices.executeUpdate();
 	}
 
-	public String getInvoiceAdjustmentNumber(Invoice invoiceAdjustment, User currentUser) {
-		BillingAccount  billingAccount = billingAccountService.refreshOrRetrieve(invoiceAdjustment.getBillingAccount());
-		Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
-		String prefix = seller.getInvoiceAdjustmentPrefix();
 
-		if (prefix == null) {
-			prefix = seller.getProvider().getInvoiceAdjustmentPrefix();
-		}
-		if (prefix == null) {
-			prefix = "";
-		}
-
-		if (prefix != null && !StringUtils.isBlank(prefix)) {
-			try {
-				prefix = evaluatePrefixElExpression(prefix, invoiceAdjustment);
-			} catch (BusinessException e) {
-				log.warn("Invalid prefix={}", e.getMessage());
-				prefix = "";
-			}
-		}
-
-		long nextInvoiceAdjustmentNb = getInvoiceAdjustmentNextValue(invoiceAdjustment, seller, currentUser,invoiceAdjustment.getInvoiceDate());
-		int padSize = getNBOfChars(seller, currentUser);
-		String invoiceAdjustmentNumber = StringUtils.getLongAsNChar(nextInvoiceAdjustmentNb, padSize);		
-		invoiceAdjustment.setAlias(invoiceAdjustmentNumber);
-		return (prefix + invoiceAdjustmentNumber);
-	}
-
-	public synchronized int getNBOfChars(Seller seller, User currentUser) {
-		int result = 9;
-
-		if (seller != null) {
-			if (seller.getInvoiceAdjustmentSequenceSize() != null && seller.getInvoiceAdjustmentSequenceSize() != 0) {
-				result = seller.getInvoiceAdjustmentSequenceSize();
-			} else {
-				if (seller.getProvider().getInvoiceAdjustmentSequenceSize() != null
-						&& seller.getProvider().getInvoiceAdjustmentSequenceSize() != 0) {
-					result = seller.getProvider().getInvoiceAdjustmentSequenceSize();
-				}
-			}
-		}
-
-		return result;
-	}
-
-	public synchronized Integer getSequenceSize(Seller seller, User currentUser) {
-		int result = 9;
-		if (seller != null) {
-			if (seller.getInvoiceSequenceSize() != null && seller.getInvoiceSequenceSize()!=0) {
-				result = seller.getInvoiceSequenceSize();
-			} else { 
-				Provider provider=seller.getProvider();
-				if (provider.getInvoiceSequenceSize() != null && provider.getInvoiceSequenceSize()!=0) {
-					result = provider.getInvoiceSequenceSize();
-				}
-			}
-		}
-		return result;
-	}
 
 	public String evaluatePrefixElExpression(String prefix, Invoice invoice)
 			throws BusinessException {
@@ -1059,10 +920,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Invoice> findInvoiceAdjustmentByInvoice(Invoice adjustedInvoice) {
+	public List<Invoice> findInvoiceAdjustmentByInvoice(Invoice adjustedInvoice) throws BusinessException {
 		QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null, adjustedInvoice.getProvider());
 		qb.addCriterionEntity("adjustedInvoice", adjustedInvoice);
-		qb.addCriterionEnum("invoiceType.invoiceTypeEnum", InvoiceTypeEnum.CREDIT_NOTE_ADJUST);
+		qb.addCriterionEntity("invoiceType.invoiceType",invoiceTypeService.getDefaultAdjustement(adjustedInvoice.getAuditable().getCreator()));
 
 		try {
 			return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();

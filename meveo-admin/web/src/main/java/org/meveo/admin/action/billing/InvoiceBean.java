@@ -58,7 +58,6 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceCategoryDTO;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
-import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
@@ -67,13 +66,11 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
@@ -274,7 +271,11 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 			log.warn("No billingAccount code");
 		} else {
 			filters.put("billingAccount", ba);
-			filters.put("invoiceType.invoiceTypeEnum", InvoiceTypeEnum.COMMERCIAL);
+			try {
+				filters.put("invoiceType", invoiceTypeService.getDefaultCommertial(ba.getAuditable().getCreator()));
+			} catch (BusinessException e) {				
+				log.error("Error on geting invoiceType",e);
+			}
 			return getLazyDataModel();
 		}
 
@@ -693,7 +694,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 			if(billingAccountId!=0){
 				BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
 				entity.setBillingAccount(billingAccount);
-				String invoiceNumber=invoiceService.getInvoiceAdjustmentNumber(entity, getCurrentUser());
+				String invoiceNumber=invoiceService.getInvoiceNumber(entity, getCurrentUser());
 				entity.setInvoiceNumber(invoiceNumber);
 			} 	 
 		}
@@ -772,7 +773,12 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 	}
 	
 	public List<Invoice> findInvoiceAdjustmentByInvoice(Invoice adjustedInvoice) {
-		return invoiceService.findInvoiceAdjustmentByInvoice(adjustedInvoice);
+		try {
+			return invoiceService.findInvoiceAdjustmentByInvoice(adjustedInvoice);
+		} catch (BusinessException e) {
+			log.error("Error on geting InvoiceAdjustmentByInvoice",e);
+		}
+		return null;
 	}
 
 	public long getBillingAccountId() {

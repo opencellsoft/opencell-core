@@ -25,7 +25,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
@@ -33,6 +32,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
@@ -65,6 +65,9 @@ public class BillingAccountApi extends AccountApi {
 
 	@EJB
 	private AccountHierarchyApi accountHierarchyApi;
+	
+	@Inject
+	private InvoiceTypeService invoiceTypeService;
 
 	public void create(BillingAccountDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		create(postData, currentUser, true);
@@ -382,7 +385,7 @@ public class BillingAccountApi extends AccountApi {
 					String billingAccountCode = ba.getCode();
 					if (invoices != null && invoices.size() > 0) {
 						for (Invoice i : invoices) {
-							if (i.getInvoiceType().getInvoiceTypeEnum() == InvoiceTypeEnum.CREDIT_NOTE_ADJUST) {
+							if (invoiceTypeService.getAdjustementCode().equals(  i.getInvoiceType().getCode())) {
 								Invoice4_2Dto invoiceDto = new Invoice4_2Dto(i, billingAccountCode);
 								invoicesDto.add(invoiceDto);
 							}

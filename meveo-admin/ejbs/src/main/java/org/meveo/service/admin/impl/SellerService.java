@@ -80,17 +80,4 @@ public class SellerService extends PersistenceService<Seller> {
 		}
 	}
 	
-	@Override
-	public Seller update(Seller seller, User updater) throws BusinessException {
-		Seller sellerToUpdate=findById(seller.getId()); 
-		if((sellerToUpdate.getCurrentInvoiceNb()!=null && seller.getCurrentInvoiceNb()!=null) 
-				&& seller.getCurrentInvoiceNb()<sellerToUpdate.getCurrentInvoiceNb()){
-			throw new BusinessException("'Current invoice number' must be greater than current value");
-		}
-		if((sellerToUpdate.getCurrentInvoiceAdjustmentNb()!=null && seller.getCurrentInvoiceAdjustmentNb()!=null)
-				&& seller.getCurrentInvoiceAdjustmentNb()<sellerToUpdate.getCurrentInvoiceAdjustmentNb()){
-			throw new BusinessException("'Current Invoice Adjustment number' must be greater than current value");
-		}
-		return super.update(seller, updater);
-	}
 }

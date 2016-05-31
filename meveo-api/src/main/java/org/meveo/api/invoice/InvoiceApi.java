@@ -26,11 +26,9 @@ import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
 import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
 import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
-import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
@@ -124,6 +122,8 @@ public class InvoiceApi extends BaseApi {
 	@MeveoParamBean
 	private ParamBean paramBean;
 
+	
+	
 	public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO, User currentUser) throws MeveoApiException, BusinessException, Exception {
 		validateInvoiceDto(invoiceDTO, currentUser);
 		Auditable auditable = new Auditable();
@@ -307,12 +307,6 @@ public class InvoiceApi extends BaseApi {
 
 		if (invoiceDTO.isAutoValidation()) {
 			response.setInvoiceNumber(validateInvoice(invoice.getId(), currentUser));
-			if (invoiceDTO.isReturnXml()) {
-				response.setXmlInvoice(getXMLInvoice(invoice.getInvoiceNumber(), invoice.getInvoiceType().getCode(), currentUser));
-			}
-			if (invoiceDTO.isReturnPdf()) {
-				response.setPdfInvoice(getPdfInvoince(invoice.getInvoiceNumber(), invoice.getInvoiceType().getCode(), currentUser));
-			}
 		}
 
 		return response;
@@ -514,11 +508,7 @@ public class InvoiceApi extends BaseApi {
 		if (invoice == null) {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
 		}
-		if (invoice.getInvoiceType().getInvoiceTypeEnum().isAdjustment()) {
-			invoice.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(invoice, currentUser));
-		} else {
-			invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));
-		}
+		invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));		
 		invoiceService.update(invoice, currentUser);
 		return invoice.getInvoiceNumber();
 	}

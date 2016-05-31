@@ -1,13 +1,39 @@
+/*
+ * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
+ * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * This program is not suitable for any direct or indirect application in MILITARY industry
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.meveo.api.dto;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.account.CustomersDto;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.Sequence;
 
 /**
  * @author Edward P. Legaspi
@@ -31,20 +57,17 @@ public class SellerDto extends BaseDto {
 	@XmlAttribute()
 	private String description;
 
-	private String invoicePrefix;
 	private String currencyCode;
 	private String countryCode;
 	private String languageCode;
 	private String parentSeller;
 	private String provider;
-	private Integer invoiceSequenceSize;
-	private Integer invoiceAdjustmentSequenceSize;
-	private String invoiceAdjustmentPrefix;
-	private Long currentInvoiceNb;
-	private Long currentInvoiceAdjustmentNb;
+
 	private CustomersDto customers;
 	
 	private CustomFieldsDto customFields = new CustomFieldsDto();
+	
+	private Map<String,SequenceDto> invoiceTypeSequences = new HashMap<String,SequenceDto>();
 
 	public SellerDto() {
 	}
@@ -52,12 +75,11 @@ public class SellerDto extends BaseDto {
 	public SellerDto(Seller seller, CustomFieldsDto customFieldInstances) {
 		code = seller.getCode();
 		description = seller.getDescription();
-		invoicePrefix = seller.getInvoicePrefix();
-		invoiceSequenceSize=seller.getInvoiceSequenceSize();
-		invoiceAdjustmentSequenceSize=seller.getInvoiceAdjustmentSequenceSize();
-		invoiceAdjustmentPrefix=seller.getInvoiceAdjustmentPrefix();
-		currentInvoiceNb=seller.getCurrentInvoiceNb();
-		currentInvoiceAdjustmentNb=seller.getCurrentInvoiceAdjustmentNb();
+		if(seller.getInvoiceTypeSequence() != null){
+			for(Entry<InvoiceType, Sequence> entry : seller.getInvoiceTypeSequence().entrySet() ){
+				invoiceTypeSequences.put(entry.getKey().getCode(), new SequenceDto(entry.getValue()));
+			}
+		}
 
 		if (seller.getTradingCountry() != null) {
 			countryCode = seller.getTradingCountry().getCountryCode();
@@ -98,13 +120,7 @@ public class SellerDto extends BaseDto {
 		this.description = description;
 	}
 
-	public String getInvoicePrefix() {
-		return invoicePrefix;
-	}
 
-	public void setInvoicePrefix(String invoicePrefix) {
-		this.invoicePrefix = invoicePrefix;
-	}
 
 	public String getCurrencyCode() {
 		return currencyCode;
@@ -139,11 +155,6 @@ public class SellerDto extends BaseDto {
 	}
 
 
-	@Override
-	public String toString() {
-		return "SellerDto [code=" + code + ", description=" + description + ", invoicePrefix=" + invoicePrefix + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode=" + languageCode + ", parentSeller=" + parentSeller + ", provider=" + provider + ", invoiceSequenceSize=" + invoiceSequenceSize + ", invoiceAdjustmentSequenceSize=" + invoiceAdjustmentSequenceSize + ", invoiceAdjustmentPrefix=" + invoiceAdjustmentPrefix + ", currentInvoiceNb="
-				+ currentInvoiceNb + ", currentInvoiceAdjustmentNb=" + currentInvoiceAdjustmentNb + ", customers=" + customers + ", customFields=" + customFields + "]";
-	}
 
 	public String getProvider() {
 		return provider;
@@ -168,70 +179,28 @@ public class SellerDto extends BaseDto {
 	public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
+
+	/**
+	 * @return the invoiceTypeSequences
+	 */
+	public Map<String, SequenceDto> getInvoiceTypeSequences() {
+		return invoiceTypeSequences;
+	}
+
+	/**
+	 * @param invoiceTypeSequences the invoiceTypeSequences to set
+	 */
+	public void setInvoiceTypeSequences(Map<String, SequenceDto> invoiceTypeSequences) {
+		this.invoiceTypeSequences = invoiceTypeSequences;
+	}
+
+
+	@Override
+	public String toString() {
+		return "SellerDto [code=" + code + ", description=" + description + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode=" + languageCode + ", parentSeller=" + parentSeller + ", provider=" + provider + ", customers=" + customers + ", customFields=" + customFields + ", invoiceTypeSequences=" + invoiceTypeSequences + "]";
+	}
+
 	
-
-	public Integer getInvoiceSequenceSize() {
-		return invoiceSequenceSize;
-	}
-
-	public void setInvoiceSequenceSize(Integer invoiceSequenceSize) {
-		this.invoiceSequenceSize = invoiceSequenceSize;
-	}
-
-	/**
-	 * @return the invoiceAdjustmentSequenceSize
-	 */
-	public Integer getInvoiceAdjustmentSequenceSize() {
-		return invoiceAdjustmentSequenceSize;
-	}
-
-	/**
-	 * @param invoiceAdjustmentSequenceSize the invoiceAdjustmentSequenceSize to set
-	 */
-	public void setInvoiceAdjustmentSequenceSize(Integer invoiceAdjustmentSequenceSize) {
-		this.invoiceAdjustmentSequenceSize = invoiceAdjustmentSequenceSize;
-	}
-
-	/**
-	 * @return the invoiceAdjustmentPrefix
-	 */
-	public String getInvoiceAdjustmentPrefix() {
-		return invoiceAdjustmentPrefix;
-	}
-
-	/**
-	 * @param invoiceAdjustmentPrefix the invoiceAdjustmentPrefix to set
-	 */
-	public void setInvoiceAdjustmentPrefix(String invoiceAdjustmentPrefix) {
-		this.invoiceAdjustmentPrefix = invoiceAdjustmentPrefix;
-	}
-
-	/**
-	 * @return the currentInvoiceNb
-	 */
-	public Long getCurrentInvoiceNb() {
-		return currentInvoiceNb;
-	}
-
-	/**
-	 * @param currentInvoiceNb the currentInvoiceNb to set
-	 */
-	public void setCurrentInvoiceNb(Long currentInvoiceNb) {
-		this.currentInvoiceNb = currentInvoiceNb;
-	}
-
-	/**
-	 * @return the currentInvoiceAdjustmentNb
-	 */
-	public Long getCurrentInvoiceAdjustmentNb() {
-		return currentInvoiceAdjustmentNb;
-	}
-
-	/**
-	 * @param currentInvoiceAdjustmentNb the currentInvoiceAdjustmentNb to set
-	 */
-	public void setCurrentInvoiceAdjustmentNb(Long currentInvoiceAdjustmentNb) {
-		this.currentInvoiceAdjustmentNb = currentInvoiceAdjustmentNb;
-	}
+	
 	
 }

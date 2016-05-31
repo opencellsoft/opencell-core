@@ -2,23 +2,28 @@ package org.meveo.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.SequenceDto;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
 import org.meveo.api.dto.billing.InvoiceTypesDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 
@@ -33,6 +38,9 @@ public class InvoiceTypeApi extends BaseApi {
 
     @Inject
     private OCCTemplateService occTemplateService;
+    
+    @Inject
+    private SellerService sellerService;
 
     
     private void handleParameters(InvoiceTypeDto invoiceTypeDto) throws MissingParameterException{
@@ -41,10 +49,7 @@ public class InvoiceTypeApi extends BaseApi {
         }
         if (StringUtils.isBlank(invoiceTypeDto.getOccTemplateCode())) {
             missingParameters.add("occTemplateCode");
-        }
-        if (StringUtils.isBlank(invoiceTypeDto.getInvoiceTypeEnum())) {
-            missingParameters.add("invoiceTypeEnum");
-        }        
+        }     
         handleMissingParameters();	
     }
     
@@ -74,11 +79,27 @@ public class InvoiceTypeApi extends BaseApi {
         InvoiceType invoiceType = new InvoiceType();
         invoiceType.setCode(invoiceTypeDto.getCode());
         invoiceType.setDescription(invoiceTypeDto.getDescription());
-        invoiceType.setInvoiceTypeEnum(invoiceTypeDto.getInvoiceTypeEnum());
         invoiceType.setOccTemplate(occTemplate);
-        invoiceType.setPrefixEL(invoiceTypeDto.getPrefix());
-        invoiceType.setSequenceSize(invoiceTypeDto.getSequenceSize());
         invoiceType.setAppliesTo(invoiceTypesToApplies);
+        invoiceType.setSequence(invoiceTypeDto.getSequenceDto() == null ? null : invoiceTypeDto.getSequenceDto().fromDto());
+        if(invoiceTypeDto.getSellerSequences() != null){
+	        for(Entry<String,SequenceDto> entry : invoiceTypeDto.getSellerSequences().entrySet()){
+	        	Seller seller = sellerService.findByCode(entry.getKey(), provider);
+	        	if(seller == null){
+	        		 throw new EntityDoesNotExistsException(Seller.class, entry.getKey()); 
+	        	}
+	        	invoiceType.getSellerSequence().put(seller, entry.getValue() == null ? null : entry.getValue().fromDto());
+	        }
+        }
+        if(invoiceTypeDto.getProviderSequences() != null){
+	        for(Entry<String,SequenceDto> entry : invoiceTypeDto.getProviderSequences().entrySet()){
+	        	if(!entry.getKey().equals(provider.getCode())){
+	        		throw new BusinessApiException("Other provider not allowed");
+	        	}
+
+	        	invoiceType.getProviderSequence().put(provider, entry.getValue() == null ? null : entry.getValue().fromDto());
+	        }
+        }
         invoiceType.setMatchingAuto(invoiceTypeDto.isMatchingAuto());
         invoiceTypeService.create(invoiceType, currentUser);
         return result;
@@ -99,17 +120,11 @@ public class InvoiceTypeApi extends BaseApi {
         if (occTemplate == null) {
             throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateCode());
         }    
-        invoiceType.setOccTemplate(occTemplate); 
-        invoiceType.setInvoiceTypeEnum(invoiceTypeDto.getInvoiceTypeEnum());       
+        invoiceType.setOccTemplate(occTemplate);   
 		if(!StringUtils.isBlank(invoiceTypeDto.getDescription())){
 	        invoiceType.setDescription(invoiceTypeDto.getDescription());
 		}
-		if(!StringUtils.isBlank(invoiceTypeDto.getPrefix())){
-			invoiceType.setPrefixEL(invoiceTypeDto.getPrefix());
-		}
-		if(!StringUtils.isBlank(invoiceTypeDto.getSequenceSize())){
-			invoiceType.setSequenceSize(invoiceTypeDto.getSequenceSize());
-		}
+
 		if(!StringUtils.isBlank(invoiceTypeDto.isMatchingAuto())){
 			invoiceType.setMatchingAuto(invoiceTypeDto.isMatchingAuto());
 		}			
@@ -125,6 +140,26 @@ public class InvoiceTypeApi extends BaseApi {
         	}
         }
         invoiceType.setAppliesTo(invoiceTypesToApplies);
+        
+        if(invoiceTypeDto.getSellerSequences() != null){
+	        for(Entry<String,SequenceDto> entry : invoiceTypeDto.getSellerSequences().entrySet()){
+	        	Seller seller = sellerService.findByCode(entry.getKey(), provider);
+	        	if(seller == null){
+	        		 throw new EntityDoesNotExistsException(Seller.class, entry.getKey()); 
+	        	}
+	        	invoiceType.getSellerSequence().put(seller, entry.getValue() == null ? null : entry.getValue().fromDto());
+	        }
+        }
+        if(invoiceTypeDto.getProviderSequences() != null){
+	        for(Entry<String,SequenceDto> entry : invoiceTypeDto.getProviderSequences().entrySet()){
+	        	if(!entry.getKey().equals(provider.getCode())){
+	        		throw new BusinessApiException("Other provider not allowed");
+	        	}
+
+	        	invoiceType.getProviderSequence().put(provider, entry.getValue() == null ? null : entry.getValue().fromDto());
+	        }
+        }
+        
         invoiceTypeService.update(invoiceType, currentUser);
         return result;
     }

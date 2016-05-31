@@ -41,7 +41,6 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
@@ -178,22 +177,21 @@ public class Invoice4_2Api extends BaseApi {
         invoice.setDiscount(invoiceDTO.getDiscount());
         invoice.setInvoiceType(invoiceType);
         
-        if (invoice.getInvoiceType().getInvoiceTypeEnum() == InvoiceTypeEnum.CREDIT_NOTE_ADJUST) {
+        if (invoice.getInvoiceType().equals(invoiceTypeService.getDefaultAdjustement(currentUser))) {
             String invoiceNumber = invoiceDTO.getInvoiceNumber();
             if (invoiceNumber == null) {
                 missingParameters.add("invoiceNumber");
                 handleMissingParameters();
             }
-            Invoice commercialInvoice = invoiceService.getInvoiceByNumber(invoiceNumber);
+            Invoice commercialInvoice = invoiceService.getInvoiceByNumber(invoiceNumber,currentUser);
             if (commercialInvoice == null) {
                 throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber);
             }
             invoice.setAdjustedInvoice(commercialInvoice);
-            invoice.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(invoice, currentUser));
-        } else {
-            invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));
-        }
-
+           
+        } 
+        invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice,currentUser));
+        
         invoiceService.create(invoice, currentUser);
 
         List<UserAccount> userAccounts = billingAccount.getUsersAccounts();

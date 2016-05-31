@@ -14,14 +14,13 @@ import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
 import org.meveo.api.dto.invoice.Invoice4_2Dto;
 import org.meveo.api.dto.response.CustomerInvoices4_2Response;
-import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.dto.response.InvoiceCreationResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.invoice.Invoice4_2Api;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.invoice.Invoice4_2Rs;
-import org.meveo.model.billing.InvoiceTypeEnum;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -29,6 +28,9 @@ public class Invoice4_2RsImpl extends BaseRs implements Invoice4_2Rs {
 
     @Inject
     private Invoice4_2Api invoiceApi;
+    
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
 
     @Override
     public InvoiceCreationResponse create(Invoice4_2Dto invoiceDto) {
@@ -99,7 +101,7 @@ public class Invoice4_2RsImpl extends BaseRs implements Invoice4_2Rs {
 
     @Override
     public GetXmlInvoiceResponseDto findXMLInvoice(String invoiceNumber) {
-        return findXMLInvoiceWithType(invoiceNumber, InvoiceTypeEnum.COMMERCIAL.name());
+        return findXMLInvoiceWithType(invoiceNumber, invoiceTypeService.getCommercialCode() );
     }
 
     @Override
@@ -127,7 +129,7 @@ public class Invoice4_2RsImpl extends BaseRs implements Invoice4_2Rs {
 
     @Override
     public GetPdfInvoiceResponseDto findPdfInvoice(String InvoiceNumber) {
-        return findPdfInvoiceWithType(InvoiceNumber, InvoiceTypeEnum.COMMERCIAL.name());
+        return findPdfInvoiceWithType(InvoiceNumber, invoiceTypeService.getCommercialCode());
     }
 
     @Override
