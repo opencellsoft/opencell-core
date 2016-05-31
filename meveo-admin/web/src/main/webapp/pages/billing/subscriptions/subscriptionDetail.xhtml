@@ -1129,15 +1129,11 @@
 						<h:outputText
 							value="#{subscriptionBean.recurringWalletOperations.size()} #{messages['commons.itemsFound']}" />
 						<h:form id="recurringWalletForm">
-						  <p:commandButton value="#{messages['commons.clean']}" process="@this" update="recurringWalletForm" action="#{subscriptionBean.resetFilters}">
-							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
-							</p:commandButton>
-							<br /> <br />
 						<p:dataTable id="recurringWalletOperationTable" widgetVar="recurringWidget"
 							value="#{subscriptionBean.recurringWalletOperations}"
 							var="shotApplication" paginator="true" rows="5" resizableColumns="true"
 							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-							rowsPerPageTemplate="5,10,20,30" styleClass="custom-grid">
+							rowsPerPageTemplate="5,10,20,30" styleClass="custom-grid" >
 
                             <p:column headerText="date" filterBy="#{shotApplication.operationDate}" filterFunction="#{subscriptionBean.filterByDate}" sortBy="#{shotApplication.operationDate}" sortOrder="descending">
                                 <f:facet name="filter">
@@ -1146,22 +1142,26 @@
                                 <f:facet name="header">
                                     <p:outputLabel value="#{messages['walletOperation.operationDate']}" />
                                     <br />
-                                    <p:calendar id="from" pattern="dd/MM/yyyy" size="9" >
+                                    <p:calendar id="from" pattern="dd/MM/yyyy" size="9" readonly="true">
 									<p:watermark for="from" value="from" />
                                         <p:ajax event="dateSelect"
                                             onstart="$(PrimeFaces.escapeClientId('#{p:component('filter')}'))[0].value = $(PrimeFaces.escapeClientId('#{p:component('from')}_input'))[0].value + '-' + $(PrimeFaces.escapeClientId('#{p:component('to')}_input'))[0].value"
                                             oncomplete="PF('recurringWidget').filter()" />
                                     </p:calendar>
-                                    <p:calendar id="to" pattern="dd/MM/yyyy" size="9">
+                                    <p:calendar id="to" pattern="dd/MM/yyyy" size="9" readonly="true">
 									<p:watermark for="to" value="to" />
                                         <p:ajax event="dateSelect"
                                             onstart="$(PrimeFaces.escapeClientId('#{p:component('filter')}'))[0].value = $(PrimeFaces.escapeClientId('#{p:component('from')}_input'))[0].value + '-' + $(PrimeFaces.escapeClientId('#{p:component('to')}_input'))[0].value"
                                             oncomplete="PF('recurringWidget').filter()" />
                                     </p:calendar>
+									<p:commandButton  process="@this" update="recurringWalletForm" action="#{subscriptionBean.resetFilters}" icon="ui-icon-close">
+									<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+									</p:commandButton>
                                 </f:facet>
                                 <h:outputText value="#{shotApplication.operationDate}">
                                     <f:convertDateTime pattern="dd/MM/yyyy" />
                                 </h:outputText>
+							
                             </p:column>
                             <p:column width="60" sortBy="#{shotApplication.startDate}">
 								<f:facet name="header">
