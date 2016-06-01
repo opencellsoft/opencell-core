@@ -27,7 +27,7 @@
 				<p:commandButton id="toggler1" type="button" style="float:right" disabled="#{pricePlanMatrixListBean.lazyDataModel.size==0?'true':'false'}"
 					icon="ui-icon-calculator"/>
 				<p:columnToggler datasource="datatable_pp_results_omitFromSubmit" trigger="toggler1" >
-					<p:ajax event="toggle" listener="#{pricePlanMatrixColumnSelectorBean.onToggle}" />
+<!-- 					<p:ajax event="toggle" listener="#{pricePlanMatrixColumnSelectorBean.onToggle}" /> -->
 				</p:columnToggler>
 			</f:facet>
 			<p:column exportable="true" toggleable="false">
