@@ -1787,7 +1787,7 @@ public class AccountHierarchyApi extends BaseApi {
 		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
 		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(accountType, currentUser.getProvider());
 		if (businessAccountModel != null) {
-			accountHierarchyTypeEnum = businessAccountModel.getType();
+			accountHierarchyTypeEnum = businessAccountModel.getHierarchyType();
 		} else {
 			try {
 				accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(accountType);
@@ -2061,7 +2061,7 @@ public class AccountHierarchyApi extends BaseApi {
 		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
 		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(accountType, currentUser.getProvider());
 		if (businessAccountModel != null) {
-			accountHierarchyTypeEnum = businessAccountModel.getType();
+			accountHierarchyTypeEnum = businessAccountModel.getHierarchyType();
 		} else {
 			try {
 				accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(accountType);
@@ -2336,7 +2336,7 @@ public class AccountHierarchyApi extends BaseApi {
 		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
 		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(accountType, currentUser.getProvider());
 		if (businessAccountModel != null) {
-			accountHierarchyTypeEnum = businessAccountModel.getType();
+			accountHierarchyTypeEnum = businessAccountModel.getHierarchyType();
 		} else {
 			try {
 				accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(accountType);
@@ -2677,7 +2677,7 @@ public class AccountHierarchyApi extends BaseApi {
 		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
 		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(accountType, currentUser.getProvider());
 		if (businessAccountModel != null) {
-			accountHierarchyTypeEnum = businessAccountModel.getType();
+			accountHierarchyTypeEnum = businessAccountModel.getHierarchyType();
 		} else {
 			try {
 				accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(accountType);
@@ -2720,7 +2720,7 @@ public class AccountHierarchyApi extends BaseApi {
 		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
 		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(accountType, currentUser.getProvider());
 		if (businessAccountModel != null) {
-			accountHierarchyTypeEnum = businessAccountModel.getType();
+			accountHierarchyTypeEnum = businessAccountModel.getHierarchyType();
 		} else {
 			try {
 				accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(accountType);
