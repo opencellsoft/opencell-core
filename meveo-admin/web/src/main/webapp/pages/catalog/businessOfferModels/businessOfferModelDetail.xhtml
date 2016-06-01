@@ -46,9 +46,6 @@
                 <h:outputText id="offerId" value="#{businessOfferModelBean.offerTemplateCodeFromModuleSource}" styleClass="field-value" />
             </hftl:decorateFormField>
             
-            <hftl:formField id="offerSelectId1" label="#{messages['pricePlanMatrix.offerCode']}" field="offerTemplate" valueLabelField="code" required="true"
-                rendered="#{!businessOfferModelBean.entity.downloaded}" />
-                
             <hftl:formField id="script" label="#{messages['meveoModule.script']}" field="script" valueLabelField="code" componentWidth="30" popup="true" popupId="moduleScriptPopup"
                 createEditPopup="true" createEditPopupId="scriptDialog" createEditPopupListenerBean="#{businessOfferModelBean}" createEditPopupListenerViewMethod="viewEditScript"
                 createEditPopupListenerNewMethod="newScript" createEditPopupListenerUpdate=":scriptForm" />

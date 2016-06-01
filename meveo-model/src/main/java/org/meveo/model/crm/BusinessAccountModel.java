@@ -23,11 +23,12 @@ public class BusinessAccountModel extends MeveoModule {
     @Column(name = "HIERARCHY_TYPE", length = 20)
     private AccountHierarchyTypeEnum hierarchyType;
 
-    public AccountHierarchyTypeEnum getHierarchyType() {
-        return hierarchyType;
-    }
+	public AccountHierarchyTypeEnum getHierarchyType() {
+		return hierarchyType;
+	}
 
-    public void setType(AccountHierarchyTypeEnum hierarchyType) {
-        this.hierarchyType = hierarchyType;
-    }
+	public void setHierarchyType(AccountHierarchyTypeEnum hierarchyType) {
+		this.hierarchyType = hierarchyType;
+	}
+
 }
