@@ -130,7 +130,7 @@ public class InvoiceType extends BusinessEntity {
 	/**
 	 * @return the sequence
 	 */
-	public Sequence getSequence() {
+	public Sequence getSequence() {		
 		return sequence;
 	}
 

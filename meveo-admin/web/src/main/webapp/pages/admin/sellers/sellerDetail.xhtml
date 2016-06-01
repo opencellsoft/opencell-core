@@ -55,6 +55,7 @@
                         <hftl:formField label="#{messages['invoice.adjustment.sequenceSize']}" field="invoiceAdjustmentSequenceSize" id="invoiceAdjustmentSequenceSize" />
 						
 						 </p:fieldset>-->
+						 <h:panelGroup rendered="#{not empty sellerBean.entity.id}">	
 						 <p:dataTable id="sellerSequenceTable" width="80px;" label="#{messages['inboundRequest.responseHeaders']}" style="width:70%;"
 						value="#{sellerBean.getInvoiceTypeSequencesList}" 
 						var="invoiceTypeSeq" paginator="true" rows="5" resizableColumns="true"
@@ -88,6 +89,7 @@
 						 <h:outputText value="#{invoiceTypeSeq.value.sequenceSize}" />  
 					  </p:column> 		  
 					</p:dataTable>
+					</h:panelGroup>	
                    
 
                     <!-- <p:tab title="#{messages['billingAccount.tab.information']}">

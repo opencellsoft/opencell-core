@@ -2226,4 +2226,12 @@ ALTER FUNCTION invoice_type_migration2()
     </changeSet>   
 <!-- Begin InvoiceType evol -->        	   
     	
+	<changeSet id="#1700-20160601" author="anasseh">			
+		<addColumn tableName="billing_cycle">
+			<column name="invoice_type_id" type="BIGINT" />
+		</addColumn>
+		<addForeignKeyConstraint constraintName="fk_invoice_type_id_billing_cycle"
+			referencedTableName="billing_invoice_type" baseColumnNames="invoice_type_id"
+			baseTableName="billing_cycle" referencedColumnNames="id" />
+		</changeSet>    	
 </databaseChangeLog>

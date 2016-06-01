@@ -86,7 +86,7 @@
                         <hftl:formField label="#{messages['invoiceConfiguration.displayChargesPeriods']}" field="invoiceConfiguration" childField="displayChargesPeriods" id="displayChargesPeriods" />
 
                     </p:fieldset>
-					  <h:panelGroup>			 
+					  <h:panelGroup rendered="#{not empty providerBean.entity.id}">			 
 					  <p:dataTable id="sellerSequenceTable" width="80px;" label="#{messages['inboundRequest.responseHeaders']}" style="width:70%;"
 						value="#{providerBean.getInvoiceTypeSequencesList}" 
 						var="invoiceTypeSeq" paginator="true" rows="5" resizableColumns="true"
