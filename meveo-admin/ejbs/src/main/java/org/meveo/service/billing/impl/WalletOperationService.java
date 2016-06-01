@@ -402,8 +402,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			applicationDate = new Date();
 		}
 
-		log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, multiplicator={}, applicationDate={}, chargeInstance.getId={}", new Object[] {
-				subscription.getId(), quantity, chargeInstance.getChargeTemplate().getUnitMultiplicator(), applicationDate, chargeInstance.getId() });
+		log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, multiplicator={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}", new Object[] {
+				subscription.getId(), quantity, chargeInstance.getChargeTemplate().getUnitMultiplicator(), applicationDate, chargeInstance.getId(),chargeInstance.getDescription() });
 
 		WalletOperation walletOperation = rateOneShotApplication(subscription, chargeInstance, inputQuantity, quantity, applicationDate, creator);
 		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();

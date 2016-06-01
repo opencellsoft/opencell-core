@@ -513,11 +513,16 @@
 																					   value="#{messages['commons.search']}" />
 																		</hftl:decorateFormField>
 																	</h:panelGroup>
+																	
+																	<hftl:decorateFormField fieldId="oneshot_description"
+																		label="#{messages['businessEntity.description']}">
+																		<p:inputText id="oneshot_description"
+																			value="#{subscriptionBean.oneShotChargeInstance.description}"
+																			size="50" 
+																			disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
+																		</p:inputText>
+																	</hftl:decorateFormField>
 
-																	<hftl:formField id="oneshot_description"
-																		label="#{messages['businessEntity.description']}"
-																		field="description" size="50" maxlength="50"
-																		textArea="true" rows="1" disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}" edit="true" />
 																	<hftl:formField
 																		label="#{messages['oneShotChargeInstance.chargeDate']}"
 																		required="true" field="chargeDate" edit="true" />
@@ -544,16 +549,16 @@
 																	</h:panelGroup>
 
 																	<hftl:decorateFormField fieldId="amountWithoutTax2"
-																		label="#{messages['oneShotChargeInstance.amountWithoutTax']}">
+																		label="#{messages['oneShotChargeInstance.amountWithoutTax']}"
+																		rendered="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
 																		<p:inputText id="amountWithoutTax2"
 																			value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}"
-																			size="5" converter="bigDecimalConverter"
-																			disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
+																			size="5" converter="bigDecimalConverter">
 																		</p:inputText>
 																	</hftl:decorateFormField>
 																	<hftl:decorateFormField fieldId="amountWithTax"
 																		label="#{messages['oneShotChargeInstance.amountWithTax']}"
-																		rendered="#{!subscriptionBean.entity.provider.entreprise}">
+																		rendered="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and !subscriptionBean.entity.provider.entreprise}">
 																		<p:inputText id="amountWithTax"
 																			value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
 																			size="5" converter="bigDecimalConverter"
@@ -641,7 +646,7 @@
 																			action="#{subscriptionBean.saveOneShotChargeIns}"
 																			value="#{messages['action.save']}"
 																			update=":subscriptionTab:oneShotPanel"
-																			rendered="#{subscriptionBean.canUserUpdateEntity()}" />
+																			rendered="#{subscriptionBean.canUserUpdateEntity() and subscriptionBean.oneShotChargeInstance.id==null}" />
 																		<p:commandButton value="#{messages['action.cancel']}"
 																			update=":#{p:component('oneShotChgDiv')}"
 																			rendered="#{subscriptionBean.canUserUpdateEntity()}"
