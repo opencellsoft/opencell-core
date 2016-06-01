@@ -1707,95 +1707,7 @@
 			baseTableName="crm_business_account_model" referencedColumnNames="id" />
 	</changeSet>
 	
-   	<changeSet author="anasseh" id="#1685_20160510">
-	    <createSequence sequenceName="billing_invoice_type_seq" />
-		<createTable tableName="billing_invoice_type">
-			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
-			<column name="version" type="INT4" />
-			<column name="disabled" type="BOOL">
-				<constraints nullable="false" />
-			</column>
-			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
-				<constraints nullable="false" />
-			</column>
-			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
-			<column name="provider_id" type="BIGINT" />
-			<column name="creator_id" type="BIGINT" />
-			<column name="updater_id" type="BIGINT" />
-			<column name="code" type="VARCHAR(60)">
-				<constraints nullable="false" />
-			</column>
-			<column name="description" type="VARCHAR(100)" />
-			<column name="inv_type" type="VARCHAR(100)" />
-			<column name="prefix" type="VARCHAR(2000)" />
-			<column name="sequence_size" type="INT4" />
-			<column name="matching_auto" type="BOOL" />
-			<column name="occ_template_id" type="BIGINT" />
-		</createTable>
-
-		<addPrimaryKey columnNames="id" constraintName="billing_invoice_type_pkey"
-			tableName="billing_invoice_type" />
-
-		<addForeignKeyConstraint baseColumnNames="provider_id"
-			baseTableName="billing_invoice_type" constraintName="fk_provider_id_billing_invoice_type"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
-		
-		<addForeignKeyConstraint baseColumnNames="creator_id"
-			baseTableName="billing_invoice_type" constraintName="fk_creator_id_billing_invoice_type"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-		
-		<addForeignKeyConstraint baseColumnNames="updater_id"
-			baseTableName="billing_invoice_type" constraintName="fk_updater_id_billing_invoice_type"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-		
-		<addForeignKeyConstraint baseColumnNames="occ_template_id"
-			baseTableName="billing_invoice_type" constraintName="fk_occ_template_id_billing_invoice_type"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" />
-		
-		<addUniqueConstraint columnNames="code, provider_id, occ_template_id" constraintName="uk_billing_invoice_type" deferrable="false" disabled="false"
-            initiallyDeferred="false" tableName="billing_invoice_type" />				
-
-		<createTable tableName="billing_invoice_type_applies_to">
-			<column name="invoice_type_id" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
-			<column name="applies_to_id" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
-		</createTable>
-		
-		<addForeignKeyConstraint baseColumnNames="invoice_type_id"
-			baseTableName="billing_invoice_type_applies_to" constraintName="fk_invoice_type_id_billing_invoice_type_applies_to"
-			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
-			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
-			
-		<addForeignKeyConstraint baseColumnNames="applies_to_id"
-			baseTableName="billing_invoice_type_applies_to" constraintName="fk_applies_to_id_billing_invoice_type_applies_to"
-			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
-			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice_type" />			
-	</changeSet>
-	
-	
-	<changeSet id="#1695-20160512" author="anasseh">	
-		<dropUniqueConstraint constraintName="billing_invoice_provider_id_invoice_number_invoice_type_key" tableName="billing_invoice" />
-		
-		<addColumn tableName="billing_invoice">
-			<column name="invoice_type_id" type="BIGINT" />
-		</addColumn>    
-    
-    	<addForeignKeyConstraint constraintName="fk_invoice_type_id_billing_invoice"
-			referencedTableName="billing_invoice_type" baseColumnNames="invoice_type_id"
-			baseTableName="billing_invoice" referencedColumnNames="id" />
-			
-		<addUniqueConstraint constraintName="uk_billing_invoice" columnNames="provider_id, invoice_number, invoice_type_id" tableName="billing_invoice" />
-	</changeSet>	
-	
+   
     <changeSet id="#1686-20160512" author="anasseh">
         <addColumn tableName="BILLING_INVOICE">
             <column name="UUID" type="VARCHAR(60)"/>
@@ -1973,11 +1885,102 @@
      	<modifyDataType columnName="DESCRIPTION" newDataType="VARCHAR(600)"   tableName="BILLING_INVOICE_AGREGATE"/>
      </changeSet>  
      
+<!-- Begin InvoiceType evol -->    
+  	<changeSet author="anasseh" id="#1685_20160510">
+	    <createSequence sequenceName="billing_invoice_type_seq" />
+		<createTable tableName="billing_invoice_type">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="inv_type" type="VARCHAR(100)" />
+			<column name="prefix" type="VARCHAR(2000)" />
+			<column name="sequence_size" type="INT4" />
+			<column name="matching_auto" type="BOOL" />
+			<column name="occ_template_id" type="BIGINT" />
+		</createTable>
+
+		<addPrimaryKey columnNames="id" constraintName="billing_invoice_type_pkey"
+			tableName="billing_invoice_type" />
+
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="billing_invoice_type" constraintName="fk_provider_id_billing_invoice_type"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		
+		<addForeignKeyConstraint baseColumnNames="creator_id"
+			baseTableName="billing_invoice_type" constraintName="fk_creator_id_billing_invoice_type"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		
+		<addForeignKeyConstraint baseColumnNames="updater_id"
+			baseTableName="billing_invoice_type" constraintName="fk_updater_id_billing_invoice_type"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		
+		<addForeignKeyConstraint baseColumnNames="occ_template_id"
+			baseTableName="billing_invoice_type" constraintName="fk_occ_template_id_billing_invoice_type"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" />
+		
+		<addUniqueConstraint columnNames="code, provider_id, occ_template_id" constraintName="uk_billing_invoice_type" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="billing_invoice_type" />				
+
+		<createTable tableName="billing_invoice_type_applies_to">
+			<column name="invoice_type_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="applies_to_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		
+		<addForeignKeyConstraint baseColumnNames="invoice_type_id"
+			baseTableName="billing_invoice_type_applies_to" constraintName="fk_invoice_type_id_billing_invoice_type_applies_to"
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+			
+		<addForeignKeyConstraint baseColumnNames="applies_to_id"
+			baseTableName="billing_invoice_type_applies_to" constraintName="fk_applies_to_id_billing_invoice_type_applies_to"
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice_type" />			
+	</changeSet>
+	
+	
+	<changeSet id="#1695-20160512" author="anasseh">	
+		<dropUniqueConstraint constraintName="billing_invoice_provider_id_invoice_number_invoice_type_key" tableName="billing_invoice" />
+		
+		<addColumn tableName="billing_invoice">
+			<column name="invoice_type_id" type="BIGINT" />
+		</addColumn>    
+    
+    	<addForeignKeyConstraint constraintName="fk_invoice_type_id_billing_invoice"
+			referencedTableName="billing_invoice_type" baseColumnNames="invoice_type_id"
+			baseTableName="billing_invoice" referencedColumnNames="id" />
+			
+		<addUniqueConstraint constraintName="uk_billing_invoice" columnNames="provider_id, invoice_number, invoice_type_id" tableName="billing_invoice" />
+	</changeSet>	
+
      <changeSet author="anasseh" id="#1685_20160510_2">	   		
 		 <renameColumn   newColumnName="prefix_el"  oldColumnName="prefix"  tableName="billing_invoice_type"/>
      </changeSet>
-     		
-    <changeSet author="anasseh (generated)" id="#1685_20160530-1">
+     
+     
+         <changeSet author="anasseh (generated)" id="#1685_20160530-1">
         <createTable tableName="billing_seq_invtyp_prov">
             <column name="invoicetype_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -2033,7 +2036,133 @@
     <changeSet author="anasseh (generated)" id="#1685_20160530-49">
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="billing_seq_invtyp_prov" constraintName="fk_r55ewvyjj3tpuauck83pe3syw" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider"/>
     </changeSet>
-   
+     
+     
+     <changeSet author="anasseh" id="#1696_20160601">
+    <createProcedure  procedureName="invoice_type_migration">
+CREATE OR REPLACE FUNCTION invoice_type_migration()
+  RETURNS void AS
+$BODY$
+			declare
+			cursorProv cursor for
+			select * from crm_provider;			
+			providerRecord record;
+			id_occ_com 	BIGINT;
+			id_occ_adj  BIGINT;
+			creator_id  BIGINT;
+			begin
+			open cursorProv;
+			loop
+			fetch cursorProv into providerRecord;
+			exit when not found;
+			select  u.id into creator_id from adm_user u, adm_user_role r where u.provider_id = providerRecord.id and  r.user_id = u.id and r.role_id=1  limit 1;
+			IF( (select count(id) from AR_OCC_TEMPLATE where code ='FAI' and provider_id=providerRecord.id) >0)THEN
+				IF( (select count(id) from AR_OCC_TEMPLATE where code ='FA_FACT' and provider_id=providerRecord.id) >0)THEN
+			  			id_occ_com = nextval('AR_OCC_TEMPLATE_SEQ');
+			  			INSERT INTO ar_occ_template( id, version, disabled, created, updated, account_code, account_code_client_side, 
+                        code, description, occ_category, provider_id, creator_id, updater_id)
+                        VALUES (id_occ_com, 1, false, current_timestamp, null, null, null,'FA_FACT','Invoice OCC','DEBIT',
+                         providerRecord.id, creator_id, null);
+                 ELSE
+                       select id into id_occ_com from AR_OCC_TEMPLATE where code ='FA_FACT' and provider_id=providerRecord.id;
+                       select cc.creator_id into creator_id from AR_OCC_TEMPLATE cc where cc.code ='FA_FACT' and cc.provider_id=providerRecord.id;
+                 END IF;  
+             ELSE
+                   select id into id_occ_com from AR_OCC_TEMPLATE where code ='FAI' and provider_id=providerRecord.id;    
+                   select cc.creator_id into creator_id from AR_OCC_TEMPLATE cc where cc.code ='FAI' and cc.provider_id=providerRecord.id;
+             END IF;  
+              
+			IF( (select count(id) from AR_OCC_TEMPLATE where code ='AVI' and provider_id=providerRecord.id) >0)THEN
+				IF( (select count(id) from AR_OCC_TEMPLATE where code ='FA_ADJ' and provider_id=providerRecord.id) >0)THEN
+			  			id_occ_adj = nextval('AR_OCC_TEMPLATE_SEQ');
+			  			INSERT INTO ar_occ_template( id, version, disabled, created, updated, account_code, account_code_client_side, 
+                        code, description, occ_category, provider_id, creator_id, updater_id)
+                        VALUES (id_occ_adj, 1, false, current_timestamp, null, null, null,'FA_ADJ','Adjustement OCC','CREDIT',
+                         providerRecord.id, creator_id, null);
+                 ELSE
+                       select id into id_occ_adj from AR_OCC_TEMPLATE where code ='FA_ADJ' and provider_id=providerRecord.id;
+                       select cc.creator_id into creator_id from AR_OCC_TEMPLATE cc where cc.code ='FA_ADJ' and cc.provider_id=providerRecord.id;
+                 END IF;  
+             ELSE
+                    select id into id_occ_adj from AR_OCC_TEMPLATE where code ='AVI' and provider_id=providerRecord.id;    
+                    select cc.creator_id into creator_id from AR_OCC_TEMPLATE cc where cc.code ='AVI' and cc.provider_id=providerRecord.id;
+             END IF;             
+
+			INSERT INTO billing_invoice_type(
+            id, version, disabled, created, updated, provider_id, creator_id, 
+            updater_id, code, description, prefix_el, sequence_size,current_invoice_nb, matching_auto, 
+            occ_template_id)
+            VALUES ( nextval('BILLING_INVOICE_TYPE_SEQ'), 1, providerRecord.disabled, current_timestamp, null, providerRecord.id, creator_id,
+             null, 'COM','Commercial',providerRecord.INVOICE_PREFIX , providerRecord.INVOICE_SEQUENCE_SIZE, providerRecord.CURRENT_INVOICE_NB, false,
+              id_occ_com);
+
+            INSERT INTO billing_invoice_type(
+            id, version, disabled, created, updated, provider_id, creator_id, 
+            updater_id, code, description, prefix_el, sequence_size,current_invoice_nb, matching_auto, 
+            occ_template_id)
+            VALUES ( nextval('BILLING_INVOICE_TYPE_SEQ'), 1, providerRecord.disabled, current_timestamp, null,  providerRecord.id, creator_id,
+             null, 'ADJ','Adjustement',providerRecord.INVOICE_ADJUSTMENT_PREFIX , providerRecord.INVOICE_ADJUSTMENT_SEQUENCE_SIZE, providerRecord.CURRENT_INVOICE_ADJUSTMENT_NB, false, 
+             id_occ_adj);
+             
+             INSERT INTO billing_invoice_type_applies_to(invoice_type_id, applies_to_id) VALUES ((select id from billing_invoice_type where code='COM' and provider_id = providerRecord.id ) , (select id from billing_invoice_type where code='ADJ' and provider_id = providerRecord.id ));
+
+            
+			end loop;
+			close cursorProv;
+			end;
+			$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION invoice_type_migration()
+  OWNER TO meveo;
+    </createProcedure>
+    
+        <createProcedure  procedureName="invoice_type_migration2">
+CREATE OR REPLACE FUNCTION invoice_type_migration2()
+  RETURNS void AS
+$BODY$
+			declare
+			cursorSellerCOM cursor for
+			select * from crm_seller where invoice_prefix is  not null ;		
+			cursorSellerADJ cursor for
+			select * from crm_seller where invoice_adjustment_prefix is  not null;					
+			sellerRecord record;
+			begin
+			
+			open cursorSellerCOM;
+			loop
+			fetch cursorSellerCOM into sellerRecord;
+			exit when not found;
+			
+			insert into billing_seq_invtyp_sell (invoicetype_id,currentinvoicenb,prefixel,sequencesize,seller_id) 
+			values((select id from billing_invoice_type where code='COM' and provider_id = sellerRecord.provider_id ),sellerRecord.current_invoice_nb ,sellerRecord.invoice_prefix,sellerRecord.invoice_sequence_size,sellerRecord.id);
+			
+			end loop;
+			close cursorSellerCOM;
+			
+			open cursorSellerADJ;
+			loop
+			fetch cursorSellerADJ into sellerRecord;
+			exit when not found;
+			
+			insert into billing_seq_invtyp_sell (invoicetype_id,currentinvoicenb,prefixel,sequencesize,seller_id) 
+			values((select id from billing_invoice_type where code='ADJ' and provider_id = sellerRecord.provider_id),sellerRecord.current_invoice_adjustment_nb ,sellerRecord.invoice_adjustment_prefix,sellerRecord.invoice_adjustment_sequence_size,sellerRecord.id);
+			
+			end loop;
+			close cursorSellerADJ;			
+			end;
+			$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION invoice_type_migration2()
+  OWNER TO meveo;
+    </createProcedure>
+    <sql>select invoice_type_migration()</sql>
+    <sql>select invoice_type_migration2()</sql>
+    <sql>drop FUNCTION invoice_type_migration()</sql> 
+    <sql>drop FUNCTION invoice_type_migration2()</sql> 
+</changeSet>
+
     <changeSet author="anasseh (generated)" id="#1685_20160530-80">
         <dropColumn columnName="credit_note_prefix" tableName="crm_provider"/>
     </changeSet>
@@ -2094,10 +2223,7 @@
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1685_20160530-101">
         <dropColumn columnName="invoice_type" tableName="billing_invoice"/>
-    </changeSet>   	
-    
-    <changeSet id="#1679_20160531" author="AndriusKarpavicius">
-        <renameColumn tableName="crm_business_account_model" oldColumnName="type" newColumnName="HIERARCHY_TYPE"/>        
-    </changeSet>
+    </changeSet>   
+<!-- Begin InvoiceType evol -->        	   
     	
 </databaseChangeLog>

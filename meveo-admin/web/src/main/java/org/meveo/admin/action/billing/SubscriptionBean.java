@@ -271,13 +271,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         	if(selectedWalletTemplate.getCode()==null){
         		selectedWalletTemplate.setCode(WalletTemplate.PRINCIPAL);
         	}
-            if (oneShotChargeInstance != null && oneShotChargeInstance.getId() != null) {
-                oneShotChargeInstanceService.update(oneShotChargeInstance, getCurrentUser());
-            } else {
-
                 entity = subscriptionService.attach(entity);
+                String description = oneShotChargeInstance.getDescription();
                 oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplateService.attach((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate()));
-                
+                oneShotChargeInstance.setDescription(description);
                 if (oneShotChargeInstance.getChargeDate() == null) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date());
@@ -293,8 +290,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 oneShotChargeInstanceService.oneShotChargeApplication(entity, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),selectedWalletTemplate.getCode(),
                     oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
                     oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), oneShotChargeInstance.getDescription(), getCurrentUser(), true);
-            }
-
+           
             oneShotChargeInstance = null;
             oneShotChargeInstances = null;
             clearObjectId();

@@ -74,7 +74,7 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
     protected CustomFieldInstanceService customFieldInstanceService;
 
 	private DualListModel<TriggeredEDRTemplate> edrTemplates;
-	
+
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -238,7 +238,6 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 			filters = new HashMap<>();
 		}
 		filters.put("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.OTHER);
-		listFiltered = true;
 		return getLazyDataModel();
 	}
 
