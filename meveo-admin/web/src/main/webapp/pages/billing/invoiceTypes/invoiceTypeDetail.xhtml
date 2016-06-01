@@ -54,6 +54,12 @@
 			</f:facet>
 			  <h:outputText value="#{sellerSeq.key.code}" />
 		   </p:column>
+		   <p:column>
+			<f:facet name="header">
+				<h:outputText value="#{messages['invoiceType.sequence.prefixEl']}" />
+			</f:facet>
+			 <h:outputText value="#{sellerSeq.value.prefixEL}" />  
+		  </p:column>
 		    <p:column>
 			<f:facet name="header">
 				<h:outputText value="#{messages['seller.currentInvoiceNb']}" />
