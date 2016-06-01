@@ -76,6 +76,10 @@ public class BillingCycle extends BusinessEntity {
 	
 	@Column(name = "INVOICING_THRESHOLD")
 	private BigDecimal invoicingThreshold; 
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "INVOICE_TYPE_ID")
+	private InvoiceType invoiceType;
 
 	public String getBillingTemplateName() {
 		return billingTemplateName;
@@ -158,6 +162,20 @@ public class BillingCycle extends BusinessEntity {
 	 */
 	public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
 		this.invoicingThreshold = invoicingThreshold;
+	}
+
+	/**
+	 * @return the invoiceType
+	 */
+	public InvoiceType getInvoiceType() {
+		return invoiceType;
+	}
+
+	/**
+	 * @param invoiceType the invoiceType to set
+	 */
+	public void setInvoiceType(InvoiceType invoiceType) {
+		this.invoiceType = invoiceType;
 	}
 
 }

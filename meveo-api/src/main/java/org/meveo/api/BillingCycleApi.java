@@ -11,9 +11,11 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.catalog.impl.CalendarService;
 
 /**
@@ -27,6 +29,9 @@ public class BillingCycleApi extends BaseApi {
 
     @Inject
     private CalendarService calendarService;
+    
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
 
     public void create(BillingCycleDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -47,8 +52,7 @@ public class BillingCycleApi extends BaseApi {
         }
 
         handleMissingParameters();
-        
-
+     
         Provider provider = currentUser.getProvider();
 
         if (billingCycleService.findByBillingCycleCode(postData.getCode(), provider) != null) {
@@ -58,6 +62,14 @@ public class BillingCycleApi extends BaseApi {
         Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
+        }
+        
+        InvoiceType invoiceType = null;
+        if (!StringUtils.isBlank(postData.getInvoiceTypeCode())) {
+			invoiceType = invoiceTypeService.findByCode(postData.getInvoiceTypeCode(), currentUser.getProvider());
+			if(invoiceType == null){
+				 throw new EntityDoesNotExistsException(InvoiceType.class, postData.getInvoiceTypeCode());
+			}
         }
 
         BillingCycle billingCycle = new BillingCycle();
@@ -70,6 +82,7 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setTransactionDateDelay(postData.getTransactionDateDelay());
         billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
         billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
+        billingCycle.setInvoiceType(invoiceType);
 
         billingCycleService.create(billingCycle, currentUser);
 
@@ -109,6 +122,14 @@ public class BillingCycleApi extends BaseApi {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
         }
 
+        InvoiceType invoiceType = null;
+        if (!StringUtils.isBlank(postData.getInvoiceTypeCode())) {
+			invoiceType = invoiceTypeService.findByCode(postData.getInvoiceTypeCode(), currentUser.getProvider());
+			if(invoiceType == null){
+				 throw new EntityDoesNotExistsException(InvoiceType.class, postData.getInvoiceTypeCode());
+			}
+        }
+        
         billingCycle.setDescription(postData.getDescription());
         billingCycle.setBillingTemplateName(postData.getBillingTemplateName());
         billingCycle.setInvoiceDateDelay(postData.getInvoiceDateDelay());
@@ -117,7 +138,7 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setTransactionDateDelay(postData.getTransactionDateDelay());
         billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
         billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
-
+        billingCycle.setInvoiceType(invoiceType);
         billingCycleService.update(billingCycle, currentUser);
     }
 

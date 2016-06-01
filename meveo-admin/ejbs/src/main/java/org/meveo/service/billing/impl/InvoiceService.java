@@ -306,7 +306,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			
 			sequence =  invoiceType.getSellerSequence().get(seller);
 			if(increment){
-				sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() +step);
+				sequence.setCurrentInvoiceNb((sequence.getCurrentInvoiceNb() == null?0L:sequence.getCurrentInvoiceNb()) +step);
 				invoiceType.getSellerSequence().put(seller,sequence);
 				invoiceTypeService.update(invoiceType,currentUser);
 			}
@@ -314,7 +314,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if(invoiceType.getProviderSequence() != null && invoiceType.getProviderSequence().containsKey(seller.getProvider())){
 			sequence =  invoiceType.getProviderSequence().get(seller.getProvider());
 			if(increment){
-				sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() +step);
+				sequence.setCurrentInvoiceNb((sequence.getCurrentInvoiceNb() == null?0L:sequence.getCurrentInvoiceNb()) +step);
 				invoiceType.getProviderSequence().put(seller.getProvider(),sequence);
 				invoiceTypeService.update(invoiceType,currentUser);
 			}
@@ -322,7 +322,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if(invoiceType.getSequence() != null){
 			sequence =  invoiceType.getSequence();
 			if(increment){
-				sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() +step);
+				sequence.setCurrentInvoiceNb((sequence.getCurrentInvoiceNb() == null?0L:sequence.getCurrentInvoiceNb()) +step);
 				invoiceType.setSequence(sequence);
 				invoiceTypeService.update(invoiceType,currentUser);
 			}
@@ -394,9 +394,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			if (billingCycle == null) {
 				billingCycle = billingAccount.getBillingCycle();
 			}
-
-			Invoice invoice = new Invoice();			
-			invoice.setInvoiceType(invoiceTypeService.getDefaultCommertial(currentUser));
+			InvoiceType invoiceType = billingRun.getBillingCycle().getInvoiceType();
+			if(invoiceType == null){
+				invoiceType = invoiceTypeService.getDefaultCommertial(currentUser);
+			}
+			Invoice invoice = new Invoice();
+			invoice.setInvoiceType(invoiceType);
 			invoice.setBillingAccount(billingAccount);
 			invoice.setBillingRun(billingRun);
 			invoice.setAuditable(billingRun.getAuditable());
