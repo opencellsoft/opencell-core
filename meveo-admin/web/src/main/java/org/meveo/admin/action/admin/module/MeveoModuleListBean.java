@@ -28,6 +28,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.module.ModuleApi;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.service.admin.impl.MeveoModuleService;
@@ -99,6 +100,15 @@ public class MeveoModuleListBean extends MeveoModuleBean {
             try {
                 moduleApi.createOrUpdate(selectedModuleDto, currentUser);
                 messages.info(new BundleKey("messages", "meveoModule.downloadSuccess"), selectedModuleDto.getCode());
+
+            } catch (ActionForbiddenException e) {
+                if (e.getReason() != null) {
+                    messages.error(e.getReason());
+                } else {
+                    messages.error(new BundleKey("messages", "meveoModule.downloadFailed"), selectedModuleDto.getCode(),
+                        (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
+                }
+
             } catch (Exception e) {
                 log.error("Failed to download meveo module {} from meveoInstance {}", selectedModuleDto.getCode(), meveoInstance.getCode(), e);
                 messages.error(new BundleKey("messages", "meveoModule.downloadFailed"), selectedModuleDto.getCode(),
@@ -112,6 +122,14 @@ public class MeveoModuleListBean extends MeveoModuleBean {
             try {
                 moduleApi.install(selectedModuleDto, currentUser);
                 messages.info(new BundleKey("messages", "meveoModule.installSuccess"), selectedModuleDto.getCode());
+
+            } catch (ActionForbiddenException e) {
+                if (e.getReason() != null) {
+                    messages.error(e.getReason());
+                } else {
+                    messages.error(new BundleKey("messages", "meveoModule.downloadFailed"), selectedModuleDto.getCode(),
+                        (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
+                }
 
             } catch (Exception e) {
                 log.error("Failed to download and install meveo module {} ", selectedModuleDto.getCode(), e);
