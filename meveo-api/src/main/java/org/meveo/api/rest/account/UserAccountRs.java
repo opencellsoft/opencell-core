@@ -73,7 +73,7 @@ public interface UserAccountRs extends IBaseRs {
      * @return
      */
     @GET
-    @Path("/filterCountersByPeriod")
+    @Path("/filter")
 	GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(@QueryParam("userAccountCode") String userAccountCode, 
 			@QueryParam("date") Date date);
 
