@@ -96,7 +96,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
         try {
-            List<ModuleDto> dtos = moduleApi.list(getCurrentUser());
+            List<ModuleDto> dtos = moduleApi.list(null, getCurrentUser());
             result.setModules(dtos);
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -160,7 +160,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
 
         try {
             moduleApi.install(moduleDto, getCurrentUser());
-            
+
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -181,7 +181,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
 
         try {
             moduleApi.uninstall(code, MeveoModule.class, getCurrentUser());
-            
+
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -202,7 +202,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
 
         try {
             moduleApi.enable(code, MeveoModule.class, getCurrentUser());
-            
+
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -216,7 +216,6 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
 
         return result;
     }
-    
 
     @Override
     public ActionStatus disableModule(String code) {
@@ -224,7 +223,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
 
         try {
             moduleApi.disable(code, MeveoModule.class, getCurrentUser());
-            
+
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

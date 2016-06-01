@@ -2094,5 +2094,10 @@
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1685_20160530-101">
         <dropColumn columnName="invoice_type" tableName="billing_invoice"/>
-    </changeSet>   		
+    </changeSet>   	
+    
+    <changeSet id="#1679_20160531" author="AndriusKarpavicius">
+        <renameColumn tableName="crm_business_account_model" oldColumnName="type" newColumnName="HIERARCHY_TYPE"/>        
+    </changeSet>
+    	
 </databaseChangeLog>

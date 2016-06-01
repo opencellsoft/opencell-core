@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.BusinessAccountModelDto;
 import org.meveo.api.dto.response.account.BusinessAccountModelResponseDto;
-import org.meveo.api.dto.response.account.BusinessAccountModelsResponseDto;
+import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -27,24 +27,27 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface BusinessAccountModelRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ActionStatus create(BusinessAccountModelDto postData);
+    @POST
+    @Path("/")
+    public ActionStatus create(BusinessAccountModelDto postData);
 
-	@PUT
-	@Path("/")
-	ActionStatus update(BusinessAccountModelDto postData);
+    @PUT
+    @Path("/")
+    public ActionStatus update(BusinessAccountModelDto postData);
 
-	@GET
-	@Path("/")
-	BusinessAccountModelResponseDto find(@QueryParam("bamCode") String bamCode);
+    @GET
+    @Path("/")
+    public BusinessAccountModelResponseDto find(@QueryParam("bamCode") String bamCode);
 
-	@DELETE
-	@Path("/{bamCode}")
-	ActionStatus remove(@PathParam("bamCode") String bamCode);
+    @DELETE
+    @Path("/{bamCode}")
+    public ActionStatus remove(@PathParam("bamCode") String bamCode);
 
-	@POST
-	@Path("/list")
-	BusinessAccountModelsResponseDto list();
+    @GET
+    @Path("/list")
+    public MeveoModuleDtosResponse list();
 
+    @PUT
+    @Path("/install")
+    public ActionStatus install(BusinessAccountModelDto moduleDto);
 }
