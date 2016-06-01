@@ -144,6 +144,9 @@ public class ProviderApi extends BaseApi {
         
         handleMissingParameters();
         
+		if (!currentUser.hasPermission("superAdmin", "superAdminManagement")) {
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+		}
 
         Provider provider = providerService.findByCode(postData.getCode());
         if (provider != null) {
