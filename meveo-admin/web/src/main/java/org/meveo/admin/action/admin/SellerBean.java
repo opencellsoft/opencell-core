@@ -18,8 +18,12 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.validator.ValidatorException;
@@ -34,6 +38,8 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.Sequence;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -98,5 +104,11 @@ public class SellerBean extends CustomFieldBean<Seller> {
 //			return super.saveOrUpdate(killConversation);
 //		}
 	}
+	
+	 public List<Map.Entry<InvoiceType,Sequence>> getInvoiceTypeSequencesList() {
+	        Set<Entry<InvoiceType,Sequence>> sequencesSet = 
+	                         entity.getInvoiceTypeSequence().entrySet();
+	        return new ArrayList<Map.Entry<InvoiceType,Sequence>>(sequencesSet);
+	    }
 
 }

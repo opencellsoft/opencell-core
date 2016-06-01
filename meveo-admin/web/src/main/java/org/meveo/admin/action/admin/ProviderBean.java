@@ -18,6 +18,12 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
@@ -29,10 +35,13 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.InvoiceConfiguration;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.Language;
+import org.meveo.model.billing.Sequence;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
@@ -139,5 +148,11 @@ public class ProviderBean extends CustomFieldBean<Provider> {
             return getEditViewName();
         }
         return null;
+    }
+    
+    public List<Map.Entry<InvoiceType,Sequence>> getInvoiceTypeSequencesList() {
+        Set<Entry<InvoiceType,Sequence>> sequencesSet = 
+                         entity.getInvoiceTypeSequence().entrySet();
+        return new ArrayList<Map.Entry<InvoiceType,Sequence>>(sequencesSet);
     }
 }

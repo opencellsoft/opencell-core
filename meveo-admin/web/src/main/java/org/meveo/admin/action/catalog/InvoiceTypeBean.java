@@ -21,6 +21,9 @@ package org.meveo.admin.action.catalog;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,7 +31,9 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.Sequence;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -125,5 +130,11 @@ public class InvoiceTypeBean extends BaseBean<InvoiceType> {
 
     public void setDualListModel(DualListModel<InvoiceType> invoiceTypesDM) {
         this.invoiceTypesDM = invoiceTypesDM;
+    }
+    
+    public List<Map.Entry<Seller, Sequence>> getSellerSequencesList() {
+        Set<Entry<Seller, Sequence>> productSet = 
+                         entity.getSellerSequence().entrySet();
+        return new ArrayList<Map.Entry<Seller, Sequence>>(productSet);
     }
 }
