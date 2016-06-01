@@ -4,12 +4,12 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>PublishModuleTestCase</title>
+<title>DownloadAndInstallModuleTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">PublishModuleTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">DownloadAndInstallModuleTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
@@ -22,6 +22,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
+</tr>
+<tr>
 	<td>assertText</td>
 	<td>//a[contains(text(),'${Code}')]</td>
 	<td>${Code}</td>
@@ -34,79 +39,68 @@
 <tr>
 	<td>click</td>
 	<td>//a[contains(text(),'${Code}')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>id=moduleFormId:publishModuleButton</td>
-	<td>Publish module</td>
-</tr>
-<tr>
-	<td>verifyText</td>
-	<td>id=moduleFormId:publishModuleButton</td>
-	<td>Publish module</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${PublishModule}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>id=meveoModuleDialog_title</td>
-	<td>Publish module</td>
+	<td>${CodeModule}</td>
+	<td>${Code}</td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>id=meveoModuleDialog_title</td>
-	<td>Publish module</td>
-</tr>
-<tr>
-	<td>verifyText</td>
-	<td>id=meveoModuleDialog_title</td>
-	<td>Publish module</td>
+	<td>${CodeModule}</td>
+	<td>${Code}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${SelectMeveoInstance}</td>
+	<td>${DisableModule}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SelectMeveoInstance}</td>
+	<td>${DisableModule}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>//div[@id='module:meveoInstance_panel']/div/ul/li[2]</td>
+	<td>${disableYes}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${disableYes}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>//div[@id='module:meveoInstance_panel']/div/ul/li[2]</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>1000</td>
+	<td>assertElementPresent</td>
+	<td>${backButton}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;${CodeMI}&quot;)</td>
+	<td>clickAndWait</td>
+	<td>${backButton}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${PublishYes}</td>
-	<td></td>
+	<td>assertText</td>
+	<td>//tbody[@id='datatable_results_data']/tr/td[6]</td>
+	<td>StatusDisabled</td>
 </tr>
-
+<tr>
+	<td>verifyText</td>
+	<td>//tbody[@id='datatable_results_data']/tr/td[6]</td>
+	<td>StatusDisabled</td>
+</tr>
 </tbody></table>
 </body>
 </html>
