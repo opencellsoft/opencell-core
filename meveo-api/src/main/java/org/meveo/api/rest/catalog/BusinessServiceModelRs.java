@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
+import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -46,4 +47,11 @@ public interface BusinessServiceModelRs extends IBaseRs {
     @POST
     ActionStatus createOrUpdate(BusinessServiceModelDto postData);
 
+    @GET
+    @Path("/list")
+    public MeveoModuleDtosResponse list();
+
+    @PUT
+    @Path("/install")
+    public ActionStatus install(BusinessServiceModelDto moduleDto);
 }

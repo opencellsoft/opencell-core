@@ -2,8 +2,10 @@ package org.meveo.api.module;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -13,6 +15,7 @@ import javax.xml.bind.Marshaller;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ModuleUtil;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.CustomEntityApi;
 import org.meveo.api.CustomFieldTemplateApi;
@@ -76,6 +79,7 @@ import org.meveo.model.notification.ScriptNotification;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.MeveoModuleService;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -172,8 +176,8 @@ public class ModuleApi extends BaseApi {
                 && (((BusinessServiceModelDto) moduleDto).getServiceTemplate() == null || StringUtils.isBlank(((BusinessServiceModelDto) moduleDto).getServiceTemplate().getCode()))) {
             missingParameters.add("serviceTemplate.code");
 
-        } else if (moduleDto instanceof BusinessAccountModelDto && ((BusinessAccountModelDto) moduleDto).getType() == null) {
-            missingParameters.add("type");
+        } else if (moduleDto instanceof BusinessAccountModelDto && ((BusinessAccountModelDto) moduleDto).getHierarchyType() == null) {
+            missingParameters.add("hierarchyType");
         }
 
         if (moduleDto.getScript() != null) {
@@ -231,7 +235,7 @@ public class ModuleApi extends BaseApi {
                 && (((BusinessServiceModelDto) moduleDto).getServiceTemplate() == null || StringUtils.isBlank(((BusinessServiceModelDto) moduleDto).getServiceTemplate().getCode()))) {
             missingParameters.add("serviceTemplate.code");
 
-        } else if (moduleDto instanceof BusinessAccountModelDto && ((BusinessAccountModelDto) moduleDto).getType() == null) {
+        } else if (moduleDto instanceof BusinessAccountModelDto && ((BusinessAccountModelDto) moduleDto).getHierarchyType() == null) {
             missingParameters.add("type");
         }
 
@@ -281,9 +285,20 @@ public class ModuleApi extends BaseApi {
 
     }
 
-    public List<ModuleDto> list(User currentUser) throws MeveoApiException, BusinessException {
+    public List<ModuleDto> list(Class<? extends MeveoModule> clazz, User currentUser) throws MeveoApiException, BusinessException {
         Provider provider = currentUser.getProvider();
-        List<MeveoModule> meveoModules = meveoModuleService.list(provider);
+        List<MeveoModule> meveoModules = null;
+        if (clazz == null) {
+            meveoModules = meveoModuleService.list(provider);
+
+        } else {
+            Map<String, Object> filters = new HashMap<>();
+            filters.put(PersistenceService.SEARCH_CURRENT_PROVIDER, provider);
+            filters.put(PersistenceService.SEARCH_ATTR_TYPE_CLASS, clazz);
+
+            meveoModules = meveoModuleService.list(new PaginationConfiguration(filters));
+        }
+        
         List<ModuleDto> result = new ArrayList<ModuleDto>();
         ModuleDto moduleDto = null;
         for (MeveoModule meveoModule : meveoModules) {
@@ -340,7 +355,7 @@ public class ModuleApi extends BaseApi {
         } else {
 
             if (meveoModule.isInstalled()) {
-                throw new ActionForbiddenException(meveoModule.getClass(), moduleDto.getCode(), "install", "Module is not installed or already enabled");
+                throw new ActionForbiddenException(meveoModule.getClass(), moduleDto.getCode(), "install", "Module is already installed");
             }
 
             try {
@@ -429,7 +444,7 @@ public class ModuleApi extends BaseApi {
     }
 
     private void parseModuleInfoOnlyFromDtoBAM(BusinessAccountModel bam, BusinessAccountModelDto bamDto, User currentUser) throws MeveoApiException, BusinessException {
-        bam.setType(bamDto.getType());
+        bam.setType(bamDto.getHierarchyType());
     }
 
     private void unpackAndInstallBAMItems(BusinessAccountModel bam, BusinessAccountModelDto bamDto, User currentUser) throws MeveoApiException, BusinessException {

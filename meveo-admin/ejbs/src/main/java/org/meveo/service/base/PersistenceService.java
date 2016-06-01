@@ -653,16 +653,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                                 }
 
                                 if (condition == null) {
-                                    queryBuilder.addSqlCriterion("a.type in (:typeClass)", "typeClass", classes);
+                                    queryBuilder.addSqlCriterion("type(a) in (:typeClass)", "typeClass", classes);
                                 } else if ("ne".equalsIgnoreCase(condition)) {
-                                    queryBuilder.addSqlCriterion("a.type not in (:typeClass)", "typeClass", classes);
+                                    queryBuilder.addSqlCriterion("type(a) not in (:typeClass)", "typeClass", classes);
                                 }
 
                             } else if (filter instanceof Class) {
                                 if (condition == null) {
-                                    queryBuilder.addSqlCriterion("a.type = :typeClass", "typeClass", filter);
+                                    queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", filter);
                                 } else if ("ne".equalsIgnoreCase(condition)) {
-                                    queryBuilder.addSqlCriterion("a.type != :typeClass", "typeClass", filter);
+                                    queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", filter);
                                 }
 
                             } else if (filter instanceof String) {
