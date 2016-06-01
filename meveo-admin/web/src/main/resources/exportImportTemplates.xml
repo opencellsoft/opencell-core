@@ -19,7 +19,8 @@
     <template name="CustomEntityTemplate" entityToExport="org.meveo.model.customEntities.CustomEntityTemplate">
         <classesToExportAsFull>
             <java-class>org.meveo.model.crm.CustomFieldTemplate</java-class>
-            <java-class>org.meveo.model.scripts.EntityActionScript</java-class>
+            <java-class>org.meveo.model.crm.custom.EntityCustomAction</java-class>
+            <java-class>org.meveo.model.scripts.ScriptInstance</java-class>
         </classesToExportAsFull>
         <relatedEntities>
             <relatedEntity>
@@ -37,8 +38,8 @@
                 </parameters>
             </relatedEntity>
             <relatedEntity>
-                <entityClass>org.meveo.model.scripts.EntityActionScript</entityClass>
-                <selection>select es from EntityActionScript es where es.disabled=false and es.appliesTo=:cftPrefix and es.provider=:provider</selection>
+                <entityClass>org.meveo.model.crm.custom.EntityCustomAction</entityClass>
+                <selection>select ea from EntityCustomAction ea where ea.disabled=false and ea.appliesTo=:cftPrefix and ea.provider=:provider</selection>
                 <parameters>
                     <entry>
                         <string>cftPrefix</string>
@@ -207,7 +208,8 @@
                 <entityClass>org.meveo.model.module.MeveoModule</entityClass>
                 <selection>select mie from MeveoModule mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
                     (mi.itemClass='org.meveo.model.module.MeveoModule' or mi.itemClass='org.meveo.model.catalog.BusinessOfferModel' or
-                    mi.itemClass='org.meveo.model.catalog.BusinessServiceModel') and
+                    mi.itemClass='org.meveo.model.catalog.BusinessServiceModel' or
+                    mi.itemClass='org.meveo.model.crm.BusinessAccountModel') and
                     mi.meveoModule=:meveoModule and mie.provider=:provider
                 </selection>
                 <parameters>
