@@ -23,11 +23,8 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.Sequence;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -78,6 +75,14 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 		defaultInvoiceType.setOccTemplate(occTemplate);
 		create(defaultInvoiceType, currentUser);
 		return defaultInvoiceType;
+	}
+	
+	public Long getMaxCurrentInvoiceNumber() throws BusinessException {
+		Long max = getEntityManager()
+				.createNamedQuery("InvoiceType.currentInvoiceNb", Long.class).getSingleResult();
+		
+		return max == null ? 0 : max;
+		
 	}
 
 	public InvoiceType getDefaultAdjustement(User currentUser) throws BusinessException {
