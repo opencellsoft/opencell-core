@@ -34,6 +34,7 @@ import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetTriggeredEdrResponseDto;
 import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
+import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 
 /**
  * @author Edward P. Legaspi
@@ -41,235 +42,231 @@ import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
 @WebService
 public interface CatalogWs extends IBaseWs {
 
-	// counter template
+    // counter template
 
-	@WebMethod
-	ActionStatus createCounterTemplate(@WebParam(name = "counterTemplate") CounterTemplateDto postData);
+    @WebMethod
+    ActionStatus createCounterTemplate(@WebParam(name = "counterTemplate") CounterTemplateDto postData);
 
-	@WebMethod
-	ActionStatus updateCounterTemplate(@WebParam(name = "counterTemplate") CounterTemplateDto postData);
+    @WebMethod
+    ActionStatus updateCounterTemplate(@WebParam(name = "counterTemplate") CounterTemplateDto postData);
 
-	@WebMethod
-	GetCounterTemplateResponseDto findCounterTemplate(@WebParam(name = "counterTemplateCode") String counterTemplateCode);
+    @WebMethod
+    GetCounterTemplateResponseDto findCounterTemplate(@WebParam(name = "counterTemplateCode") String counterTemplateCode);
 
-	@WebMethod
-	ActionStatus removeCounterTemplate(@WebParam(name = "counterTemplateCode") String counterTemplateCode);
+    @WebMethod
+    ActionStatus removeCounterTemplate(@WebParam(name = "counterTemplateCode") String counterTemplateCode);
 
-	@WebMethod
-	ActionStatus createOrUpdateCounterTemplate(@WebParam(name = "counterTemplate") CounterTemplateDto postData);
+    @WebMethod
+    ActionStatus createOrUpdateCounterTemplate(@WebParam(name = "counterTemplate") CounterTemplateDto postData);
 
-	// charges
+    // charges
 
-	@WebMethod
-	GetChargeTemplateResponseDto findChargeTemplate(@WebParam(name = "chargeTemplateCode") String chargeTemplateCode);
+    @WebMethod
+    GetChargeTemplateResponseDto findChargeTemplate(@WebParam(name = "chargeTemplateCode") String chargeTemplateCode);
 
-	@WebMethod
-	public ActionStatus createRecurringChargeTemplate(
-			@WebParam(name = "recurringChargeTemplate") RecurringChargeTemplateDto postData);
+    @WebMethod
+    public ActionStatus createRecurringChargeTemplate(@WebParam(name = "recurringChargeTemplate") RecurringChargeTemplateDto postData);
 
-	@WebMethod
-	public GetRecurringChargeTemplateResponseDto findRecurringChargeTemplate(
-			@WebParam(name = "recurringChargeTemplateCode") String recurringChargeTemplateCode);
+    @WebMethod
+    public GetRecurringChargeTemplateResponseDto findRecurringChargeTemplate(@WebParam(name = "recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
-	@WebMethod
-	public ActionStatus updateRecurringChargeTemplate(
-			@WebParam(name = "recurringChargeTemplate") RecurringChargeTemplateDto postData);
+    @WebMethod
+    public ActionStatus updateRecurringChargeTemplate(@WebParam(name = "recurringChargeTemplate") RecurringChargeTemplateDto postData);
 
-	@WebMethod
-	public ActionStatus removeRecurringChargeTemplate(
-			@WebParam(name = "recurringChargeTemplateCode") String recurringChargeTemplateCode);
+    @WebMethod
+    public ActionStatus removeRecurringChargeTemplate(@WebParam(name = "recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
-	@WebMethod
-	public ActionStatus createOrUpdateRecurringChargeTemplate(
-			@WebParam(name = "recurringChargeTemplate") RecurringChargeTemplateDto postData);
+    @WebMethod
+    public ActionStatus createOrUpdateRecurringChargeTemplate(@WebParam(name = "recurringChargeTemplate") RecurringChargeTemplateDto postData);
 
-	@WebMethod
-	public ActionStatus createOneShotChargeTemplate(
-			@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
+    @WebMethod
+    public ActionStatus createOneShotChargeTemplate(@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
 
-	@WebMethod
-	public ActionStatus updateOneShotChargeTemplate(
-			@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
+    @WebMethod
+    public ActionStatus updateOneShotChargeTemplate(@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
 
-	@WebMethod
-	public GetOneShotChargeTemplateResponseDto findOneShotChargeTemplate(
-			@WebParam(name = "oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
+    @WebMethod
+    public GetOneShotChargeTemplateResponseDto findOneShotChargeTemplate(@WebParam(name = "oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
 
-	@WebMethod
-	public ActionStatus createOrUpdateOneShotChargeTemplate(
-			@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
+    @WebMethod
+    public ActionStatus createOrUpdateOneShotChargeTemplate(@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
 
-	@WebMethod
-	public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplate(
-			@WebParam(name = "languageCode") String languageCode, @WebParam(name = "countryCode") String countryCode,
-			@WebParam(name = "currencyCode") String currencyCode, @WebParam(name = "sellerCode") String sellerCode,
-			@WebParam(name = "date") String date);
+    @WebMethod
+    public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplate(@WebParam(name = "languageCode") String languageCode,
+            @WebParam(name = "countryCode") String countryCode, @WebParam(name = "currencyCode") String currencyCode, @WebParam(name = "sellerCode") String sellerCode,
+            @WebParam(name = "date") String date);
 
-	@WebMethod
-	public ActionStatus removeOneShotChargeTemplate(
-			@WebParam(name = "oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
+    @WebMethod
+    public ActionStatus removeOneShotChargeTemplate(@WebParam(name = "oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
 
-	@WebMethod
-	public ActionStatus createUsageChargeTemplate(
-			@WebParam(name = "usageChargeTemplate") UsageChargeTemplateDto postData);
+    @WebMethod
+    public ActionStatus createUsageChargeTemplate(@WebParam(name = "usageChargeTemplate") UsageChargeTemplateDto postData);
 
-	@WebMethod
-	public ActionStatus updateUsageChargeTemplate(
-			@WebParam(name = "usageChargeTemplate") UsageChargeTemplateDto postData);
+    @WebMethod
+    public ActionStatus updateUsageChargeTemplate(@WebParam(name = "usageChargeTemplate") UsageChargeTemplateDto postData);
 
-	@WebMethod
-	public GetUsageChargeTemplateResponseDto findUsageChargeTemplate(
-			@WebParam(name = "usageChargeTemplateCode") String usageChargeTemplateCode);
+    @WebMethod
+    public GetUsageChargeTemplateResponseDto findUsageChargeTemplate(@WebParam(name = "usageChargeTemplateCode") String usageChargeTemplateCode);
 
-	@WebMethod
-	public ActionStatus removeUsageChargeTemplate(
-			@WebParam(name = "usageChargeTemplateCode") String usageChargeTemplateCode);
+    @WebMethod
+    public ActionStatus removeUsageChargeTemplate(@WebParam(name = "usageChargeTemplateCode") String usageChargeTemplateCode);
 
-	@WebMethod
-	public ActionStatus createOrUpdateUsageChargeTemplate(
-			@WebParam(name = "usageChargeTemplate") UsageChargeTemplateDto postData);
+    @WebMethod
+    public ActionStatus createOrUpdateUsageChargeTemplate(@WebParam(name = "usageChargeTemplate") UsageChargeTemplateDto postData);
 
-	// service
+    // service
 
-	@WebMethod
-	ActionStatus createServiceTemplate(@WebParam(name = "serviceTemplate") ServiceTemplateDto postData);
+    @WebMethod
+    ActionStatus createServiceTemplate(@WebParam(name = "serviceTemplate") ServiceTemplateDto postData);
 
-	@WebMethod
-	ActionStatus updateServiceTemplate(@WebParam(name = "serviceTemplate") ServiceTemplateDto postData);
+    @WebMethod
+    ActionStatus updateServiceTemplate(@WebParam(name = "serviceTemplate") ServiceTemplateDto postData);
 
-	@WebMethod
-	GetServiceTemplateResponseDto findServiceTemplate(@WebParam(name = "serviceTemplateCode") String serviceTemplateCode);
+    @WebMethod
+    GetServiceTemplateResponseDto findServiceTemplate(@WebParam(name = "serviceTemplateCode") String serviceTemplateCode);
 
-	@WebMethod
-	ActionStatus removeServiceTemplate(@WebParam(name = "serviceTemplateCode") String serviceTemplateCode);
+    @WebMethod
+    ActionStatus removeServiceTemplate(@WebParam(name = "serviceTemplateCode") String serviceTemplateCode);
 
-	@WebMethod
-	ActionStatus createOrUpdateServiceTemplate(@WebParam(name = "serviceTemplate") ServiceTemplateDto postData);
+    @WebMethod
+    ActionStatus createOrUpdateServiceTemplate(@WebParam(name = "serviceTemplate") ServiceTemplateDto postData);
 
-	// offer
+    // offer
 
-	@WebMethod
-	ActionStatus createOfferTemplate(@WebParam(name = "offerTemplate") OfferTemplateDto postData);
+    @WebMethod
+    ActionStatus createOfferTemplate(@WebParam(name = "offerTemplate") OfferTemplateDto postData);
 
-	@WebMethod
-	ActionStatus updateOfferTemplate(@WebParam(name = "offerTemplate") OfferTemplateDto postData);
+    @WebMethod
+    ActionStatus updateOfferTemplate(@WebParam(name = "offerTemplate") OfferTemplateDto postData);
 
-	@WebMethod
-	GetOfferTemplateResponseDto findOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode);
+    @WebMethod
+    GetOfferTemplateResponseDto findOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode);
 
-	@WebMethod
-	ActionStatus removeOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode);
+    @WebMethod
+    ActionStatus removeOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode);
 
-	@WebMethod
-	ActionStatus createOrUpdateOfferTemplate(@WebParam(name = "offerTemplate") OfferTemplateDto postData);
+    @WebMethod
+    ActionStatus createOrUpdateOfferTemplate(@WebParam(name = "offerTemplate") OfferTemplateDto postData);
 
-	// price plan
+    // price plan
 
-	@WebMethod
-	ActionStatus createPricePlan(@WebParam(name = "pricePlan") PricePlanDto postData);
+    @WebMethod
+    ActionStatus createPricePlan(@WebParam(name = "pricePlan") PricePlanDto postData);
 
-	@WebMethod
-	ActionStatus updatePricePlan(@WebParam(name = "pricePlan") PricePlanDto postData);
+    @WebMethod
+    ActionStatus updatePricePlan(@WebParam(name = "pricePlan") PricePlanDto postData);
 
-	@WebMethod
-	GetPricePlanResponseDto findPricePlan(@WebParam(name = "pricePlanCode") String pricePlanCode);
+    @WebMethod
+    GetPricePlanResponseDto findPricePlan(@WebParam(name = "pricePlanCode") String pricePlanCode);
 
-	@WebMethod
-	ActionStatus removePricePlan(@WebParam(name = "pricePlanCode") String pricePlanCode);
+    @WebMethod
+    ActionStatus removePricePlan(@WebParam(name = "pricePlanCode") String pricePlanCode);
 
-	@WebMethod
-	PricePlanMatrixesResponseDto listPricePlanByEventCode(@WebParam(name = "eventCode") String eventCode);
+    @WebMethod
+    PricePlanMatrixesResponseDto listPricePlanByEventCode(@WebParam(name = "eventCode") String eventCode);
 
-	@WebMethod
-	ActionStatus createOrUpdatePricePlan(@WebParam(name = "pricePlan") PricePlanDto postData);
+    @WebMethod
+    ActionStatus createOrUpdatePricePlan(@WebParam(name = "pricePlan") PricePlanDto postData);
 
-	// triggered Edr
+    // triggered Edr
 
-	@WebMethod
-	ActionStatus createTriggeredEdr(@WebParam(name = "triggeredEdrTemplate") TriggeredEdrTemplateDto postData);
+    @WebMethod
+    ActionStatus createTriggeredEdr(@WebParam(name = "triggeredEdrTemplate") TriggeredEdrTemplateDto postData);
 
-	@WebMethod
-	ActionStatus updateTriggeredEdr(@WebParam(name = "triggeredEdrTemplate") TriggeredEdrTemplateDto postData);
+    @WebMethod
+    ActionStatus updateTriggeredEdr(@WebParam(name = "triggeredEdrTemplate") TriggeredEdrTemplateDto postData);
 
-	@WebMethod
-	GetTriggeredEdrResponseDto findTriggeredEdr(@WebParam(name = "triggeredEdrCode") String triggeredEdrCode);
+    @WebMethod
+    GetTriggeredEdrResponseDto findTriggeredEdr(@WebParam(name = "triggeredEdrCode") String triggeredEdrCode);
 
-	@WebMethod
-	ActionStatus removeTriggeredEdr(@WebParam(name = "triggeredEdrCode") String triggeredEdrCode);
+    @WebMethod
+    ActionStatus removeTriggeredEdr(@WebParam(name = "triggeredEdrCode") String triggeredEdrCode);
 
-	@WebMethod
-	ActionStatus createOrUpdateTriggeredEdr(@WebParam(name = "triggeredEdrTemplate") TriggeredEdrTemplateDto postData);
+    @WebMethod
+    ActionStatus createOrUpdateTriggeredEdr(@WebParam(name = "triggeredEdrTemplate") TriggeredEdrTemplateDto postData);
 
-	// bom
+    // bom
 
-	@WebMethod
-	ActionStatus createBusinessOfferModel(@WebParam(name = "businessOfferModel") BusinessOfferModelDto postData);
+    @WebMethod
+    ActionStatus createBusinessOfferModel(@WebParam(name = "businessOfferModel") BusinessOfferModelDto postData);
 
-	@WebMethod
-	ActionStatus updateBusinessOfferModel(@WebParam(name = "businessOfferModel") BusinessOfferModelDto postData);
+    @WebMethod
+    ActionStatus updateBusinessOfferModel(@WebParam(name = "businessOfferModel") BusinessOfferModelDto postData);
 
-	@WebMethod
-	GetBusinessOfferModelResponseDto findBusinessOfferModel(@WebParam(name = "businessOfferModelCode") String businessOfferModelCode);
+    @WebMethod
+    GetBusinessOfferModelResponseDto findBusinessOfferModel(@WebParam(name = "businessOfferModelCode") String businessOfferModelCode);
 
-	@WebMethod
-	ActionStatus removeBusinessOfferModel(@WebParam(name = "businessOfferModelCode") String businessOfferModelCode);
+    @WebMethod
+    ActionStatus removeBusinessOfferModel(@WebParam(name = "businessOfferModelCode") String businessOfferModelCode);
 
-	@WebMethod
-	ActionStatus createOrUpdateBusinessOfferModel(@WebParam(name = "businessOfferModel") BusinessOfferModelDto postData);
-	
-	// som
-	@WebMethod
-	ActionStatus createBusinessServiceModel(@WebParam(name = "businessServiceModel") BusinessServiceModelDto postData);
+    @WebMethod
+    ActionStatus createOrUpdateBusinessOfferModel(@WebParam(name = "businessOfferModel") BusinessOfferModelDto postData);
 
-	@WebMethod
-	ActionStatus updateBusinessServiceModel(@WebParam(name = "businessServiceModel") BusinessServiceModelDto postData);
+    @WebMethod
+    ActionStatus installBusinessOfferModel(@WebParam(name = "businessOfferModel") BusinessOfferModelDto postData);
 
-	@WebMethod
-	GetBusinessServiceModelResponseDto findBusinessServiceModel(@WebParam(name = "businessServiceModelCode") String businessServiceModelCode);
+    @WebMethod
+    MeveoModuleDtosResponse listBusinessOfferModel();
 
-	@WebMethod
-	ActionStatus removeBusinessServiceModel(@WebParam(name = "businessServiceModelCode") String businessServiceModelCode);
+    // som
+    @WebMethod
+    ActionStatus createBusinessServiceModel(@WebParam(name = "businessServiceModel") BusinessServiceModelDto postData);
 
-	@WebMethod
-	ActionStatus createOrUpdateBusinessServiceModel(@WebParam(name = "businessServiceModel") BusinessServiceModelDto postData);	
+    @WebMethod
+    ActionStatus updateBusinessServiceModel(@WebParam(name = "businessServiceModel") BusinessServiceModelDto postData);
 
-	// bom offer
+    @WebMethod
+    GetBusinessServiceModelResponseDto findBusinessServiceModel(@WebParam(name = "businessServiceModelCode") String businessServiceModelCode);
 
-	@WebMethod
-	ActionStatus createOfferFromBOM(@WebParam(name = "bomOffer") BomOfferDto postData);
-	
-	//discount Plan
-	@WebMethod
-	ActionStatus createDiscountPlan(@WebParam(name = "discountPlan") DiscountPlanDto postData);
-	
-	@WebMethod
-	ActionStatus updateDiscountPlan(@WebParam(name = "discountPlan") DiscountPlanDto postData);
-	
-	@WebMethod
-	ActionStatus createOrUpdateDiscountPlan(@WebParam(name = "discountPlan") DiscountPlanDto postData);
-	
-	@WebMethod
-	GetDiscountPlanResponseDto findDiscountPlan(@WebParam(name = "discountPlanCocde") String discountPlanCode);
-	
-	@WebMethod
-	ActionStatus removeDiscountPlan(@WebParam(name = "discountPlanCocde") String discountPlanCode);
-	
-	@WebMethod
-	GetDiscountPlansResponseDto listDiscountPlan();
-	
-	@WebMethod
-	ActionStatus createOfferTemplateCategory(@WebParam(name = "offerTemplateCategory") OfferTemplateCategoryDto postData);
-	
-	@WebMethod
-	ActionStatus updateOfferTemplateCategory(@WebParam(name = "offerTemplateCategory") OfferTemplateCategoryDto postData);
-	
-	@WebMethod
-	ActionStatus createOrUpdateOfferTemplateCategory(@WebParam(name = "offerTemplateCategory") OfferTemplateCategoryDto postData);
-	
-	@WebMethod
-	ActionStatus removeOfferTemplateCategory(@WebParam(name = "offerTemplateCategoryCode") String code);
-	
-	@WebMethod
-	GetOfferTemplateCategoryResponseDto findOfferTemplateCategory(@WebParam(name = "offerTemplateCategoryCode") String code);
-	
+    @WebMethod
+    ActionStatus removeBusinessServiceModel(@WebParam(name = "businessServiceModelCode") String businessServiceModelCode);
+
+    @WebMethod
+    ActionStatus createOrUpdateBusinessServiceModel(@WebParam(name = "businessServiceModel") BusinessServiceModelDto postData);
+
+    @WebMethod
+    ActionStatus installBusinessServiceModel(@WebParam(name = "businessServiceModel") BusinessServiceModelDto postData);
+
+    @WebMethod
+    MeveoModuleDtosResponse listBusinessServiceModel();
+
+    // bom offer
+
+    @WebMethod
+    ActionStatus createOfferFromBOM(@WebParam(name = "bomOffer") BomOfferDto postData);
+
+    // discount Plan
+    @WebMethod
+    ActionStatus createDiscountPlan(@WebParam(name = "discountPlan") DiscountPlanDto postData);
+
+    @WebMethod
+    ActionStatus updateDiscountPlan(@WebParam(name = "discountPlan") DiscountPlanDto postData);
+
+    @WebMethod
+    ActionStatus createOrUpdateDiscountPlan(@WebParam(name = "discountPlan") DiscountPlanDto postData);
+
+    @WebMethod
+    GetDiscountPlanResponseDto findDiscountPlan(@WebParam(name = "discountPlanCocde") String discountPlanCode);
+
+    @WebMethod
+    ActionStatus removeDiscountPlan(@WebParam(name = "discountPlanCocde") String discountPlanCode);
+
+    @WebMethod
+    GetDiscountPlansResponseDto listDiscountPlan();
+
+    @WebMethod
+    ActionStatus createOfferTemplateCategory(@WebParam(name = "offerTemplateCategory") OfferTemplateCategoryDto postData);
+
+    @WebMethod
+    ActionStatus updateOfferTemplateCategory(@WebParam(name = "offerTemplateCategory") OfferTemplateCategoryDto postData);
+
+    @WebMethod
+    ActionStatus createOrUpdateOfferTemplateCategory(@WebParam(name = "offerTemplateCategory") OfferTemplateCategoryDto postData);
+
+    @WebMethod
+    ActionStatus removeOfferTemplateCategory(@WebParam(name = "offerTemplateCategoryCode") String code);
+
+    @WebMethod
+    GetOfferTemplateCategoryResponseDto findOfferTemplateCategory(@WebParam(name = "offerTemplateCategoryCode") String code);
+
 }

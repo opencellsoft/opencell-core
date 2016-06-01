@@ -32,7 +32,7 @@
 
             <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />
             <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description" />
-            <hftl:formField label="#{messages['businessAccountModel.type']}" field="type" />
+            <hftl:formField label="#{messages['businessAccountModel.type']}" field="hierarchyType" />
             <hftl:formField id="script" label="#{messages['meveoModule.script']}" field="script" valueLabelField="code" componentWidth="30" popup="true" popupId="moduleScriptPopup"
                 createEditPopup="true" createEditPopupId="scriptDialog" createEditPopupListenerBean="#{businessAccountModelBean}" createEditPopupListenerViewMethod="viewEditScript"
                 createEditPopupListenerNewMethod="newScript" createEditPopupListenerUpdate=":scriptForm" />

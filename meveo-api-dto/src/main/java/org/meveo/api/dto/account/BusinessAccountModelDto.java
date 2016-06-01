@@ -17,7 +17,7 @@ public class BusinessAccountModelDto extends ModuleDto {
 
     private static final long serialVersionUID = 2264963153183287690L;
 
-    private AccountHierarchyTypeEnum type;
+    private AccountHierarchyTypeEnum hierarchyType;
 
     public BusinessAccountModelDto() {
 
@@ -27,12 +27,12 @@ public class BusinessAccountModelDto extends ModuleDto {
         super(module);
     }
 
-    public AccountHierarchyTypeEnum getType() {
-        return type;
+    public AccountHierarchyTypeEnum getHierarchyType() {
+        return hierarchyType;
     }
 
-    public void setType(AccountHierarchyTypeEnum type) {
-        this.type = type;
+    public void setHierarchyType(AccountHierarchyTypeEnum hierarchyType) {
+        this.hierarchyType = hierarchyType;
     }
 
 }

@@ -29388,12 +29388,12 @@ import org.meveo.service.script.service.ServiceScript;
 public class ${#Project#entityPrefix}_${#TestSuite#index}_BSM_Script2 extends ServiceScript {
 }</script>
                </script>
-]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Install BSM" id="0b2c8eca-cb81-46ad-8650-a0cbc7f10fe6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>installModule</con:operation><con:request name="Install BSM" id="dd0adad3-6c66-410f-b859-5fedb7ecb189"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Install BSM" id="0b2c8eca-cb81-46ad-8650-a0cbc7f10fe6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>installModule</con:operation><con:request name="Install BSM" id="dd0adad3-6c66-410f-b859-5fedb7ecb189"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
-      <ws:installModule>\r
-         <module code="${#Project#entityPrefix}_${#TestSuite#index}_BSM"/>\r
-      </ws:installModule>\r
+      <ws:installBusinessServiceModel>\r
+         <businessServiceModel code="${#Project#entityPrefix}_${#TestSuite#index}_BSM"/>\r
+      </ws:installBusinessServiceModel>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="700b77f6-78b4-440d-8f95-00d31f72eff0"/><con:assertion type="Simple Contains" id="85f227c4-e263-4e17-a624-be5d074be7b8" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get BSM After install" id="7c03a175-0cbc-40a7-93f1-3c9017afad74"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>get</con:operation><con:request name="Get BSM After install" id="fff83a35-c78b-4dfc-9465-f3fdd4155d18"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
@@ -29436,13 +29436,13 @@ import org.meveo.service.script.service.ServiceScript;
 public class ${#Project#entityPrefix}_${#TestSuite#index}_BSM_Script2 extends ServiceScript {
 }</script>
                </script>
-]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="List BSM" id="bd33068b-1d14-4a8e-9b20-65750d7b26b2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>list</con:operation><con:request name="List BSM" id="e41cc5f6-e897-44aa-ab71-9c6a41ef5e5d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="List BSM" id="bd33068b-1d14-4a8e-9b20-65750d7b26b2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>list</con:operation><con:request name="List BSM" id="e41cc5f6-e897-44aa-ab71-9c6a41ef5e5d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-      <ws:list/>
+      <ws:listBusinessServiceModel/>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="9b66e124-744d-42d5-96d3-9d4061d931a3"/><con:assertion type="XPath Match" id="7c7280fe-335c-43f5-aefb-68bda8f66ec1" name="Match content of [status]"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:listResponse[1]/return[1]/actionStatus[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="Simple Contains" id="5e744e9c-158c-4df1-bf68-142bdb1a50db" name="Contains"><con:configuration><token>&lt;businessServiceModel code="${#Project#entityPrefix}_${#TestSuite#index}_BSM"</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="9eccb588-6a5f-4a11-9e01-a610701ce7ad" name="Contains 1"><con:configuration><token>&lt;businessServiceModel code="${#Project#entityPrefix}_${#TestSuite#index}_BSM_SUB"</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete BSM" id="68c8db48-fc80-4735-a257-6c05bc9e4223"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>delete</con:operation><con:request name="Delete BSM" id="5e65d7c2-5466-4f69-b07b-872a0f27ce3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+//ns2:listBusinessServiceModelResponse[1]/return[1]/actionStatus[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="Simple Contains" id="5e744e9c-158c-4df1-bf68-142bdb1a50db" name="Contains"><con:configuration><token>&lt;businessServiceModel code="${#Project#entityPrefix}_${#TestSuite#index}_BSM"</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="9eccb588-6a5f-4a11-9e01-a610701ce7ad" name="Contains 1"><con:configuration><token>&lt;businessServiceModel code="${#Project#entityPrefix}_${#TestSuite#index}_BSM_SUB"</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete BSM" id="68c8db48-fc80-4735-a257-6c05bc9e4223"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>delete</con:operation><con:request name="Delete BSM" id="5e65d7c2-5466-4f69-b07b-872a0f27ce3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeBusinessServiceModel>      	
@@ -29458,7 +29458,249 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BSM_Script2 extends Se
       </ws:findBusinessServiceModel>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="3382c6c6-3e45-4ded-8818-ff872c56f22a"/><con:assertion type="Simple Contains" id="c484c36c-b2fc-4be2-9182-8ccb10ae6aa7" name="Contains"><con:configuration><token>&lt;message>BusinessServiceModel with code=${#Project#entityPrefix}_${#TestSuite#index}_BSM does not exists.&lt;/message>
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="3c79f7e0-e959-400f-b48c-e6578821c4ac" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD BOM" searchProperties="true"><con:settings/><con:testStep type="request" name="Create BOM" id="120e2318-ed8b-428e-8e71-19d3584e7c13"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create BOM" id="26fadc13-9fcd-4022-a898-007cee426e83"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="f1628960-3caa-4811-90fd-a04d9cd4ea9d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="BSM script workflow" searchProperties="true"><con:settings/><con:testStep type="request" name="Install BSM test script" id="d3f01116-8dd8-483a-8e2e-aa8da339bb56"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>installModule</con:operation><con:request name="Install BSM test script" id="dd0adad3-6c66-410f-b859-5fedb7ecb189"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:installBusinessServiceModel>\r
+         <businessServiceModel code="${#Project#entityPrefix}_${#TestSuite#index}_BSM_Script_Test" description="MainModuleDescription" license="GPL">\r
+            <script description="${#Project#entityPrefix}_${#TestSuite#index}_BSM_Script_Test">\r
+               <type>JAVA</type>\r
+               <script><![CDATA[package org.meveo.scripts;
+
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.model.module.MeveoModule;               
+import org.meveo.service.script.service.ServiceScript;
+import org.meveo.service.script.Script;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+public class ${#Project#entityPrefix}_${#TestSuite#index}_BSM_Script_Test extends ServiceScript {
+    Logger log = LoggerFactory.getLogger(getClass());
+    @Override
+    public void preInstallModule(Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK preInstalling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_preI");
+    }
+    @Override
+    public void postInstallModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK postInstalling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_postI");
+    }
+    @Override
+    public void preUninstallModule(Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK preUninstalling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+
+        String source = ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getModuleSource();
+        int pos = source.indexOf("MainModuleDescription");
+        int length = "MainModuleDescription".length();
+        source =  source.substring(0, pos+length)+"_preU"+source.substring(pos+length);
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setModuleSource(source);        
+    }
+    @Override
+    public void postUninstallModule(Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK postUninstalling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        
+        String source = ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getModuleSource();
+        int pos = source.indexOf("MainModuleDescription");    
+        int length = "MainModuleDescription".length();
+        source =  source.substring(0, pos+length+5)+"_postU"+source.substring(pos+length+5);
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setModuleSource(source);
+    }
+    @Override
+    public void preEnableModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK preEnabling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_preE");
+    }
+    @Override
+    public void postEnableModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK postEnabling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_postE");
+    }
+    @Override
+    public void preDisableModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK preDisabling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_preD");
+    }
+    @Override
+    public void postDisableModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK postDisabing module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_postD");
+    }
+}]]]]>><![CDATA[</script>\r
+            </script>\r
+            <serviceTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_BSM_ST_SERVICE1" description="${#Project#entityPrefix}_${#TestSuite#index}_BSM_ST_SERVICE1">\r
+               <invoicingCalendar>MONTHLY</invoicingCalendar>\r
+               <serviceChargeTemplateRecurrings>\r
+                  <serviceChargeTemplateRecurring>\r
+                     <code>${#Project#baseEntityPrefix}_REC1</code>\r
+                  </serviceChargeTemplateRecurring>\r
+               </serviceChargeTemplateRecurrings>\r
+               <serviceChargeTemplateSubscriptions>\r
+                  <serviceChargeTemplateSubscription>\r
+                     <code>${#Project#baseEntityPrefix}_OS1</code>\r
+                  </serviceChargeTemplateSubscription>\r
+               </serviceChargeTemplateSubscriptions>\r
+               <serviceChargeTemplateUsages>\r
+                  <serviceChargeTemplateUsage>\r
+                     <code>${#Project#baseEntityPrefix}_USAGE1</code>\r
+                     <counterTemplate/>\r
+                  </serviceChargeTemplateUsage>\r
+               </serviceChargeTemplateUsages>\r
+            </serviceTemplate>\r
+            <moduleItems>\r
+               <businessServiceModel code="${#Project#entityPrefix}_${#TestSuite#index}_CHILD_BSM_SCRIPT_TEST" license="GPL" description="ChildBSMDescription">\r
+                  <script description="${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_Script_Test">\r
+                     <type>JAVA</type>\r
+                     <script><![CDATA[package org.meveo.scripts;
+
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.model.module.MeveoModule;               
+import org.meveo.service.script.service.ServiceScript;
+import org.meveo.service.script.Script;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_Script_Test extends ServiceScript {
+    Logger log = LoggerFactory.getLogger(getClass());
+    @Override
+    public void preInstallModule(Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK preInstalling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_preI");
+    }
+    @Override
+    public void postInstallModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK postInstalling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_postI");
+    }
+    @Override
+    public void preUninstallModule(Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK preUninstalling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+
+        String source = ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getModuleSource();
+        int pos = source.indexOf("ChildModuleDescription");
+        int length = "ChildModuleDescription".length();
+        source =  source.substring(0, pos+length)+"_preU"+source.substring(pos+length);
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setModuleSource(source);        
+    }
+    @Override
+    public void postUninstallModule(Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK postUninstalling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        
+        String source = ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getModuleSource();
+        int pos = source.indexOf("ChildModuleDescription");       
+        int length = "ChildModuleDescription".length();
+        source =  source.substring(0, pos+length+5)+"_postU"+source.substring(pos+length+5);
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setModuleSource(source);
+    }
+    @Override
+    public void preEnableModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK preEnabling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_preE");
+    }
+    @Override
+    public void postEnableModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK postEnabling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_postE");
+    }
+    @Override
+    public void preDisableModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK preDisabling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_preD");
+    }
+    @Override
+    public void postDisableModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK postDisabing module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_postD");
+    }
+}]]]]>><![CDATA[</script>\r
+                  </script>\r
+                  <serviceTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_BSM_ST_SERVICE2" description="${#Project#entityPrefix}_${#TestSuite#index}_BSM_ST_SERVICE2">\r
+                     <invoicingCalendar>MONTHLY</invoicingCalendar>\r
+                     <serviceChargeTemplateRecurrings>\r
+                        <serviceChargeTemplateRecurring>\r
+                           <code>${#Project#baseEntityPrefix}_REC1</code>\r
+                        </serviceChargeTemplateRecurring>\r
+                     </serviceChargeTemplateRecurrings>\r
+                     <serviceChargeTemplateSubscriptions>\r
+                        <serviceChargeTemplateSubscription>\r
+                           <code>${#Project#baseEntityPrefix}_OS1</code>\r
+                        </serviceChargeTemplateSubscription>\r
+                     </serviceChargeTemplateSubscriptions>\r
+                     <serviceChargeTemplateUsages>\r
+                        <serviceChargeTemplateUsage>\r
+                           <code>${#Project#baseEntityPrefix}_USAGE1</code>\r
+                           <counterTemplate/>\r
+                        </serviceChargeTemplateUsage>\r
+                     </serviceChargeTemplateUsages>\r
+                  </serviceTemplate>\r
+                  <moduleItems/>\r
+               </businessServiceModel>\r
+            </moduleItems>\r
+         </businessServiceModel>\r
+      </ws:installBusinessServiceModel>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="700b77f6-78b4-440d-8f95-00d31f72eff0"/><con:assertion type="Simple Contains" id="2b0e3eb2-0ccd-4085-a94b-c9ce18a9a1d3" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Disable BSM test script" id="db50e5b3-7c0f-4285-a94b-6e2360545389"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>disableModule</con:operation><con:request name="Disable BSM test script" id="d0d4b096-77ed-49ea-be11-7a785bd1d957"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:disableModule>\r
+         <code>${#Project#entityPrefix}_${#TestSuite#index}_BSM_Script_Test</code>\r
+      </ws:disableModule>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="66da140b-a134-42f6-9951-84d2d8469e3f"/><con:assertion type="Simple Contains" id="0186ddd0-694c-4376-bc78-1776ecd30ed9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Enable BSM test script" id="ec2daa1d-dbe2-4493-a0ea-6cd94ab72080"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>disableModule</con:operation><con:request name="Enable BSM test script" id="d0d4b096-77ed-49ea-be11-7a785bd1d957"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:enableModule>\r
+         <code>${#Project#entityPrefix}_${#TestSuite#index}_BSM_Script_Test</code>\r
+      </ws:enableModule>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="66da140b-a134-42f6-9951-84d2d8469e3f"/><con:assertion type="Simple Contains" id="fecf4138-dc74-4dff-bb30-ea2c4a932030" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find BSM test script 1" id="539dd0a6-3028-4cb8-9fe5-d52001f0beee"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>get</con:operation><con:request name="Find BSM test script 1" id="9e2ab374-04e4-4d72-bed8-9f880d8ec521"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:get>\r
+         <code>${#Project#entityPrefix}_${#TestSuite#index}_BSM_Script_Test</code>\r
+      </ws:get>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5e71890a-8f7c-46cd-b4f1-cfd713ac775b"/><con:assertion type="Simple Contains" id="8d5da140-52ed-40a4-a797-914bd0733f6d" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="c3f25794-dd18-4b6f-838d-758dec07c996" name="XPath Match"><con:configuration><path>//module/@description</path><content>MainModuleDescription_preI_postI_preD_postD_preE_postE</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="6765c588-863a-4549-9636-a6cfdfe77919" name="XPath Match 1"><con:configuration><path>//businessServiceModel[1]/@description</path><content>ChildBSMDescription_preI_postI_preD_postD_preE_postE</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Uninstall BSM test script" id="a2e97560-9caf-4b24-a4d1-8b5985d17873"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>disableModule</con:operation><con:request name="Uninstall BSM test script" id="d0d4b096-77ed-49ea-be11-7a785bd1d957"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:uninstallModule>\r
+         <code>${#Project#entityPrefix}_${#TestSuite#index}_BSM_Script_Test</code>\r
+      </ws:uninstallModule>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="66da140b-a134-42f6-9951-84d2d8469e3f"/><con:assertion type="Simple Contains" id="fecf4138-dc74-4dff-bb30-ea2c4a932030" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find BSM test script after uninstall" id="ed874e3f-0523-4c46-bcc3-d1531aeee7d5"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>get</con:operation><con:request name="Find BSM test script after uninstall" id="9e2ab374-04e4-4d72-bed8-9f880d8ec521"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:get>\r
+         <code>${#Project#entityPrefix}_${#TestSuite#index}_BSM_Script_Test</code>\r
+      </ws:get>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5e71890a-8f7c-46cd-b4f1-cfd713ac775b"/><con:assertion type="Simple Contains" id="8d5da140-52ed-40a4-a797-914bd0733f6d" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="c3f25794-dd18-4b6f-838d-758dec07c996" name="XPath Match"><con:configuration><path>//module/@description</path><content>MainModuleDescription_preU_postU</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find BSM test script child module" id="f1b4385b-0fb9-4148-9491-20b608312565"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>get</con:operation><con:request name="Find BSM test script child module" id="9e2ab374-04e4-4d72-bed8-9f880d8ec521"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:get>\r
+         <code>${#Project#entityPrefix}_${#TestSuite#index}_CHILD_BSM_SCRIPT_TEST</code>\r
+      </ws:get>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5e71890a-8f7c-46cd-b4f1-cfd713ac775b"/><con:assertion type="Simple Contains" id="8d5da140-52ed-40a4-a797-914bd0733f6d" name="Contains"><con:configuration><token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete BSM test script" id="9dfd4b97-ee23-4dad-a4f3-3d149dfcc7c9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>delete</con:operation><con:request name="Delete BSM test script" id="5e65d7c2-5466-4f69-b07b-872a0f27ce3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:delete>      	
+          <code>${#Project#entityPrefix}_${#TestSuite#index}_BSM_Script_Test</code>
+      </ws:delete>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="138d8ba5-7068-4031-8a5d-faa697dc6aaf"/><con:assertion type="XPath Match" id="604d9c93-8e45-45b8-8487-25245fe65581" name="Match content of [status]"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
+//ns2:deleteResponse[1]/return[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="3c79f7e0-e959-400f-b48c-e6578821c4ac" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD BOM" searchProperties="true"><con:settings/><con:testStep type="request" name="Create BOM" id="120e2318-ed8b-428e-8e71-19d3584e7c13"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create BOM" id="26fadc13-9fcd-4022-a898-007cee426e83"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createBusinessOfferModel>\r
@@ -30358,12 +30600,12 @@ import org.meveo.service.script.offer.OfferScript;
 public class ${#Project#entityPrefix}_${#TestSuite#index}_BOM_Script2 extends OfferScript {
 }</script>
                </script>
-]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Install BOM" id="6525ea64-dcb3-46b2-8b7f-fcccc3925db5"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>installModule</con:operation><con:request name="Install BOM" id="dd0adad3-6c66-410f-b859-5fedb7ecb189"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Install BOM" id="6525ea64-dcb3-46b2-8b7f-fcccc3925db5"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>installModule</con:operation><con:request name="Install BOM" id="dd0adad3-6c66-410f-b859-5fedb7ecb189"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
-      <ws:installModule>\r
-         <module code="${#Project#entityPrefix}_${#TestSuite#index}_BOM"/>\r
-      </ws:installModule>\r
+      <ws:installBusinessOfferModel>\r
+         <businessOfferModel code="${#Project#entityPrefix}_${#TestSuite#index}_BOM"/>\r
+      </ws:installBusinessOfferModel>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="700b77f6-78b4-440d-8f95-00d31f72eff0"/><con:assertion type="Simple Contains" id="bc8dd345-d3f8-44c0-8ced-71d10f9c7b02" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get BOM After install" id="c8cc5c37-7895-4ea4-a4bc-5858c68b0b17"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>get</con:operation><con:request name="Get BOM After install" id="fff83a35-c78b-4dfc-9465-f3fdd4155d18"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
@@ -30441,13 +30683,13 @@ import org.meveo.service.script.offer.OfferScript;
 public class ${#Project#entityPrefix}_${#TestSuite#index}_BOM_Script2 extends OfferScript {
 }</script>
                </script>
-]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="List BOM" id="9d3e0d0d-d821-4901-87c0-3aadb9838c05"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>list</con:operation><con:request name="List BOM" id="e41cc5f6-e897-44aa-ab71-9c6a41ef5e5d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="List BOM" id="9d3e0d0d-d821-4901-87c0-3aadb9838c05"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>list</con:operation><con:request name="List BOM" id="e41cc5f6-e897-44aa-ab71-9c6a41ef5e5d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-      <ws:list/>
+      <ws:listBusinessOfferModel/>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="9b66e124-744d-42d5-96d3-9d4061d931a3"/><con:assertion type="XPath Match" id="7c7280fe-335c-43f5-aefb-68bda8f66ec1" name="Match content of [status]"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:listResponse[1]/return[1]/actionStatus[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="Simple Contains" id="5e744e9c-158c-4df1-bf68-142bdb1a50db" name="Contains"><con:configuration><token>&lt;businessOfferModel code="${#Project#entityPrefix}_${#TestSuite#index}_BOM"</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="9eccb588-6a5f-4a11-9e01-a610701ce7ad" name="Contains 1"><con:configuration><token>&lt;businessOfferModel code="${#Project#entityPrefix}_${#TestSuite#index}_BOM_SUB"</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete BOM" id="e6fa246c-eff1-4f29-9da9-70cf584a308e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>delete</con:operation><con:request name="Delete BOM" id="5e65d7c2-5466-4f69-b07b-872a0f27ce3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+//ns2:listBusinessOfferModelResponse[1]/return[1]/actionStatus[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="Simple Contains" id="5e744e9c-158c-4df1-bf68-142bdb1a50db" name="Contains"><con:configuration><token>&lt;businessOfferModel code="${#Project#entityPrefix}_${#TestSuite#index}_BOM"</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="9eccb588-6a5f-4a11-9e01-a610701ce7ad" name="Contains 1"><con:configuration><token>&lt;businessOfferModel code="${#Project#entityPrefix}_${#TestSuite#index}_BOM_SUB"</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete BOM" id="e6fa246c-eff1-4f29-9da9-70cf584a308e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>delete</con:operation><con:request name="Delete BOM" id="5e65d7c2-5466-4f69-b07b-872a0f27ce3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeBusinessOfferModel>      	
@@ -30463,7 +30705,233 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BOM_Script2 extends Of
       </ws:findBusinessOfferModel>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="3382c6c6-3e45-4ded-8818-ff872c56f22a"/><con:assertion type="Simple Contains" id="c484c36c-b2fc-4be2-9182-8ccb10ae6aa7" name="Contains"><con:configuration><token>&lt;message>BusinessOfferModel with code=${#Project#entityPrefix}_${#TestSuite#index}_BOM does not exists.&lt;/message>
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>46</con:value></con:property></con:properties><con:setupScript>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="230de583-a7b4-43d7-aa99-e3c4e6de9ed0" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="BOM script workflow" searchProperties="true"><con:settings/><con:testStep type="request" name="Install BOM test script" id="40496cb5-2696-4590-9f7e-74f9c7eb6f60"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>installModule</con:operation><con:request name="Install BOM test script" id="dd0adad3-6c66-410f-b859-5fedb7ecb189"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:installBusinessOfferModel>\r
+         <businessOfferModel code="${#Project#entityPrefix}_${#TestSuite#index}_BOM_Script_Test" description="MainModuleDescription" license="GPL">\r
+            <script description="${#Project#entityPrefix}_${#TestSuite#index}_BOM_Script_Test">\r
+               <type>JAVA</type>\r
+               <script><![CDATA[package org.meveo.scripts;
+
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.model.module.MeveoModule;               
+import org.meveo.service.script.offer.OfferScript;
+import org.meveo.service.script.Script;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+public class ${#Project#entityPrefix}_${#TestSuite#index}_BOM_Script_Test extends OfferScript {
+    Logger log = LoggerFactory.getLogger(getClass());
+    @Override
+    public void preInstallModule(Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK preInstalling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_preI");
+    }
+    @Override
+    public void postInstallModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK postInstalling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_postI");
+    }
+    @Override
+    public void preUninstallModule(Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK preUninstalling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+
+        String source = ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getModuleSource();
+        int pos = source.indexOf("MainModuleDescription");
+        int length = "MainModuleDescription".length();
+        source =  source.substring(0, pos+length)+"_preU"+source.substring(pos+length);
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setModuleSource(source);        
+    }
+    @Override
+    public void postUninstallModule(Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK postUninstalling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        
+        String source = ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getModuleSource();
+        int pos = source.indexOf("MainModuleDescription");    
+        int length = "MainModuleDescription".length();
+        source =  source.substring(0, pos+length+5)+"_postU"+source.substring(pos+length+5);
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setModuleSource(source);
+    }
+    @Override
+    public void preEnableModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK preEnabling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_preE");
+    }
+    @Override
+    public void postEnableModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK postEnabling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_postE");
+    }
+    @Override
+    public void preDisableModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK preDisabling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_preD");
+    }
+    @Override
+    public void postDisableModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK postDisabing module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_postD");
+    }
+}]]]]>><![CDATA[</script>\r
+            </script>\r
+            <offerTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_BOM_ST_OFFER1" description="${#Project#entityPrefix}_${#TestSuite#index}_BOM_ST_OFFER1">
+               <disabled>false</disabled>
+               <offerServiceTemplates>
+                  <offerServiceTemplate>
+                     <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE1" description="${#Project#baseEntityPrefix}_SERVICE1">
+                        <mandatory>false</mandatory>
+                     </serviceTemplate>
+                  </offerServiceTemplate>
+               </offerServiceTemplates>
+            </offerTemplate>
+
+            <moduleItems>\r
+               <businessOfferModel code="${#Project#entityPrefix}_${#TestSuite#index}_CHILD_BOM_SCRIPT_TEST" license="GPL" description="ChildBOMDescription">\r
+                  <script description="${#Project#entityPrefix}_${#TestSuite#index}_ChildBOM_Script_Test">\r
+                     <type>JAVA</type>\r
+                     <script><![CDATA[package org.meveo.scripts;
+
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.model.module.MeveoModule;               
+import org.meveo.service.script.offer.OfferScript;
+import org.meveo.service.script.Script;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBOM_Script_Test extends OfferScript {
+    Logger log = LoggerFactory.getLogger(getClass());
+    @Override
+    public void preInstallModule(Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK preInstalling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_preI");
+    }
+    @Override
+    public void postInstallModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK postInstalling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_postI");
+    }
+    @Override
+    public void preUninstallModule(Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK preUninstalling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+
+        String source = ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getModuleSource();
+        int pos = source.indexOf("ChildModuleDescription");
+        int length = "ChildModuleDescription".length();
+        source =  source.substring(0, pos+length)+"_preU"+source.substring(pos+length);
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setModuleSource(source);        
+    }
+    @Override
+    public void postUninstallModule(Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK postUninstalling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        
+        String source = ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getModuleSource();
+        int pos = source.indexOf("ChildModuleDescription");       
+        int length = "ChildModuleDescription".length();
+        source =  source.substring(0, pos+length+5)+"_postU"+source.substring(pos+length+5);
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setModuleSource(source);
+    }
+    @Override
+    public void preEnableModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK preEnabling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_preE");
+    }
+    @Override
+    public void postEnableModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK postEnabling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_postE");
+    }
+    @Override
+    public void preDisableModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK preDisabling module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_preD");
+    }
+    @Override
+    public void postDisableModule(java.util.Map<String, Object> methodContext, User user) throws BusinessException {
+        log.error("AKK postDisabing module {}", ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getCode());
+        ((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).setDescription(((MeveoModule) methodContext.get(Script.CONTEXT_ENTITY)).getDescription()+"_postD");
+    }
+}]]]]>><![CDATA[</script>\r
+                  </script>\r
+             <offerTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_BOM_ST_OFFER2" description="${#Project#entityPrefix}_${#TestSuite#index}_BOM_ST_OFFER2">
+               <disabled>false</disabled>
+               <offerServiceTemplates>
+                  <offerServiceTemplate>
+                     <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE1" description="${#Project#baseEntityPrefix}_SERVICE1">
+                        <mandatory>false</mandatory>
+                     </serviceTemplate>
+                  </offerServiceTemplate>
+               </offerServiceTemplates>
+            </offerTemplate>
+
+                  <moduleItems/>\r
+               </businessOfferModel>\r
+            </moduleItems>\r
+         </businessOfferModel>\r
+      </ws:installBusinessOfferModel>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="700b77f6-78b4-440d-8f95-00d31f72eff0"/><con:assertion type="Simple Contains" id="2b0e3eb2-0ccd-4085-a94b-c9ce18a9a1d3" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Disable BOM test script" id="9ec2f6dc-c3ee-412c-8cc4-6b3820bbaef8"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>disableModule</con:operation><con:request name="Disable BOM test script" id="d0d4b096-77ed-49ea-be11-7a785bd1d957"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:disableModule>\r
+         <code>${#Project#entityPrefix}_${#TestSuite#index}_BOM_Script_Test</code>\r
+      </ws:disableModule>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="66da140b-a134-42f6-9951-84d2d8469e3f"/><con:assertion type="Simple Contains" id="0186ddd0-694c-4376-bc78-1776ecd30ed9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Enable BOM test script" id="8bb06e45-047c-4aa5-bb26-1dd894339de6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>disableModule</con:operation><con:request name="Enable BOM test script" id="d0d4b096-77ed-49ea-be11-7a785bd1d957"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:enableModule>\r
+         <code>${#Project#entityPrefix}_${#TestSuite#index}_BOM_Script_Test</code>\r
+      </ws:enableModule>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="66da140b-a134-42f6-9951-84d2d8469e3f"/><con:assertion type="Simple Contains" id="fecf4138-dc74-4dff-bb30-ea2c4a932030" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find BOM test script 1" id="d5ec8f17-9ed4-4ff0-8221-8eb7bb2a98f0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>get</con:operation><con:request name="Find BOM test script 1" id="9e2ab374-04e4-4d72-bed8-9f880d8ec521"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:get>\r
+         <code>${#Project#entityPrefix}_${#TestSuite#index}_BOM_Script_Test</code>\r
+      </ws:get>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5e71890a-8f7c-46cd-b4f1-cfd713ac775b"/><con:assertion type="Simple Contains" id="8d5da140-52ed-40a4-a797-914bd0733f6d" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="c3f25794-dd18-4b6f-838d-758dec07c996" name="XPath Match"><con:configuration><path>//module/@description</path><content>MainModuleDescription_preI_postI_preD_postD_preE_postE</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="6765c588-863a-4549-9636-a6cfdfe77919" name="XPath Match 1"><con:configuration><path>//businessOfferModel[1]/@description</path><content>ChildBOMDescription_preI_postI_preD_postD_preE_postE</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Uninstall BOM test script" id="4fcef3e4-0b41-48e2-aa9e-002da3f26758"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>disableModule</con:operation><con:request name="Uninstall BOM test script" id="d0d4b096-77ed-49ea-be11-7a785bd1d957"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:uninstallModule>\r
+         <code>${#Project#entityPrefix}_${#TestSuite#index}_BOM_Script_Test</code>\r
+      </ws:uninstallModule>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="66da140b-a134-42f6-9951-84d2d8469e3f"/><con:assertion type="Simple Contains" id="fecf4138-dc74-4dff-bb30-ea2c4a932030" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find BOM test script after uninstall" id="ca58278d-91a7-4042-8200-5347f081b565"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>get</con:operation><con:request name="Find BOM test script after uninstall" id="9e2ab374-04e4-4d72-bed8-9f880d8ec521"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:get>\r
+         <code>${#Project#entityPrefix}_${#TestSuite#index}_BOM_Script_Test</code>\r
+      </ws:get>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5e71890a-8f7c-46cd-b4f1-cfd713ac775b"/><con:assertion type="Simple Contains" id="8d5da140-52ed-40a4-a797-914bd0733f6d" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="c3f25794-dd18-4b6f-838d-758dec07c996" name="XPath Match"><con:configuration><path>//module/@description</path><content>MainModuleDescription_preU_postU</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find BOM test script child module" id="b7a49e28-e2bd-42f1-8fe6-6a1c25c6a679"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>get</con:operation><con:request name="Find BOM test script child module" id="9e2ab374-04e4-4d72-bed8-9f880d8ec521"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:get>\r
+         <code>${#Project#entityPrefix}_${#TestSuite#index}_CHILD_BOM_SCRIPT_TEST</code>\r
+      </ws:get>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5e71890a-8f7c-46cd-b4f1-cfd713ac775b"/><con:assertion type="Simple Contains" id="8d5da140-52ed-40a4-a797-914bd0733f6d" name="Contains"><con:configuration><token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete BOM test script" id="62732586-4754-4a4c-8ae1-22a2bce16855"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>delete</con:operation><con:request name="Delete BOM test script" id="5e65d7c2-5466-4f69-b07b-872a0f27ce3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:delete>      	
+          <code>${#Project#entityPrefix}_${#TestSuite#index}_BOM_Script_Test</code>
+      </ws:delete>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="138d8ba5-7068-4031-8a5d-faa697dc6aaf"/><con:assertion type="XPath Match" id="604d9c93-8e45-45b8-8487-25245fe65581" name="Match content of [status]"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
+//ns2:deleteResponse[1]/return[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>50</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite id="a0a2a7cb-b873-4441-8433-8458e3285508" name="CRUD Customers"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD Customer" searchProperties="true" id="ba686e8b-be4a-40f5-a036-5c1cdcadc9e2"><con:settings/><con:testStep type="request" name="Create customer with All Vals" id="4f7e951e-3ae0-465d-a659-bf6f6d8fefc7"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer with All Vals" id="7d9f2f3a-a0cc-4523-87f1-ca9a852c03f0"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>

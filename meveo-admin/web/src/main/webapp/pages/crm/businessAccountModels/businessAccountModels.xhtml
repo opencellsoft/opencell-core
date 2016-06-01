@@ -20,7 +20,7 @@
         <hftl:dataList label="#{messages['businessAccountModel.title']}" backingBean="#{businessAccountModelListBean}" sortBy="code">
             <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
             <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
-            <hftl:column label="#{messages['businessAccountModel.type']}" field="type" />
+            <hftl:column label="#{messages['businessAccountModel.type']}" field="hierarchyType" />
             <p:column headerText="#{messages['commons.status']}">
                 <h:outputText value="#{messages[!entity.installed?'meveoModule.downloaded':entity.active?'meveoModule.installedAndEnabled':'meveoModule.installedAndDisabled']}"
                     rendered="#{entity.downloaded}" />

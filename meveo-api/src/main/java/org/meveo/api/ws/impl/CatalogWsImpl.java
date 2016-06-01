@@ -1,5 +1,6 @@
 package org.meveo.api.ws.impl;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.ejb.EJBTransactionRolledbackException;
@@ -39,6 +40,7 @@ import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
+import org.meveo.api.dto.module.ModuleDto;
 import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
@@ -54,6 +56,7 @@ import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetTriggeredEdrResponseDto;
 import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
+import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.ModuleApi;
@@ -1138,6 +1141,49 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
+    public ActionStatus installBusinessOfferModel(BusinessOfferModelDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            moduleApi.install(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+    }
+
+    @Override
+    public MeveoModuleDtosResponse listBusinessOfferModel() {
+        MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        result.getActionStatus().setMessage("");
+        try {
+            List<ModuleDto> dtos = moduleApi.list(BusinessOfferModel.class, getCurrentUser());
+            result.setModules(dtos);
+
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        return result;
+    }
+
+    @Override
     public ActionStatus createOfferFromBOM(BomOfferDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -1472,6 +1518,49 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
             result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus installBusinessServiceModel(BusinessServiceModelDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            moduleApi.install(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+    }
+
+    @Override
+    public MeveoModuleDtosResponse listBusinessServiceModel() {
+        MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        result.getActionStatus().setMessage("");
+        try {
+            List<ModuleDto> dtos = moduleApi.list(BusinessServiceModel.class, getCurrentUser());
+            result.setModules(dtos);
+
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
         }
 
         return result;

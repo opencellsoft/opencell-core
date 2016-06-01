@@ -1,5 +1,7 @@
 package org.meveo.api.rest.module.impl;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -35,13 +37,14 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
         try {
             moduleApi.create(moduleData, getCurrentUser());
         } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
-            log.error("Error when create meveoModule ", e);
         } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
-            log.error("Unknown exception when create meveoModule ", e);
         }
 
         return result;
@@ -53,13 +56,14 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
         try {
             moduleApi.update(moduleDto, getCurrentUser());
         } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
-            log.error("Error when update meveoModule ", e);
         } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
-            log.error("Unknown error when update meveoModule ", e);
         }
 
         return result;
@@ -71,13 +75,14 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
         try {
             moduleApi.delete(code, getCurrentUser());
         } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
-            log.error("Error when delete meveoModule ", e);
         } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
-            log.error("Unknown exception when delete meveoModule ", e);
         }
 
         return result;
@@ -87,12 +92,19 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
     public MeveoModuleDtosResponse list() {
         MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        result.getActionStatus().setMessage("");
         try {
-            result.setModules(moduleApi.list(getCurrentUser()));
-        } catch (Exception e) {
+            List<ModuleDto> dtos = moduleApi.list(null, getCurrentUser());
+            result.setModules(dtos);
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
-            log.error("Error when list meveoModule ", e);
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
         }
 
         return result;
@@ -104,10 +116,15 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         try {
             result.setModule(moduleApi.get(code, MeveoModule.class, getCurrentUser()));
-        } catch (Exception e) {
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
-            log.error("Error when get a meveoModule by code {}", code, e);
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
         }
 
         return result;
