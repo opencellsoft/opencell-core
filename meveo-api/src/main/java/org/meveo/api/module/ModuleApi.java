@@ -444,7 +444,7 @@ public class ModuleApi extends BaseApi {
     }
 
     private void parseModuleInfoOnlyFromDtoBAM(BusinessAccountModel bam, BusinessAccountModelDto bamDto, User currentUser) throws MeveoApiException, BusinessException {
-        bam.setType(bamDto.getHierarchyType());
+        bam.setHierarchyType(bamDto.getHierarchyType());
     }
 
     private void unpackAndInstallBAMItems(BusinessAccountModel bam, BusinessAccountModelDto bamDto, User currentUser) throws MeveoApiException, BusinessException {
