@@ -180,6 +180,17 @@ public class InvoiceApi extends BaseApi {
 			BigDecimal catAmountTax = BigDecimal.ZERO;
 			BigDecimal catAmountWithTax = BigDecimal.ZERO;
 			CategoryInvoiceAgregate invoiceAgregateCat = new CategoryInvoiceAgregate();
+			invoiceAgregateCat.setAuditable(auditable);
+			invoiceAgregateCat.setInvoice(invoice);
+			invoiceAgregateCat.setBillingRun(null);
+			invoiceAgregateCat.setDescription(catInvAgrDto.getDescription());
+			invoiceAgregateCat.setItemNumber(catInvAgrDto.getListSubCategoryInvoiceAgregateDto().size());
+			invoiceAgregateCat.setUserAccount(userAccount);
+			invoiceAgregateCat.setBillingAccount(billingAccount);
+			invoiceAgregateCat.setInvoiceCategory(invoiceCategoryService.findByCode(catInvAgrDto.getCategoryInvoiceCode(), currentUser.getProvider()));
+			invoiceAgregateCat.setUserAccount(userAccount);
+			invoiceAgregateService.create(invoiceAgregateCat, currentUser);
+			
 			for (SubCategoryInvoiceAgregateDto subCatInvAgrDTO : catInvAgrDto.getListSubCategoryInvoiceAgregateDto()) {
 				BigDecimal subCatAmountWithoutTax = BigDecimal.ZERO;
 				BigDecimal subCatAmountTax = BigDecimal.ZERO;
@@ -262,19 +273,10 @@ public class InvoiceApi extends BaseApi {
 				catAmountTax = catAmountTax.add(invoiceAgregateSubcat.getAmountTax());
 				catAmountWithTax = catAmountWithTax.add(invoiceAgregateSubcat.getAmountWithTax());
 			}
-			invoiceAgregateCat.setAuditable(auditable);
-			invoiceAgregateCat.setInvoice(invoice);
-			invoiceAgregateCat.setBillingRun(null);
-			invoiceAgregateCat.setDescription(catInvAgrDto.getDescription());
-			invoiceAgregateCat.setItemNumber(catInvAgrDto.getListSubCategoryInvoiceAgregateDto().size());
-			invoiceAgregateCat.setUserAccount(userAccount);
-			invoiceAgregateCat.setBillingAccount(billingAccount);
-			invoiceAgregateCat.setInvoiceCategory(invoiceCategoryService.findByCode(catInvAgrDto.getCategoryInvoiceCode(), currentUser.getProvider()));
-			invoiceAgregateCat.setUserAccount(userAccount);
+			
 			invoiceAgregateCat.setAmountWithoutTax(catAmountWithoutTax);
 			invoiceAgregateCat.setAmountTax(catAmountTax);
 			invoiceAgregateCat.setAmountWithTax(catAmountWithTax);
-			invoiceAgregateService.create(invoiceAgregateCat, currentUser);
 
 			invoiceAmountWithoutTax = invoiceAmountWithoutTax.add(invoiceAgregateCat.getAmountWithoutTax());
 			invoiceAmountTax = invoiceAmountTax.add(invoiceAgregateCat.getAmountTax());
@@ -289,7 +291,7 @@ public class InvoiceApi extends BaseApi {
 		invoice.setAmountTax(invoiceAmountTax);
 		invoice.setAmountWithTax(invoiceAmountWithTax);
 		invoiceService.update(invoice, currentUser);
-		// includ open RT
+		// include open RT
 
 		try {
 			populateCustomFields(invoiceDTO.getCustomFields(), invoice, true, currentUser, true);
