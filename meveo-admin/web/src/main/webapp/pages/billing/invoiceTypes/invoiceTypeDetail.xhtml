@@ -39,7 +39,7 @@
 			<hftl:formField label="#{messages['seller.currentInvoiceNb']}" field="sequence"  childField="currentInvoiceNb" id="currentInvoiceNb" />
             <hftl:formField label="#{messages['invoiceType.appliesTo']}" field="appliesTo" listType="pickUpList" valueLabelField="code" dualListModel="#{invoiceTypeBean.dualListModel}" 
             newLine="true"  id="appliesTo"/> 
-        <h:panelGroup>			 
+        <h:panelGroup rendered="#{not empty invoiceTypeBean.entity.id}">		 
 		  <p:dataTable id="sellerSequenceTable" width="80px;" label="#{messages['inboundRequest.responseHeaders']}" style="width:70%;"
 			value="#{invoiceTypeBean.getSellerSequencesList}" 
 			var="sellerSeq" paginator="true" rows="5" resizableColumns="true"
