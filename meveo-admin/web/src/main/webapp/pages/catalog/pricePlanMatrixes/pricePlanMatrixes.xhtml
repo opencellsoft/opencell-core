@@ -115,14 +115,11 @@
 			exportButton="false" exportXlsxButton="true"
 			backingBean="#{pricePlanMatrixListBean}">
 
-			<p:ajax event="cellEdit" partialSubmit="true" process="@this" listener="#{pricePlanMatrixListBean.onCellEdit}"
-				update=":searchForm:search_messages datatable_results" />
-
 			<f:facet name="header">
 				<p:commandButton id="toggler" type="button" style="float:right" disabled="#{backingBean.lazyDataModel.size==0?'true':'false'}"
 					icon="ui-icon-calculator"/>
 				<p:columnToggler datasource="datatable_results" trigger="toggler" >
-					<p:ajax event="toggle" listener="#{pricePlanMatrixColumnSelectorBean.onToggle}" />
+<!-- 					<p:ajax event="toggle" listener="#{pricePlanMatrixColumnSelectorBean.onToggle}" /> -->
 				</p:columnToggler>
 			</f:facet>
 			<p:column exportable="true" toggleable="false">
