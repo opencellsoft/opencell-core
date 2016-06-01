@@ -2056,8 +2056,8 @@ $BODY$
 			fetch cursorProv into providerRecord;
 			exit when not found;
 			select  u.id into creator_id from adm_user u, adm_user_role r where u.provider_id = providerRecord.id and  r.user_id = u.id and r.role_id=1  limit 1;
-			IF( (select count(id) from AR_OCC_TEMPLATE where code ='FAI' and provider_id=providerRecord.id) >0)THEN
-				IF( (select count(id) from AR_OCC_TEMPLATE where code ='FA_FACT' and provider_id=providerRecord.id) >0)THEN
+			IF( (select count(id) from AR_OCC_TEMPLATE where code ='FAI' and provider_id=providerRecord.id) = 0)THEN
+				IF( (select count(id) from AR_OCC_TEMPLATE where code ='FA_FACT' and provider_id=providerRecord.id) =0)THEN
 			  			id_occ_com = nextval('AR_OCC_TEMPLATE_SEQ');
 			  			INSERT INTO ar_occ_template( id, version, disabled, created, updated, account_code, account_code_client_side, 
                         code, description, occ_category, provider_id, creator_id, updater_id)
@@ -2072,8 +2072,8 @@ $BODY$
                    select cc.creator_id into creator_id from AR_OCC_TEMPLATE cc where cc.code ='FAI' and cc.provider_id=providerRecord.id;
              END IF;  
               
-			IF( (select count(id) from AR_OCC_TEMPLATE where code ='AVI' and provider_id=providerRecord.id) >0)THEN
-				IF( (select count(id) from AR_OCC_TEMPLATE where code ='FA_ADJ' and provider_id=providerRecord.id) >0)THEN
+			IF( (select count(id) from AR_OCC_TEMPLATE where code ='AVI' and provider_id=providerRecord.id) = 0 )THEN
+				IF( (select count(id) from AR_OCC_TEMPLATE where code ='FA_ADJ' and provider_id=providerRecord.id) = 0)THEN
 			  			id_occ_adj = nextval('AR_OCC_TEMPLATE_SEQ');
 			  			INSERT INTO ar_occ_template( id, version, disabled, created, updated, account_code, account_code_client_side, 
                         code, description, occ_category, provider_id, creator_id, updater_id)
