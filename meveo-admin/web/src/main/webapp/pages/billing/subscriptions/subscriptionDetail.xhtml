@@ -517,7 +517,7 @@
 																	<hftl:formField id="oneshot_description"
 																		label="#{messages['businessEntity.description']}"
 																		field="description" size="50" maxlength="50"
-																		textArea="true" rows="1" disabled="true" edit="true" />
+																		textArea="true" rows="1" disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}" edit="true" />
 																	<hftl:formField
 																		label="#{messages['oneShotChargeInstance.chargeDate']}"
 																		required="true" field="chargeDate" edit="true" />
@@ -548,8 +548,7 @@
 																		<p:inputText id="amountWithoutTax2"
 																			value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}"
 																			size="5" converter="bigDecimalConverter"
-																			onkeyup="validateAmounts();"
-																			disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and subscriptionBean.oneShotChargeInstance.id != null}">
+																			disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
 																		</p:inputText>
 																	</hftl:decorateFormField>
 																	<hftl:decorateFormField fieldId="amountWithTax"
@@ -558,8 +557,7 @@
 																		<p:inputText id="amountWithTax"
 																			value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
 																			size="5" converter="bigDecimalConverter"
-																			onkeyup="validateAmounts();"
-																			disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and subscriptionBean.oneShotChargeInstance.id != null}">
+																			disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
 																		</p:inputText>
 																	</hftl:decorateFormField>
 																	<hftl:formField
@@ -613,7 +611,6 @@
 																				<hftl:column
 																					label="#{messages['chargeApplication.description']}"
 																					field="description" />
-																				<!-- 																<hftl:column label="#{messages['chargeApplication.amountWithoutTax']}" showSortLinks="false" field="amountWithoutTax" /> -->
 																				<p:column>
 																					<f:facet name="header">
 																						<h:outputText
@@ -622,7 +619,6 @@
 																	#{oneShotWalletOp.amountWithoutTax}
 																</p:column>
 
-																				<!-- 																<hftl:column label="#{messages['walletOperation.amountWithTax']}" showSortLinks="false" field="amountWithTax" /> -->
 																				<p:column
 																					rendered="#{!subscriptionBean.entity.provider.entreprise}">
 																					<f:facet name="header">
@@ -632,129 +628,20 @@
 																	#{oneShotWalletOp.amountWithTax}
 																</p:column>
 
-																				<!-- 																<hftl:column label="#{messages['currency.codeCurrency']}" field="currency" /> -->
 																				<hftl:column
 																					label="#{messages['chargeApplication.status']}"
 																					field="status" />
 																			</p:dataTable>
 																		</h:panelGroup>
 																	</p:outputPanel>
-
-																	<script type="text/javascript">
-    //<![CDATA[
-
-    var validAmount;
-    var amountWithoutTax;
-    var chargeTemplate;
-    var amountWithTax;
-    var calculatedAmount;
-    var calculatedAmountWithoutTax;
-    var formatedValue;
-    var formatedValueHT;
-
-    function caseTTCamount(){
-//     	if ((document.getElementById('{rich:clientId('amountWithTax')}').value!='')&&(document.getElementById('{rich:clientId('amountWithoutTax')}').value=='')) 
-//     	{return true;} else {return false;}
-    }
-    function caseHTamount(){
-//     	if ((document.getElementById('{rich:clientId('amountWithTax')}').value=='')&&(document.getElementById('{rich:clientId('amountWithoutTax')}').value!='')) 
-//     	{return true;} else {return false;}
-    }
-    function caseHTandTTCamouts(){
-//     	if ((document.getElementById('{rich:clientId('amountWithTax')}').value!='')&&(document.getElementById('{rich:clientId('amountWithoutTax')}').value!='')) 
-//     	{return true;} else {return false;}
-    }
-	
-    function getValidAmout(){
-    	validateAmounts();
-       	return validAmount;
-    }
-    function getValidFormat(amount){
-    	Seam.Component.getInstance("javaScriptAction").getFormatedAmountString(amount,function(result) {formatedValue=result;});
-    }
-    function getValidFormatHT(amount){
-    	Seam.Component.getInstance("javaScriptAction").getFormatedAmountString(amount,function(result) {formatedValueHT=result;});
-    }
-
-	function getAlertTextForCaseHTandTTCamouts(){
-		var text =  'Attention : pour le Montant HT '+amountWithoutTax +', le Montant TTC attendu est '+calculatedAmount+'. Confirmez-vous les montants saisis ?';
-		return text;
-	}
-	function getAlertTextForCaseTTCamount(){
-		var text =  'Attention : pour le Montant TTC '+amountWithTax +', le Montant HT attendu est '+calculatedAmountWithoutTax;
-		return text;
-	}
-	function getAlertTextForCaseHTamount(){
-		var text =  'Attention : pour le Montant HT '+amountWithoutTax+', le Montant TTC attendu est '+calculatedAmount;
-		return text;
-	}
-
-
-	var exceptionHandler = function(ex) { alert("Error: " + ex.getMessage()); };
-	
-	function validateAmounts(){
-//        	amountWithoutTax = document.getElementById('{rich:clientId('amountWithoutTax')}').value; 
-//     	chargeTemplate= document.getElementById('{rich:clientId('chargeTemplateSelectId')}').value;
-//     	amountWithTax = document.getElementById('{rich:clientId('amountWithTax')}').value;
-//     	if ((document.getElementById('{rich:clientId('amountWithTax')}').value=='')&&(document.getElementById('{rich:clientId('amountWithoutTax')}').value=='')) 
-//     	{validAmount = true;}
-//     	else {
-//     		if(document.getElementById('{rich:clientId('amountWithoutTax')}').value!='') {
-//     	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmount(chargeTemplate, amountWithoutTax,function(result) {calculatedAmount=result;}, exceptionHandler);
-//     	getValidFormatHT(amountWithoutTax);
-// 		amountWithoutTax = formatedValueHT;
-// 		}
-//     	if(document.getElementById('{rich:clientId('amountWithTax')}').value!='') {
-//     	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmountWithoutTax(chargeTemplate, amountWithTax, function(result) {calculatedAmountWithoutTax=result;}, exceptionHandler);
-//     	getValidFormat(amountWithTax);
-// 		amountWithTax = formatedValue;
-//     	}
-//     	if (calculatedAmount==amountWithTax)
-// 		 {validAmount = true;}
-// 		 else {validAmount = false;}
-//     	}
-	}
-	function validation(){
-		var resultValidAmout=getValidAmout();
-		if(resultValidAmout==false){
-            if(caseTTCamount()==true){
-                alert(getAlertTextForCaseTTCamount());
-                return false;
-            }
-            if(caseHTamount()==true){
-                alert(getAlertTextForCaseHTamount());
-                return false;
-            }
-            if(caseHTandTTCamouts()==true){
-                if(!confirm(getAlertTextForCaseHTandTTCamouts())){
-                    return false;}
-                }
-            }
-		else {
-			return true;
-		}
-	}
-	
-    // ]]>
-  </script>
-
 																    <ui:param name="buttons" value="true"/>
                                                                     <ui:define name="buttons">    
-																		<h:commandButton
-																			action="#{subscriptionBean.saveOneShotChargeIns}"
-																			value="#{messages['action.save']}"
-																			rendered="#{currentProvider.amountValidation and subscriptionBean.canUserUpdateEntity()}">
-																			<!-- 															<a:ajax event="click" render="OS_oneShot_results_form" -->
-																			<!-- 																onsubmit="return validation();" -->
-																			<!-- 																oncomplete="document.getElementById('oneShotChgDiv').style.display='none';" /> -->
-																		</h:commandButton>
 
 																		<p:commandButton
 																			action="#{subscriptionBean.saveOneShotChargeIns}"
 																			value="#{messages['action.save']}"
 																			update=":subscriptionTab:oneShotPanel"
-																			rendered="#{!currentProvider.amountValidation and subscriptionBean.canUserUpdateEntity()}" />
-
+																			rendered="#{subscriptionBean.canUserUpdateEntity()}" />
 																		<p:commandButton value="#{messages['action.cancel']}"
 																			update=":#{p:component('oneShotChgDiv')}"
 																			rendered="#{subscriptionBean.canUserUpdateEntity()}"
