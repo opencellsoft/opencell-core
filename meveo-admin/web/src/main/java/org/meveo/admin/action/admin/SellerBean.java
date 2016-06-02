@@ -27,13 +27,11 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.Column;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceType;
@@ -57,9 +55,6 @@ public class SellerBean extends CustomFieldBean<Seller> {
 	@Inject
 	private SellerService sellerService;
 	
-	 @Inject
-	private ResourceBundle resourceMessages;
-	 
 	 @Inject
 	 private InvoiceTypeService invoiceTypeService;
 	 
@@ -118,11 +113,18 @@ public class SellerBean extends CustomFieldBean<Seller> {
 		return new ArrayList<Map.Entry<InvoiceType,Sequence>>(sequencesSet);
 	}
 	public void addNewInvoiceTypeSequence() throws BusinessException{
+		if(getCurrentInvoiceNb().longValue() 
+				< invoiceTypeService.getMaxCurrentInvoiceNumber(getCurrentProvider()).longValue()) {
+			messages.error(new BundleKey("messages", "invoice.adjustment.downgrade.cuurrentNb.error.msg"));
+			return;
+		}
+		
 		InvoiceType invoiceType=invoiceTypeService.findByCode(invoiceTypeCode, getCurrentProvider());
 		Sequence sequence = new Sequence();
 		sequence.setPrefixEL(getPrefixEl());
 		sequence.setSequenceSize(getSequenceSize());
 		sequence.setCurrentInvoiceNb(getCurrentInvoiceNb());
+		
 		entity.getInvoiceTypeSequence().put(invoiceType, sequence);
 	
 	}
