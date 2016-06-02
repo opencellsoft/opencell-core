@@ -2088,8 +2088,6 @@ $BODY$
 			$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION invoice_type_migration()
-  OWNER TO meveo;
     </createProcedure>
     
         <createProcedure  procedureName="invoice_type_migration2">
@@ -2129,8 +2127,6 @@ $BODY$
 			$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION invoice_type_migration2()
-  OWNER TO meveo;
     </createProcedure>
     <sql>select invoice_type_migration()</sql>
     <sql>select invoice_type_migration2()</sql>
@@ -2225,8 +2221,6 @@ $BODY$
 			$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION update_old_invoice_entities()
-  OWNER TO meveo;
     </createProcedure>
     
 
