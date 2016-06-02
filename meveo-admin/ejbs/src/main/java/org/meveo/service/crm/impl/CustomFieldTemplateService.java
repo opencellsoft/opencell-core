@@ -10,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
@@ -289,5 +290,14 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
             }
         }
         return allTemplates;
+    }
+    @SuppressWarnings("unchecked")
+	public List<CustomFieldTemplate> findByAppliesToGuiPrefix(String appliesTo,String fieldGroupGui,Provider provider){
+    	QueryBuilder qb=new QueryBuilder(CustomFieldTemplate.class,"c",null,provider);
+    	qb.addCriterion("c.appliesTo", "=", appliesTo, true);
+    	if(StringUtils.isNotEmpty(fieldGroupGui)){
+    		qb.addCriterionWildcard("guiPosition", fieldGroupGui+"*", false);
+    	}
+    	return qb.getQuery(getEntityManager()).getResultList();
     }
 }

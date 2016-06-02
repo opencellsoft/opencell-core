@@ -210,4 +210,10 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     public void setChildEntityFieldListModel(DualListModel<CustomFieldMatrixColumn> childEntityFieldDM) {
         this.childEntityFieldDM = childEntityFieldDM;
     }
+    public void saveOrUpdateInsilence(boolean killConversation) throws BusinessException{
+    	saveOrUpdate(killConversation);
+    }
+    public void deleteInsilence(){
+    	this.deleteWithBack();
+    }
 }
