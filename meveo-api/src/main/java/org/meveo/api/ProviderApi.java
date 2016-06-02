@@ -464,6 +464,10 @@ public class ProviderApi extends BaseApi {
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
+        
+		if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && provider.getId().equals(currentUser.getProvider().getId())) {
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+		}
 
         GetTradingConfigurationResponseDto result = new GetTradingConfigurationResponseDto();
 
@@ -507,6 +511,10 @@ public class ProviderApi extends BaseApi {
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
+        
+		if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && provider.getId().equals(currentUser.getProvider().getId())) {
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+		}
 
         GetInvoicingConfigurationResponseDto result = new GetInvoicingConfigurationResponseDto();
 
@@ -571,6 +579,10 @@ public class ProviderApi extends BaseApi {
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
+        
+		if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && provider.getId().equals(currentUser.getProvider().getId())) {
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+		}
 
         GetCustomerConfigurationResponseDto result = new GetCustomerConfigurationResponseDto();
 
@@ -611,6 +623,10 @@ public class ProviderApi extends BaseApi {
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
+        
+		if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && provider.getId().equals(currentUser.getProvider().getId())) {
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+		}
 
         GetCustomerAccountConfigurationResponseDto result = new GetCustomerAccountConfigurationResponseDto();
 
