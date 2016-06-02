@@ -34,6 +34,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyJoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -48,6 +50,7 @@ import org.meveo.model.payments.OCCTemplate;
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_INVOICE_TYPE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID","OCC_TEMPLATE_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_TYPE_SEQ")
+@NamedQueries({ @NamedQuery(name = "InvoiceType.currentInvoiceNb", query = "select max(sequence.currentInvoiceNb) from InvoiceType i") })
 public class InvoiceType extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -127,7 +130,7 @@ public class InvoiceType extends BusinessEntity {
 	/**
 	 * @return the sequence
 	 */
-	public Sequence getSequence() {
+	public Sequence getSequence() {		
 		return sequence;
 	}
 

@@ -314,6 +314,11 @@ public class ProviderApi extends BaseApi {
         		if(invoiceType == null){
         			 throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
         		}
+        		
+        		if(entry.getValue().getCurrentInvoiceNb() < invoiceTypeService.getMaxCurrentInvoiceNumber()) {
+                	throw new MeveoApiException("Not able to update, check the current number");
+                }
+        		
         		provider.getInvoiceTypeSequence().put(invoiceType, entry.getValue().fromDto());
         	}
         }
@@ -459,6 +464,10 @@ public class ProviderApi extends BaseApi {
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
+        
+		if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && provider.getId().equals(currentUser.getProvider().getId())) {
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+		}
 
         GetTradingConfigurationResponseDto result = new GetTradingConfigurationResponseDto();
 
@@ -502,6 +511,10 @@ public class ProviderApi extends BaseApi {
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
+        
+		if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && provider.getId().equals(currentUser.getProvider().getId())) {
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+		}
 
         GetInvoicingConfigurationResponseDto result = new GetInvoicingConfigurationResponseDto();
 
@@ -566,6 +579,10 @@ public class ProviderApi extends BaseApi {
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
+        
+		if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && provider.getId().equals(currentUser.getProvider().getId())) {
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+		}
 
         GetCustomerConfigurationResponseDto result = new GetCustomerConfigurationResponseDto();
 
@@ -606,6 +623,10 @@ public class ProviderApi extends BaseApi {
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
+        
+		if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && provider.getId().equals(currentUser.getProvider().getId())) {
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+		}
 
         GetCustomerAccountConfigurationResponseDto result = new GetCustomerAccountConfigurationResponseDto();
 

@@ -261,6 +261,12 @@ public class ModuleApi extends BaseApi {
         if (meveoModule == null) {
             throw new EntityDoesNotExistsException(MeveoModule.class, moduleDto.getCode());
         }
+
+        if (!meveoModule.isDownloaded()) {
+            throw new ActionForbiddenException(meveoModule.getClass(), moduleDto.getCode(), "install",
+                "Module with the same code is being developped locally, can not overwrite it.");
+        }
+
         if (meveoModule.getModuleItems() != null) {
             Iterator<MeveoModuleItem> itr = meveoModule.getModuleItems().iterator();
             while (itr.hasNext()) {
@@ -298,7 +304,7 @@ public class ModuleApi extends BaseApi {
 
             meveoModules = meveoModuleService.list(new PaginationConfiguration(filters));
         }
-        
+
         List<ModuleDto> result = new ArrayList<ModuleDto>();
         ModuleDto moduleDto = null;
         for (MeveoModule meveoModule : meveoModules) {
@@ -353,6 +359,11 @@ public class ModuleApi extends BaseApi {
             create(moduleDto, currentUser);
             meveoModule = meveoModuleService.findByCode(moduleDto.getCode(), currentUser.getProvider());
         } else {
+
+            if (!meveoModule.isDownloaded()) {
+                throw new ActionForbiddenException(meveoModule.getClass(), moduleDto.getCode(), "install",
+                    "Module with the same code is being developped locally, can not overwrite it.");
+            }
 
             if (meveoModule.isInstalled()) {
                 throw new ActionForbiddenException(meveoModule.getClass(), moduleDto.getCode(), "install", "Module is already installed");

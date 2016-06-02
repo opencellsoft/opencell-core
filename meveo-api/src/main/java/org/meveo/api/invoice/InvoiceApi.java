@@ -525,8 +525,12 @@ public class InvoiceApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
 		}
 		if (!StringUtils.isBlank(invoice.getInvoiceNumber())) {
-			throw new MeveoApiException("Invoice already validted");
+			throw new MeveoApiException("Invoice already validated");
 		}
+		for(RatedTransaction rt : ratedTransactionService.listByInvoice(invoice)) {
+			ratedTransactionService.remove(rt);
+		}
+		
 		invoiceService.remove(invoice);
 	}
 

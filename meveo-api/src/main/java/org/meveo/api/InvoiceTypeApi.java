@@ -115,7 +115,14 @@ public class InvoiceTypeApi extends BaseApi {
         InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeDto.getCode(), provider);
         if (invoiceType == null) {
             throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeDto.getCode());
-        }        
+        } 
+        
+        if(invoiceTypeDto.getSequenceDto().getCurrentInvoiceNb() < invoiceTypeService.getMaxCurrentInvoiceNumber()) {
+        	throw new MeveoApiException("Not able to update, check the current number");
+        }
+        
+        invoiceType.setSequence(invoiceTypeDto.getSequenceDto().fromDto());
+        
         OCCTemplate occTemplate = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateCode(), provider);        
         if (occTemplate == null) {
             throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateCode());
