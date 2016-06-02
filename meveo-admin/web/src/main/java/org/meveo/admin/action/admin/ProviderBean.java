@@ -18,34 +18,17 @@
  */
 package org.meveo.admin.action.admin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-
-import javax.faces.application.FacesMessage;
-import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.InvoiceConfiguration;
-import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.Language;
-import org.meveo.model.billing.Sequence;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.security.Role;
-import org.meveo.service.admin.impl.RoleService;
-import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.ViewScoped;
@@ -59,17 +42,6 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 
     @Inject
     private ProviderService providerService;
-
-    @Inject
-    private UserService userService;
-
-    @Inject
-    private RoleService roleService;
-    
-    @Inject
-    private ResourceBundle resourceMessages;
-
-    private static ParamBean paramBean = ParamBean.getInstance();
 
     public ProviderBean() {
         super(Provider.class);
