@@ -580,7 +580,16 @@ public class ModuleApi extends BaseApi {
 
             } else if (dto instanceof ModuleDto) {
                 install((ModuleDto) dto, currentUser);
-                meveoModule.addModuleItem(new MeveoModuleItem(((ModuleDto) dto).getCode(), MeveoModule.class.getName(), null));
+
+                Class<? extends MeveoModule> moduleClazz = MeveoModule.class;
+                if (dto instanceof BusinessOfferModelDto) {
+                    moduleClazz = BusinessOfferModel.class;
+                } else if (dto instanceof BusinessServiceModelDto) {
+                    moduleClazz = BusinessServiceModel.class;
+                } else if (dto instanceof BusinessAccountModelDto) {
+                    moduleClazz = BusinessAccountModel.class;
+                }
+                meveoModule.addModuleItem(new MeveoModuleItem(((ModuleDto) dto).getCode(), moduleClazz.getName(), null));
 
             } else if (dto instanceof MeasurableQuantityDto) {
                 measurableQuantityApi.createOrUpdate((MeasurableQuantityDto) dto, currentUser);

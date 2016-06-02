@@ -278,7 +278,6 @@ public class OfferTemplateApi extends BaseApi {
                     if (offerServiceTemplates.size() > 0) {
                         offerTemplate.setOfferServiceTemplates(offerServiceTemplates);
                     }
-                    offerTemplateService.update(offerTemplate, currentUser);
                 }
             } else {
                 List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
@@ -318,10 +317,12 @@ public class OfferTemplateApi extends BaseApi {
                 if (offerServiceTemplates.size() > 0) {
                     offerTemplate.setOfferServiceTemplates(offerServiceTemplates);
                 }
-                offerTemplateService.update(offerTemplate, currentUser);
+                
             }
         }
 
+        offerTemplate = offerTemplateService.update(offerTemplate, currentUser);
+        
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), offerTemplate, false, currentUser);
