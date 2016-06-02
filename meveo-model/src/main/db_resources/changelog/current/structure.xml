@@ -2238,5 +2238,9 @@ ALTER FUNCTION invoice_type_migration2()
 	<changeSet id="#1679_20160602" author="EdwardLegaspi">
 		<renameColumn tableName="crm_business_account_model" oldColumnName="type" newColumnName="hierarchy_type"/>
 	</changeSet>
+	
+	<changeSet id="#1422_20160602" author="anasseh">			
+     	<modifyDataType columnName="report" newDataType="text"   tableName="job_execution"/>
+	</changeSet>
 	    	
 </databaseChangeLog>
