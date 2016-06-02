@@ -43,14 +43,13 @@ import javax.persistence.UniqueConstraint;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 
 @Entity
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_INVOICE_TYPE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID","OCC_TEMPLATE_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_TYPE_SEQ")
-@NamedQueries({ @NamedQuery(name = "InvoiceType.currentInvoiceNb", query = "select max(sequence.currentInvoiceNb) from InvoiceType i") })
+@NamedQueries({ @NamedQuery(name = "InvoiceType.currentInvoiceNb", query = "select max(sequence.currentInvoiceNb) from InvoiceType i where i.provider=:provider") })
 public class InvoiceType extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -58,6 +57,10 @@ public class InvoiceType extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "OCC_TEMPLATE_ID")
 	private OCCTemplate occTemplate;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "OCC_TEMPL_NEGATIVE_ID")
+	private OCCTemplate occTemplateNegative;	
 		
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "BILLING_INVOICE_TYPE_APPLIES_TO", joinColumns = @JoinColumn(name = "INVOICE_TYPE_ID"), inverseJoinColumns = @JoinColumn(name = "APPLIES_TO_ID"))
@@ -70,12 +73,6 @@ public class InvoiceType extends BusinessEntity {
 	@CollectionTable(name = "BILLING_SEQ_INVTYP_SELL") 
 	@MapKeyJoinColumn(name="SELLER_ID")
 	Map<Seller,Sequence> sellerSequence = new HashMap<Seller,Sequence>();
-	
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "BILLING_SEQ_INVTYP_PROV") 
-	@MapKeyJoinColumn(name="PROVIDER_ID")
-	Map<Provider,Sequence> providerSequence = new HashMap<Provider,Sequence>();
-
 	
 	@Column(name = "MATCHING_AUTO")
 	private boolean matchingAuto = false;
@@ -156,19 +153,18 @@ public class InvoiceType extends BusinessEntity {
 	}
 
 	/**
-	 * @return the providerSequence
+	 * @return the occTemplateNegative
 	 */
-	public Map<Provider, Sequence> getProviderSequence() {
-		return providerSequence;
+	public OCCTemplate getOccTemplateNegative() {
+		return occTemplateNegative;
 	}
 
 	/**
-	 * @param providerSequence the providerSequence to set
+	 * @param occTemplateNegative the occTemplateNegative to set
 	 */
-	public void setProviderSequence(Map<Provider, Sequence> providerSequence) {
-		this.providerSequence = providerSequence;
+	public void setOccTemplateNegative(OCCTemplate occTemplateNegative) {
+		this.occTemplateNegative = occTemplateNegative;
 	}
-	
 	
 	
 }

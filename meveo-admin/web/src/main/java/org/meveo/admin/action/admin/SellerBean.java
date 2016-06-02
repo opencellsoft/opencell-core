@@ -22,13 +22,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.Column;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -36,13 +35,13 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.Sequence;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.omnifaces.cdi.ViewScoped;
 
 @Named
@@ -60,6 +59,14 @@ public class SellerBean extends CustomFieldBean<Seller> {
 	
 	 @Inject
 	private ResourceBundle resourceMessages;
+	 
+	 @Inject
+	 private InvoiceTypeService invoiceTypeService;
+	 
+	 private String prefixEl;
+	 private Integer sequenceSize= 9;
+	 private Long currentInvoiceNb = 0L; 
+	 private String invoiceTypeCode;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -105,10 +112,53 @@ public class SellerBean extends CustomFieldBean<Seller> {
 //		}
 	}
 	
-	 public List<Map.Entry<InvoiceType,Sequence>> getInvoiceTypeSequencesList() {
-	        Set<Entry<InvoiceType,Sequence>> sequencesSet = 
-	                         entity.getInvoiceTypeSequence().entrySet();
-	        return new ArrayList<Map.Entry<InvoiceType,Sequence>>(sequencesSet);
-	    }
+	public List<Map.Entry<InvoiceType,Sequence>> getInvoiceTypeSequencesList() {
+		Set<Entry<InvoiceType,Sequence>> sequencesSet = 
+				entity.getInvoiceTypeSequence().entrySet();
+		return new ArrayList<Map.Entry<InvoiceType,Sequence>>(sequencesSet);
+	}
+	public void addNewInvoiceTypeSequence() throws BusinessException{
+		InvoiceType invoiceType=invoiceTypeService.findByCode(invoiceTypeCode, getCurrentProvider());
+		Sequence sequence = new Sequence();
+		sequence.setPrefixEL(getPrefixEl());
+		sequence.setSequenceSize(getSequenceSize());
+		sequence.setCurrentInvoiceNb(getCurrentInvoiceNb());
+		entity.getInvoiceTypeSequence().put(invoiceType, sequence);
+	
+	}
+
+	public String getPrefixEl() {
+		return prefixEl;
+	}
+
+	public void setPrefixEl(String prefixEl) {
+		this.prefixEl = prefixEl;
+	}
+
+	public Integer getSequenceSize() {
+		return sequenceSize;
+	}
+
+	public void setSequenceSize(Integer sequenceSize) {
+		this.sequenceSize = sequenceSize;
+	}
+
+	public Long getCurrentInvoiceNb() {
+		return currentInvoiceNb;
+	}
+
+	public void setCurrentInvoiceNb(Long currentInvoiceNb) {
+		this.currentInvoiceNb = currentInvoiceNb;
+	}
+
+	public String getInvoiceTypeCode() {
+		return invoiceTypeCode;
+	}
+
+	public void setInvoiceTypeCode(String invoiceTypeCode) {
+		this.invoiceTypeCode = invoiceTypeCode;
+	}
+	
+	
 
 }

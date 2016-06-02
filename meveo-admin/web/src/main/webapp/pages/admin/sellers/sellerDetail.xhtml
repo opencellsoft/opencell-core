@@ -55,7 +55,7 @@
                         <hftl:formField label="#{messages['invoice.adjustment.sequenceSize']}" field="invoiceAdjustmentSequenceSize" id="invoiceAdjustmentSequenceSize" />
 						
 						 </p:fieldset>-->
-						 <h:panelGroup rendered="#{not empty sellerBean.entity.id}">	
+						 <h:panelGroup>	
 						 <p:dataTable id="sellerSequenceTable" width="80px;" label="#{messages['inboundRequest.responseHeaders']}" style="width:70%;"
 						value="#{sellerBean.getInvoiceTypeSequencesList}" 
 						var="invoiceTypeSeq" paginator="true" rows="5" resizableColumns="true"
@@ -89,7 +89,47 @@
 						 <h:outputText value="#{invoiceTypeSeq.value.sequenceSize}" />  
 					  </p:column> 		  
 					</p:dataTable>
+					
+					<p:commandButton id="editRecurringChgInsLink" 
+					oncomplete="PF('dlg_recurringChgPopup').show()" value="#{messages['commons.addNew']}">
+				    </p:commandButton> 
+					
+					<p:dialog 
+					header="#{messages['seller.sellerSequence']}"
+					widgetVar="dlg_recurringChgPopup" modal="true"  width="45%" closeOnEscape="true"> 
+					<h:panelGrid columns="4" cellpadding="8"> 
+					<hftl:decorateFormField  label="#{messages['invoiceType.panel']}" > 
+					<p:selectOneMenu required="true" value="#{sellerBean.invoiceTypeCode}"> 
+					<f:selectItem itemLabel="#{messages['commons.select']}" />
+					<f:selectItems value="#{invoiceTypeBean.listAll()}" var="item" itemLabel="#{item.code}" itemValue="#{item.code}"/>
+					</p:selectOneMenu>
+					</hftl:decorateFormField> 
+					
+					<hftl:decorateFormField  
+					label="#{messages['invoiceType.sequenceSize']}">
+					<p:spinner value="#{sellerBean.sequenceSize}"/>
+					</hftl:decorateFormField>
+			
+					<hftl:decorateFormField  
+					label="#{messages['seller.currentInvoiceNb']}">
+					<p:spinner value="#{sellerBean.currentInvoiceNb}"/>
+					</hftl:decorateFormField>
+					
+					<hftl:decorateFormField  
+					label="#{messages['invoiceType.sequence.prefixEl']}">
+					<p:inputTextarea rows="6" cols="33" value="#{sellerBean.prefixEl}" />
+					</hftl:decorateFormField>
+					
+					<p:commandButton
+					action="#{sellerBean.addNewInvoiceTypeSequence}"
+					value="#{messages['action.save']}" 
+                    update="@form"					
+					oncomplete="PF('dlg_recurringChgPopup').hide()" />
+					</h:panelGrid> 
+					</p:dialog> 
 					</h:panelGroup>	
+					
+					
                    
 
                     <!-- <p:tab title="#{messages['billingAccount.tab.information']}">
@@ -121,7 +161,7 @@
 
             </p:tabView>
         </hftl:formPanel>
-
+		
     </ui:define>
 
 </ui:composition>

@@ -100,9 +100,8 @@ public class SubscriptionApi extends BaseApi {
         if (StringUtils.isBlank(postData.getSubscriptionDate())) {
             missingParameters.add("subscriptionDate");
         }
-        
+
         handleMissingParameters();
-        
 
         Provider provider = currentUser.getProvider();
 
@@ -156,10 +155,9 @@ public class SubscriptionApi extends BaseApi {
         if (StringUtils.isBlank(postData.getSubscriptionDate())) {
             missingParameters.add("subscriptionDate");
         }
-        
+
         handleMissingParameters();
-        
-    
+
         Provider provider = currentUser.getProvider();
 
         Subscription subscription = subscriptionService.findByCode(postData.getCode(), provider);
@@ -208,9 +206,8 @@ public class SubscriptionApi extends BaseApi {
         if (postData.getServicesToActivateDto().getService() == null || postData.getServicesToActivateDto().getService().size() == 0) {
             missingParameters.add("services");
         }
-        
+
         handleMissingParameters();
-        
 
         Provider provider = currentUser.getProvider();
 
@@ -255,7 +252,7 @@ public class SubscriptionApi extends BaseApi {
                     if (subscriptionServiceInstance.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
                         if (serviceToActivateDto.getSubscriptionDate() != null) {
                             log.warn("need date for serviceInstance with code={}", subscriptionServiceInstance.getCode());
-                            subscriptionServiceInstance.setDescription(serviceTemplate.getDescription());
+                            // subscriptionServiceInstance.setDescription(serviceTemplate.getDescription()); // Is there a need to reset it?
                             subscriptionServiceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
                             subscriptionServiceInstance.setQuantity(serviceToActivateDto.getQuantity());
                             serviceInstance = subscriptionServiceInstance;
@@ -264,7 +261,7 @@ public class SubscriptionApi extends BaseApi {
                     } else if (subscriptionServiceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
                         serviceInstance = subscriptionServiceInstance;
                         alreadyActive = true;
-                        
+
                     } else {
                         alreadySuspended = true;
                     }
@@ -276,7 +273,7 @@ public class SubscriptionApi extends BaseApi {
             if (alreadyActive && !ignoreAlreadyActivatedError) {
                 throw new MeveoApiException("ServiceInstance with code=" + serviceToActivateDto.getCode() + " must not be ACTIVE.");
             }
-            
+
             if (alreadySuspended) {
                 throw new MeveoApiException("ServiceInstance with code=" + serviceToActivateDto.getCode() + " must not be SUSPENDED.");
             }
@@ -375,9 +372,8 @@ public class SubscriptionApi extends BaseApi {
         if (postData.getServicesToInstantiate().getService() == null || postData.getServicesToInstantiate().getService().size() == 0) {
             missingParameters.add("services");
         }
-        
+
         handleMissingParameters();
-        
 
         Provider provider = currentUser.getProvider();
 
@@ -472,9 +468,8 @@ public class SubscriptionApi extends BaseApi {
         if (postData.getOperationDate() == null) {
             missingParameters.add("operationDate");
         }
-        
+
         handleMissingParameters();
-        
 
         Provider provider = currentUser.getProvider();
 
@@ -509,7 +504,7 @@ public class SubscriptionApi extends BaseApi {
         try {
             oneShotChargeInstanceService.oneShotChargeApplication(subscription, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                 postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),
-                postData.getDescription(),currentUser, true);
+                postData.getDescription(), currentUser, true);
         } catch (BusinessException e) {
             throw new MeveoApiException(e.getMessage());
         }
@@ -528,7 +523,6 @@ public class SubscriptionApi extends BaseApi {
         }
 
         handleMissingParameters();
-        
 
         Provider provider = currentUser.getProvider();
 
@@ -568,9 +562,8 @@ public class SubscriptionApi extends BaseApi {
         if (postData.getTerminationDate() == null) {
             missingParameters.add("terminationDate");
         }
-        
+
         handleMissingParameters();
-        
 
         Provider provider = currentUser.getProvider();
 
@@ -645,7 +638,7 @@ public class SubscriptionApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws BusinessException
      */
     public void createOrUpdate(SubscriptionDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (subscriptionService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {

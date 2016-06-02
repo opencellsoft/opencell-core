@@ -1,7 +1,5 @@
 package org.meveo.api.rest.account;
 
-import java.util.Date;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -73,8 +71,8 @@ public interface UserAccountRs extends IBaseRs {
      * @return
      */
     @GET
-    @Path("/filter")
+    @Path("/filterCountersByPeriod")
 	GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(@QueryParam("userAccountCode") String userAccountCode, 
-			@QueryParam("date") Date date);
+			@QueryParam("date") String date);
 
 }

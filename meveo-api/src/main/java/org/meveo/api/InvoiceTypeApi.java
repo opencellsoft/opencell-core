@@ -12,7 +12,6 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.SequenceDto;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
 import org.meveo.api.dto.billing.InvoiceTypesDto;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -64,7 +63,16 @@ public class InvoiceTypeApi extends BaseApi {
         OCCTemplate occTemplate = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateCode(), provider);        
         if (occTemplate == null) {
             throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateCode());
-        }        
+        }    
+        
+        OCCTemplate occTemplateNegative = null;
+        if (!StringUtils.isBlank(invoiceTypeDto.getOccTemplateNegativeCode())) {
+        	occTemplateNegative = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateNegativeCode(), provider);
+        	if(occTemplateNegative == null){
+        		 throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateNegativeCode());
+        	}
+        }  
+        
         List<InvoiceType> invoiceTypesToApplies = new ArrayList<InvoiceType>();       
         if(invoiceTypeDto.getAppliesTo() != null){
         	for(String invoiceTypeCode : invoiceTypeDto.getAppliesTo()){
@@ -80,6 +88,7 @@ public class InvoiceTypeApi extends BaseApi {
         invoiceType.setCode(invoiceTypeDto.getCode());
         invoiceType.setDescription(invoiceTypeDto.getDescription());
         invoiceType.setOccTemplate(occTemplate);
+        invoiceType.setOccTemplateNegative(occTemplateNegative);
         invoiceType.setAppliesTo(invoiceTypesToApplies);
         invoiceType.setSequence(invoiceTypeDto.getSequenceDto() == null ? null : invoiceTypeDto.getSequenceDto().fromDto());
         if(invoiceTypeDto.getSellerSequences() != null){
@@ -90,16 +99,7 @@ public class InvoiceTypeApi extends BaseApi {
 	        	}
 	        	invoiceType.getSellerSequence().put(seller, entry.getValue() == null ? null : entry.getValue().fromDto());
 	        }
-        }
-        if(invoiceTypeDto.getProviderSequences() != null){
-	        for(Entry<String,SequenceDto> entry : invoiceTypeDto.getProviderSequences().entrySet()){
-	        	if(!entry.getKey().equals(provider.getCode())){
-	        		throw new BusinessApiException("Other provider not allowed");
-	        	}
-
-	        	invoiceType.getProviderSequence().put(provider, entry.getValue() == null ? null : entry.getValue().fromDto());
-	        }
-        }
+        }      
         invoiceType.setMatchingAuto(invoiceTypeDto.isMatchingAuto());
         invoiceTypeService.create(invoiceType, currentUser);
         return result;
@@ -117,7 +117,7 @@ public class InvoiceTypeApi extends BaseApi {
             throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeDto.getCode());
         } 
         
-        if(invoiceTypeDto.getSequenceDto().getCurrentInvoiceNb() < invoiceTypeService.getMaxCurrentInvoiceNumber()) {
+        if(invoiceTypeDto.getSequenceDto().getCurrentInvoiceNb() < invoiceTypeService.getMaxCurrentInvoiceNumber(provider)) {
         	throw new MeveoApiException("Not able to update, check the current number");
         }
         
@@ -126,7 +126,16 @@ public class InvoiceTypeApi extends BaseApi {
         OCCTemplate occTemplate = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateCode(), provider);        
         if (occTemplate == null) {
             throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateCode());
-        }    
+        } 
+        
+        OCCTemplate occTemplateNegative = null;
+        if (!StringUtils.isBlank(invoiceTypeDto.getOccTemplateNegativeCode())) {
+        	occTemplateNegative = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateNegativeCode(), provider);
+        	if(occTemplateNegative == null){
+        		 throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateNegativeCode());
+        	}
+        }  
+        invoiceType.setOccTemplateNegative(occTemplateNegative); 
         invoiceType.setOccTemplate(occTemplate);   
 		if(!StringUtils.isBlank(invoiceTypeDto.getDescription())){
 	        invoiceType.setDescription(invoiceTypeDto.getDescription());
@@ -156,17 +165,7 @@ public class InvoiceTypeApi extends BaseApi {
 	        	}
 	        	invoiceType.getSellerSequence().put(seller, entry.getValue() == null ? null : entry.getValue().fromDto());
 	        }
-        }
-        if(invoiceTypeDto.getProviderSequences() != null){
-	        for(Entry<String,SequenceDto> entry : invoiceTypeDto.getProviderSequences().entrySet()){
-	        	if(!entry.getKey().equals(provider.getCode())){
-	        		throw new BusinessApiException("Other provider not allowed");
-	        	}
-
-	        	invoiceType.getProviderSequence().put(provider, entry.getValue() == null ? null : entry.getValue().fromDto());
-	        }
-        }
-        
+        }              
         invoiceTypeService.update(invoiceType, currentUser);
         return result;
     }

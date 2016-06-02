@@ -46,7 +46,7 @@ public class UnitAccountOperationsGenerationJobBean {
 
 		try {
 			Invoice invoice = invoiceService.findById(id);
-			CustomerAccount customerAccount = null;			
+			CustomerAccount customerAccount = null;
 			RecordedInvoice recordedInvoice = new RecordedInvoice();
 			BillingAccount billingAccount = invoice.getBillingAccount();
 
@@ -60,9 +60,39 @@ public class UnitAccountOperationsGenerationJobBean {
 				recordedInvoice.setProvider(customerAccount.getProvider());
 			} catch (Exception e) {
 				log.error("error while getting customer account ", e);
-				throw new ImportInvoiceException("Cannot found customerAccount");
+				throw new ImportInvoiceException("Cant find customerAccount");
 			}
+			if (invoice.getNetToPay() == null) {
+				throw new ImportInvoiceException("Net to pay is null");
+			}
+			if (invoice.getInvoiceType() == null) {
+				throw new ImportInvoiceException("Invoice type is null");
+			}
+			
 			OCCTemplate invoiceTemplate = invoice.getInvoiceType().getOccTemplate();
+			BigDecimal amountWithoutTax = invoice.getAmountWithoutTax();
+			BigDecimal amountTax = invoice.getAmountTax();
+			BigDecimal amountWithTax = invoice.getAmountWithTax();
+			BigDecimal netToPay = invoice.getNetToPay();
+
+			if (netToPay.compareTo(BigDecimal.ZERO) < 0) {
+				netToPay = netToPay.abs();
+				invoiceTemplate = invoice.getInvoiceType().getOccTemplateNegative();
+			}
+			if (amountWithoutTax != null && amountWithoutTax.compareTo(BigDecimal.ZERO) < 0) {
+				amountWithoutTax = amountWithoutTax.abs();
+			}
+			if (amountTax != null && amountTax.compareTo(BigDecimal.ZERO) < 0) {
+				amountTax = amountTax.abs();
+			}
+			if (amountWithTax != null && amountWithTax.compareTo(BigDecimal.ZERO) < 0) {
+				amountWithTax = amountWithTax.abs();
+			}
+
+			if (invoiceTemplate == null) {
+				throw new ImportInvoiceException("Cant find OccTemplate");
+			}
+
 			recordedInvoice.setReference(invoice.getInvoiceNumber());
 			recordedInvoice.setAccountCode(invoiceTemplate.getAccountCode());
 			recordedInvoice.setOccCode(invoiceTemplate.getCode());
@@ -70,28 +100,13 @@ public class UnitAccountOperationsGenerationJobBean {
 			recordedInvoice.setTransactionCategory(invoiceTemplate.getOccCategory());
 			recordedInvoice.setAccountCodeClientSide(invoiceTemplate.getAccountCodeClientSide());
 
-			try {
-				recordedInvoice.setAmount(invoice.getAmountWithTax());
-				recordedInvoice.setUnMatchingAmount(invoice.getAmountWithTax());
-				recordedInvoice.setMatchingAmount(BigDecimal.ZERO);
-			} catch (Exception e) {
-				log.error("error with amount with tax", e);
-				throw new ImportInvoiceException("Error on amountWithTax");
-			}
+			recordedInvoice.setAmount(amountWithTax);
+			recordedInvoice.setUnMatchingAmount(amountWithTax);
+			recordedInvoice.setMatchingAmount(BigDecimal.ZERO);
 
-			try {
-				recordedInvoice.setAmountWithoutTax(invoice.getAmountWithoutTax());
-			} catch (Exception e) {
-				log.error("error with amount without tax", e);
-				throw new ImportInvoiceException("Error on amountWithoutTax");
-			}
-
-			try {
-				recordedInvoice.setNetToPay(invoice.getNetToPay());
-			} catch (Exception e) {
-				log.error("error with netToPay", e);
-				throw new ImportInvoiceException("Error on netToPay");
-			}
+			recordedInvoice.setAmountWithoutTax(amountWithoutTax);
+			recordedInvoice.setTaxAmount(amountTax);
+			recordedInvoice.setNetToPay(invoice.getNetToPay());
 
 			try {
 				recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice.getDueDate()));
@@ -108,19 +123,7 @@ public class UnitAccountOperationsGenerationJobBean {
 				throw new ImportInvoiceException("Error on invoiceDate");
 			}
 
-			try {
-				recordedInvoice.setPaymentMethod(billingAccount.getPaymentMethod());
-			} catch (Exception e) {
-				log.error("erro with payment method", e);
-				throw new ImportInvoiceException("Error on paymentMethod");
-			}
-
-			try {
-				recordedInvoice.setTaxAmount(invoice.getAmountTax());
-			} catch (Exception e) {
-				log.error("error with total tax", e);
-				throw new ImportInvoiceException("Error on total tax");
-			}
+			recordedInvoice.setPaymentMethod(billingAccount.getPaymentMethod());
 
 			if (billingAccount.getBankCoordinates() != null) {
 				recordedInvoice.setPaymentInfo(billingAccount.getBankCoordinates().getIban());

@@ -209,11 +209,6 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 	@Column(name = "RECOGNIZE_REVENUE")
 	private boolean recognizeRevenue;
 	
-	
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "BILLING_SEQ_INVTYP_PROV") 
-	@MapKeyJoinColumn(name="INVOICETYPE_ID")
-	Map<InvoiceType,Sequence> invoiceTypeSequence = new HashMap<InvoiceType,Sequence>();
 
     public String getCode() {
         return code;
@@ -576,22 +571,6 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 
 	public void setRecognizeRevenue(boolean recognizeRevenue) {
 		this.recognizeRevenue = recognizeRevenue;
-	}
-	
-	
-
-	/**
-	 * @return the invoiceTypeSequence
-	 */
-	public Map<InvoiceType, Sequence> getInvoiceTypeSequence() {
-		return invoiceTypeSequence;
-	}
-
-	/**
-	 * @param invoiceTypeSequence the invoiceTypeSequence to set
-	 */
-	public void setInvoiceTypeSequence(Map<InvoiceType, Sequence> invoiceTypeSequence) {
-		this.invoiceTypeSequence = invoiceTypeSequence;
 	}
 
 	@Override
