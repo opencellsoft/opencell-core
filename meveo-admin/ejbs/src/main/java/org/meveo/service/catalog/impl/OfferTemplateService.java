@@ -59,7 +59,7 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 
 	@Override
 	public OfferTemplate update(OfferTemplate offerTemplate, User updater) throws BusinessException {
-		OfferTemplate result = super.update(offerTemplate, updater);
+		offerTemplate = super.update(offerTemplate, updater);
 
 		if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
 			try {
@@ -69,7 +69,7 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 			}
 		}
 
-		return result;
+		return offerTemplate;
 	}
 
 	@SuppressWarnings("unchecked")

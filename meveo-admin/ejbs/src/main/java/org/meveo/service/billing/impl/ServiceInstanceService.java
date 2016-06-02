@@ -72,7 +72,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     private WalletOperationService walletOperationService;
 
     @Inject
-    ServiceTemplateService serviceTemplateService;   
+    ServiceTemplateService serviceTemplateService;
 
     public ServiceInstance findByCodeAndSubscription(String code, Subscription subscription) {
         return findByCodeAndSubscription(getEntityManager(), code, subscription);
@@ -149,7 +149,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         Seller seller = userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
         if (serviceInstance.getSubscriptionDate() == null) {
-        serviceInstance.setSubscriptionDate(subscription.getSubscriptionDate() != null?subscription.getSubscriptionDate():new Date());
+            serviceInstance.setSubscriptionDate(subscription.getSubscriptionDate() != null ? subscription.getSubscriptionDate() : new Date());
         }
         serviceInstance.setStatus(InstanceStatusEnum.INACTIVE);
         serviceInstance.setCode(serviceCode);
@@ -303,12 +303,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             terminationDate = new Date();
         }
 
-        // execute termination script
-        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
-            serviceModelScriptService.terminateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(),
-                terminationDate, terminationReason, user);
-        }
-
         String serviceCode = serviceInstance.getCode();
         Subscription subscription = serviceInstance.getSubscription();
         if (subscription == null) {
@@ -317,7 +311,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE) {
             throw new IncorrectServiceInstanceException("service instance is inactive. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
         }
-        serviceInstance=refreshOrRetrieve(serviceInstance);
+        serviceInstance = refreshOrRetrieve(serviceInstance);
+
+        // execute termination script
+        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+            serviceModelScriptService.terminateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(),
+                terminationDate, terminationReason, user);
+        }
+
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
             Date chargeDate = recurringChargeInstance.getChargeDate();
             Date nextChargeDate = recurringChargeInstance.getNextChargeDate();
@@ -433,7 +434,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         update(serviceInstance, updater);
     }
 
-    public void serviceReactivation(ServiceInstance serviceInstance, Date reactivationDate, User updater) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+    public void serviceReactivation(ServiceInstance serviceInstance, Date reactivationDate, User updater) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
+            BusinessException {
 
         String serviceCode = serviceInstance.getCode();
         if (reactivationDate == null) {
