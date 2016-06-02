@@ -311,14 +311,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				invoiceTypeService.update(invoiceType,currentUser);
 			}
 		}
-		if(invoiceType.getProviderSequence() != null && invoiceType.getProviderSequence().containsKey(seller.getProvider())){
-			sequence =  invoiceType.getProviderSequence().get(seller.getProvider());
-			if(increment){
-				sequence.setCurrentInvoiceNb((sequence.getCurrentInvoiceNb() == null?0L:sequence.getCurrentInvoiceNb()) +step);
-				invoiceType.getProviderSequence().put(seller.getProvider(),sequence);
-				invoiceTypeService.update(invoiceType,currentUser);
-			}
-		}
+
 		if(invoiceType.getSequence() != null){
 			sequence =  invoiceType.getSequence();
 			if(increment){

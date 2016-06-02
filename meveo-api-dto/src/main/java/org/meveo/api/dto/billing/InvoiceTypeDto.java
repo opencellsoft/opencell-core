@@ -64,10 +64,7 @@ public class InvoiceTypeDto  extends BaseDto{
 			}			
 			for(Entry<Seller,Sequence> entry : invoiceType.getSellerSequence().entrySet()){
 				sellerSequences.put(entry.getKey().getCode(), new SequenceDto(entry.getValue()));
-			}
-			for(Entry<Provider,Sequence> entry : invoiceType.getProviderSequence().entrySet()){
-				providerSequences.put(entry.getKey().getCode(), new SequenceDto(entry.getValue()));
-			}			
+			}		
 			this.matchingAuto = invoiceType.isMatchingAuto();
 		}
 		

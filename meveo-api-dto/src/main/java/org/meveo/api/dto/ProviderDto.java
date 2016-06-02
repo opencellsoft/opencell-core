@@ -1,9 +1,5 @@
 package org.meveo.api.dto;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -12,8 +8,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.invoice.InvoiceConfigurationDto;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.Sequence;
 import org.meveo.model.crm.Provider;
 
 /**
@@ -50,8 +44,6 @@ public class ProviderDto extends BaseDto {
 
 	@XmlElement(required = false)
 	private CustomFieldsDto customFields;
-	
-	private Map<String,SequenceDto> invoiceTypeSequences = new HashMap<String,SequenceDto>();
 
 	public ProviderDto() {
 
@@ -83,11 +75,6 @@ public class ProviderDto extends BaseDto {
 			discountAccountingCode = e.getDiscountAccountingCode();
 			email = e.getEmail();			
 
-			if(e.getInvoiceTypeSequence() != null){
-				for(Entry<InvoiceType, Sequence> entry : e.getInvoiceTypeSequence().entrySet() ){
-					invoiceTypeSequences.put(entry.getKey().getCode(), new SequenceDto(entry.getValue()));
-				}
-			}
 			this.setEnterprise(e.isEntreprise());
 			this.setLevelDuplication(e.isLevelDuplication());
 			
@@ -276,28 +263,12 @@ public class ProviderDto extends BaseDto {
 		this.recognizeRevenue = recognizeRevenue;
 	}
 
-	/**
-	 * @return the invoiceTypeSequences
-	 */
-	public Map<String, SequenceDto> getInvoiceTypeSequences() {
-		return invoiceTypeSequences;
-	}
-
-	/**
-	 * @param invoiceTypeSequences the invoiceTypeSequences to set
-	 */
-	public void setInvoiceTypeSequences(Map<String, SequenceDto> invoiceTypeSequences) {
-		this.invoiceTypeSequences = invoiceTypeSequences;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "ProviderDto [code=" + code + ", description=" + description + ", currency=" + currency + ", country=" + country + ", language=" + language + ", multiCurrency=" + multiCurrency + ", multiCountry=" + multiCountry + ", multiLanguage=" + multiLanguage + ", userAccount=" + userAccount + ", enterprise=" + enterprise + ", levelDuplication=" + levelDuplication + ", displayFreeTransacInInvoice=" + displayFreeTransacInInvoice + ", rounding=" + rounding
-				+ ", prepaidReservationExpirationDelayinMillisec=" + prepaidReservationExpirationDelayinMillisec + ", discountAccountingCode=" + discountAccountingCode + ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", recognizeRevenue=" + recognizeRevenue + ", invoiceConfiguration=" + invoiceConfiguration + ", customFields=" + customFields + ", invoiceTypeSequences=" + invoiceTypeSequences + "]";
+				+ ", prepaidReservationExpirationDelayinMillisec=" + prepaidReservationExpirationDelayinMillisec + ", discountAccountingCode=" + discountAccountingCode + ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", recognizeRevenue=" + recognizeRevenue + ", invoiceConfiguration=" + invoiceConfiguration + ", customFields=" + customFields + "]";
 	}
+
 
 	
 

@@ -1979,20 +1979,6 @@
 		 <renameColumn   newColumnName="prefix_el"  oldColumnName="prefix"  tableName="billing_invoice_type"/>
      </changeSet>
      
-     
-         <changeSet author="anasseh (generated)" id="#1685_20160530-1">
-        <createTable tableName="billing_seq_invtyp_prov">
-            <column name="invoicetype_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="currentinvoicenb" type="BIGINT"/>
-            <column name="prefixel" type="VARCHAR(255)"/>
-            <column name="sequencesize" type="INT4"/>
-            <column name="provider_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
     <changeSet author="anasseh (generated)" id="#1685_20160530-2">
         <createTable tableName="billing_seq_invtyp_sell">
             <column name="invoicetype_id" type="BIGINT">
@@ -2014,9 +2000,6 @@
     </changeSet>
 
 
-    <changeSet author="anasseh (generated)" id="#1685_20160530-10">
-        <addPrimaryKey columnNames="invoicetype_id, provider_id" constraintName="billing_seq_invtyp_prov_pkey" tableName="billing_seq_invtyp_prov"/>
-    </changeSet>
     <changeSet author="anasseh (generated)" id="#1685_20160530-11">
         <addPrimaryKey columnNames="invoicetype_id, seller_id" constraintName="billing_seq_invtyp_sell_pkey" tableName="billing_seq_invtyp_sell"/>
     </changeSet>
@@ -2029,14 +2012,6 @@
         <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_seq_invtyp_sell" constraintName="fk_ivmab13iml7v0n29giw9w8kor" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller"/>
     </changeSet>
 
-    <changeSet author="anasseh (generated)" id="#1685_20160530-46">
-        <addForeignKeyConstraint baseColumnNames="invoicetype_id" baseTableName="billing_seq_invtyp_prov" constraintName="fk_obda28muhcodm36q8y6oryjx7" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type"/>
-    </changeSet>
- 
-    <changeSet author="anasseh (generated)" id="#1685_20160530-49">
-        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="billing_seq_invtyp_prov" constraintName="fk_r55ewvyjj3tpuauck83pe3syw" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider"/>
-    </changeSet>
-     
      
      <changeSet author="anasseh" id="#1696_20160601">
     <createProcedure  procedureName="invoice_type_migration">
@@ -2163,6 +2138,7 @@ ALTER FUNCTION invoice_type_migration2()
     <sql>drop FUNCTION invoice_type_migration2()</sql> 
 </changeSet>
 
+
     <changeSet author="anasseh (generated)" id="#1685_20160530-80">
         <dropColumn columnName="credit_note_prefix" tableName="crm_provider"/>
     </changeSet>
@@ -2221,6 +2197,44 @@ ALTER FUNCTION invoice_type_migration2()
     <changeSet author="anasseh (generated)" id="#1685_20160530-100">
         <dropColumn columnName="invoice_sequence_size" tableName="crm_seller"/>
     </changeSet>
+    
+   <changeSet author="anasseh" id="#1696_20160601_2">
+    <createProcedure  procedureName="update_old_invoice_entities">
+CREATE OR REPLACE FUNCTION update_old_invoice_entities()
+  RETURNS void AS
+$BODY$
+			declare
+			cursorInv cursor for
+			select * from billing_invoice where invoice_type is not null;			
+			invRecord record;
+			begin
+			open cursorInv;
+			loop
+			fetch cursorInv into invRecord;
+			exit when not found;
+						
+			IF( invRecord.invoice_type = 'COMMERCIAL')THEN
+				update billing_invoice set invoice_type_id = (select id from billing_invoice_type where code='COM' and provider_id = invRecord.provider_id ) where id = invRecord.id ;
+             ELSE
+                  update billing_invoice set invoice_type_id = (select id from billing_invoice_type where code='ADJ' and provider_id = invRecord.provider_id ) where id = invRecord.id;
+             END IF;  
+              		
+			end loop;
+			close cursorInv;
+			end;
+			$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION update_old_invoice_entities()
+  OWNER TO meveo;
+    </createProcedure>
+    
+
+    <sql>select update_old_invoice_entities()</sql>
+    <sql>drop FUNCTION update_old_invoice_entities()</sql> 
+
+</changeSet>
+ 
     <changeSet author="anasseh (generated)" id="#1685_20160530-101">
         <dropColumn columnName="invoice_type" tableName="billing_invoice"/>
     </changeSet>   
