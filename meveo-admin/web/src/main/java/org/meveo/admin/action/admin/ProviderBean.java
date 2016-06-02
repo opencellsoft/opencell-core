@@ -149,10 +149,5 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         }
         return null;
     }
-    
-    public List<Map.Entry<InvoiceType,Sequence>> getInvoiceTypeSequencesList() {
-        Set<Entry<InvoiceType,Sequence>> sequencesSet = 
-                         entity.getInvoiceTypeSequence().entrySet();
-        return new ArrayList<Map.Entry<InvoiceType,Sequence>>(sequencesSet);
-    }
+
 }
