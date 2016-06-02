@@ -71,12 +71,6 @@ public class InvoiceType extends BusinessEntity {
 	@MapKeyJoinColumn(name="SELLER_ID")
 	Map<Seller,Sequence> sellerSequence = new HashMap<Seller,Sequence>();
 	
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "BILLING_SEQ_INVTYP_PROV") 
-	@MapKeyJoinColumn(name="PROVIDER_ID")
-	Map<Provider,Sequence> providerSequence = new HashMap<Provider,Sequence>();
-
-	
 	@Column(name = "MATCHING_AUTO")
 	private boolean matchingAuto = false;
 	
@@ -154,21 +148,4 @@ public class InvoiceType extends BusinessEntity {
 	public void setSellerSequence(Map<Seller, Sequence> sellerSequence) {
 		this.sellerSequence = sellerSequence;
 	}
-
-	/**
-	 * @return the providerSequence
-	 */
-	public Map<Provider, Sequence> getProviderSequence() {
-		return providerSequence;
-	}
-
-	/**
-	 * @param providerSequence the providerSequence to set
-	 */
-	public void setProviderSequence(Map<Provider, Sequence> providerSequence) {
-		this.providerSequence = providerSequence;
-	}
-	
-	
-	
 }

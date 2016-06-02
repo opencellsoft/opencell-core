@@ -2,7 +2,6 @@ package org.meveo.api;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -16,7 +15,6 @@ import org.meveo.api.dto.InvoiceCategoryDto;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.ProviderDto;
-import org.meveo.api.dto.SequenceDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
 import org.meveo.api.dto.account.CreditCategoryDto;
@@ -39,7 +37,6 @@ import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.Tax;
@@ -157,15 +154,6 @@ public class ProviderApi extends BaseApi {
         provider.setCode(postData.getCode().toUpperCase());
         provider.setDescription(postData.getDescription());
     
-        if(postData.getInvoiceTypeSequences() != null){
-        	for(Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet() ){
-        		InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey(), currentUser.getProvider());
-        		if(invoiceType == null){
-        			 throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
-        		}
-        		provider.getInvoiceTypeSequence().put(invoiceType, entry.getValue().fromDto());
-        	}
-        }
         
         provider.setMulticountryFlag(postData.isMultiCountry());
         provider.setMulticurrencyFlag(postData.isMultiCurrency());
@@ -307,21 +295,6 @@ public class ProviderApi extends BaseApi {
         provider.setEmail(postData.getEmail());
         provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
         provider.setPrepaidReservationExpirationDelayinMillisec(postData.getPrepaidReservationExpirationDelayinMillisec());
-
-        if(postData.getInvoiceTypeSequences() != null){
-        	for(Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet() ){
-        		InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey(), currentUser.getProvider());
-        		if(invoiceType == null){
-        			 throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
-        		}
-        		
-        		if(entry.getValue().getCurrentInvoiceNb() < invoiceTypeService.getMaxCurrentInvoiceNumber(currentUser.getProvider())) {
-                	throw new MeveoApiException("Not able to update, check the current number");
-                }
-        		
-        		provider.getInvoiceTypeSequence().put(invoiceType, entry.getValue().fromDto());
-        	}
-        }
         
         // search for country
         if (!StringUtils.isBlank(postData.getCountry())) {

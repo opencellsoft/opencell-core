@@ -12,7 +12,6 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.SequenceDto;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
 import org.meveo.api.dto.billing.InvoiceTypesDto;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -90,16 +89,7 @@ public class InvoiceTypeApi extends BaseApi {
 	        	}
 	        	invoiceType.getSellerSequence().put(seller, entry.getValue() == null ? null : entry.getValue().fromDto());
 	        }
-        }
-        if(invoiceTypeDto.getProviderSequences() != null){
-	        for(Entry<String,SequenceDto> entry : invoiceTypeDto.getProviderSequences().entrySet()){
-	        	if(!entry.getKey().equals(provider.getCode())){
-	        		throw new BusinessApiException("Other provider not allowed");
-	        	}
-
-	        	invoiceType.getProviderSequence().put(provider, entry.getValue() == null ? null : entry.getValue().fromDto());
-	        }
-        }
+        }      
         invoiceType.setMatchingAuto(invoiceTypeDto.isMatchingAuto());
         invoiceTypeService.create(invoiceType, currentUser);
         return result;
@@ -156,17 +146,7 @@ public class InvoiceTypeApi extends BaseApi {
 	        	}
 	        	invoiceType.getSellerSequence().put(seller, entry.getValue() == null ? null : entry.getValue().fromDto());
 	        }
-        }
-        if(invoiceTypeDto.getProviderSequences() != null){
-	        for(Entry<String,SequenceDto> entry : invoiceTypeDto.getProviderSequences().entrySet()){
-	        	if(!entry.getKey().equals(provider.getCode())){
-	        		throw new BusinessApiException("Other provider not allowed");
-	        	}
-
-	        	invoiceType.getProviderSequence().put(provider, entry.getValue() == null ? null : entry.getValue().fromDto());
-	        }
-        }
-        
+        }              
         invoiceTypeService.update(invoiceType, currentUser);
         return result;
     }

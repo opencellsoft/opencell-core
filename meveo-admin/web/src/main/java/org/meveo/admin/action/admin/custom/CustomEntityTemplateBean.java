@@ -1,6 +1,7 @@
 package org.meveo.admin.action.admin.custom;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -210,10 +211,54 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         return entityActions;
     }
 
-    public void refreshFields() {
-        groupedFields = null;
+    public void removeField(){
+    	log.debug("start to remvoe treeNode {}",selectedFieldGrouping);
+    	if(selectedFieldGrouping==null){
+    		return;
+    	}
+    	TreeNode parentTreeNode=selectedFieldGrouping.getParent();
+    	parentTreeNode.getChildren().remove(selectedFieldGrouping);
     }
-
+    private void clearChildField(TreeNode treeNode){
+    	Iterator<TreeNode> itr=treeNode.getChildren().iterator();
+    	while(itr.hasNext()){
+    		SortedTreeNode node=(SortedTreeNode)itr.next();
+    		if(node.getType()==CustomFieldTemplate.POSITION_FIELD){
+    			itr.remove();
+    		}
+    	}
+    }
+    
+    public void saveField(){
+    	if(selectedFieldGrouping==null){
+    		return;
+    	}
+    	TreeNode parentNode=selectedFieldGrouping;
+    	SortedTreeNode sortedTreeNode=(SortedTreeNode)selectedFieldGrouping;
+        String guiPosition=sortedTreeNode.getGuiPositionForField().substring(0,sortedTreeNode.getGuiPositionForField().lastIndexOf(";")+1)+"field:";
+        List<CustomFieldTemplate> cfts=customFieldTemplateService.findByAppliesToGuiPrefix(cetPrefix, guiPosition, getCurrentProvider());
+        clearChildField(parentNode);
+        if(cfts!=null){
+        	for(CustomFieldTemplate cft:cfts){
+        		new SortedTreeNode(CustomFieldTemplate.POSITION_FIELD,cft,parentNode);
+        	}
+        }
+    }
+	public void updateField(){
+    	if(selectedFieldGrouping==null){
+    		return;
+    	}
+    	TreeNode parentNode=selectedFieldGrouping.getParent();
+    	SortedTreeNode sortedTreeNode=(SortedTreeNode)selectedFieldGrouping;
+        String guiPosition=sortedTreeNode.getGuiPositionForField().substring(0,sortedTreeNode.getGuiPositionForField().lastIndexOf(";")+1)+"field:";
+        List<CustomFieldTemplate> cfts=customFieldTemplateService.findByAppliesToGuiPrefix(cetPrefix, guiPosition, getCurrentProvider());
+        clearChildField(parentNode);
+        if(cfts!=null){
+        	for(CustomFieldTemplate cft:cfts){
+        		new SortedTreeNode(CustomFieldTemplate.POSITION_FIELD,cft,parentNode);
+        	}
+        }
+    }
     public void refreshActions() {
         entityActions = null;
     }
@@ -455,10 +500,17 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                 if (getParent().getType().equals(GroupedCustomField.TYPE_TAB)) {
                     guiPosition = CustomFieldTemplate.POSITION_TAB + ":" + getParent().getData() + ":" + getParent().getParent().getChildren().indexOf(getParent()) + ";"
                             + guiPosition;
-                }
-                return guiPosition;
             }
-            return null;
+                return guiPosition;
+            }else{//field
+            	String guiPosition="";
+            	if (getParent().getType().equals(GroupedCustomField.TYPE_TAB)) {
+            		guiPosition=CustomFieldTemplate.POSITION_TAB+":"+getParent().getData()+":"+getParent().getParent().getChildren().indexOf(getParent())+";";
+            	}else{//fieldgroup
+            		guiPosition=CustomFieldTemplate.POSITION_TAB+":"+getParent().getParent().getData()+":"+getParent().getParent().getParent().getChildren().indexOf(getParent().getParent())+";"+CustomFieldTemplate.POSITION_FIELD_GROUP+":"+getParent().getData()+":"+getParent().getParent().getChildren().indexOf(getParent())+";";
+            	}
+            	return guiPosition+CustomFieldTemplate.POSITION_FIELD+":"+getData()+":"+getParent().getChildren().indexOf(this);
+            }
         }
 
         public boolean canMoveUp() {

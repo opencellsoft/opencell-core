@@ -311,14 +311,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				invoiceTypeService.update(invoiceType,currentUser);
 			}
 		}
-		if(invoiceType.getProviderSequence() != null && invoiceType.getProviderSequence().containsKey(seller.getProvider())){
-			sequence =  invoiceType.getProviderSequence().get(seller.getProvider());
-			if(increment){
-				sequence.setCurrentInvoiceNb((sequence.getCurrentInvoiceNb() == null?0L:sequence.getCurrentInvoiceNb()) +step);
-				invoiceType.getProviderSequence().put(seller.getProvider(),sequence);
-				invoiceTypeService.update(invoiceType,currentUser);
-			}
-		}
+
 		if(invoiceType.getSequence() != null){
 			sequence =  invoiceType.getSequence();
 			if(increment){
@@ -328,7 +321,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 		}
 		if(sequence == null){
-			throw new BusinessException("Cant found sequence for invoiceType:"+invoiceType.getCode());
+			sequence = new Sequence();
+			sequence.setCurrentInvoiceNb(1L);
+			sequence.setSequenceSize(9);
+			sequence.setPrefixEL("");
+			invoiceType.setSequence(sequence);
+			invoiceTypeService.update(invoiceType,currentUser);			
 		}
 		if(currentNbFromCF != null){
 			sequence.setCurrentInvoiceNb(currentNbFromCF);
@@ -394,7 +392,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			if (billingCycle == null) {
 				billingCycle = billingAccount.getBillingCycle();
 			}
-			InvoiceType invoiceType = billingRun.getBillingCycle().getInvoiceType();
+			if(billingCycle == null){
+				throw new BusinessException("Cant find the billing cycle");
+			}
+			InvoiceType invoiceType = billingCycle.getInvoiceType();
 			if(invoiceType == null){
 				invoiceType = invoiceTypeService.getDefaultCommertial(currentUser);
 			}
