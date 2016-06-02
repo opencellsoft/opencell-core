@@ -33,7 +33,7 @@ import org.meveo.service.notification.InboundRequestService;
 import org.slf4j.Logger;
 
 /**
- * To call this servlet the url must be in this format: /inboud/<provider.code>
+ * To call this servlet the url must be in this format: /inbound/<provider.code>
  */
 @WebServlet("/inbound/*")
 public class InboundServlet extends HttpServlet {
@@ -72,7 +72,6 @@ public class InboundServlet extends HttpServlet {
 		return bufferOffset;
 	}
 
-	@SuppressWarnings("unused")
 	private User authenticateRequest(HttpServletRequest req) {
         final String authorization = req.getHeader("Authorization");
         User user = null;
@@ -131,7 +130,7 @@ public class InboundServlet extends HttpServlet {
             providerCode = path.substring(1);
         }
 
-        if(providerCode.endsWith("/")){
+        if(providerCode.contains("/")){
             providerCode = providerCode.substring(0, providerCode.indexOf('/'));
         }
 
