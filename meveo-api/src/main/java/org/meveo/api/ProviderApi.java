@@ -315,7 +315,7 @@ public class ProviderApi extends BaseApi {
         			 throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
         		}
         		
-        		if(entry.getValue().getCurrentInvoiceNb() < invoiceTypeService.getMaxCurrentInvoiceNumber()) {
+        		if(entry.getValue().getCurrentInvoiceNb() < invoiceTypeService.getMaxCurrentInvoiceNumber(currentUser.getProvider())) {
                 	throw new MeveoApiException("Not able to update, check the current number");
                 }
         		
