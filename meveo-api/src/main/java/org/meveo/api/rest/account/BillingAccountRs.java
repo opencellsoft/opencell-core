@@ -1,7 +1,5 @@
 package org.meveo.api.rest.account;
 
-import java.util.Date;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -81,5 +79,5 @@ public interface BillingAccountRs extends IBaseRs {
     @GET
     @Path("/filterCountersByPeriod")
 	GetCountersInstancesResponseDto filterBillingAccountCountersByPeriod(@QueryParam("billingAccountCode") String billingAccountCode, 
-			@QueryParam("date") Date date);
+			@QueryParam("date") String date);
 }
