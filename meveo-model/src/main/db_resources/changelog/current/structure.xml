@@ -2233,5 +2233,10 @@ ALTER FUNCTION invoice_type_migration2()
 		<addForeignKeyConstraint constraintName="fk_invoice_type_id_billing_cycle"
 			referencedTableName="billing_invoice_type" baseColumnNames="invoice_type_id"
 			baseTableName="billing_cycle" referencedColumnNames="id" />
-		</changeSet>    	
+		</changeSet>
+		
+	<changeSet id="#1679_20160602" author="EdwardLegaspi">
+		<renameColumn tableName="crm_business_account_model" oldColumnName="type" newColumnName="hierarchy_type"/>
+	</changeSet>
+	    	
 </databaseChangeLog>
