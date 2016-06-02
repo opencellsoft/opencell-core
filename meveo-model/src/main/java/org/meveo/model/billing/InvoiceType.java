@@ -43,7 +43,6 @@ import javax.persistence.UniqueConstraint;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 
 @Entity
@@ -58,6 +57,10 @@ public class InvoiceType extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "OCC_TEMPLATE_ID")
 	private OCCTemplate occTemplate;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "OCC_TEMPL_NEGATIVE_ID")
+	private OCCTemplate occTemplateNegative;	
 		
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "BILLING_INVOICE_TYPE_APPLIES_TO", joinColumns = @JoinColumn(name = "INVOICE_TYPE_ID"), inverseJoinColumns = @JoinColumn(name = "APPLIES_TO_ID"))
@@ -148,4 +151,20 @@ public class InvoiceType extends BusinessEntity {
 	public void setSellerSequence(Map<Seller, Sequence> sellerSequence) {
 		this.sellerSequence = sellerSequence;
 	}
+
+	/**
+	 * @return the occTemplateNegative
+	 */
+	public OCCTemplate getOccTemplateNegative() {
+		return occTemplateNegative;
+	}
+
+	/**
+	 * @param occTemplateNegative the occTemplateNegative to set
+	 */
+	public void setOccTemplateNegative(OCCTemplate occTemplateNegative) {
+		this.occTemplateNegative = occTemplateNegative;
+	}
+	
+	
 }

@@ -17,7 +17,6 @@ import org.meveo.api.dto.SequenceDto;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.Sequence;
-import org.meveo.model.crm.Provider;
 
 @XmlRootElement(name = "InvoiceType")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -33,15 +32,13 @@ public class InvoiceTypeDto  extends BaseDto{
 		@XmlElement(required = true)
 		private String occTemplateCode;
 		
+		private String occTemplateNegativeCode;		
+		
 		private SequenceDto sequenceDto;
 		
 		@XmlElementWrapper
 	    @XmlElement(name="sellerSequence")
 		private Map<String,SequenceDto> sellerSequences = new HashMap<String,SequenceDto>();
-		
-		@XmlElementWrapper
-	    @XmlElement(name="providerSequence")
-		private Map<String,SequenceDto> providerSequences = new HashMap<String,SequenceDto>();
 		
 		
 		private List<String> appliesTo = new ArrayList<String>();
@@ -56,6 +53,7 @@ public class InvoiceTypeDto  extends BaseDto{
 			this.code = invoiceType.getCode();
 			this.description = invoiceType.getDescription();			
 			this.occTemplateCode = invoiceType.getOccTemplate() != null ? invoiceType.getOccTemplate().getCode():null;
+			this.occTemplateNegativeCode = invoiceType.getOccTemplateNegative() != null ? invoiceType.getOccTemplateNegative().getCode():null;
 			this.sequenceDto = new SequenceDto(invoiceType.getSequence());
 			if(invoiceType.getAppliesTo() != null){				
 				for(InvoiceType tmpInvoiceType : invoiceType.getAppliesTo()){
@@ -154,8 +152,6 @@ public class InvoiceTypeDto  extends BaseDto{
 			this.sequenceDto = sequenceDto;
 		}
 
-		
-
 		/**
 		 * @return the sellerSequences
 		 */
@@ -171,22 +167,21 @@ public class InvoiceTypeDto  extends BaseDto{
 		}
 
 		/**
-		 * @return the providerSequences
+		 * @return the occTemplateNegativeCode
 		 */
-		public Map<String, SequenceDto> getProviderSequences() {
-			return providerSequences;
+		public String getOccTemplateNegativeCode() {
+			return occTemplateNegativeCode;
 		}
 
 		/**
-		 * @param providerSequences the providerSequences to set
+		 * @param occTemplateNegativeCode the occTemplateNegativeCode to set
 		 */
-		public void setProviderSequences(Map<String, SequenceDto> providerSequences) {
-			this.providerSequences = providerSequences;
+		public void setOccTemplateNegativeCode(String occTemplateNegativeCode) {
+			this.occTemplateNegativeCode = occTemplateNegativeCode;
 		}
 
 		@Override
 		public String toString() {
-			return "InvoiceTypeDto [code=" + code + ", description=" + description + ", occTemplateCode=" + occTemplateCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", providerSequences=" + providerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto + "]";
-		}
-
+			return "InvoiceTypeDto [code=" + code + ", description=" + description + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode=" + occTemplateNegativeCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto + "]";
+		}		
 }

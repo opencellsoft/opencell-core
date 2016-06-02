@@ -2135,24 +2135,6 @@ $BODY$
 </changeSet>
 
 
-    <changeSet author="anasseh (generated)" id="#1685_20160530-80">
-        <dropColumn columnName="credit_note_prefix" tableName="crm_provider"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1685_20160530-81">
-        <dropColumn columnName="credit_note_prefix" tableName="crm_seller"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1685_20160530-82">
-        <dropColumn columnName="credit_note_sequence_size" tableName="crm_provider"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1685_20160530-83">
-        <dropColumn columnName="credit_note_sequence_size" tableName="crm_seller"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1685_20160530-84">
-        <dropColumn columnName="current_credit_note_nb" tableName="crm_provider"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1685_20160530-85">
-        <dropColumn columnName="current_credit_note_nb" tableName="crm_seller"/>
-    </changeSet>
     <changeSet author="anasseh (generated)" id="#1685_20160530-86">
         <dropColumn columnName="current_invoice_adjustment_nb" tableName="crm_provider"/>
     </changeSet>
@@ -2250,5 +2232,16 @@ $BODY$
 	<changeSet id="#1422_20160602" author="anasseh">			
      	<modifyDataType columnName="report" newDataType="text"   tableName="job_execution"/>
 	</changeSet>
+	
+	<changeSet id="#1760-20160602" author="anasseh">			
+		<addColumn tableName="billing_invoice_type">
+			<column name="occ_templ_negative_id" type="BIGINT" />
+		</addColumn>    
+    
+		<addForeignKeyConstraint baseColumnNames="occ_templ_negative_id"
+			baseTableName="billing_invoice_type" constraintName="fk_occ_templ_negative_id_billing_invoice_type"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" />
+	</changeSet>	
 	    	
 </databaseChangeLog>

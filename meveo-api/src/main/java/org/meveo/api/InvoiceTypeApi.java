@@ -63,7 +63,16 @@ public class InvoiceTypeApi extends BaseApi {
         OCCTemplate occTemplate = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateCode(), provider);        
         if (occTemplate == null) {
             throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateCode());
-        }        
+        }    
+        
+        OCCTemplate occTemplateNegative = null;
+        if (!StringUtils.isBlank(invoiceTypeDto.getOccTemplateNegativeCode())) {
+        	occTemplateNegative = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateNegativeCode(), provider);
+        	if(occTemplateNegative == null){
+        		 throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateNegativeCode());
+        	}
+        }  
+        
         List<InvoiceType> invoiceTypesToApplies = new ArrayList<InvoiceType>();       
         if(invoiceTypeDto.getAppliesTo() != null){
         	for(String invoiceTypeCode : invoiceTypeDto.getAppliesTo()){
@@ -79,6 +88,7 @@ public class InvoiceTypeApi extends BaseApi {
         invoiceType.setCode(invoiceTypeDto.getCode());
         invoiceType.setDescription(invoiceTypeDto.getDescription());
         invoiceType.setOccTemplate(occTemplate);
+        invoiceType.setOccTemplateNegative(occTemplateNegative);
         invoiceType.setAppliesTo(invoiceTypesToApplies);
         invoiceType.setSequence(invoiceTypeDto.getSequenceDto() == null ? null : invoiceTypeDto.getSequenceDto().fromDto());
         if(invoiceTypeDto.getSellerSequences() != null){
@@ -116,7 +126,16 @@ public class InvoiceTypeApi extends BaseApi {
         OCCTemplate occTemplate = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateCode(), provider);        
         if (occTemplate == null) {
             throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateCode());
-        }    
+        } 
+        
+        OCCTemplate occTemplateNegative = null;
+        if (!StringUtils.isBlank(invoiceTypeDto.getOccTemplateNegativeCode())) {
+        	occTemplateNegative = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateNegativeCode(), provider);
+        	if(occTemplateNegative == null){
+        		 throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateNegativeCode());
+        	}
+        }  
+        invoiceType.setOccTemplateNegative(occTemplateNegative); 
         invoiceType.setOccTemplate(occTemplate);   
 		if(!StringUtils.isBlank(invoiceTypeDto.getDescription())){
 	        invoiceType.setDescription(invoiceTypeDto.getDescription());
