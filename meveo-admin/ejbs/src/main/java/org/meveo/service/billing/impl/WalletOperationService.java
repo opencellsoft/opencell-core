@@ -21,6 +21,7 @@ import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -1079,12 +1080,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 	@SuppressWarnings("unchecked")
 	public List<WalletOperation> findByUserAccountAndWalletCode(String walletCode, UserAccount userAccount, Boolean orderAscending) {
-		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w");
-		qb.addCriterionEntity("wallet.userAccount", userAccount);
+		
+		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w", Arrays.asList("chargeInstance"), null);
+		
+		qb.addCriterionEntity("w.wallet.userAccount", userAccount);
         // qb.addCriterionEntity("provider", userAccount.getProvider()); // No need as userAccount is provider based already
-		qb.addCriterion("wallet.code", "=", walletCode, true);
+		qb.addCriterion("w.wallet.code", "=", walletCode, true);
 		if (orderAscending != null) {
-			qb.addOrderCriterion("operationDate", orderAscending);
+			qb.addOrderCriterion("w.operationDate", orderAscending);
 		}
 
 		try {
