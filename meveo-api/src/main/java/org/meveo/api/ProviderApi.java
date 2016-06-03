@@ -161,7 +161,7 @@ public class ProviderApi extends BaseApi {
 
         provider.setEntreprise(postData.isEnterprise());
 
-        provider.setDisplayFreeTransacInInvoice(postData.isDisplayFreeTransacInInvoice());
+        provider.setDisplayFreeTransacInInvoice(postData.getInvoiceConfiguration().isDisplayFreeTransacInInvoice());
         provider.setRounding(postData.getRounding());
         provider.setEmail(postData.getEmail());
         provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
@@ -331,7 +331,7 @@ public class ProviderApi extends BaseApi {
             provider.setUserAccount(ua);
         }
 
-        provider.setDisplayFreeTransacInInvoice(postData.isDisplayFreeTransacInInvoice());
+        provider.setDisplayFreeTransacInInvoice(postData.getInvoiceConfiguration().isDisplayFreeTransacInInvoice());
         provider.setEntreprise(postData.isEnterprise());
        
         BankCoordinates bankCoordinates = provider.getBankCoordinates() == null ? new BankCoordinates() : provider.getBankCoordinates();

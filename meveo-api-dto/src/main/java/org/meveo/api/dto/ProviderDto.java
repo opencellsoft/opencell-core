@@ -33,7 +33,6 @@ public class ProviderDto extends BaseDto {
 
 	private boolean enterprise;
 	private boolean levelDuplication;	
-	private boolean displayFreeTransacInInvoice;
 	private Integer rounding = 2;
 	private Long prepaidReservationExpirationDelayinMillisec;
 	private String discountAccountingCode;
@@ -78,7 +77,6 @@ public class ProviderDto extends BaseDto {
 			this.setEnterprise(e.isEntreprise());
 			this.setLevelDuplication(e.isLevelDuplication());
 			
-			this.setDisplayFreeTransacInInvoice(e.isDisplayFreeTransacInInvoice());
 			this.setRecognizeRevenue(e.isRecognizeRevenue());
 
 			if (e.getBankCoordinates() != null) {
@@ -87,7 +85,10 @@ public class ProviderDto extends BaseDto {
 
 			if (e.getInvoiceConfiguration() != null) {
 				this.setInvoiceConfiguration(new InvoiceConfigurationDto(e.getInvoiceConfiguration()));
+			}else{
+				this.setInvoiceConfiguration(new InvoiceConfigurationDto());
 			}
+			this.getInvoiceConfiguration().setDisplayFreeTransacInInvoice(e.isDisplayFreeTransacInInvoice());
 		}
 		
 		customFields = customFieldInstances;
@@ -190,16 +191,6 @@ public class ProviderDto extends BaseDto {
 		this.levelDuplication = levelDuplication;
 	}
 
-	
-
-	public boolean isDisplayFreeTransacInInvoice() {
-		return displayFreeTransacInInvoice;
-	}
-
-	public void setDisplayFreeTransacInInvoice(boolean displayFreeTransacInInvoice) {
-		this.displayFreeTransacInInvoice = displayFreeTransacInInvoice;
-	}	
-
 	public BankCoordinatesDto getBankCoordinates() {
 		return bankCoordinates;
 	}
@@ -265,7 +256,7 @@ public class ProviderDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "ProviderDto [code=" + code + ", description=" + description + ", currency=" + currency + ", country=" + country + ", language=" + language + ", multiCurrency=" + multiCurrency + ", multiCountry=" + multiCountry + ", multiLanguage=" + multiLanguage + ", userAccount=" + userAccount + ", enterprise=" + enterprise + ", levelDuplication=" + levelDuplication + ", displayFreeTransacInInvoice=" + displayFreeTransacInInvoice + ", rounding=" + rounding
+		return "ProviderDto [code=" + code + ", description=" + description + ", currency=" + currency + ", country=" + country + ", language=" + language + ", multiCurrency=" + multiCurrency + ", multiCountry=" + multiCountry + ", multiLanguage=" + multiLanguage + ", userAccount=" + userAccount + ", enterprise=" + enterprise + ", levelDuplication=" + levelDuplication +  ", rounding=" + rounding
 				+ ", prepaidReservationExpirationDelayinMillisec=" + prepaidReservationExpirationDelayinMillisec + ", discountAccountingCode=" + discountAccountingCode + ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", recognizeRevenue=" + recognizeRevenue + ", invoiceConfiguration=" + invoiceConfiguration + ", customFields=" + customFields + "]";
 	}
 
