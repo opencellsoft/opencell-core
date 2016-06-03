@@ -1,7 +1,6 @@
 package org.meveo.admin.action.admin.custom;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -67,6 +66,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     private SortedTreeNode groupedFields;
 
     private TreeNode selectedFieldGrouping;
+    private List<TreeNode> cachedTreeNodes;
 
     private List<EntityCustomAction> entityActions;
 
@@ -193,8 +193,34 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                 }
             }
         }
+        if(cachedTreeNodes!=null&&!cachedTreeNodes.isEmpty()){
+        	for(TreeNode tabNode:cachedTreeNodes){//tab
+        		TreeNode existedTab=getChildNodeByValue(groupedFields,tabNode.getData().toString());
+        		if(existedTab==null){//check tab
+        			existedTab=new SortedTreeNode(CustomFieldTemplate.POSITION_TAB,tabNode.getData().toString(),groupedFields);
+        			existedTab.setExpanded(true);
+        			log.debug("add a tab {} from cache",tabNode.getData());
+        		}
+        		for(TreeNode fieldGroupNode:tabNode.getChildren()){//field groups of tab
+        			TreeNode existedFieldGroup=getChildNodeByValue(existedTab,fieldGroupNode.getData().toString());
+        			if(existedFieldGroup==null){
+        				existedFieldGroup=new SortedTreeNode(CustomFieldTemplate.POSITION_FIELD_GROUP,fieldGroupNode.getData().toString(),existedTab);
+        				log.debug("add a fieldGroup {} from cache",fieldGroupNode.getData());
+        			}
+        		}
+        	}
+        }
 
         return groupedFields;
+    }
+   
+    private TreeNode getChildNodeByValue(TreeNode parentTreeNode,String value){
+    	for(TreeNode childNode:parentTreeNode.getChildren()){
+    		if(childNode.getData().equals(value)){
+    			return childNode;
+    		}
+    	}
+    	return null;
     }
 
     public List<EntityCustomAction> getEntityActions() {
@@ -211,54 +237,31 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         return entityActions;
     }
 
-    public void removeField(){
-    	log.debug("start to remvoe treeNode {}",selectedFieldGrouping);
-    	if(selectedFieldGrouping==null){
-    		return;
-    	}
-    	TreeNode parentTreeNode=selectedFieldGrouping.getParent();
-    	parentTreeNode.getChildren().remove(selectedFieldGrouping);
+    public void removeField(TreeNode currentNode){
+    	currentNode.getParent().getChildren().remove(currentNode);
+    	refreshFields();
     }
-    private void clearChildField(TreeNode treeNode){
-    	Iterator<TreeNode> itr=treeNode.getChildren().iterator();
-    	while(itr.hasNext()){
-    		SortedTreeNode node=(SortedTreeNode)itr.next();
-    		if(node.getType()==CustomFieldTemplate.POSITION_FIELD){
-    			itr.remove();
-    		}
-    	}
-    }
-    
-    public void saveField(){
-    	if(selectedFieldGrouping==null){
-    		return;
-    	}
-    	TreeNode parentNode=selectedFieldGrouping;
-    	SortedTreeNode sortedTreeNode=(SortedTreeNode)selectedFieldGrouping;
-        String guiPosition=sortedTreeNode.getGuiPositionForField().substring(0,sortedTreeNode.getGuiPositionForField().lastIndexOf(";")+1)+"field:";
-        List<CustomFieldTemplate> cfts=customFieldTemplateService.findByAppliesToGuiPrefix(cetPrefix, guiPosition, getCurrentProvider());
-        clearChildField(parentNode);
-        if(cfts!=null){
-        	for(CustomFieldTemplate cft:cfts){
-        		new SortedTreeNode(CustomFieldTemplate.POSITION_FIELD,cft,parentNode);
+    public void refreshFields() {
+    	if(groupedFields!=null){
+    		cachedTreeNodes=new ArrayList<TreeNode>();
+    		for(TreeNode tabNode:groupedFields.getChildren()){
+        		SortedTreeNode tab=new SortedTreeNode(CustomFieldTemplate.POSITION_TAB,tabNode.getData(),null);
+        		cachedTreeNodes.add(tab);
+        		log.debug("in refresh, add tab {} to cache",tabNode);
+        		if(tabNode.getChildCount()!=0){
+        			for(TreeNode fieldGroupNode:tabNode.getChildren()){//fieldgroup
+        				SortedTreeNode fieldGroup=(SortedTreeNode)fieldGroupNode;
+        				if(fieldGroup.getType().equals(CustomFieldTemplate.POSITION_FIELD_GROUP)&&fieldGroupNode.getChildCount()==0){
+        					new SortedTreeNode(CustomFieldTemplate.POSITION_FIELD_GROUP,fieldGroupNode.getData(),tab);
+        					log.debug("in refresh, add a fieldgroup {} into cache",fieldGroupNode.getData());
+        				}
+        			}
+        		}
         	}
-        }
-    }
-	public void updateField(){
-    	if(selectedFieldGrouping==null){
-    		return;
     	}
-    	TreeNode parentNode=selectedFieldGrouping.getParent();
-    	SortedTreeNode sortedTreeNode=(SortedTreeNode)selectedFieldGrouping;
-        String guiPosition=sortedTreeNode.getGuiPositionForField().substring(0,sortedTreeNode.getGuiPositionForField().lastIndexOf(";")+1)+"field:";
-        List<CustomFieldTemplate> cfts=customFieldTemplateService.findByAppliesToGuiPrefix(cetPrefix, guiPosition, getCurrentProvider());
-        clearChildField(parentNode);
-        if(cfts!=null){
-        	for(CustomFieldTemplate cft:cfts){
-        		new SortedTreeNode(CustomFieldTemplate.POSITION_FIELD,cft,parentNode);
-        	}
-        }
+        groupedFields = null;
     }
+
     public void refreshActions() {
         entityActions = null;
     }
@@ -346,12 +349,13 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                 customFieldTemplateService.remove(((CustomFieldTemplate) childNode.getData()).getId());
             } else if (childNode.getType().equals(GroupedCustomField.TYPE_FIELD_GROUP)) {
                 for (TreeNode childChildNode : childNode.getChildren()) {
-                    customFieldTemplateService.remove((CustomFieldTemplate) childChildNode.getData());
+                    customFieldTemplateService.remove(((CustomFieldTemplate) childChildNode.getData()).getId());
                 }
             }
         }
 
         selectedFieldGrouping.getParent().getChildren().remove(selectedFieldGrouping);
+        refreshFields();
 
     }
 
@@ -500,17 +504,10 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                 if (getParent().getType().equals(GroupedCustomField.TYPE_TAB)) {
                     guiPosition = CustomFieldTemplate.POSITION_TAB + ":" + getParent().getData() + ":" + getParent().getParent().getChildren().indexOf(getParent()) + ";"
                             + guiPosition;
-            }
+                }
                 return guiPosition;
-            }else{//field
-            	String guiPosition="";
-            	if (getParent().getType().equals(GroupedCustomField.TYPE_TAB)) {
-            		guiPosition=CustomFieldTemplate.POSITION_TAB+":"+getParent().getData()+":"+getParent().getParent().getChildren().indexOf(getParent())+";";
-            	}else{//fieldgroup
-            		guiPosition=CustomFieldTemplate.POSITION_TAB+":"+getParent().getParent().getData()+":"+getParent().getParent().getParent().getChildren().indexOf(getParent().getParent())+";"+CustomFieldTemplate.POSITION_FIELD_GROUP+":"+getParent().getData()+":"+getParent().getParent().getChildren().indexOf(getParent())+";";
-            	}
-            	return guiPosition+CustomFieldTemplate.POSITION_FIELD+":"+getData()+":"+getParent().getChildren().indexOf(this);
             }
+            return null;
         }
 
         public boolean canMoveUp() {
