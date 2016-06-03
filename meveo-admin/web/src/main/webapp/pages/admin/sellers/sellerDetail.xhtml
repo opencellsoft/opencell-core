@@ -109,9 +109,9 @@
 					widgetVar="dlg_sellerSequenceChgPopup" modal="true"  width="50%" closeOnEscape="true"> 
 					<h:panelGrid columns="4" cellpadding="8"> 
 					
-					 <h:panelGrid columns="4" cellpadding="8"> 
+					 <h:panelGrid columns="4" cellpadding="8" > 
 					<p:outputLabel  value="#{messages['invoiceType.panel']}" />
-					<p:selectOneMenu id="country" value="#{sellerBean.invoiceTypeCode}" disabled="#{sellerBean.isEditSellerSequence}"> 
+					<p:selectOneMenu required="true" label="#{messages['invoiceType.name']}" value="#{sellerBean.invoiceTypeCode}" disabled="#{sellerBean.isEditSellerSequence}"> 
 					<f:selectItem itemLabel="#{messages['commons.select']}" />
 					<f:selectItems value="#{invoiceTypeBean.listAll()}" var="item" itemLabel="#{item.code}" itemValue="#{item.code}"/>
 					</p:selectOneMenu> 

@@ -127,28 +127,20 @@ public class SellerBean extends CustomFieldBean<Seller> {
 		 }
 		 InvoiceType invoiceType=invoiceTypeService.findByCode(invoiceTypeCode, getCurrentProvider());
 		 if(invoiceType!=null){
-			 if(entity.getInvoiceTypeSequence().containsKey(invoiceType)){
-				 messages.error(new BundleKey("messages","seller.sellerSequence.unique")); 
-			 }
-			 else if(!editSellerSequence){
-				 entity.getInvoiceTypeSequence().put(invoiceType, getSequence());
-				 messages.info(new BundleKey("messages","save.successful"));
-			 }else{
-				 for(Entry<InvoiceType,Sequence> entry : entity.getInvoiceTypeSequence().entrySet()){ 
-					 if(entry.getKey().equals(invoiceType)){
-						 Sequence sequence = getSequence();
-						 entry.setValue(sequence);
-						 entity.getInvoiceTypeSequence().put(entry.getKey(),sequence);
-						 break;
-					 }
+			 if(!editSellerSequence){
+				 if(entity.getInvoiceTypeSequence().containsKey(invoiceType)){
+					 messages.error(new BundleKey("messages","seller.sellerSequence.unique")); 
+				 }else{
+					 entity.getInvoiceTypeSequence().put(invoiceType, getSequence());
+					 messages.info(new BundleKey("messages","save.successful"));	 
 				 }
+			 }else{ 
+				 entity.getInvoiceTypeSequence().put(invoiceType,getSequence());
 				 messages.info(new BundleKey("messages","update.successful"));
 			 }
-			 resetSequenceField();
-			 
 		 }
-		 
-	 }
+		 resetSequenceField();	 
+	 }	
 	 
 	 public void deleteSellerSequence(InvoiceType invoiceType){
 		 entity.getInvoiceTypeSequence().remove(invoiceType);
