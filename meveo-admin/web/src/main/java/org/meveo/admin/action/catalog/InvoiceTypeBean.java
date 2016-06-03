@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -71,6 +72,11 @@ public class InvoiceTypeBean extends BaseBean<InvoiceType> {
 	        log.trace("saving new InvoiceType={}", entity.getCode());
 	        getEntity().getAppliesTo().clear();
 	        getEntity().getAppliesTo().addAll(invoiceTypeService.refreshOrRetrieve(invoiceTypesDM.getTarget()));
+	        if(entity.getSequence().getCurrentInvoiceNb().longValue() 
+					< invoiceTypeService.getMaxCurrentInvoiceNumber(getCurrentProvider()).longValue()) {
+				messages.error(new BundleKey("messages", "invoiceType.downgrade.cuurrentNb.error.msg"));
+				return null;
+			}
 	        return super.saveOrUpdate(killConversation);
 	    }
 	  

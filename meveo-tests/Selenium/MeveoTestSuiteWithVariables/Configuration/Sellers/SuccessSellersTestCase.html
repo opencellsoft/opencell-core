@@ -78,126 +78,6 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${InvoicePrefixBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${InvoicePrefix}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${InvoicePrefix}</td>
-	<td>${InvoicePrefixValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${InvoiceSequenceSizeBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${InvoiceSequenceSize}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${InvoiceSequenceSize}</td>
-	<td>${InvoiceSequenceSizeValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CurrentInvoiceNumberBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${CurrentInvoiceNumber}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${CurrentInvoiceNumber}</td>
-	<td>${CurrentInvoiceNumberValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${InvoiceAdjustmentPrefixBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${InvoiceAdjustmentPrefix}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${InvoiceAdjustmentPrefix}</td>
-	<td>${InvoiceAdjustmentPrefixValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CurrentInvoiceAdjustmentNumberBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${CurrentInvoiceAdjustmentNumber}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${CurrentInvoiceAdjustmentNumber}</td>
-	<td>${CurrentInvoiceAdjustmentNumberValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${InvoiceAdjustmentSequenceSizeBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${InvoiceAdjustmentSequenceSize}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${InvoiceAdjustmentSequenceSize}</td>
-	<td>${InvoiceAdjustmentSequenceSizeValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
 	<td>${CurrencyBool}==true</td>
 	<td></td>
 </tr>
@@ -295,6 +175,131 @@
 	<td>endIf</td>
 	<td></td>
 	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${AddNewInvoiceType}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${AddNewInvoiceType}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[9]/div/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//div[9]/div/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${InvoiceTypeBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectInvoiceType}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectInvoiceType}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${InvoiceTypeValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${InvoiceSequenceSizeBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${InvoiceSequenceSize}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${InvoiceSequenceSize}</td>
+	<td>${InvoiceSequenceSizeValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${CurrentInvoiceNumberBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${CurrentInvoiceNumber}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${CurrentInvoiceNumber}</td>
+	<td>${CurrentInvoiceNumberValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${PrefixELBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${PrefixEL}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${PrefixEL}</td>
+	<td>${PrefixELValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SaveSellerSequence}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SaveSellerSequence}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='sellerFormId:tabView:sellerSequenceTable_data']/tr/td</td>
+	<td>${InvoiceTypeValue}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//tbody[@id='sellerFormId:tabView:sellerSequenceTable_data']/tr/td</td>
+	<td>${InvoiceTypeValue}</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
