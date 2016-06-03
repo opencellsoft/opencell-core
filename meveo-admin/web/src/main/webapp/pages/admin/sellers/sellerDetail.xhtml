@@ -70,12 +70,6 @@
 						</f:facet>
 						  <h:outputText value="#{invoiceTypeSeq.key.code}" />
 					   </p:column>
-						<p:column>
-						<f:facet name="header">
-							<h:outputText value="#{messages['invoiceType.sequence.prefixEl']}" />
-						</f:facet>
-						 <h:outputText value="#{invoiceTypeSeq.value.prefixEL}" />  
-					  </p:column>
 					  <p:column>
 						<f:facet name="header">
 							<h:outputText value="#{messages['seller.currentInvoiceNb']}" />
@@ -87,23 +81,45 @@
 							<h:outputText value="#{messages['seller.invoiceSequenceSize']}" />
 						</f:facet>
 						 <h:outputText value="#{invoiceTypeSeq.value.sequenceSize}" />  
-					  </p:column> 		  
+					  </p:column>
+						<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{messages['invoiceType.sequence.prefixEl']}" />
+						</f:facet>
+						 <h:outputText value="#{invoiceTypeSeq.value.prefixEL}" />  
+					  </p:column>					  
+                    	<p:column  width="60px;" >
+								<f:facet name="header">
+									<h:outputText value="#{messages['commons.actions']}" />
+								</f:facet>
+								<p:commandButton  action="#{sellerBean.getSequenceSelected(invoiceTypeSeq.key)}"
+									oncomplete="PF('dlg_sellerSequenceChgPopup').show()" update=":sellerFormId:tabView:sellerSequenceChgPopup"
+									icon="ui-icon-document" /> 
+								<p:commandButton
+									action="#{sellerBean.deleteSellerSequence(invoiceTypeSeq.key)}"
+									icon="ui-icon-trash"
+									update="@form" />
+							</p:column>					  
 					</p:dataTable>
-					
-					<p:commandButton id="editRecurringChgInsLink" 
-					oncomplete="PF('dlg_recurringChgPopup').show()" value="#{messages['commons.addNew']}">
+					<p:commandButton
+					oncomplete="PF('dlg_sellerSequenceChgPopup').show()" value="#{messages['commons.addNew']}">
 				    </p:commandButton> 
-					
-					<p:dialog 
+					<p:dialog id="sellerSequenceChgPopup"
 					header="#{messages['seller.sellerSequence']}"
-					widgetVar="dlg_recurringChgPopup" modal="true"  width="45%" closeOnEscape="true"> 
+					widgetVar="dlg_sellerSequenceChgPopup" modal="true"  width="50%" closeOnEscape="true"> 
 					<h:panelGrid columns="4" cellpadding="8"> 
-					<hftl:decorateFormField  label="#{messages['invoiceType.panel']}" > 
-					<p:selectOneMenu required="true" value="#{sellerBean.invoiceTypeCode}"> 
+					
+					 <h:panelGrid columns="4" cellpadding="8"> 
+					<p:outputLabel  value="#{messages['invoiceType.panel']}" />
+					<p:selectOneMenu id="country" value="#{sellerBean.invoiceTypeCode}" disabled="#{sellerBean.isEditSellerSequence}"> 
 					<f:selectItem itemLabel="#{messages['commons.select']}" />
 					<f:selectItems value="#{invoiceTypeBean.listAll()}" var="item" itemLabel="#{item.code}" itemValue="#{item.code}"/>
-					</p:selectOneMenu>
-					</hftl:decorateFormField> 
+					</p:selectOneMenu> 
+					</h:panelGrid> 
+					<hftl:decorateFormField  
+					label="#{messages['seller.currentInvoiceNb']}">
+					<p:spinner value="#{sellerBean.currentInvoiceNb}"/>
+					</hftl:decorateFormField>
 					
 					<hftl:decorateFormField  
 					label="#{messages['invoiceType.sequenceSize']}">
@@ -111,27 +127,19 @@
 					</hftl:decorateFormField>
 			
 					<hftl:decorateFormField  
-					label="#{messages['seller.currentInvoiceNb']}">
-					<p:spinner value="#{sellerBean.currentInvoiceNb}"/>
-					</hftl:decorateFormField>
-					
-					<hftl:decorateFormField  
 					label="#{messages['invoiceType.sequence.prefixEl']}">
 					<p:inputTextarea rows="6" cols="33" value="#{sellerBean.prefixEl}" />
 					</hftl:decorateFormField>
 					
 					<p:commandButton
-					action="#{sellerBean.addNewInvoiceTypeSequence}"
+					action="#{sellerBean.saveOrUpdateSequence}"
 					value="#{messages['action.save']}" 
-                    update="@form"					
-					oncomplete="PF('dlg_recurringChgPopup').hide()" />
+                    update="@all"					
+					oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_recurringChgPopup').hide()" />
 					</h:panelGrid> 
 					</p:dialog> 
 					</h:panelGroup>	
 					
-					
-                   
-
                     <!-- <p:tab title="#{messages['billingAccount.tab.information']}">
 							<hftl:formField label="#{messages['address.address1']}"
 								field="address" id="address1" childField="address1"
