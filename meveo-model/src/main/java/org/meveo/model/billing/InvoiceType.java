@@ -42,7 +42,6 @@ import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.OCCTemplate;
 
@@ -168,32 +167,8 @@ public class InvoiceType extends BusinessEntity {
 	}
 	
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-		return result;
+	public int hashCode() { 
+	  return id!=null?id.intValue():0;
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        } else if (!(obj instanceof InvoiceType)) {
-            return false;
-        }
-        
-        InvoiceType other = (InvoiceType) obj;
-        if (getId() == null) {
-            if (other.getId() != null) {
-                return false;
-            }
-        } else if (!getId().equals(other.getId())){
-            return false;
-        }
-        return true;
-    }
+ 
 }
