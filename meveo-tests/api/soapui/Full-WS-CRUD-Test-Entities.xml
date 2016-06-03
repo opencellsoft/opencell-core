@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="63d882e4-12ba-48cb-9cf8-b557b7f5787f" activeEnvironment="Default" name="Full WS Test Entities" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="63d882e4-12ba-48cb-9cf8-b557b7f5787f" activeEnvironment="Default" name="Full WS Test Entities" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
   <con:entry key="TestSuite" value="&lt;all>"/>
@@ -28564,7 +28564,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path><content>1</co
          <terminationReasonCode>${#Project#entityPrefix}_${#TestSuite#index}_TR2</terminationReasonCode>
       </ws:findTerminationReason>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="0f4f3b0b-f8f5-47db-ad1b-6dda5285f99c" name="Code Status FAIL"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="eca3027d-7009-4406-8052-889e2115df90" name="ERROR Code"><con:configuration><token>ENTITY_DOES_NOT_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>48</con:value></con:property></con:properties><con:setupScript>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="0f4f3b0b-f8f5-47db-ad1b-6dda5285f99c" name="Code Status FAIL"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="eca3027d-7009-4406-8052-889e2115df90" name="ERROR Code"><con:configuration><token>ENTITY_DOES_NOT_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>49</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite id="31a5ea97-3d5b-4e3c-bf5e-c77c8c5b9627" name="CRUD Catalog"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="3d7fde33-b80f-4645-bc3b-099b145399ad" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD OfferCategories" searchProperties="true"><con:settings/><con:testStep type="request" name="create OfferCategories with All Vals" id="1370ebb0-3f5e-4e6f-aa49-44c3f5b31440"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplateCategory</con:operation><con:request name="create OfferCategories with All Vals" id="c8ede4d6-badf-45c3-bdde-7e9901ea921b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -32904,7 +32904,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
          <appliesTo>OFFER</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f329450a-0c6d-48ba-b306-13ed8d43116c"/><con:assertion type="Simple Contains" id="368b9338-6d7b-40c1-a09d-7bc8673aa087" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>72</con:value></con:property></con:properties><con:setupScript>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f329450a-0c6d-48ba-b306-13ed8d43116c"/><con:assertion type="Simple Contains" id="368b9338-6d7b-40c1-a09d-7bc8673aa087" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>73</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite id="a0a2a7cb-b873-4441-8433-8458e3285508" name="CRUD Customers"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD Customer" searchProperties="true" id="ba686e8b-be4a-40f5-a036-5c1cdcadc9e2"><con:settings/><con:testStep type="request" name="Create customer with All Vals" id="4f7e951e-3ae0-465d-a659-bf6f6d8fefc7"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer with All Vals" id="7d9f2f3a-a0cc-4523-87f1-ca9a852c03f0"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -36010,7 +36010,765 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBAM_Script_Test e
       </ws:delete>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="138d8ba5-7068-4031-8a5d-faa697dc6aaf"/><con:assertion type="XPath Match" id="604d9c93-8e45-45b8-8487-25245fe65581" name="Match content of [status]"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:deleteResponse[1]/return[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>51</con:value></con:property></con:properties><con:setupScript>
+//ns2:deleteResponse[1]/return[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="f5f61a64-5638-4b7c-b5b1-cf78d36da75b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="BAM Workflow" searchProperties="true"><con:settings/><con:testStep type="request" name="Create BAM" id="ebc6d50e-6bed-4131-808f-8cea0336e428"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createBusinessAccountModel</con:operation><con:request name="Create BAM" id="69ca532e-b5cf-4525-84a9-004a174820c2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBusinessAccountModel>
+         <businessAccountModelDto code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST" description="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Description" license="GPL">
+         	  <hierarchyType>C_UA</hierarchyType>
+            <script code="org.meveo.scripts.${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1" description="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1">
+               <type>JAVA</type>
+               <script>
+<![CDATA[
+               package org.meveo.scripts;
+               import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.service.script.account.AccountScript;
+public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 extends AccountScript {
+
+	public static String CONTEXT_SELLER = "CONTEXT_SELLER";
+
+	@Override
+	public void createAccount(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+		// TODO Auto-generated method stub
+		System.out.println("AccountScript.createAccount");
+	}
+
+	@Override
+	public void updateAccount(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+		// TODO Auto-generated method stub
+		System.out.println("AccountScript.updateAccount");
+	}
+
+	@Override
+	public void terminateAccount(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+		// TODO Auto-generated method stub
+		System.out.println("AccountScript.terminateAccount");
+	}
+
+	@Override
+	public void closeAccount(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+		// TODO Auto-generated method stub
+		System.out.println("AccountScript.closeAccount");
+	}
+
+}]]]]>><![CDATA[  
+
+</script>
+            </script>
+            <moduleItems>
+               <customEntityTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Entity Template 1" name="First entity template" description="Entity template testing">
+                  <fields>
+                     <field code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Field1" description="Field one">
+                        <fieldType>STRING</fieldType>
+                        <accountLevel>CE_Entity template 1</accountLevel>
+                        <appliesTo>CE_${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Entity template 1</appliesTo>
+                        <defaultValue>hello</defaultValue>
+                        <storageType>SINGLE</storageType>
+                        <valueRequired>false</valueRequired>
+                        <versionable>false</versionable>
+                        <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+                        <listValues/>
+                        <allowEdit>true</allowEdit>
+                        <hideOnNew>false</hideOnNew>
+                        <maxValue>7</maxValue>
+                        <cacheValue>false</cacheValue>
+                        <guiPosition>tab:First entity template:0;field:0</guiPosition>
+                     </field>
+                  </fields>
+                  <actions>
+                     <action appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Entity template 1" code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_TstBtn" description="Test button">
+                        <script code="BAM_TEST_Action1" description="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_ACTION1 script">
+                           <type>JAVA</type>
+                           <script>import org.meveo.service.script.Script;
+                        		public class BAM_TEST_Action1 extends Script {}</script>
+                        </script>
+                        <label>Test</label>
+                     </action>
+                  </actions>
+               </customEntityTemplate>
+               <customFieldTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_CONSUMPTION" description="Consumption">
+                  <fieldType>DOUBLE</fieldType>
+                  <accountLevel>CUST</accountLevel>
+                  <appliesTo>CUST</appliesTo>
+                  <defaultValue>25.0</defaultValue>
+                  <storageType>SINGLE</storageType>
+                  <valueRequired>false</valueRequired>
+                  <versionable>true</versionable>
+                  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+                  <calendar>MONTHLY</calendar>
+                  <listValues/>
+                  <allowEdit>true</allowEdit>
+                  <hideOnNew>false</hideOnNew>
+                  <cacheValue>false</cacheValue>
+                  <guiPosition>tab:Custom fields:0;field:0</guiPosition>
+               </customFieldTemplate>
+               <filter code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Filter1" description="Filter1">
+                  <shared>false</shared>
+                  <inputXml><![CDATA[<filter>
+  <primarySelector>
+    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>
+    <alias>c</alias>
+    <displayFields>
+      <field>code</field>
+      <field>status</field>
+    </displayFields>
+    <exportFields/>
+    <ignoreIfNotFoundForeignKeys/>
+  </primarySelector>
+  <secondarySelectors/>
+  <filterCondition class="andCompositeFilterCondition">
+    <filterConditionType>COMPOSITE_AND</filterConditionType>
+    <filterConditions>
+      <primitiveFilterCondition>
+        <filterConditionType>PRIMITIVE</filterConditionType>
+        <fieldName>status</fieldName>
+        <operator>=</operator>
+        <operand>enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE</operand>
+      </primitiveFilterCondition>
+    </filterConditions>
+  </filterCondition>
+  <orderCondition>
+    <fieldNames>
+      <field>subscriptionDate</field>
+    </fieldNames>
+    <ascending>false</ascending>
+  </orderCondition>
+</filter>]]]]>><![CDATA[</inputXml>
+               </filter>
+               <jobInstance jobTemplate="ReRatingJob" code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Rerate_Job" timerCode="Hourly">
+                  <jobCategory>RATING</jobCategory>
+                  <active>false</active>
+               </jobInstance>
+               <script code="org.meveo.service.script.Script1" description="Script1">
+                  <type>JAVA</type>
+                  <script>package org.meveo.service.script;
+					import org.meveo.admin.exception.BusinessException;
+					import org.meveo.model.crm.Provider;
+					import org.meveo.model.admin.User;
+					import org.slf4j.Logger;
+					import org.slf4j.LoggerFactory;
+					
+					import java.util.Map;
+					
+					public class Script1 extends org.meveo.service.script.Script {
+						
+						private static final Logger log = LoggerFactory.getLogger(Script1.class);
+							
+						@Override
+					    public void execute(Map&lt;String, Object> context, User user) throws BusinessException {
+							log.debug("Hello MEVEO Module");
+						}
+					
+			   }</script>
+                  <executionRoles name="administrateur">
+                     <description>Administrateur</description>
+                     <permissions>
+                        <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>
+                        <permission permission="billingManagement" name="Billing management" resource="billing"/>
+                        <permission permission="apiAccess" name="API User" resource="user"/>
+                        <permission permission="administrationManagement" name="Administration management" resource="administration"/>
+                        <permission permission="reportingVisualization" name="Reporting visualization" resource="reporting"/>
+                        <permission permission="accountVisualization" name="Account visualization" resource="account"/>
+                        <permission permission="reportingManagement" name="Reporting management" resource="reporting"/>
+                        <permission permission="catalogVisualization" name="Catalog visualization" resource="catalog"/>
+                        <permission permission="billingVisualization" name="Billing visualization" resource="billing"/>
+                        <permission permission="customerSummaryVisualization" name="Customer summary visualization" resource="customerSummary"/>
+                        <permission permission="ftpread" name="FTP Read" resource="administration"/>
+                        <permission permission="accountManagement" name="Account management" resource="account"/>
+                        <permission permission="ftpwrite" name="FTP Write" resource="administration"/>
+                        <permission permission="catalogManagement" name="Catalog management" resource="catalog"/>
+                        <permission permission="remoteImport" name="Remote import" resource="utilities"/>
+                     </permissions>
+                     <roles>
+                        <role name="ModifyAllCE">
+                           <description>Modify all custom entities</description>
+                           <permissions>
+                              <permission permission="modify" name="CE_MEVEO_CF_145_CET-modify" resource="CE_MEVEO_CF_145_CET"/>
+                              <permission permission="modify" name="CE_MEVEO_CF_144_CET-modify" resource="CE_MEVEO_CF_144_CET"/>
+                              <permission permission="modify" name="CE_MEVEO_CF_142_CET-modify" resource="CE_MEVEO_CF_142_CET"/>
+                              <permission permission="modify" name="CE_ProductOrderItem-modify" resource="CE_ProductOrderItem"/>
+                              <permission permission="modify" name="CE_MEVEO_CF_131_CET-modify" resource="CE_MEVEO_CF_131_CET"/>
+                              <permission permission="modify" name="CE_MEVEO_CF_130_CET-modify" resource="CE_MEVEO_CF_130_CET"/>
+                              <permission permission="modify" name="CE_MEVEO_CF_141_CET-modify" resource="CE_MEVEO_CF_141_CET"/>
+                              <permission permission="modify" name="CE_Entity template 1-modify" resource="CE_Entity template 1"/>
+                              <permission permission="modify" name="CE_Entity template2-modify" resource="CE_Entity template2"/>
+                              <permission permission="modify" name="CE_MEVEO_CF_143_CET-modify" resource="CE_MEVEO_CF_143_CET"/>
+                              <permission permission="modify" name="CE_ProductOrder-modify" resource="CE_ProductOrder"/>
+                           </permissions>
+                           <roles>
+                              <role name="ReadAllCE">
+                                 <description>Read all custom entities</description>
+                                 <permissions>
+                                    <permission permission="read" name="CE_MEVEO_CF_145_CET-read" resource="CE_MEVEO_CF_145_CET"/>
+                                    <permission permission="read" name="CE_MEVEO_CF_141_CET-read" resource="CE_MEVEO_CF_141_CET"/>
+                                    <permission permission="read" name="CE_Entity template 1-read" resource="CE_Entity template 1"/>
+                                    <permission permission="read" name="CE_MEVEO_CF_143_CET-read" resource="CE_MEVEO_CF_143_CET"/>
+                                    <permission permission="read" name="CE_MEVEO_CF_142_CET-read" resource="CE_MEVEO_CF_142_CET"/>
+                                    <permission permission="read" name="CE_MEVEO_CF_131_CET-read" resource="CE_MEVEO_CF_131_CET"/>
+                                    <permission permission="read" name="CE_MEVEO_CF_144_CET-read" resource="CE_MEVEO_CF_144_CET"/>
+                                    <permission permission="read" name="CE_ProductOrderItem-read" resource="CE_ProductOrderItem"/>
+                                    <permission permission="read" name="CE_Entity template2-read" resource="CE_Entity template2"/>
+                                    <permission permission="read" name="CE_MEVEO_CF_130_CET-read" resource="CE_MEVEO_CF_130_CET"/>
+                                    <permission permission="read" name="CE_ProductOrder-read" resource="CE_ProductOrder"/>
+                                 </permissions>
+                                 <roles/>
+                              </role>
+                           </roles>
+                        </role>
+                     </roles>
+                  </executionRoles>
+                  <sourcingRoles name="administrateur">
+                     <description>Administrateur</description>
+                     <permissions>
+                        <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>
+                        <permission permission="billingManagement" name="Billing management" resource="billing"/>
+                        <permission permission="apiAccess" name="API User" resource="user"/>
+                        <permission permission="administrationManagement" name="Administration management" resource="administration"/>
+                        <permission permission="reportingVisualization" name="Reporting visualization" resource="reporting"/>
+                        <permission permission="accountVisualization" name="Account visualization" resource="account"/>
+                        <permission permission="reportingManagement" name="Reporting management" resource="reporting"/>
+                        <permission permission="catalogVisualization" name="Catalog visualization" resource="catalog"/>
+                        <permission permission="billingVisualization" name="Billing visualization" resource="billing"/>
+                        <permission permission="customerSummaryVisualization" name="Customer summary visualization" resource="customerSummary"/>
+                        <permission permission="ftpread" name="FTP Read" resource="administration"/>
+                        <permission permission="accountManagement" name="Account management" resource="account"/>
+                        <permission permission="ftpwrite" name="FTP Write" resource="administration"/>
+                        <permission permission="catalogManagement" name="Catalog management" resource="catalog"/>
+                        <permission permission="remoteImport" name="Remote import" resource="utilities"/>
+                     </permissions>
+                     <roles>
+                        <role name="ModifyAllCE">
+                           <description>Modify all custom entities</description>
+                           <permissions>
+                              <permission permission="modify" name="CE_MEVEO_CF_145_CET-modify" resource="CE_MEVEO_CF_145_CET"/>
+                              <permission permission="modify" name="CE_MEVEO_CF_144_CET-modify" resource="CE_MEVEO_CF_144_CET"/>
+                              <permission permission="modify" name="CE_MEVEO_CF_142_CET-modify" resource="CE_MEVEO_CF_142_CET"/>
+                              <permission permission="modify" name="CE_ProductOrderItem-modify" resource="CE_ProductOrderItem"/>
+                              <permission permission="modify" name="CE_MEVEO_CF_131_CET-modify" resource="CE_MEVEO_CF_131_CET"/>
+                              <permission permission="modify" name="CE_MEVEO_CF_130_CET-modify" resource="CE_MEVEO_CF_130_CET"/>
+                              <permission permission="modify" name="CE_MEVEO_CF_141_CET-modify" resource="CE_MEVEO_CF_141_CET"/>
+                              <permission permission="modify" name="CE_Entity template 1-modify" resource="CE_Entity template 1"/>
+                              <permission permission="modify" name="CE_Entity template2-modify" resource="CE_Entity template2"/>
+                              <permission permission="modify" name="CE_MEVEO_CF_143_CET-modify" resource="CE_MEVEO_CF_143_CET"/>
+                              <permission permission="modify" name="CE_ProductOrder-modify" resource="CE_ProductOrder"/>
+                           </permissions>
+                           <roles>
+                              <role name="ReadAllCE">
+                                 <description>Read all custom entities</description>
+                                 <permissions>
+                                    <permission permission="read" name="CE_MEVEO_CF_145_CET-read" resource="CE_MEVEO_CF_145_CET"/>
+                                    <permission permission="read" name="CE_MEVEO_CF_141_CET-read" resource="CE_MEVEO_CF_141_CET"/>
+                                    <permission permission="read" name="CE_Entity template 1-read" resource="CE_Entity template 1"/>
+                                    <permission permission="read" name="CE_MEVEO_CF_143_CET-read" resource="CE_MEVEO_CF_143_CET"/>
+                                    <permission permission="read" name="CE_MEVEO_CF_142_CET-read" resource="CE_MEVEO_CF_142_CET"/>
+                                    <permission permission="read" name="CE_MEVEO_CF_131_CET-read" resource="CE_MEVEO_CF_131_CET"/>
+                                    <permission permission="read" name="CE_MEVEO_CF_144_CET-read" resource="CE_MEVEO_CF_144_CET"/>
+                                    <permission permission="read" name="CE_ProductOrderItem-read" resource="CE_ProductOrderItem"/>
+                                    <permission permission="read" name="CE_Entity template2-read" resource="CE_Entity template2"/>
+                                    <permission permission="read" name="CE_MEVEO_CF_130_CET-read" resource="CE_MEVEO_CF_130_CET"/>
+                                    <permission permission="read" name="CE_ProductOrder-read" resource="CE_ProductOrder"/>
+                                 </permissions>
+                                 <roles/>
+                              </role>
+                           </roles>
+                        </role>
+                     </roles>
+                  </sourcingRoles>
+               </script>
+               <timerEntity code="Hourly" hour="*" minute="0" second="0" year="*" month="*" dayOfMonth="*" dayOfWeek="*"/>
+               <emailNotif code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_EmailNotification">
+                  <classNameFilter>org.meveo.model.billing.UserAccount</classNameFilter>
+                  <eventTypeFilter>UPDATED</eventTypeFilter>
+                  <scriptParams/>
+                  <emailFrom>info@opencell.info</emailFrom>
+                  <subject>Test</subject>
+                  <body>Test</body>
+               </emailNotif>
+               <subModule code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Child module 1" license="GPL" description="Child module 1">
+                  <moduleItems>
+                     <customEntityTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Entity template2" name="Second entity " description="Second entity template">
+                        <fields>
+                           <field code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Field2" description="Field two">
+                              <fieldType>LONG</fieldType>
+                              <accountLevel>CE_Entity template2</accountLevel>
+                              <appliesTo>CE_${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Entity template2</appliesTo>
+                              <storageType>SINGLE</storageType>
+                              <valueRequired>false</valueRequired>
+                              <versionable>false</versionable>
+                              <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+                              <listValues/>
+                              <allowEdit>true</allowEdit>
+                              <hideOnNew>false</hideOnNew>
+                              <cacheValue>false</cacheValue>
+                              <guiPosition>tab:Second entity :0;field:0</guiPosition>
+                           </field>
+                        </fields>
+                        <actions/>
+                     </customEntityTemplate>
+                     <customFieldTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_HIGH_CONSUMP_FLAG" description="High consumer">
+                        <fieldType>STRING</fieldType>
+                        <accountLevel>CUST</accountLevel>
+                        <appliesTo>CUST</appliesTo>
+                        <defaultValue>X</defaultValue>
+                        <storageType>SINGLE</storageType>
+                        <valueRequired>false</valueRequired>
+                        <versionable>false</versionable>
+                        <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+                        <listValues/>
+                        <allowEdit>true</allowEdit>
+                        <hideOnNew>false</hideOnNew>
+                        <maxValue>3</maxValue>
+                        <cacheValue>false</cacheValue>
+                        <guiPosition>tab:Custom fields:0;field:1</guiPosition>
+                        <applicableOnEl>#{mv:executeScript(entity, "org.meveo.test.TestCFTScript",null,entity.auditable.creator) > 10}</applicableOnEl>
+                     </customFieldTemplate>
+                     <filter code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Filter2" description="Filter2">
+                        <shared>true</shared>
+                        <inputXml><![CDATA[<filter>
+					  <primarySelector>
+					    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>
+					    <alias>c</alias>
+					    <displayFields>
+					      <field>code</field>
+					      <field>status</field>
+					    </displayFields>
+					    <exportFields/>
+					    <ignoreIfNotFoundForeignKeys/>
+					  </primarySelector>
+					  <secondarySelectors/>
+					  <filterCondition class="andCompositeFilterCondition">
+					    <filterConditionType>COMPOSITE_AND</filterConditionType>
+					    <filterConditions>
+					      <primitiveFilterCondition>
+					        <filterConditionType>PRIMITIVE</filterConditionType>
+					        <fieldName>status</fieldName>
+					        <operator>=</operator>
+					        <operand>enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE</operand>
+					      </primitiveFilterCondition>
+					    </filterConditions>
+					  </filterCondition>
+					  <orderCondition>
+					    <fieldNames>
+					      <field>subscriptionDate</field>
+					    </fieldNames>
+					    <ascending>false</ascending>
+					  </orderCondition>
+					</filter>]]]]>><![CDATA[</inputXml>
+                     </filter>
+                     <jobInstance jobTemplate="InvoicingJob" code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Inv_Job" timerCode="Hourly">
+                        <jobCategory>INVOICING</jobCategory>
+                        <active>false</active>
+                     </jobInstance>
+                     <jobInstance jobTemplate="PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Purge Job" description="Purge job" timerCode="Hourly">
+                        <jobCategory>UTILS</jobCategory>
+                        <followingJob>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Inv_Job</followingJob>
+                        <parameter>purgeak</parameter>
+                        <active>false</active>
+                        <customFields>
+                           <customField code="PurgeJob_counterPeriod_nbDays">
+                              <longValue>30</longValue>
+                           </customField>
+                           <customField code="PurgeJob_jobExecHistory_nbDays">
+                              <longValue>20</longValue>
+                           </customField>
+                           <customField code="PurgeJob_jobExecHistory_jobName">
+                              <stringValue>Invoicing</stringValue>
+                           </customField>
+                        </customFields>
+                     </jobInstance>
+                     <script code="org.meveo.service.script.Script3" description="Script3">
+                        <type>JAVA</type>
+                        <script>package org.meveo.service.script;
+						import org.meveo.admin.exception.BusinessException;
+						import org.meveo.model.crm.Provider;
+						import org.meveo.model.admin.User;
+						import org.slf4j.Logger;
+						import org.slf4j.LoggerFactory;
+						
+						import java.util.Map;
+						
+						public class Script3 extends org.meveo.service.script.Script {
+							
+							private static final Logger log = LoggerFactory.getLogger(Script3.class);
+								
+							@Override
+						    public void execute(Map&lt;String, Object> context, User user) throws BusinessException {
+								log.debug("Hello MEVEO Module");
+							}
+						
+				    }</script>
+                        <executionRoles name="administrateur">
+                           <description>Administrateur</description>
+                           <permissions>
+                              <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>
+                              <permission permission="billingManagement" name="Billing management" resource="billing"/>
+                              <permission permission="apiAccess" name="API User" resource="user"/>
+                              <permission permission="administrationManagement" name="Administration management" resource="administration"/>
+                              <permission permission="reportingVisualization" name="Reporting visualization" resource="reporting"/>
+                              <permission permission="accountVisualization" name="Account visualization" resource="account"/>
+                              <permission permission="reportingManagement" name="Reporting management" resource="reporting"/>
+                              <permission permission="catalogVisualization" name="Catalog visualization" resource="catalog"/>
+                              <permission permission="billingVisualization" name="Billing visualization" resource="billing"/>
+                              <permission permission="customerSummaryVisualization" name="Customer summary visualization" resource="customerSummary"/>
+                              <permission permission="ftpread" name="FTP Read" resource="administration"/>
+                              <permission permission="accountManagement" name="Account management" resource="account"/>
+                              <permission permission="ftpwrite" name="FTP Write" resource="administration"/>
+                              <permission permission="catalogManagement" name="Catalog management" resource="catalog"/>
+                              <permission permission="remoteImport" name="Remote import" resource="utilities"/>
+                           </permissions>
+                           <roles>
+                              <role name="ModifyAllCE">
+                                 <description>Modify all custom entities</description>
+                                 <permissions>
+                                    <permission permission="modify" name="CE_MEVEO_CF_145_CET-modify" resource="CE_MEVEO_CF_145_CET"/>
+                                    <permission permission="modify" name="CE_MEVEO_CF_144_CET-modify" resource="CE_MEVEO_CF_144_CET"/>
+                                    <permission permission="modify" name="CE_MEVEO_CF_142_CET-modify" resource="CE_MEVEO_CF_142_CET"/>
+                                    <permission permission="modify" name="CE_ProductOrderItem-modify" resource="CE_ProductOrderItem"/>
+                                    <permission permission="modify" name="CE_MEVEO_CF_131_CET-modify" resource="CE_MEVEO_CF_131_CET"/>
+                                    <permission permission="modify" name="CE_MEVEO_CF_130_CET-modify" resource="CE_MEVEO_CF_130_CET"/>
+                                    <permission permission="modify" name="CE_MEVEO_CF_141_CET-modify" resource="CE_MEVEO_CF_141_CET"/>
+                                    <permission permission="modify" name="CE_Entity template 1-modify" resource="CE_Entity template 1"/>
+                                    <permission permission="modify" name="CE_Entity template2-modify" resource="CE_Entity template2"/>
+                                    <permission permission="modify" name="CE_MEVEO_CF_143_CET-modify" resource="CE_MEVEO_CF_143_CET"/>
+                                    <permission permission="modify" name="CE_ProductOrder-modify" resource="CE_ProductOrder"/>
+                                 </permissions>
+                                 <roles>
+                                    <role name="ReadAllCE">
+                                       <description>Read all custom entities</description>
+                                       <permissions>
+                                          <permission permission="read" name="CE_MEVEO_CF_145_CET-read" resource="CE_MEVEO_CF_145_CET"/>
+                                          <permission permission="read" name="CE_MEVEO_CF_141_CET-read" resource="CE_MEVEO_CF_141_CET"/>
+                                          <permission permission="read" name="CE_Entity template 1-read" resource="CE_Entity template 1"/>
+                                          <permission permission="read" name="CE_MEVEO_CF_143_CET-read" resource="CE_MEVEO_CF_143_CET"/>
+                                          <permission permission="read" name="CE_MEVEO_CF_142_CET-read" resource="CE_MEVEO_CF_142_CET"/>
+                                          <permission permission="read" name="CE_MEVEO_CF_131_CET-read" resource="CE_MEVEO_CF_131_CET"/>
+                                          <permission permission="read" name="CE_MEVEO_CF_144_CET-read" resource="CE_MEVEO_CF_144_CET"/>
+                                          <permission permission="read" name="CE_ProductOrderItem-read" resource="CE_ProductOrderItem"/>
+                                          <permission permission="read" name="CE_Entity template2-read" resource="CE_Entity template2"/>
+                                          <permission permission="read" name="CE_MEVEO_CF_130_CET-read" resource="CE_MEVEO_CF_130_CET"/>
+                                          <permission permission="read" name="CE_ProductOrder-read" resource="CE_ProductOrder"/>
+                                       </permissions>
+                                       <roles/>
+                                    </role>
+                                 </roles>
+                              </role>
+                           </roles>
+                        </executionRoles>
+                     </script>
+                     <script code="org.meveo.service.script.Script2" description="Script2">
+                        <type>JAVA</type>
+                        <script>package org.meveo.service.script;
+
+					import org.meveo.admin.exception.BusinessException;
+					import org.meveo.model.crm.Provider;
+					import org.meveo.model.admin.User;
+					import org.slf4j.Logger;
+					import org.slf4j.LoggerFactory;
+					
+					import java.util.Map;
+					
+					public class Script2 extends org.meveo.service.script.Script {
+						
+						private static final Logger log = LoggerFactory.getLogger(Script2.class);
+							
+						@Override
+					    public void execute(Map&lt;String, Object> context, User user) throws BusinessException {
+							log.debug("Hello MEVEO Module");
+						}
+					
+					}</script>
+                        <executionRoles name="superAdministrateur">
+                           <description>Super Administrateur</description>
+                           <permissions>
+                              <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>
+                              <permission permission="remoteImport" name="Remote import" resource="utilities"/>
+                              <permission permission="superAdminManagement" name="SuperAdmin management" resource="superAdmin"/>
+                           </permissions>
+                           <roles/>
+                        </executionRoles>
+                     </script>
+                     <notification code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Notification2">
+                        <classNameFilter>org.meveo.model.crm.Customer</classNameFilter>
+                        <eventTypeFilter>DISABLED</eventTypeFilter>
+                        <scriptInstanceCode>org.meveo.service.script.Script3</scriptInstanceCode>
+                        <scriptParams/>
+                     </notification>
+                     <timerEntity code="Hourly" hour="*" minute="0" second="0" year="*" month="*" dayOfMonth="*" dayOfWeek="*"/>
+                     <webhookNotif code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Webhook2">
+                        <classNameFilter>org.meveo.model.billing.BillingAccount</classNameFilter>
+                        <eventTypeFilter>REJECTED</eventTypeFilter>
+                        <scriptParams/>
+                        <host>i.meveo.info</host>
+                        <port>443</port>
+                        <page>meveo/api/rest</page>
+                        <httpMethod>HTTP_POST</httpMethod>
+                        <headers/>
+                        <params/>
+                     </webhookNotif>
+                     <measurableQuantity code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Measure_Chart">
+                        <dimension1>Three</dimension1>
+                        <dimension2>Four</dimension2>
+                        <editable>false</editable>
+                        <additive>false</additive>
+                     </measurableQuantity>
+                     <barChart code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_chart" description="Chart">
+                        <measurableQuantity code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Measure_Chart">
+                           <dimension1>Offer</dimension1>
+                           <dimension2>Billing acc.</dimension2>
+                           <dimension3>Payer acc.</dimension3>
+                           <dimension4>Custommer</dimension4>
+                           <editable>false</editable>
+                           <additive>true</additive>
+                           <sqlQuery>SELECT  wo.amount_without_tax/((EXTRACT(epoch FROM (wo.end_date - wo.start_date))/86400)) as mrr_value,
+					        wo.offer_code as offer_code,ba.code as ba_code,ca.code as ca_code,cust.code as cust_code
+					        FROM billing_wallet_operation wo
+					        LEFT JOIN crm_provider p ON p.id=wo.provider_id
+					        LEFT JOIN billing_charge_instance ci ON ci.id=wo.charge_instance_id
+					        LEFT JOIN billing_subscription sub ON sub.id = ci.subscription_id
+					        LEFT JOIN billing_wallet w ON w.id=wo.wallet_id
+					        LEFT JOIN billing_user_account uaa ON uaa.id= w.user_account_id
+					        LEFT JOIN account_entity ua ON ua.id= uaa.id
+					        LEFT JOIN billing_billing_account baa ON baa.id= uaa.billing_account_id
+					        LEFT JOIN account_entity ba ON ba.id= baa.id
+					        LEFT JOIN ar_customer_account caa ON caa.id= baa.customer_account_id
+					        LEFT JOIN account_entity ca ON ca.id= caa.id
+					        LEFT JOIN crm_customer custa ON custa.id= caa.customer_id
+					        LEFT JOIN account_entity cust ON cust.id= custa.id
+					        WHERE wo.disabled=FALSE
+					        AND wo.provider_id=#{provider}
+					        AND NOT(wo.end_date IS NULL)
+					        AND ((EXTRACT(epoch FROM (wo.end_date - wo.start_date))/86400))>0
+					        AND (wo.start_date &lt;= '#{date}') AND (wo.end_date > '#{date}')</sqlQuery>
+                           <measurementPeriod>DAILY</measurementPeriod>
+                           <lastMeasureDate>2016-02-21T20:00:00-03:00</lastMeasureDate>
+                        </measurableQuantity>
+                        <width>1400px</width>
+                        <height>100px</height>
+                        <style>width:1000px</style>
+                        <visible>true</visible>
+                        <barPadding>8</barPadding>
+                        <barMargin>10</barMargin>
+                        <stacked>false</stacked>
+                        <breakOnNull>false</breakOnNull>
+                        <xaxisLabel>Date</xaxisLabel>
+                        <yaxisLabel>Monthly Rec. Revenue</yaxisLabel>
+                        <xaxisAngle>30</xaxisAngle>
+                        <legendCols>0</legendCols>
+                        <legendRows>0</legendRows>
+                        <zoom>true</zoom>
+                        <animate>false</animate>
+                        <showDataTip>true</showDataTip>
+                     </barChart>
+                  </moduleItems>
+               </subModule>
+               <measurableQuantity code="${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Measure1">
+                  <dimension1>first</dimension1>
+                  <dimension2>second</dimension2>
+                  <editable>false</editable>
+                  <additive>false</additive>
+                  <sqlQuery>select now from dual</sqlQuery>
+               </measurableQuantity>
+            </moduleItems>
+         </businessAccountModelDto>
+      </ws:createBusinessAccountModel>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e401886d-40b4-4124-b0da-17e5c12aa472"/><con:assertion type="Simple Contains" id="4cf3e5f9-853b-4b0b-a220-e7422c7b2c30" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Execute BAM" id="40a08387-81a4-42a1-a95e-3cb82c69a8af"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createBusinessAccountModel</con:operation><con:request name="Execute BAM" id="69ca532e-b5cf-4525-84a9-004a174820c2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</crmAccountType>
+            <!--Optional:-->
+            <crmParentCode>MAIN_SELLER</crmParentCode>
+            <!--Optional:-->
+            <code>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</code>
+            <!--Optional:-->
+            <description>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_description</description>
+            <!--Optional:-->
+            <externalRef1>ref1</externalRef1>
+            <!--Optional:-->
+            <externalRef2>ref2</externalRef2>
+            <!--Optional:-->
+            <name>
+               <!--Optional:-->
+               <title>M</title>
+               <!--Optional:-->
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1></address1>
+               <!--Optional:-->
+               <address2></address2>
+               <!--Optional:-->               
+               <zipCode>4030</zipCode>
+               <!--Optional:-->
+               <city>Los Banos</city>
+               <!--Optional:-->
+               <country>PH</country>
+               <!--Optional:-->
+               <state>Laguna</state>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>czetsuya@gmail.com</email>
+               <!--Optional:-->
+               <phone>09152154716</phone>
+               <!--Optional:-->
+               <mobile>0629951689</mobile>
+              
+            </contactInformation>
+            <!--Optional:-->
+            <language>ENG</language>
+            <!--Optional:-->
+            <paymentMethod>CHECK</paymentMethod>
+            
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+            <!--Optional:-->
+            <seller>MAIN_SELLER</seller>
+            <!--Optional:-->
+            <mandateIdentification>1234</mandateIdentification>
+           
+            <currency>EUR</currency>
+           
+            <creditCategory>PART_C</creditCategory>
+            <!--Optional:-->
+            
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <!--Optional:-->
+            <country>US</country>
+           
+            <electronicBilling>true</electronicBilling>
+           
+            <email>edward.legaspi@manaty.net</email>
+         </crmAccountHierarchy>
+      </ws:createCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e401886d-40b4-4124-b0da-17e5c12aa472"/><con:assertion type="Simple Contains" id="4cf3e5f9-853b-4b0b-a220-e7422c7b2c30" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update BAM" id="0b9e13b7-a361-4df9-a340-13abfbe2313b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createBusinessAccountModel</con:operation><con:request name="Update BAM" id="69ca532e-b5cf-4525-84a9-004a174820c2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</crmAccountType>
+            <!--Optional:-->
+            <crmParentCode>MAIN_SELLER</crmParentCode>
+            <!--Optional:-->
+            <code>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</code>
+            <!--Optional:-->
+            <description>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_description-updated</description>
+            <!--Optional:-->
+            <externalRef1>ref1</externalRef1>
+            <!--Optional:-->
+            <externalRef2>ref2</externalRef2>
+            <!--Optional:-->
+            <name>
+               <!--Optional:-->
+               <title>M</title>
+               <!--Optional:-->
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1></address1>
+               <!--Optional:-->
+               <address2></address2>
+               <!--Optional:-->               
+               <zipCode>4030</zipCode>
+               <!--Optional:-->
+               <city>Los Banos</city>
+               <!--Optional:-->
+               <country>PH</country>
+               <!--Optional:-->
+               <state>Laguna</state>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>czetsuya@gmail.com</email>
+               <!--Optional:-->
+               <phone>09152154716</phone>
+               <!--Optional:-->
+               <mobile>0629951689</mobile>
+              
+            </contactInformation>
+            <!--Optional:-->
+            <language>ENG</language>
+            <!--Optional:-->
+            <paymentMethod>CHECK</paymentMethod>
+            
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+            <!--Optional:-->
+            <seller>MAIN_SELLER</seller>
+            <!--Optional:-->
+            <mandateIdentification>1234</mandateIdentification>
+           
+            <currency>EUR</currency>
+           
+            <creditCategory>PART_C</creditCategory>
+            <!--Optional:-->
+            
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <!--Optional:-->
+            <country>US</country>
+           
+            <electronicBilling>true</electronicBilling>
+           
+            <email>edward.legaspi@manaty.net</email>
+         </crmAccountHierarchy>
+      </ws:updateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e401886d-40b4-4124-b0da-17e5c12aa472"/><con:assertion type="Simple Contains" id="4cf3e5f9-853b-4b0b-a220-e7422c7b2c30" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Terminate BA" id="4e0c17b0-9530-4a18-8a31-bbdeecedad7d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createBusinessAccountModel</con:operation><con:request name="Terminate BA" id="69ca532e-b5cf-4525-84a9-004a174820c2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:terminateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+             <!--Optional:-->
+            <crmAccountType>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</crmAccountType>
+            <!--Optional:-->
+            <code>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</code>
+            <terminationDate>2016-05-05</terminationDate>
+            <terminationReason>TERM_REASON_1</terminationReason>
+         </crmAccountHierarchy>
+      </ws:terminateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e401886d-40b4-4124-b0da-17e5c12aa472"/><con:assertion type="Simple Contains" id="4cf3e5f9-853b-4b0b-a220-e7422c7b2c30" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Close CRM Account Hierarchy" id="11f8d43d-a382-4599-81a2-9b9f78563bd8"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createBusinessAccountModel</con:operation><con:request name="Close CRM Account Hierarchy" id="69ca532e-b5cf-4525-84a9-004a174820c2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:closeCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <crmAccountType>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</crmAccountType>
+            <!--Optional:-->
+            <code>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</code>
+         </crmAccountHierarchy>
+      </ws:closeCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e401886d-40b4-4124-b0da-17e5c12aa472"/><con:assertion type="Simple Contains" id="4cf3e5f9-853b-4b0b-a220-e7422c7b2c30" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Account Hierarchy" id="f10b2f05-61e8-4711-ac60-c7dbbadd996e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createBusinessAccountModel</con:operation><con:request name="Find Account Hierarchy" id="69ca532e-b5cf-4525-84a9-004a174820c2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>         
+         <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</customerCode>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e401886d-40b4-4124-b0da-17e5c12aa472"/><con:assertion type="Simple Contains" id="4cf3e5f9-853b-4b0b-a220-e7422c7b2c30" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="d4f67382-3f3f-4758-9e95-2b9bf607688d" name="Response"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
+//ns2:findCustomerResponse[1]/return[1]/actionStatus[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="Customer"><con:configuration><path>//return/customer/@code</path><content>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="Customer Account"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/@code</path><content>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="Billing Account"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/@code</path><content>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="User Account"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/userAccounts[1]/userAccount/@code</path><content>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="Billing Account - Terminated"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/status</path><content>TERMINATED</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="User Account - Terminated"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/userAccounts[1]/userAccount/status</path><content>TERMINATED</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="Customer Account - Closed"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/status</path><content>CLOSE</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>52</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite id="c53779ef-2907-445a-9d72-4e4816cb2d01" name="CRUD Rating"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="87abb0b0-f3a5-429b-9e88-165bfc9edaf5" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD DiscountPlan" searchProperties="true"><con:settings/><con:testStep type="request" name="create DiscountPlan with All Vals" id="d4da562a-97e6-401c-b740-853e373050c3"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createDiscountPlan</con:operation><con:request name="create DiscountPlan with All Vals" id="654ed8a5-1982-4ed6-8fbe-e6d82fdce941"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -36444,7 +37202,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
           <triggeredEdrCode>${#Project#entityPrefix}_${#TestSuite#index}_TrEDR2</triggeredEdrCode>
       </ws:findTriggeredEdr>
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="cd10c27a-f86f-4dd3-94bc-45a9fe774b65" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="f86775ae-de39-41b8-b230-5cb2eaf6505b" name="ERROR Code"><con:configuration><token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>39</con:value></con:property></con:properties><con:setupScript>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="cd10c27a-f86f-4dd3-94bc-45a9fe774b65" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="f86775ae-de39-41b8-b230-5cb2eaf6505b" name="ERROR Code"><con:configuration><token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>40</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite id="d459c40a-9525-49e6-ab26-606e90e05a7d" name="CRUD Reporting"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="b26e2cfb-2d8e-4cb4-9ae2-ba5c3ab44bfa" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD MeasurableQuantities" searchProperties="true"><con:settings/><con:testStep type="request" name="create MeasurableQuantities with All Vals" id="668a233f-16e6-46e1-9256-96a203978ea7"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createMeasurableQuantity</con:operation><con:request name="create MeasurableQuantities with All Vals" id="6cd4934b-337c-4c28-8fd8-7b9dce84ee36"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -37335,7 +38093,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <chartCode>${#Project#entityPrefix}_${#TestSuite#index}_LC_Code2</chartCode>
       </ws:findChart>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="358e5189-e56d-48d0-a009-5475a7d76191" name="ERROR Code"><con:configuration><token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>42</con:value></con:property></con:properties><con:setupScript>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="dbb2d7dd-e359-41d3-baec-2bbb6f207f77" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="358e5189-e56d-48d0-a009-5475a7d76191" name="ERROR Code"><con:configuration><token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>43</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite id="a4a806e4-d644-46c0-a7ca-869ca2d83a7c" name="CRUD Administration"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="03d3419e-4026-4dd1-ad82-5efcbd084dc2" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD Module" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Module" id="044435f7-9ab2-4474-b6f7-8ee0cfbd70af"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create Module" id="26fadc13-9fcd-4022-a898-007cee426e83"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -40048,7 +40806,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
       	<notificationCode>${#Project#entityPrefix}_${#TestSuite#index}_EmailNotif2</notificationCode>
       </ws:findEmailNotification>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="64d04093-53e3-4916-9a0c-5c235dfbd777"/><con:assertion type="Simple Contains" id="73e66b15-80b3-4ad5-8604-7a38a5c4a3ce" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="bc5ff0cb-82eb-482b-a24a-46ab0bff796e" name="ERROR Code"><con:configuration><token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>58</con:value></con:property></con:properties><con:setupScript>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="64d04093-53e3-4916-9a0c-5c235dfbd777"/><con:assertion type="Simple Contains" id="73e66b15-80b3-4ad5-8604-7a38a5c4a3ce" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="bc5ff0cb-82eb-482b-a24a-46ab0bff796e" name="ERROR Code"><con:configuration><token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>59</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite id="8c1b8c7b-b6f9-4242-9fa7-cd34a390ce53" name="Sub creation, Service Activation, Charging and invoicing"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Subscription creation and Service activation" searchProperties="true" id="466bc5d2-a895-4ce3-850d-1bbf77aab2ce"><con:settings/><con:testStep type="request" name="Create subscription" id="96d9c8d9-3870-4b9d-ba46-b36edf63840c"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create subscription" id="78b62f52-e128-4072-971f-02c3d4c4e3e8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -40153,7 +40911,7 @@ and paste that invoice number in the next step.
          <invoiceNumber>E_000000005</invoiceNumber>
       </ws:findPdfInvoice>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f24123ca-553d-42a4-93d9-a187f3be4240"/><con:assertion type="Simple Contains" id="3feda672-6447-46a7-8076-1b3f29d7ecc4" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>46</con:value></con:property></con:properties><con:setupScript>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f24123ca-553d-42a4-93d9-a187f3be4240"/><con:assertion type="Simple Contains" id="3feda672-6447-46a7-8076-1b3f29d7ecc4" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>47</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite id="00461149-cf25-47a7-b93e-42311b942019" name="Service workflow"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Service workflow" searchProperties="true" id="870b08da-98cb-49ba-b0e6-723d2e4f9247"><con:settings/><con:testStep type="request" name="Create subscription" id="a1da827e-45df-4b8e-ab90-fe4fefd64584"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create subscription" id="78b62f52-e128-4072-971f-02c3d4c4e3e8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -40263,7 +41021,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
 </soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="f6d50bee-315b-481a-9485-3653fdb52cda" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="ddfa860a-13a0-40df-b74a-156adfd4ab5b" name="Contains 1"><con:configuration><token>                  &lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="${#Project#baseEntityPrefix}_SERVICE1">
                      &lt;status>TERMINATED&lt;/status>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="81808fc2-7642-48f9-bb56-8cef90dd23c6" name="XPath Match"><con:configuration><path>//serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path><content>2015-02-01T00:00:00${#Project#timezone}:00</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="e1caec94-d309-45c9-927b-16eac6dc2355" name="XPath Match 1"><con:configuration><path>//serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/quantity</path><content>1.000000000000</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="Simple Contains" id="07c79e66-36ed-4c61-9013-72872170af60" name="Contains 2"><con:configuration><token>                  &lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE2" description="${#Project#baseEntityPrefix}_SERVICE2">
-                     &lt;status>TERMINATED&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="81808fc2-7642-48f9-bb56-8cef90dd23c6" name="XPath Match2"><con:configuration><path>//serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE2']/subscriptionDate</path><content>2015-02-01T00:00:00${#Project#timezone}:00</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="e1caec94-d309-45c9-927b-16eac6dc2355" name="XPath Match 3"><con:configuration><path>//serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE2']/quantity</path><content>2.000000000000</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="81808fc2-7642-48f9-bb56-8cef90dd23c6" name="XPath Match 4"><con:configuration><path>//serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/terminationDate</path><content>2016-04-30T00:00:00${#Project#timezone2}:00</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="e1caec94-d309-45c9-927b-16eac6dc2355" name="XPath Match 5"><con:configuration><path>//serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/terminationReason</path><content>TERM_REASON_1</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="81808fc2-7642-48f9-bb56-8cef90dd23c6" name="XPath Match 6"><con:configuration><path>//serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE2']/terminationDate</path><content>2016-05-15T00:00:00${#Project#timezone2}:00</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="e1caec94-d309-45c9-927b-16eac6dc2355" name="XPath Match 7"><con:configuration><path>//serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE2']/terminationReason</path><content>TERM_REASON_3</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>825</con:value></con:property><con:property><con:name>ticket</con:name><con:value>825</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>49</con:value></con:property></con:properties><con:setupScript>
+                     &lt;status>TERMINATED&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="81808fc2-7642-48f9-bb56-8cef90dd23c6" name="XPath Match2"><con:configuration><path>//serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE2']/subscriptionDate</path><content>2015-02-01T00:00:00${#Project#timezone}:00</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="e1caec94-d309-45c9-927b-16eac6dc2355" name="XPath Match 3"><con:configuration><path>//serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE2']/quantity</path><content>2.000000000000</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="81808fc2-7642-48f9-bb56-8cef90dd23c6" name="XPath Match 4"><con:configuration><path>//serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/terminationDate</path><content>2016-04-30T00:00:00${#Project#timezone2}:00</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="e1caec94-d309-45c9-927b-16eac6dc2355" name="XPath Match 5"><con:configuration><path>//serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/terminationReason</path><content>TERM_REASON_1</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="81808fc2-7642-48f9-bb56-8cef90dd23c6" name="XPath Match 6"><con:configuration><path>//serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE2']/terminationDate</path><content>2016-05-15T00:00:00${#Project#timezone2}:00</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="e1caec94-d309-45c9-927b-16eac6dc2355" name="XPath Match 7"><con:configuration><path>//serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE2']/terminationReason</path><content>TERM_REASON_3</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>825</con:value></con:property><con:property><con:name>ticket</con:name><con:value>825</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>50</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite id="befc33bd-871c-4f7a-9110-7bda66c7dfb8" name="Subscription workflow"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Terminate Subscription" searchProperties="true" id="4e4ca106-4ba3-4673-be58-ae9a3c03068c"><con:settings/><con:testStep type="request" name="Create subscription" id="b1d0c317-4908-4555-a84d-f3ecd0a8d804"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create subscription" id="78b62f52-e128-4072-971f-02c3d4c4e3e8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -40375,7 +41133,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
       </ws:applyOneShotChargeInstance>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="0629c172-17fe-4f5e-b7d5-45fb0817a750"/><con:assertion type="Simple Contains" id="79fa29c9-ff31-4d84-b321-382de1ba98cf" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>38</con:value></con:property></con:properties><con:setupScript>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>39</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite id="4a33b9a1-45fd-4452-9fcd-88f7d37d3709" name="EL expression tests"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="736c2a5f-b7ab-48a6-9b5c-cfc551aab050" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Calling script from EL" searchProperties="true"><con:settings/><con:testStep type="request" name="Create script" id="caeffcad-4151-4ecf-8e26-5aecf4a2c4ff"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptInstanceWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create script" id="8bc39b95-9e34-42c4-b335-a27ce494eb10"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
