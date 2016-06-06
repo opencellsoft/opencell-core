@@ -23,6 +23,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -35,15 +36,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class RatedTransactionDto extends BaseDto {
 
 	private static final long serialVersionUID = -7627662294414998797L;
-
+	@XmlElement(required = true)
 	private Date usageDate;
+	
 	private BigDecimal unitAmountWithoutTax;
 	private BigDecimal unitAmountWithTax;
 	private BigDecimal unitAmountTax;
 	private BigDecimal quantity;
+	@XmlElement(required = true)
 	private BigDecimal amountWithoutTax;
+	@XmlElement(required = true)
 	private BigDecimal amountWithTax;
+	@XmlElement(required = true)
 	private BigDecimal amountTax;
+	@XmlElement(required = true)
 	private String code;
 	private String description;
 	private String unityDescription;

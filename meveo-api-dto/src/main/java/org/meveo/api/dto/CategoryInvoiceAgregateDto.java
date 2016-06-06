@@ -34,10 +34,11 @@ public class CategoryInvoiceAgregateDto extends BaseDto {
 
 	private static final long serialVersionUID = 6165612614574594919L;
 
+	@XmlElement(required = true)
 	private String categoryInvoiceCode;
 	private String description;
 	@XmlElementWrapper
-    @XmlElement(name="subCategoryInvoiceAgregateDto")
+    @XmlElement(name="subCategoryInvoiceAgregateDto",required = true)
 	private List<SubCategoryInvoiceAgregateDto> listSubCategoryInvoiceAgregateDto=new ArrayList<SubCategoryInvoiceAgregateDto>();
 	
 	

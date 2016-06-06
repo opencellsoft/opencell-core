@@ -815,5 +815,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			return null;
 		}
 	}
+	
+
+	@SuppressWarnings("unchecked")
+	public List<RatedTransaction> openRTbySubCat(WalletInstance walletInstance , InvoiceSubCategory invoiceSubCategory ) {
+		QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "rt", null,walletInstance.getProvider());
+		qb.addCriterionEntity("rt.invoiceSubCategory", invoiceSubCategory);
+		qb.addCriterionEntity("rt.walletInstance", walletInstance);
+		qb.addCriterionEnum("rt.status", WalletOperationStatusEnum.OPEN);
+		try {
+			return (List<RatedTransaction>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
 
 }

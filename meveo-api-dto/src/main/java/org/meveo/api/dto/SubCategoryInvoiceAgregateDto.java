@@ -49,6 +49,8 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
 	private BigDecimal amountWithoutTax;
 	private BigDecimal amountTax;
 	private BigDecimal amountWithTax;
+	
+    @XmlElement(required = true)
 	private String invoiceSubCategoryCode;
 	private List<String> taxesCodes=new ArrayList<String>();
 	private String userAccountCode;
