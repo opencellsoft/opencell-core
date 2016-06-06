@@ -211,6 +211,15 @@ public class InvoiceApi extends BaseApi {
 					subCatAmountTax = subCatAmountTax.add(ratedTransaction.getAmountTax());
 					subCatAmountWithTax = subCatAmountWithTax.add(ratedTransaction.getAmountWithTax());
 				}
+				List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory);
+				for(RatedTransaction ratedTransaction : openedRT){
+					subCatAmountWithoutTax = subCatAmountWithoutTax.add(ratedTransaction.getAmountWithoutTax());
+					subCatAmountTax = subCatAmountTax.add(ratedTransaction.getAmountTax());
+					subCatAmountWithTax = subCatAmountWithTax.add(ratedTransaction.getAmountWithTax());
+					ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
+					ratedTransaction.setInvoice(invoice);
+					ratedTransactionService.update(ratedTransaction, currentUser);
+				}
 				for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
 					if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()) && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
 						if (!taxes.contains(invoicesubcatCountry.getTax())) {
@@ -515,7 +524,7 @@ public class InvoiceApi extends BaseApi {
 		return invoice.getInvoiceNumber();
 	}
 
-	public void cancelInvoice(Long invoiceId, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, MeveoApiException {
+	public void cancelInvoice(Long invoiceId, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
 		if (StringUtils.isBlank(invoiceId)) {
 			missingParameters.add("invoiceId");
 		}
@@ -528,9 +537,15 @@ public class InvoiceApi extends BaseApi {
 			throw new MeveoApiException("Invoice already validated");
 		}
 		for(RatedTransaction rt : ratedTransactionService.listByInvoice(invoice)) {
-			ratedTransactionService.remove(rt);
+			if(rt.getWalletOperationId() == null){
+				rt.setStatus(RatedTransactionStatusEnum.OPEN);
+				rt.setInvoice(null);
+				ratedTransactionService.update(rt,currentUser);
+			}else{
+				ratedTransactionService.remove(rt);
+			}
 		}
-		
+				
 		invoiceService.remove(invoice);
 	}
 
