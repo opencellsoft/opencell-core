@@ -31,6 +31,7 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
@@ -125,7 +126,8 @@ public class InvoiceApi extends BaseApi {
 	
 	
 	public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO, User currentUser) throws MeveoApiException, BusinessException, Exception {
-		validateInvoiceDto(invoiceDTO, currentUser);
+		log.debug("InvoiceDto:"+JsonUtils.toJson(invoiceDTO));
+		validateInvoiceDto(invoiceDTO, currentUser);						 
 		Auditable auditable = new Auditable();
 		auditable.setCreated(new Date());
 		auditable.setCreator(currentUser);
@@ -537,7 +539,7 @@ public class InvoiceApi extends BaseApi {
 			throw new MeveoApiException("Invoice already validated");
 		}
 		for(RatedTransaction rt : ratedTransactionService.listByInvoice(invoice)) {
-			if(rt.getWalletOperationId() == null){
+			if(rt.getWalletOperationId() != null){
 				rt.setStatus(RatedTransactionStatusEnum.OPEN);
 				rt.setInvoice(null);
 				ratedTransactionService.update(rt,currentUser);
