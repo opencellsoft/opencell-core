@@ -86,14 +86,15 @@
 									icon="ui-icon-alert" />
 							</p:commandButton>
 						</p:column>
+						<ui:define name="add-on-buttons">
+							<p:commandButton value="#{messages['action.add']}" type="button"
+								onclick="PF('dlg_invoicePopup').show();" />
+
+							<p:commandButton value="#{messages['action.deleteAll']}"
+								action="#{aggregatedDetailInvoiceBean.deleteAllLinkedInvoice}"
+								update=":tabView:datatable_selectedLinkedInvoice" />
+						</ui:define>
 					</hftl:dataList>
-
-					<p:commandButton value="#{messages['action.add']}" type="button"
-						onclick="PF('dlg_invoicePopup').show();" />
-
-					<p:commandButton value="#{messages['action.deleteAll']}"
-						action="#{aggregatedDetailInvoiceBean.deleteAllLinkedInvoice}"
-						update=":tabView:datatable_selectedLinkedInvoice" />
 
 					<!-- aggregated lines here -->
 					<h:form id="aggregatedInvoiceForm">
@@ -195,6 +196,11 @@
 							</p:dataTable>
 						</p:outputPanel>
 
+						<p:commandButton immediate="true"
+							value="#{messages['action.invoice.importFromLinkedInvoices']}"
+							action="#{aggregatedDetailInvoiceBean.importFromLinkedInvoices}"
+							update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary" />
+
 						<p:panel id="addAggregatedLine" style="float: right; width: 50%;">
 							<p:row>
 								<p:column>
@@ -238,11 +244,6 @@
 						<div style="clear: both"></div>
 
 					</h:form>
-
-					<p:commandButton
-						value="#{messages['action.invoice.importFromLinkedInvoices']}"
-						action="#{aggregatedDetailInvoiceBean.importFromLinkedInvoices}"
-						update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary" />
 
 					<p:outputPanel id="invoiceSummary">
 						<p:panelGrid style="float: right; width: 50%;"

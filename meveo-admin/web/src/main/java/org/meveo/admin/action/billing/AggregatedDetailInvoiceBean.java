@@ -53,7 +53,6 @@ import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.CellEditEvent;
@@ -99,9 +98,6 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 
 	@Inject
 	private InvoiceCategoryService invoiceCategoryService;
-
-	@Inject
-	private InvoiceSubCategoryService invoiceSubCategoryService;
 
 	private long billingAccountId;
 	private Invoice invoiceToAdd;
@@ -237,20 +233,30 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 
 	public void deleteLinkedInvoiceCategory() {
 		if (entity.getInvoiceAgregates() != null) {
-			entity.getInvoiceAgregates().remove(selectedCategoryInvoiceAgregate);
+			if (selectedCategoryInvoiceAgregate instanceof CategoryInvoiceAgregate) {
+				CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) selectedCategoryInvoiceAgregate;
+				if (categoryInvoiceAgregate.getSubCategoryInvoiceAgregates() != null) {
+					entity.getInvoiceAgregates().removeAll(categoryInvoiceAgregate.getSubCategoryInvoiceAgregates());
+				}
+				entity.getInvoiceAgregates().remove(selectedCategoryInvoiceAgregate);
+			}
 		}
 	}
 
 	public void deleteLinkedInvoiceSubCategory() {
 		if (entity.getInvoiceAgregates() != null) {
+			List<InvoiceAgregate> iaToRemove = new ArrayList<>();
 			for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
 				if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
 					CategoryInvoiceAgregate cat = (CategoryInvoiceAgregate) invoiceAgregate;
 					if (cat.equals(selectedSubCategoryInvoiceAgregate.getCategoryInvoiceAgregate())) {
+						iaToRemove.add(selectedSubCategoryInvoiceAgregate);
 						cat.getSubCategoryInvoiceAgregates().remove(selectedSubCategoryInvoiceAgregate);
-						entity.getInvoiceAgregates().remove(selectedSubCategoryInvoiceAgregate);
 					}
 				}
+			}
+			if (iaToRemove.size() > 0) {
+				entity.getInvoiceAgregates().removeAll(iaToRemove);
 			}
 		}
 	}
@@ -473,7 +479,7 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 		if (selectedInvoiceCatSubCatModel == null) {
 			selectedInvoiceCatSubCatModel = new InvoiceCatSubCatModel();
 		}
-		
+
 		return selectedInvoiceCatSubCatModel;
 	}
 
