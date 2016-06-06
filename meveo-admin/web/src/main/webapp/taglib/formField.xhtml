@@ -91,7 +91,8 @@
         fkToEntity - store a "sort of FK" to a selected entity without a formal FK JPA relationship - any value can be stored
         valueLabelField - selected entity's attribute to display when entity is selected. In a list of entities used as a label attribute for list item.
         valueField - used in along with fkToEntity="true". Specifies a name of a field in list item that represents FK value.
-        listenerUpdate - components (ids) to update when value changes (entity selection via picklist only)
+        listenerUpdate - components (ids) to update when value changes (entity selection via picklist only) 
+        actionListenerBean and actionListenerMethod - action listener bean and method to execute when value changes (entity selection via picklist only) 
         createEditPopup and createEditPopupId - entity details view or new data entry via popup. (In popup only)
         createEditPopupListenerBean, createEditPopupListenerViewMethod and createEditPopupListenerNewMethod - action listener bean and method to execute before createEditPopup is shown to view and create a new value
         createEditPopupListenerUpdate - component IDs to refresh before showing createEditPopupId popup
@@ -214,8 +215,9 @@
                 disabled="${disabled}" required="${required}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}"
                 style="${style}" labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}"
                 labelWidth="${labelWidth}" inputWidth="${inputWidth}" size="${size}" popup="${popup}" popupId="${popupId}" listBean="${listBean}" listElements="${listElements}"
-                fkToEntity="${fkToEntity}" valueLabelField="${valueLabelField}" valueField="${valueField}" listenerUpdate="${listenerUpdate}" newEntity="${newEntity}"
-                createEditPopup="${createEditPopup}" createEditPopupId="${createEditPopupId}" createEditPopupListenerBean="${createEditPopupListenerBean}"
+                fkToEntity="${fkToEntity}" valueLabelField="${valueLabelField}" valueField="${valueField}" listenerUpdate="${listenerUpdate}"
+                actionListenerBean="${actionListenerBean}" actionListenerMethod="${actionListenerMethod}" newEntity="${newEntity}" createEditPopup="${createEditPopup}"
+                createEditPopupId="${createEditPopupId}" createEditPopupListenerBean="${createEditPopupListenerBean}"
                 createEditPopupListenerViewMethod="${createEditPopupListenerViewMethod}" createEditPopupListenerNewMethod="${createEditPopupListenerNewMethod}"
                 createEditPopupListenerUpdate="${createEditPopupListenerUpdate}" showPopupOnlyOnNew="${showPopupOnlyOnNew}" edit="#{edit}" />
         </c:if>

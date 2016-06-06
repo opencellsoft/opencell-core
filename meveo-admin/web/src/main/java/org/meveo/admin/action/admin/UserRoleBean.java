@@ -84,7 +84,7 @@ public class UserRoleBean extends BaseBean<Role> {
 
     public DualListModel<Role> getRoleListModel() {
         if (rolesDM == null) {
-            List<Role> perksSource = userRoleService.list();
+            List<Role> perksSource = userRoleService.list(entity.getProvider());
             perksSource.remove(getEntity());
             List<Role> perksTarget = new ArrayList<Role>();
             if (getEntity().getRoles() != null) {
@@ -98,6 +98,13 @@ public class UserRoleBean extends BaseBean<Role> {
 
     public void setRoleListModel(DualListModel<Role> perks) {
         this.rolesDM = perks;
+    }
+
+    /**
+     * On provider change reset role and permission picklists
+     */
+    public void onProviderChange() {
+        rolesDM = null;
     }
 
     @Override
