@@ -253,5 +253,10 @@
 		<constraint>currentUser.hasPermission('billing','billingManagement')</constraint>
 		<constraint type="READ">currentUser.hasPermission('billing','billingVisualization')</constraint>
 	</page>
+	<!--  PAGE RULES FOR FINANCE PAGES -->
+	<page view-id=".+\/finance\/.+">
+		<constraint>currentUser.hasPermission('billing','billingManagement')</constraint>
+		<constraint type="READ">currentUser.hasPermission('billing','billingVisualization')</constraint>
+	</page>
 	
 </page-access>

@@ -25,10 +25,10 @@ import javax.ejb.Stateless;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.DunningPlan;
 import org.meveo.model.payments.DunningPlanStatusEnum;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 @Stateless
-public class DunningPlanService extends PersistenceService<DunningPlan> {
+public class DunningPlanService extends BusinessService<DunningPlan> {
 
 	@SuppressWarnings("unchecked")
 	public List<DunningPlan> getDunningPlans(Provider provider) {

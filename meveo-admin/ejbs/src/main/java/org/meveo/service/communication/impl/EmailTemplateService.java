@@ -21,11 +21,11 @@ package org.meveo.service.communication.impl;
 import javax.ejb.Stateless;
 
 import org.meveo.model.communication.email.EmailTemplate;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 /**
  * EmailTemplate service implementation.
  */
 @Stateless
-public class EmailTemplateService extends PersistenceService<EmailTemplate> {
+public class EmailTemplateService extends BusinessService<EmailTemplate> {
 }
