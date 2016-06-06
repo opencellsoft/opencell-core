@@ -14,19 +14,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
-import org.meveo.api.dto.payment.AccountOperationDto;
-import org.meveo.api.dto.payment.MatchingAmountDto;
-import org.meveo.api.dto.payment.MatchingAmountsDto;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceModeEnum;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
@@ -44,8 +33,10 @@ public class InvoiceDto extends BaseDto {
 
     @XmlElement(required = true)
     private Date dueDate;
-
+    
     private List<String> listInvoiceNumbersToLink= new ArrayList<String>();
+    
+    @XmlElement(required = true)
     private Date invoiceDate;
     private BigDecimal discount;
     private BigDecimal amountWithoutTax;
@@ -53,16 +44,20 @@ public class InvoiceDto extends BaseDto {
     private BigDecimal amountWithTax;
     private PaymentMethodEnum paymentMethod;
     private boolean PDFpresent;
+    @XmlElement(required = true)
     private String invoiceType;
     private byte[] pdf;
+    
 	@XmlElementWrapper
-    @XmlElement(name="categoryInvoiceAgregate")
+    @XmlElement(name="categoryInvoiceAgregate",required = true)
     private List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregateDto>();
     
     
-    private boolean autoValidation =  false;
+    private boolean autoValidation =  true;
     private boolean returnXml = false;
     private boolean returnPdf = false;
+    
+    @XmlElement(required = true)
     private InvoiceModeEnum invoiceMode;
     
     
