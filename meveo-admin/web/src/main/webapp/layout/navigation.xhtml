@@ -284,21 +284,29 @@
 		<p:submenu id="invoicing" label="#{messages['menu.invoicing']}"
 			rendered="#{identity.hasPermission('billing','billingVisualization')}">
 
-			<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing"
-				rendered="#{identity.hasPermission('billing','billingManagement')}"
-				value="#{messages['menu.globalExecution']}" />
+			<p:submenu id="billingRun" label="#{messages['menu.billingRun']}"
+				rendered="#{identity.hasPermission('billing','billingManagement')}">
+				<p:menuitem id="billingRuns" outcome="billingRuns"
+					value="#{messages['menu.billingRuns']}" />
+				<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing"
+					rendered="#{identity.hasPermission('billing','billingManagement')}"
+					value="#{messages['menu.globalExecution']}" />
+				<p:menuitem id="exceptionalInvoicing" outcome="exceptionelInvoicing"
+					value="#{messages['menu.exceptionalInvoicing']}" />
+			</p:submenu>
 
-			<p:menuitem id="exceptionalInvoicing" outcome="exceptionelInvoicing"
-				value="#{messages['menu.exceptionalInvoicing']}" />
-
-			<p:menuitem id="billingRuns" outcome="billingRuns"
-				value="#{messages['menu.billingRuns']}" />
-				
 			<p:menuitem id="ratedTransactions" outcome="ratedTransactions"
 				value="#{messages['menu.ratedTransactions']}" />
-				
-			<p:menuitem id="invoices" outcome="invoices"
-				value="#{messages['menu.invoices']}" />	
+
+			<p:submenu id="invoice" label="#{messages['menu.invoice']}"
+				rendered="#{identity.hasPermission('billing','billingManagement')}">
+				<p:menuitem id="invoices" outcome="invoices"
+					value="#{messages['menu.invoices']}" />
+				<p:menuitem id="aggregateInvoices" outcome="invoiceAggregatedDetail"
+					value="#{messages['menu.invoice.createAggregated']}" />
+				<p:menuitem id="detailedInvoices" outcome="invoices"
+					value="#{messages['menu.invoice.createDetailed']}" />
+			</p:submenu>
 
 		</p:submenu>
 

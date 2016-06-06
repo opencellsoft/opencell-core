@@ -55,7 +55,6 @@ import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.BillingCycleService;
-import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
@@ -130,9 +129,6 @@ public class ProviderApi extends BaseApi {
 
     @Inject
     private TitleService titleService;
-    
-    @Inject
-    private InvoiceTypeService invoiceTypeService;
 
     public void create(ProviderDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
@@ -256,7 +252,7 @@ public class ProviderApi extends BaseApi {
         Provider provider = providerService.findByCodeWithFetch(providerCode, Arrays.asList("currency", "country", "language"));
 		if (provider != null) {
 			if (currentUser.hasPermission("superAdmin", "superAdminManagement")
-					|| (currentUser.hasPermission("administration", "administrationManagement") && provider.getId().equals(currentUser.getProvider().getId()))) {
+					|| (currentUser.hasPermission("administration", "administrationVisualization") && provider.getId().equals(currentUser.getProvider().getId()))) {
 				return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider));
 			} else {
 				throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
@@ -438,7 +434,8 @@ public class ProviderApi extends BaseApi {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
         
-		if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && provider.getId().equals(currentUser.getProvider().getId())) {
+		if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && provider.getId()
+				.equals(currentUser.getProvider().getId())))) {
 			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
 		}
 
@@ -485,7 +482,9 @@ public class ProviderApi extends BaseApi {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
         
-		if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && provider.getId().equals(currentUser.getProvider().getId())) {
+		if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || ((currentUser.hasPermission("administration", "administrationVisualization")
+				|| currentUser.hasPermission("billing", "billingVisualization") || currentUser.hasPermission("catalog", "catalogVisualization")) && provider.getId().equals(
+				currentUser.getProvider().getId())))) {
 			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
 		}
 
@@ -662,7 +661,8 @@ public class ProviderApi extends BaseApi {
 
 		Provider provider = providerService.findByCode(providerCode);
 		if (provider != null) {
-			if (currentUser.hasPermission("superAdmin", "superAdminManagement") || provider.getId().equals(currentUser.getProvider().getId())) {
+			if (currentUser.hasPermission("superAdmin", "superAdminManagement")
+					|| (currentUser.hasPermission("administration", "administrationVisualization") && provider.getId().equals(currentUser.getProvider().getId()))) {
 				return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider), false);
 			} else {
 				throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());

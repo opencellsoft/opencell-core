@@ -1,59 +1,48 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:c="http://java.sun.com/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-	<ui:define name="body">
-	
-		<p:panel>
-			<h:form id="crumbmenuForm">
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.admin']}" disabled="true"/>
-				<p:menuitem outcome="users" value="#{messages['menu.users']}"/>
-			</p:breadCrumb>
-			</h:form>
-		</p:panel>
-		<hftl:formPanel label="#{messages['user.userPanel']}"
-			backingBean="#{userBean}" columns="1">
-			<hftl:formField label="#{messages['user.userName']}" field="userName"
-				required="true" validateUnique="true" useConverter="false" />
-			<hftl:formField label="#{messages['contactInformation.email']}"
-				field="email" required="true" useConverter="false"
-				validatorId="emailValidator" />
-			<p:commandLink value="#{messages['menutop.changePassword']}" 
-				action="#{userBean.showHidePassword}" update="passwordPanel"
-				rendered="#{!(userBean.entity.id==null) and userBean.edit and userBean.canUserUpdateEntity()}" partialSubmit="true" process="@this"
-				style="text-align:right;"  />
+    <ui:define name="body">
+
+        <p:panel>
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                    <p:menuitem outcome="users" value="#{messages['menu.users']}" />
+                </p:breadCrumb>
+            </h:form>
+        </p:panel>
+        <hftl:formPanel label="#{messages['user.userPanel']}" backingBean="#{userBean}" columns="1">
+            <hftl:formField label="#{messages['user.userName']}" field="userName" required="true" validateUnique="true" useConverter="false" />
+            <hftl:formField label="#{messages['contactInformation.email']}" field="email" required="true" useConverter="false" validatorId="emailValidator" />
+            <p:commandLink value="#{messages['menutop.changePassword']}" action="#{userBean.showHidePassword}" update="passwordPanel"
+                rendered="#{!(userBean.entity.id==null) and userBean.edit and userBean.canUserUpdateEntity()}" partialSubmit="true" process="@this" style="text-align:right;" />
 
 
             <p:outputPanel id="passwordPanel" styleClass="clearLeft">
                 <h:panelGroup rendered="#{(userBean.show or userBean.entity.id==null) and userBean.edit}">
                     <hftl:decorateFormField fieldId="password" label="#{messages['user.password']}">
-                        <p:password autocomplete="off" id="password" feedback="true" value="#{userBean.password}" required="true" match="repeatedPassword"/>
+                        <p:password autocomplete="off" id="password" feedback="true" value="#{userBean.password}" required="true" match="repeatedPassword" />
                     </hftl:decorateFormField>
                     <hftl:decorateFormField id="repeatedPassword" fieldId="repeatedPassword" label="#{messages['user.repeatedPassword']}">
-                        <p:password id="repeatedPassword" value="#{userBean.repeatedPassword}" autocomplete="off"/>
+                        <p:password id="repeatedPassword" value="#{userBean.repeatedPassword}" autocomplete="off" />
                     </hftl:decorateFormField>
                 </h:panelGroup>
             </p:outputPanel>
 
-            <hftl:formField label="#{messages['commons.provider']}" field="provider" listBean="#{providerBean}" valueLabelField="code" required="true" allowEdit="false" rendered="#{identity.hasPermission('superAdmin', 'superAdminManagement')}" newLine="true" listenerUpdate="userRoles"/> 
+            <hftl:formField label="#{messages['commons.provider']}" field="provider" listBean="#{providerBean}" valueLabelField="code" required="true" allowEdit="false"
+                rendered="#{identity.hasPermission('superAdmin', 'superAdminManagement')}" newLine="true" listenerUpdate="userRoles" actionListenerBean="#{userBean}"
+                actionListenerMethod="onProviderChange" />
 
-            <hftl:formField id="userRoles" label="#{messages['user.roles']}" field="roles"
-				listType="pickUpList" valueLabelField="name" required="true"
-				dualListModel="#{userBean.dualListModel}" newLine="true"/>
+            <hftl:formField id="userRoles" label="#{messages['user.roles']}" field="roles" listType="pickUpList" valueLabelField="name" required="true"
+                dualListModel="#{userBean.dualListModel}" newLine="true" />
 
-		</hftl:formPanel>
-		
-	</ui:define>
+        </hftl:formPanel>
+
+    </ui:define>
 
 </ui:composition>

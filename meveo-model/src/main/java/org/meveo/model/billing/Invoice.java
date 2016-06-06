@@ -21,7 +21,9 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Basic;
@@ -32,6 +34,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -53,7 +57,7 @@ import org.meveo.model.payments.RecordedInvoice;
 @Table(name = "BILLING_INVOICE", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID", "INVOICE_NUMBER", "INVOICE_TYPE_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SEQ")
 @CustomFieldEntity(cftCodePrefix = "INVOICE")
-public class Invoice extends AuditableEntity  implements ICustomFieldEntity{
+public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -116,7 +120,7 @@ public class Invoice extends AuditableEntity  implements ICustomFieldEntity{
 	private String iban;
 
 	@Column(name = "ALIAS", length = 255)
-    @Size(max = 255)
+	@Size(max = 255)
 	private String alias;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -151,15 +155,19 @@ public class Invoice extends AuditableEntity  implements ICustomFieldEntity{
 
 	@OneToMany(mappedBy = "adjustedInvoice", fetch = FetchType.LAZY)
 	private List<Invoice> invoiceAdjustments;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "INVOICE_TYPE_ID")
 	private InvoiceType invoiceType;
-	
-    @Column(name = "UUID", nullable = false, updatable = false, length = 60)
-    @Size(max = 60)
-    @NotNull
-    private String uuid = UUID.randomUUID().toString();	
+
+	@Column(name = "UUID", nullable = false, updatable = false, length = 60)
+	@Size(max = 60)
+	@NotNull
+	private String uuid = UUID.randomUUID().toString();
+
+	@ManyToMany
+	@JoinTable(name = "BILLING_LINKED_INVOICES", joinColumns = { @JoinColumn(name = "ID") }, inverseJoinColumns = { @JoinColumn(name = "LINKED_INVOICE_ID") })
+	private Set<Invoice> linkedInvoices = new HashSet<>();
 
 	@Transient
 	private Long invoiceAdjustmentCurrentSellerNb;
@@ -309,7 +317,7 @@ public class Invoice extends AuditableEntity  implements ICustomFieldEntity{
 			amountWithoutTax = BigDecimal.ZERO;
 		}
 		if (amountToAdd != null) {
-		amountWithoutTax = amountWithoutTax.add(amountToAdd);
+			amountWithoutTax = amountWithoutTax.add(amountToAdd);
 		}
 	}
 
@@ -318,7 +326,7 @@ public class Invoice extends AuditableEntity  implements ICustomFieldEntity{
 			amountTax = BigDecimal.ZERO;
 		}
 		if (amountToAdd != null) {
-		amountTax = amountTax.add(amountToAdd);	
+			amountTax = amountTax.add(amountToAdd);
 		}
 	}
 
@@ -419,8 +427,6 @@ public class Invoice extends AuditableEntity  implements ICustomFieldEntity{
 		this.adjustedInvoice = adjustedInvoice;
 	}
 
-
-
 	public List<Invoice> getInvoiceAdjustments() {
 		return invoiceAdjustments;
 	}
@@ -470,30 +476,45 @@ public class Invoice extends AuditableEntity  implements ICustomFieldEntity{
 	}
 
 	/**
-	 * @param invoiceType the invoiceType to set
+	 * @param invoiceType
+	 *            the invoiceType to set
 	 */
 	public void setInvoiceType(InvoiceType invoiceType) {
 		this.invoiceType = invoiceType;
 	}
 
-    @Override
-    public String getUuid() {
-        return uuid;
-    }
+	@Override
+	public String getUuid() {
+		return uuid;
+	}
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 
-    @Override
-    public String clearUuid() {
-        String oldUuid = uuid;
-        uuid = UUID.randomUUID().toString();
-        return oldUuid;
-    }
+	@Override
+	public String clearUuid() {
+		String oldUuid = uuid;
+		uuid = UUID.randomUUID().toString();
+		return oldUuid;
+	}
 
 	@Override
 	public ICustomFieldEntity getParentCFEntity() {
 		return null;
+	}
+
+	public Set<Invoice> getLinkedInvoices() {
+		return linkedInvoices;
+	}
+
+	public void setLinkedInvoices(Set<Invoice> linkedInvoices) {
+		this.linkedInvoices = linkedInvoices;
+	}
+	
+	public void addInvoiceAggregate(InvoiceAgregate obj) {
+		if (!invoiceAgregates.contains(obj)) {
+			invoiceAgregates.add(obj);
+		}
 	}
 }

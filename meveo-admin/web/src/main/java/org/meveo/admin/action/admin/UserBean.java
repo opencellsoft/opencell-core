@@ -343,9 +343,9 @@ public class UserBean extends BaseBean<User> {
     public String getSelectedFolder() {
         return selectedFolder;
     }
-    
+
     public boolean hasSelectedFolder() {
-    	return !StringUtils.isBlank(selectedFolder);
+        return !StringUtils.isBlank(selectedFolder);
     }
 
     public void setSelectedFolder(String selectedFolder) {
@@ -379,16 +379,16 @@ public class UserBean extends BaseBean<User> {
         File[] files = file.listFiles();
 
         fileList = files == null ? new ArrayList<File>() : new ArrayList<File>(Arrays.asList(files));
-    	currentDirEmpty = !StringUtils.isBlank(this.selectedFolder) && fileList.size() == 0;
+        currentDirEmpty = !StringUtils.isBlank(this.selectedFolder) && fileList.size() == 0;
     }
-    
-    public String getFileType(String fileName){
-    	if(fileName != null && fileName.endsWith(".zip")){
-    		return "zip";
-    	}
-    	return "text";
+
+    public String getFileType(String fileName) {
+        if (fileName != null && fileName.endsWith(".zip")) {
+            return "zip";
+        }
+        return "text";
     }
-    
+
     public String getLastModified(File file) {
         return sdf.format(new Date(file.lastModified()));
     }
@@ -538,5 +538,9 @@ public class UserBean extends BaseBean<User> {
             searchCriteria.put(PersistenceService.SEARCH_SKIP_PROVIDER_CONSTRAINT, true);
         }
         return searchCriteria;
+    }
+
+    public void onProviderChange() {
+        rolesDM = null;
     }
 }
