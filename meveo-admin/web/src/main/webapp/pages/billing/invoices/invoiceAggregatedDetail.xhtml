@@ -181,7 +181,7 @@
 										</p:column>
 										<p:column>
 											<p:commandButton icon="ui-icon-trash"
-												process=":tabView:aggregatedInvoicePanel"
+												process=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel"
 												action="#{aggregatedDetailInvoiceBean.deleteLinkedInvoiceSubCategory}"
 												update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary">
 												<f:setPropertyActionListener value="#{subCat}"
