@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.service.base.PersistenceService;
@@ -38,7 +39,7 @@ import org.primefaces.context.RequestContext;
  */
 @Named
 @ViewScoped
-public class ChargeInstanceBean extends BaseBean<ChargeInstance> {
+public class ChargeInstanceBean extends CustomFieldSearchBean<ChargeInstance> {
 
 	private static final long serialVersionUID = 1L;
 

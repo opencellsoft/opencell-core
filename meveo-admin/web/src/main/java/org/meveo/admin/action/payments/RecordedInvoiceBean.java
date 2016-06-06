@@ -18,13 +18,9 @@
  */
 package org.meveo.admin.action.payments;
 
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.payments.RecordedInvoice;
@@ -32,6 +28,10 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.omnifaces.cdi.ViewScoped;
+
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Standard backing bean for {@link RecordedInvoice} (extends {@link BaseBean}
@@ -41,7 +41,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
-public class RecordedInvoiceBean extends CustomFieldBean<RecordedInvoice> {
+public class RecordedInvoiceBean extends CustomFieldSearchBean<RecordedInvoice> {
 
 	private static final long serialVersionUID = 1L;
 

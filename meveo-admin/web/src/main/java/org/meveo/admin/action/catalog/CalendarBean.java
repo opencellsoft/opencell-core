@@ -34,6 +34,7 @@ import javax.persistence.DiscriminatorValue;
 
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -57,7 +58,7 @@ import org.primefaces.model.DualListModel;
 
 @Named
 @ViewScoped
-public class CalendarBean extends BaseBean<Calendar> {
+public class CalendarBean extends CustomFieldSearchBean<Calendar> {
 
     private static final long serialVersionUID = 1L;
 

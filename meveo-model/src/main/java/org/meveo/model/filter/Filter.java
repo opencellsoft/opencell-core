@@ -13,9 +13,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ModuleItem;
+import org.meveo.model.*;
 
 /**
  * @author Edward P. Legaspi
@@ -23,9 +21,10 @@ import org.meveo.model.ModuleItem;
 @Entity
 @ModuleItem
 @ExportIdentifier({ "code", "provider" })
+@CustomFieldEntity(cftCodePrefix = "FILTER", cftCodeFields = "code")
 @Table(name = "MEVEO_FILTER")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_FILTER_SEQ")
-public class Filter extends BusinessEntity {
+public class Filter extends BusinessCFEntity {
 
 	private static final long serialVersionUID = -6150352877726034654L;
 
@@ -110,4 +109,8 @@ public class Filter extends BusinessEntity {
 //		this.filterParameters = filterParameters;
 //	}
 
+	@Override
+	public ICustomFieldEntity getParentCFEntity() {
+		return null;
+	}
 }

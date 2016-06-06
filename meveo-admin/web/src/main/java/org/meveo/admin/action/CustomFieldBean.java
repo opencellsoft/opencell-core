@@ -27,7 +27,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
 
     @Inject
-    private CustomFieldDataEntryBean customFieldDataEntryBean;
+    protected CustomFieldDataEntryBean customFieldDataEntryBean;
 
     public CustomFieldBean() {
     }

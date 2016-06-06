@@ -1,13 +1,8 @@
 package org.meveo.admin.action.admin.custom;
 
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.customEntities.CustomEntityInstance;
@@ -17,9 +12,13 @@ import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.Map;
+
 @Named
 @ViewScoped
-public class CustomEntityInstanceBean extends CustomFieldBean<CustomEntityInstance> {
+public class CustomEntityInstanceBean extends CustomFieldSearchBean<CustomEntityInstance> {
 
     private static final long serialVersionUID = -459772193950603406L;
 

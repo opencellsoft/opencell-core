@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.CsvReader;
@@ -56,7 +57,7 @@ import org.primefaces.model.UploadedFile;
  */
 @Named
 @ViewScoped
-public class CatMessagesBean extends BaseBean<CatMessages> {
+public class CatMessagesBean extends CustomFieldSearchBean<CatMessages> {
 
 	private static final String INVALID_CLASS_TYPE = "Invalid class type!";
 

@@ -59,6 +59,7 @@ import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.security.MeveoUser;
@@ -596,7 +597,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (filters != null && !filters.isEmpty()) {
 
             if (filters.containsKey("$FILTER")) {
-                queryBuilder = new FilteredQueryBuilder((Filter) filters.get("$FILTER"), false, false);
+                Filter filter = (Filter) filters.get("$FILTER");
+                Map<CustomFieldTemplate, Object> parameterMap = (Map<CustomFieldTemplate, Object>) filters.get("$FILTER_PARAMETERS");
+                queryBuilder = new FilteredQueryBuilder(filter, parameterMap, false, false);
             } else {
 
                 for (String key : filters.keySet()) {

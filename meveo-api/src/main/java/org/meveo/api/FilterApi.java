@@ -45,6 +45,7 @@ public class FilterApi extends BaseApi {
             filter.setDescription(dto.getDescription());
             filter.setInputXml(dto.getInputXml());
             filter.setShared(dto.getShared());
+            filter.clearUuid();
 
             filterService.create(filter, currentUser);
 

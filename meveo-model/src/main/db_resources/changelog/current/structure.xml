@@ -2253,6 +2253,12 @@ $BODY$
 			baseTableName="billing_invoice_type" constraintName="fk_occ_templ_negative_id_billing_invoice_type"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" />
-	</changeSet>	
+	</changeSet>
+
+	<changeSet id="1026_20160530" author="TonyAlejandro">
+		<addColumn tableName="meveo_filter">
+			<column name="UUID" type="VARCHAR(60)" />
+		</addColumn>
+	</changeSet>
 	    	
 </databaseChangeLog>

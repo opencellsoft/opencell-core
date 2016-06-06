@@ -32,6 +32,7 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BillingCycle;
@@ -56,7 +57,7 @@ import org.primefaces.model.SortOrder;
  */
 @Named
 @ViewScoped
-public class BillingRunBean extends BaseBean<BillingRun> {
+public class BillingRunBean extends CustomFieldSearchBean<BillingRun> {
 
 	private static final long serialVersionUID = 1L;
 

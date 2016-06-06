@@ -73,6 +73,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.filter.FilterService;
+import org.meveo.util.EntityCustomizationUtils;
 import org.meveo.util.view.PagePermission;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
@@ -1096,14 +1097,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void runListFilter() {
         if (listFilter != null) {
             dataModel = null;
-            filters = new HashMap<String, Object>();
-
+            filters = new HashMap<>();
             filters.put("$FILTER", listFilter);
-
             listFiltered = true;
         } else {
             filters.remove("$FILTER");
         }
+    }
+
+    public boolean isListFiltered() {
+        return listFiltered;
     }
 
     public int getActiveTab() {

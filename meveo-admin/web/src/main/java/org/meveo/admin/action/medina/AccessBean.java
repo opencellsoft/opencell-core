@@ -30,6 +30,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.Subscription;
@@ -49,7 +50,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
-public class AccessBean extends CustomFieldBean<Access> {
+public class AccessBean extends CustomFieldSearchBean<Access> {
 
 	private static final long serialVersionUID = 1L;
 
