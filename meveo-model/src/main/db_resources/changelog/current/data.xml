@@ -415,6 +415,10 @@
             update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL=replace(FILTER_EL,'.entityReferenceValue','')  where FILTER_EL is not null and FILTER_EL like '%mv:%';
         
         </sql>
-    </changeSet>        
+    </changeSet>   
+    
+    <changeSet id="#1759_20160606" author="anasseh">               
+       <sql>update crm_custom_field_tmpl set max_value = 256 where field_type='STRING'</sql>      
+    </changeSet>     
         
 </databaseChangeLog>

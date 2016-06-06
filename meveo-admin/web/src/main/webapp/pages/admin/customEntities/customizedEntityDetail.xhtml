@@ -324,7 +324,7 @@
                 </ui:define>
                 <ui:define name="buttons">
                     <p:commandButton value="#{messages['action.save']}" action="#{customEntityTemplateBean.saveUpdateFieldGrouping}" update="@form :fieldsForm:fields"
-                        oncomplete="PF('groupDialog').hide()" />
+                        oncomplete="if (args &amp;&amp; !args.validationFailed){PF('groupDialog').hide();}" />
                     <p:commandButton value="#{messages['action.cancel']}" action="#{customEntityTemplateBean.cancelFieldGrouping}" oncomplete="PF('groupDialog').hide()" immediate="true"/>
                 </ui:define>
             </hftl:decorateFormPanel>
@@ -487,23 +487,24 @@
                     <ui:define name="buttons">
                         <hf:formButtons backingBean="#{customFieldTemplateBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:fields" edit="true"
                             killConversationOnSave="false" showEditButton="false" showDeleteButton="false">
-                            <p:commandButton value="#{messages['action.save']}"  onclick="delayDisable(this);" oncomplete="PF('cftDialog').hide();$('html,body').scrollTop(0);"
-            					actionListener="#{customFieldTemplateBean.saveOrUpdateForPopup}" action="#{customEntityTemplateBean.refreshFields}" icon="ui-icon-check" process="@form" update="@form :fieldsForm:fields">
+                            <p:remoteCommand action="#{customEntityTemplateBean.refreshFields}" name="refreshFields" update=":fieldsForm:fields" />
+                            <p:commandButton value="#{messages['action.save']}"  onclick="delayDisable(this);" oncomplete="refreshFields();if (args &amp;&amp; !args.validationFailed){PF('cftDialog').hide();$('html,body').scrollTop(0);}"
+            					actionListener="#{customFieldTemplateBean.saveOrUpdateForPopup}" icon="ui-icon-check" process="@form" update="@form">
             					<f:param name="edit" value="true" />
         					</p:commandButton>
                             <p:commandButton value="#{messages['commons.disable']}"
                                 rendered="#{not empty customFieldTemplateBean.entity.id and customFieldTemplateBean.entity.active}"
-                                actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.disable}" update="@form :fieldsForm:fields">
+                                oncomplete="refreshFields()" action="#{customFieldTemplateBean.disable}" update="@form :fieldsForm:fields">
                                 <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
                             </p:commandButton>
 
                             <p:commandButton value="#{messages['commons.enable']}"
                                 rendered="#{not empty customFieldTemplateBean.entity.id and customFieldTemplateBean.entity.disabled}"
-                                actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.enable}" update="@form :fieldsForm:fields">
+                                oncomplete="refreshFields()" action="#{customFieldTemplateBean.enable}" update="@form :fieldsForm:fields">
                                 <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
                             </p:commandButton>
-                            <p:commandButton id="deleteButton" icon="ui-icon-trash" value="#{messages['commons.delete']}" actionListener="#{customFieldTemplateBean.delete}" action="#{customEntityTemplateBean.refreshFields}" update="@this :fieldsForm:fields"
-								rendered="#{customFieldTemplateBean.entity.id!=null and customFieldTemplateBean.canUserUpdateEntity()}" oncomplete="PF('cftDialog').hide()">
+                            <p:commandButton id="deleteButton" icon="ui-icon-trash" value="#{messages['commons.delete']}" action="#{customFieldTemplateBean.delete}"
+								rendered="#{customFieldTemplateBean.entity.id!=null and customFieldTemplateBean.canUserUpdateEntity()}" oncomplete="refreshFields();PF('cftDialog').hide()">
             					<p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
 							</p:commandButton>
                             <p:commandButton value="#{messages['commons.close']}" onclick="PF('cftDialog').hide()" type="button" />
