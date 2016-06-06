@@ -18,16 +18,9 @@
  */
 package org.meveo.admin.action.catalog;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -43,6 +36,12 @@ import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Standard backing bean for {@link RecurringChargeTemplate} (extends
  * {@link BaseBean} that provides almost all common methods to handle entities
@@ -51,8 +50,7 @@ import org.primefaces.model.DualListModel;
  */
 @Named
 @ViewScoped
-public class RecurringChargeTemplateBean extends
-		CustomFieldBean<RecurringChargeTemplate> {
+public class RecurringChargeTemplateBean extends CustomFieldSearchBean<RecurringChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 	/**
 	 * Injected @{link RecurringChargeTemplate} service. Extends

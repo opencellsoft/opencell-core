@@ -18,19 +18,11 @@
  */
 package org.meveo.admin.action.catalog;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -43,6 +35,13 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.tabview.TabView;
 
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Standard backing bean for {@link InvoiceSubCategory} (extends
  * {@link BaseBean} that provides almost all common methods to handle entities
@@ -51,7 +50,7 @@ import org.primefaces.component.tabview.TabView;
  */
 @Named
 @ViewScoped
-public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> {
+public class InvoiceSubCategoryBean extends CustomFieldSearchBean<InvoiceSubCategory> {
 	private static final long serialVersionUID = 1L;
 
 	/**

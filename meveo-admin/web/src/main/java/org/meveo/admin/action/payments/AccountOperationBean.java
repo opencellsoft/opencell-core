@@ -18,37 +18,30 @@
  */
 package org.meveo.admin.action.payments;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.model.IEntity;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.AutomatedPayment;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.MatchingAmount;
-import org.meveo.model.payments.MatchingCode;
-import org.meveo.model.payments.MatchingStatusEnum;
-import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.payments.*;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
+
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Standard backing bean for {@link AccountOperation} (extends {@link BaseBean}
@@ -58,7 +51,7 @@ import org.primefaces.model.LazyDataModel;
  */
 @Named
 @ViewScoped
-public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
+public class AccountOperationBean extends CustomFieldSearchBean<AccountOperation> {
 
 	private static final long serialVersionUID = 1L;
 

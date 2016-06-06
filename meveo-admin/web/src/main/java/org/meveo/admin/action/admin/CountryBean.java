@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.model.billing.Country;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
@@ -42,7 +43,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
-public class CountryBean extends BaseBean<Country> {
+public class CountryBean extends CustomFieldSearchBean<Country> {
 
 	private static final long serialVersionUID = 1L;
 

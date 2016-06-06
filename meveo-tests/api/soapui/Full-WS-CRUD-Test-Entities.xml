@@ -41177,7 +41177,318 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          </recurringChargeTemplate>
       </ws:createOrUpdateRecurringChargeTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="77009aab-f6cc-40a8-a2d2-e01330090264"/><con:assertion type="SOAP Fault Assertion" id="7b40c11f-5568-48e0-b176-6c7c3f6640b4"/><con:assertion type="Simple Contains" name="Contains" id="9c125173-7f38-4392-b8d0-adedad43637b"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite id="33560d18-e1e9-451a-a2f2-d543a800b70f" name="Remove base data"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="9f452fe5-90e9-4a47-b3a3-109cfb3a7b16" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Remove Administration" searchProperties="true"><con:settings/><con:testStep type="request" name="find BarChart" id="0f44d189-a04f-4b94-b24f-83dd0d150482"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="find BarChart" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="77009aab-f6cc-40a8-a2d2-e01330090264"/><con:assertion type="SOAP Fault Assertion" id="7b40c11f-5568-48e0-b176-6c7c3f6640b4"/><con:assertion type="Simple Contains" name="Contains" id="9c125173-7f38-4392-b8d0-adedad43637b"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite id="17eed8e9-cd9c-4aa0-9975-1f5edbc624ff" name="Custom Fields in Filters"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="e598cb90-daca-48f9-863f-b06976569262" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Setup Filters" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Access Filter" id="81921c01-365d-4426-8222-9c8d9e190144"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>FilterWsSoapBinding</con:interface><con:operation>createOrUpdateFilter</con:operation><con:request name="Create Access Filter" id="7f64463a-7933-49b4-99b1-6189bf8c4667"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/FilterWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateFilter>
+         
+         <filter code="${#Project#entityPrefix}_FilterCustomFields_Access" 
+         		description="Subscription with Start and End Date">
+            
+            <shared>false</shared>
+            
+            <inputXml><![CDATA[<filter>
+            	<primarySelector>
+			    <targetEntity>org.meveo.model.mediation.Access</targetEntity>
+			    <alias>a</alias>
+			    <displayFields>
+			      <field>code</field>
+			      <field>startDate</field>
+			      <field>endDate</field>
+			    </displayFields>
+			    <exportFields/>
+			    <ignoreIfNotFoundForeignKeys/>
+			  </primarySelector>
+			  <secondarySelectors/>
+			  <disabled>false</disabled>
+			  <appendGeneratedCode>false</appendGeneratedCode>
+			  <filterCondition class="andCompositeFilterCondition">
+			    <filterConditionType>COMPOSITE_AND</filterConditionType>
+			    <filterConditions>
+					<filterCondition class="andCompositeFilterCondition">
+						<filterConditionType>COMPOSITE_AND</filterConditionType>
+						<filterConditions>
+						      <primitiveFilterCondition>
+						        <filterConditionType>PRIMITIVE</filterConditionType>
+						        <fieldName>startDate</fieldName>
+						        <operator>>=</operator>
+						        <operand>cfDate:ACCESS_START_DATE</operand>
+						      </primitiveFilterCondition>
+						</filterConditions>
+					</filterCondition>
+					<filterCondition class="andCompositeFilterCondition">
+						<filterConditionType>COMPOSITE_AND</filterConditionType>
+						<filterConditions>
+							<primitiveFilterCondition>
+						        <filterConditionType>PRIMITIVE</filterConditionType>
+						        <fieldName>endDate</fieldName>
+						        <operator><![CDATA[<=]]]]]]>><![CDATA[<![CDATA[></operator>
+						        <operand>cfDate:ACCESS_END_DATE</operand>
+						      </primitiveFilterCondition>
+						</filterConditions>
+					</filterCondition>
+					<filterCondition class="andCompositeFilterCondition">
+						<filterConditionType>COMPOSITE_AND</filterConditionType>
+						<filterConditions>
+						      <primitiveFilterCondition>
+						        <filterConditionType>PRIMITIVE</filterConditionType>
+						        <fieldName>subscription</fieldName>
+						        <operator>=</operator>
+						        <operand>cfEntity:ACCESS_SUBSCRIPTION</operand>
+						      </primitiveFilterCondition>
+						</filterConditions>
+					</filterCondition>
+				</filterConditions>
+			  </filterCondition>
+		  </filter>]]]]>><![CDATA[</inputXml>
+         </filter>
+      </ws:createOrUpdateFilter>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a6e159a5-25ac-4eb7-b2bf-b68b89c3b50e"/><con:assertion type="Schema Compliance" id="574dfc7c-73a3-4c3b-b72e-cbe8de7a4a4f"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="8ef4c6b8-c035-47b2-9f1b-707e4ad74181"/><con:assertion type="Simple Contains" id="8427ab8e-5d25-4e27-bfb4-3b03b6465ee7" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Price Plan Filter" id="310adafe-a00e-455b-90d9-421f2a3a382b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>FilterWsSoapBinding</con:interface><con:operation>createOrUpdateFilter</con:operation><con:request name="Create Price Plan Filter" id="7f64463a-7933-49b4-99b1-6189bf8c4667"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/FilterWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateFilter>
+         
+         <filter code="${#Project#entityPrefix}_FilterCustomFields_PricePlanMatrix" 
+         		description="Start and End Rating Dates">
+            
+            <shared>false</shared>
+            
+            <inputXml><![CDATA[<filter>
+            	<primarySelector>
+			    <targetEntity>org.meveo.model.catalog.PricePlanMatrix</targetEntity>
+			    <alias>p</alias>
+			    <displayFields>
+			      <field>code</field>
+			      <field>eventCode</field>
+			    </displayFields>
+			    <exportFields/>
+			    <ignoreIfNotFoundForeignKeys/>
+			  </primarySelector>
+			  <secondarySelectors/>
+			  <disabled>false</disabled>
+			  <appendGeneratedCode>false</appendGeneratedCode>
+			  <filterCondition class="andCompositeFilterCondition">
+			    <filterConditionType>COMPOSITE_AND</filterConditionType>
+			    <filterConditions>
+					<filterCondition class="andCompositeFilterCondition">
+						<filterConditionType>COMPOSITE_AND</filterConditionType>
+						<filterConditions>
+						      <primitiveFilterCondition>
+						        <filterConditionType>PRIMITIVE</filterConditionType>
+						        <fieldName>startRatingDate</fieldName>
+						        <operator>>=</operator>
+						        <operand>cfDate:PRICE_PLAN_START_RATING_DATE</operand>
+						      </primitiveFilterCondition>
+						</filterConditions>
+					</filterCondition>
+					<filterCondition class="andCompositeFilterCondition">
+						<filterConditionType>COMPOSITE_AND</filterConditionType>
+						<filterConditions>
+							<primitiveFilterCondition>
+						        <filterConditionType>PRIMITIVE</filterConditionType>
+						        <fieldName>endRatingDate</fieldName>
+						        <operator><![CDATA[<=]]]]]]>><![CDATA[<![CDATA[></operator>
+						        <operand>cfDate:PRICE_PLAN_END_RATING_DATE</operand>
+						      </primitiveFilterCondition>
+						</filterConditions>
+					</filterCondition>
+				</filterConditions>
+			  </filterCondition>
+		  </filter>]]]]>><![CDATA[</inputXml>
+         </filter>
+      </ws:createOrUpdateFilter>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a6e159a5-25ac-4eb7-b2bf-b68b89c3b50e"/><con:assertion type="Schema Compliance" id="574dfc7c-73a3-4c3b-b72e-cbe8de7a4a4f"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="8ef4c6b8-c035-47b2-9f1b-707e4ad74181"/><con:assertion type="Simple Contains" id="8427ab8e-5d25-4e27-bfb4-3b03b6465ee7" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Billing Account Filter" id="6a5f5c4e-30e0-491c-8c50-3978aa704f12"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>FilterWsSoapBinding</con:interface><con:operation>createOrUpdateFilter</con:operation><con:request name="Create Billing Account Filter" id="7f64463a-7933-49b4-99b1-6189bf8c4667"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/FilterWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateFilter>
+         
+         <filter code="${#Project#entityPrefix}_FilterCustomFields_Billing_Account" 
+         		description="Multi Fields">
+            
+            <shared>false</shared>
+            
+            <inputXml><![CDATA[<filter>
+            	<primarySelector>
+			    <targetEntity>org.meveo.model.billing.BillingAccount</targetEntity>
+			    <alias>ba</alias>
+			    <displayFields>
+			      <field>code</field>
+			      <field>statusDate</field>
+			      <field>email</field>
+                  <field>nextInvoiceDate</field>
+			    </displayFields>
+			    <exportFields/>
+			    <ignoreIfNotFoundForeignKeys/>
+			  </primarySelector>
+			  <secondarySelectors/>
+			  <disabled>false</disabled>
+			  <appendGeneratedCode>false</appendGeneratedCode>
+			  <filterCondition class="andCompositeFilterCondition">
+			    <filterConditionType>COMPOSITE_AND</filterConditionType>
+			    <filterConditions>
+					<filterCondition class="orCompositeFilterCondition">
+						<filterConditionType>COMPOSITE_OR</filterConditionType>
+						<filterConditions>
+						      <primitiveFilterCondition>
+						        <filterConditionType>PRIMITIVE</filterConditionType>
+						        <fieldName>statusDate</fieldName>
+						        <operator>=</operator>
+						        <operand>cfDate:BILLING_ACCOUNT_STATUS_DATE</operand>
+						      </primitiveFilterCondition>
+						</filterConditions>
+					</filterCondition>
+                    	<filterCondition class="orCompositeFilterCondition">
+						<filterConditionType>COMPOSITE_OR</filterConditionType>
+						<filterConditions>
+							<primitiveFilterCondition>
+						        <filterConditionType>PRIMITIVE</filterConditionType>
+						        <fieldName>email</fieldName>
+						        <operator>LIKE</operator>
+						        <operand>cfString:BILLING_ACCOUNT_EMAIL</operand>
+						      </primitiveFilterCondition>
+						</filterConditions>
+					</filterCondition>
+					<filterCondition class="orCompositeFilterCondition">
+						<filterConditionType>COMPOSITE_OR</filterConditionType>
+						<filterConditions>
+						      <primitiveFilterCondition>
+						        <filterConditionType>PRIMITIVE</filterConditionType>
+						        <fieldName>customerAccount</fieldName>
+						        <operator>=</operator>
+						        <operand>cfEntity:BILLING_ACCOUNT_CUSTOMER_ACCOUNT</operand>
+						      </primitiveFilterCondition>
+						</filterConditions>
+					</filterCondition>
+                    	<filterCondition class="orCompositeFilterCondition">
+						<filterConditionType>COMPOSITE_OR</filterConditionType>
+						<filterConditions>
+						      <primitiveFilterCondition>
+						        <filterConditionType>PRIMITIVE</filterConditionType>
+						        <fieldName>brAmountWithTax</fieldName>
+						        <operator>=</operator>
+						        <operand>cfDecimal:BILLING_ACCOUNT_AMOUNT_WITH_TAX</operand>
+						      </primitiveFilterCondition>
+						</filterConditions>
+					</filterCondition>
+				</filterConditions>
+			  </filterCondition>
+		  </filter>]]]]>><![CDATA[</inputXml>
+         </filter>
+      </ws:createOrUpdateFilter>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a6e159a5-25ac-4eb7-b2bf-b68b89c3b50e"/><con:assertion type="Schema Compliance" id="574dfc7c-73a3-4c3b-b72e-cbe8de7a4a4f"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="8ef4c6b8-c035-47b2-9f1b-707e4ad74181"/><con:assertion type="Simple Contains" id="8427ab8e-5d25-4e27-bfb4-3b03b6465ee7" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="c63177c1-3844-4f79-8b69-02e92ccb6aca" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Setup Custom Fields" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Access Filter startDate CF" id="87393f58-f587-43f6-bdcb-650ef71f70e0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>createOrUpdateField</con:operation><con:request name="Create Access Filter startDate CF" id="04e6c895-a8c1-4478-9a7c-e1bd0ba4e1f5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="ACCESS_START_DATE" description="Start Date">\r
+            <appliesTo>FILTER_${#Project#entityPrefix}_FilterCustomFields_Access</appliesTo>
+            <fieldType>DATE</fieldType>\r
+            <storageType>SINGLE</storageType>\r
+            <allowEdit>true</allowEdit>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="27f1a495-6342-4a75-b973-f4496b467f6c"/><con:assertion type="Schema Compliance" id="2788f8a3-a197-4057-9481-1e08e3040d52"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="5758112e-2418-4393-b7f6-f174425e8357"/><con:assertion type="Simple Contains" id="2c971e33-d15e-4b99-955d-1744cb976a65" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Access Filter endDate CF" id="8aef7980-0006-4f25-a6b6-90124bcd124b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>createOrUpdateField</con:operation><con:request name="Create Access Filter endDate CF" id="04e6c895-a8c1-4478-9a7c-e1bd0ba4e1f5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="ACCESS_END_DATE" description="End Date">\r
+            <appliesTo>FILTER_${#Project#entityPrefix}_FilterCustomFields_Access</appliesTo>
+            <fieldType>DATE</fieldType>\r
+            <storageType>SINGLE</storageType>\r
+            <allowEdit>true</allowEdit>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="27f1a495-6342-4a75-b973-f4496b467f6c"/><con:assertion type="Schema Compliance" id="2788f8a3-a197-4057-9481-1e08e3040d52"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="5758112e-2418-4393-b7f6-f174425e8357"/><con:assertion type="Simple Contains" id="f577d3c5-d2c2-4bba-b115-5760825c533c" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Access Filter subscription CF" id="1428fbcc-950c-4200-8204-bbf8306f2b36"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>createOrUpdateField</con:operation><con:request name="Create Access Filter subscription CF" id="04e6c895-a8c1-4478-9a7c-e1bd0ba4e1f5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="ACCESS_SUBSCRIPTION" description="Subscription">\r
+            <appliesTo>FILTER_${#Project#entityPrefix}_FilterCustomFields_Access</appliesTo>
+            <fieldType>ENTITY</fieldType>\r
+            <storageType>SINGLE</storageType>\r
+            <entityClazz>org.meveo.model.billing.Subscription</entityClazz>
+            <allowEdit>true</allowEdit>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="27f1a495-6342-4a75-b973-f4496b467f6c"/><con:assertion type="Schema Compliance" id="2788f8a3-a197-4057-9481-1e08e3040d52"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="5758112e-2418-4393-b7f6-f174425e8357"/><con:assertion type="Simple Contains" id="ebb8f65e-a55c-406b-8c10-f79432de93a6" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Price Plan Filter startRatingDate CF" id="4ca631a8-776c-49e5-9680-c8024c1e9a8c"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>createOrUpdateField</con:operation><con:request name="Create Price Plan Filter startRatingDate CF" id="04e6c895-a8c1-4478-9a7c-e1bd0ba4e1f5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="PRICE_PLAN_START_RATING_DATE" description="Start Rating Date">\r
+            <appliesTo>FILTER_${#Project#entityPrefix}_FilterCustomFields_PricePlanMatrix</appliesTo>
+            <fieldType>DATE</fieldType>\r
+            <storageType>SINGLE</storageType>\r
+            <allowEdit>true</allowEdit>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="27f1a495-6342-4a75-b973-f4496b467f6c"/><con:assertion type="Schema Compliance" id="2788f8a3-a197-4057-9481-1e08e3040d52"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="5758112e-2418-4393-b7f6-f174425e8357"/><con:assertion type="Simple Contains" id="dfb0c063-caa3-480e-887b-509c0617cf16" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Price Plan Filter endRatingDate CF" id="a99fbdd6-6fb5-450e-815b-1f5d89419b20"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>createOrUpdateField</con:operation><con:request name="Create Price Plan Filter endRatingDate CF" id="04e6c895-a8c1-4478-9a7c-e1bd0ba4e1f5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="PRICE_PLAN_END_RATING_DATE" description="End Rating Date">\r
+            <appliesTo>FILTER_${#Project#entityPrefix}_FilterCustomFields_PricePlanMatrix</appliesTo>
+            <fieldType>DATE</fieldType>\r
+            <storageType>SINGLE</storageType>\r
+            <allowEdit>true</allowEdit>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="27f1a495-6342-4a75-b973-f4496b467f6c"/><con:assertion type="Schema Compliance" id="2788f8a3-a197-4057-9481-1e08e3040d52"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="5758112e-2418-4393-b7f6-f174425e8357"/><con:assertion type="Simple Contains" id="04e5d562-60e3-4d6b-b1f0-b5a1ef1a5863" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Billing Account Filter statusDate CF" id="d6eace31-659f-4d22-b014-d2f9056c5048"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>createOrUpdateField</con:operation><con:request name="Create Billing Account Filter statusDate CF" id="04e6c895-a8c1-4478-9a7c-e1bd0ba4e1f5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="BILLING_ACCOUNT_STATUS_DATE" description="Status Date">\r
+            <appliesTo>FILTER_${#Project#entityPrefix}_FilterCustomFields_Billing_Account</appliesTo>
+            <fieldType>DATE</fieldType>\r
+            <storageType>SINGLE</storageType>\r
+            <allowEdit>true</allowEdit>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="27f1a495-6342-4a75-b973-f4496b467f6c"/><con:assertion type="Schema Compliance" id="2788f8a3-a197-4057-9481-1e08e3040d52"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="5758112e-2418-4393-b7f6-f174425e8357"/><con:assertion type="Simple Contains" id="2c971e33-d15e-4b99-955d-1744cb976a65" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Billing Account Filter email CF" id="6afc2d5b-6ad6-4b83-afbd-8469132f0fe1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>createOrUpdateField</con:operation><con:request name="Create Billing Account Filter email CF" id="04e6c895-a8c1-4478-9a7c-e1bd0ba4e1f5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="BILLING_ACCOUNT_EMAIL" description="Email">\r
+            <appliesTo>FILTER_${#Project#entityPrefix}_FilterCustomFields_Billing_Account</appliesTo>
+            <fieldType>STRING</fieldType>\r
+            <storageType>SINGLE</storageType>\r
+            <allowEdit>true</allowEdit>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="27f1a495-6342-4a75-b973-f4496b467f6c"/><con:assertion type="Schema Compliance" id="2788f8a3-a197-4057-9481-1e08e3040d52"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="5758112e-2418-4393-b7f6-f174425e8357"/><con:assertion type="Simple Contains" id="2c971e33-d15e-4b99-955d-1744cb976a65" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Billing Account Filter customerAccount CF" id="dce2ed39-0816-4613-b9a7-612d555dce75"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>createOrUpdateField</con:operation><con:request name="Create Billing Account Filter customerAccount CF" id="04e6c895-a8c1-4478-9a7c-e1bd0ba4e1f5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="BILLING_ACCOUNT_CUSTOMER_ACCOUNT" description="Customer Account">\r
+            <appliesTo>FILTER_${#Project#entityPrefix}_FilterCustomFields_Billing_Account</appliesTo>
+            <fieldType>ENTITY</fieldType>\r
+            <entityClazz>org.meveo.model.payments.CustomerAccount</entityClazz>
+            <storageType>SINGLE</storageType>\r
+            <allowEdit>true</allowEdit>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="27f1a495-6342-4a75-b973-f4496b467f6c"/><con:assertion type="Schema Compliance" id="2788f8a3-a197-4057-9481-1e08e3040d52"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="5758112e-2418-4393-b7f6-f174425e8357"/><con:assertion type="Simple Contains" id="2c971e33-d15e-4b99-955d-1744cb976a65" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Billing Account Filter brAmountWithTax CF" id="832497bf-62af-47b8-b708-c78714dafd74"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EntityCustomizationWsSoapBinding</con:interface><con:operation>createOrUpdateField</con:operation><con:request name="Create Billing Account Filter brAmountWithTax CF" id="04e6c895-a8c1-4478-9a7c-e1bd0ba4e1f5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="BILLING_ACCOUNT_AMOUNT_WITH_TAX" description="Amount with Tax">\r
+            <appliesTo>FILTER_${#Project#entityPrefix}_FilterCustomFields_Billing_Account</appliesTo>
+            <fieldType>DOUBLE</fieldType>\r
+            <storageType>SINGLE</storageType>\r
+            <allowEdit>true</allowEdit>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="27f1a495-6342-4a75-b973-f4496b467f6c"/><con:assertion type="Schema Compliance" id="2788f8a3-a197-4057-9481-1e08e3040d52"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="5758112e-2418-4393-b7f6-f174425e8357"/><con:assertion type="Simple Contains" id="2c971e33-d15e-4b99-955d-1744cb976a65" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite id="33560d18-e1e9-451a-a2f2-d543a800b70f" name="Remove base data"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="9f452fe5-90e9-4a47-b3a3-109cfb3a7b16" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Remove Administration" searchProperties="true"><con:settings/><con:testStep type="request" name="find BarChart" id="0f44d189-a04f-4b94-b24f-83dd0d150482"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ReportingWsSoapBinding</con:interface><con:operation>createBarChart</con:operation><con:request name="find BarChart" id="369cdd69-e2f0-4da9-8573-e0b478b18b9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ReportingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findChart>

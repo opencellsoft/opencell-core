@@ -18,14 +18,9 @@
  */
 package org.meveo.admin.action.catalog;
 
-import java.util.*;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -43,6 +38,13 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * Standard backing bean for {@link OneShotChargeTemplate} (extends
  * {@link BaseBean} that provides almost all common methods to handle entities
@@ -51,7 +53,7 @@ import org.primefaces.model.LazyDataModel;
  */
 @Named
 @ViewScoped
-public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemplate> {
+public class OneShotChargeTemplateBean extends CustomFieldSearchBean<OneShotChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 
 	/**

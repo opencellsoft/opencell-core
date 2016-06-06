@@ -629,12 +629,12 @@ public class CustomFieldDataEntryBean implements Serializable {
      */
     public void saveCustomFieldsToEntity(ICustomFieldEntity entity, boolean isNewEntity) throws BusinessException {
 
-        CustomFieldValueHolder entityFieldsValues = getFieldsValuesByUUID(entity.getUuid());
-        if(groupedFieldTemplates.get(entity.getUuid()) != null) {
-        	for (CustomFieldTemplate cft : groupedFieldTemplates.get(entity.getUuid()).getFields()) {
-        		List<CustomFieldInstance> cfis = entityFieldsValues.getValues(cft);
-        		
-        		for (CustomFieldInstance cfi : cfis) {
+        String uuid = entity.getUuid();
+        CustomFieldValueHolder entityFieldsValues = getFieldsValuesByUUID(uuid);
+        GroupedCustomField groupedCustomFields = groupedFieldTemplates.get(uuid);
+        if(groupedCustomFields != null) {
+        	for (CustomFieldTemplate cft : groupedCustomFields.getFields()) {
+        		for (CustomFieldInstance cfi : entityFieldsValues.getValues(cft)) {
         			// Not saving empty values unless template has a default value or is versionable (to prevent that for SINGLE type CFT with a default value, value is
         			// instantiates automatically)
         			// Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
@@ -1062,4 +1062,32 @@ public class CustomFieldDataEntryBean implements Serializable {
         initFields(cei);
         return fieldsValues.get(cei.getUuid());
     }
+
+    /**
+     * Save custom fields for a given entity
+     *
+     * @param entity Entity, the fields relate to
+     * @throws BusinessException
+     */
+    public Map<CustomFieldTemplate, Object> loadCustomFieldsFromGUI(ICustomFieldEntity entity) throws BusinessException {
+        Map<CustomFieldTemplate, Object> fieldMap = new HashMap<>();
+        String uuid = entity.getUuid();
+        CustomFieldValueHolder entityFieldsValues = getFieldsValuesByUUID(uuid);
+        GroupedCustomField groupedCustomFields = groupedFieldTemplates.get(uuid);
+        if(groupedCustomFields != null) {
+            for (CustomFieldTemplate cft : groupedCustomFields.getFields()) {
+                for (CustomFieldInstance cfi : entityFieldsValues.getValues(cft)) {
+                    CustomFieldValue cfValue = cfi.getCfValue();
+                    serializeFromGUI(entity, cfValue, cft);
+                    if(CustomFieldTypeEnum.ENTITY.equals(cft.getFieldType())){
+                        fieldMap.put(cft, cfValue.getEntityReferenceValueForGUI());
+                    } else {
+                        fieldMap.put(cft, cfValue.getValue());
+                    }
+                }
+            }
+        }
+        return fieldMap;
+    }
+
 }

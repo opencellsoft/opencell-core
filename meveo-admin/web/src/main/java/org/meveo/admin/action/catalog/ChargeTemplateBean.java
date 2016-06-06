@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -41,7 +42,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
-public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
+public class ChargeTemplateBean extends CustomFieldSearchBean<ChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 
 	/**

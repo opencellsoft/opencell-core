@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -39,7 +40,7 @@ import org.meveo.service.billing.impl.BillingAccountService;
  */
 @Named
 @ConversationScoped
-public class BillingAccountListBean extends BaseBean<BillingAccount> {
+public class BillingAccountListBean extends CustomFieldSearchBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;
 

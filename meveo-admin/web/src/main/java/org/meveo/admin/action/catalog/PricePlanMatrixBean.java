@@ -18,28 +18,13 @@
  */
 package org.meveo.admin.action.catalog;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Instance;
-import javax.faces.bean.ApplicationScoped;
-import javax.faces.event.ActionEvent;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.catalog.*;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
@@ -52,6 +37,15 @@ import org.primefaces.event.ToggleEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.Visibility;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
+import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Standard backing bean for {@link PricePlanMatrix} (extends {@link BaseBean}
  * that provides almost all common methods to handle entities filtering/sorting
@@ -60,7 +54,7 @@ import org.primefaces.model.Visibility;
  */
 @Named
 @ViewScoped
-public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
+public class PricePlanMatrixBean extends CustomFieldSearchBean<PricePlanMatrix> {
 
 	private static final long serialVersionUID = -7046887530976683885L;
 

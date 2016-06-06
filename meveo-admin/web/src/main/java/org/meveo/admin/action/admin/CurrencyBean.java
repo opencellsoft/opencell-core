@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
 import org.meveo.service.admin.impl.CurrencyService;
@@ -39,7 +40,7 @@ import org.primefaces.context.RequestContext;
  */
 @Named
 @ViewScoped
-public class CurrencyBean extends BaseBean<Currency> {
+public class CurrencyBean extends CustomFieldSearchBean<Currency> {
 
     private static final long serialVersionUID = 1895532923500996522L;
 

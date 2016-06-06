@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.service.base.PersistenceService;
@@ -35,7 +36,7 @@ import org.primefaces.model.LazyDataModel;
 
 @Named
 @ViewScoped
-public class CounterTemplateBean extends BaseBean<CounterTemplate> {
+public class CounterTemplateBean extends CustomFieldSearchBean<CounterTemplate> {
 
 	private static final long serialVersionUID = 1L;
 
