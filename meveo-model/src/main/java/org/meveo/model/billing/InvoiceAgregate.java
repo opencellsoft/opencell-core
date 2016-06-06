@@ -310,4 +310,24 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 		setAmountWithTax(new BigDecimal(0));
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		InvoiceAgregate temp = (InvoiceAgregate) obj;
+		if (temp instanceof CategoryInvoiceAgregate && this instanceof CategoryInvoiceAgregate) {
+			CategoryInvoiceAgregate temp1 = (CategoryInvoiceAgregate) this;
+			CategoryInvoiceAgregate temp2 = (CategoryInvoiceAgregate) temp;
+			return temp1.getInvoiceCategory().getCode().equals(temp2.getInvoiceCategory().getCode());
+		} else if (temp instanceof SubCategoryInvoiceAgregate && this instanceof SubCategoryInvoiceAgregate) {
+			SubCategoryInvoiceAgregate temp1 = (SubCategoryInvoiceAgregate) this;
+			SubCategoryInvoiceAgregate temp2 = (SubCategoryInvoiceAgregate) temp;
+			return temp1.getInvoiceSubCategory().getCode().equals(temp2.getInvoiceSubCategory().getCode());
+		} else if (temp instanceof TaxInvoiceAgregate && this instanceof TaxInvoiceAgregate) {
+			TaxInvoiceAgregate temp1 = (TaxInvoiceAgregate) this;
+			TaxInvoiceAgregate temp2 = (TaxInvoiceAgregate) temp;
+			return temp1.getTax().getCode().equals(temp2.getTax().getCode());
+		}
+
+		return false;
+	}
+	
 }
