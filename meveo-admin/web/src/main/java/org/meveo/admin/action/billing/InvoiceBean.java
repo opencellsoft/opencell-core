@@ -696,15 +696,14 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 			}else{
 				entity = invoiceService.update(entity, getCurrentUser());
 			}
-		}
-		if (entity.isTransient()) {	
 			if(billingAccountId!=0){
 				BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
 				entity.setBillingAccount(billingAccount);
 				String invoiceNumber=invoiceService.getInvoiceNumber(entity, getCurrentUser());
 				entity.setInvoiceNumber(invoiceNumber);
-			}
-			}	
+			} 	 
+		}
+				
 		if (isDetailed()) {
 			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, new Date(),getCurrentUser(), true);
 		} else {
