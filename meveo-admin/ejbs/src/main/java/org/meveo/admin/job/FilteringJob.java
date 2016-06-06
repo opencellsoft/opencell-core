@@ -13,6 +13,7 @@ import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.filter.Filter;
@@ -99,7 +100,8 @@ public class FilteringJob extends Job {
 		variablesCF.setFieldType(CustomFieldTypeEnum.STRING);
 		variablesCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
 		variablesCF.setValueRequired(false);
-		variablesCF.setMaxValue(50L);
+		variablesCF.setMaxValue(256L);
+		variablesCF.setMapKeyType(CustomFieldMapKeyEnum.STRING);
 		result.put("FilteringJob_variables", variablesCF); 
 
 		CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
@@ -110,7 +112,7 @@ public class FilteringJob extends Job {
 		recordVariableName.setDescription("Record variable name");
 		recordVariableName.setFieldType(CustomFieldTypeEnum.STRING);
 		recordVariableName.setValueRequired(false);
-		recordVariableName.setMaxValue(50L);
+		recordVariableName.setMaxValue(256L);		
 		result.put("FilteringJob_recordVariableName", recordVariableName);
 
 		return result;

@@ -116,7 +116,7 @@ public class FlatFileProcessingJob extends Job {
 		inputDirectoryCF.setFieldType(CustomFieldTypeEnum.STRING);
 		inputDirectoryCF.setDefaultValue(null);
 		inputDirectoryCF.setValueRequired(true);
-		inputDirectoryCF.setMaxValue(150L);
+		inputDirectoryCF.setMaxValue(256L);
 		result.put("FlatFileProcessingJob_inputDir", inputDirectoryCF);
 
 		CustomFieldTemplate fileNameExtensionCF = new CustomFieldTemplate();
@@ -127,7 +127,7 @@ public class FlatFileProcessingJob extends Job {
 		fileNameExtensionCF.setFieldType(CustomFieldTypeEnum.STRING);
 		fileNameExtensionCF.setDefaultValue("csv");
 		fileNameExtensionCF.setValueRequired(true);
-		fileNameExtensionCF.setMaxValue(100L);
+		fileNameExtensionCF.setMaxValue(256L);
 		result.put("FlatFileProcessingJob_fileNameExtension", fileNameExtensionCF);
 
 		CustomFieldTemplate mappingConf = new CustomFieldTemplate();
@@ -148,7 +148,7 @@ public class FlatFileProcessingJob extends Job {
 		scriptFlowCF.setFieldType(CustomFieldTypeEnum.STRING);
 		scriptFlowCF.setDefaultValue(null);
 		scriptFlowCF.setValueRequired(true);
-		scriptFlowCF.setMaxValue(100L);
+		scriptFlowCF.setMaxValue(256L);
 		result.put("FlatFileProcessingJob_scriptsFlow", scriptFlowCF);
 
 		CustomFieldTemplate variablesCF = new CustomFieldTemplate();
@@ -159,7 +159,7 @@ public class FlatFileProcessingJob extends Job {
 		variablesCF.setFieldType(CustomFieldTypeEnum.STRING);
 		variablesCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
 		variablesCF.setValueRequired(false);
-		variablesCF.setMaxValue(100L);
+		variablesCF.setMaxValue(256L);
 		variablesCF.setMapKeyType(CustomFieldMapKeyEnum.STRING);
 		result.put("FlatFileProcessingJob_variables", variablesCF);
 
@@ -182,7 +182,7 @@ public class FlatFileProcessingJob extends Job {
 		originFilename.setDescription("Filename variable name");
 		originFilename.setFieldType(CustomFieldTypeEnum.STRING);
 		originFilename.setValueRequired(false);
-		originFilename.setMaxValue(100L);
+		originFilename.setMaxValue(256L);
 		result.put("FlatFileProcessingJob_originFilename", originFilename);
 
 		CustomFieldTemplate formatTransfo = new CustomFieldTemplate();
