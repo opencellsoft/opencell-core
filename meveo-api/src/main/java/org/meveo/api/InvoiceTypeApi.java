@@ -95,7 +95,13 @@ public class InvoiceTypeApi extends BaseApi {
 	        for(Entry<String,SequenceDto> entry : invoiceTypeDto.getSellerSequences().entrySet()){
 	        	Seller seller = sellerService.findByCode(entry.getKey(), provider);
 	        	if(seller == null){
-	        		 throw new EntityDoesNotExistsException(Seller.class, entry.getKey()); 
+	        		throw new EntityDoesNotExistsException(Seller.class, entry.getKey()); 
+	        	}
+	        	if(entry.getValue().getSequenceSize().intValue()<0){
+	        		throw new MeveoApiException("sequence size value must be positive");
+	        	}
+	        	if(entry.getValue().getCurrentInvoiceNb().intValue()<0){
+	        		throw new MeveoApiException("current invoice number value must be positive");
 	        	}
 	        	invoiceType.getSellerSequence().put(seller, entry.getValue() == null ? null : entry.getValue().fromDto());
 	        }
@@ -163,6 +169,12 @@ public class InvoiceTypeApi extends BaseApi {
 	        	Seller seller = sellerService.findByCode(entry.getKey(), provider);
 	        	if(seller == null){
 	        		 throw new EntityDoesNotExistsException(Seller.class, entry.getKey()); 
+	        	}
+	        	if(entry.getValue().getSequenceSize().intValue()<0){
+	        		throw new MeveoApiException("sequence size value must be positive");
+	        	}
+	        	if(entry.getValue().getCurrentInvoiceNb().intValue()<0){
+	        		throw new MeveoApiException("current invoice number value must be positive");
 	        	}
 	        	invoiceType.getSellerSequence().put(seller, entry.getValue() == null ? null : entry.getValue().fromDto());
 	        }
