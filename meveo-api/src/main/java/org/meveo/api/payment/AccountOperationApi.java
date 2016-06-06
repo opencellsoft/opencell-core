@@ -197,6 +197,7 @@ public class AccountOperationApi extends BaseApi {
             accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus());
             accountOperationDto.setOccCode(accountOp.getOccCode());
             accountOperationDto.setOccDescription(accountOp.getOccDescription());
+            accountOperationDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(accountOp));
 
             List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
             MatchingAmountDto matchingAmountDto = null;

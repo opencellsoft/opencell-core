@@ -510,7 +510,7 @@ public class ProviderApi extends BaseApi {
         List<InvoiceCategory> invoiceCategories = invoiceCategoryService.list(provider);
         if (invoiceCategories != null) {
             for (InvoiceCategory invoiceCategory : invoiceCategories) {
-                result.getInvoiceCategories().getInvoiceCategory().add(new InvoiceCategoryDto(invoiceCategory));
+                result.getInvoiceCategories().getInvoiceCategory().add(new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceCategory)));
             }
         }
 
@@ -518,7 +518,7 @@ public class ProviderApi extends BaseApi {
         List<InvoiceSubCategory> invoiceSubCategories = invoiceSubCategoryService.list(provider);
         if (invoiceSubCategories != null) {
             for (InvoiceSubCategory invoiceSubCategory : invoiceSubCategories) {
-                result.getInvoiceSubCategories().getInvoiceSubCategory().add(new InvoiceSubCategoryDto(invoiceSubCategory));
+                result.getInvoiceSubCategories().getInvoiceSubCategory().add(new InvoiceSubCategoryDto(invoiceSubCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceSubCategory)));
             }
         }
 

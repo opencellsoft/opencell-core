@@ -32,9 +32,10 @@ public class InvoiceCategoryDto extends BaseDto {
 
 	}
 
-	public InvoiceCategoryDto(InvoiceCategory invoiceCategory) {
+	public InvoiceCategoryDto(InvoiceCategory invoiceCategory, CustomFieldsDto customFieldInstances) {
 		code = invoiceCategory.getCode();
 		description = invoiceCategory.getDescription();
+		customFields = customFieldInstances;
 	}
 
 	public String getCode() {

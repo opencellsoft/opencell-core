@@ -76,10 +76,10 @@
                             field="accountingCode" />
                             
 						<hftl:formLanguageFields entity="#{invoiceSubCategoryBean.entity}" backingBean="#{invoiceSubCategoryBean}" multiLang="true"/>
-
 					</hftl:formPanel>
 
 				</p:tab>
+				
 
 				<p:tab title="#{messages['invoiceSubCategory.tab2']}" id="tab2"
 					rendered="#{invoiceSubCategoryBean.entity.id!=null}">
@@ -196,7 +196,13 @@
 								</hftl:formPanel>
 							</p:panel>
 				</p:tab>
-
+				<p:tab title="#{messages['meveoModule.customFields']}" id="tab3" rendered="#{invoiceSubCategoryBean.entity.id!=null}">
+					<hftl:formPanel formId="invoiceSubCatFormId" edit="#{invoiceSubCategoryBean.edit}"
+						backingBean="#{invoiceSubCategoryBean}">
+							<hftl:customFields backingBean="#{invoiceSubCategoryBean}" messagesId=":tabView:invoiceSubCatFormId:messages" />
+					</hftl:formPanel>
+				</p:tab>
+				
 			</p:tabView>
 		</p:panel>
 	</ui:define>

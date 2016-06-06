@@ -191,7 +191,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, code);
         }
 
-        result = new InvoiceSubCategoryDto(invoiceSubCategory);
+        result = new InvoiceSubCategoryDto(invoiceSubCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceSubCategory));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
         for (CatMessages msg : catMessagesService.getCatMessagesList(InvoiceSubCategory.class.getSimpleName() + "_" + invoiceSubCategory.getId())) {
