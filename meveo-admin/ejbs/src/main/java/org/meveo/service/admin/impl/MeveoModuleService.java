@@ -381,6 +381,9 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 
         } else if (module instanceof BusinessOfferModel) {
             businessOfferModelToDto((BusinessOfferModel) module, (BusinessOfferModelDto) moduleDto, provider);
+
+        } else if (module instanceof BusinessAccountModel) {
+            businessAccountModelToDto((BusinessAccountModel) module, (BusinessAccountModelDto) moduleDto, provider);
         }
 
         return moduleDto;
@@ -442,6 +445,19 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         dto.setDuplicateService(bsm.isDuplicateService());
         dto.setDuplicatePricePlan(bsm.isDuplicatePricePlan());
 
+    }
+
+    /**
+     * Convert BusinessAccountModel object to DTO representation
+     * 
+     * @param bom BusinessAccountModel object to convert
+     * @param dto BusinessAccountModel object DTO representation (as result of base MeveoModule object conversion)
+     * @param provider Provider
+     * @return BusinessAccountModel object DTO representation
+     */
+    private void businessAccountModelToDto(BusinessAccountModel bom, BusinessAccountModelDto dto, Provider provider) {
+
+        dto.setHierarchyType(bom.getHierarchyType());
     }
 
     /**
@@ -865,7 +881,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         qb.addCriterion("i.itemClass", "=", itemClazz, false);
         qb.addCriterion("i.appliesTo", "=", appliesTo, false);
         List<MeveoModule> modules = qb.getQuery(getEntityManager()).getResultList();
-        
+
         if (modules != null) {
             StringBuilder sb = new StringBuilder();
             int i = 0;
