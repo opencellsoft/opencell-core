@@ -85,9 +85,9 @@
 									</h:commandLink>
 									<p:spacer width="10" />
 									<p:commandButton icon="ui-icon-close"
-										rendered="#{invoiceBean.entity.invoiceNumber==null}"
+										rendered="#{invoiceBean.entity.invoiceNumber==null and invoiceBean.entity.id!=null}"
 										action="#{invoiceBean.deleteInvoicePdf}"
-										update="totalForm:formId:buttonGenerate,@form" />
+										update="@form" />
 								</p:outputPanel>
 								<p:outputPanel
 									rendered="#{invoiceBean.isXmlInvoiceAdjustmentAlreadyGenerated}">
@@ -99,9 +99,9 @@
 									</h:commandLink>
 									<p:spacer width="10" />
 									<p:commandButton
-										rendered="#{invoiceBean.entity.invoiceNumber==null}"
+										rendered="#{invoiceBean.entity.invoiceNumber==null and invoiceBean.entity.id!=null}"
 										icon="ui-icon-close" action="#{invoiceBean.deleteXmlInvoice}"
-										update="totalForm:formId:buttonGenerate,@form" />
+										update="@form" />
 								</p:outputPanel>
 							</p:panelGrid>
 						</p:fieldset>
