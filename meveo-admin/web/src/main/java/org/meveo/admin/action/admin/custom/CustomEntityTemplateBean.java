@@ -193,34 +193,32 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                 }
             }
         }
-        if(cachedTreeNodes!=null&&!cachedTreeNodes.isEmpty()){
-        	for(TreeNode tabNode:cachedTreeNodes){//tab
-        		TreeNode existedTab=getChildNodeByValue(groupedFields,tabNode.getData().toString());
-        		if(existedTab==null){//check tab
-        			existedTab=new SortedTreeNode(CustomFieldTemplate.POSITION_TAB,tabNode.getData().toString(),groupedFields);
-        			existedTab.setExpanded(true);
-        			log.debug("add a tab {} from cache",tabNode.getData());
-        		}
-        		for(TreeNode fieldGroupNode:tabNode.getChildren()){//field groups of tab
-        			TreeNode existedFieldGroup=getChildNodeByValue(existedTab,fieldGroupNode.getData().toString());
-        			if(existedFieldGroup==null){
-        				existedFieldGroup=new SortedTreeNode(CustomFieldTemplate.POSITION_FIELD_GROUP,fieldGroupNode.getData().toString(),existedTab);
-        				log.debug("add a fieldGroup {} from cache",fieldGroupNode.getData());
-        			}
-        		}
-        	}
+        if (cachedTreeNodes != null && !cachedTreeNodes.isEmpty()) {
+            for (TreeNode tabNode : cachedTreeNodes) {// tab
+                TreeNode existedTab = getChildNodeByValue(groupedFields, tabNode.getData().toString());
+                if (existedTab == null) {// check tab
+                    existedTab = new SortedTreeNode(CustomFieldTemplate.POSITION_TAB, tabNode.getData().toString(), groupedFields);
+                    existedTab.setExpanded(true);
+                }
+                for (TreeNode fieldGroupNode : tabNode.getChildren()) {// field groups of tab
+                    TreeNode existedFieldGroup = getChildNodeByValue(existedTab, fieldGroupNode.getData().toString());
+                    if (existedFieldGroup == null) {
+                        existedFieldGroup = new SortedTreeNode(CustomFieldTemplate.POSITION_FIELD_GROUP, fieldGroupNode.getData().toString(), existedTab);
+                    }
+                }
+            }
         }
 
         return groupedFields;
     }
-   
-    private TreeNode getChildNodeByValue(TreeNode parentTreeNode,String value){
-    	for(TreeNode childNode:parentTreeNode.getChildren()){
-    		if(childNode.getData().equals(value)){
-    			return childNode;
-    		}
-    	}
-    	return null;
+
+    private TreeNode getChildNodeByValue(TreeNode parentTreeNode, String value) {
+        for (TreeNode childNode : parentTreeNode.getChildren()) {
+            if (childNode.getData().equals(value)) {
+                return childNode;
+            }
+        }
+        return null;
     }
 
     public List<EntityCustomAction> getEntityActions() {
@@ -237,28 +235,27 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         return entityActions;
     }
 
-    public void removeField(TreeNode currentNode){
-    	currentNode.getParent().getChildren().remove(currentNode);
-    	refreshFields();
+    public void removeField(TreeNode currentNode) {
+        currentNode.getParent().getChildren().remove(currentNode);
+        refreshFields();
     }
+
     public void refreshFields() {
-    	if(groupedFields!=null){
-    		cachedTreeNodes=new ArrayList<TreeNode>();
-    		for(TreeNode tabNode:groupedFields.getChildren()){
-        		SortedTreeNode tab=new SortedTreeNode(CustomFieldTemplate.POSITION_TAB,tabNode.getData(),null);
-        		cachedTreeNodes.add(tab);
-        		log.debug("in refresh, add tab {} to cache",tabNode);
-        		if(tabNode.getChildCount()!=0){
-        			for(TreeNode fieldGroupNode:tabNode.getChildren()){//fieldgroup
-        				SortedTreeNode fieldGroup=(SortedTreeNode)fieldGroupNode;
-        				if(fieldGroup.getType().equals(CustomFieldTemplate.POSITION_FIELD_GROUP)&&fieldGroupNode.getChildCount()==0){
-        					new SortedTreeNode(CustomFieldTemplate.POSITION_FIELD_GROUP,fieldGroupNode.getData(),tab);
-        					log.debug("in refresh, add a fieldgroup {} into cache",fieldGroupNode.getData());
-        				}
-        			}
-        		}
-        	}
-    	}
+        if (groupedFields != null) {
+            cachedTreeNodes = new ArrayList<TreeNode>();
+            for (TreeNode tabNode : groupedFields.getChildren()) {
+                SortedTreeNode tab = new SortedTreeNode(CustomFieldTemplate.POSITION_TAB, tabNode.getData(), null);
+                cachedTreeNodes.add(tab);
+                if (tabNode.getChildCount() != 0) {
+                    for (TreeNode fieldGroupNode : tabNode.getChildren()) {// fieldgroup
+                        SortedTreeNode fieldGroup = (SortedTreeNode) fieldGroupNode;
+                        if (fieldGroup.getType().equals(CustomFieldTemplate.POSITION_FIELD_GROUP) && fieldGroupNode.getChildCount() == 0) {
+                            new SortedTreeNode(CustomFieldTemplate.POSITION_FIELD_GROUP, fieldGroupNode.getData(), tab);
+                        }
+                    }
+                }
+            }
+        }
         groupedFields = null;
     }
 
