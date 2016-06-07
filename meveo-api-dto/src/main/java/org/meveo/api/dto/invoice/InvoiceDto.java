@@ -43,7 +43,7 @@ public class InvoiceDto extends BaseDto {
     private BigDecimal amountTax;
     private BigDecimal amountWithTax;
     private PaymentMethodEnum paymentMethod;
-    private boolean PDFpresent;
+    private boolean pdfPresent;
     @XmlElement(required = true)
     private String invoiceType;
     private byte[] pdf;
@@ -218,12 +218,12 @@ public class InvoiceDto extends BaseDto {
         this.amountWithTax = amountWithTax;
     }
 
-    public boolean isPDFpresent() {
-        return PDFpresent;
+    public boolean isPdfPresent() {
+        return pdfPresent;
     }
 
-    public void setPDFpresent(boolean pDFpresent) {
-        PDFpresent = pDFpresent;
+    public void setPdfPresent(boolean pDFpresent) {
+        pdfPresent = pDFpresent;
     }
 
     public PaymentMethodEnum getPaymentMethod() {

@@ -9,13 +9,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
-import org.meveo.api.dto.invoice.Invoice4_2Dto;
-import org.meveo.api.dto.response.CustomerInvoices4_2Response;
-import org.meveo.api.dto.response.InvoiceCreationResponse;
+import org.meveo.api.dto.invoice.InvoiceDto;
+import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -24,11 +25,11 @@ import org.meveo.api.rest.security.RSSecured;
  * 
  * @author Edward P. Legaspi
  **/
-@Path("/invoice4_2")
+@Path("/invoice")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured
-public interface Invoice4_2Rs extends IBaseRs {
+public interface InvoiceRs extends IBaseRs {
 
     /**
      * Create invoice. Invoice number depends on invoice type
@@ -37,8 +38,8 @@ public interface Invoice4_2Rs extends IBaseRs {
      * @return
      */
     @POST
-    @Path("/")
-    public InvoiceCreationResponse create(Invoice4_2Dto invoiceDto);
+    @Path("/create")
+    public CreateInvoiceResponseDto create(InvoiceDto invoiceDto);
 
     /**
      * Search for a list of invoice given a customer account code.
@@ -48,7 +49,7 @@ public interface Invoice4_2Rs extends IBaseRs {
      */
     @GET
     @Path("/")
-    public CustomerInvoices4_2Response find(@QueryParam("customerAccountCode") String customerAccountCode);
+    public CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode);
 
     /**
      * This operation generates rated transaction given a billing account and invoicing date, updates billing account amounts and generates aggregates and invoice.
@@ -101,4 +102,25 @@ public interface Invoice4_2Rs extends IBaseRs {
     @POST
     @Path("/getPdfInvoiceWithType")
     public GetPdfInvoiceResponseDto findPdfInvoiceWithType(@FormParam("invoiceNumber") String invoiceNumber, @FormParam("invoiceType") String invoiceType);
+    
+    /**
+     * 
+     * 
+     * @param invoiceId
+     * @return
+     */
+    @POST
+    @Path("/cancel")
+	public ActionStatus cancel(@FormParam("invoiceId") Long invoiceId);
+	
+    
+    /**
+     * 
+     * @param invoiceId
+     * @return
+     */
+    @POST
+    @Path("/validate")
+	public ActionStatus validate(@FormParam("invoiceId") Long invoiceId);
+
 }
