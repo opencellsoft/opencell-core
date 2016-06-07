@@ -102,8 +102,9 @@
 							</p:column>					  
 					</p:dataTable>
 					<p:commandButton
-					oncomplete="PF('dlg_sellerSequenceChgPopup').show()" value="#{messages['commons.addNew']}">
-				    </p:commandButton> 
+					oncomplete="PF('dlg_sellerSequenceChgPopup').show()" value="#{messages['commons.addNew']}" update=":sellerFormId:tabView:sellerSequenceChgPopup"
+					action="#{sellerBean.resetSequenceField}">
+				    </p:commandButton>  
 					<p:dialog id="sellerSequenceChgPopup"
 					header="#{messages['seller.sellerSequence']}"
 					widgetVar="dlg_sellerSequenceChgPopup" modal="true"  width="50%" closeOnEscape="true"> 
@@ -118,12 +119,12 @@
 					</h:panelGrid> 
 					<hftl:decorateFormField  
 					label="#{messages['seller.currentInvoiceNb']}">
-					<p:spinner value="#{sellerBean.currentInvoiceNb}"/>
+					<p:spinner value="#{sellerBean.currentInvoiceNb}" min="0"/>
 					</hftl:decorateFormField>
 					
 					<hftl:decorateFormField  
 					label="#{messages['invoiceType.sequenceSize']}">
-					<p:spinner value="#{sellerBean.sequenceSize}"/>
+					<p:spinner value="#{sellerBean.sequenceSize}" min="0"/>
 					</hftl:decorateFormField>
 			
 					<hftl:decorateFormField  

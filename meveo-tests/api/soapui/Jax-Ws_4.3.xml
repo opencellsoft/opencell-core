@@ -57728,16 +57728,6 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
                   </value>
                </entry>
             </sellerSequences>
-             <providerSequences>
-               <entry>
-                  <key>DEMO</key>
-                  <value>
-                     <prefixEL>PrefixINV5_</prefixEL>
-                     <sequenceSize>1</sequenceSize>
-                     <currentInvoiceNb>18</currentInvoiceNb>
-                  </value>
-               </entry>
-            </providerSequences>
          </invoiceType>
       </ws:createOrUpdateInvoiceType>
    </soapenv:Body>
@@ -57764,16 +57754,6 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
                   </value>
                </entry>
             </sellerSequences>
-             <providerSequences>
-               <entry>
-                  <key>DEMO</key>
-                  <value>
-                     <prefixEL>Prefix_</prefixEL>
-                     <sequenceSize>6</sequenceSize>
-                     <currentInvoiceNb>7</currentInvoiceNb>
-                  </value>
-               </entry>
-            </providerSequences>
          </invoiceType>
       </ws:createOrUpdateInvoiceType>
    </soapenv:Body>
@@ -57800,16 +57780,6 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
                   </value>
                </entry>
             </sellerSequences>
-             <providerSequences>
-               <entry>
-                  <key>DEMO</key>
-                  <value>
-                     <prefixEL>PrefixINV5_</prefixEL>
-                     <sequenceSize>7</sequenceSize>
-                     <currentInvoiceNb>11</currentInvoiceNb>
-                  </value>
-               </entry>
-            </providerSequences>
          </invoiceType>
       </ws:createOrUpdateInvoiceType>
    </soapenv:Body>
@@ -57837,7 +57807,41 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
          <invoiceTypeCode>${#TestSuite#ticket}_code1</invoiceTypeCode>
       </ws:findInvoiceType>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b12d7580-79b1-4420-bd16-2f5973cee2ab"/><con:assertion type="Simple Contains" id="942f4873-74a7-4ca7-a65a-ff97712f59dc" name="Contains"><con:configuration><token>ENTITY_DOES_NOT_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1685</con:value></con:property></con:properties></con:testSuite><con:testSuite id="e572d25e-0519-4f70-b43b-0f4290449b06" name="Test revenue recognition rule"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="20b3aa15-9f82-4db3-92a2-5d086e11e300" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="test evenueRecognitionRule api" searchProperties="true"><con:settings/><con:testStep type="request" id="2c65321a-5afd-4d25-afd5-dba0f3f16f40" name="createRevenueRecognitionRule"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>FinanceWsSoapBinding</con:interface><con:operation>createRevenueRecognitionRule</con:operation><con:request name="createRevenueRecognitionRule" id="04069ed4-183f-4939-be2d-532d108f79ac"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/FinanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b12d7580-79b1-4420-bd16-2f5973cee2ab"/><con:assertion type="Simple Contains" id="942f4873-74a7-4ca7-a65a-ff97712f59dc" name="Contains"><con:configuration><token>ENTITY_DOES_NOT_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="createOrUpdate_InvoiceType_with_sellerSequence_negative_value" id="449de026-6f5f-4b59-8dd5-1a0ad9b9108c"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createInvoiceType</con:operation><con:request name="createOrUpdate_InvoiceType_with_sellerSequence_negative_value" id="6bd029ac-1593-4e78-a7e9-2cb7af69ec3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateInvoiceType>
+         <invoiceType>
+            <code>${#TestSuite#ticket}_code48</code>
+            <description>description</description>
+            <occTemplateCode>FA_FACT</occTemplateCode>
+            <sequenceDto>
+               <prefixEL>Fact_</prefixEL>
+               <sequenceSize>120</sequenceSize>
+               <currentInvoiceNb>360</currentInvoiceNb>
+            </sequenceDto>
+            <sellerSequences>
+               <entry>
+                  <key>SELLER_FR</key>
+                  <value>
+                     <prefixEL>PrefixINV6_</prefixEL>
+                     <sequenceSize>-9</sequenceSize>
+                     <currentInvoiceNb>-22</currentInvoiceNb>
+                  </value>
+               </entry>
+               <entry>
+                  <key>SELLER_US</key>
+                  <value>
+                     <prefixEL>PrefixINV7_</prefixEL>
+                     <sequenceSize>20</sequenceSize>
+                     <currentInvoiceNb>45</currentInvoiceNb>
+                  </value>
+               </entry>
+            </sellerSequences>
+         </invoiceType>
+      </ws:createOrUpdateInvoiceType>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4fcad515-e4d3-40c2-aad2-5202b9773546"/><con:assertion type="Simple Contains" id="6cc24052-74b2-4dad-b34e-44e744ac15b2" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1685</con:value></con:property></con:properties></con:testSuite><con:testSuite id="e572d25e-0519-4f70-b43b-0f4290449b06" name="Test revenue recognition rule"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="20b3aa15-9f82-4db3-92a2-5d086e11e300" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="test evenueRecognitionRule api" searchProperties="true"><con:settings/><con:testStep type="request" id="2c65321a-5afd-4d25-afd5-dba0f3f16f40" name="createRevenueRecognitionRule"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>FinanceWsSoapBinding</con:interface><con:operation>createRevenueRecognitionRule</con:operation><con:request name="createRevenueRecognitionRule" id="04069ed4-183f-4939-be2d-532d108f79ac"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/FinanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createRevenueRecognitionRule>\r
@@ -61554,4 +61558,4 @@ for( item in holder.getNodeValues( "//invoiceId" )) {
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4dea367e-1e93-404d-9e7a-027eea668f81"/><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="GUI- Create Adjustement" searchProperties="true" id="d4cef487-58c5-4422-a5d5-2737959846cb"><con:settings/><con:testStep type="manualTestStep" name="GUI-Adjustement" id="ca3ba7a4-55cc-4071-8927-b7455bce7970"><con:description>1. Open the Meveo Admin page and log in. 
 2-Go to Configuration > Sellers > 'Seller_FR' >  set 'periode date' and 'value=300' then click on 'add new period'
 3. Go to Customers-> BillingAccount ,click on 1758_BA --> Tab invoice --> show details 
-4- Click on "New Detailled Invoice Adjustment" --> click Save button</con:description><con:settings/><con:config xsi:type="con:ManualTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:expectedResult>1. Invoice Adjustment is created</con:expectedResult></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1758</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties></con:testSuite><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>provider</con:name><con:value>DEMO</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+4- Click on "New Detailled Invoice Adjustment" --> click Save button</con:description><con:settings/><con:config xsi:type="con:ManualTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:expectedResult>1. Invoice Adjustment is created</con:expectedResult></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties></con:testSuite><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>provider</con:name><con:value>DEMO</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
