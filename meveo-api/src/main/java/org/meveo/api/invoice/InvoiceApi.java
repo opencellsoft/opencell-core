@@ -123,7 +123,6 @@ public class InvoiceApi extends BaseApi {
 	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
-
 	
 	
 	public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO, User currentUser) throws MeveoApiException, BusinessException, Exception {
@@ -333,10 +332,14 @@ public class InvoiceApi extends BaseApi {
 		response.setAmountWithoutTax(invoice.getAmountWithoutTax());
 		response.setAmountTax(invoice.getAmountTax());
 		response.setAmountWithTax(invoice.getAmountWithTax());
-
+		
 		if (invoiceDTO.isAutoValidation()) {
 			response.setInvoiceNumber(validateInvoice(invoice.getId(), currentUser));
 		}
+		
+//		if(invoiceDTO.isAutoValidation() && invoiceDTO.isReturnXml()){
+//			response.setXmlInvoice(getXMLInvoice(response.getInvoiceNumber(), invoiceType.getCode(), currentUser));
+//		}
 
 		return response;
 	}
