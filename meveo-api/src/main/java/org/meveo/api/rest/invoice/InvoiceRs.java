@@ -38,7 +38,7 @@ public interface InvoiceRs extends IBaseRs {
      * @return
      */
     @POST
-    @Path("/create")
+    @Path("/")
     public CreateInvoiceResponseDto create(InvoiceDto invoiceDto);
 
     /**
