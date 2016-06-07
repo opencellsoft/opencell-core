@@ -216,7 +216,7 @@
 <tr>
 	<td>type</td>
 	<td>${CurrentInvoiceNumber}</td>
-	<td>${CurrentInvoiceNumber1Value}</td>
+	<td>${CurrentInvoiceNumber2Value}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -270,18 +270,13 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>css=span.ui-messages-info-summary</td>
+	<td>css=span.ui-messages-error-summary</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
-	<td>css=span.ui-messages-info-summary</td>
+	<td>css=span.ui-messages-error-summary</td>
 	<td></td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${Code}')]</td>
-	<td>${Code}</td>
 </tr>
 </tbody></table>
 </body>
