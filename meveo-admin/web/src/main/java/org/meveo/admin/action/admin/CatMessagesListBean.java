@@ -19,8 +19,10 @@
 package org.meveo.admin.action.admin;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.admin.action.FilterCustomFieldSearchBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.CatMessages;
@@ -32,6 +34,15 @@ import org.primefaces.event.CellEditEvent;
 public class CatMessagesListBean extends CatMessagesBean {
 
     private static final long serialVersionUID = -3037867704912788015L;
+    
+    @Inject
+	private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
+	
+    @Override
+    public DataTable search() {
+    	filterCustomFieldSearchBean.buildFilterParameters(filters);
+    	return super.search();
+    }
     
     public void onCellEdit(CellEditEvent event) throws BusinessException{
     	String oldDescription = (String) event.getOldValue();

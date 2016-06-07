@@ -19,11 +19,24 @@
 package org.meveo.admin.action.crm;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
+
+import org.meveo.admin.action.FilterCustomFieldSearchBean;
+import org.primefaces.component.datatable.DataTable;
 
 @Named
 @ConversationScoped
 public class ProviderContactListBean extends ProviderContactBean {
-
-    private static final long serialVersionUID = -3037867704912788037L;
+	
+	private static final long serialVersionUID = -3037867704912788037L;
+    
+	@Inject
+	private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
+	
+    @Override
+    public DataTable search() {
+    	filterCustomFieldSearchBean.buildFilterParameters(filters);
+    	return super.search();
+    }
 }

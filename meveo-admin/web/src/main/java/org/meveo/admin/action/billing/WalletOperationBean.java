@@ -30,6 +30,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.FilterCustomFieldSearchBean;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.RatedTransaction;
@@ -40,6 +41,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.LazyDataModel;
 
 
@@ -60,7 +62,11 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 	
 	@Inject
 	private RatedTransactionService ratedTransactionService;
-   private Map<String, Currency> listCurrency = new HashMap<String, Currency>(); 
+	
+	@Inject
+	private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
+	
+	private Map<String, Currency> listCurrency = new HashMap<String, Currency>(); 
 
 
 	/**
@@ -191,6 +197,12 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 		}
 		conversation.end();
 		return "walletOperations";
+	}
+
+	@Override
+	public DataTable search() {
+		filterCustomFieldSearchBean.buildFilterParameters(filters);
+		return super.search();
 	}
 
 } 

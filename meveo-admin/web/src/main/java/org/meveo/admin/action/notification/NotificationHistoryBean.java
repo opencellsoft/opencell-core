@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.FilterCustomFieldSearchBean;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.model.notification.EmailNotification;
@@ -21,6 +22,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.notification.NotificationHistoryService;
 import org.meveo.service.notification.NotificationService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -44,8 +46,9 @@ public class NotificationHistoryBean extends BaseBean<NotificationHistory> {
 	@Inject
 	private NotificationService notificationService;
 	
-
-
+	@Inject
+	private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
+	
 	public NotificationHistoryBean() {
 		super(NotificationHistory.class);
 	}
@@ -111,6 +114,12 @@ public class NotificationHistoryBean extends BaseBean<NotificationHistory> {
 		InputStream inputStream = new ByteArrayInputStream(csv.toString()
 				.getBytes());
 		csv.download(inputStream, "NotificationHistories.csv");
+	}
+	
+	@Override
+	public DataTable search() {
+		filterCustomFieldSearchBean.buildFilterParameters(filters);
+		return super.search();
 	}
 
 }
