@@ -215,7 +215,7 @@ public class InvoiceApi extends BaseApi {
 				}
 				for (RatedTransactionDto ratedTransaction : subCatInvAgrDTO.getRatedTransactions()) {
 					
-					BigDecimal amountWithoutTax = ratedTransaction.getUnitAmountWithTax().multiply(ratedTransaction.getQuantity());
+					BigDecimal amountWithoutTax = ratedTransaction.getUnitAmountWithoutTax().multiply(ratedTransaction.getQuantity());
 					BigDecimal amountWithTax = getAmountWithTax(currentTax, amountWithoutTax);
 					BigDecimal amountTax = getAmountTax(amountWithTax, amountWithoutTax);
 					
