@@ -273,12 +273,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return (prefix + invoiceNumber);
 	}
 
-	public synchronized Sequence getSequence(Invoice invoice ,Seller seller,int step,boolean increment,User currentUser)throws BusinessException{	
-		String cfName = "INVOICE_SEQUENCE";
+	public synchronized Sequence getSequence(Invoice invoice ,Seller seller,int step,boolean increment,User currentUser)throws BusinessException{			
+		String cfName = "INVOICE_SEQUENCE_"+invoice.getInvoiceType().getCode().toUpperCase();	
 		Long currentNbFromCF = null;
 		
-		if(!invoiceTypeService.getCommercialCode().equals(invoice.getInvoiceType().getCode())){
+		if(invoiceTypeService.getAdjustementCode().equals(invoice.getInvoiceType().getCode())){
 			cfName = "INVOICE_ADJUSTMENT_SEQUENCE";
+		}
+		if(invoiceTypeService.getCommercialCode().equals(invoice.getInvoiceType().getCode())){
+			cfName = "INVOICE_SEQUENCE";
 		}
 		
 		Object currentValObj = customFieldInstanceService.getCFValue(seller, cfName, invoice.getInvoiceDate(), currentUser);
@@ -311,7 +314,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				invoiceTypeService.update(invoiceType,currentUser);
 			}
 		}
-
 		if(invoiceType.getSequence() != null){
 			sequence =  invoiceType.getSequence();
 			if(increment){
@@ -330,7 +332,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 		if(currentNbFromCF != null){
 			sequence.setCurrentInvoiceNb(currentNbFromCF);
-		}
+		}		
 		return sequence;		
 	}
 	

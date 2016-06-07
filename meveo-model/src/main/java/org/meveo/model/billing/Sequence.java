@@ -24,7 +24,8 @@ public class Sequence {
 	 * @return the prefixEL
 	 */
 	public String getPrefixEL() {
-		return prefixEL;
+		
+		return prefixEL==null?"":prefixEL;
 	}
 
 	/**
