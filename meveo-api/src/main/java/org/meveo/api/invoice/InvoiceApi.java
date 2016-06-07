@@ -3,6 +3,7 @@ package org.meveo.api.invoice;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -197,10 +198,31 @@ public class InvoiceApi extends BaseApi {
 				BigDecimal subCatAmountWithoutTax = BigDecimal.ZERO;
 				BigDecimal subCatAmountTax = BigDecimal.ZERO;
 				BigDecimal subCatAmountWithTax = BigDecimal.ZERO;
+				Tax currentTax = null;
 				List<Tax> taxes = new ArrayList<Tax>();
 				InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(subCatInvAgrDTO.getInvoiceSubCategoryCode(), provider);
+				for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
+					if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()) && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
+						if (!taxes.contains(invoicesubcatCountry.getTax())) {
+							taxes.add(invoicesubcatCountry.getTax());
+						}
+						if(currentTax == null){
+							currentTax = invoicesubcatCountry.getTax();
+						}
+					}
+				}
+				if(currentTax == null){
+					throw new BusinessApiException("Cant find tax for InvoiceSubCategory:"+subCatInvAgrDTO.getInvoiceSubCategoryCode());
+				}
 				for (RatedTransactionDto ratedTransaction : subCatInvAgrDTO.getRatedTransactions()) {
-					RatedTransaction meveoRatedTransaction = new RatedTransaction(null, ratedTransaction.getUsageDate(), ratedTransaction.getUnitAmountWithoutTax(), ratedTransaction.getUnitAmountWithTax(), ratedTransaction.getUnitAmountTax(), ratedTransaction.getQuantity(), ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax(), RatedTransactionStatusEnum.BILLED, provider, userAccount.getWallet(), billingAccount,
+					
+					BigDecimal amountWithoutTax = ratedTransaction.getUnitAmountWithTax().multiply(ratedTransaction.getQuantity());
+					BigDecimal amountWithTax = getAmountWithTax(currentTax, amountWithoutTax);
+					BigDecimal amountTax = getAmountTax(amountWithTax, amountWithoutTax);
+					
+					RatedTransaction meveoRatedTransaction = new RatedTransaction(null, ratedTransaction.getUsageDate(), ratedTransaction.getUnitAmountWithoutTax(),
+							ratedTransaction.getUnitAmountWithTax(), ratedTransaction.getUnitAmountTax(), ratedTransaction.getQuantity(), amountWithoutTax,
+							amountWithTax, amountTax, RatedTransactionStatusEnum.BILLED, provider, userAccount.getWallet(), billingAccount,
 							invoiceSubCategory, null, null, null, null, null, null, null);
 					meveoRatedTransaction.setCode(ratedTransaction.getCode());
 					meveoRatedTransaction.setDescription(ratedTransaction.getDescription());
@@ -209,9 +231,9 @@ public class InvoiceApi extends BaseApi {
 					meveoRatedTransaction.setWallet(userAccount.getWallet());
 					ratedTransactionService.create(meveoRatedTransaction, currentUser);
 
-					subCatAmountWithoutTax = subCatAmountWithoutTax.add(ratedTransaction.getAmountWithoutTax());
-					subCatAmountTax = subCatAmountTax.add(ratedTransaction.getAmountTax());
-					subCatAmountWithTax = subCatAmountWithTax.add(ratedTransaction.getAmountWithTax());
+					subCatAmountWithoutTax = subCatAmountWithoutTax.add(amountWithoutTax);
+					subCatAmountTax = subCatAmountTax.add(amountTax);
+					subCatAmountWithTax = subCatAmountWithTax.add(amountWithTax);
 				}
 				List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory);
 				for(RatedTransaction ratedTransaction : openedRT){
@@ -222,13 +244,7 @@ public class InvoiceApi extends BaseApi {
 					ratedTransaction.setInvoice(invoice);
 					ratedTransactionService.update(ratedTransaction, currentUser);
 				}
-				for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
-					if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()) && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
-						if (!taxes.contains(invoicesubcatCountry.getTax())) {
-							taxes.add(invoicesubcatCountry.getTax());
-						}
-					}
-				}
+		
 
 				SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
 				invoiceAgregateSubcat.setCategoryInvoiceAgregate(invoiceAgregateCat);
@@ -247,9 +263,9 @@ public class InvoiceApi extends BaseApi {
 					invoiceAgregateSubcat.setAmountTax(subCatAmountTax);
 					invoiceAgregateSubcat.setAmountWithTax(subCatAmountWithTax);
 				} else {
-					invoiceAgregateSubcat.setAmountWithoutTax(subCatInvAgrDTO.getAmountWithoutTax());
-					invoiceAgregateSubcat.setAmountTax(subCatInvAgrDTO.getAmountTax());
-					invoiceAgregateSubcat.setAmountWithTax(subCatInvAgrDTO.getAmountWithTax());
+					invoiceAgregateSubcat.setAmountWithoutTax(subCatInvAgrDTO.getAmountWithoutTax());					
+					invoiceAgregateSubcat.setAmountWithTax(getAmountWithTax(currentTax, subCatInvAgrDTO.getAmountWithoutTax()));
+					invoiceAgregateSubcat.setAmountTax(getAmountTax(invoiceAgregateSubcat.getAmountWithTax(), invoiceAgregateSubcat.getAmountWithoutTax()));
 				}
 
 				invoiceAgregateService.create(invoiceAgregateSubcat, currentUser);
@@ -634,5 +650,12 @@ public class InvoiceApi extends BaseApi {
 
 		handleMissingParameters();
 
+	}
+	private BigDecimal getAmountWithTax(Tax tax,BigDecimal amountWithoutTax ){
+		BigDecimal ttc = amountWithoutTax.add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100),tax.getProvider().getRounding(),RoundingMode.HALF_UP));
+		return ttc;	
+	}
+	private BigDecimal getAmountTax(BigDecimal amountWithTax, BigDecimal amountWithoutTax){		
+		return amountWithTax.subtract(amountWithoutTax);
 	}
 }
