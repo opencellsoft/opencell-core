@@ -1,7 +1,18 @@
 package org.meveo.services.job;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.CustomFieldSearchBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.ICustomFieldEntity;
@@ -14,13 +25,9 @@ import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.*;
-
 @Named
 @ViewScoped
-public class JobInstanceBean extends CustomFieldSearchBean<JobInstance> {
+public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     private static final long serialVersionUID = 1L;
 

@@ -18,8 +18,11 @@
  */
 package org.meveo.admin.action.payments;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldSearchBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.payments.AutomatedPayment;
@@ -27,9 +30,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.AutomatedPaymentService;
 import org.omnifaces.cdi.ViewScoped;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Standard backing bean for {@link AutomatedPayment} (extends {@link BaseBean}
@@ -39,7 +39,7 @@ import javax.inject.Named;
  */
 @Named
 @ViewScoped
-public class AutomatedPaymentBean extends CustomFieldSearchBean<AutomatedPayment> {
+public class AutomatedPaymentBean extends CustomFieldBean<AutomatedPayment> {
 
 	private static final long serialVersionUID = 1L;
 

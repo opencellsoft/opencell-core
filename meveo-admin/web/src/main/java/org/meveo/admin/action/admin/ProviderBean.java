@@ -18,8 +18,11 @@
  */
 package org.meveo.admin.action.admin;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.CustomFieldSearchBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.BankCoordinates;
@@ -31,12 +34,9 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 @Named
 @ViewScoped
-public class ProviderBean extends CustomFieldSearchBean<Provider> {
+public class ProviderBean extends CustomFieldBean<Provider> {
 
     private static final long serialVersionUID = 1L;
 

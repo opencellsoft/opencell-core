@@ -26,11 +26,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldSearchBean;
+import org.meveo.admin.action.FilterCustomFieldSearchBean;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.primefaces.component.datatable.DataTable;
 
 /**
  * Standard backing bean for {@link BillingAccount} (extends {@link BaseBean}
@@ -40,7 +41,7 @@ import org.meveo.service.billing.impl.BillingAccountService;
  */
 @Named
 @ConversationScoped
-public class BillingAccountListBean extends CustomFieldSearchBean<BillingAccount> {
+public class BillingAccountListBean extends BaseBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -51,6 +52,9 @@ public class BillingAccountListBean extends CustomFieldSearchBean<BillingAccount
 	 */
 	@Inject
 	private BillingAccountService billingAccountService;
+	
+	@Inject
+	private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -76,6 +80,12 @@ public class BillingAccountListBean extends CustomFieldSearchBean<BillingAccount
 	@Override
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("name");
+	}
+	
+	@Override
+	public DataTable search() {
+		filterCustomFieldSearchBean.buildFilterParameters(filters);
+		return super.search();
 	}
 
 }

@@ -2,7 +2,7 @@ package org.meveo.admin.action;
 
 import org.meveo.model.AccountEntity;
 
-public abstract class AccountBean<T extends AccountEntity> extends CustomFieldSearchBean<T> {
+public abstract class AccountBean<T extends AccountEntity> extends CustomFieldBean<T> {
 
     private static final long serialVersionUID = 3407699633028715707L;
 

@@ -1,34 +1,39 @@
 package org.meveo.admin.action;
 
-import org.meveo.admin.action.admin.custom.GroupedCustomField;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IEntity;
-import org.meveo.model.crm.CustomFieldInstance;
-import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldValueHolder;
-import org.meveo.model.filter.Filter;
-import org.meveo.service.base.ValueExpressionWrapper;
-import org.primefaces.component.datatable.DataTable;
-
+import java.io.Serializable;
 import java.util.Map;
+
+import javax.faces.bean.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.jboss.seam.international.status.Messages;
+import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.filter.Filter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Tony Alejandro on 03/06/2016.
  */
-public abstract class CustomFieldSearchBean<T extends IEntity> extends CustomFieldBean<T> {
+@Named
+@ViewScoped
+public class FilterCustomFieldSearchBean implements Serializable {
 
-    public CustomFieldSearchBean() {
-    }
+	private static final long serialVersionUID = 4300150745614341095L;
 
-    public CustomFieldSearchBean(Class<T> clazz) {
-        super(clazz);
-    }
-
-    @Override
-    public DataTable search() {
+	@Inject
+	private CustomFieldDataEntryBean customFieldDataEntryBean;
+	
+	@Inject
+    protected Messages messages;
+	
+	private static final Logger log = LoggerFactory.getLogger(FilterCustomFieldSearchBean.class);
+	
+    public void buildFilterParameters(Map<String, Object> filters) {
         if (filters != null && filters.containsKey("$FILTER")) {
             Filter entity = (Filter)filters.get("$FILTER");
             try {
@@ -39,7 +44,6 @@ public abstract class CustomFieldSearchBean<T extends IEntity> extends CustomFie
                 messages.error(e.getMessage());
             }
         }
-        return super.search();
     }
 
     public void saveOrUpdateFilter(Filter filter) throws BusinessException {

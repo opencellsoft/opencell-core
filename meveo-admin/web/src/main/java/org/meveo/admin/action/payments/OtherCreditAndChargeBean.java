@@ -18,10 +18,17 @@
  */
 package org.meveo.admin.action.payments;
 
+import java.util.Date;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldSearchBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
@@ -36,12 +43,6 @@ import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.OtherCreditAndChargeService;
 import org.omnifaces.cdi.ViewScoped;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.Date;
-
 /**
  * Standard backing bean for {@link OtherCreditAndCharge} (extends
  * {@link BaseBean} that provides almost all common methods to handle entities
@@ -50,7 +51,7 @@ import java.util.Date;
  */
 @Named
 @ViewScoped
-public class OtherCreditAndChargeBean extends CustomFieldSearchBean<OtherCreditAndCharge> {
+public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndCharge> {
 
 	private static final long serialVersionUID = 1L;
 

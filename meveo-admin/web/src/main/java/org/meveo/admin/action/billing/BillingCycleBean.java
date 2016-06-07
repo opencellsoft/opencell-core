@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -40,7 +39,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
-public class BillingCycleBean extends CustomFieldSearchBean<BillingCycle> {
+public class BillingCycleBean extends BaseBean<BillingCycle> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -50,6 +49,7 @@ public class BillingCycleBean extends CustomFieldSearchBean<BillingCycle> {
 	 */
 	@Inject
 	private BillingCycleService billingCycleService;
+	
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

@@ -18,22 +18,23 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.Arrays;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldSearchBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.omnifaces.cdi.ViewScoped;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.Arrays;
-import java.util.List;
-
 @Named
 @ViewScoped
-public class InvoiceCategoryBean extends CustomFieldSearchBean<InvoiceCategory> {
+public class InvoiceCategoryBean extends CustomFieldBean<InvoiceCategory> {
 
 	private static final long serialVersionUID = 1L;
 

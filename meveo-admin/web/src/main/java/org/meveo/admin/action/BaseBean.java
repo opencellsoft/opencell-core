@@ -73,7 +73,6 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.filter.FilterService;
-import org.meveo.util.EntityCustomizationUtils;
 import org.meveo.util.view.PagePermission;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;

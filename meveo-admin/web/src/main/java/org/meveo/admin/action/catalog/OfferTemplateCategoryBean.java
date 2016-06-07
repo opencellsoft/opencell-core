@@ -1,14 +1,8 @@
 package org.meveo.admin.action.catalog;
 
-import org.meveo.admin.action.CustomFieldSearchBean;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.catalog.OfferTemplateCategory;
-import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
-import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -19,16 +13,23 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
+import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Named
 @ViewScoped
-public class OfferTemplateCategoryBean extends CustomFieldSearchBean<OfferTemplateCategory> {
+public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCategory> {
 
 	private static final long serialVersionUID = 1L;
 

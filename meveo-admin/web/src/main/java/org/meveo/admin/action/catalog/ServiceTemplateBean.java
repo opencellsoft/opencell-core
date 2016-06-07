@@ -18,30 +18,40 @@
  */
 package org.meveo.admin.action.catalog;
 
-import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldSearchBean;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.catalog.*;
-import org.meveo.service.base.PersistenceService;
-import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.ServiceInstanceService;
-import org.meveo.service.billing.impl.WalletTemplateService;
-import org.meveo.service.catalog.impl.*;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.model.DualListModel;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
+import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
+import org.meveo.model.catalog.ServiceChargeTemplateTermination;
+import org.meveo.model.catalog.ServiceChargeTemplateUsage;
+import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
+import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
+import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
+import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.model.DualListModel;
 
 @Named
 @ViewScoped
-public class ServiceTemplateBean extends CustomFieldSearchBean<ServiceTemplate> {
+public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 
 	private static final long serialVersionUID = 1L;
 	

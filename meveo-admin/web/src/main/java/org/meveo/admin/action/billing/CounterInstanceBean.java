@@ -22,14 +22,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldSearchBean;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link WalletInstance} (extends {@link BaseBean}
@@ -39,7 +37,7 @@ import org.primefaces.context.RequestContext;
  */
 @Named
 @ViewScoped
-public class CounterInstanceBean extends CustomFieldSearchBean<CounterInstance> {
+public class CounterInstanceBean extends BaseBean<CounterInstance> {
 
 	private static final long serialVersionUID = 1L;
 

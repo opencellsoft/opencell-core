@@ -1,16 +1,12 @@
 package org.meveo.service.filter.processor;
 
+import java.util.Map;
+
 import org.meveo.admin.exception.FilterException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.PrimitiveFilterCondition;
-import org.meveo.service.base.PersistenceService;
-import org.reflections.Reflections;
-
-import java.util.Map;
-import java.util.Set;
 
 public class CustomEntityProcessor extends PrimitiveFilterProcessor {
 

@@ -18,37 +18,62 @@
  */
 package org.meveo.admin.action.billing;
 
-import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.solder.servlet.http.RequestParam;
-import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldSearchBean;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.InvoiceJasperNotFoundException;
-import org.meveo.admin.exception.InvoiceXmlNotFoundException;
-import org.meveo.admin.job.PDFParametersConstruction;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.Auditable;
-import org.meveo.model.billing.*;
-import org.meveo.model.shared.DateUtils;
-import org.meveo.service.base.PersistenceService;
-import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.*;
-import org.meveo.service.payments.impl.CustomerAccountService;
-import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.model.LazyDataModel;
-
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.persistence.DiscriminatorValue;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.persistence.DiscriminatorValue;
+import javax.servlet.http.HttpServletResponse;
+
+import org.jboss.seam.international.status.builder.BundleKey;
+import org.jboss.solder.servlet.http.RequestParam;
+import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.InvoiceJasperNotFoundException;
+import org.meveo.admin.exception.InvoiceXmlNotFoundException;
+import org.meveo.admin.job.PDFParametersConstruction;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.Auditable;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.billing.InvoiceCategoryDTO;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceSubCategoryDTO;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.InvoiceAgregateService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.XMLInvoiceCreator;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.model.LazyDataModel;
 
 /**
  * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that
@@ -58,7 +83,7 @@ import java.util.*;
  */
 @Named
 @ViewScoped
-public class InvoiceBean extends CustomFieldSearchBean<Invoice> {
+public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 	private static final long serialVersionUID = 1L;
 

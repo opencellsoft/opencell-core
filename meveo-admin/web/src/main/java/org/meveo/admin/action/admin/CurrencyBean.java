@@ -18,19 +18,14 @@
  */
 package org.meveo.admin.action.admin;
 
-import java.util.Date;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldSearchBean;
-import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link Currency} (extends {@link BaseBean} that
@@ -40,7 +35,7 @@ import org.primefaces.context.RequestContext;
  */
 @Named
 @ViewScoped
-public class CurrencyBean extends CustomFieldSearchBean<Currency> {
+public class CurrencyBean extends BaseBean<Currency> {
 
     private static final long serialVersionUID = 1895532923500996522L;
 
