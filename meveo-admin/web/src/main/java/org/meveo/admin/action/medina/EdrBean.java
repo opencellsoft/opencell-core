@@ -11,13 +11,11 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.FilterCustomFieldSearchBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.EdrService;
-import org.primefaces.component.datatable.DataTable;
 
 @Named
 @ConversationScoped
@@ -27,9 +25,6 @@ public class EdrBean extends BaseBean<EDR> {
 
 	@Inject
 	private EdrService edrService;
-	
-	@Inject
-	private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
 
 	public EdrBean() {
 		super(EDR.class);
@@ -74,12 +69,6 @@ public class EdrBean extends BaseBean<EDR> {
 	@Override
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
-	}
-	
-	@Override
-	public DataTable search() {
-		filterCustomFieldSearchBean.buildFilterParameters(filters);
-		return super.search();
 	}
 
 }

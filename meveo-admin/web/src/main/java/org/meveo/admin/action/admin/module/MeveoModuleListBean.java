@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.FilterCustomFieldSearchBean;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.module.ModuleDto;
@@ -33,7 +32,6 @@ import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.module.ModuleApi;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.service.admin.impl.MeveoModuleService;
-import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -48,9 +46,6 @@ public class MeveoModuleListBean extends MeveoModuleBean {
 
     @Inject
     private MeveoModuleService meveoModuleService;
-    
-    @Inject
-	private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
 
     private ModuleDto selectedModuleDto;
 
@@ -163,10 +158,4 @@ public class MeveoModuleListBean extends MeveoModuleBean {
         node.setExpanded(true);
         return node;
     }
-    
-    @Override
-	public DataTable search() {
-		filterCustomFieldSearchBean.buildFilterParameters(filters);
-		return super.search();
-	}
 }

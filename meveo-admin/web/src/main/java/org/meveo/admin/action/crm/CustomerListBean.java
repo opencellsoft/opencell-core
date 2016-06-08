@@ -23,12 +23,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.FilterCustomFieldSearchBean;
 import org.meveo.model.crm.Customer;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
-import org.primefaces.component.datatable.DataTable;
 
 /**
  * Standard backing bean for {@link Customer} (extends {@link BaseBean} that
@@ -45,9 +43,6 @@ public class CustomerListBean extends BaseBean<Customer> {
 	/** Injected @{link Customer} service. Extends {@link PersistenceService}. */
 	@Inject
 	private CustomerService customerService;
-	
-	@Inject
-	private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -95,11 +90,5 @@ public class CustomerListBean extends BaseBean<Customer> {
 	protected String getDefaultSort() {
 		return "code";
 	}
-	
-	@Override
-    public DataTable search() {
-    	filterCustomFieldSearchBean.buildFilterParameters(filters);
-    	return super.search();
-    }
 
 }

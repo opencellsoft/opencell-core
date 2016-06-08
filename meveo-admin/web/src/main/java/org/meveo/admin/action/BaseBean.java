@@ -130,6 +130,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @Inject
     private ProviderService providerService;
 
+    @Inject
+    private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
+
     /** Search filters. */
     protected Map<String, Object> filters = new HashMap<String, Object>();
 
@@ -872,6 +875,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public DataTable search() {
+        filterCustomFieldSearchBean.buildFilterParameters(filters);
         dataTable.reset();
         return dataTable;
     }

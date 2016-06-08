@@ -23,12 +23,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.FilterCustomFieldSearchBean;
 import org.meveo.model.billing.Subscription;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
-import org.primefaces.component.datatable.DataTable;
 
 /**
  * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that
@@ -49,9 +47,6 @@ public class SubscriptionListBean extends BaseBean<Subscription> {
 	 */
 	@Inject
 	private SubscriptionService subscriptionService;
-	
-	@Inject
-	private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
 
 	public SubscriptionListBean() {
 		super(Subscription.class);
@@ -68,12 +63,6 @@ public class SubscriptionListBean extends BaseBean<Subscription> {
 	@Override
 	protected String getDefaultSort() {
 		return "code";
-	}
-	
-	@Override
-	public DataTable search() {
-		filterCustomFieldSearchBean.buildFilterParameters(filters);
-		return super.search();
 	}
 
 }
