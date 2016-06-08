@@ -27,6 +27,10 @@ public class BomOfferDto extends BaseDto {
 	private String description;
 
 	private CustomFieldsDto offerCustomFields;
+	@Deprecated
+	/**
+	 * Moved inside serviceCodes.
+	 */
 	private CustomFieldsDto serviceCustomFields;
 
 	private String prefix;
