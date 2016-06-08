@@ -122,15 +122,6 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 				}
 			}
 
-			// get the BSM from BOM
-			BusinessServiceModel bsm = null;
-			for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {
-				if (item.getItemClass().equals(BusinessServiceModel.class.getName())) {
-					bsm = businessServiceModelService.findByCode(item.getItemCode(), currentUser.getProvider());
-					break;
-				}
-			}
-
 			List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
 			List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
 			for (OfferServiceTemplate offerServiceTemplate : bomOffer.getOfferServiceTemplates()) {
@@ -148,6 +139,17 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 				}
 				if (!serviceFound) {
 					continue;
+				}
+
+				// get the BSM from BOM
+				BusinessServiceModel bsm = null;
+				for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {
+					if (item.getItemClass().equals(BusinessServiceModel.class.getName())) {
+						bsm = businessServiceModelService.findByCode(item.getItemCode(), currentUser.getProvider());
+						if (bsm.getServiceTemplate().equals(serviceTemplate)) {
+							break;
+						}
+					}
 				}
 
 				OfferServiceTemplate newOfferServiceTemplate = new OfferServiceTemplate();
