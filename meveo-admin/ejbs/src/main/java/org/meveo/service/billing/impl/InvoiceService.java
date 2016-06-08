@@ -363,8 +363,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public List<Long> getInvoiceIdsWithNoAccountOperation(BillingRun br, Provider currentProvider) {
 		try {
 			QueryBuilder qb = new QueryBuilder("SELECT i.id FROM " + Invoice.class.getName() + " i");
-			qb.addCriterionEntity("i.provider", currentProvider);
-			qb.addCriterion("i.billingRun.status", "=", BillingRunStatusEnum.VALIDATED, true);
+			qb.addCriterionEntity("i.provider", currentProvider);			
+			qb.addSql("i.invoiceNumber is not null");
 			qb.addSql("i.recordedInvoice is null");
 			if (br != null) {
 				qb.addCriterionEntity("i.billingRun", br);
