@@ -15728,7 +15728,7 @@ public class Action1 extends Script {
          </customEntityTemplate>\r
       </ws:createOrUpdateEntityTemplate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/><con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for customer" id="050be43f-fda0-42f2-acc2-7ccaac82557d"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CUST</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for customer account" id="145e0c5a-c6f9-4d1d-a1a1-c7963c66dc74"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for billing account" id="305f83e3-a058-4444-a420-c3cb13390241"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>BA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for user account" id="1a538fca-7032-4bbb-87a9-03a8ea56d9bf"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>UA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for subscription" id="571fe5cb-11f3-4c2f-bcc3-46314a5e9a09"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SUB</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for access" id="4c9308f2-2df1-4435-8645-0116fafdc018"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>ACC</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for provider" id="3acd3ae8-a220-4487-b534-aac056c39e42"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>PROVIDER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for service template" id="5346204a-1592-412f-b66c-7c2f5cfeb5fb"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SERVICE</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for offer template" id="ba1027f1-331f-4918-9cb2-da0d4e3f90fc"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>OFFER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for charge template" id="74d70e84-d8b5-4b30-a79d-c8b450dec95d"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CHARGE</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for seller" id="ffa7550a-5947-40c4-88dd-b9428f635afe"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SELLER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for priceplan" id="2c68bf4e-aa23-4de9-a4c0-5ce2569863fd"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>PRICEPLAN</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties/><con:reportParameters/></con:testCase><con:testCase id="b2563788-a6d0-442a-bac1-3467999e030c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CFT - Test all CF types" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="44a0292e-a0ad-46f1-bfa1-5290ea4bb585"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createSeller</con:operation><con:request name="create" id="fed3e654-710d-40df-9ccd-cb9e29c803b7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/><con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for customer" id="050be43f-fda0-42f2-acc2-7ccaac82557d"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CUST</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for customer account" id="145e0c5a-c6f9-4d1d-a1a1-c7963c66dc74"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for billing account" id="305f83e3-a058-4444-a420-c3cb13390241"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>BA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for user account" id="1a538fca-7032-4bbb-87a9-03a8ea56d9bf"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>UA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for subscription" id="571fe5cb-11f3-4c2f-bcc3-46314a5e9a09"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SUB</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for access" id="4c9308f2-2df1-4435-8645-0116fafdc018"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>ACC</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for provider" id="3acd3ae8-a220-4487-b534-aac056c39e42"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>PROVIDER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for service template" id="5346204a-1592-412f-b66c-7c2f5cfeb5fb"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SERVICE</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for offer template" id="ba1027f1-331f-4918-9cb2-da0d4e3f90fc"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>OFFER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for charge template" id="74d70e84-d8b5-4b30-a79d-c8b450dec95d"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CHARGE</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for seller" id="ffa7550a-5947-40c4-88dd-b9428f635afe"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SELLER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for priceplan" id="2c68bf4e-aa23-4de9-a4c0-5ce2569863fd"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>PRICEPLAN</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for invoice category" id="78178a38-b1b5-4269-a3b9-c1e3e6be87e2"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>INV_CAT</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for invoice sub category" id="362f14fb-fca8-4138-b1f8-e701bfef1592"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>INV_SUB_CAT</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties/><con:reportParameters/></con:testCase><con:testCase id="b2563788-a6d0-442a-bac1-3467999e030c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CFT - Test all CF types" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="44a0292e-a0ad-46f1-bfa1-5290ea4bb585"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createSeller</con:operation><con:request name="create" id="fed3e654-710d-40df-9ccd-cb9e29c803b7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createSeller>\r
@@ -24443,7 +24443,373 @@ public class Action1 extends Script {
       </ws:findEntityCustomizations>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a0d930a4-fcda-4758-bc4d-f90c5778b278"/><con:assertion type="Simple Contains" id="0e570331-b92b-4421-99d2-1fed729e547c" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple NotContains" id="3071f92b-9fe4-44e6-b8f4-ef54c178116b" name="Not Contains"><con:configuration><token>${#TestSuite#ticket}_${#TestSuite#index}_PurgeJob_ACTION4</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>227</con:value></con:property></con:properties><con:setupScript>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple NotContains" id="3071f92b-9fe4-44e6-b8f4-ef54c178116b" name="Not Contains"><con:configuration><token>${#TestSuite#ticket}_${#TestSuite#index}_PurgeJob_ACTION4</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="d305838f-eb11-4971-a13e-69c5aacaccf3" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CFT - Settings" searchProperties="true"><con:settings/><con:testStep type="request" name="create invoice category" id="b744e295-da86-4b48-aefb-772788e051f6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createSeller</con:operation><con:request name="create invoice category" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createInvoiceCategory>
+         <!--Optional:-->
+         <invoiceCategory code="${#TestSuite#ticket}_invoiceCategory" description="${#TestSuite#ticket}_invoiceCategory">
+            <!--Zero or more repetitions:-->
+            <languageDescriptions>
+               <!--Optional:-->
+               <languageCode>FRA</languageCode>
+               <!--Optional:-->
+               <description>FRANCE</description>
+            </languageDescriptions>
+            <!--Optional:-->
+           <customFields>
+               <customField code="${#Project#baseEntityPrefix}_INV_CAT_DATE_MAP_VC" valueDate="2015-09-10">
+                  <mapValue>
+                     <entry>
+                        <key>x</key>
+                        <value>
+                           <dateValue>2007-08-01</dateValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>y</key>
+                        <value>
+                           <dateValue>2007-09-01</dateValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_INV_CAT_DATE_MAP_VC" valueDate="2015-08-10">
+                  <mapValue>
+                     <entry>
+                        <key>z</key>
+                        <value>
+                           <dateValue>2006-08-01</dateValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>aa</key>
+                        <value>
+                           <dateValue>2006-09-01</dateValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField> 
+               <customField code="${#Project#baseEntityPrefix}_INV_CAT_ENTITY_MAP_VC" valueDate="2015-09-10">
+                  <mapValue>
+                     <entry>
+                        <key>bb</key>
+                        <value>
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY0"/>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>cc</key>
+                        <value>
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY0"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_INV_CAT_ENTITY_MAP_VC" valueDate="2015-08-10">
+                  <mapValue>
+                     <entry>
+                        <key>dd</key>
+                        <value>
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY1"/>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>ee</key>
+                        <value>
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY1"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+            </customFields>
+         </invoiceCategory>
+      </ws:createInvoiceCategory>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create invoice sub category" id="35e97fb1-5c64-4445-a5a0-0a4a0767b10f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="create invoice sub category" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createInvoiceSubCategory>
+         <!--Optional:-->
+         <invoiceSubCategory code="${#TestSuite#ticket}_invoiceSubCategory2" description="${#TestSuite#ticket}_invoiceSubCategory">
+            <invoiceCategory>${#TestSuite#ticket}_invoiceCategory</invoiceCategory>
+            <accountingCode>205.55.77.98</accountingCode>
+            <!--Zero or more repetitions:-->
+            <languageDescriptions>
+               <!--Optional:-->
+               <languageCode>FRA</languageCode>
+               <!--Optional:-->
+               <description>FRANCE</description>
+            </languageDescriptions>
+             <customFields>
+               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2015-09-10">
+                  <stringValue>BA_STRING_VALUE_1</stringValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2015-08-10">
+                  <stringValue>BA_STRING_VALUE_2</stringValue>
+               </customField>
+            </customFields>
+         </invoiceSubCategory>
+      </ws:createInvoiceSubCategory>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find invoice category" id="3b63a692-9005-4b1f-bb4f-d2d613f083b7"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findSeller</con:operation><con:request name="Find invoice category" id="c86136db-6ca0-4125-9817-87936ab06776"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findInvoiceCategory>
+         <invoiceCategoryCode>${#TestSuite#ticket}_invoiceCategory</invoiceCategoryCode>
+      </ws:findInvoiceCategory>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>xe</key>
+                           <value>
+                              <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>ye</key>
+                           <value>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>y</key>
+                           <value>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>aayy</key>
+                           <value>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find invoice sub category" id="cb6c4645-9b39-4787-8908-d34a883153e2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomer</con:operation><con:request name="Find invoice sub category" id="c86136db-6ca0-4125-9817-87936ab06776"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findInvoiceSubCategory>
+         <invoiceSubCategoryCode>${#TestSuite#ticket}_invoiceSubCategory</invoiceSubCategoryCode>
+      </ws:findInvoiceSubCategory>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>x</key>
+                           <value>
+                              <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>y</key>
+                           <value>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>z</key>
+                           <value>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>aa</key>
+                           <value>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update invoice category" id="33dee3be-cdc2-4e5a-b541-fca5d8ba524d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateSeller</con:operation><con:request name="Update invoice category" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateInvoiceCategory>
+         <!--Optional:-->
+         <invoiceCategory code="${#TestSuite#ticket}_invoiceCategory" description="${#TestSuite#ticket}_invoiceCategory">
+            <!--Zero or more repetitions:-->
+            <languageDescriptions>
+               <!--Optional:-->
+               <languageCode>FRA</languageCode>
+               <!--Optional:-->
+               <description>FRANCE</description>
+            </languageDescriptions>
+            <!--Optional:-->
+           <customFields>
+               <customField code="${#Project#baseEntityPrefix}_INV_CAT_DATE_MAP_VC" valueDate="2015-02-10">
+                  <mapValue>
+                     <entry>
+                        <key>x</key>
+                        <value>
+                           <dateValue>2011-06-01</dateValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>y</key>
+                        <value>
+                           <dateValue>2015-08-01</dateValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_INV_CAT_DATE_MAP_VC" valueDate="2015-02-10">
+                  <mapValue>
+                     <entry>
+                        <key>z</key>
+                        <value>
+                           <dateValue>2012-05-01</dateValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>aa</key>
+                        <value>
+                           <dateValue>2010-08-01</dateValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField> 
+               <customField code="${#Project#baseEntityPrefix}_INV_CAT_ENTITY_MAP_VC" valueDate="2015-08-10">
+                  <mapValue>
+                     <entry>
+                        <key>bb</key>
+                        <value>
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY0"/>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>cc</key>
+                        <value>
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY0"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_INV_CAT_ENTITY_MAP_VC" valueDate="2015-09-10">
+                  <mapValue>
+                     <entry>
+                        <key>dd</key>
+                        <value>
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY1"/>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>ee</key>
+                        <value>
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY1"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+            </customFields>
+         </invoiceCategory>
+      </ws:updateInvoiceCategory>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find invoice category updated" id="138f2674-d604-487b-a1ab-82cfccd6c75a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findSeller</con:operation><con:request name="Find invoice category updated" id="c86136db-6ca0-4125-9817-87936ab06776"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findInvoiceCategory>
+         <invoiceCategoryCode>${#TestSuite#ticket}_invoiceCategory</invoiceCategoryCode>
+      </ws:findInvoiceCategory>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>xe</key>
+                           <value>
+                              <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>ye</key>
+                           <value>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>y</key>
+                           <value>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>aayy</key>
+                           <value>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update invoice sub category" id="6817e70b-a6b8-441d-abf2-804bb6045145"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="update invoice sub category" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateInvoiceSubCategory>
+         <!--Optional:-->
+         <invoiceSubCategory code="${#TestSuite#ticket}_invoiceSubCategory" description="${#TestSuite#ticket}_invoiceSubCategory">
+            <invoiceCategory>${#TestSuite#ticket}_invoiceCategory</invoiceCategory>
+            <accountingCode>205.55.77.98</accountingCode>
+            <!--Zero or more repetitions:-->
+            <languageDescriptions>
+               <!--Optional:-->
+               <languageCode>FRA</languageCode>
+               <!--Optional:-->
+               <description>FRANCE</description>
+            </languageDescriptions>
+             <customFields>
+               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2011-09-10">
+                  <stringValue>BA_STRING_VALUE_update1</stringValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2016-08-10">
+                  <stringValue>BA_STRING_VALUE_update2</stringValue>
+               </customField>
+            </customFields>
+         </invoiceSubCategory>
+      </ws:updateInvoiceSubCategory>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find invoice sub category updated" id="1d350361-b1ff-4c67-b502-75cd4f15623c"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findSeller</con:operation><con:request name="Find invoice sub category updated" id="c86136db-6ca0-4125-9817-87936ab06776"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findInvoiceSubCategory>
+         <invoiceSubCategoryCode>${#TestSuite#ticket}_invoiceSubCategory</invoiceSubCategoryCode>
+      </ws:findInvoiceSubCategory>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>xe</key>
+                           <value>
+                              <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>ye</key>
+                           <value>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d"><con:configuration><token><![CDATA[                  <customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                     <mapValue>
+                        <entry>
+                           <key>y</key>
+                           <value>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>aayy</key>
+                           <value>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/><con:reportParameters/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>227</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript><con:reportParameters/></con:testSuite><con:testSuite id="9b9a3a43-4576-4cb5-a078-379d65785ca4" name="CRM Account Hierarchy"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="c28a1e28-09b3-4a00-855f-1c675813d8d0" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create" searchProperties="true"><con:settings/><con:testStep type="request" name="S" id="2efb24c3-af43-4d4c-9c3b-75851733a639"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCRMAccountHierarchy</con:operation><con:request name="S" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>

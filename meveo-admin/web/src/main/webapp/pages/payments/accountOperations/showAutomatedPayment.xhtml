@@ -6,7 +6,9 @@
         <ui:include src="/layout/navigation.xhtml" />
     </ui:define>
     <ui:define name="body">
-        <hftl:formPanel showFormButtons="#{false}" edit="#{false}" label="#{messages['accountOperation_AP.form']}" backingBean="#{automatedPaymentBean}">
+        <hftl:formPanel  edit="#{true}" label="#{messages['accountOperation_AP.form']}" backingBean="#{automatedPaymentBean}" showDeleteButton="false" showEditButton="true" showBackButton="false" formId="apFormId">
+				<p:tabView id="tabView" activeIndex="#{invoiceCategoryBean.activeTab}"  >
+				<p:tab title="#{messages['customer.tab.information']}"> 
             <hftl:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" disabled="true" />
             <hftl:formField label="#{messages['accountOperation.reference']}" field="reference" disabled="true" />
             <hftl:formField label="#{messages['accountOperation.depositDate']}" field="depositDate" disabled="true" />
@@ -15,14 +17,14 @@
             <hftl:formField label="#{messages['accountOperation.bankLot']}" field="bankLot" size="50" maxlength="50" disabled="true" />
             <hftl:formField label="#{messages['accountOperation.occDescription']}" field="occDescription" disabled="true" />
             <hftl:formField label="#{messages['accountOperation.amount']}" field="amount" disabled="true" />
-            <ui:param name="buttons" value="true"/>
-            <ui:define name="buttons">
-                <p:button outcome="customerAccountDetail" value="#{messages['action.back']}">
-                    <f:param name="customerAccountId" value="#{automatedPaymentBean.entity.getCustomerAccount().getId()}" />
-                    <f:param name="edit" value="false" />
-                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                </p:button>
-            </ui:define>
-        </hftl:formPanel>
+         </p:tab>
+				<hftl:customFields backingBean="#{automatedPaymentBean}" messagesId=":apFormId:messages" />
+			</p:tabView>
+        </hftl:formPanel>  
+		<p:button outcome="customerAccountDetail" value="#{messages['action.back']}">
+			<f:param name="customerAccountId" value="#{automatedPaymentBean.entity.getCustomerAccount().getId()}" />
+			<f:param name="edit" value="false" />
+			<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+		</p:button> 
     </ui:define>
 </ui:composition>

@@ -33,6 +33,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.IEntity;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
@@ -354,6 +355,13 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 	public void deleteInlist() {
 		//	accountOperationService.getEntityManager().refresh(entity.getCustomerAccount());
 	    super.deleteInlist();	
+	}
+	
+	@Override
+	@ActionMethod
+	public String saveOrUpdate(boolean killConversation) throws BusinessException { 
+		super.saveOrUpdate(killConversation);
+		return null;
 	}
 
 }
