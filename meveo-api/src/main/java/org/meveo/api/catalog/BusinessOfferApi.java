@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.ServiceCodeDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
@@ -64,15 +65,27 @@ public class BusinessOfferApi extends BaseApi {
 		}
 
 		// populate service custom fields
-		if (postData.getServiceCustomFields() != null) {
-			for (OfferServiceTemplate ost : newOfferTemplate.getOfferServiceTemplates()) {
-				ServiceTemplate serviceTemplate = ost.getServiceTemplate();
-				try {
-					populateCustomFields(postData.getServiceCustomFields(), serviceTemplate, true, currentUser);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					throw new MeveoApiException(e.getMessage());
-				}
+		for (OfferServiceTemplate ost : newOfferTemplate.getOfferServiceTemplates()) {
+			ServiceTemplate serviceTemplate = ost.getServiceTemplate();
 
+			boolean toUpdate = false;
+
+			for (ServiceCodeDto serviceCodeDto : postData.getServiceCodes()) {
+				String serviceCode = postData.getPrefix() + "_" + serviceCodeDto.getCode();
+				if (serviceCode.equals(serviceTemplate.getCode())) {
+					if (serviceCodeDto.getServiceCustomFields() != null) {
+						toUpdate = true;
+						try {
+							populateCustomFields(serviceCodeDto.getServiceCustomFields(), serviceTemplate, true, currentUser);
+						} catch (IllegalArgumentException | IllegalAccessException e) {
+							throw new MeveoApiException(e.getMessage());
+						}
+						break;
+					}
+				}
+			}
+
+			if (toUpdate) {
 				try {
 					serviceTemplateService.update(serviceTemplate, currentUser);
 				} catch (BusinessException e) {

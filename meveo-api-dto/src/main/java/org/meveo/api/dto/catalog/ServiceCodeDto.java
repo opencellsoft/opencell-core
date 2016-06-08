@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldsDto;
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -19,6 +21,8 @@ public class ServiceCodeDto {
 
 	@XmlAttribute
 	private String description;
+	
+	private CustomFieldsDto serviceCustomFields;
 
 	public String getCode() {
 		return code;
@@ -38,7 +42,15 @@ public class ServiceCodeDto {
 
 	@Override
 	public String toString() {
-		return "ServiceCodeDto [code=" + code + ", description=" + description + "]";
+		return "ServiceCodeDto [code=" + code + ", description=" + description + ", serviceCustomFields=" + serviceCustomFields + "]";
+	}
+
+	public CustomFieldsDto getServiceCustomFields() {
+		return serviceCustomFields;
+	}
+
+	public void setServiceCustomFields(CustomFieldsDto serviceCustomFields) {
+		this.serviceCustomFields = serviceCustomFields;
 	}
 
 }
