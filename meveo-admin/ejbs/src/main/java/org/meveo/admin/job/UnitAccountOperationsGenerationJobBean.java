@@ -70,28 +70,31 @@ public class UnitAccountOperationsGenerationJobBean {
 			}
 			
 			OCCTemplate invoiceTemplate = invoice.getInvoiceType().getOccTemplate();
+			if (invoiceTemplate == null) {
+				throw new ImportInvoiceException("Cant find OccTemplate");
+			}
 			BigDecimal amountWithoutTax = invoice.getAmountWithoutTax();
 			BigDecimal amountTax = invoice.getAmountTax();
 			BigDecimal amountWithTax = invoice.getAmountWithTax();
 			BigDecimal netToPay = invoice.getNetToPay();
 
-			if (netToPay.compareTo(BigDecimal.ZERO) < 0) {
-				netToPay = netToPay.abs();
+			if (netToPay.compareTo(BigDecimal.ZERO) < 0) {				
 				invoiceTemplate = invoice.getInvoiceType().getOccTemplateNegative();
-			}
-			if (amountWithoutTax != null && amountWithoutTax.compareTo(BigDecimal.ZERO) < 0) {
-				amountWithoutTax = amountWithoutTax.abs();
-			}
-			if (amountTax != null && amountTax.compareTo(BigDecimal.ZERO) < 0) {
-				amountTax = amountTax.abs();
-			}
-			if (amountWithTax != null && amountWithTax.compareTo(BigDecimal.ZERO) < 0) {
-				amountWithTax = amountWithTax.abs();
+				if (invoiceTemplate == null) {
+					throw new ImportInvoiceException("Cant find negative OccTemplate");
+				}
+				netToPay = netToPay.abs();
+				if (amountWithoutTax != null) {
+					amountWithoutTax = amountWithoutTax.abs();
+				}
+				if (amountTax != null ) {
+					amountTax = amountTax.abs();
+				}
+				if (amountWithTax != null) {
+					amountWithTax = amountWithTax.abs();
+				}
 			}
 
-			if (invoiceTemplate == null) {
-				throw new ImportInvoiceException("Cant find OccTemplate");
-			}
 
 			recordedInvoice.setReference(invoice.getInvoiceNumber());
 			recordedInvoice.setAccountCode(invoiceTemplate.getAccountCode());
