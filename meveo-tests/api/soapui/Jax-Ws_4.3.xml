@@ -33738,8 +33738,8 @@
          </businessAccountModelDto>\r
       </ws:installBusinessAccountModel>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/installBusinessAccountModel"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/SettingsWs?wsdl" id="3a4f2982-ba89-440d-99f7-8da28f5aa27e" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://192.168.10.14:8080/meveo/SettingsWs?wsdl"><con:part><con:url>http://192.168.10.14:8080/meveo/SettingsWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SettingsWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
-  <wsdl:import location="http://192.168.10.14:8080/meveo/SettingsWs?wsdl=SettingsWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/installBusinessAccountModel"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/SettingsWs?wsdl" id="3a4f2982-ba89-440d-99f7-8da28f5aa27e" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SettingsWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SettingsWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SettingsWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:import location="http://localhost:8080/meveo/SettingsWs?wsdl=SettingsWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SettingsWsSoapBinding" type="ns1:SettingsWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="findUser4_2">
@@ -34717,10 +34717,10 @@
   </wsdl:binding>
   <wsdl:service name="SettingsWs">
     <wsdl:port binding="tns:SettingsWsSoapBinding" name="SettingsWsImplPort">
-      <soap:address location="http://192.168.10.14:8080/meveo/SettingsWs"/>
+      <soap:address location="http://localhost:8080/meveo/SettingsWs"/>
     </wsdl:port>
   </wsdl:service>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://192.168.10.14:8080/meveo/SettingsWs?wsdl=SettingsWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SettingsWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/SettingsWs?wsdl=SettingsWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SettingsWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
       <xs:element name="Access" type="tns:Access"/>
@@ -64640,7 +64640,7 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
    <soapenv:Body>
       <ws:createOrUpdateInvoiceType>
          <invoiceType>
-            <code>${#TestSuite#ticket}_code1</code>
+            <code>${#TestSuite#ticket}_IT1</code>
             <description>description</description>
             <occTemplateCode>FA_FACT</occTemplateCode>
             <sequenceDto>
@@ -64658,16 +64658,6 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
                   </value>
                </entry>
             </sellerSequences>
-             <providerSequences>
-               <entry>
-                  <key>DEMO</key>
-                  <value>
-                     <prefixEL>PrefixINV5_${#TestSuite#ticket}</prefixEL>
-                     <sequenceSize>1</sequenceSize>
-                     <currentInvoiceNb>18</currentInvoiceNb>
-                  </value>
-               </entry>
-            </providerSequences>
          </invoiceType>
       </ws:createOrUpdateInvoiceType>
    </soapenv:Body>
@@ -64676,10 +64666,36 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
    <soapenv:Body>
       <ws:findInvoiceType>
          <!--Optional:-->
-         <invoiceTypeCode>${#TestSuite#ticket}_code1</invoiceTypeCode>
+         <invoiceTypeCode>${#TestSuite#ticket}_IT1</invoiceTypeCode>
       </ws:findInvoiceType>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b12d7580-79b1-4420-bd16-2f5973cee2ab"/><con:assertion type="Simple Contains" id="942f4873-74a7-4ca7-a65a-ff97712f59dc" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update_invoice_type_success" id="d2a973db-82b6-4e77-912a-89e2eb49967b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createInvoiceType</con:operation><con:request name="update_invoice_type_success" id="6bd029ac-1593-4e78-a7e9-2cb7af69ec3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b12d7580-79b1-4420-bd16-2f5973cee2ab"/><con:assertion type="Simple Contains" id="942f4873-74a7-4ca7-a65a-ff97712f59dc" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create_invoice_type_2" id="310dca77-02b7-4442-a5c0-2939b2998b98"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createInvoiceType</con:operation><con:request name="create_invoice_type_2" id="6bd029ac-1593-4e78-a7e9-2cb7af69ec3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateInvoiceType>
+         <invoiceType>
+            <code>${#TestSuite#ticket}_IT2</code>
+            <description>description</description>
+            <occTemplateCode>FA_FACT</occTemplateCode>
+            <sequenceDto>
+               <prefixEL>Fact_</prefixEL>
+               <sequenceSize>2</sequenceSize>
+               <currentInvoiceNb>1</currentInvoiceNb>
+            </sequenceDto>
+            <sellerSequences>
+               <entry>
+                  <key>MAIN_SELLER</key>
+                  <value>
+                     <prefixEL>PrefixINV4_${#TestSuite#ticket}</prefixEL>
+                     <sequenceSize>8</sequenceSize>
+                     <currentInvoiceNb>12</currentInvoiceNb>
+                  </value>
+               </entry>
+            </sellerSequences>
+         </invoiceType>
+      </ws:createOrUpdateInvoiceType>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4fcad515-e4d3-40c2-aad2-5202b9773546"/><con:assertion type="Simple Contains" id="6cc24052-74b2-4dad-b34e-44e744ac15b2" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update_invoice_type_success" id="d2a973db-82b6-4e77-912a-89e2eb49967b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createInvoiceType</con:operation><con:request name="update_invoice_type_success" id="6bd029ac-1593-4e78-a7e9-2cb7af69ec3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceType>
@@ -64688,9 +64704,9 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
             <description>description</description>
             <occTemplateCode>FA_FACT</occTemplateCode>
             <sequenceDto>
-               <prefixEL>Fact_</prefixEL>
+               <prefixEL>Fact_Up</prefixEL>
                <sequenceSize>2</sequenceSize>
-               <currentInvoiceNb>10000</currentInvoiceNb>
+               <currentInvoiceNb>10</currentInvoiceNb>
             </sequenceDto>
             <sellerSequences>
                <entry>
@@ -64702,16 +64718,6 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
                   </value>
                </entry>
             </sellerSequences>
-             <providerSequences>
-               <entry>
-                  <key>DEMO</key>
-                  <value>
-                     <prefixEL>PrefixINV5_${#TestSuite#ticket}</prefixEL>
-                     <sequenceSize>1</sequenceSize>
-                     <currentInvoiceNb>20</currentInvoiceNb>
-                  </value>
-               </entry>
-            </providerSequences>
          </invoiceType>
       </ws:createOrUpdateInvoiceType>
    </soapenv:Body>
@@ -64721,7 +64727,7 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
    <soapenv:Body>
       <ws:createOrUpdateInvoiceType>
          <invoiceType>
-            <code>${#TestSuite#ticket}_code1</code>
+            <code>${#TestSuite#ticket}_IT1</code>
             <description>description</description>
             <occTemplateCode>FA_FACT</occTemplateCode>
             <sequenceDto>
@@ -64739,45 +64745,10 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
                   </value>
                </entry>
             </sellerSequences>
-             <providerSequences>
-               <entry>
-                  <key>DEMO</key>
-                  <value>
-                     <prefixEL>PrefixINV5_${#TestSuite#ticket}</prefixEL>
-                     <sequenceSize>1</sequenceSize>
-                     <currentInvoiceNb>18</currentInvoiceNb>
-                  </value>
-               </entry>
-            </providerSequences>
          </invoiceType>
       </ws:createOrUpdateInvoiceType>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4fcad515-e4d3-40c2-aad2-5202b9773546"/><con:assertion type="Simple Contains" id="6cc24052-74b2-4dad-b34e-44e744ac15b2" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update_provider" id="3a54e52d-e59d-444f-9541-d37eda88954f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateProvider</con:operation><con:request name="update_provider" id="860c2374-06e0-43bf-ac05-0a616836c04b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:updateProvider>\r
-         <!--Optional:-->\r
-         <provider code="DEMO">\r
-            <invoiceTypeSequences>\r
-               <!--Zero or more repetitions:-->\r
-               <entry>\r
-                  <!--Optional:-->\r
-                  <key>${#TestSuite#ticket}_code1</key>\r
-                  <!--Optional:-->\r
-                  <value>\r
-                     <!--Optional:-->\r
-                     <prefixEL>pel001</prefixEL>\r
-                     <!--Optional:-->\r
-                     <sequenceSize>1066</sequenceSize>\r
-                     <!--Optional:-->\r
-                     <currentInvoiceNb>29</currentInvoiceNb>\r
-                  </value>\r
-               </entry>\r
-            </invoiceTypeSequences>\r
-         </provider>\r
-      </ws:updateProvider>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d5d875d2-ed2f-427b-8f88-dda950f4a12e"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update_seller" id="acd8eb5d-7728-439c-b5a2-26e141f2d477"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateSeller</con:operation><con:request name="update_seller" id="37258cdf-c90b-46ae-97b3-74576d44b559"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4fcad515-e4d3-40c2-aad2-5202b9773546"/><con:assertion type="Simple Contains" id="6cc24052-74b2-4dad-b34e-44e744ac15b2" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update_seller" id="acd8eb5d-7728-439c-b5a2-26e141f2d477"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateSeller</con:operation><con:request name="update_seller" id="37258cdf-c90b-46ae-97b3-74576d44b559"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:updateSeller>\r
@@ -64787,7 +64758,7 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
                <!--Zero or more repetitions:-->\r
                <entry>\r
                   <!--Optional:-->\r
-                  <key>${#TestSuite#ticket}_code1</key>\r
+                  <key>${#TestSuite#ticket}_IT1</key>\r
                   <!--Optional:-->\r
                   <value>\r
                      <!--Optional:-->\r
@@ -64795,7 +64766,7 @@ public class DailyRecognitionScript extends RevenueRecognitionScript {
                      <!--Optional:-->\r
                      <sequenceSize>10</sequenceSize>\r
                      <!--Optional:-->\r
-                     <currentInvoiceNb>1090</currentInvoiceNb>\r
+                     <currentInvoiceNb>11</currentInvoiceNb>\r
                   </value>\r
                </entry>\r
             </invoiceTypeSequences>\r
