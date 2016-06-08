@@ -492,7 +492,7 @@ public class InvoiceApi extends BaseApi {
 
 		Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType, currentUser.getProvider());
 		if (invoice == null) {
-			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber);
+			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
 		}
 		ParamBean param = ParamBean.getInstance();
 		String invoicesDir = param.getProperty("providers.rootDir", "/tmp/meveo");
@@ -529,7 +529,7 @@ public class InvoiceApi extends BaseApi {
 
 		Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType, currentUser.getProvider());
 		if (invoice == null) {
-			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber);
+			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
 		}
 		if (invoice.getPdf() == null) {
 			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId(), currentUser, currentUser.getProvider());
