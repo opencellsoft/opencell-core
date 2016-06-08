@@ -25,6 +25,7 @@ public class CreateInvoiceResponseDto extends BaseResponse {
 	private BigDecimal amountWithoutTax;
 	private BigDecimal amountTax;
 	private BigDecimal amountWithTax;
+	private BigDecimal netToPay;
 	private String xmlInvoice;
 	private byte[] pdfInvoice;
 	
@@ -175,6 +176,22 @@ public class CreateInvoiceResponseDto extends BaseResponse {
 	 */
 	public void setPdfInvoice(byte[] pdfInvoice) {
 		this.pdfInvoice = pdfInvoice;
+	}
+
+
+	/**
+	 * @return the netToPay
+	 */
+	public BigDecimal getNetToPay() {
+		return netToPay;
+	}
+
+
+	/**
+	 * @param netToPay the netToPay to set
+	 */
+	public void setNetToPay(BigDecimal netToPay) {
+		this.netToPay = netToPay;
 	}
 	
 	

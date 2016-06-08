@@ -124,7 +124,7 @@ public class InvoiceApi extends BaseApi {
 	@MeveoParamBean
 	private ParamBean paramBean;
 	
-	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO, User currentUser) throws MeveoApiException, BusinessException, Exception {
 		log.debug("InvoiceDto:"+JsonUtils.toJson(invoiceDTO));
 		validateInvoiceDto(invoiceDTO, currentUser);						 
@@ -316,6 +316,18 @@ public class InvoiceApi extends BaseApi {
 		invoice.setAmountWithoutTax(invoiceAmountWithoutTax);
 		invoice.setAmountTax(invoiceAmountTax);
 		invoice.setAmountWithTax(invoiceAmountWithTax);
+		
+		BigDecimal netToPay = invoice.getAmountWithTax();
+		if (!provider.isEntreprise() && invoiceDTO.isIncludeBalance()) {
+			BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount()
+					.getCustomerAccount().getCode(), invoice.getDueDate(), invoice.getProvider());
+
+			if (balance == null) {
+				throw new BusinessException("account balance calculation failed");
+			}
+			netToPay = invoice.getAmountWithTax().add(balance);
+		}
+		invoice.setNetToPay(netToPay);
 		invoiceService.update(invoice, currentUser);
 		// include open RT
 
@@ -332,15 +344,13 @@ public class InvoiceApi extends BaseApi {
 		response.setAmountWithoutTax(invoice.getAmountWithoutTax());
 		response.setAmountTax(invoice.getAmountTax());
 		response.setAmountWithTax(invoice.getAmountWithTax());
+		response.setDueDate(invoice.getDueDate());
+		response.setInvoiceDate(invoice.getInvoiceDate());
+		response.setNetToPay(invoice.getNetToPay());
 		
 		if (invoiceDTO.isAutoValidation()) {
 			response.setInvoiceNumber(validateInvoice(invoice.getId(), currentUser));
 		}
-		
-//		if(invoiceDTO.isAutoValidation() && invoiceDTO.isReturnXml()){
-//			response.setXmlInvoice(getXMLInvoice(response.getInvoiceNumber(), invoiceType.getCode(), currentUser));
-//		}
-
 		return response;
 	}
 
@@ -630,9 +640,6 @@ public class InvoiceApi extends BaseApi {
 						if (StringUtils.isBlank(ratedTransactionDto.getUnitAmountWithoutTax())) {
 							missingParameters.add("ratedTransactions.unitAmountWithout");
 						}
-						if (StringUtils.isBlank(ratedTransactionDto.getUnitAmountWithoutTax())) {
-							missingParameters.add("ratedTransactions.unitAmountWithout");
-						}
 						if (StringUtils.isBlank(ratedTransactionDto.getQuantity())) {
 							missingParameters.add("ratedTransactions.quantity");
 						}
@@ -640,12 +647,6 @@ public class InvoiceApi extends BaseApi {
 				} else {
 					if (StringUtils.isBlank(subCatInvAgrDto.getAmountWithoutTax())) {
 						missingParameters.add("subCategoryInvoiceAgregateDto.amountWithoutTax");
-					}
-					if (StringUtils.isBlank(subCatInvAgrDto.getAmountTax())) {
-						missingParameters.add("subCategoryInvoiceAgregateDto.amountTax");
-					}
-					if (StringUtils.isBlank(subCatInvAgrDto.getAmountWithTax())) {
-						missingParameters.add("subCategoryInvoiceAgregateDto.amountWithTax");
 					}
 				}
 			}
@@ -655,7 +656,8 @@ public class InvoiceApi extends BaseApi {
 
 	}
 	private BigDecimal getAmountWithTax(Tax tax,BigDecimal amountWithoutTax ){
-		BigDecimal ttc = amountWithoutTax.add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100),tax.getProvider().getRounding(),RoundingMode.HALF_UP));
+		Integer rounding =  tax.getProvider().getRounding()==null?2:tax.getProvider().getRounding();
+		BigDecimal ttc = amountWithoutTax.add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100),rounding,RoundingMode.HALF_UP));
 		return ttc;	
 	}
 	private BigDecimal getAmountTax(BigDecimal amountWithTax, BigDecimal amountWithoutTax){		

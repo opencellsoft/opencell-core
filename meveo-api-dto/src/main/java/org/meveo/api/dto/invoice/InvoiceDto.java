@@ -61,6 +61,7 @@ public class InvoiceDto extends BaseDto {
     private boolean autoValidation =  true;
     private boolean returnXml = false;
     private boolean returnPdf = false;
+    private boolean includeBalance = false;
     
     @XmlElement(required = true)
     private InvoiceModeEnum invoiceMode;
@@ -334,6 +335,20 @@ public class InvoiceDto extends BaseDto {
 	 */
 	public void setInvoiceNumber(String invoiceNumber) {
 		this.invoiceNumber = invoiceNumber;
+	}
+
+	/**
+	 * @return the includeBalance
+	 */
+	public boolean isIncludeBalance() {
+		return includeBalance;
+	}
+
+	/**
+	 * @param includeBalance the includeBalance to set
+	 */
+	public void setIncludeBalance(boolean includeBalance) {
+		this.includeBalance = includeBalance;
 	}
 
 	
