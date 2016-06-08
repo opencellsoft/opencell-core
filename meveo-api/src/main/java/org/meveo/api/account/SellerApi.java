@@ -163,7 +163,7 @@ public class SellerApi extends BaseApi {
         		}
         		
         		if(entry.getValue().getCurrentInvoiceNb().longValue() 
-        				< invoiceTypeService.getMaxCurrentInvoiceNumber(currentUser.getProvider()).longValue()) {
+        				< invoiceTypeService.getMaxCurrentInvoiceNumber(currentUser.getProvider(), invoiceType.getCode()).longValue()) {
                 	throw new MeveoApiException("Not able to update, check the current number");
                 }
         		

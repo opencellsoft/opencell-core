@@ -78,10 +78,10 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 		return defaultInvoiceType;
 	}
 	
-	public Long getMaxCurrentInvoiceNumber(Provider provider) throws BusinessException {
+	public Long getMaxCurrentInvoiceNumber(Provider provider, String code) throws BusinessException {
 		Long max = getEntityManager()
 				.createNamedQuery("InvoiceType.currentInvoiceNb", Long.class)
-				.setParameter("provider", provider).getSingleResult();
+				.setParameter("provider", provider).setParameter("code", code).getSingleResult();
 		
 		return max == null ? 0 : max;
 		

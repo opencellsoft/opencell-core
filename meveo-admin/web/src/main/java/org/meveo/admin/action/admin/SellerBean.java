@@ -121,7 +121,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
 			return sequence;
 		}
 	 public void saveOrUpdateSequence() throws BusinessException{ 
-		 if(getCurrentInvoiceNb().longValue()< invoiceTypeService.getMaxCurrentInvoiceNumber(getCurrentProvider()).longValue()) {
+		 if(getCurrentInvoiceNb().longValue()< invoiceTypeService.getMaxCurrentInvoiceNumber(getCurrentProvider(), invoiceTypeCode).longValue()) {
 			 messages.error(new BundleKey("messages", "invoice.adjustment.downgrade.cuurrentNb.error.msg"));
 			 return;
 		 }
