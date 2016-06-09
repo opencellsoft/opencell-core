@@ -98,10 +98,9 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     @Inject
     private CurrencyApi currencyApi;
 
-
     @Inject
     private LanguageApi languageApi;
-    
+
     @Inject
     private InvoiceCategoryApi invoiceCategoryApi;
 
@@ -110,7 +109,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Inject
     private InvoiceSubCategoryApi invoiceSubCategoryApi;
-
 
     @Inject
     private ProviderApi providerApi;
@@ -144,7 +142,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Inject
     private TerminationReasonApi terminationReasonApi;
-    
+
     @Inject
     private InvoiceTypeApi invoiceTypeApi;
 
@@ -172,7 +170,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     @Deprecated
     @Override
     public GetCountryResponse findCountry(String countryCode) {
-    	GetCountryResponse result = new GetCountryResponse();
+        GetCountryResponse result = new GetCountryResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
@@ -193,11 +191,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Deprecated
     @Override
-    public ActionStatus removeCountry(String countryCode,String currencyCode) {
+    public ActionStatus removeCountry(String countryCode, String currencyCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            countryApi.remove(countryCode,currencyCode, getCurrentUser().getProvider());
+            countryApi.remove(countryCode, currencyCode, getCurrentUser().getProvider());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -257,7 +255,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     @Deprecated
     @Override
     public GetCurrencyResponse findCurrency(String currencyCode) {
-    	GetCurrencyResponse result = new GetCurrencyResponse();
+        GetCurrencyResponse result = new GetCurrencyResponse();
 
         try {
             result.setCurrency(currencyApi.find(currencyCode, getCurrentUser().getProvider()));
@@ -338,7 +336,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
-    
     @Override
     public ActionStatus createInvoiceCategory(InvoiceCategoryDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -942,10 +939,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
     }
-    
+
     @Override
     public ActionStatus createUser4_2(User4_2Dto postData) {
-    	ActionStatus result = new ActionStatus();
+        ActionStatus result = new ActionStatus();
 
         try {
             userApi.create4_2(postData, getCurrentUser());
@@ -982,10 +979,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
     }
-    
+
     @Override
     public ActionStatus updateUser4_2(User4_2Dto postData) {
-    	ActionStatus result = new ActionStatus();
+        ActionStatus result = new ActionStatus();
 
         try {
             userApi.update4_2(postData, getCurrentUser());
@@ -1028,7 +1025,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         GetUser4_2Response result = new GetUser4_2Response();
 
         try {
-            result.setUser(userApi.find(username));
+            result.setUser(userApi.find4_2(username));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1042,13 +1039,13 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
     }
-    
+
     @Override
     public GetUserResponse findUser(String username) {
-    	GetUserResponse result = new GetUserResponse();
+        GetUserResponse result = new GetUserResponse();
 
         try {
-            result.setUser(new UserDto(userApi.find(username)));
+            result.setUser(userApi.find(username, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1664,8 +1661,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
-
-
     @Override
     public ActionStatus createOrUpdateOccTemplate(OccTemplateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -1726,10 +1721,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
     }
-    
+
     @Override
     public ActionStatus createOrUpdateUser4_2(User4_2Dto postData) {
-    	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             userApi.createOrUpdate(postData, getCurrentUser());
@@ -1820,10 +1815,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public ActionStatus removeRole(String name) {
+    public ActionStatus removeRole(String name, String provider) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            roleApi.remove(name, getCurrentUser());
+            roleApi.remove(name, provider, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -1839,10 +1834,29 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public GetRoleResponse findRole(String name) {
+    public GetRoleResponse findRole(String name, String provider) {
         GetRoleResponse result = new GetRoleResponse();
         try {
-            result.setRoleDto(roleApi.find(name, getCurrentUser()));
+            result.setRoleDto(roleApi.find(name, provider, getCurrentUser()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        return result;
+    }
+
+    @Override
+    public GetRoleResponse findRole4_2(String name) {
+        GetRoleResponse result = new GetRoleResponse();
+        try {
+            result.setRoleDto(roleApi.find(name, null, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -2118,9 +2132,9 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Deprecated
-	@Override
-	public ActionStatus createOrUpdateLanguage(LanguageDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createOrUpdateLanguage(LanguageDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             languageApi.createOrUpdate(postData, getCurrentUser());
@@ -2136,79 +2150,79 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus createInvoiceType(InvoiceTypeDto invoiceTypeDto) {
-	    ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-	    try {
-			invoiceTypeApi.create(invoiceTypeDto, getCurrentUser());
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
-	    return result;
-	}
+    @Override
+    public ActionStatus createInvoiceType(InvoiceTypeDto invoiceTypeDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            invoiceTypeApi.create(invoiceTypeDto, getCurrentUser());
+        } catch (Exception e) {
+            super.processException(e, result);
+        }
+        return result;
+    }
 
-	@Override
-	public ActionStatus updateInvoiceType(InvoiceTypeDto invoiceTypeDto) {
-	    ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-	    try {
-			invoiceTypeApi.update(invoiceTypeDto, getCurrentUser());
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
-	    return result;
-	}
+    @Override
+    public ActionStatus updateInvoiceType(InvoiceTypeDto invoiceTypeDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            invoiceTypeApi.update(invoiceTypeDto, getCurrentUser());
+        } catch (Exception e) {
+            super.processException(e, result);
+        }
+        return result;
+    }
 
-	@Override
-	public GetInvoiceTypeResponse findInvoiceType(String invoiceTypeCode) {
-		GetInvoiceTypeResponse result = new GetInvoiceTypeResponse();
-		result.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
-	    try {
-	    	result.setInvoiceTypeDto(invoiceTypeApi.find(invoiceTypeCode, getCurrentUser().getProvider()));
-		} catch (Exception e) {
-			super.processException(e, result.getActionStatus());
-		}
-	    return result;
-	}
+    @Override
+    public GetInvoiceTypeResponse findInvoiceType(String invoiceTypeCode) {
+        GetInvoiceTypeResponse result = new GetInvoiceTypeResponse();
+        result.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+        try {
+            result.setInvoiceTypeDto(invoiceTypeApi.find(invoiceTypeCode, getCurrentUser().getProvider()));
+        } catch (Exception e) {
+            super.processException(e, result.getActionStatus());
+        }
+        return result;
+    }
 
-	@Override
-	public ActionStatus removeInvoiceType(String invoiceTypeCode) {
-	    ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-	    try {
-			invoiceTypeApi.remove(invoiceTypeCode, getCurrentUser().getProvider());
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
-	    return result;
-	}
+    @Override
+    public ActionStatus removeInvoiceType(String invoiceTypeCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            invoiceTypeApi.remove(invoiceTypeCode, getCurrentUser().getProvider());
+        } catch (Exception e) {
+            super.processException(e, result);
+        }
+        return result;
+    }
 
-	@Override
-	public ActionStatus createOrUpdateInvoiceType(InvoiceTypeDto invoiceTypeDto) {
-	    ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-	    try {
-			invoiceTypeApi.createOrUpdate(invoiceTypeDto, getCurrentUser());
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
-	    return result;
-	}
+    @Override
+    public ActionStatus createOrUpdateInvoiceType(InvoiceTypeDto invoiceTypeDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            invoiceTypeApi.createOrUpdate(invoiceTypeDto, getCurrentUser());
+        } catch (Exception e) {
+            super.processException(e, result);
+        }
+        return result;
+    }
 
-	@Override
-	public GetInvoiceTypesResponse listInvoiceTypes() {
-		GetInvoiceTypesResponse result = new GetInvoiceTypesResponse();
-		result.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
-	    try {
-	    	result.setInvoiceTypesDto(invoiceTypeApi.list(getCurrentUser().getProvider()));
-		} catch (Exception e) {
-			super.processException(e, result.getActionStatus());
-		}
-	    return result;
-	}
+    @Override
+    public GetInvoiceTypesResponse listInvoiceTypes() {
+        GetInvoiceTypesResponse result = new GetInvoiceTypesResponse();
+        result.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+        try {
+            result.setInvoiceTypesDto(invoiceTypeApi.list(getCurrentUser().getProvider()));
+        } catch (Exception e) {
+            super.processException(e, result.getActionStatus());
+        }
+        return result;
+    }
 
-	@Override
-	public ActionStatus updateProviderCF(ProviderDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus updateProviderCF(ProviderDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             providerApi.updateProviderCF(postData, getCurrentUser());
@@ -2224,11 +2238,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public GetProviderResponse findProviderCF(String providerCode) {
-		GetProviderResponse result = new GetProviderResponse();
+    @Override
+    public GetProviderResponse findProviderCF(String providerCode) {
+        GetProviderResponse result = new GetProviderResponse();
 
         try {
             result.setProvider(providerApi.findProviderCF(providerCode, getCurrentUser()));
@@ -2245,6 +2259,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
-	}
+    }
 
 }

@@ -31,7 +31,7 @@ public class UserDto extends BaseDto {
 	@XmlElement(required = true)
 	private String email;
 
-	@XmlElement(required = true)
+	@XmlElement()
 	private String provider;
 
 	private String firstName;

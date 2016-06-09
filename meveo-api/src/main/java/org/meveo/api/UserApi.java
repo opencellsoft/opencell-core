@@ -9,8 +9,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.UserDto;
 import org.meveo.api.dto.User4_2Dto;
+import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -89,7 +89,7 @@ public class UserApi extends BaseApi {
 
         userService.create(user, currentUser);
     }
-    
+
     public void create(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getUsername())) {
@@ -98,19 +98,27 @@ public class UserApi extends BaseApi {
         if (StringUtils.isBlank(postData.getEmail())) {
             missingParameters.add("email");
         }
-        if (StringUtils.isBlank(postData.getProvider())) {
-            missingParameters.add("provider");
-        }
+
         if (postData.getRoles() == null || postData.getRoles().isEmpty()) {
             missingParameters.add("roles");
         }
 
         handleMissingParameters();
 
-        // find provider
-        Provider provider = providerService.findByCode(postData.getProvider());
-        if (provider == null) {
-            throw new EntityDoesNotExistsException(Provider.class, postData.getProvider());
+        // Find provider and check if user has access to manage that provider data
+        Provider provider = null;
+        if (!StringUtils.isBlank(postData.getProvider())) {
+            provider = providerService.findByCode(postData.getProvider());
+            if (provider == null) {
+                throw new EntityDoesNotExistsException(Provider.class, postData.getProvider());
+            }
+        } else {
+            provider = currentUser.getProvider();
+        }
+
+        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider
+            .equals(currentUser.getProvider())))) {
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
         }
 
         // check if the user already exists
@@ -120,12 +128,12 @@ public class UserApi extends BaseApi {
 
         // find role
         Set<Role> roles = new HashSet<Role>();
-        for(String rl : postData.getRoles()) {
-        	Role role = roleService.findByName(rl, currentUser.getProvider());
-        	if (role == null) {
-        		throw new EntityDoesNotExistsException(Role.class, rl);
-        	}
-        	roles.add(role);
+        for (String rl : postData.getRoles()) {
+            Role role = roleService.findByName(rl, provider);
+            if (role == null) {
+                throw new EntityDoesNotExistsException(Role.class, rl);
+            }
+            roles.add(role);
         }
 
         User user = new User();
@@ -193,7 +201,7 @@ public class UserApi extends BaseApi {
 
         userService.update(user, currentUser);
     }
-    
+
     public void update(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getUsername())) {
@@ -201,9 +209,6 @@ public class UserApi extends BaseApi {
         }
         if (StringUtils.isBlank(postData.getEmail())) {
             missingParameters.add("email");
-        }
-        if (StringUtils.isBlank(postData.getProvider())) {
-            missingParameters.add("provider");
         }
         if (postData.getRoles() == null || postData.getRoles().isEmpty()) {
             missingParameters.add("roles");
@@ -218,21 +223,14 @@ public class UserApi extends BaseApi {
             throw new EntityDoesNotExistsException(User.class, postData.getUsername(), "username");
         }
 
-        // find provider
-        Provider provider = providerService.findByCode(postData.getProvider());
-        if (provider == null) {
-            throw new EntityDoesNotExistsException(Provider.class, postData.getProvider());
-        }
-
-        // find role
-        
+        // find roles
         Set<Role> roles = new HashSet<Role>();
-        for(String rl : postData.getRoles()) {
-        	Role role = roleService.findByName(rl, currentUser.getProvider());
-        	if (role == null) {
-        		throw new EntityDoesNotExistsException(Role.class, rl);
-        	}
-        	roles.add(role);
+        for (String rl : postData.getRoles()) {
+            Role role = roleService.findByName(rl, user.getProvider());
+            if (role == null) {
+                throw new EntityDoesNotExistsException(Role.class, rl);
+            }
+            roles.add(role);
         }
 
         user.setUserName(postData.getUsername());
@@ -242,7 +240,6 @@ public class UserApi extends BaseApi {
         name.setLastName(postData.getLastName());
         name.setFirstName(postData.getFirstName());
         user.setName(name);
-        user.setProvider(provider);
         user.setRoles(roles);
 
         userService.update(user, currentUser);
@@ -258,7 +255,7 @@ public class UserApi extends BaseApi {
         userService.remove(user);
     }
 
-    public User4_2Dto find(String username) throws MeveoApiException {
+    public User4_2Dto find4_2(String username) throws MeveoApiException {
         User user = userService.findByUsernameWithFetch(username, Arrays.asList("provider", "roles"));
 
         if (user == null) {
@@ -266,6 +263,30 @@ public class UserApi extends BaseApi {
         }
 
         User4_2Dto result = new User4_2Dto(user);
+
+        return result;
+    }
+
+    public UserDto find(String username, User currentUser) throws MeveoApiException {
+
+        if (StringUtils.isBlank(username)) {
+            missingParameters.add("username");
+        }
+
+        handleMissingParameters();
+
+        User user = userService.findByUsernameWithFetch(username, Arrays.asList("provider", "roles"));
+
+        if (user == null) {
+            throw new EntityDoesNotExistsException(User.class, username, "username");
+        }
+
+        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && user.getProvider()
+            .equals(currentUser.getProvider())))) {
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+        }
+
+        UserDto result = new UserDto(user);
 
         return result;
     }
@@ -278,7 +299,7 @@ public class UserApi extends BaseApi {
             update4_2(postData, currentUser);
         }
     }
-    
+
     public void createOrUpdate(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
         User user = userService.findByUsername(postData.getUsername());
         if (user == null) {

@@ -92,7 +92,7 @@ public class User4_2RsImpl extends BaseRs implements User4_2Rs {
         GetUser4_2Response result = new GetUser4_2Response();
 
         try {
-            result.setUser(userApi.find(username));
+            result.setUser(userApi.find4_2(username));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

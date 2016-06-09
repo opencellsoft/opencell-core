@@ -45,22 +45,24 @@ public interface RoleRs extends IBaseRs {
     /**
      * Remove role.
      * 
-     * @param rolename
+     * @param rolename Role name
+     * @param provider Provider code
      * @return
      */
     @DELETE
-    @Path("/{roleName}")
-    public ActionStatus remove(@PathParam("roleName") String roleName);
+    @Path("/{roleName}/{provider}")
+    public ActionStatus remove(@PathParam("roleName") String roleName, @PathParam("provider") String provider);
 
     /**
      * Search role.
      * 
-     * @param rolename
+     * @param rolename Role name
+     * @param provider Provider code
      * @return
      */
     @GET
     @Path("/")
-    public GetRoleResponse find(@QueryParam("roleName") String roleName);
+    public GetRoleResponse find(@QueryParam("roleName") String roleName, @QueryParam("provider") String provider);
 
     /**
      * Create or update role
