@@ -72,7 +72,7 @@ public class UserRsImpl extends BaseRs implements UserRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            userApi.remove(username);
+            userApi.remove(username, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -89,7 +89,7 @@ public class UserRsImpl extends BaseRs implements UserRs {
 
     @Override
     public GetUserResponse find(@QueryParam("username") String username) {
-    	GetUserResponse result = new GetUserResponse();
+        GetUserResponse result = new GetUserResponse();
 
         try {
             result.setUser(userApi.find(username, getCurrentUser()));

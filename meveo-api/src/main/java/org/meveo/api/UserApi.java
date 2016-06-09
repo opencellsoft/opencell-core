@@ -13,6 +13,7 @@ import org.meveo.api.dto.User4_2Dto;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -118,7 +119,7 @@ public class UserApi extends BaseApi {
 
         if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider
             .equals(currentUser.getProvider())))) {
-            throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+            throw new LoginException("User has no permission to manage users for provider " + provider.getCode());
         }
 
         // check if the user already exists
@@ -223,6 +224,11 @@ public class UserApi extends BaseApi {
             throw new EntityDoesNotExistsException(User.class, postData.getUsername(), "username");
         }
 
+        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && user.getProvider()
+            .equals(currentUser.getProvider())))) {
+            throw new LoginException("User has no permission to manage users for provider " + user.getProvider().getCode());
+        }
+
         // find roles
         Set<Role> roles = new HashSet<Role>();
         for (String rl : postData.getRoles()) {
@@ -245,11 +251,16 @@ public class UserApi extends BaseApi {
         userService.update(user, currentUser);
     }
 
-    public void remove(String username) throws MeveoApiException {
+    public void remove(String username, User currentUser) throws MeveoApiException {
         User user = userService.findByUsername(username);
 
         if (user == null) {
             throw new EntityDoesNotExistsException(User.class, username, "username");
+        }
+
+        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && user.getProvider()
+            .equals(currentUser.getProvider())))) {
+            throw new LoginException("User has no permission to manage users for provider " + user.getProvider().getCode());
         }
 
         userService.remove(user);
@@ -283,7 +294,7 @@ public class UserApi extends BaseApi {
 
         if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && user.getProvider()
             .equals(currentUser.getProvider())))) {
-            throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+            throw new LoginException("User has no permission to access users for provider " + user.getProvider().getCode());
         }
 
         UserDto result = new UserDto(user);

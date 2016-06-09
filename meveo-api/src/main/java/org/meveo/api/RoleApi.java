@@ -13,6 +13,7 @@ import org.meveo.api.dto.PermissionDto;
 import org.meveo.api.dto.RoleDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -72,7 +73,7 @@ public class RoleApi extends BaseApi {
 
         if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider
             .equals(currentUser.getProvider())))) {
-            throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+            throw new LoginException("User has no permission to manage roles for provider " + provider.getCode());
         }
 
         Role role = new Role();
@@ -154,7 +155,7 @@ public class RoleApi extends BaseApi {
 
         if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider
             .equals(currentUser.getProvider())))) {
-            throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+            throw new LoginException("User has no permission to manage roles for provider " + provider.getCode());
         }
 
         Role role = roleService.findByName(name, provider);
@@ -223,7 +224,7 @@ public class RoleApi extends BaseApi {
 
         if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && provider
             .equals(currentUser.getProvider())))) {
-            throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+            throw new LoginException("User has no permission to access roles for provider " + provider.getCode());
         }
 
         RoleDto roleDto = null;
@@ -256,7 +257,7 @@ public class RoleApi extends BaseApi {
 
         if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider
             .equals(currentUser.getProvider())))) {
-            throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+            throw new LoginException("User has no permission to manage roles for provider " + provider.getCode());
         }
 
         Role role = roleService.findByName(name, provider);
@@ -289,7 +290,7 @@ public class RoleApi extends BaseApi {
 
         if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider
             .equals(currentUser.getProvider())))) {
-            throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
+            throw new LoginException("User has no permission to manage roles for provider " + provider.getCode());
         }
 
         Role role = roleService.findByName(name, currentUser.getProvider());

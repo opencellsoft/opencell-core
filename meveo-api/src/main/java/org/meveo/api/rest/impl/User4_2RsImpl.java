@@ -72,7 +72,7 @@ public class User4_2RsImpl extends BaseRs implements User4_2Rs {
         ActionStatus result = new ActionStatus();
 
         try {
-            userApi.remove(username);
+            userApi.remove(username, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

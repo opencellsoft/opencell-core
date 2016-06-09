@@ -30,12 +30,17 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 
         try {
         	result = invoiceApi.create(invoiceDto, getCurrentUser());  
-        	if(invoiceDto.isAutoValidation() && invoiceDto.isReturnXml()){
-        		result.setXmlInvoice(invoiceApi.getXMLInvoice(result.getInvoiceNumber(), invoiceDto.getInvoiceType(), getCurrentUser()));
+        	if(invoiceDto.isAutoValidation()){
+        		String invoiceXml = invoiceApi.getXMLInvoice(result.getInvoiceNumber(), invoiceDto.getInvoiceType(), getCurrentUser());
+        		byte[] invoicePdf = invoiceApi.getPdfInvoince(result.getInvoiceNumber(), invoiceDto.getInvoiceType(), getCurrentUser());
+        		if(invoiceDto.isReturnXml()){
+        			result.setXmlInvoice(invoiceXml);
+        		}
+            	if(invoiceDto.isReturnPdf()){
+            		result.setPdfInvoice(invoicePdf);
+            	}
         	}
-        	if(invoiceDto.isAutoValidation() && invoiceDto.isReturnXml() && invoiceDto.isReturnPdf()){
-        		result.setPdfInvoice(invoiceApi.getPdfInvoince(result.getInvoiceNumber(), invoiceDto.getInvoiceType(), getCurrentUser()));
-        	}
+
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (Exception e) {
