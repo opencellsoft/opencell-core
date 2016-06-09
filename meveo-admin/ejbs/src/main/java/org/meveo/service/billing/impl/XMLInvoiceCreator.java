@@ -441,6 +441,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				billingRundir.mkdirs();
 				trans.transform(source, result);
 			}
+			addCustomFields(invoice, invoice, doc, invoiceTag);
 
 		} catch (TransformerException e) {
 			log.error("Error occured when creating xml for invoiceID={}. {}", invoiceId, e);
@@ -893,6 +894,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					.createTextNode(round(categoryInvoiceAgregate.getAmountWithoutTax(), rounding));
 			amountWithoutTax.appendChild(amountWithoutTaxTxt);
 			category.appendChild(amountWithoutTax);
+			addCustomFields(invoiceCategory, invoice, doc, category);
 
 			// if (!entreprise) {
 			// Element amountWithTax = doc.createElement("amountWithTax");
@@ -1122,6 +1124,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						subCategory.appendChild(line);
 						
 					}
+					addCustomFields(invoiceSubCat, invoice, doc, subCategory);				
 				}
 			}
 		}
