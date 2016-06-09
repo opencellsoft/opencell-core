@@ -160,16 +160,16 @@ public class InvoiceApi extends BaseApi {
 		invoice.setPaymentMethod(paymentMethod);
 		invoice.setInvoiceType(invoiceType);
 
-		if (invoiceDTO.getListInvoiceNumbersToLink().isEmpty()) {
-			for (String invvoiceNumber : invoiceDTO.getListInvoiceNumbersToLink()) {
-				Invoice invoiceTmp = invoiceService.getInvoiceByNumber(invvoiceNumber, provider.getCode());
+		if (invoiceDTO.getListInvoiceIdToLink() != null) {
+			for (Long invoiceId : invoiceDTO.getListInvoiceIdToLink()) {
+				Invoice invoiceTmp = invoiceService.findById(invoiceId);
 				if (invoiceTmp == null) {
-					throw new EntityDoesNotExistsException(Invoice.class, invvoiceNumber);
+					throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
 				}
-				if (invoiceType.getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
-					throw new BusinessApiException("Invoice " + invvoiceNumber + " cant be linked");
+				if (invoiceTmp.getInvoiceType().getAppliesTo().contains(invoiceType)) {				
+					throw new BusinessApiException("Invoice " + invoiceId + " cant be linked");
 				}
-				invoice.getInvoiceAdjustments().add(invoiceTmp);
+				invoice.getLinkedInvoices().add(invoiceTmp);
 			}
 		}
 		invoiceService.create(invoice, currentUser);

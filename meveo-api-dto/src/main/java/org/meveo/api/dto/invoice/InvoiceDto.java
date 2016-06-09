@@ -34,28 +34,38 @@ public class InvoiceDto extends BaseDto {
     private static final long serialVersionUID = 1072382628068718580L;
 
     @XmlElement(required = true)
+    private String invoiceType;
+    
+    @XmlElement(required = true)
     private String billingAccountCode;
 
     @XmlElement(required = true)
     private Date dueDate;
     
-    private List<String> listInvoiceNumbersToLink= new ArrayList<String>();
-    private String invoiceNumber;
     @XmlElement(required = true)
     private Date invoiceDate;
+    
+	@XmlElementWrapper
+    @XmlElement(name="categoryInvoiceAgregate",required = true)
+    private List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregateDto>();
+	
+	@XmlElementWrapper
+    @XmlElement(name="invoiceIdToLink")
+    private List<Long> listInvoiceIdToLink= new ArrayList<Long>();
+	
+    private String invoiceNumber;
+    
+
     private BigDecimal discount;
     private BigDecimal amountWithoutTax;
     private BigDecimal amountTax;
     private BigDecimal amountWithTax;
     private PaymentMethodEnum paymentMethod;
     private boolean pdfPresent;
-    @XmlElement(required = true)
-    private String invoiceType;
+
     private byte[] pdf;
     
-	@XmlElementWrapper
-    @XmlElement(name="categoryInvoiceAgregate",required = true)
-    private List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregateDto>();
+
     
     
     private boolean autoValidation =  true;
@@ -124,18 +134,19 @@ public class InvoiceDto extends BaseDto {
 
   
 
-    /**
-	 * @return the listInvoiceNumbersToLink
+
+	/**
+	 * @return the listInvoiceIdToLink
 	 */
-	public List<String> getListInvoiceNumbersToLink() {
-		return listInvoiceNumbersToLink;
+	public List<Long> getListInvoiceIdToLink() {
+		return listInvoiceIdToLink;
 	}
 
 	/**
-	 * @param listInvoiceNumbersToLink the listInvoiceNumbersToLink to set
+	 * @param listInvoiceIdToLink the listInvoiceIdToLink to set
 	 */
-	public void setListInvoiceNumbersToLink(List<String> listInvoiceNumbersToLink) {
-		this.listInvoiceNumbersToLink = listInvoiceNumbersToLink;
+	public void setListInvoiceIdToLink(List<Long> listInvoiceIdToLink) {
+		this.listInvoiceIdToLink = listInvoiceIdToLink;
 	}
 
 	public String getBillingAccountCode() {

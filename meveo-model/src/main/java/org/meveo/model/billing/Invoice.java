@@ -153,9 +153,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 	@JoinColumn(name = "INVOICE_ID")
 	private Invoice adjustedInvoice;
 
-	@OneToMany(mappedBy = "adjustedInvoice", fetch = FetchType.LAZY)
-	private List<Invoice> invoiceAdjustments;
-
 	@ManyToOne
 	@JoinColumn(name = "INVOICE_TYPE_ID")
 	private InvoiceType invoiceType;
@@ -425,14 +422,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
 	public void setAdjustedInvoice(Invoice adjustedInvoice) {
 		this.adjustedInvoice = adjustedInvoice;
-	}
-
-	public List<Invoice> getInvoiceAdjustments() {
-		return invoiceAdjustments;
-	}
-
-	public void setInvoiceAdjustments(List<Invoice> invoiceAdjustments) {
-		this.invoiceAdjustments = invoiceAdjustments;
 	}
 
 	public Long getInvoiceAdjustmentCurrentSellerNb() {
