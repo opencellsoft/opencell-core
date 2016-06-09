@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 @XmlRootElement(name = "Payment")
@@ -49,6 +50,22 @@ public class PaymentDto extends BaseDto {
 	private Date transactionDate;
 	private List<String> listOCCReferenceforMatching;
 	private boolean isToMatching;
+	
+	private CustomFieldsDto customFields = new CustomFieldsDto();
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}
 
 	public String getType() {
 		return type;
@@ -169,7 +186,7 @@ public class PaymentDto extends BaseDto {
 				+ customerAccountCode + ", reference=" + reference + ", bankLot=" + bankLot + ", depositDate="
 				+ depositDate + ", bankCollectionDate=" + bankCollectionDate + ", dueDate=" + dueDate
 				+ ", transactionDate=" + transactionDate + ", listOCCReferenceforMatching="
-				+ listOCCReferenceforMatching + ", isToMatching=" + isToMatching + "]";
+				+ listOCCReferenceforMatching + ", isToMatching=" + isToMatching + ", customFields=" + customFields + "]";
 	}
 
 }

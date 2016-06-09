@@ -53,9 +53,7 @@ public class AutomatedPaymentBean extends CustomFieldBean<AutomatedPayment> {
 	@Inject
 	private AutomatedPaymentService automatedPaymentService;
 	
-	@Inject
-	private CustomerAccountService customerAccountService;
-	
+
 	@Inject
 	private AccountOperationService accountOperationService;
 
