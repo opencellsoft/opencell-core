@@ -308,18 +308,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if(invoiceType.getSellerSequence() != null && invoiceType.getSellerSequence().containsKey(seller)){
 			
 			sequence =  invoiceType.getSellerSequence().get(seller);
-			if(increment){
+			if(increment && currentNbFromCF == null){
 				sequence.setCurrentInvoiceNb((sequence.getCurrentInvoiceNb() == null?0L:sequence.getCurrentInvoiceNb()) +step);
 				invoiceType.getSellerSequence().put(seller,sequence);
 				invoiceTypeService.update(invoiceType,currentUser);
 			}
-		}
-		if(invoiceType.getSequence() != null){
-			sequence =  invoiceType.getSequence();
-			if(increment){
-				sequence.setCurrentInvoiceNb((sequence.getCurrentInvoiceNb() == null?0L:sequence.getCurrentInvoiceNb()) +step);
-				invoiceType.setSequence(sequence);
-				invoiceTypeService.update(invoiceType,currentUser);
+		}else{
+			if(invoiceType.getSequence() != null){
+				sequence =  invoiceType.getSequence();
+				if(increment && currentNbFromCF == null){
+					sequence.setCurrentInvoiceNb((sequence.getCurrentInvoiceNb() == null?0L:sequence.getCurrentInvoiceNb()) +step);
+					invoiceType.setSequence(sequence);
+					invoiceTypeService.update(invoiceType,currentUser);
+				}
 			}
 		}
 		if(sequence == null){

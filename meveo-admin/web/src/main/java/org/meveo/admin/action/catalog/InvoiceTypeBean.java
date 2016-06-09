@@ -74,7 +74,7 @@ public class InvoiceTypeBean extends BaseBean<InvoiceType> {
 	        getEntity().getAppliesTo().addAll(invoiceTypeService.refreshOrRetrieve(invoiceTypesDM.getTarget()));
 	        if(entity.getSequence().getCurrentInvoiceNb().longValue() 
 					< invoiceTypeService.getMaxCurrentInvoiceNumber(getCurrentProvider(), entity.getCode()).longValue()) {
-				messages.error(new BundleKey("messages", "invoiceType.downgrade.cuurrentNb.error.msg"));
+				messages.error(new BundleKey("messages", "invoice.downgrade.cuurrentNb.error.msg"));
 				return null;
 			}
 	        return super.saveOrUpdate(killConversation);

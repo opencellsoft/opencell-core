@@ -25,10 +25,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 

@@ -55,9 +55,7 @@
         <h:panelGroup rendered="#{not empty invoiceTypeBean.entity.id}">		 
 		  <p:dataTable id="sellerSequenceTable" width="80px;" label="#{messages['inboundRequest.responseHeaders']}" style="width:70%;"
 			value="#{invoiceTypeBean.getSellerSequencesList}" 
-			var="sellerSeq" paginator="true" rows="5" resizableColumns="true"
-			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-			rowsPerPageTemplate="10,20,30" >
+			var="sellerSeq" paginator="false"  resizableColumns="true" >
 	       <f:facet name="header">
             #{messages['invoiceType.sellerSequences']}
            </f:facet>

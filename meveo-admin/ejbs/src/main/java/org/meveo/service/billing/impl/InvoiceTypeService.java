@@ -53,7 +53,6 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 		String occCode = "accountOperationsGenerationJob.occCode";
 		String occCodeDefaultValue = "FA_FACT";
 		if (param.getProperty("invoiceType.adjustement.code", "ADJ").equals(typeCode)) {
-
 			occCode = "accountOperationsGenerationJob.occCodeAdjustement";
 			occCodeDefaultValue = "FA_ADJ";
 		}

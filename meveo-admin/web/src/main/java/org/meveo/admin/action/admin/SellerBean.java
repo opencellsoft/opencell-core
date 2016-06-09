@@ -122,7 +122,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
 		}
 	 public void saveOrUpdateSequence() throws BusinessException{ 
 		 if(getCurrentInvoiceNb().longValue()< invoiceTypeService.getMaxCurrentInvoiceNumber(getCurrentProvider(), invoiceTypeCode).longValue()) {
-			 messages.error(new BundleKey("messages", "invoice.adjustment.downgrade.cuurrentNb.error.msg"));
+			 messages.error(new BundleKey("messages", "invoice.downgrade.cuurrentNb.error.msg"));
 			 return;
 		 }
 		 InvoiceType invoiceType=invoiceTypeService.findByCode(invoiceTypeCode, getCurrentProvider());
@@ -140,6 +140,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
 			 }
 		 }
 		 resetSequenceField();	 
+		 super.saveOrUpdate(false);
 	 }	
 	 
 	 public void deleteSellerSequence(InvoiceType invoiceType){
@@ -156,7 +157,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
 	}
 	public void resetSequenceField(){
 		invoiceTypeCode=null;
-		prefixEl=null;
+		prefixEl="";
 		sequenceSize=9;
 		currentInvoiceNb=0L;
 		editSellerSequence=false;
