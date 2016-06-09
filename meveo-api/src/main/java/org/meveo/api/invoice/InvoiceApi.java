@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -256,6 +258,8 @@ public class InvoiceApi extends BaseApi {
 				invoiceAgregateSubcat.setAccountingCode(invoiceSubCategory.getAccountingCode());
 				invoiceAgregateSubcat.setAuditable(auditable);
 				invoiceAgregateSubcat.setQuantity(BigDecimal.ONE);
+				invoiceAgregateSubcat.setTaxPercent(currentTax.getPercent());
+				invoiceAgregateSubcat.setSubCategoryTaxes(new HashSet<Tax>( Arrays.asList(currentTax)));
 				if (InvoiceModeEnum.DETAILLED.name().equals(invoiceDTO.getInvoiceMode().name())) {
 					invoiceAgregateSubcat.setItemNumber(subCatInvAgrDTO.getRatedTransactions().size());
 					invoiceAgregateSubcat.setAmountWithoutTax(subCatAmountWithoutTax);
