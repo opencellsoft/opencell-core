@@ -7,7 +7,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.XmlUtil;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.Auditable;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.*;
@@ -72,38 +71,10 @@ public class FilterBean extends BaseBean<Filter> {
 			}
 
 			Filter filter = filterService.parse(entity.getInputXml());
-			if (filter != null) {
-				Auditable auditable = new Auditable();
-				auditable.setCreated(new Date());
-				auditable.setCreator(getCurrentUser());
+			filterService.validateFilter(filter);
+			filterService.setFilterAuditInfo(this.entity);
+			filterService.updateFilterDetails(filter, this.entity, getCurrentUser());
 
-				if (filter.getOrderCondition() != null) {
-					filter.getOrderCondition().setProvider(getCurrentProvider());
-					entity.setOrderCondition(filter.getOrderCondition());
-				}
-
-				if (filter.getPrimarySelector() != null) {
-					filter.getPrimarySelector().setProvider(getCurrentProvider());
-					entity.setPrimarySelector(filter.getPrimarySelector());
-				}
-
-				if (filter.getSecondarySelectors() != null) {
-					if (entity.getSecondarySelectors() == null) {
-						entity.setSecondarySelectors(new ArrayList<FilterSelector>());
-					}
-					for (FilterSelector filterSelector : filter.getSecondarySelectors()) {
-						filterSelector.setProvider(getCurrentProvider());
-						filterSelectorService.create(filterSelector, getCurrentUser());
-						entity.getSecondarySelectors().add(filterSelector);
-					}
-				}
-
-				// process filterCondition
-				if (filter.getFilterCondition() != null) {
-					entity.setFilterCondition(filterService.setProviderToFilterCondition(filter.getFilterCondition()));
-				}
-			}
-			
 			try {
 				validate(entity);
 			} catch (ConstraintViolationException e) {
@@ -111,7 +82,7 @@ public class FilterBean extends BaseBean<Filter> {
 				return "";
 			}
 		}
-
+		forceUpdateParameters = true;
 		return super.saveOrUpdate(killConversation);
 	}
 
@@ -182,23 +153,6 @@ public class FilterBean extends BaseBean<Filter> {
 		}
 	}
 
-	public void removeParameter(CustomFieldTemplate customField) {
-		if(customField != null){
-			try {
-				final int listIndex = parameters.indexOf(customField);
-				final CustomFieldTemplate cfDuplicate = customFieldTemplateService.findByCodeAndAppliesTo(customField.getCode(), customField.getAppliesTo(), getCurrentProvider());
-				removeCustomField(customField);
-				updateCustomField(cfDuplicate, getFilterCftCodePrefix());
-				parameters.remove(listIndex);
-				forceUpdateParameters = true;
-				messages.info(new BundleKey("messages", "delete.successful"));
-			} catch (BusinessException e) {
-				log.error("Failed to remove custom field.", e);
-				messages.error(new BundleKey("messages", "error.action.failed"), e.getMessage());
-			}
-		}
-	}
-
 	public List<CustomFieldTemplate> getParameters() {
 		if (parameters == null || forceUpdateParameters) {
 			log.info("Initializing filter parameters.");
@@ -207,7 +161,7 @@ public class FilterBean extends BaseBean<Filter> {
 			try {
 				if(this.getEntity() != null){
 					String appliesTo = customFieldTemplateService.calculateAppliesToValue(this.getEntity());
-					Map<String, CustomFieldTemplate> customFieldTemplateMap = customFieldTemplateService.findByAppliesTo(appliesTo, currentUser.getProvider());
+					Map<String, CustomFieldTemplate> customFieldTemplateMap = customFieldTemplateService.findByAppliesToNoCache(appliesTo, currentUser.getProvider());
 					for (Map.Entry<String, CustomFieldTemplate> customFieldTemplateEntry : customFieldTemplateMap.entrySet()) {
 						parameters.add(customFieldTemplateEntry.getValue());
 					}
@@ -218,26 +172,6 @@ public class FilterBean extends BaseBean<Filter> {
 			}
 		}
 		return parameters;
-	}
-
-	public CustomFieldTemplate getCustomField() {
-		return null;
-	}
-
-	public void setCustomField(CustomFieldTemplate customField) {
-		if(customField != null){
-			try {
-				CustomFieldTemplate cfDuplicate = customFieldTemplateService.findByCodeAndAppliesTo(customField.getCode(), customField.getAppliesTo(), getCurrentProvider());
-				removeCustomField(customField);
-				updateCustomField(cfDuplicate, customFieldTemplateService.calculateAppliesToValue(this.getEntity()));
-				parameters.add(cfDuplicate);
-				forceUpdateParameters = true;
-				messages.info(new BundleKey("messages", "update.successful"));
-			} catch (CustomFieldException | BusinessException e) {
-				log.error("Failed to add custom field.", e);
-				messages.error(new BundleKey("messages", "error.action.failed"), e.getMessage());
-			}
-		}
 	}
 
 	public LazyDataModel<CustomFieldTemplate> getFilterTypeCustomFields(){

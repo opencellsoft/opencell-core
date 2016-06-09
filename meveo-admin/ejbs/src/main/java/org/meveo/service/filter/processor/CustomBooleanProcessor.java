@@ -4,6 +4,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.FilterException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.filter.FilterParameterTypeEnum;
 import org.meveo.model.filter.PrimitiveFilterCondition;
 
 import java.util.Map;
@@ -12,7 +13,7 @@ public class CustomBooleanProcessor extends BooleanProcessor {
 
     @Override
     public boolean canProccessCondition(PrimitiveFilterCondition condition) {
-        return isPrefixInOperand(condition, "cfBoolean:");
+        return isPrefixInOperand(condition, FilterParameterTypeEnum.BOOLEAN.getPrefix());
     }
 
     @Override

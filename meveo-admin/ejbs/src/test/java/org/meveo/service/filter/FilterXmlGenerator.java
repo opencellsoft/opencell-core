@@ -3,7 +3,9 @@ package org.meveo.service.filter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.DiscriminatorValue;
 
@@ -54,7 +56,7 @@ public class FilterXmlGenerator {
 		AndCompositeFilterCondition andCompositeFilterCondition = new AndCompositeFilterCondition();
 		andCompositeFilterCondition.setFilterConditionType(AndCompositeFilterCondition.class.getAnnotation(
 				DiscriminatorValue.class).value());
-		List<FilterCondition> andFilterConditions = new ArrayList<>();
+		Set<FilterCondition> andFilterConditions = new HashSet<>();
 
 		PrimitiveFilterCondition primitiveFilterCondition = new PrimitiveFilterCondition();
 		primitiveFilterCondition.setFilterConditionType(PrimitiveFilterCondition.class.getAnnotation(
@@ -93,7 +95,7 @@ public class FilterXmlGenerator {
 		AndCompositeFilterCondition andCompositeFilterCondition = new AndCompositeFilterCondition();
 		andCompositeFilterCondition.setFilterConditionType(AndCompositeFilterCondition.class.getAnnotation(
 				DiscriminatorValue.class).value());
-		List<FilterCondition> andFilterConditions = new ArrayList<>();
+		Set<FilterCondition> andFilterConditions = new HashSet<>();
 
 		PrimitiveFilterCondition primitiveFilterCondition = new PrimitiveFilterCondition();
 		primitiveFilterCondition.setFilterConditionType(PrimitiveFilterCondition.class.getAnnotation(
@@ -167,7 +169,7 @@ public class FilterXmlGenerator {
 		AndCompositeFilterCondition andCompositeFilterCondition = new AndCompositeFilterCondition();
 		andCompositeFilterCondition.setFilterConditionType(AndCompositeFilterCondition.class.getAnnotation(
 				DiscriminatorValue.class).value());
-		List<FilterCondition> andFilterConditions = new ArrayList<>();
+		Set<FilterCondition> andFilterConditions = new HashSet<>();
 
 		NativeFilterCondition nativeFilterCondition = new NativeFilterCondition();
 		nativeFilterCondition.setFilterConditionType(NativeFilterCondition.class
@@ -179,7 +181,7 @@ public class FilterXmlGenerator {
 		OrCompositeFilterCondition orCompositeFilterCondition = new OrCompositeFilterCondition();
 		orCompositeFilterCondition.setFilterConditionType(OrCompositeFilterCondition.class.getAnnotation(
 				DiscriminatorValue.class).value());
-		List<FilterCondition> orFilterConditions = new ArrayList<>();
+		Set<FilterCondition> orFilterConditions = new HashSet<>();
 
 		NativeFilterCondition nativeFilterCondition2 = new NativeFilterCondition();
 		nativeFilterCondition2.setFilterConditionType(NativeFilterCondition.class.getAnnotation(

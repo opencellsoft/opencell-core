@@ -27,7 +27,7 @@ public class FilterCondition extends BaseEntity {
 
 	private static final long serialVersionUID = -4620739918936998431L;
 
-	@OneToOne(mappedBy = "filterCondition")
+	@OneToOne(orphanRemoval = true, mappedBy = "filterCondition")
 	public Filter filter;
 
 	@Column(name = "FILTER_CONDITION_TYPE", length = 50, nullable = false)

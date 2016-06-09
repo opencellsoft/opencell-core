@@ -36,11 +36,10 @@ public class FilterApi extends BaseApi {
 
         handleMissingParameters();
 
-        Filter filter = filterService.parse(dto.getInputXml());
-
         try {
-            filterService.initFilterFromInputXml(filter, currentUser);
-
+            Filter filter = filterService.parse(dto.getInputXml());
+            filterService.validateFilter(filter);
+            filterService.setFilterAuditInfo(filter);
             filter.setCode(dto.getCode());
             filter.setDescription(dto.getDescription());
             filter.setInputXml(dto.getInputXml());
@@ -72,6 +71,10 @@ public class FilterApi extends BaseApi {
                 throw new EntityDoesNotExistsException(Filter.class, dto.getCode());
             }
 
+            Filter parsedFilter = filterService.parse(dto.getInputXml());
+            filterService.validateFilter(parsedFilter);
+            filterService.setFilterAuditInfo(filter);
+            filterService.updateFilterDetails(parsedFilter, filter, currentUser);
             filter.setDescription(dto.getDescription());
             filter.setInputXml(dto.getInputXml());
             filter.setShared(dto.getShared());

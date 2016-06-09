@@ -4,6 +4,7 @@ import org.apache.commons.validator.routines.BigDecimalValidator;
 import org.meveo.admin.exception.FilterException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.filter.FilterParameterTypeEnum;
 import org.meveo.model.filter.PrimitiveFilterCondition;
 
 import java.math.BigDecimal;
@@ -13,7 +14,7 @@ public class CustomBigDecimalProcessor extends BigDecimalProcessor {
 
     @Override
     public boolean canProccessCondition(PrimitiveFilterCondition condition) {
-        return isPrefixInOperand(condition, "cfDecimal:");
+        return isPrefixInOperand(condition, FilterParameterTypeEnum.BIG_DECIMAL.getPrefix());
     }
 
     @Override

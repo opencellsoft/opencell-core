@@ -6,13 +6,14 @@ import org.meveo.admin.exception.FilterException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.filter.FilterParameterTypeEnum;
 import org.meveo.model.filter.PrimitiveFilterCondition;
 
 public class CustomEntityProcessor extends PrimitiveFilterProcessor {
 
     @Override
     public boolean canProccessCondition(PrimitiveFilterCondition condition) {
-        return isPrefixInOperand(condition, "cfEntity:");
+        return isPrefixInOperand(condition, FilterParameterTypeEnum.ENTITY.getPrefix());
     }
 
     @Override

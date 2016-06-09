@@ -66,15 +66,9 @@
 							<p:column headerText="#{messages['businessEntity.description']}">
 								<h:outputText value="#{parameter.description}"/>
 							</p:column>
-							<p:column headerText="#{messages['commons.actions']}">
-								<p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this"
-												 update=":tabView:formId searchCustomField"
-												 action="#{filterBean.removeParameter(parameter)}"/>
+							<p:column headerText="#{messages['customFieldTemplate.fieldType']}">
+								<h:outputText value="#{parameter.fieldType}"/>
 							</p:column>
-							<f:facet name="footer" layout="block">
-								<p:commandButton value="#{messages['meveoModuleItem.addCF']}" partialSubmit="true"
-												 process="@this" oncomplete="PF('dlg_searchCustomField').show()"/>
-							</f:facet>
 						</p:dataTable>
 					</hftl:formPanel>
 
@@ -82,16 +76,6 @@
 			</p:tabView>
 
 		</p:panel>
-
-		<hftl:entityPopup id="searchCustomField" header="#{messages['customField.popup.header']}"
-						  backingBean="#{filterBean}"
-						  dataModel="#{filterBean.filterTypeCustomFields}"
-						  selection="#{filterBean.customField}"
-						  updateField=":tabView:formId searchCustomField"
-						  searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
-						  column1Label="#{messages['businessEntity.code']}" column1="code"
-						  column2Label="#{messages['businessEntity.description']}" column2="description" >
-		</hftl:entityPopup>
 	</ui:define>
 
 </ui:composition>

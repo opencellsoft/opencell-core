@@ -4,26 +4,36 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-
+import org.apache.commons.lang3.EnumUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.filter.AndCompositeFilterCondition;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.filter.FilterCondition;
+import org.meveo.model.filter.FilterParameterTypeEnum;
 import org.meveo.model.filter.FilterSelector;
 import org.meveo.model.filter.NativeFilterCondition;
 import org.meveo.model.filter.OrCompositeFilterCondition;
@@ -44,6 +54,8 @@ import com.thoughtworks.xstream.hibernate.converter.HibernateProxyConverter;
 import com.thoughtworks.xstream.hibernate.mapper.HibernateMapper;
 import com.thoughtworks.xstream.mapper.ClassAliasingMapper;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
+import org.meveo.service.crm.impl.CustomFieldException;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
 /**
  * @author Edward P. Legaspi
@@ -53,6 +65,12 @@ public class FilterService extends BusinessService<Filter> {
 
     @Inject
     private FilterSelectorService filterSelectorService;
+
+    @Inject
+    private CustomFieldsCacheContainerProvider customFieldsCacheContainerProvider;
+
+    @Inject
+    protected CustomFieldTemplateService customFieldTemplateService;
 
     public Filter parse(String xmlInput) throws XStreamException {
         xmlInput = xmlInput.trim();
@@ -264,40 +282,110 @@ public class FilterService extends BusinessService<Filter> {
         }
     }
 
-    public void initFilterFromInputXml(Filter filter, User currentUser) throws BusinessException {
+    public void setFilterAuditInfo(Filter filter) throws BusinessException {
         if (filter == null) {
             return;
         }
         Auditable auditable = new Auditable();
         auditable.setCreated(new Date());
         auditable.setCreator(getCurrentUser());
+    }
 
-        if (filter.getOrderCondition() != null) {
-            filter.getOrderCondition().setProvider(getCurrentProvider());
-            filter.setOrderCondition(filter.getOrderCondition());
-        }
+    public void updateFilterDetails(Filter sourceFilter, Filter targetFilter, User currentUser) throws BusinessException {
 
-        if (filter.getPrimarySelector() != null) {
-            filter.getPrimarySelector().setProvider(getCurrentProvider());
-            filter.setPrimarySelector(filter.getPrimarySelector());
-        }
+        Provider provider = currentUser.getProvider();
 
-        if (filter.getSecondarySelectors() != null) {
-            if (filter.getSecondarySelectors() == null) {
-                filter.setSecondarySelectors(new ArrayList<FilterSelector>());
+        if(!targetFilter.isTransient()){
+            try {
+
+                String appliesTo = customFieldTemplateService.calculateAppliesToValue(targetFilter);
+
+                Map<String, CustomFieldTemplate> customFieldTemplates = customFieldsCacheContainerProvider.getCustomFieldTemplates(appliesTo, currentUser.getProvider());
+                customFieldsCacheContainerProvider.refreshCache(null);
+                customFieldTemplates = customFieldsCacheContainerProvider.getCustomFieldTemplates(appliesTo, currentUser.getProvider());
+
+
+                clearFilterSelectors(targetFilter);
+                clearFilterConditions(targetFilter, appliesTo, provider);
+                getEntityManager().flush();
+                customFieldTemplates = customFieldsCacheContainerProvider.getCustomFieldTemplates(appliesTo, currentUser.getProvider());
+            } catch (CustomFieldException e) {
+                throw new BusinessException("Failed to retrieve appliesTo value", e);
             }
-            for (FilterSelector filterSelector : filter.getSecondarySelectors()) {
-                filterSelector.setProvider(getCurrentProvider());
-                filterSelectorService.create(filterSelector, currentUser);
-                filter.getSecondarySelectors().add(filterSelector);
-            }
         }
-
-        // process filterCondition
-        if (filter.getFilterCondition() != null) {
-            filter.setFilterCondition(setProviderToFilterCondition(filter.getFilterCondition()));
+        targetFilter.setPrimarySelector(sourceFilter.getPrimarySelector());
+        if(targetFilter.getPrimarySelector() != null){
+            targetFilter.getPrimarySelector().setProvider(provider);
+        }
+        targetFilter.setSecondarySelectors(new ArrayList<FilterSelector>());
+        for (FilterSelector filterSelector : sourceFilter.getSecondarySelectors()) {
+            filterSelector.setProvider(provider);
+            targetFilter.getSecondarySelectors().add(filterSelector);
+        }
+        targetFilter.setFilterCondition(setProviderToFilterCondition(sourceFilter.getFilterCondition()));
+        targetFilter.setOrderCondition(sourceFilter.getOrderCondition());
+        if(targetFilter.getOrderCondition() != null){
+            targetFilter.getOrderCondition().setProvider(provider);
         }
     }
+
+    private void deleteEntity(IEntity entity) {
+        EntityManager entityManager = getEntityManager();
+        if(!entityManager.contains(entity)){
+            entity = entityManager.merge(entity);
+        }
+        entityManager.remove(entity);
+    }
+
+    private void clearFilterConditions(Filter targetFilter, String appliesTo, Provider provider) {
+        EntityManager entityManager = getEntityManager();
+        if(targetFilter.getOrderCondition() != null){
+            deleteEntity(targetFilter.getOrderCondition());
+        }
+        removeFilterConditions(entityManager, targetFilter.getFilterCondition(), appliesTo, provider);
+    }
+
+    private void removeFilterConditions(EntityManager entityManager, FilterCondition filterCondition, String appliesTo, Provider provider) {
+        if(filterCondition != null){
+            if(filterCondition instanceof AndCompositeFilterCondition){
+                AndCompositeFilterCondition andCondition = (AndCompositeFilterCondition) filterCondition;
+                Set<FilterCondition> filterConditions = andCondition.getFilterConditions();
+                for (FilterCondition condition : filterConditions) {
+                    removeFilterConditions(entityManager, condition, appliesTo, provider);
+                }
+                deleteEntity(filterCondition);
+            } else if(filterCondition instanceof OrCompositeFilterCondition){
+                OrCompositeFilterCondition orCondition = (OrCompositeFilterCondition) filterCondition;
+                Set<FilterCondition> filterConditions = orCondition.getFilterConditions();
+                for (FilterCondition condition : filterConditions) {
+                    removeFilterConditions(entityManager, condition, appliesTo, provider);
+                }
+                deleteEntity(filterCondition);
+            } else if(filterCondition instanceof PrimitiveFilterCondition){
+                PrimitiveFilterCondition condition = (PrimitiveFilterCondition) filterCondition;
+                String[] typeAndCode = condition.getOperand().split(":");
+                String typePrefix = typeAndCode[0];
+                String code = typeAndCode[1];
+                CustomFieldTemplate customField = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, provider);
+                if(customField != null){
+                    deleteEntity(customField);
+                }
+                deleteEntity(filterCondition);
+            } else if(filterCondition instanceof NativeFilterCondition){
+                deleteEntity(filterCondition);
+            }
+        }
+    }
+
+    private void clearFilterSelectors(Filter targetFilter) {
+        if(targetFilter.getPrimarySelector() != null){
+            deleteEntity(targetFilter.getPrimarySelector());
+        }
+        for (FilterSelector secondarySelector : targetFilter.getSecondarySelectors()) {
+            deleteEntity(secondarySelector);
+        }
+    }
+
 
     public FilterCondition setProviderToFilterCondition(FilterCondition filterCondition) {
         filterCondition.setProvider(getCurrentProvider());
@@ -323,4 +411,150 @@ public class FilterService extends BusinessService<Filter> {
         return filterCondition;
     }
 
+    @Override
+    public void create(Filter filter, User user) throws BusinessException {
+        try {
+            persistCustomFields(filter, filter.getFilterCondition(), user);
+        } catch (CustomFieldException e) {
+            throw new BusinessException(e);
+        }
+        super.create(filter, user);
+    }
+
+    @Override
+    public Filter update(Filter filter, User user) throws BusinessException {
+        try {
+            persistCustomFields(filter, filter.getFilterCondition(), user);
+        } catch (CustomFieldException e) {
+            throw new BusinessException(e);
+        }
+        return super.update(filter, user);
+    }
+
+    public void persistCustomFields(ICustomFieldEntity entity, FilterCondition filterCondition, User user) throws CustomFieldException {
+        if(filterCondition != null){
+            if (filterCondition instanceof OrCompositeFilterCondition) {
+                OrCompositeFilterCondition orCondition = (OrCompositeFilterCondition) filterCondition;
+                for (FilterCondition subCondition : orCondition.getFilterConditions()) {
+                    persistCustomFields(entity, subCondition, user);
+                }
+            } else if (filterCondition instanceof AndCompositeFilterCondition) {
+                AndCompositeFilterCondition andCondition = (AndCompositeFilterCondition) filterCondition;
+                for (FilterCondition subCondition : andCondition.getFilterConditions()) {
+                    persistCustomFields(entity, subCondition, user);
+                }
+            } else if (filterCondition instanceof PrimitiveFilterCondition) {
+                PrimitiveFilterCondition condition = (PrimitiveFilterCondition) filterCondition;
+                String operand = condition.getOperand();
+                for(FilterParameterTypeEnum type : FilterParameterTypeEnum.values()){
+                    if(type.matchesPrefixOf(operand)){
+                        String[] typeAndCode = operand.split(":");
+                        String typePrefix = typeAndCode[0];
+                        String code = typeAndCode[1];
+                        String defaultValue = condition.getDefaultValue();
+                        String className = condition.getClassName();
+                        String label = condition.getLabel();
+                        if(StringUtils.isBlank(label)){
+                            label = code;
+                        }
+                        String appliesTo = customFieldTemplateService.calculateAppliesToValue(entity);
+                        CustomFieldTemplate customField = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, user.getProvider());
+                        if(customField == null) {
+                            customField = new CustomFieldTemplate();
+                            customField.setAppliesTo(appliesTo);
+                            customField.setCode(code);
+                        }
+                        customField.setDescription(label);
+                        customField.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
+                        customField.setAllowEdit(true);
+                        customField.setFieldType(type.getFieldType());
+                        switch (type){
+                            case ENTITY:
+                                customField.setEntityClazz(className);
+                                break;
+                            case ENUM:
+                                try {
+                                    Map<String, String> items = new HashMap<>();
+                                    String name = null;
+                                    for (Object enumItem : EnumUtils.getEnumList((Class<? extends Enum>) Class.forName(className))) {
+                                        name = ((Enum) enumItem).name();
+                                        items.put(name, name);
+                                    }
+                                    customField.setListValues(items);
+                                } catch (ClassNotFoundException e) {
+                                    String message = "Failed to create enum values list.";
+                                    log.error(message, e);
+                                    throw new CustomFieldException(message);
+                                }
+                                break;
+                        }
+                        if(customField.isTransient()){
+                            try {
+                                customFieldTemplateService.create(customField, user);
+                            } catch (BusinessException e) {
+                                String message = "Failed to create new custom field";
+                                log.error(message, e);
+                                throw new CustomFieldException(message);
+                            }
+                        } else {
+                            try {
+                                customFieldTemplateService.update(customField, user);
+                            } catch (BusinessException e) {
+                                String message = "Failed to update custom field";
+                                log.error(message, e);
+                                throw new CustomFieldException(message);
+                            }
+                        }
+
+                    }
+                }
+
+            }
+        }
+    }
+
+    public void validateFilter(Filter filter) throws BusinessException {
+        validateFilterCondition(filter.getFilterCondition());
+    }
+
+    private void validateFilterCondition(FilterCondition filterCondition) throws BusinessException{
+        boolean isValid = true;
+        String fieldName = null;
+        List<String> requiresClassName = Arrays.asList(FilterParameterTypeEnum.ENTITY.getPrefix(), FilterParameterTypeEnum.ENUM.getPrefix());
+        if(filterCondition != null){
+            if(filterCondition instanceof AndCompositeFilterCondition){
+                for (FilterCondition condition : ((AndCompositeFilterCondition) filterCondition).getFilterConditions()) {
+                    validateFilterCondition(condition);
+                }
+            } else if (filterCondition instanceof OrCompositeFilterCondition){
+                for (FilterCondition condition : ((OrCompositeFilterCondition) filterCondition).getFilterConditions()) {
+                    validateFilterCondition(condition);
+                }
+            } else if (filterCondition instanceof PrimitiveFilterCondition){
+                PrimitiveFilterCondition condition = (PrimitiveFilterCondition) filterCondition;
+                String operand = condition.getOperand();
+                if(operand != null){
+                    String[] typeAndCode = operand.split(":");
+                    String type = typeAndCode[0];
+                    String code = typeAndCode[1];
+                    if(requiresClassName.contains(type)){
+                        fieldName = condition.getFieldName();
+                        if(condition.getClassName() != null){
+                            try {
+                                Class<?> conditionClass = Class.forName(condition.getClassName());
+                                isValid = conditionClass != null;
+                            } catch (ClassNotFoundException e) {
+                                isValid = false;
+                            }
+                        } else {
+                            isValid = false;
+                        }
+                    }
+                }
+            }
+        }
+        if(!isValid){
+            throw new BusinessException("A valid class name must be entered for " + fieldName + " field.");
+        }
+    }
 }

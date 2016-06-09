@@ -4,6 +4,7 @@ import org.apache.commons.validator.routines.LongValidator;
 import org.meveo.admin.exception.FilterException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.filter.FilterParameterTypeEnum;
 import org.meveo.model.filter.PrimitiveFilterCondition;
 
 import java.util.Map;
@@ -12,7 +13,7 @@ public class CustomLongProcessor extends LongProcessor {
 
     @Override
     public boolean canProccessCondition(PrimitiveFilterCondition condition) {
-        return isPrefixInOperand(condition, "cfLong:");
+        return isPrefixInOperand(condition, FilterParameterTypeEnum.LONG.getPrefix());
     }
 
     @Override

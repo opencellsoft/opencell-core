@@ -28,7 +28,7 @@ public class Filter extends BusinessCFEntity {
 
 	private static final long serialVersionUID = -6150352877726034654L;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinColumn(name = "FILTER_CONDITION_ID")
 	private FilterCondition filterCondition;
 
@@ -40,12 +40,9 @@ public class Filter extends BusinessCFEntity {
 	@JoinColumn(name = "PRIMARY_SELECTOR_ID")
 	private FilterSelector primarySelector;
 
-	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL,fetch=FetchType.EAGER)
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinColumn(name = "FILTER_ID")
 	private List<FilterSelector> secondarySelectors=new ArrayList<FilterSelector>();
-
-//	@OneToMany(mappedBy = "filter")
-//	public List<FilterParameter> filterParameters;
 
 	@Column(name = "INPUT_XML", columnDefinition = "TEXT")
 	private String inputXml;
@@ -100,14 +97,6 @@ public class Filter extends BusinessCFEntity {
 	public void setShared(Boolean shared) {
 		this.shared = shared;
 	}
-
-//	public List<FilterParameter> getFilterParameters() {
-//		return filterParameters;
-//	}
-//
-//	public void setFilterParameters(List<FilterParameter> filterParameters) {
-//		this.filterParameters = filterParameters;
-//	}
 
 	@Override
 	public ICustomFieldEntity getParentCFEntity() {
