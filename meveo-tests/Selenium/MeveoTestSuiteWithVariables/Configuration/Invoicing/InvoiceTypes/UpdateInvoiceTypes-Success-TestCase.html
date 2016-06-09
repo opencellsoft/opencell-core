@@ -4,16 +4,16 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>ModifiedContactTestCase</title>
+<title>SuccessTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">ModifiedContactTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">SuccessTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${Sellers}</td>
+	<td>${InvoiceTypes}</td>
 	<td></td>
 </tr>
 <tr>
@@ -39,21 +39,6 @@
 <tr>
 	<td>waitForPageToLoad</td>
 	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>${Information}</td>
-	<td>Information</td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>${Information}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${Information}</td>
 	<td></td>
 </tr>
 <tr>
@@ -73,13 +58,13 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${descriptionSeller}</td>
+	<td>${DescriptionIT}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${descriptionSeller}</td>
-	<td>${DescriptionValue}</td>
+	<td>${DescriptionIT}</td>
+	<td>${Description}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -88,148 +73,110 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${CurrencyBool}==true</td>
+	<td>${AccountOpBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${Currency}</td>
+	<td>${ChooseAccountOperation}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${Currency}</td>
+	<td>${ChooseAccountOperation}</td>
 	<td></td>
 </tr>
+<!--begin-->
 <tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;${CurrencyValue}&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CountryBool}==true</td>
+	<td>waitForElementPresent</td>
+	<td>id=searchOccTemplatePopuppopupForm:searchField1</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${Country}</td>
+	<td>id=searchOccTemplatePopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=searchOccTemplatePopuppopupForm:searchField1</td>
+	<td>${AccountOpValue}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=searchOccTemplatePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='searchOccTemplatePopuppopupForm:searchOccTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td>${AccountOpValue}</td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${AccountOpValue}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${Country}</td>
+	<td>id=searchOccTemplatePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='searchOccTemplatePopuppopupForm:searchOccTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td>${AccountOpValue}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='searchOccTemplatePopuppopupForm:searchOccTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=searchOccTemplatePopup</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;${CountryValue}&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${LanguageBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${Language}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${Language}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;${LanguageValue}&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ParentSellerBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${ParentSeller}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${ParentSeller}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;${ParentSellerValue}&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${EditInvoiceType}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${EditInvoiceType}</td>
+	<td>${ChooseAccountOperation}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>//div[9]/div/span</td>
+	<td>//tbody[@id='searchOccTemplatePopuppopupForm:searchOccTemplatePopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>//div[9]/div/span</td>
+	<td>click</td>
+	<td>//tbody[@id='searchOccTemplatePopuppopupForm:searchOccTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=formInvoiceType:occTemplateSelectedId_text</td>
+	<td>${AccountOpValue}</td>
+</tr>
+<!--end-->
+<tr>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 <tr>
 	<td>if</td>
-	<td>${InvoiceTypeBool}==true</td>
+	<td>${PrefixBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${SelectInvoiceType}</td>
+	<td>${Prefix}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${SelectInvoiceType}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>1000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${InvoiceTypeValue}</td>
-	<td></td>
+	<td>type</td>
+	<td>${Prefix}</td>
+	<td>${PrefixValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -238,18 +185,18 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${InvoiceSequenceSizeBool}==true</td>
+	<td>${SequenceSizeBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${UpdateInvoiceSequenceSize}</td>
+	<td>${SequenceSize}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${UpdateInvoiceSequenceSize}</td>
-	<td>${InvoiceSequenceSize1Value}</td>
+	<td>${SequenceSize}</td>
+	<td>${SequenceSize1Value}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -263,12 +210,12 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${UpdateCurrentInvoiceNumber}</td>
+	<td>${CurrentInvoiceNumber}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${UpdateCurrentInvoiceNumber}</td>
+	<td>${CurrentInvoiceNumber}</td>
 	<td>${CurrentInvoiceNumber1Value}</td>
 </tr>
 <tr>
@@ -278,18 +225,33 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${PrefixELBool}==false</td>
+	<td>${ApplyToBool}==false</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>${UpdatePrefixEL}</td>
+	<td>assertText</td>
+	<td>${InvoiceTypeIN}</td>
+	<td>${ApplyToValue}</td>
+</tr>
+<tr>
+	<td>doubleClick</td>
+	<td>${InvoiceTypeIN}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>${UpdatePrefixEL}</td>
-	<td>${PrefixELValue}</td>
+	<td>waitForElementPresent</td>
+	<td>${InvoiceTypeOUT}</td>
+	<td>${ApplyToValue}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${InvoiceTypeOUT}</td>
+	<td>${ApplyToValue}</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -297,24 +259,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>${SaveUpdatedSellerSequence}</td>
+	<td>clickAndWait</td>
+	<td>${saveButtonWhenUpdate}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${SaveUpdatedSellerSequence}</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
 	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>//tbody[@id='sellerFormId:tabView:sellerSequenceTable_data']/tr/td</td>
-	<td>${InvoiceType}</td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>//tbody[@id='sellerFormId:tabView:sellerSequenceTable_data']/tr/td</td>
-	<td>${InvoiceType}</td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
@@ -325,6 +277,11 @@
 	<td>verifyElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
 </tr>
 </tbody></table>
 </body>
