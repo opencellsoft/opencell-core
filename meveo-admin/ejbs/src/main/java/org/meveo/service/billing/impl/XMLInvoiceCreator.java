@@ -413,7 +413,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			}
 
 			addUserAccounts(invoice, doc, detail, entreprise, invoiceTag, displayDetail);
-
+			addCustomFields(invoice, invoice, doc, invoiceTag);
+			
 			Transformer trans = transfac.newTransformer();
 			// trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 			trans.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -441,7 +442,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				billingRundir.mkdirs();
 				trans.transform(source, result);
 			}
-			addCustomFields(invoice, invoice, doc, invoiceTag);
 
 		} catch (TransformerException e) {
 			log.error("Error occured when creating xml for invoiceID={}. {}", invoiceId, e);
