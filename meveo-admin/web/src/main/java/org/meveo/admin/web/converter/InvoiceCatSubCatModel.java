@@ -29,7 +29,7 @@ public class InvoiceCatSubCatModel {
 	public InvoiceCatSubCatModel(int type, BusinessCFEntity entity, String label) {
 		this.type = type;
 		this.entity = entity;
-		this.label = (type == CATEGORY) ? label : "+" + label;
+		this.label = (type == CATEGORY) ? label : " >" + label;
 	}
 
 	public int getType() {

@@ -63,6 +63,15 @@
 							label="#{messages['billingAccount']}" field="billingAccount"
 							valueLabelField="code" popup="true" popupId="billingAccountPopup"
 							required="true" showPopupOnlyOnNew="true" />
+						<hftl:decorateFormField fieldId="dueDate"
+							label="#{messages['invoice.dueDate']}">
+							<p:calendar event="change" id="dueDate"
+								value="#{aggregatedDetailInvoiceBean.entity.dueDate}"
+								required="true">
+								<p:ajax event="dateSelect"
+									listener="#{aggregatedDetailInvoiceBean.handleDateSelect}"></p:ajax>
+							</p:calendar>
+						</hftl:decorateFormField>
 					</hftl:formPanel>
 
 					<hftl:dataList label="#{messages['invoice.linkedInvoices']}"
@@ -199,7 +208,7 @@
 						<p:commandButton immediate="true"
 							value="#{messages['action.invoice.importFromLinkedInvoices']}"
 							action="#{aggregatedDetailInvoiceBean.importFromLinkedInvoices}"
-							update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary" />
+							update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary :tabView:formId:messages" />
 
 						<p:panel id="addAggregatedLine" style="float: right; width: 50%;">
 							<p:row>
@@ -207,11 +216,10 @@
 									<hftl:decorateFormField fieldId="selectedInvoiceCatOrSubCat"
 										label="#{messages['invoice.catOrSubCat']}">
 										<p:selectOneMenu id="selectedInvoiceCatOrSubCat"
-											value="#{aggregatedDetailInvoiceBean.selectedInvoiceCatSubCatModel}"
+											value="#{aggregatedDetailInvoiceBean.selectedInvoiceSubCategory}"
 											converter="omnifaces.SelectItemsConverter">
 											<f:selectItem itemLabel="" noSelectionOption="true" />
-											<f:selectItems var="e" itemLabel="#{e.label}"
-												itemValue="#{e}"
+											<f:selectItems
 												value="#{aggregatedDetailInvoiceBean.invoiceCatSubCats}" />
 										</p:selectOneMenu>
 									</hftl:decorateFormField>
@@ -220,21 +228,21 @@
 									<hftl:decorateFormField fieldId="description"
 										label="#{messages['BusinessEntity.description']}">
 										<p:inputText id="description"
-											value="#{aggregatedDetailInvoiceBean.selectedInvoiceCatSubCatModel.description}"></p:inputText>
+											value="#{aggregatedDetailInvoiceBean.description}"></p:inputText>
 									</hftl:decorateFormField>
 								</p:column>
 								<p:column>
 									<hftl:decorateFormField fieldId="amountWithoutTax"
 										label="#{messages['invoice.amountWithoutTax']}">
 										<p:inputText id="amountWithoutTax" required="true"
-											value="#{aggregatedDetailInvoiceBean.selectedInvoiceCatSubCatModel.amountWithoutTax}"></p:inputText>
+											value="#{aggregatedDetailInvoiceBean.amountWithoutTax}"></p:inputText>
 									</hftl:decorateFormField>
 								</p:column>
 								<p:column>
 									<p:commandButton value="#{messages['action.invoice.addLine']}"
 										process="addAggregatedLine"
 										action="#{aggregatedDetailInvoiceBean.addAggregatedLine()}"
-										update=":tabView:aggregatedInvoiceForm :tabView:invoiceSummary"
+										update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary :tabView:formId:messages"
 										style="margin-top: 20px;">
 									</p:commandButton>
 								</p:column>
@@ -264,6 +272,23 @@
 							</p:row>
 						</p:panelGrid>
 					</p:outputPanel>
+
+					<div style="clear: both"></div>
+
+					<h:form>
+						<p:outputPanel style="float: right; width: 50%;">
+							<hftl:decorateFormField fieldId="includeAccountBalance"
+								label="#{messages['invoice.includeAccountBalance']}">
+								<p:selectBooleanCheckbox id="includeAccountBalance"
+									value="#{aggregatedDetailInvoiceBean.includeBalance}" />
+							</hftl:decorateFormField>
+							<p:commandButton
+								value="#{messages['action.invoice.refreshTotal']}"
+								rendered="#{!aggregatedDetailInvoiceBean.entity.transient}"
+								action="#{aggregatedDetailInvoiceBean.refreshTotal}"
+								update="invoiceSummary"></p:commandButton>
+						</p:outputPanel>
+					</h:form>
 
 					<div style="clear: both"></div>
 

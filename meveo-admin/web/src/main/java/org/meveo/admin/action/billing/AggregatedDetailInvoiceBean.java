@@ -22,11 +22,16 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -41,9 +46,11 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -53,6 +60,7 @@ import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.CellEditEvent;
@@ -99,12 +107,21 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 	@Inject
 	private InvoiceCategoryService invoiceCategoryService;
 
+	@Inject
+	private InvoiceSubCategoryService invoiceSubCategoryService;
+
 	private long billingAccountId;
 	private Invoice invoiceToAdd;
 	private Invoice selectedInvoice;
 	private CategoryInvoiceAgregate selectedCategoryInvoiceAgregate;
 	private SubCategoryInvoiceAgregate selectedSubCategoryInvoiceAgregate;
-	private InvoiceCatSubCatModel selectedInvoiceCatSubCatModel = new InvoiceCatSubCatModel();
+	private InvoiceSubCategory selectedInvoiceSubCategory;
+	private List<CategoryInvoiceAgregate> tempCategoryInvoiceAggregates = new ArrayList<>();
+	private List<TaxInvoiceAgregate> tempTaxInvoiceAggregates = new ArrayList<>();
+	private List<SelectItem> invoiceCategoriesGUI;
+	private String description;
+	private BigDecimal amountWithoutTax;
+	private boolean includeBalance;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -149,6 +166,27 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 	}
 
 	public void importFromLinkedInvoices() {
+		tempCategoryInvoiceAggregates = new ArrayList<CategoryInvoiceAgregate>();
+
+		if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
+			messages.error("BillingAccount is required.");
+			return;
+		}
+
+		if (entity.getDueDate() == null) {
+			messages.error("Due date is required.");
+			return;
+		}
+
+		BillingAccount billingAccount = billingAccountService.refreshOrRetrieve(entity.getBillingAccount());
+		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
+		if (userAccounts == null || userAccounts.isEmpty()) {
+			messages.error("BillingAccount with code=" + entity.getBillingAccount().getCode() + " has no userAccount.");
+			return;
+		}
+		// TODO : userAccount on dto ?
+		UserAccount userAccount = userAccounts.get(0);
+
 		if (entity.getLinkedInvoices() != null && entity.getLinkedInvoices().size() > 0) {
 			Auditable auditable = new Auditable();
 			auditable.setCreator(getCurrentUser());
@@ -164,7 +202,13 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 						newCategoryInvoiceAgregate.setSubCategoryInvoiceAgregates(null);
 						newCategoryInvoiceAgregate.setInvoice(entity);
 						newCategoryInvoiceAgregate.setAuditable(auditable);
-						entity.addInvoiceAggregate(newCategoryInvoiceAgregate);
+						newCategoryInvoiceAgregate.setDescription(categoryInvoiceAgregate.getDescription());
+						newCategoryInvoiceAgregate.setBillingRun(null);
+						newCategoryInvoiceAgregate.setUserAccount(userAccount);
+						newCategoryInvoiceAgregate.setBillingAccount(categoryInvoiceAgregate.getBillingAccount());
+
+						// entity.addInvoiceAggregate(newCategoryInvoiceAgregate);
+						tempCategoryInvoiceAggregates.add(newCategoryInvoiceAgregate);
 
 						if (categoryInvoiceAgregate.getSubCategoryInvoiceAgregates() != null) {
 							for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : categoryInvoiceAgregate.getSubCategoryInvoiceAgregates()) {
@@ -172,13 +216,14 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 								SubCategoryInvoiceAgregate newSubCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate(subCategoryInvoiceAgregate);
 								newSubCategoryInvoiceAgregate.setInvoice(entity);
 								newSubCategoryInvoiceAgregate.setAuditable(auditable);
-								newSubCategoryInvoiceAgregate.setOldAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
-								newSubCategoryInvoiceAgregate.setOldAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax());
-								newSubCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax());
-								newSubCategoryInvoiceAgregate.setAmountTax(subCategoryInvoiceAgregate.getAmountTax());
 								newSubCategoryInvoiceAgregate.setCategoryInvoiceAgregate(newCategoryInvoiceAgregate);
+								newSubCategoryInvoiceAgregate.setDescription(subCategoryInvoiceAgregate.getDescription());
+								newSubCategoryInvoiceAgregate.setBillingRun(null);
+								newSubCategoryInvoiceAgregate.setWallet(userAccount.getWallet());
+								newSubCategoryInvoiceAgregate.setBillingAccount(billingAccount);
+								newSubCategoryInvoiceAgregate.setUserAccount(userAccount);
 
-								entity.addInvoiceAggregate(newSubCategoryInvoiceAgregate);
+								// entity.addInvoiceAggregate(newSubCategoryInvoiceAgregate);
 
 								newCategoryInvoiceAgregate.addSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
 
@@ -190,13 +235,21 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 							}
 						}
 					} else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
-						TaxInvoiceAgregate taxInvoiceAgregate = (TaxInvoiceAgregate) invoiceAgregate;
-						TaxInvoiceAgregate newTaxInvoiceAgregate = new TaxInvoiceAgregate(taxInvoiceAgregate);
-
-						newTaxInvoiceAgregate.setInvoice(entity);
-						newTaxInvoiceAgregate.setAuditable(auditable);
-						newTaxInvoiceAgregate.setTax(taxInvoiceAgregate.getTax());
-						entity.addInvoiceAggregate(newTaxInvoiceAgregate);
+						// TaxInvoiceAgregate taxInvoiceAgregate =
+						// (TaxInvoiceAgregate) invoiceAgregate;
+						// TaxInvoiceAgregate newTaxInvoiceAgregate = new
+						// TaxInvoiceAgregate(taxInvoiceAgregate);
+						//
+						// newTaxInvoiceAgregate.setInvoice(entity);
+						// newTaxInvoiceAgregate.setAuditable(auditable);
+						// newTaxInvoiceAgregate.setTax(taxInvoiceAgregate.getTax());
+						// newTaxInvoiceAgregate.setAccountingCode(taxInvoiceAgregate.getAccountingCode());
+						// newTaxInvoiceAgregate.setTaxPercent(taxInvoiceAgregate.getTaxPercent());
+						// newTaxInvoiceAgregate.setBillingRun(null);
+						// newTaxInvoiceAgregate.setUserAccount(userAccount);
+						// newTaxInvoiceAgregate.setBillingAccount(billingAccount);
+						//
+						// tempTaxInvoiceAggregates.add(newTaxInvoiceAgregate);
 					}
 				}
 			}
@@ -205,13 +258,10 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 
 	public List<CategoryInvoiceAgregate> getCategoryInvoiceAggregates() {
 		List<CategoryInvoiceAgregate> result = new ArrayList<>();
-		if (entity.getInvoiceAgregates() != null) {
-			for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
-				if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-					CategoryInvoiceAgregate cat = (CategoryInvoiceAgregate) invoiceAgregate;
-					if (!result.contains(cat)) {
-						result.add(cat);
-					}
+		if (tempCategoryInvoiceAggregates != null) {
+			for (CategoryInvoiceAgregate cat : tempCategoryInvoiceAggregates) {
+				if (!result.contains(cat)) {
+					result.add(cat);
 				}
 			}
 		}
@@ -220,6 +270,8 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 	}
 
 	public List<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAggregates(CategoryInvoiceAgregate cat) {
+		if (cat == null)
+			return null;
 		List<SubCategoryInvoiceAgregate> result = new ArrayList<>();
 		if (cat.getSubCategoryInvoiceAgregates() == null)
 			return result;
@@ -232,31 +284,13 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 	}
 
 	public void deleteLinkedInvoiceCategory() {
-		if (entity.getInvoiceAgregates() != null) {
-			if (selectedCategoryInvoiceAgregate instanceof CategoryInvoiceAgregate) {
-				CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) selectedCategoryInvoiceAgregate;
-				if (categoryInvoiceAgregate.getSubCategoryInvoiceAgregates() != null) {
-					entity.getInvoiceAgregates().removeAll(categoryInvoiceAgregate.getSubCategoryInvoiceAgregates());
-				}
-				entity.getInvoiceAgregates().remove(selectedCategoryInvoiceAgregate);
-			}
-		}
+		tempCategoryInvoiceAggregates.remove(selectedCategoryInvoiceAgregate);
 	}
 
 	public void deleteLinkedInvoiceSubCategory() {
-		if (entity.getInvoiceAgregates() != null) {
-			List<InvoiceAgregate> iaToRemove = new ArrayList<>();
-			for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
-				if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-					CategoryInvoiceAgregate cat = (CategoryInvoiceAgregate) invoiceAgregate;
-					if (cat.equals(selectedSubCategoryInvoiceAgregate.getCategoryInvoiceAgregate())) {
-						iaToRemove.add(selectedSubCategoryInvoiceAgregate);
-						cat.getSubCategoryInvoiceAgregates().remove(selectedSubCategoryInvoiceAgregate);
-					}
-				}
-			}
-			if (iaToRemove.size() > 0) {
-				entity.getInvoiceAgregates().removeAll(iaToRemove);
+		for (CategoryInvoiceAgregate cat : tempCategoryInvoiceAggregates) {
+			if (cat.equals(selectedSubCategoryInvoiceAgregate.getCategoryInvoiceAgregate())) {
+				cat.getSubCategoryInvoiceAgregates().remove(selectedSubCategoryInvoiceAgregate);
 			}
 		}
 	}
@@ -273,13 +307,10 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 
 	public BigDecimal computeTotalAmountWithoutTax() {
 		BigDecimal total = new BigDecimal(0);
-		if (entity.getInvoiceAgregates() != null) {
-			for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
-				if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-					SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = (SubCategoryInvoiceAgregate) invoiceAgregate;
-					if (subCategoryInvoiceAgregate.getAmountWithoutTax() != null) {
-						total = total.add(subCategoryInvoiceAgregate.getAmountWithoutTax());
-					}
+		for (CategoryInvoiceAgregate cat : tempCategoryInvoiceAggregates) {
+			for (SubCategoryInvoiceAgregate subCat : cat.getSubCategoryInvoiceAgregates()) {
+				if (subCat.getAmountWithoutTax() != null) {
+					total = total.add(subCat.getAmountWithoutTax());
 				}
 			}
 		}
@@ -289,13 +320,10 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 
 	public BigDecimal computeTotalAmountTax() {
 		BigDecimal total = new BigDecimal(0);
-		if (entity.getInvoiceAgregates() != null) {
-			for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
-				if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-					SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = (SubCategoryInvoiceAgregate) invoiceAgregate;
-					if (subCategoryInvoiceAgregate.getAmountTax() != null) {
-						total = total.add(subCategoryInvoiceAgregate.getAmountTax());
-					}
+		for (CategoryInvoiceAgregate cat : tempCategoryInvoiceAggregates) {
+			for (SubCategoryInvoiceAgregate subCat : cat.getSubCategoryInvoiceAgregates()) {
+				if (subCat.getAmountTax() != null) {
+					total = total.add(subCat.getAmountTax());
 				}
 			}
 		}
@@ -305,13 +333,10 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 
 	public BigDecimal computeTotalAmountWithTax() {
 		BigDecimal total = new BigDecimal(0);
-		if (entity.getInvoiceAgregates() != null) {
-			for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
-				if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-					SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = (SubCategoryInvoiceAgregate) invoiceAgregate;
-					if (subCategoryInvoiceAgregate.getAmountWithTax() != null) {
-						total = total.add(subCategoryInvoiceAgregate.getAmountWithTax());
-					}
+		for (CategoryInvoiceAgregate cat : tempCategoryInvoiceAggregates) {
+			for (SubCategoryInvoiceAgregate subCat : cat.getSubCategoryInvoiceAgregates()) {
+				if (subCat.getAmountWithTax() != null) {
+					total = total.add(subCat.getAmountWithTax());
 				}
 			}
 		}
@@ -337,36 +362,42 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 			netToPay = entity.getAmountWithTax().add(balance);
 		}
 
+		if (netToPay == null) {
+			return "";
+		}
+
 		return netToPay.setScale(2, RoundingMode.HALF_UP).toString();
 	}
 
-	public List<InvoiceCatSubCatModel> getInvoiceCatSubCats() {
-		List<InvoiceCatSubCatModel> result = new ArrayList<>();
+	public void handleDateSelect(SelectEvent event) {
+	}
+
+	public List<SelectItem> getInvoiceCatSubCats() {
+		if (invoiceCategoriesGUI != null) {
+			return invoiceCategoriesGUI;
+		}
+
+		invoiceCategoriesGUI = new ArrayList<>();
 
 		List<InvoiceCategory> invoiceCategories = invoiceCategoryService.list();
 		for (InvoiceCategory ic : invoiceCategories) {
-			result.add(new InvoiceCatSubCatModel(InvoiceCatSubCatModel.CATEGORY, ic, ic.getCode()));
+			SelectItemGroup g1 = new SelectItemGroup(ic.getCode());
+			List<SelectItem> subCats = new ArrayList<>();
 			for (InvoiceSubCategory is : ic.getInvoiceSubCategories()) {
-				result.add(new InvoiceCatSubCatModel(InvoiceCatSubCatModel.SUB_CATEGORY, is, is.getCode()));
+				subCats.add(new SelectItem(is, is.getCode()));
 			}
+			g1.setSelectItems(subCats.toArray(new SelectItem[subCats.size()]));
+			invoiceCategoriesGUI.add(g1);
 		}
 
-		return result;
+		return invoiceCategoriesGUI;
 	}
 
-	public void addAggregatedLine() {
-		if (selectedInvoiceCatSubCatModel == null)
-			return;
-
-		if (selectedInvoiceCatSubCatModel.getType() == InvoiceCatSubCatModel.CATEGORY) {
-			addInvoiceCategory(selectedInvoiceCatSubCatModel);
-		} else if (selectedInvoiceCatSubCatModel.getType() == InvoiceCatSubCatModel.SUB_CATEGORY) {
-			addInvoiceSubCategory(selectedInvoiceCatSubCatModel);
-		}
-
-		selectedInvoiceCatSubCatModel = new InvoiceCatSubCatModel();
+	public void addAggregatedLine() throws BusinessException {
+		addInvoiceSubCategory(selectedInvoiceSubCategory);
 	}
 
+	@SuppressWarnings("unused")
 	private void addInvoiceCategory(InvoiceCatSubCatModel invoiceCatSubCatModel) {
 		InvoiceCategory ic = (InvoiceCategory) invoiceCatSubCatModel.getEntity();
 		Auditable auditable = new Auditable();
@@ -374,18 +405,40 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 		auditable.setCreated(new Date());
 
 		CategoryInvoiceAgregate newCategoryInvoiceAgregate = new CategoryInvoiceAgregate();
-		newCategoryInvoiceAgregate.setSubCategoryInvoiceAgregates(null);
 		newCategoryInvoiceAgregate.setInvoiceCategory(ic);
 		newCategoryInvoiceAgregate.setInvoice(entity);
-		newCategoryInvoiceAgregate.setAmountWithTax(selectedInvoiceCatSubCatModel.getAmountWithTax());
 		newCategoryInvoiceAgregate.setAuditable(auditable);
-		newCategoryInvoiceAgregate.setDescription(selectedInvoiceCatSubCatModel.getDescription());
+		// newCategoryInvoiceAgregate.setAmountWithTax(selectedInvoiceCatSubCatModel.getAmountWithTax());
+		// newCategoryInvoiceAgregate.setAmountWithoutTax(selectedInvoiceCatSubCatModel.getAmountWithoutTax());
+		// newCategoryInvoiceAgregate.setDescription(selectedInvoiceCatSubCatModel.getDescription());
+		newCategoryInvoiceAgregate.setBillingRun(null);
+		newCategoryInvoiceAgregate.setUserAccount(null);
+		newCategoryInvoiceAgregate.setBillingAccount(null);
 
-		entity.addInvoiceAggregate(newCategoryInvoiceAgregate);
+		tempCategoryInvoiceAggregates.add(newCategoryInvoiceAgregate);
 	}
 
-	private void addInvoiceSubCategory(InvoiceCatSubCatModel invoiceCatSubCatModel) {
-		InvoiceSubCategory isc = (InvoiceSubCategory) invoiceCatSubCatModel.getEntity();
+	private void addInvoiceSubCategory(InvoiceSubCategory isc) throws BusinessException {
+		if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
+			messages.error("BillingAccount is required.");
+			return;
+		}
+
+		if (entity.getDueDate() == null) {
+			messages.error("Due date is required.");
+			return;
+		}
+
+		BillingAccount billingAccount = billingAccountService.refreshOrRetrieve(entity.getBillingAccount());
+		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
+		if (userAccounts == null || userAccounts.isEmpty()) {
+			messages.error("BillingAccount with code=" + entity.getBillingAccount().getCode() + " has no userAccount.");
+			return;
+		}
+		// TODO : userAccount on dto ?
+		UserAccount userAccount = userAccounts.get(0);
+
+		isc = invoiceSubCategoryService.refreshOrRetrieve(isc);
 		InvoiceCategory ic = (InvoiceCategory) isc.getInvoiceCategory();
 
 		Auditable auditable = new Auditable();
@@ -393,22 +446,46 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 		auditable.setCreated(new Date());
 
 		SubCategoryInvoiceAgregate newSubCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate();
+		newSubCategoryInvoiceAgregate.setInvoiceSubCategory(isc);
 		newSubCategoryInvoiceAgregate.setInvoice(entity);
 		newSubCategoryInvoiceAgregate.setAuditable(auditable);
-		newSubCategoryInvoiceAgregate.setAmountWithTax(invoiceCatSubCatModel.getAmountWithTax());
-		newSubCategoryInvoiceAgregate.setAmountWithoutTax(invoiceCatSubCatModel.getAmountWithoutTax());
+		newSubCategoryInvoiceAgregate.setAmountWithoutTax(amountWithoutTax);
 		newSubCategoryInvoiceAgregate.setInvoiceSubCategory(isc);
+		newSubCategoryInvoiceAgregate.setDescription(description);
+		newSubCategoryInvoiceAgregate.setBillingRun(null);
+		newSubCategoryInvoiceAgregate.setWallet(userAccount.getWallet());
+		newSubCategoryInvoiceAgregate.setBillingAccount(billingAccount);
+		newSubCategoryInvoiceAgregate.setUserAccount(userAccount);
+
+		Tax currentTax = null;
+		List<Tax> taxes = new ArrayList<Tax>();
+		for (InvoiceSubcategoryCountry invoicesubcatCountry : isc.getInvoiceSubcategoryCountries()) {
+			if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
+					&& invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, entity)) {
+				if (!taxes.contains(invoicesubcatCountry.getTax())) {
+					taxes.add(invoicesubcatCountry.getTax());
+				}
+
+				if (currentTax == null) {
+					currentTax = invoicesubcatCountry.getTax();
+				}
+			}
+		}
+		if (currentTax == null) {
+			messages.error("Cant find tax for InvoiceSubCategorywith code=" + isc.getCode() + ".");
+		}
+
+		newSubCategoryInvoiceAgregate.setAmountWithTax(getAmountWithTax(currentTax, newSubCategoryInvoiceAgregate.getAmountWithoutTax()));
+		newSubCategoryInvoiceAgregate.setAmountTax(getAmountTax(newSubCategoryInvoiceAgregate.getAmountWithTax(), newSubCategoryInvoiceAgregate.getAmountWithoutTax()));
 
 		// find category
 		boolean found = false;
 		CategoryInvoiceAgregate foundCategoryInvoiceAgregate = null;
-		for (InvoiceAgregate ia : entity.getInvoiceAgregates()) {
-			if (ia instanceof CategoryInvoiceAgregate) {
-				foundCategoryInvoiceAgregate = (CategoryInvoiceAgregate) ia;
-				if (foundCategoryInvoiceAgregate.getInvoiceCategory().getCode().equals(ic.getCode())) {
-					found = true;
-					break;
-				}
+		for (CategoryInvoiceAgregate ia : tempCategoryInvoiceAggregates) {
+			foundCategoryInvoiceAgregate = (CategoryInvoiceAgregate) ia;
+			if (foundCategoryInvoiceAgregate.getInvoiceCategory().getCode().equals(ic.getCode())) {
+				found = true;
+				break;
 			}
 		}
 
@@ -416,23 +493,162 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 		if (!found) {
 			// create invoice category
 			newCategoryInvoiceAgregate = new CategoryInvoiceAgregate();
-			newCategoryInvoiceAgregate.setSubCategoryInvoiceAgregates(null);
 			newCategoryInvoiceAgregate.setInvoiceCategory(ic);
 			newCategoryInvoiceAgregate.setInvoice(entity);
-			newCategoryInvoiceAgregate.setAmountWithTax(selectedInvoiceCatSubCatModel.getAmountWithTax());
-			newCategoryInvoiceAgregate.setAmountWithoutTax(selectedInvoiceCatSubCatModel.getAmountWithoutTax());
+			newCategoryInvoiceAgregate.setAmountWithoutTax(newSubCategoryInvoiceAgregate.getAmountWithoutTax());
 			newCategoryInvoiceAgregate.setAuditable(auditable);
+			newCategoryInvoiceAgregate.setDescription("");
+			newCategoryInvoiceAgregate.setAccountingCode(isc.getAccountingCode());
+			newCategoryInvoiceAgregate.setBillingRun(null);
+			newCategoryInvoiceAgregate.setUserAccount(userAccount);
+			newCategoryInvoiceAgregate.setBillingAccount(billingAccount);
+			newCategoryInvoiceAgregate.addSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
 
-			entity.addInvoiceAggregate(newCategoryInvoiceAgregate);
+			tempCategoryInvoiceAggregates.add(newCategoryInvoiceAgregate);
 		} else {
 			// update total
-			foundCategoryInvoiceAgregate.addAmountWithTax(newSubCategoryInvoiceAgregate.getAmountWithTax());
 			foundCategoryInvoiceAgregate.addAmountWithoutTax(newSubCategoryInvoiceAgregate.getAmountWithoutTax());
+			foundCategoryInvoiceAgregate.addSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
 		}
 
 		newSubCategoryInvoiceAgregate.setCategoryInvoiceAgregate(newCategoryInvoiceAgregate);
-		newCategoryInvoiceAgregate.addSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
-		entity.addInvoiceAggregate(newSubCategoryInvoiceAgregate);
+	}
+
+	private BigDecimal getAmountWithTax(Tax tax, BigDecimal amountWithoutTax) {
+		Integer rounding = tax.getProvider().getRounding() == null ? 2 : tax.getProvider().getRounding();
+		BigDecimal ttc = amountWithoutTax.add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100), rounding, RoundingMode.HALF_UP));
+		return ttc;
+	}
+
+	private BigDecimal getAmountTax(BigDecimal amountWithTax, BigDecimal amountWithoutTax) {
+		return amountWithTax.subtract(amountWithoutTax);
+	}
+
+	@Override
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		String result = super.saveOrUpdate(killConversation);
+
+		BillingAccount billingAccount = billingAccountService.refreshOrRetrieve(entity.getBillingAccount());
+		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
+		if (userAccounts == null || userAccounts.isEmpty()) {
+			messages.error("BillingAccount with code=" + entity.getBillingAccount().getCode() + " has no userAccount.");
+			return "";
+		}
+		// TODO : userAccount on dto ?
+		UserAccount userAccount = userAccounts.get(0);
+
+		Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
+
+		Auditable auditable = new Auditable();
+		auditable.setCreator(getCurrentUser());
+		auditable.setCreated(new Date());
+
+		BigDecimal invoiceAmountWithoutTax = BigDecimal.ZERO;
+		BigDecimal invoiceAmountTax = BigDecimal.ZERO;
+		BigDecimal invoiceAmountWithTax = BigDecimal.ZERO;
+		for (CategoryInvoiceAgregate cat : tempCategoryInvoiceAggregates) {
+			BigDecimal catAmountWithoutTax = BigDecimal.ZERO;
+			BigDecimal catAmountTax = BigDecimal.ZERO;
+			BigDecimal catAmountWithTax = BigDecimal.ZERO;
+
+			invoiceAgregateService.create(cat, getCurrentUser());
+			for (SubCategoryInvoiceAgregate subCat : cat.getSubCategoryInvoiceAgregates()) {
+				invoiceAgregateService.create(subCat, getCurrentUser());
+				catAmountWithoutTax = catAmountWithoutTax.add(subCat.getAmountWithoutTax());
+				catAmountTax = catAmountTax.add(subCat.getAmountTax());
+				catAmountWithTax = catAmountWithTax.add(subCat.getAmountWithTax());
+
+				Tax currentTax = null;
+				List<Tax> taxes = new ArrayList<Tax>();
+				InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(subCat.getInvoiceSubCategory().getCode(), getCurrentProvider());
+				for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
+					if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
+							&& invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, entity)) {
+						if (!taxes.contains(invoicesubcatCountry.getTax())) {
+							taxes.add(invoicesubcatCountry.getTax());
+						}
+						if (currentTax == null) {
+							currentTax = invoicesubcatCountry.getTax();
+						}
+					}
+				}
+
+				for (Tax tax : taxes) {
+					TaxInvoiceAgregate invoiceAgregateTax = null;
+					Long taxId = tax.getId();
+
+					if (taxInvoiceAgregateMap.containsKey(taxId)) {
+						invoiceAgregateTax = taxInvoiceAgregateMap.get(taxId);
+					} else {
+						invoiceAgregateTax = new TaxInvoiceAgregate();
+						invoiceAgregateTax.setInvoice(entity);
+						invoiceAgregateTax.setBillingRun(null);
+						invoiceAgregateTax.setTax(tax);
+						invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
+						invoiceAgregateTax.setTaxPercent(tax.getPercent());
+						invoiceAgregateTax.setUserAccount(userAccount);
+						invoiceAgregateTax.setAmountWithoutTax(BigDecimal.ZERO);
+						invoiceAgregateTax.setAmountWithTax(BigDecimal.ZERO);
+						invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
+						invoiceAgregateTax.setBillingAccount(billingAccount);
+						invoiceAgregateTax.setUserAccount(userAccount);
+						invoiceAgregateTax.setAuditable(auditable);
+					}
+
+					invoiceAgregateTax.setAmountWithoutTax(invoiceAgregateTax.getAmountWithoutTax().add(subCat.getAmountWithoutTax()));
+					invoiceAgregateTax.setAmountTax(invoiceAgregateTax.getAmountTax().add(subCat.getAmountTax()));
+					invoiceAgregateTax.setAmountWithTax(invoiceAgregateTax.getAmountWithTax().add(subCat.getAmountWithTax()));
+
+					taxInvoiceAgregateMap.put(taxId, invoiceAgregateTax);
+				}
+			}
+
+			cat.setAmountWithoutTax(catAmountWithoutTax);
+			cat.setAmountTax(catAmountTax);
+			cat.setAmountWithTax(catAmountWithTax);
+
+			invoiceAmountWithoutTax = invoiceAmountWithoutTax.add(cat.getAmountWithoutTax());
+			invoiceAmountTax = invoiceAmountTax.add(cat.getAmountTax());
+			invoiceAmountWithTax = invoiceAmountWithTax.add(cat.getAmountWithTax());
+		}
+
+		for (Entry<Long, TaxInvoiceAgregate> entry : taxInvoiceAgregateMap.entrySet()) {
+			invoiceAgregateService.create(entry.getValue(), currentUser);
+		}
+
+		entity.setAmountWithoutTax(invoiceAmountWithoutTax);
+		entity.setAmountTax(invoiceAmountTax);
+		entity.setAmountWithTax(invoiceAmountWithTax);
+
+		BigDecimal netToPay = entity.getAmountWithTax();
+		if (!getCurrentProvider().isEntreprise() && includeBalance) {
+			BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, entity.getBillingAccount().getCustomerAccount().getCode(), entity.getDueDate(),
+					entity.getProvider());
+
+			if (balance == null) {
+				throw new BusinessException("account balance calculation failed");
+			}
+			netToPay = entity.getAmountWithTax().add(balance);
+		}
+		entity.setNetToPay(netToPay);
+		invoiceService.update(entity, currentUser);
+
+		return result;
+	}
+
+	public void refreshTotal() throws BusinessException {
+		BigDecimal netToPay = entity.getAmountWithTax();
+		if (!getCurrentProvider().isEntreprise() && includeBalance) {
+			BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, entity.getBillingAccount().getCustomerAccount().getCode(), entity.getDueDate(),
+					entity.getProvider());
+
+			if (balance == null) {
+				throw new BusinessException("account balance calculation failed");
+			}
+			netToPay = entity.getAmountWithTax().add(balance);
+		}
+		entity.setNetToPay(netToPay);
+		invoiceService.update(entity, currentUser);
 	}
 
 	public long getBillingAccountId() {
@@ -475,16 +691,60 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 		this.selectedSubCategoryInvoiceAgregate = selectedSubCategoryInvoiceAgregate;
 	}
 
-	public InvoiceCatSubCatModel getSelectedInvoiceCatSubCatModel() {
-		if (selectedInvoiceCatSubCatModel == null) {
-			selectedInvoiceCatSubCatModel = new InvoiceCatSubCatModel();
-		}
-
-		return selectedInvoiceCatSubCatModel;
+	public List<CategoryInvoiceAgregate> getTempCategoryInvoiceAggregates() {
+		return tempCategoryInvoiceAggregates;
 	}
 
-	public void setSelectedInvoiceCatSubCatModel(InvoiceCatSubCatModel selectedInvoiceCatSubCatModel) {
-		this.selectedInvoiceCatSubCatModel = selectedInvoiceCatSubCatModel;
+	public void setTempCategoryInvoiceAggregates(List<CategoryInvoiceAgregate> tempCategoryInvoiceAggregates) {
+		this.tempCategoryInvoiceAggregates = tempCategoryInvoiceAggregates;
+	}
+
+	public List<TaxInvoiceAgregate> getTempTaxInvoiceAggregates() {
+		return tempTaxInvoiceAggregates;
+	}
+
+	public void setTempTaxInvoiceAggregates(List<TaxInvoiceAgregate> tempTaxInvoiceAggregates) {
+		this.tempTaxInvoiceAggregates = tempTaxInvoiceAggregates;
+	}
+
+	public List<SelectItem> getInvoiceCategoriesGUI() {
+		return invoiceCategoriesGUI;
+	}
+
+	public void setInvoiceCategoriesGUI(List<SelectItem> invoiceCategoriesGUI) {
+		this.invoiceCategoriesGUI = invoiceCategoriesGUI;
+	}
+
+	public InvoiceSubCategory getSelectedInvoiceSubCategory() {
+		return selectedInvoiceSubCategory;
+	}
+
+	public void setSelectedInvoiceSubCategory(InvoiceSubCategory selectedInvoiceSubCategory) {
+		this.selectedInvoiceSubCategory = selectedInvoiceSubCategory;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public BigDecimal getAmountWithoutTax() {
+		return amountWithoutTax;
+	}
+
+	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+		this.amountWithoutTax = amountWithoutTax;
+	}
+
+	public boolean isIncludeBalance() {
+		return includeBalance;
+	}
+
+	public void setIncludeBalance(boolean includeBalance) {
+		this.includeBalance = includeBalance;
 	}
 
 }
