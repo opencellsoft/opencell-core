@@ -718,13 +718,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 		}		
 		invoiceService.commit();
 		// create xml invoice adjustment
-		String invoicesDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo");
-		File billingRundir = new File(invoicesDir + File.separator + getCurrentProvider().getCode() + File.separator
-				+ "invoices" + File.separator + "xml" + File.separator
-				+ entity.getAdjustedInvoice().getBillingRun().getId());
-		billingRundir.mkdirs();
+		String brPath = invoiceService.getBillingRunPath(entity.getBillingRun(), entity.getAuditable().getCreated(),currentUser.getProvider().getCode());
+		File billingRundir = new File(brPath);		
 		xmlInvoiceCreator.createXMLInvoiceAdjustment(entity.getId(), billingRundir);
-
 		// create pdf
         Map<String, Object> parameters = pDFParametersConstruction.constructParameters(entity.getId(), currentUser, currentUser.getProvider());
 		invoiceService.produceInvoiceAdjustmentPdf(parameters, currentUser);

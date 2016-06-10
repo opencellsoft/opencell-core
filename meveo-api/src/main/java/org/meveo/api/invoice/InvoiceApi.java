@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -57,7 +56,6 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
@@ -498,13 +496,10 @@ public class InvoiceApi extends BaseApi {
 		if (invoice == null) {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
 		}
-		ParamBean param = ParamBean.getInstance();
-		String invoicesDir = param.getProperty("providers.rootDir", "/tmp/meveo");
-		String sep = File.separator;
-		String invoicePath = invoicesDir + sep + currentUser.getProvider().getCode() + sep + "invoices" + sep + "xml" + sep + (invoice.getBillingRun() == null ? DateUtils.formatDateWithPattern(invoice.getAuditable().getCreated(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss")) : invoice.getBillingRun().getId());
-		File billingRundir = new File(invoicePath);
+		String brPath = invoiceService.getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(),currentUser.getProvider().getCode());
+		File billingRundir = new File(brPath);
 		xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir);
-		String xmlCanonicalPath = invoicePath + sep + invoiceNumber + ".xml";
+		String xmlCanonicalPath = brPath + File.separator + invoiceNumber + ".xml";
 		Scanner scanner = new Scanner(new File(xmlCanonicalPath));
 		String xmlContent = scanner.useDelimiter("\\Z").next();
 		scanner.close();
