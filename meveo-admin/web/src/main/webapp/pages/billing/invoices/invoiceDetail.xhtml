@@ -247,7 +247,7 @@
 				<p:fieldset legend="#{messages['invoice.adjustment']}">
 					<hftl:dataList label="#{messages['invoice.adjustment']}"
 						backingBean="#{invoiceListBean}"
-						dataModel="#{invoiceBean.entity.invoiceAdjustments}">
+						dataModel="#{invoiceBean.entity.linkedInvoices}">
 						<p:column headerText="#{messages['invoice.adjustment.number']}">
 							<h:link value="#{entity.invoiceNumber}" outcome="invoiceAdjustmentDetail">
 								<f:param name="objectId" value="#{entity.id}" />
