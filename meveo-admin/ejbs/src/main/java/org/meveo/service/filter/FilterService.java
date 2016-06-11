@@ -281,15 +281,15 @@ public class FilterService extends BusinessService<Filter> {
             targetFilter.getPrimarySelector().setProvider(provider);
         }
 
-//        if(targetFilter.getSecondarySelectors() != null){
-//            targetFilter.getSecondarySelectors().clear();
-//        } else {
-//            targetFilter.setSecondarySelectors(new ArrayList<FilterSelector>());
-//        }
-//        for (FilterSelector filterSelector : sourceFilter.getSecondarySelectors()) {
-//            filterSelector.setProvider(provider);
-//            targetFilter.getSecondarySelectors().add(filterSelector);
-//        }
+        if(targetFilter.getSecondarySelectors() != null){
+            targetFilter.getSecondarySelectors().clear();
+        } else {
+            targetFilter.setSecondarySelectors(new ArrayList<FilterSelector>());
+        }
+        for (FilterSelector filterSelector : sourceFilter.getSecondarySelectors()) {
+            filterSelector.setProvider(provider);
+            targetFilter.getSecondarySelectors().add(filterSelector);
+        }
 
         targetFilter.setFilterCondition(sourceFilter.getFilterCondition());
         setProviderToFilterCondition(targetFilter.getFilterCondition(), provider);
