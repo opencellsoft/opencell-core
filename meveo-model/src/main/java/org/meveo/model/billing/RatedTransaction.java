@@ -41,6 +41,7 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 
@@ -531,4 +532,21 @@ public class RatedTransaction extends BaseEntity {
 	public void setOfferTemplate(OfferTemplate offerTemplate) {
 		this.offerTemplate = offerTemplate;
 	}
+	 @Override
+	    public boolean equals(Object obj) {
+	        if (this == obj) {
+	            return true;
+	        }
+	        if (obj == null) {
+	            return false;
+	        } else if (!(obj instanceof RatedTransaction)) { 
+	        	return false;
+	        }
+         RatedTransaction other = (RatedTransaction) obj;
+
+	        if (getId() != null && other.getId() != null && getId() == other.getId()) {
+	             return true;
+	        }
+	        return true;
+	    }
 }

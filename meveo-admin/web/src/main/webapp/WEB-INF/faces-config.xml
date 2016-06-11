@@ -603,6 +603,11 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>detailedInvoiceDetail</from-outcome>
+			<to-view-id>/pages/billing/invoices/detailedInvoiceDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>wallets</from-outcome>
 			<to-view-id>/pages/billing/wallets/wallets.xhtml</to-view-id>
 			<redirect />
