@@ -1,29 +1,34 @@
 package org.meveo.service.filter;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.XStreamException;
+import com.thoughtworks.xstream.converters.collections.CollectionConverter;
+import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentCollectionConverter;
+import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentMapConverter;
+import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentSortedMapConverter;
+import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentSortedSetConverter;
+import com.thoughtworks.xstream.hibernate.converter.HibernateProxyConverter;
+import com.thoughtworks.xstream.hibernate.mapper.HibernateMapper;
+import com.thoughtworks.xstream.mapper.ClassAliasingMapper;
+import com.thoughtworks.xstream.mapper.MapperWrapper;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import org.apache.commons.lang3.EnumUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.Auditable;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
@@ -42,18 +47,6 @@ import org.meveo.model.filter.PrimitiveFilterCondition;
 import org.meveo.model.filter.Projector;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.XStreamException;
-import com.thoughtworks.xstream.converters.collections.CollectionConverter;
-import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentCollectionConverter;
-import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentMapConverter;
-import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentSortedMapConverter;
-import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentSortedSetConverter;
-import com.thoughtworks.xstream.hibernate.converter.HibernateProxyConverter;
-import com.thoughtworks.xstream.hibernate.mapper.HibernateMapper;
-import com.thoughtworks.xstream.mapper.ClassAliasingMapper;
-import com.thoughtworks.xstream.mapper.MapperWrapper;
 import org.meveo.service.crm.impl.CustomFieldException;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
@@ -65,9 +58,6 @@ public class FilterService extends BusinessService<Filter> {
 
     @Inject
     private FilterSelectorService filterSelectorService;
-
-    @Inject
-    private CustomFieldsCacheContainerProvider customFieldsCacheContainerProvider;
 
     @Inject
     protected CustomFieldTemplateService customFieldTemplateService;
@@ -282,238 +272,155 @@ public class FilterService extends BusinessService<Filter> {
         }
     }
 
-    public void setFilterAuditInfo(Filter filter) throws BusinessException {
-        if (filter == null) {
-            return;
-        }
-        Auditable auditable = new Auditable();
-        auditable.setCreated(new Date());
-        auditable.setCreator(getCurrentUser());
-    }
-
     public void updateFilterDetails(Filter sourceFilter, Filter targetFilter, User currentUser) throws BusinessException {
 
         Provider provider = currentUser.getProvider();
 
-        if(!targetFilter.isTransient()){
-            try {
-
-                String appliesTo = customFieldTemplateService.calculateAppliesToValue(targetFilter);
-
-                Map<String, CustomFieldTemplate> customFieldTemplates = customFieldsCacheContainerProvider.getCustomFieldTemplates(appliesTo, currentUser.getProvider());
-                customFieldsCacheContainerProvider.refreshCache(null);
-                customFieldTemplates = customFieldsCacheContainerProvider.getCustomFieldTemplates(appliesTo, currentUser.getProvider());
-
-
-                clearFilterSelectors(targetFilter);
-                clearFilterConditions(targetFilter, appliesTo, provider);
-                getEntityManager().flush();
-                customFieldTemplates = customFieldsCacheContainerProvider.getCustomFieldTemplates(appliesTo, currentUser.getProvider());
-            } catch (CustomFieldException e) {
-                throw new BusinessException("Failed to retrieve appliesTo value", e);
-            }
-        }
         targetFilter.setPrimarySelector(sourceFilter.getPrimarySelector());
         if(targetFilter.getPrimarySelector() != null){
             targetFilter.getPrimarySelector().setProvider(provider);
         }
-        targetFilter.setSecondarySelectors(new ArrayList<FilterSelector>());
-        for (FilterSelector filterSelector : sourceFilter.getSecondarySelectors()) {
-            filterSelector.setProvider(provider);
-            targetFilter.getSecondarySelectors().add(filterSelector);
-        }
-        targetFilter.setFilterCondition(setProviderToFilterCondition(sourceFilter.getFilterCondition()));
+
+//        if(targetFilter.getSecondarySelectors() != null){
+//            targetFilter.getSecondarySelectors().clear();
+//        } else {
+//            targetFilter.setSecondarySelectors(new ArrayList<FilterSelector>());
+//        }
+//        for (FilterSelector filterSelector : sourceFilter.getSecondarySelectors()) {
+//            filterSelector.setProvider(provider);
+//            targetFilter.getSecondarySelectors().add(filterSelector);
+//        }
+
+        targetFilter.setFilterCondition(sourceFilter.getFilterCondition());
+        setProviderToFilterCondition(targetFilter.getFilterCondition(), provider);
+
         targetFilter.setOrderCondition(sourceFilter.getOrderCondition());
         if(targetFilter.getOrderCondition() != null){
             targetFilter.getOrderCondition().setProvider(provider);
         }
     }
 
-    private void deleteEntity(IEntity entity) {
-        EntityManager entityManager = getEntityManager();
-        if(!entityManager.contains(entity)){
-            entity = entityManager.merge(entity);
-        }
-        entityManager.remove(entity);
-    }
-
-    private void clearFilterConditions(Filter targetFilter, String appliesTo, Provider provider) {
-        EntityManager entityManager = getEntityManager();
-        if(targetFilter.getOrderCondition() != null){
-            deleteEntity(targetFilter.getOrderCondition());
-        }
-        removeFilterConditions(entityManager, targetFilter.getFilterCondition(), appliesTo, provider);
-    }
-
-    private void removeFilterConditions(EntityManager entityManager, FilterCondition filterCondition, String appliesTo, Provider provider) {
+    public FilterCondition setProviderToFilterCondition(FilterCondition filterCondition, Provider provider) {
         if(filterCondition != null){
-            if(filterCondition instanceof AndCompositeFilterCondition){
-                AndCompositeFilterCondition andCondition = (AndCompositeFilterCondition) filterCondition;
-                Set<FilterCondition> filterConditions = andCondition.getFilterConditions();
-                for (FilterCondition condition : filterConditions) {
-                    removeFilterConditions(entityManager, condition, appliesTo, provider);
-                }
-                deleteEntity(filterCondition);
-            } else if(filterCondition instanceof OrCompositeFilterCondition){
-                OrCompositeFilterCondition orCondition = (OrCompositeFilterCondition) filterCondition;
-                Set<FilterCondition> filterConditions = orCondition.getFilterConditions();
-                for (FilterCondition condition : filterConditions) {
-                    removeFilterConditions(entityManager, condition, appliesTo, provider);
-                }
-                deleteEntity(filterCondition);
-            } else if(filterCondition instanceof PrimitiveFilterCondition){
-                PrimitiveFilterCondition condition = (PrimitiveFilterCondition) filterCondition;
-                String[] typeAndCode = condition.getOperand().split(":");
-                String typePrefix = typeAndCode[0];
-                String code = typeAndCode[1];
-                CustomFieldTemplate customField = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, provider);
-                if(customField != null){
-                    deleteEntity(customField);
-                }
-                deleteEntity(filterCondition);
-            } else if(filterCondition instanceof NativeFilterCondition){
-                deleteEntity(filterCondition);
-            }
-        }
-    }
+            filterCondition.setProvider(provider);
 
-    private void clearFilterSelectors(Filter targetFilter) {
-        if(targetFilter.getPrimarySelector() != null){
-            deleteEntity(targetFilter.getPrimarySelector());
-        }
-        for (FilterSelector secondarySelector : targetFilter.getSecondarySelectors()) {
-            deleteEntity(secondarySelector);
-        }
-    }
-
-
-    public FilterCondition setProviderToFilterCondition(FilterCondition filterCondition) {
-        filterCondition.setProvider(getCurrentProvider());
-
-        if (filterCondition.getFilterConditionType().equals(AndCompositeFilterCondition.class.getAnnotation(DiscriminatorValue.class).value())) {
-            AndCompositeFilterCondition andCompositeFilterCondition = (AndCompositeFilterCondition) filterCondition;
-            if (andCompositeFilterCondition.getFilterConditions() != null) {
+            if (filterCondition.getFilterConditionType().equals(AndCompositeFilterCondition.class.getAnnotation(DiscriminatorValue.class).value())) {
+                AndCompositeFilterCondition andCompositeFilterCondition = (AndCompositeFilterCondition) filterCondition;
                 for (FilterCondition filterConditionLoop : andCompositeFilterCondition.getFilterConditions()) {
-                    setProviderToFilterCondition(filterConditionLoop);
+                    setProviderToFilterCondition(filterConditionLoop, provider);
                 }
             }
-        }
 
-        if (filterCondition.getFilterConditionType().equals(OrCompositeFilterCondition.class.getAnnotation(DiscriminatorValue.class).value())) {
-            OrCompositeFilterCondition orCompositeFilterCondition = (OrCompositeFilterCondition) filterCondition;
-            if (orCompositeFilterCondition.getFilterConditions() != null) {
+            if (filterCondition.getFilterConditionType().equals(OrCompositeFilterCondition.class.getAnnotation(DiscriminatorValue.class).value())) {
+                OrCompositeFilterCondition orCompositeFilterCondition = (OrCompositeFilterCondition) filterCondition;
                 for (FilterCondition filterConditionLoop : orCompositeFilterCondition.getFilterConditions()) {
-                    setProviderToFilterCondition(filterConditionLoop);
+                    setProviderToFilterCondition(filterConditionLoop, provider);
                 }
             }
         }
-
         return filterCondition;
     }
 
     @Override
     public void create(Filter filter, User user) throws BusinessException {
-        try {
-            persistCustomFields(filter, filter.getFilterCondition(), user);
-        } catch (CustomFieldException e) {
-            throw new BusinessException(e);
-        }
+        persistCustomFieldTemplates(filter, user);
         super.create(filter, user);
     }
 
     @Override
     public Filter update(Filter filter, User user) throws BusinessException {
-        try {
-            persistCustomFields(filter, filter.getFilterCondition(), user);
-        } catch (CustomFieldException e) {
-            throw new BusinessException(e);
-        }
+        persistCustomFieldTemplates(filter, user);
         return super.update(filter, user);
     }
 
-    public void persistCustomFields(ICustomFieldEntity entity, FilterCondition filterCondition, User user) throws CustomFieldException {
+    public void persistCustomFieldTemplates(Filter filter, User user) throws BusinessException {
+        try {
+            List<CustomFieldTemplate> customFieldTemplates = new ArrayList<>();
+            extractCustomFields(filter, filter.getFilterCondition(), user, customFieldTemplates);
+            customFieldTemplateService.createMissingTemplates(filter, customFieldTemplates, user, true, true);
+        } catch (CustomFieldException e) {
+            throw new BusinessException(e);
+        }
+    }
+
+    public void extractCustomFields(ICustomFieldEntity entity, FilterCondition filterCondition, User user, List<CustomFieldTemplate> customFieldTemplates) throws CustomFieldException {
         if(filterCondition != null){
             if (filterCondition instanceof OrCompositeFilterCondition) {
                 OrCompositeFilterCondition orCondition = (OrCompositeFilterCondition) filterCondition;
                 for (FilterCondition subCondition : orCondition.getFilterConditions()) {
-                    persistCustomFields(entity, subCondition, user);
+                    extractCustomFields(entity, subCondition, user, customFieldTemplates);
                 }
             } else if (filterCondition instanceof AndCompositeFilterCondition) {
                 AndCompositeFilterCondition andCondition = (AndCompositeFilterCondition) filterCondition;
                 for (FilterCondition subCondition : andCondition.getFilterConditions()) {
-                    persistCustomFields(entity, subCondition, user);
+                    extractCustomFields(entity, subCondition, user, customFieldTemplates);
                 }
             } else if (filterCondition instanceof PrimitiveFilterCondition) {
+                String appliesTo = customFieldTemplateService.calculateAppliesToValue(entity);
                 PrimitiveFilterCondition condition = (PrimitiveFilterCondition) filterCondition;
-                String operand = condition.getOperand();
-                for(FilterParameterTypeEnum type : FilterParameterTypeEnum.values()){
-                    if(type.matchesPrefixOf(operand)){
-                        String[] typeAndCode = operand.split(":");
-                        String typePrefix = typeAndCode[0];
-                        String code = typeAndCode[1];
-                        String defaultValue = condition.getDefaultValue();
-                        String className = condition.getClassName();
-                        String label = condition.getLabel();
-                        if(StringUtils.isBlank(label)){
-                            label = code;
-                        }
-                        String appliesTo = customFieldTemplateService.calculateAppliesToValue(entity);
-                        CustomFieldTemplate customField = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, user.getProvider());
-                        if(customField == null) {
-                            customField = new CustomFieldTemplate();
-                            customField.setAppliesTo(appliesTo);
-                            customField.setCode(code);
-                        }
-                        customField.setDescription(label);
-                        customField.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
-                        customField.setAllowEdit(true);
-                        customField.setFieldType(type.getFieldType());
-                        switch (type){
-                            case ENTITY:
-                                customField.setEntityClazz(className);
-                                break;
-                            case ENUM:
-                                try {
-                                    Map<String, String> items = new HashMap<>();
-                                    String name = null;
-                                    for (Object enumItem : EnumUtils.getEnumList((Class<? extends Enum>) Class.forName(className))) {
-                                        name = ((Enum) enumItem).name();
-                                        items.put(name, name);
-                                    }
-                                    customField.setListValues(items);
-                                } catch (ClassNotFoundException e) {
-                                    String message = "Failed to create enum values list.";
-                                    log.error(message, e);
-                                    throw new CustomFieldException(message);
-                                }
-                                break;
-                        }
-                        if(customField.isTransient()){
-                            try {
-                                customFieldTemplateService.create(customField, user);
-                            } catch (BusinessException e) {
-                                String message = "Failed to create new custom field";
-                                log.error(message, e);
-                                throw new CustomFieldException(message);
-                            }
-                        } else {
-                            try {
-                                customFieldTemplateService.update(customField, user);
-                            } catch (BusinessException e) {
-                                String message = "Failed to update custom field";
-                                log.error(message, e);
-                                throw new CustomFieldException(message);
-                            }
-                        }
-
-                    }
-                }
-
+                extractCustomField(user, customFieldTemplates, appliesTo, condition);
             }
         }
     }
 
-    public void validateFilter(Filter filter) throws BusinessException {
+    private void extractCustomField(User user, List<CustomFieldTemplate> customFields, String appliesTo, PrimitiveFilterCondition primitiveFilterCondition) throws CustomFieldException {
+        String operand = primitiveFilterCondition.getOperand();
+        String[] typeAndCode = null;
+        String typePrefix = null;
+        String code = null;
+        String defaultValue = null;
+        String className = null;
+        String label = null;
+
+        CustomFieldTemplate customField = null;
+        for(FilterParameterTypeEnum type : FilterParameterTypeEnum.values()){
+            if(type.matchesPrefixOf(operand)){
+                typeAndCode = operand.split(":");
+                code = typeAndCode[1];
+                defaultValue = primitiveFilterCondition.getDefaultValue();
+                className = primitiveFilterCondition.getClassName();
+                label = primitiveFilterCondition.getLabel();
+                if(StringUtils.isBlank(label)){
+                    label = code;
+                }
+                customField = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, user.getProvider());
+                if(customField == null) {
+                    customField = new CustomFieldTemplate();
+                    customField.setAppliesTo(appliesTo);
+                    customField.setCode(code);
+                }
+                customField.setDescription(label);
+                customField.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
+                customField.setAllowEdit(true);
+                customField.setDefaultValue(defaultValue);
+                customField.setFieldType(type.getFieldType());
+                switch (type){
+                    case ENTITY:
+                        customField.setEntityClazz(className);
+                        break;
+                    case ENUM:
+                        try {
+                            Map<String, String> items = new HashMap<>();
+                            String name = null;
+                            for (Object enumItem : EnumUtils.getEnumList((Class<? extends Enum>) Class.forName(className))) {
+                                name = ((Enum) enumItem).name();
+                                items.put(name, name);
+                            }
+                            customField.setListValues(items);
+                        } catch (ClassNotFoundException e) {
+                            String message = "Failed to create enum values list.";
+                            log.error(message, e);
+                            throw new CustomFieldException(message);
+                        }
+                        break;
+                }
+                customFields.add(customField);
+                break;
+            }
+        }
+    }
+
+    public void validateUnmarshalledFilter(Filter filter) throws BusinessException {
         validateFilterCondition(filter.getFilterCondition());
     }
 
@@ -536,7 +443,6 @@ public class FilterService extends BusinessService<Filter> {
                 if(operand != null){
                     String[] typeAndCode = operand.split(":");
                     String type = typeAndCode[0];
-                    String code = typeAndCode[1];
                     if(requiresClassName.contains(type)){
                         fieldName = condition.getFieldName();
                         if(condition.getClassName() != null){

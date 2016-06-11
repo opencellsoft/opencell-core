@@ -25,7 +25,7 @@ public class FilterApi extends BaseApi {
     @Inject
     private FilterService filterService;
 
-    private void create(FilterDto dto, User currentUser, Provider provider) throws MeveoApiException {
+    private void create(FilterDto dto, User currentUser) throws MeveoApiException {
 
         if (StringUtils.isBlank(dto.getCode())) {
             missingParameters.add("code");
@@ -38,14 +38,12 @@ public class FilterApi extends BaseApi {
 
         try {
             Filter filter = filterService.parse(dto.getInputXml());
-            filterService.validateFilter(filter);
-            filterService.setFilterAuditInfo(filter);
+            filterService.validateUnmarshalledFilter(filter);
             filter.setCode(dto.getCode());
             filter.setDescription(dto.getDescription());
             filter.setInputXml(dto.getInputXml());
             filter.setShared(dto.getShared());
             filter.clearUuid();
-
             filterService.create(filter, currentUser);
 
         } catch (BusinessException e) {
@@ -72,8 +70,7 @@ public class FilterApi extends BaseApi {
             }
 
             Filter parsedFilter = filterService.parse(dto.getInputXml());
-            filterService.validateFilter(parsedFilter);
-            filterService.setFilterAuditInfo(filter);
+            filterService.validateUnmarshalledFilter(parsedFilter);
             filterService.updateFilterDetails(parsedFilter, filter, currentUser);
             filter.setDescription(dto.getDescription());
             filter.setInputXml(dto.getInputXml());
@@ -96,7 +93,7 @@ public class FilterApi extends BaseApi {
         if (existed != null) {
             update(dto, currentUser);
         } else {
-            create(dto, currentUser, provider);
+            create(dto, currentUser);
         }
     }
 

@@ -32,11 +32,11 @@ public class Filter extends BusinessCFEntity {
 	@JoinColumn(name = "FILTER_CONDITION_ID")
 	private FilterCondition filterCondition;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ORDER_CONDITION_ID")
 	private OrderCondition orderCondition;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "PRIMARY_SELECTOR_ID")
 	private FilterSelector primarySelector;
 

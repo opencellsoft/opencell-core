@@ -7,7 +7,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.XmlUtil;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.*;
 import org.meveo.service.base.local.IPersistenceService;
@@ -15,11 +14,9 @@ import org.meveo.service.crm.impl.CustomFieldException;
 import org.meveo.service.filter.FilterSelectorService;
 import org.meveo.service.filter.FilterService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.model.LazyDataModel;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.EntityManager;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -71,8 +68,7 @@ public class FilterBean extends BaseBean<Filter> {
 			}
 
 			Filter filter = filterService.parse(entity.getInputXml());
-			filterService.validateFilter(filter);
-			filterService.setFilterAuditInfo(this.entity);
+			filterService.validateUnmarshalledFilter(filter);
 			filterService.updateFilterDetails(filter, this.entity, getCurrentUser());
 
 			try {
@@ -82,6 +78,7 @@ public class FilterBean extends BaseBean<Filter> {
 				return "";
 			}
 		}
+		filterService.persistCustomFieldTemplates(this.entity, getCurrentUser());
 		forceUpdateParameters = true;
 		return super.saveOrUpdate(killConversation);
 	}
@@ -155,49 +152,24 @@ public class FilterBean extends BaseBean<Filter> {
 
 	public List<CustomFieldTemplate> getParameters() {
 		if (parameters == null || forceUpdateParameters) {
-			log.info("Initializing filter parameters.");
+			log.trace("Initializing filter parameters.");
 			forceUpdateParameters = false;
 			parameters = new ArrayList<>();
 			try {
 				if(this.getEntity() != null){
 					String appliesTo = customFieldTemplateService.calculateAppliesToValue(this.getEntity());
-					Map<String, CustomFieldTemplate> customFieldTemplateMap = customFieldTemplateService.findByAppliesToNoCache(appliesTo, currentUser.getProvider());
+					Map<String, CustomFieldTemplate> customFieldTemplateMap = customFieldTemplateService.findByAppliesTo(appliesTo, currentUser.getProvider());
 					for (Map.Entry<String, CustomFieldTemplate> customFieldTemplateEntry : customFieldTemplateMap.entrySet()) {
 						parameters.add(customFieldTemplateEntry.getValue());
 					}
 				}
+				log.trace("Filter parameters initialized.");
 			} catch (CustomFieldException e) {
 				log.error(e.getMessage(), e);
 				messages.error(e.getMessage());
 			}
 		}
 		return parameters;
-	}
-
-	public LazyDataModel<CustomFieldTemplate> getFilterTypeCustomFields(){
-		customFieldTemplateListBean.getFilters().put("appliesTo", getFilterCftCodePrefix());
-		return  customFieldTemplateListBean.getLazyDataModel();
-	}
-
-	private String getFilterCftCodePrefix() {
-		if (cftCodePrefix == null) {
-			CustomFieldEntity cfeAnnotation = entity.getClass().getAnnotation(CustomFieldEntity.class);
-			cftCodePrefix = cfeAnnotation.cftCodePrefix();
-		}
-		return cftCodePrefix;
-	}
-
-	private void updateCustomField(CustomFieldTemplate cfDuplicate, String appliesTo) throws BusinessException {
-		cfDuplicate.setAppliesTo(appliesTo);
-		customFieldTemplateService.update(cfDuplicate, getCurrentUser());
-	}
-
-	private void removeCustomField(CustomFieldTemplate customField) {
-		EntityManager entityManager = customFieldTemplateService.getEntityManager();
-		if(!entityManager.contains(customField)){
-			customField = entityManager.merge(customField);
-		}
-		customFieldTemplateService.remove(customField);
 	}
 
 }
