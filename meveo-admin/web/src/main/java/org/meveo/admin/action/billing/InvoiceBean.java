@@ -715,7 +715,11 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 			super.saveOrUpdate(false);
 		}else{
 			entity = invoiceService.update(entity, getCurrentUser());
-		}		
+		}
+		
+		entity.getAdjustedInvoice().getLinkedInvoices().add(entity);
+		invoiceService.update(entity.getAdjustedInvoice(), getCurrentUser());
+
 		invoiceService.commit();
 		// create xml invoice adjustment
 		String brPath = invoiceService.getBillingRunPath(entity.getBillingRun(), entity.getAuditable().getCreated(),currentUser.getProvider().getCode());
