@@ -44,6 +44,7 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceModeEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
@@ -55,6 +56,7 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -357,7 +359,84 @@ public class InvoiceApi extends BaseApi {
 	}
 
 	public List<InvoiceDto> list(String customerAccountCode, Provider provider) throws MeveoApiException {
-		return null;
+		if (StringUtils.isBlank(customerAccountCode)) {
+            missingParameters.add("customerAccountCode");
+            handleMissingParameters();
+        }
+
+        List<InvoiceDto> customerInvoiceDtos = new ArrayList<InvoiceDto>();
+
+        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
+        if (customerAccount == null) {
+            throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
+        }
+
+        for (BillingAccount billingAccount : customerAccount.getBillingAccounts()) {
+            List<Invoice> invoiceList = billingAccount.getInvoices();
+
+            for (Invoice invoice : invoiceList) {
+            	InvoiceDto customerInvoiceDto = new InvoiceDto();
+                customerInvoiceDto.setBillingAccountCode(billingAccount.getCode());
+                customerInvoiceDto.setInvoiceDate(invoice.getInvoiceDate());
+                customerInvoiceDto.setDueDate(invoice.getDueDate());
+
+                customerInvoiceDto.setAmountWithoutTax(invoice.getAmountWithoutTax());
+                customerInvoiceDto.setAmountTax(invoice.getAmountTax());
+                customerInvoiceDto.setAmountWithTax(invoice.getAmountWithTax());
+                customerInvoiceDto.setInvoiceNumber(invoice.getInvoiceNumber());
+                customerInvoiceDto.setPaymentMethod(invoice.getPaymentMethod());
+                customerInvoiceDto.setInvoiceType(invoice.getInvoiceType().getCode());
+                customerInvoiceDto.setPdfPresent(invoice.getPdf() != null);
+                customerInvoiceDto.setPdf(invoice.getPdf());
+                
+
+                SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
+                CategoryInvoiceAgregateDto  categoryInvoiceAgregateDto = new CategoryInvoiceAgregateDto();
+
+                for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
+
+                    subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
+
+                    if (invoiceAgregate instanceof CategoryInvoiceAgregate) {            	
+                        subCategoryInvoiceAgregateDto.setType("R");               
+                        categoryInvoiceAgregateDto.setCategoryInvoiceCode(((CategoryInvoiceAgregate) invoiceAgregate).getInvoiceCategory().getCode());
+                    } else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
+                        subCategoryInvoiceAgregateDto.setType("F");
+                    } else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
+                        subCategoryInvoiceAgregateDto.setType("T");
+                    }
+
+                    subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
+                    subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
+                    subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
+                    subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
+                    subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
+                    subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
+                    subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
+                    subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
+                    
+                    categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
+                    
+                    boolean agregateAlreadyExists = false;
+                    for(CategoryInvoiceAgregateDto ciadto : customerInvoiceDto.getCategoryInvoiceAgregates()) {
+                		if(ciadto.getCategoryInvoiceCode() != null  
+                				&&  ciadto.getCategoryInvoiceCode().equals(categoryInvoiceAgregateDto.getCategoryInvoiceCode())) {
+                			agregateAlreadyExists = true;
+                			break;
+                		}
+                	}
+                    
+                    if(!agregateAlreadyExists) {
+                    	customerInvoiceDto.getCategoryInvoiceAgregates().add(categoryInvoiceAgregateDto);
+                	}
+                }
+                
+                customerInvoiceDtos.add(customerInvoiceDto);
+
+            }
+        }
+
+        return customerInvoiceDtos;
 	}
 
 	public BillingRun launchExceptionalInvoicing(GenerateInvoiceRequestDto generateInvoiceRequestDto, User currentUser, List<Long> BAids) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, BusinessApiException, Exception {
