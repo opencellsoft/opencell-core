@@ -716,7 +716,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 		}else{
 			entity = invoiceService.update(entity, getCurrentUser());
 		}
-		
+		entity = invoiceService.refreshOrRetrieve(entity);
 		entity.getAdjustedInvoice().getLinkedInvoices().add(entity);
 		invoiceService.update(entity.getAdjustedInvoice(), getCurrentUser());
 
