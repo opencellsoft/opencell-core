@@ -91,9 +91,10 @@
     <changeSet author="anasseh" id="20151009_1149">
         <modifyDataType columnName="SELECTED_BILLING_ACCOUNTS" newDataType="text"   tableName="BILLING_BILLING_RUN"/>
      </changeSet>
-   	<changeSet author="anasseh" id="20151013_1165">
-     	<modifyDataType columnName="MESSAGE" newDataType="text"   tableName="MEVEO_SCRIPT_INSTANCE_ERROR"/>
-     </changeSet>
+     <!--  Commenting it out to solve 4.3.0 migration script issue. Table is later deteled anyway. -->
+<!--    	<changeSet author="anasseh" id="20151013_1165"> -->
+<!--      	<modifyDataType columnName="MESSAGE" newDataType="text"   tableName="MEVEO_SCRIPT_INSTANCE_ERROR"/> -->
+<!--      </changeSet> -->
 
     <changeSet id="#1150_20151013" author="Mbarek" failOnError="false">
 	<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
