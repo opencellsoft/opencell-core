@@ -56,10 +56,6 @@ public class RoleApi extends BaseApi {
 
         handleMissingParameters();
 
-        if (roleService.findByName(name, currentUser.getProvider()) != null) {
-            throw new EntityAlreadyExistsException(Role.class, name, "role name");
-        }
-
         // Find provider and check if user has access to manage that provider data
         Provider provider = null;
         if (!StringUtils.isBlank(postData.getProvider())) {
@@ -69,6 +65,10 @@ public class RoleApi extends BaseApi {
             }
         } else {
             provider = currentUser.getProvider();
+        }
+
+        if (roleService.findByName(name, provider) != null) {
+            throw new EntityAlreadyExistsException(Role.class, name, "role name");
         }
 
         if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider
@@ -293,7 +293,7 @@ public class RoleApi extends BaseApi {
             throw new LoginException("User has no permission to manage roles for provider " + provider.getCode());
         }
 
-        Role role = roleService.findByName(name, currentUser.getProvider());
+        Role role = roleService.findByName(name, provider);
         if (role == null) {
             return create(postData, currentUser);
         } else {
