@@ -27,6 +27,7 @@ import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
@@ -134,12 +135,12 @@ public class ProviderApi extends BaseApi {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        
+
         handleMissingParameters();
-        
-		if (!currentUser.hasPermission("superAdmin", "superAdminManagement")) {
-			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
-		}
+
+        if (!currentUser.hasPermission("superAdmin", "superAdminManagement")) {
+            throw new LoginException("User has no permission to create new providers");
+        }
 
         Provider provider = providerService.findByCode(postData.getCode());
         if (provider != null) {
@@ -149,8 +150,7 @@ public class ProviderApi extends BaseApi {
         provider = new Provider();
         provider.setCode(postData.getCode().toUpperCase());
         provider.setDescription(postData.getDescription());
-    
-        
+
         provider.setMulticountryFlag(postData.isMultiCountry());
         provider.setMulticurrencyFlag(postData.isMultiCurrency());
         provider.setMultilanguageFlag(postData.isMultiLanguage());
@@ -199,16 +199,16 @@ public class ProviderApi extends BaseApi {
         }
 
         InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
-        if(postData.getInvoiceConfiguration() != null) {
-        	invoiceConfiguration.setDisplayEdrs(postData.getInvoiceConfiguration().getDisplayEdrs());
-        	invoiceConfiguration.setDisplayOffers(postData.getInvoiceConfiguration().getDisplayOffers());
-        	invoiceConfiguration.setDisplayServices(postData.getInvoiceConfiguration().getDisplayServices());
-        	invoiceConfiguration.setDisplaySubscriptions(postData.getInvoiceConfiguration().getDisplaySubscriptions());
-        	invoiceConfiguration.setDisplayProvider(postData.getInvoiceConfiguration().getDisplayProvider());
-        	invoiceConfiguration.setDisplayDetail(postData.getInvoiceConfiguration().getDisplayDetail());
-        	invoiceConfiguration.setDisplayPricePlans(postData.getInvoiceConfiguration().getDisplayPricePlans());
-        	invoiceConfiguration.setDisplayCfAsXML(postData.getInvoiceConfiguration().getDisplayCfAsXML());
-        	invoiceConfiguration.setDisplayChargesPeriods(postData.getInvoiceConfiguration().getDisplayChargesPeriods());
+        if (postData.getInvoiceConfiguration() != null) {
+            invoiceConfiguration.setDisplayEdrs(postData.getInvoiceConfiguration().getDisplayEdrs());
+            invoiceConfiguration.setDisplayOffers(postData.getInvoiceConfiguration().getDisplayOffers());
+            invoiceConfiguration.setDisplayServices(postData.getInvoiceConfiguration().getDisplayServices());
+            invoiceConfiguration.setDisplaySubscriptions(postData.getInvoiceConfiguration().getDisplaySubscriptions());
+            invoiceConfiguration.setDisplayProvider(postData.getInvoiceConfiguration().getDisplayProvider());
+            invoiceConfiguration.setDisplayDetail(postData.getInvoiceConfiguration().getDisplayDetail());
+            invoiceConfiguration.setDisplayPricePlans(postData.getInvoiceConfiguration().getDisplayPricePlans());
+            invoiceConfiguration.setDisplayCfAsXML(postData.getInvoiceConfiguration().getDisplayCfAsXML());
+            invoiceConfiguration.setDisplayChargesPeriods(postData.getInvoiceConfiguration().getDisplayChargesPeriods());
         }
 
         invoiceConfiguration.setProvider(provider);
@@ -231,7 +231,7 @@ public class ProviderApi extends BaseApi {
         }
 
         provider.setRecognizeRevenue(postData.isRecognizeRevenue());
-        
+
         providerService.create(provider, currentUser);
 
         // populate customFields
@@ -250,14 +250,14 @@ public class ProviderApi extends BaseApi {
         }
 
         Provider provider = providerService.findByCodeWithFetch(providerCode, Arrays.asList("currency", "country", "language"));
-		if (provider != null) {
-			if (currentUser.hasPermission("superAdmin", "superAdminManagement")
-					|| (currentUser.hasPermission("administration", "administrationVisualization") && provider.getId().equals(currentUser.getProvider().getId()))) {
-				return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider));
-			} else {
-				throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
-			}
-		}
+        if (provider != null) {
+            if (currentUser.hasPermission("superAdmin", "superAdminManagement")
+                    || (currentUser.hasPermission("administration", "administrationVisualization") && provider.getId().equals(currentUser.getProvider().getId()))) {
+                return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider));
+            } else {
+                throw new LoginException("User has no permission to access provider " + provider.getCode());
+            }
+        }
 
         throw new EntityDoesNotExistsException(Provider.class, providerCode);
 
@@ -268,22 +268,21 @@ public class ProviderApi extends BaseApi {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        
+
         handleMissingParameters();
-        
 
         // search for provider
         Provider provider = providerService.findByCodeWithFetch(postData.getCode(), Arrays.asList("currency", "country", "language"));
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, postData.getCode());
         }
-        
-		if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider.getId()
-				.equals(currentUser.getProvider().getId())))) {
-			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
-		}
 
-        provider.setDescription(postData.getDescription());       
+        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider.getId()
+            .equals(currentUser.getProvider().getId())))) {
+            throw new LoginException("User has no permission to manage provider " + provider.getCode());
+        }
+
+        provider.setDescription(postData.getDescription());
         provider.setMulticountryFlag(postData.isMultiCountry());
         provider.setMulticurrencyFlag(postData.isMultiCurrency());
         provider.setMultilanguageFlag(postData.isMultiLanguage());
@@ -291,7 +290,7 @@ public class ProviderApi extends BaseApi {
         provider.setEmail(postData.getEmail());
         provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
         provider.setPrepaidReservationExpirationDelayinMillisec(postData.getPrepaidReservationExpirationDelayinMillisec());
-        
+
         // search for country
         if (!StringUtils.isBlank(postData.getCountry())) {
             Country country = countryService.findByCode(postData.getCountry());
@@ -329,82 +328,80 @@ public class ProviderApi extends BaseApi {
 
         provider.setDisplayFreeTransacInInvoice(postData.getInvoiceConfiguration().isDisplayFreeTransacInInvoice());
         provider.setEntreprise(postData.isEnterprise());
-       
+
         BankCoordinates bankCoordinates = provider.getBankCoordinates() == null ? new BankCoordinates() : provider.getBankCoordinates();
         if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
-        	bankCoordinates.setBankCode(postData.getBankCoordinates().getBankCode());
+            bankCoordinates.setBankCode(postData.getBankCoordinates().getBankCode());
         }
         if (!StringUtils.isBlank(postData.getBankCoordinates().getBranchCode())) {
-        	bankCoordinates.setBranchCode(postData.getBankCoordinates().getBranchCode());
+            bankCoordinates.setBranchCode(postData.getBankCoordinates().getBranchCode());
         }
         if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountNumber())) {
-        	bankCoordinates.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
+            bankCoordinates.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
         }
         if (!StringUtils.isBlank(postData.getBankCoordinates().getKey())) {
-        	bankCoordinates.setKey(postData.getBankCoordinates().getKey());
+            bankCoordinates.setKey(postData.getBankCoordinates().getKey());
         }
         if (!StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
-        	bankCoordinates.setIban(postData.getBankCoordinates().getIban());
+            bankCoordinates.setIban(postData.getBankCoordinates().getIban());
         }
         if (!StringUtils.isBlank(postData.getBankCoordinates().getBic())) {
-        	bankCoordinates.setBic(postData.getBankCoordinates().getBic());
+            bankCoordinates.setBic(postData.getBankCoordinates().getBic());
         }
         if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountOwner())) {
-        	bankCoordinates.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
+            bankCoordinates.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
         }
         if (!StringUtils.isBlank(postData.getBankCoordinates().getBankName())) {
-        	bankCoordinates.setBankName(postData.getBankCoordinates().getBankName());
+            bankCoordinates.setBankName(postData.getBankCoordinates().getBankName());
         }
         if (!StringUtils.isBlank(postData.getBankCoordinates().getBankId())) {
-        	bankCoordinates.setBankId(postData.getBankCoordinates().getBankId());
+            bankCoordinates.setBankId(postData.getBankCoordinates().getBankId());
         }
         if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerNumber())) {
-        	bankCoordinates.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
+            bankCoordinates.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
         }
         if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerName())) {
-        	bankCoordinates.setIssuerName(postData.getBankCoordinates().getIssuerName());
+            bankCoordinates.setIssuerName(postData.getBankCoordinates().getIssuerName());
         }
         if (!StringUtils.isBlank(postData.getBankCoordinates().getIcs())) {
-        	bankCoordinates.setIcs(postData.getBankCoordinates().getIcs());
+            bankCoordinates.setIcs(postData.getBankCoordinates().getIcs());
         }
         provider.setBankCoordinates(bankCoordinates);
 
         InvoiceConfiguration invoiceConfiguration = provider.getInvoiceConfiguration() == null ? new InvoiceConfiguration() : provider.getInvoiceConfiguration();
 
         if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplaySubscriptions())) {
-        	invoiceConfiguration.setDisplaySubscriptions(postData.getInvoiceConfiguration().getDisplaySubscriptions());
+            invoiceConfiguration.setDisplaySubscriptions(postData.getInvoiceConfiguration().getDisplaySubscriptions());
         }
         if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayServices())) {
-        	invoiceConfiguration.setDisplayServices(postData.getInvoiceConfiguration().getDisplayServices());
+            invoiceConfiguration.setDisplayServices(postData.getInvoiceConfiguration().getDisplayServices());
         }
         if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayOffers())) {
-        	invoiceConfiguration.setDisplayOffers(postData.getInvoiceConfiguration().getDisplayOffers());
+            invoiceConfiguration.setDisplayOffers(postData.getInvoiceConfiguration().getDisplayOffers());
         }
         if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayEdrs())) {
-        	invoiceConfiguration.setDisplayEdrs(postData.getInvoiceConfiguration().getDisplayEdrs());
+            invoiceConfiguration.setDisplayEdrs(postData.getInvoiceConfiguration().getDisplayEdrs());
         }
         if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayProvider())) {
-        	invoiceConfiguration.setDisplayProvider(postData.getInvoiceConfiguration().getDisplayProvider());	
+            invoiceConfiguration.setDisplayProvider(postData.getInvoiceConfiguration().getDisplayProvider());
         }
         if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayDetail())) {
-        	invoiceConfiguration.setDisplayDetail(postData.getInvoiceConfiguration().getDisplayDetail());	
+            invoiceConfiguration.setDisplayDetail(postData.getInvoiceConfiguration().getDisplayDetail());
         }
         if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayPricePlans())) {
-        	invoiceConfiguration.setDisplayPricePlans(postData.getInvoiceConfiguration().getDisplayPricePlans());	
+            invoiceConfiguration.setDisplayPricePlans(postData.getInvoiceConfiguration().getDisplayPricePlans());
         }
         if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayCfAsXML())) {
-        	invoiceConfiguration.setDisplayCfAsXML(postData.getInvoiceConfiguration().getDisplayCfAsXML());
+            invoiceConfiguration.setDisplayCfAsXML(postData.getInvoiceConfiguration().getDisplayCfAsXML());
         }
         if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayChargesPeriods())) {
-        	invoiceConfiguration.setDisplayChargesPeriods(postData.getInvoiceConfiguration().getDisplayChargesPeriods());
+            invoiceConfiguration.setDisplayChargesPeriods(postData.getInvoiceConfiguration().getDisplayChargesPeriods());
         }
         invoiceConfiguration.setProvider(provider);
         provider.setInvoiceConfiguration(invoiceConfiguration);
-        
-        
 
         provider.setRecognizeRevenue(postData.isRecognizeRevenue());
-        
+
         provider = providerService.update(provider, currentUser);
 
         // populate customFields
@@ -433,11 +430,11 @@ public class ProviderApi extends BaseApi {
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
-        
-		if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && provider.getId()
-				.equals(currentUser.getProvider().getId())))) {
-			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
-		}
+
+        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && provider.getId()
+            .equals(currentUser.getProvider().getId())))) {
+            throw new LoginException("User has no permission to access provider " + provider.getCode());
+        }
 
         GetTradingConfigurationResponseDto result = new GetTradingConfigurationResponseDto();
 
@@ -481,12 +478,12 @@ public class ProviderApi extends BaseApi {
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
-        
-		if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || ((currentUser.hasPermission("administration", "administrationVisualization")
-				|| currentUser.hasPermission("billing", "billingVisualization") || currentUser.hasPermission("catalog", "catalogVisualization")) && provider.getId().equals(
-				currentUser.getProvider().getId())))) {
-			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
-		}
+
+        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || ((currentUser.hasPermission("administration", "administrationVisualization")
+                || currentUser.hasPermission("billing", "billingVisualization") || currentUser.hasPermission("catalog", "catalogVisualization")) && provider.getId().equals(
+            currentUser.getProvider().getId())))) {
+            throw new LoginException("User has no permission to access provider " + provider.getCode());
+        }
 
         GetInvoicingConfigurationResponseDto result = new GetInvoicingConfigurationResponseDto();
 
@@ -518,7 +515,8 @@ public class ProviderApi extends BaseApi {
         List<InvoiceSubCategory> invoiceSubCategories = invoiceSubCategoryService.list(provider);
         if (invoiceSubCategories != null) {
             for (InvoiceSubCategory invoiceSubCategory : invoiceSubCategories) {
-                result.getInvoiceSubCategories().getInvoiceSubCategory().add(new InvoiceSubCategoryDto(invoiceSubCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceSubCategory)));
+                result.getInvoiceSubCategories().getInvoiceSubCategory()
+                    .add(new InvoiceSubCategoryDto(invoiceSubCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceSubCategory)));
             }
         }
 
@@ -551,10 +549,10 @@ public class ProviderApi extends BaseApi {
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
-        
-		if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && provider.getId().equals(currentUser.getProvider().getId())) {
-			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
-		}
+
+        if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && !provider.getId().equals(currentUser.getProvider().getId())) {
+            throw new LoginException("User has no permission to access provider " + provider.getCode());
+        }
 
         GetCustomerConfigurationResponseDto result = new GetCustomerConfigurationResponseDto();
 
@@ -595,10 +593,10 @@ public class ProviderApi extends BaseApi {
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
-        
-		if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && provider.getId().equals(currentUser.getProvider().getId())) {
-			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
-		}
+
+        if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && !provider.getId().equals(currentUser.getProvider().getId())) {
+            throw new LoginException("User has no permission to access provider " + provider.getCode());
+        }
 
         GetCustomerAccountConfigurationResponseDto result = new GetCustomerAccountConfigurationResponseDto();
 
@@ -616,7 +614,7 @@ public class ProviderApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws BusinessException
      */
     public void createOrUpdate(ProviderDto postData, User currentUser) throws MeveoApiException, BusinessException {
         Provider provider = providerService.findByCode(postData.getCode());
@@ -627,51 +625,50 @@ public class ProviderApi extends BaseApi {
             update(postData, currentUser);
         }
     }
-    
-	public void updateProviderCF(ProviderDto postData, User currentUser) throws MeveoApiException {
-		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
-		}
 
-		handleMissingParameters();
+    public void updateProviderCF(ProviderDto postData, User currentUser) throws MeveoApiException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
 
-		// search for provider
-		Provider provider = providerService.findByCodeWithFetch(postData.getCode(), Arrays.asList("currency", "country", "language"));
-		if (provider == null) {
-			throw new EntityDoesNotExistsException(Provider.class, postData.getCode());
-		}
+        handleMissingParameters();
 
-		if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") 
-				|| (currentUser.hasPermission("administration", "administrationManagement") && provider.getId()
-				.equals(currentUser.getProvider().getId())))) {
-			throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
-		}
+        // search for provider
+        Provider provider = providerService.findByCodeWithFetch(postData.getCode(), Arrays.asList("currency", "country", "language"));
+        if (provider == null) {
+            throw new EntityDoesNotExistsException(Provider.class, postData.getCode());
+        }
 
-		// populate customFields
-		try {
-			populateCustomFields(postData.getCustomFields(), provider, false, currentUser);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
-		}
-	}
-    
-	public ProviderDto findProviderCF(String providerCode, User currentUser) throws MeveoApiException {
-		if (StringUtils.isBlank(providerCode)) {
-			providerCode = currentUser.getProvider().getCode();
-		}
+        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider.getId()
+            .equals(currentUser.getProvider().getId())))) {
+            throw new LoginException("User has no permission to manage provider " + provider.getCode());
+        }
 
-		Provider provider = providerService.findByCode(providerCode);
-		if (provider != null) {
-			if (currentUser.hasPermission("superAdmin", "superAdminManagement")
-					|| (currentUser.hasPermission("administration", "administrationVisualization") && provider.getId().equals(currentUser.getProvider().getId()))) {
-				return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider), false);
-			} else {
-				throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.toString());
-			}
-		}
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), provider, false, currentUser);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
+    }
 
-		throw new EntityDoesNotExistsException(Provider.class, providerCode);
-	}
-    
+    public ProviderDto findProviderCF(String providerCode, User currentUser) throws MeveoApiException {
+        if (StringUtils.isBlank(providerCode)) {
+            providerCode = currentUser.getProvider().getCode();
+        }
+
+        Provider provider = providerService.findByCode(providerCode);
+        if (provider != null) {
+            if (currentUser.hasPermission("superAdmin", "superAdminManagement")
+                    || (currentUser.hasPermission("administration", "administrationVisualization") && provider.getId().equals(currentUser.getProvider().getId()))) {
+                return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider), false);
+            } else {
+                throw new LoginException("User has no permission to access provider " + provider.getCode());
+            }
+        }
+
+        throw new EntityDoesNotExistsException(Provider.class, providerCode);
+    }
+
 }
