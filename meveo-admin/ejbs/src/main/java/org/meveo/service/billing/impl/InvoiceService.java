@@ -926,18 +926,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<Invoice> findInvoiceAdjustmentByInvoice(Invoice adjustedInvoice) throws BusinessException {
-		QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null, adjustedInvoice.getProvider());
-		qb.addCriterionEntity("adjustedInvoice", adjustedInvoice);
-		qb.addCriterionEntity("invoiceType.invoiceType",invoiceTypeService.getDefaultAdjustement(adjustedInvoice.getAuditable().getCreator()));
-
-		try {
-			return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
 
 	public List<Invoice> findInvoicesByType(InvoiceType invoiceType, BillingAccount ba) {
 		List<Invoice> result = new ArrayList<Invoice>();

@@ -475,7 +475,7 @@
 
 								<p:rowExpansion>
 									<p:dataTable
-										value="#{invoiceBean.findInvoiceAdjustmentByInvoice(entity)}"
+										value="#{invoiceBean.getLinkedInvoices(entity)}"
 										var="obj" reflow="false" styleClass="invoice-adjustment-table">
 										<p:column headerText="#{messages['invoice.adjustment.number']}">
 											<h:link value="#{obj.invoiceNumber}"

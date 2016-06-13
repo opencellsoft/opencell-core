@@ -772,19 +772,13 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 	public void setDetailedInvoiceAdjustment(Boolean detailedInvoiceAdjustment) {
 		this.detailedInvoiceAdjustment = detailedInvoiceAdjustment;
 	}
-	
-	public List<Invoice> findInvoiceAdjustmentByInvoice(Invoice adjustedInvoice) {
-		try {
-			return invoiceService.findInvoiceAdjustmentByInvoice(adjustedInvoice);
-		} catch (BusinessException e) {
-			log.error("Error on geting InvoiceAdjustmentByInvoice",e);
-		}
-		return null;
-	}
 
 	public long getBillingAccountId() {
 		return billingAccountId;
 	}
 	
+	public Set<Invoice> getLinkedInvoices(Invoice invoice){
+		return invoiceService.refreshOrRetrieve(invoice).getLinkedInvoices();
+	}
 
 }
