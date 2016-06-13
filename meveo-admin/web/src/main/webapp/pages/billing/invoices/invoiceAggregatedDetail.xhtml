@@ -56,7 +56,7 @@
 						submitPartialProcess=":tabView:formId"
 						backingBean="#{aggregatedDetailInvoiceBean}"
 						showEnableDisableButton="true">
-						<hftl:formField field="invoiceType"
+						<hftl:formField field="invoiceType" required="true"
 							label="#{messages['invoice.invoiceType']}" valueLabelField="code"
 							listBean="#{invoiceTypeBean}"></hftl:formField>
 						<hftl:formField id="billingAccountSelectedId"
@@ -67,7 +67,8 @@
 							label="#{messages['invoice.dueDate']}">
 							<p:calendar event="change" id="dueDate"
 								value="#{aggregatedDetailInvoiceBean.entity.dueDate}"
-								required="true">
+								required="true"
+								pattern="#{paramBean.getProperty('meveo.dateFormat', 'YYYY-mm-dd')}">
 								<p:ajax event="dateSelect"
 									listener="#{aggregatedDetailInvoiceBean.handleDateSelect}"></p:ajax>
 							</p:calendar>

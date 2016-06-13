@@ -165,7 +165,7 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 		selectedInvoice = null;
 	}
 
-	public void importFromLinkedInvoices() {
+	public void importFromLinkedInvoices() throws BusinessException {
 		tempCategoryInvoiceAggregates = new ArrayList<CategoryInvoiceAgregate>();
 
 		if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
@@ -254,6 +254,8 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 				}
 			}
 		}
+
+		refreshTotal();
 	}
 
 	public List<CategoryInvoiceAgregate> getCategoryInvoiceAggregates() {
@@ -283,16 +285,18 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 		return result;
 	}
 
-	public void deleteLinkedInvoiceCategory() {
+	public void deleteLinkedInvoiceCategory() throws BusinessException {
 		tempCategoryInvoiceAggregates.remove(selectedCategoryInvoiceAgregate);
+		refreshTotal();
 	}
 
-	public void deleteLinkedInvoiceSubCategory() {
+	public void deleteLinkedInvoiceSubCategory() throws BusinessException {
 		for (CategoryInvoiceAgregate cat : tempCategoryInvoiceAggregates) {
 			if (cat.equals(selectedSubCategoryInvoiceAgregate.getCategoryInvoiceAgregate())) {
 				cat.getSubCategoryInvoiceAgregates().remove(selectedSubCategoryInvoiceAgregate);
 			}
 		}
+		refreshTotal();
 	}
 
 	public void onCellEdit(CellEditEvent event) {
@@ -395,6 +399,8 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 
 	public void addAggregatedLine() throws BusinessException {
 		addInvoiceSubCategory(selectedInvoiceSubCategory);
+
+		refreshTotal();
 	}
 
 	@SuppressWarnings("unused")
@@ -528,11 +534,28 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String result = super.saveOrUpdate(killConversation);
 
+		// needed for invoice sequence no
+		BillingAccount billingAccount = billingAccountService.refreshOrRetrieve(entity.getBillingAccount());
+		entity.setBillingAccount(billingAccount);
+
+		entity.setInvoiceDate(new Date());
+		entity.setInvoiceNumber(invoiceService.getInvoiceNumber(entity, getCurrentUser()));
+
+		refreshTotal(true);
+
+		return result;
+	}
+
+	public void refreshTotal() throws BusinessException {
+		refreshTotal(false);
+	}
+
+	public void refreshTotal(boolean create) throws BusinessException {
 		BillingAccount billingAccount = billingAccountService.refreshOrRetrieve(entity.getBillingAccount());
 		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
 		if (userAccounts == null || userAccounts.isEmpty()) {
 			messages.error("BillingAccount with code=" + entity.getBillingAccount().getCode() + " has no userAccount.");
-			return "";
+			return;
 		}
 		// TODO : userAccount on dto ?
 		UserAccount userAccount = userAccounts.get(0);
@@ -551,9 +574,13 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 			BigDecimal catAmountTax = BigDecimal.ZERO;
 			BigDecimal catAmountWithTax = BigDecimal.ZERO;
 
-			invoiceAgregateService.create(cat, getCurrentUser());
+			if (create) {
+				invoiceAgregateService.create(cat, getCurrentUser());
+			}
 			for (SubCategoryInvoiceAgregate subCat : cat.getSubCategoryInvoiceAgregates()) {
-				invoiceAgregateService.create(subCat, getCurrentUser());
+				if (create) {
+					invoiceAgregateService.create(subCat, getCurrentUser());
+				}
 				catAmountWithoutTax = catAmountWithoutTax.add(subCat.getAmountWithoutTax());
 				catAmountTax = catAmountTax.add(subCat.getAmountTax());
 				catAmountWithTax = catAmountWithTax.add(subCat.getAmountWithTax());
@@ -612,8 +639,10 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 			invoiceAmountWithTax = invoiceAmountWithTax.add(cat.getAmountWithTax());
 		}
 
-		for (Entry<Long, TaxInvoiceAgregate> entry : taxInvoiceAgregateMap.entrySet()) {
-			invoiceAgregateService.create(entry.getValue(), currentUser);
+		if (create) {
+			for (Entry<Long, TaxInvoiceAgregate> entry : taxInvoiceAgregateMap.entrySet()) {
+				invoiceAgregateService.create(entry.getValue(), currentUser);
+			}
 		}
 
 		entity.setAmountWithoutTax(invoiceAmountWithoutTax);
@@ -631,24 +660,10 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 			netToPay = entity.getAmountWithTax().add(balance);
 		}
 		entity.setNetToPay(netToPay);
-		invoiceService.update(entity, currentUser);
 
-		return result;
-	}
-
-	public void refreshTotal() throws BusinessException {
-		BigDecimal netToPay = entity.getAmountWithTax();
-		if (!getCurrentProvider().isEntreprise() && includeBalance) {
-			BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, entity.getBillingAccount().getCustomerAccount().getCode(), entity.getDueDate(),
-					entity.getProvider());
-
-			if (balance == null) {
-				throw new BusinessException("account balance calculation failed");
-			}
-			netToPay = entity.getAmountWithTax().add(balance);
+		if (create) {
+			invoiceService.update(entity, getCurrentUser());
 		}
-		entity.setNetToPay(netToPay);
-		invoiceService.update(entity, currentUser);
 	}
 
 	public long getBillingAccountId() {
