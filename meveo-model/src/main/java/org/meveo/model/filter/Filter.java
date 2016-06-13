@@ -21,7 +21,7 @@ import org.meveo.model.*;
 @Entity
 @ModuleItem
 @ExportIdentifier({ "code", "provider" })
-@CustomFieldEntity(cftCodePrefix = "FILTER", cftCodeFields = "code")
+@CustomFieldEntity(cftCodePrefix = "FILTER", cftCodeFields = "code", isManuallyManaged = false)
 @Table(name = "MEVEO_FILTER")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_FILTER_SEQ")
 public class Filter extends BusinessCFEntity {
