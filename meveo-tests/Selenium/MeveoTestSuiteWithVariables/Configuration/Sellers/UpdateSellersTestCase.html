@@ -198,17 +198,17 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>//div[9]/div/span</td>
+	<td>id=sellerFormId:tabView:sellerSequenceChgPopup_title</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>//div[9]/div/span</td>
+	<td>id=sellerFormId:tabView:sellerSequenceChgPopup_title</td>
 	<td></td>
 </tr>
 <tr>
 	<td>if</td>
-	<td>${InvoiceTypeBool}==true</td>
+	<td>${InvoiceTypeBool}==false</td>
 	<td></td>
 </tr>
 <tr>
@@ -238,26 +238,6 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${InvoiceSequenceSizeBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${UpdateInvoiceSequenceSize}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${UpdateInvoiceSequenceSize}</td>
-	<td>${InvoiceSequenceSize1Value}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
 	<td>${CurrentInvoiceNumberBool}==true</td>
 	<td></td>
 </tr>
@@ -270,6 +250,26 @@
 	<td>type</td>
 	<td>${UpdateCurrentInvoiceNumber}</td>
 	<td>${CurrentInvoiceNumber1Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${InvoiceSequenceSizeBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${UpdateInvoiceSequenceSize}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${UpdateInvoiceSequenceSize}</td>
+	<td>${InvoiceSequenceSize1Value}</td>
 </tr>
 <tr>
 	<td>endIf</td>
