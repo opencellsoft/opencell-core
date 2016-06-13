@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="63d882e4-12ba-48cb-9cf8-b557b7f5787f" activeEnvironment="Default" name="Full WS Test Entities" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="63d882e4-12ba-48cb-9cf8-b557b7f5787f" activeEnvironment="Default" name="Full WS Test Entities" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
   <con:entry key="TestSuite" value="&lt;all>"/>
@@ -22567,7 +22567,769 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <invoiceConfiguration>
                   <displayFreeTransacInInvoice>false</displayFreeTransacInInvoice>
                </invoiceConfiguration>
-            </provider>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>${#Project#entityPrefix}_${#TestSuite#index}_Username.Test.Edward.1</con:username><con:password>password</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:setupScript/><con:properties><con:property><con:name>meveoUsername</con:name><con:value>${#Project#entityPrefix}_${#TestSuite#index}_Username.Test.Edward.1</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>${#Project#entityPrefix}_${#TestSuite#index}_Password</con:value></con:property></con:properties></con:testCase><con:testCase id="4c6e35c9-0104-463b-8a28-5205e44f3406" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD User" searchProperties="true"><con:settings/><con:testStep type="request" name="create User with All Vals" id="d77ccf0f-17a9-43c6-b490-38ea856a9bb7"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createUser</con:operation><con:request name="create User with All Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a7b6b132-bf5d-466b-94af-01689de7367e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+            </provider>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>${#Project#entityPrefix}_${#TestSuite#index}_Username.Test.Edward.1</con:username><con:password>password</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get trading configuration - AUTHORIZATION_SUPERADMIN" id="fb7790f6-59a6-47e8-8cf6-e4a0bf444af2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findTradingConfiguration</con:operation><con:request name="Get trading configuration - AUTHORIZATION_SUPERADMIN" id="ed54fb32-4e58-4626-8bac-8b2a7c8b9259"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findTradingConfiguration>\r
+         <!--Optional:-->\r
+         <providerCode>DEMO</providerCode>\r
+      </ws:findTradingConfiguration>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="885ca882-1d14-4c2a-9991-ca9551c86aa1"/><con:assertion type="XPath Match" id="1df1196d-1fec-4a32-917c-bf92d8605212" name="response"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
+//ns2:findTradingConfigurationResponse[1]/return[1]/actionStatus[1]/status[1]</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="1df1196d-1fec-4a32-917c-bf92d8605212" name="countries"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
+//ns2:findTradingConfigurationResponse[1]/return[1]/countries</path><content><![CDATA[<countries>
+               <country countryCode="US" name="United States">
+                  <currencyCode>USD</currencyCode>
+                  <languageCode>ENG</languageCode>
+               </country>
+               <country countryCode="FR" name="France">
+                  <currencyCode>EUR</currencyCode>
+                  <languageCode>FRA</languageCode>
+               </country>
+            </countries>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="1df1196d-1fec-4a32-917c-bf92d8605212" name="currencies"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
+//ns2:findTradingConfigurationResponse[1]/return[1]/currencies</path><content><![CDATA[ <currencies>
+               <currency code="USD">
+                  <description>US Dollar</description>
+               </currency>
+               <currency code="EUR">
+                  <description>France</description>
+               </currency>
+               <currency code="TND">
+                  <description>TND</description>
+               </currency>
+               <currency code="MAD">
+                  <description>MAD</description>
+               </currency>
+            </currencies>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="1df1196d-1fec-4a32-917c-bf92d8605212" name="languages"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
+//ns2:findTradingConfigurationResponse[1]/return[1]/languages</path><content><![CDATA[<languages>
+               <language code="ENG">
+                  <description>English</description>
+               </language>
+               <language code="FRA">
+                  <description>French</description>
+               </language>
+            </languages>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get trading configuration - MEVEO_USER - OK" id="8e669821-776b-429b-a08e-90a5a95188ce"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findTradingConfiguration</con:operation><con:request name="Get trading configuration - MEVEO_USER - OK" id="ed54fb32-4e58-4626-8bac-8b2a7c8b9259"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findTradingConfiguration>\r
+         <!--Optional:-->\r
+         <providerCode>DEMO</providerCode>\r
+      </ws:findTradingConfiguration>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="885ca882-1d14-4c2a-9991-ca9551c86aa1"/><con:assertion type="XPath Match" id="1df1196d-1fec-4a32-917c-bf92d8605212" name="response"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
+//ns2:findTradingConfigurationResponse[1]/return[1]/actionStatus[1]/status[1]</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="1df1196d-1fec-4a32-917c-bf92d8605212" name="countries"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
+//ns2:findTradingConfigurationResponse[1]/return[1]/countries</path><content><![CDATA[<countries>
+               <country countryCode="US" name="United States">
+                  <currencyCode>USD</currencyCode>
+                  <languageCode>ENG</languageCode>
+               </country>
+               <country countryCode="FR" name="France">
+                  <currencyCode>EUR</currencyCode>
+                  <languageCode>FRA</languageCode>
+               </country>
+            </countries>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="1df1196d-1fec-4a32-917c-bf92d8605212" name="currencies"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
+//ns2:findTradingConfigurationResponse[1]/return[1]/currencies</path><content><![CDATA[ <currencies>
+               <currency code="USD">
+                  <description>US Dollar</description>
+               </currency>
+               <currency code="EUR">
+                  <description>France</description>
+               </currency>
+               <currency code="TND">
+                  <description>TND</description>
+               </currency>
+               <currency code="MAD">
+                  <description>MAD</description>
+               </currency>
+            </currencies>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="1df1196d-1fec-4a32-917c-bf92d8605212" name="languages"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
+//ns2:findTradingConfigurationResponse[1]/return[1]/languages</path><content><![CDATA[<languages>
+               <language code="ENG">
+                  <description>English</description>
+               </language>
+               <language code="FRA">
+                  <description>French</description>
+               </language>
+            </languages>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get trading configuration - AUTHORIZATION_MANUAL" id="c0658bdf-1575-4c3e-b77e-eed8ec2353bd"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findTradingConfiguration</con:operation><con:request name="Get trading configuration - AUTHORIZATION_MANUAL" id="ed54fb32-4e58-4626-8bac-8b2a7c8b9259"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findTradingConfiguration>\r
+         <!--Optional:-->\r
+         <providerCode>${#Project#entityPrefix}_${#TestSuite#index}_Provider3</providerCode>\r
+      </ws:findTradingConfiguration>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="885ca882-1d14-4c2a-9991-ca9551c86aa1"/><con:assertion type="Simple Contains" id="bed87604-be38-4786-a19f-c3d2c347e1d0" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>${#Project#entityPrefix}_${#TestSuite#index}_Username.Test.Edward.1</con:username><con:password>password</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get trading configuration - MEVEO_USER - KO" id="3ce3c1ea-7822-498f-88bf-1c4c2abff2c8"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findTradingConfiguration</con:operation><con:request name="Get trading configuration - MEVEO_USER - KO" id="ed54fb32-4e58-4626-8bac-8b2a7c8b9259"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findTradingConfiguration>\r
+         <!--Optional:-->\r
+         <providerCode>${#Project#entityPrefix}_${#TestSuite#index}_Provider3</providerCode>\r
+      </ws:findTradingConfiguration>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="885ca882-1d14-4c2a-9991-ca9551c86aa1"/><con:assertion type="Simple Contains" id="3a12f81c-60f7-4d93-b2a3-6944b34aa83e" name="Contains"><con:configuration><token>AUTHENTICATION_AUTHORIZATION_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get invoicing configuration - AUTHORIZATION_SUPERADMIN" id="f70c803d-59b2-4db0-b5f2-1a21f5ea41c0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findInvoicingConfiguration</con:operation><con:request name="Get invoicing configuration - AUTHORIZATION_SUPERADMIN" id="02ac6afc-852b-40a4-8578-fcbe411ad3fa"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findInvoicingConfiguration>\r
+         <!--Optional:-->\r
+         <providerCode>DEMO</providerCode>\r
+      </ws:findInvoicingConfiguration>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8c592887-8a73-4e22-a1a4-56f44ae89b79"/><con:assertion type="XPath Match" id="332ab8f1-5f0b-4074-aa10-3bfe3c60b213" name="calendar"><con:configuration><path>//return[1]/calendars</path><content><![CDATA[<calendars>
+               <calendar code="MONTHLY">
+                  <description>Monthly Calendar</description>
+                  <calendarType>YEARLY</calendarType>
+                  <days day="1" month="JANUARY"/>
+                  <days day="1" month="FEBRUARY"/>
+                  <days day="1" month="MARCH"/>
+                  <days day="1" month="APRIL"/>
+                  <days day="1" month="MAY"/>
+                  <days day="1" month="JUNE"/>
+                  <days day="1" month="JULY"/>
+                  <days day="1" month="AUGUST"/>
+                  <days day="1" month="SEPTEMBER"/>
+                  <days day="1" month="OCTOBER"/>
+                  <days day="1" month="NOVEMBER"/>
+                  <days day="1" month="DECEMBER"/>
+               </calendar>
+               <calendar code="One period">
+                  <description>One period Calendar</description>
+                  <calendarType>PERIOD</calendarType>
+                  <periodLength>7</periodLength>
+                  <periodUnit>DAY_OF_MONTH</periodUnit>
+                  <nbPeriods>1</nbPeriods>
+               </calendar>
+               <calendar code="Multi period">
+                  <description>Multi period Calendar</description>
+                  <calendarType>PERIOD</calendarType>
+                  <periodLength>7</periodLength>
+                  <periodUnit>DAY_OF_MONTH</periodUnit>
+                  <nbPeriods>6</nbPeriods>
+               </calendar>
+            </calendars>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="332ab8f1-5f0b-4074-aa10-3bfe3c60b213" name="taxes"><con:configuration><path>//return[1]/taxes</path><content><![CDATA[<taxes>
+               <tax code="TAX_00" description="0 Percent Tax">
+                  <percent>0.000000000000</percent>
+               </tax>
+               <tax code="TAX_05" description="5 Percent Tax">
+                  <percent>5.000000000000</percent>
+               </tax>
+               <tax code="TAX_18" description="18 Percent Tax">
+                  <percent>18.000000000000</percent>
+               </tax>
+            </taxes>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="332ab8f1-5f0b-4074-aa10-3bfe3c60b213" name="invoice categories"><con:configuration><path>//return[1]/invoiceCategories</path><content>&lt;invoiceCategories>
+               &lt;invoiceCategory code="CONSUMPTION" description="Consumption"/>
+               &lt;invoiceCategory code="SUBSCRIPTION" description="Subscription"/>
+            &lt;/invoiceCategories>
+</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="332ab8f1-5f0b-4074-aa10-3bfe3c60b213" name="invoice sub categories"><con:configuration><path>//return[1]/invoiceSubCategories</path><content><![CDATA[<invoiceSubCategories>
+               <invoiceSubCategory code="CMP_DATA" description="Consumption Data">
+                  <invoiceCategory>CONSUMPTION</invoiceCategory>
+                  <accountingCode>120.121.21.2</accountingCode>
+               </invoiceSubCategory>
+               <invoiceSubCategory code="SUB_DATA" description="Subscription Data">
+                  <invoiceCategory>SUBSCRIPTION</invoiceCategory>
+                  <accountingCode>120.121.21.4</accountingCode>
+               </invoiceSubCategory>
+            </invoiceSubCategories>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="332ab8f1-5f0b-4074-aa10-3bfe3c60b213" name="billing cycles"><con:configuration><path>//return[1]/billingCycles</path><content><![CDATA[<billingCycles>
+               <billingCycle code="CYC_INV_MT_1" description="Monthly Invoice Cycle 1">
+                  <invoiceDateDelay>4</invoiceDateDelay>
+                  <dueDateDelay>2</dueDateDelay>
+                  <calendar>MONTHLY</calendar>
+               </billingCycle>
+               <billingCycle code="CYC_INV_MT_2" description="Monthly Invoice Cycle 2">
+                  <invoiceDateDelay>4</invoiceDateDelay>
+                  <dueDateDelay>2</dueDateDelay>
+                  <calendar>MONTHLY</calendar>
+               </billingCycle>
+            </billingCycles>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="332ab8f1-5f0b-4074-aa10-3bfe3c60b213" name="termination reasons"><con:configuration><path>//return[1]/terminationReasons</path><content><![CDATA[<terminationReasons>
+               <terminationReason code="TERM_REASON_1" description="Agreement Reimbursement Charge">
+                  <applyAgreement>true</applyAgreement>
+                  <applyReimbursment>true</applyReimbursment>
+                  <applyTerminationCharges>true</applyTerminationCharges>
+               </terminationReason>
+               <terminationReason code="TERM_REASON_2" description="Agreement">
+                  <applyAgreement>true</applyAgreement>
+                  <applyReimbursment>false</applyReimbursment>
+                  <applyTerminationCharges>false</applyTerminationCharges>
+               </terminationReason>
+               <terminationReason code="TERM_REASON_3" description="Charge">
+                  <applyAgreement>false</applyAgreement>
+                  <applyReimbursment>true</applyReimbursment>
+                  <applyTerminationCharges>false</applyTerminationCharges>
+               </terminationReason>
+            </terminationReasons>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get invoicing configuration - MEVEO_USER - OK" id="7606d9f6-6e21-46a0-8e94-7a31437f5814"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findInvoicingConfiguration</con:operation><con:request name="Get invoicing configuration - MEVEO_USER - OK" id="02ac6afc-852b-40a4-8578-fcbe411ad3fa"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findInvoicingConfiguration>\r
+         <!--Optional:-->\r
+         <providerCode>DEMO</providerCode>\r
+      </ws:findInvoicingConfiguration>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8c592887-8a73-4e22-a1a4-56f44ae89b79"/><con:assertion type="XPath Match" id="332ab8f1-5f0b-4074-aa10-3bfe3c60b213" name="calendar"><con:configuration><path>//return[1]/calendars</path><content><![CDATA[<calendars>
+               <calendar code="MONTHLY">
+                  <description>Monthly Calendar</description>
+                  <calendarType>YEARLY</calendarType>
+                  <days day="1" month="JANUARY"/>
+                  <days day="1" month="FEBRUARY"/>
+                  <days day="1" month="MARCH"/>
+                  <days day="1" month="APRIL"/>
+                  <days day="1" month="MAY"/>
+                  <days day="1" month="JUNE"/>
+                  <days day="1" month="JULY"/>
+                  <days day="1" month="AUGUST"/>
+                  <days day="1" month="SEPTEMBER"/>
+                  <days day="1" month="OCTOBER"/>
+                  <days day="1" month="NOVEMBER"/>
+                  <days day="1" month="DECEMBER"/>
+               </calendar>
+               <calendar code="One period">
+                  <description>One period Calendar</description>
+                  <calendarType>PERIOD</calendarType>
+                  <periodLength>7</periodLength>
+                  <periodUnit>DAY_OF_MONTH</periodUnit>
+                  <nbPeriods>1</nbPeriods>
+               </calendar>
+               <calendar code="Multi period">
+                  <description>Multi period Calendar</description>
+                  <calendarType>PERIOD</calendarType>
+                  <periodLength>7</periodLength>
+                  <periodUnit>DAY_OF_MONTH</periodUnit>
+                  <nbPeriods>6</nbPeriods>
+               </calendar>
+            </calendars>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="332ab8f1-5f0b-4074-aa10-3bfe3c60b213" name="taxes"><con:configuration><path>//return[1]/taxes</path><content><![CDATA[<taxes>
+               <tax code="TAX_00" description="0 Percent Tax">
+                  <percent>0.000000000000</percent>
+               </tax>
+               <tax code="TAX_05" description="5 Percent Tax">
+                  <percent>5.000000000000</percent>
+               </tax>
+               <tax code="TAX_18" description="18 Percent Tax">
+                  <percent>18.000000000000</percent>
+               </tax>
+            </taxes>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="332ab8f1-5f0b-4074-aa10-3bfe3c60b213" name="invoice categories"><con:configuration><path>//return[1]/invoiceCategories</path><content>&lt;invoiceCategories>
+               &lt;invoiceCategory code="CONSUMPTION" description="Consumption"/>
+               &lt;invoiceCategory code="SUBSCRIPTION" description="Subscription"/>
+            &lt;/invoiceCategories>
+</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="332ab8f1-5f0b-4074-aa10-3bfe3c60b213" name="invoice sub categories"><con:configuration><path>//return[1]/invoiceSubCategories</path><content><![CDATA[<invoiceSubCategories>
+               <invoiceSubCategory code="CMP_DATA" description="Consumption Data">
+                  <invoiceCategory>CONSUMPTION</invoiceCategory>
+                  <accountingCode>120.121.21.2</accountingCode>
+               </invoiceSubCategory>
+               <invoiceSubCategory code="SUB_DATA" description="Subscription Data">
+                  <invoiceCategory>SUBSCRIPTION</invoiceCategory>
+                  <accountingCode>120.121.21.4</accountingCode>
+               </invoiceSubCategory>
+            </invoiceSubCategories>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="332ab8f1-5f0b-4074-aa10-3bfe3c60b213" name="billing cycles"><con:configuration><path>//return[1]/billingCycles</path><content><![CDATA[<billingCycles>
+               <billingCycle code="CYC_INV_MT_1" description="Monthly Invoice Cycle 1">
+                  <invoiceDateDelay>4</invoiceDateDelay>
+                  <dueDateDelay>2</dueDateDelay>
+                  <calendar>MONTHLY</calendar>
+               </billingCycle>
+               <billingCycle code="CYC_INV_MT_2" description="Monthly Invoice Cycle 2">
+                  <invoiceDateDelay>4</invoiceDateDelay>
+                  <dueDateDelay>2</dueDateDelay>
+                  <calendar>MONTHLY</calendar>
+               </billingCycle>
+            </billingCycles>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="332ab8f1-5f0b-4074-aa10-3bfe3c60b213" name="termination reasons"><con:configuration><path>//return[1]/terminationReasons</path><content><![CDATA[<terminationReasons>
+               <terminationReason code="TERM_REASON_1" description="Agreement Reimbursement Charge">
+                  <applyAgreement>true</applyAgreement>
+                  <applyReimbursment>true</applyReimbursment>
+                  <applyTerminationCharges>true</applyTerminationCharges>
+               </terminationReason>
+               <terminationReason code="TERM_REASON_2" description="Agreement">
+                  <applyAgreement>true</applyAgreement>
+                  <applyReimbursment>false</applyReimbursment>
+                  <applyTerminationCharges>false</applyTerminationCharges>
+               </terminationReason>
+               <terminationReason code="TERM_REASON_3" description="Charge">
+                  <applyAgreement>false</applyAgreement>
+                  <applyReimbursment>true</applyReimbursment>
+                  <applyTerminationCharges>false</applyTerminationCharges>
+               </terminationReason>
+            </terminationReasons>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get invoicing configuration - AUTHORIZATION_MANUAL" id="62a04aa0-0ccb-4dc6-9201-e6897bf3a90a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findInvoicingConfiguration</con:operation><con:request name="Get invoicing configuration - AUTHORIZATION_MANUAL" id="02ac6afc-852b-40a4-8578-fcbe411ad3fa"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findInvoicingConfiguration>\r
+         <!--Optional:-->\r
+         <providerCode>DEMO</providerCode>\r
+      </ws:findInvoicingConfiguration>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8c592887-8a73-4e22-a1a4-56f44ae89b79"/><con:credentials><con:username>${#Project#entityPrefix}_${#TestSuite#index}_Username.Test.Edward.1</con:username><con:password>password</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get invoicing configuration - MEVEO_USER - KO" id="b5d8cb74-208e-43dc-b246-ac7f6517f92d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findInvoicingConfiguration</con:operation><con:request name="Get invoicing configuration - MEVEO_USER - KO" id="02ac6afc-852b-40a4-8578-fcbe411ad3fa"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findInvoicingConfiguration>\r
+         <!--Optional:-->\r
+         <providerCode>${#Project#entityPrefix}_${#TestSuite#index}_Provider3</providerCode>\r
+      </ws:findInvoicingConfiguration>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8c592887-8a73-4e22-a1a4-56f44ae89b79"/><con:assertion type="Simple Contains" id="faf1b082-3eb0-49c7-a647-b0bc698dcd01" name="Contains"><con:configuration><token>AUTHENTICATION_AUTHORIZATION_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get customer configuration - AUTHORIZATION_SUPERADMIN" id="913bed18-b03c-4c89-97ad-f434cec1231b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomerConfiguration</con:operation><con:request name="Get customer configuration - AUTHORIZATION_SUPERADMIN" id="a0aec7d8-4330-4b28-b8ae-d4ea3a933b24"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomerConfiguration>\r
+         <!--Optional:-->\r
+         <providerCode>DEMO</providerCode>\r
+      </ws:findCustomerConfiguration>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f6b41b91-f398-4af1-962f-3eef46f4da3c"/><con:assertion type="XPath Match" id="fbff8fa8-9360-4ae3-9e78-2c4daa944618" name="brands"><con:configuration><path>//return/customerBrands</path><content><![CDATA[<customerBrands>
+               <customerBrand>
+                  <code>DEFAULT</code>
+                  <description>Demo Product and Services</description>
+               </customerBrand>
+            </customerBrands>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="fbff8fa8-9360-4ae3-9e78-2c4daa944618" name="categories"><con:configuration><path>//return/customerCategories</path><content><![CDATA[<customerCategories>
+               <customerCategory>
+                  <code>PROSPECT</code>
+                  <description>Prospect</description>
+                  <exoneratedFromTaxes>false</exoneratedFromTaxes>
+               </customerCategory>
+               <customerCategory>
+                  <code>CLIENT</code>
+                  <description>Client</description>
+                  <exoneratedFromTaxes>false</exoneratedFromTaxes>
+               </customerCategory>
+            </customerCategories>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="fbff8fa8-9360-4ae3-9e78-2c4daa944618" name="titles"><con:configuration><path>//return/titles</path><content><![CDATA[<titles>
+               <title code="AGCE">
+                  <description>Agency</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="ASSO">
+                  <description>Association</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="CAB">
+                  <description>Office</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="COLL">
+                  <description>College</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="COM">
+                  <description>Municipality</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="COPR">
+                  <description>Co-ownership</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="CSSE">
+                  <description>Saving office</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="EARL">
+                  <description>EARL</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="ETS">
+                  <description>Etablishment</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="EURL">
+                  <description>EURL</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="GAEC">
+                  <description>GAEC</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="HLM">
+                  <description>HLM</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="HOPI">
+                  <description>Hospital</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="INST">
+                  <description>Institute</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="LABO">
+                  <description>Laboratory</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="M">
+                  <description>Sir</description>
+                  <isCompany>false</isCompany>
+               </title>
+               <title code="MLLE">
+                  <description>Miss</description>
+                  <isCompany>false</isCompany>
+               </title>
+               <title code="MLLE_M">
+                  <description>Miss Sir</description>
+                  <isCompany>false</isCompany>
+               </title>
+               <title code="MLLES">
+                  <description>Miss</description>
+                  <isCompany>false</isCompany>
+               </title>
+               <title code="MM">
+                  <description>Sirs</description>
+                  <isCompany>false</isCompany>
+               </title>
+               <title code="MME">
+                  <description>Madam</description>
+                  <isCompany>false</isCompany>
+               </title>
+               <title code="MME_M">
+                  <description>Madam Sir</description>
+                  <isCompany>false</isCompany>
+               </title>
+               <title code="MMES">
+                  <description>Ladies</description>
+                  <isCompany>false</isCompany>
+               </title>
+               <title code="MTRE">
+                  <description>Master</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SA">
+                  <description>Limited company</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SARL">
+                  <description>SARL</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SCEA">
+                  <description>SCEA</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SCI">
+                  <description>SCI</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SCM">
+                  <description>SCM</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SCP">
+                  <description>SCP</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SELARL">
+                  <description>SELARL</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SNC">
+                  <description>SNC</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SNI">
+                  <description>SNI</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="STE">
+                  <description>Company</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SUCC">
+                  <description>Succession</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SYNDCOP">
+                  <description>Management agent</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SYNDIC">
+                  <description>Syndicate</description>
+                  <isCompany>true</isCompany>
+               </title>
+            </titles>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get customer configuration - MEVEO_USER - OK" id="ad0ca4d7-e587-4058-9edf-2674888c78b4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomerConfiguration</con:operation><con:request name="Get customer configuration - MEVEO_USER - OK" id="a0aec7d8-4330-4b28-b8ae-d4ea3a933b24"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomerConfiguration>\r
+         <!--Optional:-->\r
+         <providerCode>DEMO</providerCode>\r
+      </ws:findCustomerConfiguration>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f6b41b91-f398-4af1-962f-3eef46f4da3c"/><con:assertion type="XPath Match" id="fbff8fa8-9360-4ae3-9e78-2c4daa944618" name="brands"><con:configuration><path>//return/customerBrands</path><content><![CDATA[<customerBrands>
+               <customerBrand>
+                  <code>DEFAULT</code>
+                  <description>Demo Product and Services</description>
+               </customerBrand>
+            </customerBrands>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="fbff8fa8-9360-4ae3-9e78-2c4daa944618" name="categories"><con:configuration><path>//return/customerCategories</path><content><![CDATA[<customerCategories>
+               <customerCategory>
+                  <code>PROSPECT</code>
+                  <description>Prospect</description>
+                  <exoneratedFromTaxes>false</exoneratedFromTaxes>
+               </customerCategory>
+               <customerCategory>
+                  <code>CLIENT</code>
+                  <description>Client</description>
+                  <exoneratedFromTaxes>false</exoneratedFromTaxes>
+               </customerCategory>
+            </customerCategories>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="fbff8fa8-9360-4ae3-9e78-2c4daa944618" name="titles"><con:configuration><path>//return/titles</path><content><![CDATA[<titles>
+               <title code="AGCE">
+                  <description>Agency</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="ASSO">
+                  <description>Association</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="CAB">
+                  <description>Office</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="COLL">
+                  <description>College</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="COM">
+                  <description>Municipality</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="COPR">
+                  <description>Co-ownership</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="CSSE">
+                  <description>Saving office</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="EARL">
+                  <description>EARL</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="ETS">
+                  <description>Etablishment</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="EURL">
+                  <description>EURL</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="GAEC">
+                  <description>GAEC</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="HLM">
+                  <description>HLM</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="HOPI">
+                  <description>Hospital</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="INST">
+                  <description>Institute</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="LABO">
+                  <description>Laboratory</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="M">
+                  <description>Sir</description>
+                  <isCompany>false</isCompany>
+               </title>
+               <title code="MLLE">
+                  <description>Miss</description>
+                  <isCompany>false</isCompany>
+               </title>
+               <title code="MLLE_M">
+                  <description>Miss Sir</description>
+                  <isCompany>false</isCompany>
+               </title>
+               <title code="MLLES">
+                  <description>Miss</description>
+                  <isCompany>false</isCompany>
+               </title>
+               <title code="MM">
+                  <description>Sirs</description>
+                  <isCompany>false</isCompany>
+               </title>
+               <title code="MME">
+                  <description>Madam</description>
+                  <isCompany>false</isCompany>
+               </title>
+               <title code="MME_M">
+                  <description>Madam Sir</description>
+                  <isCompany>false</isCompany>
+               </title>
+               <title code="MMES">
+                  <description>Ladies</description>
+                  <isCompany>false</isCompany>
+               </title>
+               <title code="MTRE">
+                  <description>Master</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SA">
+                  <description>Limited company</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SARL">
+                  <description>SARL</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SCEA">
+                  <description>SCEA</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SCI">
+                  <description>SCI</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SCM">
+                  <description>SCM</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SCP">
+                  <description>SCP</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SELARL">
+                  <description>SELARL</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SNC">
+                  <description>SNC</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SNI">
+                  <description>SNI</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="STE">
+                  <description>Company</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SUCC">
+                  <description>Succession</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SYNDCOP">
+                  <description>Management agent</description>
+                  <isCompany>true</isCompany>
+               </title>
+               <title code="SYNDIC">
+                  <description>Syndicate</description>
+                  <isCompany>true</isCompany>
+               </title>
+            </titles>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get customer configuration - AUTHORIZATION_MANUAL" id="20cd5760-fa29-4065-ae64-57dff2fcfaa6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomerConfiguration</con:operation><con:request name="Get customer configuration - AUTHORIZATION_MANUAL" id="a0aec7d8-4330-4b28-b8ae-d4ea3a933b24"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomerConfiguration>\r
+         <!--Optional:-->\r
+         <providerCode>DEMO</providerCode>\r
+      </ws:findCustomerConfiguration>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f6b41b91-f398-4af1-962f-3eef46f4da3c"/><con:assertion type="Simple Contains" id="3ae2d04d-1582-4540-b060-5874dd561018" name="Contains"><con:configuration><token>AUTHENTICATION_AUTHORIZATION_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>${#Project#entityPrefix}_${#TestSuite#index}_Username.Test.Edward.1</con:username><con:password>password</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get customer configuration - MEVEO_USER - KO" id="7bdb38f9-4423-4a03-b622-83b3963d09ad"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomerConfiguration</con:operation><con:request name="Get customer configuration - MEVEO_USER - KO" id="a0aec7d8-4330-4b28-b8ae-d4ea3a933b24"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomerConfiguration>\r
+         <!--Optional:-->\r
+         <providerCode>${#Project#entityPrefix}_${#TestSuite#index}_Provider3</providerCode>\r
+      </ws:findCustomerConfiguration>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f6b41b91-f398-4af1-962f-3eef46f4da3c"/><con:assertion type="Simple Contains" id="350bdad4-f229-4657-a729-8c732c96e09f" name="Contains"><con:configuration><token>AUTHENTICATION_AUTHORIZATION_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get customer account configuration - AUTHORIZATION_SUPERADMIN" id="1c2a3d3c-fb41-4268-a6ee-adceccfe6490"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomerAccountConfiguration</con:operation><con:request name="Get customer account configuration - AUTHORIZATION_SUPERADMIN" id="38c686c1-3751-4e2c-9648-4b5c0163f9b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomerAccountConfiguration>\r
+         <!--Optional:-->\r
+         <providerCode>DEMO</providerCode>\r
+      </ws:findCustomerAccountConfiguration>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4b27fa83-e5f6-465a-a753-991173e27242"/><con:assertion type="Simple Contains" id="c707420d-cda2-4cd4-9f55-c7850f362d0d" name="Contains"><con:configuration><token><![CDATA[<paymentMethods>CHECK</paymentMethods>
+            <paymentMethods>DIRECTDEBIT</paymentMethods>
+            <paymentMethods>TIP</paymentMethods>
+            <paymentMethods>WIRETRANSFER</paymentMethods>
+            <paymentMethods>CARD</paymentMethods>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="68bcea6c-e50a-4f7d-90a3-6516317c92cf" name="XPath Match"><con:configuration><path>//return/creditCategories</path><content><![CDATA[<creditCategories>
+               <creditCategory>
+                  <code>PART_C</code>
+                  <description>Part C</description>
+               </creditCategory>
+               <creditCategory>
+                  <code>PART_M</code>
+                  <description>Part M</description>
+               </creditCategory>
+               <creditCategory>
+                  <code>PRO</code>
+                  <description>PRO</description>
+               </creditCategory>
+               <creditCategory>
+                  <code>VIP</code>
+                  <description>VIP</description>
+               </creditCategory>
+               <creditCategory>
+                  <code>NEWCUSTOMER</code>
+                  <description>New Customer</description>
+               </creditCategory>
+            </creditCategories>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get customer account configuration - MEVEO_USER - OK" id="7e82edd2-e573-4a56-bf65-445eed065e56"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomerAccountConfiguration</con:operation><con:request name="Get customer account configuration - MEVEO_USER - OK" id="38c686c1-3751-4e2c-9648-4b5c0163f9b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomerAccountConfiguration>\r
+         <!--Optional:-->\r
+         <providerCode>DEMO</providerCode>\r
+      </ws:findCustomerAccountConfiguration>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4b27fa83-e5f6-465a-a753-991173e27242"/><con:assertion type="Simple Contains" id="c707420d-cda2-4cd4-9f55-c7850f362d0d" name="Contains"><con:configuration><token><![CDATA[<paymentMethods>CHECK</paymentMethods>
+            <paymentMethods>DIRECTDEBIT</paymentMethods>
+            <paymentMethods>TIP</paymentMethods>
+            <paymentMethods>WIRETRANSFER</paymentMethods>
+            <paymentMethods>CARD</paymentMethods>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="68bcea6c-e50a-4f7d-90a3-6516317c92cf" name="XPath Match"><con:configuration><path>//return/creditCategories</path><content><![CDATA[<creditCategories>
+               <creditCategory>
+                  <code>PART_C</code>
+                  <description>Part C</description>
+               </creditCategory>
+               <creditCategory>
+                  <code>PART_M</code>
+                  <description>Part M</description>
+               </creditCategory>
+               <creditCategory>
+                  <code>PRO</code>
+                  <description>PRO</description>
+               </creditCategory>
+               <creditCategory>
+                  <code>VIP</code>
+                  <description>VIP</description>
+               </creditCategory>
+               <creditCategory>
+                  <code>NEWCUSTOMER</code>
+                  <description>New Customer</description>
+               </creditCategory>
+            </creditCategories>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get customer account configuration - AUTHORIZATION_MANUAL" id="a648c51e-b129-4b7d-a908-6062b8ee3045"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomerAccountConfiguration</con:operation><con:request name="Get customer account configuration - AUTHORIZATION_MANUAL" id="38c686c1-3751-4e2c-9648-4b5c0163f9b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomerAccountConfiguration>\r
+         <!--Optional:-->\r
+         <providerCode>DEMO</providerCode>\r
+      </ws:findCustomerAccountConfiguration>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4b27fa83-e5f6-465a-a753-991173e27242"/><con:assertion type="Simple Contains" id="c707420d-cda2-4cd4-9f55-c7850f362d0d" name="Contains"><con:configuration><token>AUTHENTICATION_AUTHORIZATION_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>${#Project#entityPrefix}_${#TestSuite#index}_Username.Test.Edward.1</con:username><con:password>password</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get customer account configuration - MEVEO_USER - KO" id="475bf65b-c4e1-42b9-9075-984daa3ae5b0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomerAccountConfiguration</con:operation><con:request name="Get customer account configuration - MEVEO_USER - KO" id="38c686c1-3751-4e2c-9648-4b5c0163f9b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomerAccountConfiguration>\r
+         <!--Optional:-->\r
+         <providerCode>${#Project#entityPrefix}_${#TestSuite#index}_Provider3</providerCode>\r
+      </ws:findCustomerAccountConfiguration>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4b27fa83-e5f6-465a-a753-991173e27242"/><con:assertion type="Simple Contains" id="c707420d-cda2-4cd4-9f55-c7850f362d0d" name="Contains"><con:configuration><token>AUTHENTICATION_AUTHORIZATION_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>${#Project#entityPrefix}_${#TestSuite#index}_Username.Test.Edward.1</con:username><con:password>password</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:setupScript/><con:properties><con:property><con:name>meveoUsername</con:name><con:value>${#Project#entityPrefix}_${#TestSuite#index}_Username.Test.Edward.1</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>${#Project#entityPrefix}_${#TestSuite#index}_Password</con:value></con:property></con:properties></con:testCase><con:testCase id="4c6e35c9-0104-463b-8a28-5205e44f3406" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD User" searchProperties="true"><con:settings/><con:testStep type="request" name="create User with All Vals" id="d77ccf0f-17a9-43c6-b490-38ea856a9bb7"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createUser</con:operation><con:request name="create User with All Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a7b6b132-bf5d-466b-94af-01689de7367e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createUser>
@@ -26025,7 +26787,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path><content>1</co
          <terminationReasonCode>${#Project#entityPrefix}_${#TestSuite#index}_TR2</terminationReasonCode>
       </ws:findTerminationReason>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="0f4f3b0b-f8f5-47db-ad1b-6dda5285f99c" name="Code Status FAIL"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="eca3027d-7009-4406-8052-889e2115df90" name="ERROR Code"><con:configuration><token>ENTITY_DOES_NOT_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>70</con:value></con:property></con:properties><con:setupScript>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="0f4f3b0b-f8f5-47db-ad1b-6dda5285f99c" name="Code Status FAIL"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="eca3027d-7009-4406-8052-889e2115df90" name="ERROR Code"><con:configuration><token>ENTITY_DOES_NOT_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>71</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite id="31a5ea97-3d5b-4e3c-bf5e-c77c8c5b9627" name="CRUD Catalog"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="3d7fde33-b80f-4645-bc3b-099b145399ad" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD OfferCategories" searchProperties="true"><con:settings/><con:testStep type="request" name="create OfferCategories with All Vals" id="1370ebb0-3f5e-4e6f-aa49-44c3f5b31440"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplateCategory</con:operation><con:request name="create OfferCategories with All Vals" id="c8ede4d6-badf-45c3-bdde-7e9901ea921b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
