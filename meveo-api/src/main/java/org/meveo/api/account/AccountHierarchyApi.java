@@ -2285,7 +2285,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		if (businessAccountModel != null && businessAccountModel.getScript() != null) {
 			try {
-				accountModelScriptService.createAccount(businessAccountModel.getScript().getCode(), seller, accountEntity, currentUser);
+				accountModelScriptService.updateAccount(businessAccountModel.getScript().getCode(), seller, accountEntity, currentUser);
 			} catch (BusinessException e) {
 				log.error("Failed to execute a script {}. {}", businessAccountModel.getScript().getCode(), e);
 			}
