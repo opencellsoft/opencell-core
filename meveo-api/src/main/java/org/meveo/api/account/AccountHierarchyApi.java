@@ -533,41 +533,23 @@ public class AccountHierarchyApi extends BaseApi {
 
 		Seller seller = sellerService.findByCode(postData.getSellerCode(), provider);
 
-		Auditable auditableTrading = new Auditable();
-		auditableTrading.setCreated(new Date());
-		auditableTrading.setCreator(currentUser);
-
 		Country country = countryService.findByCode(postData.getCountryCode());
 
 		if (country == null) {
 			throw new EntityDoesNotExistsException(Country.class, postData.getCountryCode());
 		}
 
-		boolean needToUpdate = false;
-
 		TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode(), provider);
 
-		if (tradingCountry == null) {
-			tradingCountry = new TradingCountry();
-			tradingCountry.setAuditable(auditableTrading);
-		}
+        if (tradingCountry == null) {
+            tradingCountry = new TradingCountry();
+            tradingCountry.setCountry(country);
+            tradingCountry.setProvider(provider);
+            tradingCountry.setActive(true);
+            tradingCountry.setPrDescription(country.getDescriptionEn());
 
-		needToUpdate = !tradingCountry.getCountry().equals(country) || !tradingCountry.getProvider().equals(provider)
-				|| !tradingCountry.getPrDescription().equals(country.getDescriptionEn()) || !tradingCountry.isActive();
-
-		tradingCountry.setCountry(country);
-		tradingCountry.setProvider(provider);
-		tradingCountry.setActive(true);
-		tradingCountry.setPrDescription(country.getDescriptionEn());
-
-		if (tradingCountry.isTransient()) {
-			tradingCountryService.create(tradingCountry, currentUser);
-		} else {
-			if (needToUpdate) {
-				tradingCountryService.update(tradingCountry, currentUser);
-			}
-
-		}
+            tradingCountryService.create(tradingCountry, currentUser);
+        }
 
 		Currency currency = currencyService.findByCode(postData.getCurrencyCode());
 
@@ -577,29 +559,16 @@ public class AccountHierarchyApi extends BaseApi {
 
 		TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode(), provider);
 
-		if (tradingCurrency == null) {
-			// create tradingCountry
-			tradingCurrency = new TradingCurrency();
-			tradingCurrency.setAuditable(auditableTrading);
-		}
+        if (tradingCurrency == null) {
+            // create tradingCountry
+            tradingCurrency = new TradingCurrency();
+            tradingCurrency.setCurrency(currency);
+            tradingCurrency.setProvider(provider);
+            tradingCurrency.setActive(true);
+            tradingCurrency.setPrDescription(currency.getDescriptionEn());
 
-		needToUpdate = !tradingCurrency.getCurrencyCode().equals(postData.getCurrencyCode())
-				|| !tradingCurrency.getCurrency().getCurrencyCode().equals(currency.getCurrencyCode()) || !tradingCurrency.getProvider().equals(provider)
-				|| !tradingCurrency.isActive() || !tradingCurrency.getPrDescription().equals(currency.getDescriptionEn());
-
-		tradingCurrency.setCurrency(currency);
-		tradingCurrency.setProvider(provider);
-		tradingCurrency.setActive(true);
-		tradingCurrency.setPrDescription(currency.getDescriptionEn());
-
-		if (tradingCurrency.isTransient()) {
-			tradingCurrencyService.create(tradingCurrency, currentUser);
-		} else {
-			if (needToUpdate) {
-				tradingCurrencyService.update(tradingCurrency, currentUser);
-			}
-
-		}
+            tradingCurrencyService.create(tradingCurrency, currentUser);
+        }
 
 		Language language = languageService.findByCode(postData.getLanguageCode());
 
@@ -607,31 +576,18 @@ public class AccountHierarchyApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Language.class, postData.getLanguageCode());
 		}
 
-		TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguageCode(), provider);
+        TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguageCode(), provider);
 
-		if (tradingLanguage == null) {
-			tradingLanguage = new TradingLanguage();
-			tradingLanguage.setAuditable(auditableTrading);
-		}
+        if (tradingLanguage == null) {
+            tradingLanguage = new TradingLanguage();
+            tradingLanguage.setLanguageCode(postData.getLanguageCode());
+            tradingLanguage.setLanguage(language);
+            tradingLanguage.setProvider(provider);
+            tradingLanguage.setActive(true);
+            tradingLanguage.setPrDescription(language.getDescriptionEn());
 
-		needToUpdate = !tradingLanguage.getLanguageCode().equals(postData.getLanguageCode())
-				|| !tradingLanguage.getLanguage().getLanguageCode().equals(language.getLanguageCode()) || !tradingLanguage.getProvider().equals(provider)
-				|| !tradingLanguage.isActive() || !tradingLanguage.getPrDescription().equals(language.getDescriptionEn());
-
-		tradingLanguage.setLanguageCode(postData.getLanguageCode());
-		tradingLanguage.setLanguage(language);
-		tradingLanguage.setProvider(provider);
-		tradingLanguage.setActive(true);
-		tradingLanguage.setPrDescription(language.getDescriptionEn());
-
-		if (tradingLanguage.isTransient()) {
-			tradingLanguageService.create(tradingLanguage, currentUser);
-		} else {
-			if (needToUpdate) {
-				tradingLanguageService.update(tradingLanguage, currentUser);
-			}
-
-		}
+            tradingLanguageService.create(tradingLanguage, currentUser);
+        }
 
 		CustomerBrand customerBrand = null;
 		if (!StringUtils.isBlank(postData.getCustomerBrandCode())) {
@@ -639,39 +595,19 @@ public class AccountHierarchyApi extends BaseApi {
 
 			if (customerBrand == null) {
 				customerBrand = new CustomerBrand();
-			}
-
-			needToUpdate = !customerBrand.getCode().equals(StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode()))
-					|| !customerBrand.getDescription().equals(postData.getCustomerBrandCode());
-
-			customerBrand.setCode(StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode()));
-			customerBrand.setDescription(postData.getCustomerBrandCode());
-			if (customerBrand.isTransient()) {
-				customerBrandService.create(customerBrand, currentUser);
-			} else {
-				if (needToUpdate) {
-					customerBrandService.update(customerBrand, currentUser);
-				}
+			    customerBrand.setCode(StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode()));
+			    customerBrand.setDescription(postData.getCustomerBrandCode());	            
+			    customerBrandService.create(customerBrand, currentUser);
 			}
 		}
 
 		CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategoryCode(), currentUser.getProvider());
 		if (customerCategory == null) {
 			customerCategory = new CustomerCategory();
-		}
-
-		needToUpdate = !customerCategory.getCode().equals(StringUtils.normalizeHierarchyCode(postData.getCustomerCategoryCode()))
-				|| !customerCategory.getDescription().equals(postData.getCustomerCategoryCode());
-
-		customerCategory.setCode(StringUtils.normalizeHierarchyCode(postData.getCustomerCategoryCode()));
-		customerCategory.setDescription(postData.getCustomerCategoryCode());
-		if (customerCategory.isTransient()) {
-			customerCategoryService.create(customerCategory, currentUser);
-		} else {
-			if (needToUpdate) {
-				customerCategoryService.update(customerCategory, currentUser);
-			}
-		}
+			customerCategory.setCode(StringUtils.normalizeHierarchyCode(postData.getCustomerCategoryCode()));
+	        customerCategory.setDescription(postData.getCustomerCategoryCode());
+	        customerCategoryService.create(customerCategory, currentUser);
+		} 
 
 		int caPaymentMethod = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.paymentMethod", "1"));
 		String creditCategory = paramBean.getProperty("api.default.customerAccount.creditCategory", "NEWCUSTOMER");
