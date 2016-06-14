@@ -256,9 +256,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	public String getInvoiceNumber(Invoice invoice, User currentUser) throws BusinessException {
-		Seller seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+		String cfName = "INVOICE_SEQUENCE_"+invoice.getInvoiceType().getCode().toUpperCase();			
+		if(invoiceTypeService.getAdjustementCode().equals(invoice.getInvoiceType().getCode())){
+			cfName = "INVOICE_ADJUSTMENT_SEQUENCE";
+		}
+		if(invoiceTypeService.getCommercialCode().equals(invoice.getInvoiceType().getCode())){
+			cfName = "INVOICE_SEQUENCE";
+		}
 		
-        Sequence sequence = getSequence(invoice, seller,1,true,currentUser);
+		Seller seller = chooseSeller(invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller(), cfName, invoice.getInvoiceDate(), invoice.getInvoiceType(), currentUser);
+
+        Sequence sequence = getSequence(invoice, seller,cfName,1,true,currentUser);
 		String prefix = sequence.getPrefixEL();
 		int sequenceSize = sequence.getSequenceSize();
 
@@ -274,17 +282,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return (prefix + invoiceNumber);
 	}
 
-	public synchronized Sequence getSequence(Invoice invoice ,Seller seller,int step,boolean increment,User currentUser)throws BusinessException{			
-		String cfName = "INVOICE_SEQUENCE_"+invoice.getInvoiceType().getCode().toUpperCase();	
-		Long currentNbFromCF = null;
-		
-		if(invoiceTypeService.getAdjustementCode().equals(invoice.getInvoiceType().getCode())){
-			cfName = "INVOICE_ADJUSTMENT_SEQUENCE";
-		}
-		if(invoiceTypeService.getCommercialCode().equals(invoice.getInvoiceType().getCode())){
-			cfName = "INVOICE_SEQUENCE";
-		}
-		
+	public synchronized Sequence getSequence(Invoice invoice ,Seller seller,String cfName,int step,boolean increment,User currentUser)throws BusinessException{			
+		Long currentNbFromCF = null;		
 		Object currentValObj = customFieldInstanceService.getCFValue(seller, cfName, invoice.getInvoiceDate(), currentUser);
 		if(currentValObj != null){			
 			currentNbFromCF = (Long)currentValObj;
@@ -946,5 +945,32 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		String brPath = providerDir + sep + providerCode + sep + "invoices" + sep + "xml" + sep + 
 				(billingRun == null ? DateUtils.formatDateWithPattern(invoiceCreation, paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss")) : billingRun.getId());
 		return brPath;
+	}
+	
+	/**
+	 *  if the sequence not found on cust.seller, we try in seller.parent (until seller.parent=null)
+	 *  
+	 * @param seller
+	 * @param cfName
+	 * @param date
+	 * @param invoiceType
+	 * @param currentUser
+	 * @return
+	 */
+	private Seller chooseSeller(Seller seller,String cfName,Date date,InvoiceType invoiceType,User currentUser){
+		if(seller.getSeller() == null){
+			return seller;
+		}
+		Object currentValObj = customFieldInstanceService.getCFValue(seller, cfName,date, currentUser);
+		if(currentValObj != null){		
+			return seller;
+		}
+		if(invoiceType.getSellerSequence() != null && invoiceType.getSellerSequence().containsKey(seller)){
+			return  seller;
+		}
+		
+		return chooseSeller(seller.getSeller(), cfName, date, invoiceType, currentUser);
+		
+		
 	}
 }
