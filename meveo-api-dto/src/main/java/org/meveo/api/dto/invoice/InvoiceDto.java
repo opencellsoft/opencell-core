@@ -86,12 +86,11 @@ public class InvoiceDto extends BaseDto {
     public InvoiceDto() {
     }
 
-    public InvoiceDto(Invoice invoice, String billingAccountCode) {
+    public InvoiceDto(Invoice invoice) {
         super();
-        this.setBillingAccountCode(billingAccountCode);
+        this.setBillingAccountCode(invoice.getBillingAccount().getCode());
         this.setInvoiceDate(invoice.getInvoiceDate());
         this.setDueDate(invoice.getDueDate());
-        this.pdf = invoice.getPdf();
 
         this.setAmountWithoutTax(invoice.getAmountWithoutTax());
         this.setAmountTax(invoice.getAmountTax());
@@ -103,7 +102,7 @@ public class InvoiceDto extends BaseDto {
         
         SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
         CategoryInvoiceAgregateDto  categoryInvoiceAgregateDto = new CategoryInvoiceAgregateDto();
-
+        
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
 
             subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
@@ -127,7 +126,19 @@ public class InvoiceDto extends BaseDto {
             subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
             
             categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
-            this.getCategoryInvoiceAgregates().add(categoryInvoiceAgregateDto);
+            
+            boolean agregateAlreadyExists = false;
+            for(CategoryInvoiceAgregateDto ciadto : this.getCategoryInvoiceAgregates()) {
+        		if(ciadto.getCategoryInvoiceCode() != null  
+        				&&  ciadto.getCategoryInvoiceCode().equals(categoryInvoiceAgregateDto.getCategoryInvoiceCode())) {
+        			agregateAlreadyExists = true;
+        			break;
+        		}
+        	}
+            
+            if(!agregateAlreadyExists) {
+            	this.getCategoryInvoiceAgregates().add(categoryInvoiceAgregateDto);
+        	}
         }
 
     }

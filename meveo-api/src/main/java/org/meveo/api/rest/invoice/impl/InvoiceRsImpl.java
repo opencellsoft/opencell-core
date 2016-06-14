@@ -12,6 +12,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
+import org.meveo.api.dto.invoice.GetInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
@@ -179,5 +180,25 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 			super.processException(e, result);
 		}
 		return result;
+	}
+	
+	@Override
+	public GetInvoiceResponseDto findInvoiceByIdOrType(Long id, String invoiceNumber, String invoiceType) {
+		GetInvoiceResponseDto result = new GetInvoiceResponseDto();
+		try {
+            result.setInvoice(invoiceApi.find(id, invoiceNumber, invoiceType, getCurrentUser().getProvider()));
+            result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        return result;
 	}
 }

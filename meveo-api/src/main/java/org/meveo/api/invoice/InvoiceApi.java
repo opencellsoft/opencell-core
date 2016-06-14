@@ -715,6 +715,47 @@ public class InvoiceApi extends BaseApi {
 		handleMissingParameters();
 
 	}
+	
+	public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, Provider provider) 
+			throws MissingParameterException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
+		boolean searchById = true;
+		
+        if (StringUtils.isBlank(id)) {
+        	searchById = false;
+        	if(StringUtils.isBlank(invoiceNumber) && StringUtils.isBlank(invoiceTypeCode)) {
+        		missingParameters.add("id");
+        		missingParameters.add("invoiceNumber");
+        		missingParameters.add("invoiceTypeCode");
+        	}
+            handleMissingParameters();
+        }
+
+        InvoiceDto result = new InvoiceDto();
+        Invoice invoice = null;
+        
+		
+        if(searchById) {
+        	invoice = invoiceService.findById(id, provider);
+        } else {
+        	InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode, provider);
+        	if (invoiceType == null) {
+    			throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
+    		}
+        	invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType, provider);
+        }
+
+        if (invoice == null) {
+        	if(searchById)
+        		throw new EntityDoesNotExistsException(Invoice.class, id);
+        	else
+        		throw new EntityDoesNotExistsException(Invoice.class, "invoiceNumber", invoiceNumber, "invoiceType", invoiceTypeCode);
+        }
+
+        result = new InvoiceDto(invoice);
+
+        return result;
+    }
+	
 	private BigDecimal getAmountWithTax(Tax tax,BigDecimal amountWithoutTax ){
 		Integer rounding =  tax.getProvider().getRounding()==null?2:tax.getProvider().getRounding();
 		BigDecimal ttc = amountWithoutTax.add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100),rounding,RoundingMode.HALF_UP));

@@ -13,6 +13,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
+import org.meveo.api.dto.invoice.GetInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
@@ -122,5 +123,19 @@ public interface InvoiceRs extends IBaseRs {
     @POST
     @Path("/validate")
 	public ActionStatus validate(@FormParam("invoiceId") Long invoiceId);
+    
+    
+    /**
+     * Search for an invoice given an invoice id or invoice number and invoice type.
+     * @param id  invoice id
+     * @param invoiceNumber invoice number
+     * @param invoiceType invoice type
+     * @return GetInvoiceResponseDto
+     */
+    @GET
+    @Path("/findInvoiceByIdOrType")
+    public GetInvoiceResponseDto findInvoiceByIdOrType(@QueryParam("id") Long id, 
+    		@QueryParam("invoiceNumber") String invoiceNumber, 
+    		@QueryParam("invoiceType") String invoiceType);
 
 }
