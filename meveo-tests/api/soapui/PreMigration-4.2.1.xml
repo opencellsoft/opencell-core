@@ -35553,7 +35553,7 @@
          </country>
       </ws:createOrUpdateCountry>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="60d981f3-ffcc-4285-9e00-2292eab9c450" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createCountry"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="createProvider" id="a27f1f00-8bf7-4b97-b654-bbda502641e1" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createProvider</con:operation><con:request name="createProvider" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="469d3a47-727a-407b-91af-93954e45375f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="60d981f3-ffcc-4285-9e00-2292eab9c450" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createCountry"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="createProvider" id="a27f1f00-8bf7-4b97-b654-bbda502641e1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createProvider</con:operation><con:request name="createProvider" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="469d3a47-727a-407b-91af-93954e45375f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createProvider>
@@ -35567,8 +35567,8 @@
             <multiLanguage>true</multiLanguage>            
             <enterprise>true</enterprise>            
             <invoicePrefix>I_</invoicePrefix>
-            <currentInvoiceNb>48</currentInvoiceNb>
-            <invoiceSequenceSize>15</invoiceSequenceSize>
+            <currentInvoiceNb>9</currentInvoiceNb>
+            <invoiceSequenceSize>9</invoiceSequenceSize>
             <displayFreeTransacInInvoice>true</displayFreeTransacInInvoice>
             <bankCoordinates>
 		    	<iban>1234</iban>
@@ -35588,8 +35588,8 @@
                <displayChargesPeriods>false</displayChargesPeriods>
             </invoiceConfiguration>
             <invoiceAdjustmentPrefix>IA_</invoiceAdjustmentPrefix>
-            <currentInvoiceAdjustmentNb>36</currentInvoiceAdjustmentNb>
-            <invoiceAdjustmentSequenceSize>25</invoiceAdjustmentSequenceSize>
+            <currentInvoiceAdjustmentNb>1</currentInvoiceAdjustmentNb>
+            <invoiceAdjustmentSequenceSize>9</invoiceAdjustmentSequenceSize>
          </provider>
       </ws:createProvider>
    </soapenv:Body>
@@ -35628,17 +35628,15 @@
    <soapenv:Body>
       <ws:createSeller>
          <!--Optional:-->
-         <seller code="${#TestSuite#ticket}_Seller1" description="${#TestSuite#ticket}_Seller1">
+         <seller code="${#TestSuite#ticket}_Seller1" description="${#TestSuite#ticket}_Seller1">            
+            <!--Optional:-->
+            <currencyCode>EUR</currencyCode>        
+            <languageCode>FRA</languageCode>           
+            <provider>DEMO</provider>
+            <parentSeller>MAIN_SELLER</parentSeller>
             <!--Optional:-->
             <invoicePrefix>IP_</invoicePrefix>
-            <!--Optional:-->
-            <currencyCode>EUR</currencyCode>
-            <!--Optional:-->
-            <countryCode>FR</countryCode>
-            <!--Optional:-->
-            <languageCode>FRA</languageCode>
-            <!--Optional:-->
-            <parentSeller></parentSeller>
+            <invoiceSequenceSize>9</invoiceSequenceSize>
          </seller>
       </ws:createSeller>
    </soapenv:Body>
@@ -35663,7 +35661,6 @@
          <customerBrand>\r
             <!--Optional:-->\r
             <code>${#TestSuite#ticket}_CB1</code>\r
-            <!--Optional:-->\r
             <description>${#TestSuite#ticket}_CustomerBrand1</description>\r
          </customerBrand>\r
       </ws:createCustomerBrand>\r
@@ -35676,7 +35673,6 @@
          <customerCategory>\r
             <!--Optional:-->\r
             <code>${#TestSuite#ticket}_CC1</code>\r
-            <!--Optional:-->\r
             <description>${#TestSuite#ticket}_CustomerCategory1</description>\r
          </customerCategory>\r
       </ws:createCustomerCategory>\r
@@ -35689,7 +35685,6 @@
          <creditCategory>\r
             <!--Optional:-->\r
             <code>${#TestSuite#ticket}_CREDIT_CAT1</code>\r
-            <!--Optional:-->\r
             <description>${#TestSuite#ticket}_CreditCategory1</description>\r
          </creditCategory>\r
       </ws:createCreditCategory>\r
@@ -35726,36 +35721,51 @@
          <!--Optional:-->
          <billingCycle code="${#TestSuite#ticket}_BC1" description="BCYCLE1">
             <!--Optional:-->
-            <billingTemplateName></billingTemplateName>
             <calendar>${#TestSuite#ticket}_CAL1</calendar>
             <transactionDateDelay>0</transactionDateDelay>
             <invoiceDateProductionDelay>0</invoiceDateProductionDelay>            
             <dueDateDelay>2</dueDateDelay>                        
             <invoiceDateDelay>4</invoiceDateDelay>
-            <invoicingThreshold></invoicingThreshold>
          </billingCycle>
       </ws:createBillingCycle>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="e37ccf70-ddcb-4fb9-829b-abbcd506beca" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="createTax" id="d8b6e2ff-75aa-43be-8823-6ccb8d3dc0c4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createTax</con:operation><con:request name="createTax" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a37327fb-322a-448e-bab6-1123b1b3d597"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="e37ccf70-ddcb-4fb9-829b-abbcd506beca" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="createTax 1" id="d8b6e2ff-75aa-43be-8823-6ccb8d3dc0c4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createTax</con:operation><con:request name="createTax 1" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a37327fb-322a-448e-bab6-1123b1b3d597"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createTax>
          <!--Optional:-->
-         <tax code="${#TestSuite#ticket}_TAX1" description="12 Percent Tax">
-            <percent>12</percent>
-            <!--Optional:-->
-            <accountingCode></accountingCode>
+         <tax code="${#TestSuite#ticket}_TAX1" description="7 Percent Tax">
+            <percent>7</percent>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <!--Optional:-->
                <languageCode>FRA</languageCode>
-               <!--Optional:-->
                <description>Français</description>
             </languageDescriptions>
             <languageDescriptions>
                <!--Optional:-->
                <languageCode>ENG</languageCode>
+               <description>English</description>
+            </languageDescriptions>
+         </tax>
+      </ws:createTax>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="a6580d12-d759-4f8b-9921-8c92b7e4bea6" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createTax"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="createTax 2" id="c48731e5-e8e9-4a58-9267-0f9e88c9da99"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createTax</con:operation><con:request name="createTax 2" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a37327fb-322a-448e-bab6-1123b1b3d597"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createTax>
+         <!--Optional:-->
+         <tax code="${#TestSuite#ticket}_TAX2" description="10 Percent Tax">
+            <percent>10</percent>
+            <!--Zero or more repetitions:-->
+            <languageDescriptions>
                <!--Optional:-->
+               <languageCode>FRA</languageCode>
+               <description>Français</description>
+            </languageDescriptions>
+            <languageDescriptions>
+               <!--Optional:-->
+               <languageCode>ENG</languageCode>
                <description>English</description>
             </languageDescriptions>
          </tax>
@@ -35771,13 +35781,11 @@
             <languageDescriptions>
                <!--Optional:-->
                <languageCode>FRA</languageCode>
-               <!--Optional:-->
                <description>Français</description>
             </languageDescriptions>
             <languageDescriptions>
                <!--Optional:-->
                <languageCode>ENG</languageCode>
-               <!--Optional:-->
                <description>English</description>
             </languageDescriptions>
          </invoiceCategory>
@@ -35790,18 +35798,16 @@
          <!--Optional:-->
          <invoiceSubCategory code="${#TestSuite#ticket}_IS-CAT1" description="${#TestSuite#ticket}_IS-CAT1">
           <invoiceCategory>${#TestSuite#ticket}_I-CAT1</invoiceCategory>
-          <accountingCode>120.121.21.2</accountingCode>
+          <accountingCode>120.121.21.4</accountingCode>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <!--Optional:-->
                <languageCode>FRA</languageCode>
-               <!--Optional:-->
                <description>Français</description>
             </languageDescriptions>
             <languageDescriptions>
                <!--Optional:-->
                <languageCode>ENG</languageCode>
-               <!--Optional:-->
                <description>English</description>
             </languageDescriptions>
          </invoiceSubCategory>
@@ -35828,7 +35834,7 @@
          <invoiceSubCategoryCountry>
             <invoiceSubCategory>${#TestSuite#ticket}_IS-CAT1</invoiceSubCategory>
             <country>US</country>
-            <tax>${#TestSuite#ticket}_TAX1</tax>
+            <tax>${#TestSuite#ticket}_TAX2</tax>
             <!--Optional:-->
          </invoiceSubCategoryCountry>
       </ws:createInvoiceSubCategoryCountry>
@@ -35866,13 +35872,12 @@
          <!--Optional:-->
          <counterTemplate code="${#TestSuite#ticket}_CT1" description="${#TestSuite#ticket}_CT1" calendar="${#TestSuite#ticket}_CAL1">
             <!--Optional:-->
-            <unity></unity>
             <type>USAGE</type>
             <!--Optional:-->
             <ceiling>100</ceiling>
             <disabled>false</disabled>
             <!--Optional:-->
-            <counterLevel>UA</counterLevel>
+            <counterLevel>BA</counterLevel>
          </counterTemplate>
       </ws:createCounterTemplate>
    </soapenv:Body>
@@ -35882,18 +35887,14 @@
       <ws:createTriggeredEdr>
          <!--Optional:-->
          <triggeredEdrTemplate code="${#TestSuite#ticket}_TrEDR1" description="${#TestSuite#ticket}_TrEDR1">
-            <!--Optional:-->
-            <subscriptionEl></subscriptionEl>
-            <!--Optional:-->
-            <conditionEl></conditionEl>
             <quantityEl>#{op.amountWithoutTax}</quantityEl>
             <!--Optional:-->
+            <subscriptionEl></subscriptionEl>
+            <conditionEl></conditionEl>
+            <!--Optional:-->
             <param1El></param1El>
-            <!--Optional:-->
             <param2El></param2El>
-            <!--Optional:-->
             <param3El></param3El>
-            <!--Optional:-->
             <param4El></param4El>
          </triggeredEdrTemplate>
       </ws:createTriggeredEdr>
@@ -35911,14 +35912,18 @@
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <languageCode>FRA</languageCode>
-               <description>Frensh</description>
-            </languageDescriptions>
-            <languageDescriptions>
-               <languageCode>ENG</languageCode>
-               <description>English</description>
+               <description>${#TestSuite#ticket} Test</description>
             </languageDescriptions>
             <!--Optional:-->
-            <immediateInvoicing>false</immediateInvoicing>
+            <inputUnitDescription>1</inputUnitDescription>            
+            <ratingUnitDescription>1</ratingUnitDescription>            
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+            <immediateInvoicing>false</immediateInvoicing>         
+            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+		  <triggeredEdrs>
+		    <triggeredEdr code="${#TestSuite#ticket}_TrEDR1"></triggeredEdr>
+		  </triggeredEdrs>
          </oneShotChargeTemplate>
       </ws:createOneShotChargeTemplate>
    </soapenv:Body>
@@ -35935,23 +35940,22 @@
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <languageCode>FRA</languageCode>
-               <description>Frensh</description>
-            </languageDescriptions>
-            <languageDescriptions>
-               <languageCode>ENG</languageCode>
-               <description>English</description>
+               <description>${#TestSuite#ticket} Test</description>
             </languageDescriptions>
             <!--Optional:-->
-            <durationTermInMonth>12</durationTermInMonth>
+            <durationTermInMonth>4</durationTermInMonth>
             <subscriptionProrata>true</subscriptionProrata>
             <terminationProrata>true</terminationProrata>
             <applyInAdvance>true</applyInAdvance>
             <inputUnitDescription>1</inputUnitDescription>
-            <!--Optional:-->
             <ratingUnitDescription>1</ratingUnitDescription>
-            <!--Optional:-->
             <unitMultiplicator>1</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
+            <shareLevel>1</shareLevel>
+            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+		   <triggeredEdrs>
+		    <triggeredEdr code="${#TestSuite#ticket}_TrEDR1"></triggeredEdr>
+		  </triggeredEdrs>
          </recurringChargeTemplate>
       </ws:createRecurringChargeTemplate>
    </soapenv:Body>
@@ -35962,54 +35966,43 @@
          <!--Optional:-->
          <usageChargeTemplate code="${#TestSuite#ticket}_UC1" description="${#TestSuite#ticket}_UC1" disabled="false">
          	  <invoiceSubCategory>${#TestSuite#ticket}_IS-CAT1</invoiceSubCategory>
-            <disabled>false</disabled>
             <!--Optional:-->
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <languageCode>FRA</languageCode>
-               <description>Frensh</description>
-            </languageDescriptions>
-            <languageDescriptions>
-               <languageCode>ENG</languageCode>
-               <description>English</description>
+               <description>${#TestSuite#ticket} Test</description>
             </languageDescriptions>
              <!--Optional:-->
             <inputUnitDescription>1</inputUnitDescription>            
-            <!--Optional:-->
-            <ratingUnitDescription>Quantity</ratingUnitDescription>
-            <!--Optional:-->
-            <unitMultiplicator>2</unitMultiplicator>
+            <ratingUnitDescription>Unit</ratingUnitDescription>
+            <unitMultiplicator>1</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
             <!--Optional:-->
             <filterParam1>USAGE</filterParam1>
-            <!--Optional:-->
             <filterParam2></filterParam2>
-            <!--Optional:-->
             <filterParam3></filterParam3>
-            <!--Optional:-->
             <filterParam4></filterParam4>
             <!--Optional:-->
             <filterExpression></filterExpression>
             <priority>1</priority>
+            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
             <triggeredEdrs>
     			<triggeredEdr code="${#TestSuite#ticket}_TrEDR1"></triggeredEdr>
   		  </triggeredEdrs>
          </usageChargeTemplate>
       </ws:createUsageChargeTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="cc98e770-e422-49eb-be83-7c1b8a7547f9" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createUsageChargeTemplate"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="createPricePlanOS" id="49b556a7-a4fc-4485-b9ef-efb06865aff6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="createPricePlanOS" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="8fcb14ab-5bdf-4f3d-8572-c586d7d1af49"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>        ]]></con:request><con:assertion type="Simple Contains" id="cc98e770-e422-49eb-be83-7c1b8a7547f9" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createUsageChargeTemplate"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="createPricePlanOS" id="49b556a7-a4fc-4485-b9ef-efb06865aff6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="createPricePlanOS" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="8fcb14ab-5bdf-4f3d-8572-c586d7d1af49"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createPricePlan>
           <pricePlan code="${#TestSuite#ticket}_SUB1" description="${#TestSuite#ticket}_PP1">
             <eventCode>${#TestSuite#ticket}_SUB1</eventCode>
             <!--Optional:-->
-            <amountWithoutTax>10</amountWithoutTax>
-            <amountWithTax>-10</amountWithTax>
-            <!--Optional:-->
+            <amountWithoutTax>11</amountWithoutTax>
+            <amountWithTax>15</amountWithTax>
             <priority>1</priority>
-            <!--Optional:-->
          </pricePlan>
       </ws:createPricePlan>
    </soapenv:Body>
@@ -36021,10 +36014,8 @@
             <eventCode>${#TestSuite#ticket}_REC1</eventCode>
             <!--Optional:-->
             <amountWithoutTax>10</amountWithoutTax>
-            <amountWithTax>-4</amountWithTax>
-            <!--Optional:-->
+            <amountWithTax>12</amountWithTax>
             <priority>1</priority>
-            <!--Optional:-->
          </pricePlan>
       </ws:createPricePlan>
    </soapenv:Body>
@@ -36035,8 +36026,8 @@
           <pricePlan code="${#TestSuite#ticket}_UC1" description="${#TestSuite#ticket}_UC1">
             <eventCode>${#TestSuite#ticket}_UC1</eventCode>           
             <!--Optional:-->
-            <amountWithoutTax>10</amountWithoutTax>
-            <amountWithTax>-1</amountWithTax>
+            <amountWithoutTax>9</amountWithoutTax>
+            <amountWithTax>14</amountWithTax>
             <priority>1</priority>
          </pricePlan>
       </ws:createPricePlan>
@@ -36047,9 +36038,9 @@
       <ws:createWalletTemplate>\r
          <walletTemplate code="${#TestSuite#ticket}_PrepaidWallet1" description="${#TestSuite#ticket}_PrepaidWallet1">\r
             <walletType>PREPAID</walletType>\r
-            <consumptionAlertSet>true</consumptionAlertSet>\r
+            <consumptionAlertSet>false</consumptionAlertSet>\r
             <fastRatingLevel>1</fastRatingLevel>\r
-            <lowBalanceLevel>4</lowBalanceLevel>\r
+            <lowBalanceLevel>2</lowBalanceLevel>\r
          </walletTemplate>\r
       </ws:createWalletTemplate>\r
    </soapenv:Body>\r
@@ -36060,9 +36051,9 @@
       <ws:createWalletTemplate>\r
          <walletTemplate code="${#TestSuite#ticket}_PostpaidWallet1" description="${#TestSuite#ticket}_PostpaidWallet1">\r
             <walletType>POSTPAID</walletType>\r
-            <consumptionAlertSet>true</consumptionAlertSet>\r
+            <consumptionAlertSet>false</consumptionAlertSet>\r
             <fastRatingLevel>1</fastRatingLevel>\r
-            <lowBalanceLevel>4</lowBalanceLevel>\r
+            <lowBalanceLevel>2</lowBalanceLevel>\r
          </walletTemplate>\r
       </ws:createWalletTemplate>\r
    </soapenv:Body>\r
@@ -36073,7 +36064,6 @@
       <ws:createServiceTemplate>
          <!--Optional:-->
          <serviceTemplate code="${#TestSuite#ticket}_SERVICE1" description="${#TestSuite#ticket}_SERVICE1">
-            <!--Optional:-->
             <invoicingCalendar>${#TestSuite#ticket}_CAL1</invoicingCalendar>
             <!--Optional:-->
             <serviceChargeTemplateRecurrings>
@@ -36081,21 +36071,32 @@
                <serviceChargeTemplateRecurring>
                   <!--Optional:-->
                   <code>${#TestSuite#ticket}_REC1</code>
+                  <!--
                   <wallets>
                      <wallet>${#TestSuite#ticket}_PrepaidWallet1</wallet>
                   </wallets>
+                  -->
                </serviceChargeTemplateRecurring>
-            </serviceChargeTemplateRecurrings>            
+            </serviceChargeTemplateRecurrings> 
+            <serviceChargeTemplateSubscriptions>
+            	<!--Zero or more repetitions:-->
+               <serviceChargeTemplateSubscription>
+                  <!--Optional:-->
+                  <code>${#TestSuite#ticket}_SUB1</code>
+               </serviceChargeTemplateSubscription>
+            </serviceChargeTemplateSubscriptions>           
             <!--Optional:-->
             <serviceChargeTemplateUsages>
                <!--Zero or more repetitions:-->
                <serviceChargeTemplateUsage>
                   <!--Optional:-->
                   <code>${#TestSuite#ticket}_UC1</code>
+                  <!--
                   <wallets>
                      <wallet>${#TestSuite#ticket}_PrepaidWallet1</wallet>
                   </wallets>
                   <counterTemplate>${#TestSuite#ticket}_CT1</counterTemplate>
+                  -->
                </serviceChargeTemplateUsage>
             </serviceChargeTemplateUsages>
          </serviceTemplate>
@@ -36112,7 +36113,7 @@
             <offerServiceTemplates>
             	<offerServiceTemplate>
                	<!--Zero or more repetitions:-->
-               	<serviceTemplate code="${#TestSuite#ticket}_SERVICE1" description=""></serviceTemplate>
+               	<serviceTemplate code="${#TestSuite#ticket}_SERVICE1" description="${#TestSuite#ticket}_SERVICE1"></serviceTemplate>
             	</offerServiceTemplate>
             </offerServiceTemplates>
          </offerTemplate>
@@ -36124,6 +36125,8 @@
       <ws:createCustomer>
          <!--Optional:-->
          <customer code="${#TestSuite#ticket}_CUST1" description="${#TestSuite#ticket}_CUST1">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
             <name>
                <title>${#TestSuite#ticket}_TITLE1</title>
                <firstName>firstname</firstName>
@@ -36168,11 +36171,18 @@
                <city>Dijon</city>
                <country>FR</country>
             </address>
+             <contactInformation>
+            	<email>${#TestSuite#ticket}@manaty.net</email>
+            	<phone>+105855234</phone>
+            	<mobile>+102154716</mobile>
+         	  </contactInformation>
+         	   <mandateIdentification>1234</mandateIdentification>
+            <mandateDate>2016-03-10</mandateDate>
             <customer>${#TestSuite#ticket}_CUST1</customer>
             <currency>EUR</currency>
+            <language>FRA</language>
             <paymentMethod>CHECK</paymentMethod>
             <creditCategory>${#TestSuite#ticket}_CREDIT_CAT1</creditCategory>
-            <language>FRA</language>
          </customerAccount>
       </ws:createCustomerAccount>
    </soapenv:Body>
@@ -36201,7 +36211,7 @@
             <country>FR</country>
             <language>FRA</language>
             <paymentMethod>DIRECTDEBIT</paymentMethod>
-            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
+            <nextInvoiceDate>2016-07-01</nextInvoiceDate>
             <subscriptionDate>2015-01-01</subscriptionDate>
             <paymentTerms>CASH</paymentTerms>
             <electronicBilling>true</electronicBilling>
@@ -36213,7 +36223,7 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createUserAccount>
-         <userAccount code="${#TestSuite#ticket}_UA1" description="${#TestCase#ticket}_UA1">
+         <userAccount code="${#TestSuite#ticket}_UA1" description="${#TestSuite#ticket}_UA1">
          	<billingAccount>${#TestSuite#ticket}_BA1</billingAccount>
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
@@ -36237,11 +36247,11 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:create>
-         <subscription code="${#TestSuite#ticket}_SUB1" description="${#TestSuite#ticket}_SUB1">
+         <subscription code="${#TestSuite#ticket}_SUB_CHARGE" description="${#TestSuite#ticket}_Subscription">
             <userAccount>${#TestSuite#ticket}_UA1</userAccount>
             <offerTemplate>${#TestSuite#ticket}_OFFER1</offerTemplate>
-            <subscriptionDate>2016-02-28</subscriptionDate>
-            <!--<endAgreementDate>2016-07-01</endAgreementDate> -->
+            <subscriptionDate>2015-02-01</subscriptionDate>
+            <endAgreementDate>2015-05-01</endAgreementDate>
          </subscription>
       </ws:create>
    </soapenv:Body>
@@ -36250,11 +36260,11 @@
    <soapenv:Body>
       <ws:activateServices>
          <activateServices>
-         	  <subscription>${#TestSuite#ticket}_SUB1</subscription>
+         	  <subscription>${#TestSuite#ticket}_SUB_CHARGE</subscription>
             <servicesToActivate>
             	<service code='${#TestSuite#ticket}_SERVICE1'>
                   <quantity>1</quantity>
-                  <subscriptionDate>2016-02-28</subscriptionDate>
+                  <subscriptionDate>2015-02-01</subscriptionDate>
             	</service>
             </servicesToActivate>
          </activateServices>
@@ -36266,7 +36276,7 @@
       <ws:createAccess>
          <!--Optional:-->
          <access code="${#TestSuite#ticket}_ACC1">
-            <subscription>${#TestSuite#ticket}_SUB1</subscription>
+            <subscription>${#TestSuite#ticket}_SUB_CHARGE</subscription>
             <startDate>2016-01-01</startDate>
   		  <endDate>2016-08-30</endDate>
          </access>
@@ -36280,51 +36290,7 @@
          <cdr>2016-03-01T00:20:00.000Z;10;${#TestSuite#ticket}_ACC1;USAGE</cdr>
       </ws:chargeCdr>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5b02a077-1178-43ab-bc54-6a993e51798f"/><con:assertion type="Simple Contains" id="f80c8d0f-14af-4fec-a1b6-6d2f85cd38a5" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Copy of Invoicing" searchProperties="true" id="0418a1e4-f7cf-4d49-bc50-28f342957072" disabled="true"><con:settings/><con:testStep type="request" name="Execute RatedTransactionJob" id="c25e3e8b-30be-4b29-827c-2befd8b51f30"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findOfferTemplate</con:operation><con:request name="Execute RatedTransactionJob" id="c85a4974-17ea-4e31-95a2-a58b67b5e164"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:execute>
-         <!--Optional:-->
-         <jobInstanceInfo code="RT_Job">
-         </jobInstanceInfo>
-      </ws:execute>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4dea367e-1e93-404d-9e7a-027eea668f81"/><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create BillingRun" id="9b8ef8b3-5c37-4998-a9c5-adf9eefdf219"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>findXMLInvoice</con:operation><con:request name="Create BillingRun" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/InvoicingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createBillingRun>
-         <!--Optional:-->
-         <createBillingRunRequest billingCycleCode="CYC_INV_MT_1" billingRunTypeEnum="AUTOMATIC">
-            <!--Optional:-->
-            <!--Optional:-->
-            <invoiceDate>2016-04-25</invoiceDate>
-            <!--Optional:-->
-            <lastTransactionDate>2016-05-20</lastTransactionDate>
-         </createBillingRunRequest>
-      </ws:createBillingRun>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Execute InvoiceJob" id="e956882f-bb01-46b0-8ef1-436b33aa5eff"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>findPdfInvoice</con:operation><con:request name="Execute InvoiceJob" id="f3d0dddc-6857-4363-8f2f-917774f9fefe"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:execute>
-         <!--Optional:-->
-         <jobInstanceInfo code="Inv_Job">
-         </jobInstanceInfo>
-      </ws:execute>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f24123ca-553d-42a4-93d9-a187f3be4240"/><con:assertion type="Simple Contains" name="Contains" id="81c028e2-76e1-4f55-a543-fcb8df080cde"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="manualTestStep" name="Exclude BA and Validate BR" id="022c934c-9d58-4216-aaed-941397d5d535"><con:description>1. Open the Meveo Admin page and log in. 
-2. Go to BillingRuns->PostInvoicingReport > Exclude 1454_BA->click on 'Validate'
- </con:description><con:settings/><con:config xsi:type="con:ManualTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:expectedResult/></con:config></con:testStep><con:testStep type="manualTestStep" name="GUI-Cancel BillingRun" id="2f91cd9a-9e5e-4127-980e-b37db7a44128" disabled="true"><con:description>1. Open the Meveo Admin page and log in. 
-2. Go to Invoicing->Billing runs->PostInvoicingReport > click on 'Cancel'
- </con:description><con:settings/><con:config xsi:type="con:ManualTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:expectedResult/></con:config></con:testStep><con:testStep type="request" name="API-Cancel BillingRun" id="cacce383-4835-49c0-97da-ecaaae6a41c6" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>findXMLInvoice</con:operation><con:request name="API-Cancel BillingRun" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/InvoicingWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:cancelBillingRun>
-         <!--Optional:-->
-         <billingRunId>1</billingRunId>
-      </ws:cancelBillingRun>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Invoicing" searchProperties="true" id="00af03a1-464c-4781-9f6d-50739ee73fb8" disabled="true"><con:settings/><con:testStep type="request" name="RR_Job" id="2c258af1-d2f5-4238-b170-fccc4304866d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>execute</con:operation><con:request name="RR_Job" id="f44152d1-5d4d-4d57-ba38-7e8e3e881047"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5b02a077-1178-43ab-bc54-6a993e51798f"/><con:assertion type="Simple Contains" id="f80c8d0f-14af-4fec-a1b6-6d2f85cd38a5" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Invoicing" searchProperties="true" id="00af03a1-464c-4781-9f6d-50739ee73fb8" disabled="true"><con:settings/><con:testStep type="request" name="RR_Job" id="2c258af1-d2f5-4238-b170-fccc4304866d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>execute</con:operation><con:request name="RR_Job" id="f44152d1-5d4d-4d57-ba38-7e8e3e881047"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:execute>\r
@@ -36404,22 +36370,7 @@
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1bc75f17-2661-416c-84be-e978469d0b48"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Import-Compta" searchProperties="true" id="bdda75a4-b8f7-4db3-b4de-428c6ea4f9c5"><con:settings/><con:testStep type="request" name="Create BR" id="7fb23dbd-cdcc-4e73-92dd-ad09901eb197" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createCounterTemplate</con:operation><con:request name="Create BR" id="6c95d1fc-e5cf-41d6-b61f-fe598aee4325"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:create>
-         <!--Optional:-->
-         <jobInstance jobTemplate="BillingRunJob" code="${#TestSuite#ticket}_BR1" description="BillingRunJob">
-            <jobCategory>INVOICING</jobCategory>
-            <customFields>
-    			<customField code="BillingRunJob_billingCycle">
-                  <stringValue>${#TestSuite#ticket}_BC1</stringValue>
-               </customField>
-  		  </customFields>
-         </jobInstance>
-      </ws:create>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c0bf3f67-342e-4ccf-b549-132ea9afb5db"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create AccountOperationsJob" id="1c29bec8-fd41-488c-a960-ba8c2468cbe6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createCounterTemplate</con:operation><con:request name="Create AccountOperationsJob" id="6c95d1fc-e5cf-41d6-b61f-fe598aee4325"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1bc75f17-2661-416c-84be-e978469d0b48"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Import-Compta" searchProperties="true" id="bdda75a4-b8f7-4db3-b4de-428c6ea4f9c5"><con:settings/><con:testStep type="request" name="Create AccountOperationsJob" id="1c29bec8-fd41-488c-a960-ba8c2468cbe6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createCounterTemplate</con:operation><con:request name="Create AccountOperationsJob" id="6c95d1fc-e5cf-41d6-b61f-fe598aee4325"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:create>
@@ -36465,44 +36416,7 @@
          </PaymentDto>
       </ws:create>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="0733ac94-287b-421d-814e-4c5bd62152bb"/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Reporting" searchProperties="true" id="7b9681c5-6bd4-4b2c-8b35-87c360a02a7e" disabled="true"><con:settings/><con:testStep type="request" name="INV_Job2" id="ff67c35f-76ea-4524-854a-bdd883e754e4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>execute</con:operation><con:request name="INV_Job2" id="f44152d1-5d4d-4d57-ba38-7e8e3e881047"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:execute>\r
-         <!--Optional:-->\r
-         <jobInstanceInfo code="Inv_Job">\r
-         </jobInstanceInfo>\r
-      </ws:execute>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2fa31fe9-3815-45f0-b88a-d90d6e345ec8"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="delay" name="Delay6" id="2b83dc39-2098-427b-bc16-82bac6a65431"><con:settings/><con:config><delay>10000</delay></con:config></con:testStep><con:testStep type="request" name="XML_INV_Job" id="29a592c6-b380-41bd-bf07-e2e8ffaa0e63"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>execute</con:operation><con:request name="XML_INV_Job" id="f44152d1-5d4d-4d57-ba38-7e8e3e881047"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:execute>\r
-         <!--Optional:-->\r
-         <jobInstanceInfo code="XML_Job">\r
-         </jobInstanceInfo>\r
-      </ws:execute>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2fa31fe9-3815-45f0-b88a-d90d6e345ec8"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="delay" name="Delay7" id="944b1648-4c3f-4cf4-b433-a2af21c08e82"><con:settings/><con:config><delay>5000</delay></con:config></con:testStep><con:testStep type="request" name="PDF_INV_Job" id="d8eb1716-6ea8-4933-97d1-9bbb89bf4100"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>execute</con:operation><con:request name="PDF_INV_Job" id="f44152d1-5d4d-4d57-ba38-7e8e3e881047"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:execute>\r
-         <!--Optional:-->\r
-         <jobInstanceInfo code="PDF_Job">\r
-         </jobInstanceInfo>\r
-      </ws:execute>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2fa31fe9-3815-45f0-b88a-d90d6e345ec8"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="delay" name="Delay8" id="16478313-9cde-403e-86b1-f9d8dfc5277c"><con:settings/><con:config><delay>5000</delay></con:config></con:testStep><con:testStep type="manualTestStep" name="Create a ddrequest state operation (Menu->Payments)" id="3149ec95-d098-4158-8789-f0d767d4ef99"><con:description>Create a ddrequest state operation (Menu->Payments)
-From=2016-03-01 To=2016-03-31</con:description><con:settings/><con:config xsi:type="con:ManualTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:testStep><con:testStep type="request" name="AO_Job" id="251cdb22-338b-4e75-a47e-90b2d0b548ad"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>execute</con:operation><con:request name="AO_Job" id="f44152d1-5d4d-4d57-ba38-7e8e3e881047"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:execute>\r
-         <!--Optional:-->\r
-         <jobInstanceInfo code="${#TestSuite#ticket}_AO_Job">\r
-         </jobInstanceInfo>\r
-      </ws:execute>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2fa31fe9-3815-45f0-b88a-d90d6e345ec8"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Reporting" searchProperties="true" id="319d9ba3-4d0f-457c-ace3-e9da3ffe5788"><con:settings/><con:testStep type="request" name="GetInvoiceXml" id="4d64d527-d84a-4ba8-a5c5-ec81c1ad2d5a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>findXMLInvoice</con:operation><con:request name="GetInvoiceXml" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="0733ac94-287b-421d-814e-4c5bd62152bb"/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Reporting" searchProperties="true" id="319d9ba3-4d0f-457c-ace3-e9da3ffe5788"><con:settings/><con:testStep type="request" name="GetInvoiceXml" id="4d64d527-d84a-4ba8-a5c5-ec81c1ad2d5a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>findXMLInvoice</con:operation><con:request name="GetInvoiceXml" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoice>
