@@ -40,6 +40,9 @@ public class UserDto extends BaseDto {
 	@XmlElementWrapper
     @XmlElement(name="role")
 	private List<String> roles;
+	
+	@Deprecated//use roles field
+	private String role;
 
 	public String getEmail() {
 		return email;
@@ -51,14 +54,7 @@ public class UserDto extends BaseDto {
 
 	public UserDto() {}
 	
-	public UserDto(User4_2Dto userdto) {
-		firstName = userdto.getFirstName();
-		lastName = userdto.getLastName();	
-		username = userdto.getUsername();
-		provider = userdto.getProvider();
-		email=userdto.getEmail();
-		roles = userdto.getRoles();
-	}
+
 
 	public UserDto(User user) {
 		if(user.getName()!=null){
@@ -73,6 +69,7 @@ public class UserDto extends BaseDto {
 			roles = new ArrayList<String>();
 			for (Role r : user.getRoles()) {
 				roles.add(r.getName());
+				role=r.getName();
 			}
 		}
 	}
@@ -124,13 +121,28 @@ public class UserDto extends BaseDto {
 	public void setRoles(List<String> roles) {
 		this.roles = roles;
 	}
+	
+	
+
+	/**
+	 * @return the role
+	 */
+	public String getRole() {
+		return role;
+	}
+
+	/**
+	 * @param role the role to set
+	 */
+	public void setRole(String role) {
+		this.role = role;
+	}
 
 	@Override
 	public String toString() {
-		return "User4_3Dto [username=" + username + ", password=" + password + ", email=" + email
-				+ ", provider=" + provider + ", firstName=" + firstName + ", lastName=" 
-				+ lastName + ", roles=" + roles
-				+ "]";
+		return "UserDto [username=" + username + ", password=" + password + ", email=" + email + ", provider=" + provider + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + "]";
 	}
+
+
 
 }
