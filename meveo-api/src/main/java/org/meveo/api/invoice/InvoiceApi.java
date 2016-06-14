@@ -230,16 +230,17 @@ public class InvoiceApi extends BaseApi {
 					subCatAmountTax = subCatAmountTax.add(amountTax);
 					subCatAmountWithTax = subCatAmountWithTax.add(amountWithTax);
 				}
-				List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory);
-				for(RatedTransaction ratedTransaction : openedRT){
-					subCatAmountWithoutTax = subCatAmountWithoutTax.add(ratedTransaction.getAmountWithoutTax());
-					subCatAmountTax = subCatAmountTax.add(ratedTransaction.getAmountTax());
-					subCatAmountWithTax = subCatAmountWithTax.add(ratedTransaction.getAmountWithTax());
-					ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
-					ratedTransaction.setInvoice(invoice);
-					ratedTransactionService.update(ratedTransaction, currentUser);
-				}
-		
+				if(invoiceDTO.getInvoiceType().equals(invoiceTypeService.getCommercialCode())){
+					List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory);
+					for(RatedTransaction ratedTransaction : openedRT){
+						subCatAmountWithoutTax = subCatAmountWithoutTax.add(ratedTransaction.getAmountWithoutTax());
+						subCatAmountTax = subCatAmountTax.add(ratedTransaction.getAmountTax());
+						subCatAmountWithTax = subCatAmountWithTax.add(ratedTransaction.getAmountWithTax());
+						ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
+						ratedTransaction.setInvoice(invoice);
+						ratedTransactionService.update(ratedTransaction, currentUser);
+					}
+		     	}
 
 				SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
 				invoiceAgregateSubcat.setCategoryInvoiceAgregate(invoiceAgregateCat);
@@ -260,8 +261,9 @@ public class InvoiceApi extends BaseApi {
 					invoiceAgregateSubcat.setAmountTax(subCatAmountTax);
 					invoiceAgregateSubcat.setAmountWithTax(subCatAmountWithTax);
 				} else {
-					invoiceAgregateSubcat.setAmountWithoutTax(subCatInvAgrDTO.getAmountWithoutTax());					
-					invoiceAgregateSubcat.setAmountWithTax(getAmountWithTax(currentTax, subCatInvAgrDTO.getAmountWithoutTax()));
+					//we add subCatAmountWithoutTax, in the case if there any opened RT to includ
+					invoiceAgregateSubcat.setAmountWithoutTax(subCatAmountWithoutTax.add(subCatInvAgrDTO.getAmountWithoutTax()));					
+					invoiceAgregateSubcat.setAmountWithTax(subCatAmountWithTax.add(getAmountWithTax(currentTax, subCatInvAgrDTO.getAmountWithoutTax())));
 					invoiceAgregateSubcat.setAmountTax(getAmountTax(invoiceAgregateSubcat.getAmountWithTax(), invoiceAgregateSubcat.getAmountWithoutTax()));
 				}
 
@@ -327,8 +329,7 @@ public class InvoiceApi extends BaseApi {
 		}
 		invoice.setNetToPay(netToPay);
 		invoiceService.update(invoice, currentUser);
-		// include open RT
-
+	
 		try {
 			populateCustomFields(invoiceDTO.getCustomFields(), invoice, true, currentUser, true);
 
