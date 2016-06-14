@@ -2,6 +2,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
@@ -47,7 +48,7 @@
 
 		<p:panel header="#{messages['invoice.aggregated']}">
 
-			<p:growl id="growl"></p:growl>
+			<p:growl id="growl" globalOnly="true"></p:growl>
 
 			<p:tabView id="tabView"
 				activeIndex="#{aggregatedDetailInvoiceBean.activeTab}">
@@ -56,9 +57,22 @@
 						submitPartialProcess=":tabView:formId"
 						backingBean="#{aggregatedDetailInvoiceBean}"
 						showEnableDisableButton="true">
-						<hftl:formField field="invoiceType" required="true"
-							label="#{messages['invoice.invoiceType']}" valueLabelField="code"
-							listBean="#{invoiceTypeBean}"></hftl:formField>
+						<!-- 						<hftl:formField field="invoiceType" required="true" -->
+						<!-- 							label="#{messages['invoice.invoiceType']}" valueLabelField="code" -->
+						<!-- 							listBean="#{invoiceTypeBean}"></hftl:formField> -->
+						<hftl:decorateFormField fieldId="invoiceType"
+							label="#{messages['invoice.invoiceType']}">
+							<p:selectOneMenu id="invoiceType" required="true"
+								value="#{aggregatedDetailInvoiceBean.entity.invoiceType}">
+								<s:objectConverter />
+								<f:selectItem noSelectionOption="" />
+								<f:selectItems value="#{invoiceTypeBean.listAll}" var="e"
+									itemValue="#{e}" itemLabel="#{e.code}"></f:selectItems>
+								<p:ajax event="valueChange" update="@this"
+									process="@this :growl"
+									listener="#{aggregatedDetailInvoiceBean.handleTypeChange()}" />
+							</p:selectOneMenu>
+						</hftl:decorateFormField>
 						<hftl:formField id="billingAccountSelectedId"
 							label="#{messages['billingAccount']}" field="billingAccount"
 							valueLabelField="code" popup="true" popupId="billingAccountPopup"
@@ -79,6 +93,9 @@
 						noClose="false" backingBean="#{aggregatedDetailInvoiceBean}"
 						dataModel="#{aggregatedDetailInvoiceBean.entity.linkedInvoices}"
 						resultsId="selectedLinkedInvoice">
+
+						<f:facet name="header">#{messages['invoice.linkedInvoices']}</f:facet>
+
 						<hftl:column label="#{messages['invoice.invoiceNumber']}"
 							field="invoiceNumber" />
 						<hftl:column label="#{messages['invoice.invoiceDate']}"
@@ -209,14 +226,17 @@
 						<p:commandButton immediate="true"
 							value="#{messages['action.invoice.importFromLinkedInvoices']}"
 							action="#{aggregatedDetailInvoiceBean.importFromLinkedInvoices}"
-							update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary :tabView:formId:messages" />
+							process=":tabView:formId @this"
+							update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary :tabView:formId:messages :growl" />
 
 						<p:panel id="addAggregatedLine" style="float: right; width: 50%;">
+							<p:messages id="aggregatedMessages"></p:messages>
 							<p:row>
 								<p:column>
 									<hftl:decorateFormField fieldId="selectedInvoiceCatOrSubCat"
 										label="#{messages['invoice.catOrSubCat']}">
 										<p:selectOneMenu id="selectedInvoiceCatOrSubCat"
+											required="true"
 											value="#{aggregatedDetailInvoiceBean.selectedInvoiceSubCategory}"
 											converter="omnifaces.SelectItemsConverter">
 											<f:selectItem itemLabel="" noSelectionOption="true" />
@@ -243,7 +263,7 @@
 									<p:commandButton value="#{messages['action.invoice.addLine']}"
 										process="addAggregatedLine"
 										action="#{aggregatedDetailInvoiceBean.addAggregatedLine()}"
-										update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary :tabView:formId:messages"
+										update=":#{p:component('aggregatedMessages')} :tabView:aggregatedInvoiceForm:addAggregatedLine :tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary :growl"
 										style="margin-top: 20px;">
 									</p:commandButton>
 								</p:column>
@@ -277,7 +297,8 @@
 					<div style="clear: both"></div>
 
 					<h:form>
-						<p:outputPanel style="float: right; width: 50%;">
+						<p:outputPanel
+							style="float: right; width: 25%; text-align: right;">
 							<hftl:decorateFormField fieldId="includeAccountBalance"
 								label="#{messages['invoice.includeAccountBalance']}">
 								<p:selectBooleanCheckbox id="includeAccountBalance"
@@ -285,9 +306,8 @@
 							</hftl:decorateFormField>
 							<p:commandButton
 								value="#{messages['action.invoice.refreshTotal']}"
-								rendered="#{!aggregatedDetailInvoiceBean.entity.transient}"
 								action="#{aggregatedDetailInvoiceBean.refreshTotal}"
-								update="invoiceSummary"></p:commandButton>
+								update=":#{p:component('invoiceSummary')}"></p:commandButton>
 						</p:outputPanel>
 					</h:form>
 

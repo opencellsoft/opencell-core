@@ -1,6 +1,5 @@
 package org.meveo.api.invoice;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,7 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Scanner;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -20,7 +18,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.RatedTransactionDto;
@@ -112,9 +109,6 @@ public class InvoiceApi extends BaseApi {
 
 	@Inject
 	XMLInvoiceCreator xmlInvoiceCreator;
-
-	@Inject
-	private PDFParametersConstruction pDFParametersConstruction;
 
 	@Inject
 	private InvoiceTypeService invoiceTypeService;
@@ -575,15 +569,8 @@ public class InvoiceApi extends BaseApi {
 		if (invoice == null) {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
 		}
-		String brPath = invoiceService.getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(),currentUser.getProvider().getCode());
-		File billingRundir = new File(brPath);
-		xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir);
-		String xmlCanonicalPath = brPath + File.separator + invoiceNumber + ".xml";
-		Scanner scanner = new Scanner(new File(xmlCanonicalPath));
-		String xmlContent = scanner.useDelimiter("\\Z").next();
-		scanner.close();
-		log.debug("getXMLInvoice  invoiceNumber:{} done.", invoiceNumber);
-		return xmlContent;
+		
+		return invoiceService.getXMLInvoice(invoice, invoiceNumber, currentUser);
 	}
 
 	public byte[] getPdfInvoince(String invoiceNumber, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, Exception {
@@ -609,13 +596,8 @@ public class InvoiceApi extends BaseApi {
 		if (invoice == null) {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
 		}
-		if (invoice.getPdf() == null) {
-			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId(), currentUser, currentUser.getProvider());
-			invoiceService.producePdf(parameters, currentUser);
-		}
-		invoiceService.findById(invoice.getId(), true);
-		log.debug("getXMLInvoice invoiceNumber:{} done.", invoiceNumber);
-		return invoice.getPdf();
+		
+		return invoiceService.generatePdfInvoice(invoice, invoiceNumber, currentUser);
 	}
 
 	public String validateInvoice(Long invoiceId, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {

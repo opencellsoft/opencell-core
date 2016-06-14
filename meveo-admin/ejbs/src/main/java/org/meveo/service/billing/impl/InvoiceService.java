@@ -21,6 +21,7 @@ package org.meveo.service.billing.impl;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -34,7 +35,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -69,6 +72,7 @@ import org.jboss.vfs.VirtualFile;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
+import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.job.PdfGeneratorConstants;
 import org.meveo.commons.exceptions.ConfigurationException;
 import org.meveo.commons.utils.ParamBean;
@@ -110,6 +114,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public final static String INVOICE_ADJUSTMENT_SEQUENCE = "INVOICE_ADJUSTMENT_SEQUENCE";
 
 	public final static String INVOICE_SEQUENCE = "INVOICE_SEQUENCE";
+	
+	@EJB
+	private PDFParametersConstruction pDFParametersConstruction;
+	
+	@EJB
+	private XMLInvoiceCreator xmlInvoiceCreator;
 
 	@Inject
 	private CustomerAccountService customerAccountService;
@@ -973,4 +983,36 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		
 		
 	}
+	
+	public String getXMLInvoice(Invoice invoice, String invoiceNumber, User currentUser) throws BusinessException, FileNotFoundException {
+		String brPath = getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), currentUser.getProvider().getCode());
+		File billingRundir = new File(brPath);
+		xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir);
+		String xmlCanonicalPath = brPath + File.separator + invoiceNumber + ".xml";
+		Scanner scanner = new Scanner(new File(xmlCanonicalPath));
+		String xmlContent = scanner.useDelimiter("\\Z").next();
+		scanner.close();
+		log.debug("getXMLInvoice  invoiceNumber:{} done.", invoiceNumber);
+		
+		return xmlContent;
+	}
+
+
+	public byte[] generatePdfInvoice(Invoice invoice, String invoiceNumber, User currentUser) throws Exception {
+		if (invoice.getPdf() == null) {
+			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId(), currentUser, currentUser.getProvider());
+			producePdf(parameters, currentUser);
+		}
+		findById(invoice.getId(), true);
+		log.debug("getXMLInvoice invoiceNumber:{} done.", invoiceNumber);
+		
+		return invoice.getPdf();
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void generateXmlAndPdfInvoice(Invoice invoice, User currentUser) throws Exception {
+		getXMLInvoice(invoice, invoice.getInvoiceNumber(), currentUser);
+		generatePdfInvoice(invoice, invoice.getInvoiceNumber(), currentUser);
+	}
+	
 }
