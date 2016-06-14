@@ -55,9 +55,10 @@
 						submitPartialProcess=":tabView:formId"
 						backingBean="#{detailedInvoiceBean}"
 						showEnableDisableButton="true">
-						<hftl:formField field="invoiceType"
+						<hftl:formField field="invoiceType"  required="true"
 							label="#{messages['invoice.invoiceType']}" valueLabelField="code"
 							listBean="#{invoiceTypeBean}"></hftl:formField>
+							
 						<hftl:formField id="billingAccountSelectedId"
 							label="#{messages['billingAccount']}" field="billingAccount"
 							valueLabelField="code" popup="true" popupId="billingAccountPopup"
@@ -144,14 +145,24 @@
 
 										<p:columnGroup type="header">
 											<p:row>
+											<p:column headerText="#{messages['BusinessEntity.description']}" /> 
 												<p:column headerText="#{messages['ratedTransaction.unitAmountWithoutTax']}" /> 
 											    <p:column headerText="#{messages['invoice.quantity']}" /> 
 												<p:column
 													headerText="#{messages['invoice.amountWithoutTax']}" />
 												<p:column headerText="#{messages['commons.actions']}" />
 											</p:row>
-										</p:columnGroup>
-
+										</p:columnGroup>  
+										<p:column>
+											<p:cellEditor>
+												<f:facet name="output">
+													<h:outputText value="#{rated.description}" />
+												</f:facet>
+												<f:facet name="input">
+													<p:spinner value="#{rated.description}"></p:spinner>
+												</f:facet>
+											</p:cellEditor>
+										</p:column>
 										<p:column>
 											<h:outputText value="#{rated.unitAmountWithoutTax}" />
 										</p:column> 
@@ -195,12 +206,19 @@
 									<hftl:decorateFormField fieldId="selectedInvoiceCatOrSubCat" 
 										label="#{messages['invoice.catOrSubCat']}">
 										<p:selectOneMenu id="selectedInvoiceCatOrSubCat" style="width:200px;"
-											value="#{detailedInvoiceBean.selectedWalletOperation}"
+											value="#{detailedInvoiceBean.selectedInvoiceSubCategory}"
 											 converter="omnifaces.SelectItemsConverter">
 											<f:selectItem itemLabel="" noSelectionOption="true" />
 											<f:selectItems
 												value="#{detailedInvoiceBean.invoiceCatSubCats}" />
 										</p:selectOneMenu>
+									</hftl:decorateFormField>
+								</p:column>
+								<p:column>  
+									<hftl:decorateFormField fieldId="description"
+										label="#{messages['BusinessEntity.description']}">
+										<p:inputText id="description" required="true"
+											value="#{detailedInvoiceBean.description}"></p:inputText>
 									</hftl:decorateFormField>
 								</p:column>
 								<p:column>  
