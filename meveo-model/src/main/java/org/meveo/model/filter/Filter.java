@@ -44,7 +44,6 @@ public class Filter extends BusinessCFEntity {
 	@JoinColumn(name = "FILTER_ID")
 	private List<FilterSelector> secondarySelectors=new ArrayList<FilterSelector>();
 
-	@DerivedEntity
 	@Column(name = "INPUT_XML", columnDefinition = "TEXT")
 	private String inputXml;
 
@@ -102,5 +101,9 @@ public class Filter extends BusinessCFEntity {
 	@Override
 	public ICustomFieldEntity[] getParentCFEntities() {
 		return null;
+	}
+	
+	public String getAppliesTo() {
+		return "FILTER_" + getCode();
 	}
 }

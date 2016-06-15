@@ -41,6 +41,9 @@ public class PrimitiveFilterCondition extends FilterCondition {
 
 	@Transient
 	private String defaultValue;
+	
+	@Transient
+	private int index;
 
 	@Override
 	public boolean match(BaseEntity e) {
@@ -100,5 +103,13 @@ public class PrimitiveFilterCondition extends FilterCondition {
 
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
+	}
+	
+	public int getIndex() {
+		return index;
+	}
+	
+	public void setIndex(int index) {
+		this.index = index;
 	}
 }

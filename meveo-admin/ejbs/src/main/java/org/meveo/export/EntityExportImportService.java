@@ -90,11 +90,8 @@ import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.export.parser.BaseDerivedEntityParser;
-import org.meveo.export.parser.DerivedEntityParserFactory;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.DerivedEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
@@ -178,9 +175,6 @@ public class EntityExportImportService implements Serializable {
 
     @Inject
     private CustomFieldsCacheContainerProvider customFieldsCacheContainerProvider;
-
-    @Inject
-    private DerivedEntityParserFactory derivedEntityParserFactory;
 
     private Map<Class<? extends IEntity>, String[]> exportIdMapping;
 
@@ -1121,17 +1115,6 @@ public class EntityExportImportService implements Serializable {
         if (extractedRelatedEntities != null && !extractedRelatedEntities.isEmpty()) {
             ExportImportStatistics importStatsRelated = saveEntitiesToTarget(extractedRelatedEntities, lookupById, null, currentUser);
             importStats.mergeStatistics(importStatsRelated);
-        }
-
-        // Checks if a field is annotated with DerivedEntity, if so, it retrieves the
-        // DerivedEntityParser instance that will process the additional derivation.
-        for (Field field : entityToSave.getClass().getDeclaredFields()) {
-            if(field.isAnnotationPresent(DerivedEntity.class)){
-                Class<? extends IEntity> parentClass = (Class<? extends IEntity>) field.getDeclaringClass();
-                String fieldName = field.getName();
-                BaseDerivedEntityParser parser = derivedEntityParserFactory.getParser(parentClass, fieldName);
-                parser.deriveEntities(entityToSave, field, currentUser);
-            }
         }
 
         // Update statistics

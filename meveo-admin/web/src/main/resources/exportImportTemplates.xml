@@ -72,6 +72,30 @@
             <java-class>org.meveo.model.security.Permission</java-class>
         </classesToIgnoreFKNotFound>
     </template>
+    
+    <template name="Filter" entityToExport="org.meveo.model.filter.Filter">
+        <classesToExportAsFull>
+            <java-class>org.meveo.model.crm.CustomFieldTemplate</java-class>
+            <java-class>org.meveo.model.filter.FilterCondition</java-class>
+            <java-class>org.meveo.model.filter.FilterSelector</java-class>
+        </classesToExportAsFull>
+        <relatedEntities>
+            <relatedEntity>
+                <entityClass>org.meveo.model.crm.CustomFieldTemplate</entityClass>
+                <selection>select cft from CustomFieldTemplate cft where cft.disabled=false and cft.appliesTo=:appliesTo and cft.provider=:provider</selection>
+                <parameters>
+                    <entry>
+                        <string>appliesTo</string>
+                        <string>#{entity.appliesTo}</string>
+                    </entry>
+                    <entry>
+                        <string>provider</string>
+                        <string>#{entity.provider}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+        </relatedEntities>
+    </template>
 
     <template name="MeveoModule" entityToExport="org.meveo.model.module.MeveoModule">
         <exportAllClassesAsFull>true</exportAllClassesAsFull>
