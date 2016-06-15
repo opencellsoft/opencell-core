@@ -159,7 +159,7 @@
 													<h:outputText value="#{rated.description}" />
 												</f:facet>
 												<f:facet name="input">
-													<p:spinner value="#{rated.description}"></p:spinner>
+													<p:inputText value="#{rated.description}"/>
 												</f:facet>
 											</p:cellEditor>
 										</p:column>
@@ -238,7 +238,7 @@
 								<p:column>  
 									<hftl:decorateFormField fieldId="amountWithoutTax"
 										label="#{messages['invoice.amountWithoutTax']}">
-										<p:inputText id="amountWithoutTax" required="true"
+										<p:inputText id="amountWithoutTax"
 											value="#{detailedInvoiceBean.amountWithoutTax}"></p:inputText>
 									</hftl:decorateFormField>
 								</p:column>
@@ -258,15 +258,33 @@
 					</h:form>
 
 					<p:outputPanel id="invoiceSummary">
-						 
+						<p:panelGrid style="float: right; width: 50%;"
+							rendered="#{detailedInvoiceBean.entity.invoiceAgregates.size() > 0}">
+							<f:facet name="header">
+								<p:row>
+									<p:column>#{messages['invoice.summary.totalAmountWithoutTax']}</p:column>
+									<p:column>#{messages['invoice.summary.totalTaxAmount']}</p:column>
+									<p:column>#{messages['invoice.summary.totalAmountWithTax']}</p:column>
+									<p:column>#{messages['invoice.summary.netToPay']}</p:column>
+								</p:row>
+							</f:facet>
+							<p:row>
+								<p:column>#{detailedInvoiceBean.computeTotalAmountWithoutTax}</p:column>
+								<p:column>#{detailedInvoiceBean.computeTotalAmountTax}</p:column>
+								<p:column>#{detailedInvoiceBean.computeTotalAmountWithTax}</p:column>
+								<p:column>#{detailedInvoiceBean.netToPay}</p:column>
+							</p:row>
+						</p:panelGrid>
 					</p:outputPanel>
 
 					<div style="clear: both"></div>
 
 					<h:form>
+						 
 					</h:form>
 
 					<div style="clear: both"></div>
+
 
 				</p:tab>
 			</p:tabView>
