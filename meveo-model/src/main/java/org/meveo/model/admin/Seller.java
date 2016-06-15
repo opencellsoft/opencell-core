@@ -128,11 +128,11 @@ public class Seller extends BusinessCFEntity {
 	}
 
 	@Override
-	public ICustomFieldEntity getParentCFEntity() {
+	public ICustomFieldEntity[] getParentCFEntities() {
 		if (seller != null) {
-			return seller;
+			return new ICustomFieldEntity[]{seller};
 		}
-		return getProvider();
+		return new ICustomFieldEntity[]{getProvider()};
 	}
 
 	/**

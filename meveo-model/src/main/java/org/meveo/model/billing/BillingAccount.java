@@ -395,7 +395,7 @@ public class BillingAccount extends AccountEntity {
 	}
 
     @Override
-    public ICustomFieldEntity getParentCFEntity() {
-        return customerAccount;
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return new ICustomFieldEntity[]{customerAccount};
 	}
 }

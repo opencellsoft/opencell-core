@@ -148,7 +148,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public ICustomFieldEntity getParentCFEntity() {
+            public ICustomFieldEntity[] getParentCFEntities() {
                 return null;
             }
         };

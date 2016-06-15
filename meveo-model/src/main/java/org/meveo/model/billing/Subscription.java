@@ -192,7 +192,7 @@ public class Subscription extends BusinessCFEntity{
 	}
 
     @Override
-    public ICustomFieldEntity getParentCFEntity() {
-        return userAccount;
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return new ICustomFieldEntity[]{offer,userAccount};
 	}
 }

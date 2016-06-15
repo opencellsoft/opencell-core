@@ -3,6 +3,7 @@ package org.meveo.service.crm.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -652,6 +653,31 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             return ((IProvider) entity).getProvider();
         }
     }
+    /**
+     * get  CFEs from a cfe's hierarchy parents
+     * @param entity
+     * @return
+     */
+    private static ICustomFieldEntity[] getHierarchyParentCFEntities(ICustomFieldEntity entity) {
+
+		ICustomFieldEntity[] cfes = entity.getParentCFEntities();
+		if (cfes != null && cfes.length != 0) {
+			List<ICustomFieldEntity> result = new ArrayList<ICustomFieldEntity>();
+			for (ICustomFieldEntity cfe : cfes) {
+				if (cfe!=null) {
+					result.add(cfe);
+					if(cfe.getParentCFEntities() != null){
+						ICustomFieldEntity[] children=getHierarchyParentCFEntities(cfe);
+						if(children!=null){
+							result.addAll(Arrays.asList(children));
+						}
+					}
+				}
+			}
+			return result.toArray(new ICustomFieldEntity[0]);
+		}
+		return null;
+	}
 
     /**
      * Get a custom field value for a given entity's parent's. If custom field is versionable, a current date will be used to access the value.
@@ -661,10 +687,16 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @return Custom field value
      */
     public Object getInheritedOnlyCFValue(ICustomFieldEntity entity, String code, User currentUser) {
-        if (entity.getParentCFEntity() != null) {
-            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
-            return getInheritedCFValue(parentCFEntity, code, currentUser);
-        }
+    	ICustomFieldEntity[] cfes=getHierarchyParentCFEntities(entity);
+    	if(cfes!=null&&cfes.length>0){
+    		for(ICustomFieldEntity cfe:cfes){
+    			ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) cfe);
+    			Object cfValue=getInheritedCFValue(parentCFEntity, code, currentUser);
+    			if(cfValue!=null){
+    				return cfValue;
+    			}
+    		}
+    	}
         return null;
     }
 
@@ -682,15 +714,16 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         if (entity == null) {
             return null;
         }
-        ICustomFieldEntity parentEntity = entity.getParentCFEntity();
+        ICustomFieldEntity[] parentEntities =getHierarchyParentCFEntities(entity);
         List<Object> cfValues = new ArrayList<>();
 
-        while (parentEntity != null) {
-            Object value = getCFValue(parentEntity, code, currentUser);
-            if (value != null) {
-                cfValues.add(value);
-            }
-            parentEntity = parentEntity.getParentCFEntity();
+        while (parentEntities != null) {
+        	for(ICustomFieldEntity parentEntity:parentEntities){
+        		Object value = getCFValue(parentEntity, code, currentUser);
+                if (value != null) {
+                    cfValues.add(value);
+                }
+        	}
         }
 
         if (cfValues.isEmpty()) {
@@ -724,9 +757,15 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      */
     public Object getInheritedOnlyCFValue(ICustomFieldEntity entity, String code, Date date, User currentUser) {
 
-        if (entity.getParentCFEntity() != null) {
-            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
-            return getInheritedCFValue(parentCFEntity, code, date, currentUser);
+    	ICustomFieldEntity[] cfes=getHierarchyParentCFEntities(entity);
+        if (cfes!=null&&cfes.length>0) {
+        	for(ICustomFieldEntity cfe:cfes){
+        		ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) cfe);
+        		Object cfeValue=getInheritedCFValue(parentCFEntity, code, date, currentUser);
+        		if(cfeValue!=null){
+        			return cfeValue;
+        		}
+        	}
         }
         return null;
     }
@@ -740,9 +779,17 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      */
     public Object getInheritedCFValue(ICustomFieldEntity entity, String code, User currentUser) {
         Object value = getCFValue(entity, code, currentUser);
-        if (value == null && entity.getParentCFEntity() != null) {
-            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
-            return getInheritedCFValue(parentCFEntity, code, currentUser);
+        if (value == null){
+        	ICustomFieldEntity[] cfes=getHierarchyParentCFEntities(entity);
+        	if(cfes!=null) {
+        		for(ICustomFieldEntity cfe:cfes){
+            		ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) cfe);
+            		Object cfeValue=getInheritedCFValue(parentCFEntity, code,currentUser);
+            		if(cfeValue!=null){
+            			return cfeValue;
+            		}
+            	}
+        	}
         }
         return value;
     }
@@ -758,9 +805,17 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public Object getInheritedCFValue(ICustomFieldEntity entity, String code, Date date, User currentUser) {
 
         Object value = getCFValue(entity, code, date, currentUser);
-        if (value == null && entity.getParentCFEntity() != null) {
-            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
-            return getInheritedCFValue(parentCFEntity, code, date, currentUser);
+        if (value == null){
+        	ICustomFieldEntity[] cfes=getHierarchyParentCFEntities(entity);
+        	if(cfes!=null){
+        		for(ICustomFieldEntity cfe:cfes){
+            		ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) cfe);
+            		Object cfeValue=getInheritedCFValue(parentCFEntity, code, date, currentUser);
+            		if(cfeValue!=null){
+            			return cfeValue;
+            		}
+            	}
+        	}
         }
         return value;
     }
@@ -779,9 +834,17 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public Object getInheritedCFValueByClosestMatch(ICustomFieldEntity entity, String code, String keyToMatch) {
 
         Object value = getCFValueByClosestMatch(entity, code, keyToMatch);
-        if (value == null && entity.getParentCFEntity() != null) {
-            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
-            return getInheritedCFValueByClosestMatch(parentCFEntity, code, keyToMatch);
+        if (value == null){
+        	ICustomFieldEntity[] cfes=getHierarchyParentCFEntities(entity);
+        	if(cfes!=null){
+        		for(ICustomFieldEntity cfe:cfes){
+            		ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) cfe);
+            		Object cfeValue=getInheritedCFValueByClosestMatch(parentCFEntity, code, keyToMatch);
+            		if(cfeValue!=null){
+            			return cfeValue;
+            		}
+            	}
+        	}
         }
         return value;
     }
@@ -801,9 +864,17 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public Object getInheritedCFValueByClosestMatch(ICustomFieldEntity entity, String code, Date date, String keyToMatch) {
 
         Object value = getCFValueByClosestMatch(entity, code, date, keyToMatch);
-        if (value == null && entity.getParentCFEntity() != null) {
-            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
-            return getInheritedCFValueByClosestMatch(parentCFEntity, code, date, keyToMatch);
+        if (value == null){
+        	ICustomFieldEntity[] cfes=getHierarchyParentCFEntities(entity);
+        	if(cfes!=null){
+        		for(ICustomFieldEntity cfe:cfes){
+            		ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) cfe);
+            		Object cfeValue=getInheritedCFValueByClosestMatch(parentCFEntity, code, date, keyToMatch);
+            		if(cfeValue!=null){
+            			return cfeValue;
+            		}
+            	}
+        	}
         }
         return value;
     }
@@ -823,9 +894,17 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public Object getInheritedCFValueByMatrix(ICustomFieldEntity entity, String code, Object... keys) {
 
         Object value = getCFValueByMatrix(entity, code, keys);
-        if (value == null && entity.getParentCFEntity() != null) {
-            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
-            return getInheritedCFValueByMatrix(parentCFEntity, code, keys);
+        if (value == null) {
+        	ICustomFieldEntity[] cfes=getHierarchyParentCFEntities(entity);
+        	if(cfes!=null){
+        		for(ICustomFieldEntity cfe:cfes){
+            		ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) cfe);
+            		Object cfeValue=getInheritedCFValueByMatrix(parentCFEntity, code, keys);
+            		if(cfeValue!=null){
+            			return cfeValue;
+            		}
+            	}
+        	}
         }
         return value;
     }
@@ -846,9 +925,17 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public Object getInheritedCFValueByMatrix(ICustomFieldEntity entity, String code, Date date, Object... keys) {
 
         Object value = getCFValueByMatrix(entity, code, date, keys);
-        if (value == null && entity.getParentCFEntity() != null) {
-            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
-            return getInheritedCFValueByMatrix(parentCFEntity, code, date, keys);
+        if (value == null){
+        	ICustomFieldEntity[] cfes=getHierarchyParentCFEntities(entity);
+        	if(cfes!=null){
+        		for(ICustomFieldEntity cfe:cfes){
+            		ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) cfe);
+            		Object cfeValue=getInheritedCFValueByMatrix(parentCFEntity, code,date, keys);
+            		if(cfeValue!=null){
+            			return cfeValue;
+            		}
+            	}
+        	}
         }
         return value;
     }
@@ -866,9 +953,15 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public Object getInheritedCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Object numberToMatch) {
 
         Object value = getCFValueByRangeOfNumbers(entity, code, numberToMatch);
-        if (value == null && entity.getParentCFEntity() != null) {
-            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
-            return getInheritedCFValueByRangeOfNumbers(parentCFEntity, code, numberToMatch);
+        if (value == null && entity.getParentCFEntities() != null) {
+        	ICustomFieldEntity[] cfes=getHierarchyParentCFEntities(entity);
+        	for(ICustomFieldEntity cfe:cfes){
+        		ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) cfe);
+        		Object cfeValue=getInheritedCFValueByRangeOfNumbers(parentCFEntity, code, numberToMatch);
+        		if(cfeValue!=null){
+        			return cfeValue;
+        		}
+        	}
         }
         return value;
     }
@@ -887,9 +980,17 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public Object getInheritedCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Date date, Object numberToMatch) {
 
         Object value = getCFValueByRangeOfNumbers(entity, code, numberToMatch);
-        if (value == null && entity.getParentCFEntity() != null) {
-            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
-            return getInheritedCFValueByRangeOfNumbers(parentCFEntity, code, date, numberToMatch);
+        if (value == null) {
+        	ICustomFieldEntity[] cfes=getHierarchyParentCFEntities(entity);
+        	if(cfes!=null){
+        		for(ICustomFieldEntity cfe:cfes){
+            		ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) cfe);
+            		Object cfeValue=getInheritedCFValueByRangeOfNumbers(parentCFEntity, code, date, numberToMatch);
+            		if(cfeValue!=null){
+            			return cfeValue;
+            		}
+            	}
+        	}
         }
         return value;
     }

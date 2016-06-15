@@ -255,7 +255,7 @@ public class ServiceInstance extends BusinessCFEntity {
     }
 
     @Override
-    public ICustomFieldEntity getParentCFEntity() {
-        return serviceTemplate;
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return new ICustomFieldEntity[]{serviceTemplate};
     }
 }

@@ -460,7 +460,7 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
 	}
 
 	@Override
-	public ICustomFieldEntity getParentCFEntity() {
+	public ICustomFieldEntity[] getParentCFEntities() {
 		return null;
 	}
 }

@@ -109,8 +109,8 @@ public class InvoiceSubCategory extends BusinessCFEntity {
 	}
 
 	@Override
-	public ICustomFieldEntity getParentCFEntity() {		
-		return invoiceCategory;
+	public ICustomFieldEntity[] getParentCFEntities() {		
+		return new ICustomFieldEntity[]{invoiceCategory};
 	}
 
 }

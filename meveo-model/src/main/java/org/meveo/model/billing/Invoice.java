@@ -489,7 +489,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 	}
 
 	@Override
-	public ICustomFieldEntity getParentCFEntity() {
+	public ICustomFieldEntity[] getParentCFEntities() {
 		return null;
 	}
 

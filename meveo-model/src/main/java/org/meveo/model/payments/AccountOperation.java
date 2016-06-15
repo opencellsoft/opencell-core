@@ -296,7 +296,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 	    }
 
 		@Override
-		public ICustomFieldEntity getParentCFEntity() {
+		public ICustomFieldEntity[] getParentCFEntities() {
 			return null;
 		}	
 
