@@ -635,7 +635,7 @@ public class InvoiceApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
 		}
 		
-		return invoiceService.getXMLInvoice(invoice, invoiceNumber, currentUser);
+		return invoiceService.getXMLInvoice(invoice, invoiceNumber, currentUser, true);
 	}
 	
     /**
