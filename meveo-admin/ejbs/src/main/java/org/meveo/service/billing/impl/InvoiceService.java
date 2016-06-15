@@ -984,10 +984,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		
 	}
 	
-	public String getXMLInvoice(Invoice invoice, String invoiceNumber, User currentUser) throws BusinessException, FileNotFoundException {
+	public String getXMLInvoice(Invoice invoice, String invoiceNumber, User currentUser, boolean refreshInvoice) throws BusinessException, FileNotFoundException {
 		String brPath = getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), currentUser.getProvider().getCode());
 		File billingRundir = new File(brPath);
-		xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir);
+		xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir, false, refreshInvoice);
 		String xmlCanonicalPath = brPath + File.separator + invoiceNumber + ".xml";
 		Scanner scanner = new Scanner(new File(xmlCanonicalPath));
 		String xmlContent = scanner.useDelimiter("\\Z").next();
@@ -1009,10 +1009,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return invoice.getPdf();
 	}
 	
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void generateXmlAndPdfInvoice(Invoice invoice, User currentUser) throws Exception {
-		getXMLInvoice(invoice, invoice.getInvoiceNumber(), currentUser);
+		getXMLInvoice(invoice, invoice.getInvoiceNumber(), currentUser, false);
 		generatePdfInvoice(invoice, invoice.getInvoiceNumber(), currentUser);
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void createNewTx(Invoice invoice, User creator) throws BusinessException {
+		create(invoice, creator);
 	}
 	
 }
