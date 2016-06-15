@@ -153,7 +153,7 @@ public class CustomizedEntityService implements Serializable {
             annotation = cfClass.getAnnotation(CustomFieldEntity.class);
             boolean isSkipped = JobInstance.class.isAssignableFrom(cfClass)
                 || Modifier.isAbstract(cfClass.getModifiers())
-                || (entityName != null && !cfClass.getSimpleName().toLowerCase().contains(entityName))
+                || (entityName != null && !cfClass.getSimpleName().toLowerCase().contains(entityName.toLowerCase()))
                 || (!includeNonManagedEntities && !annotation.isManuallyManaged());
 
             if(isSkipped){
