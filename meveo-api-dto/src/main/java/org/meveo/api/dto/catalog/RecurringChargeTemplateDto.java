@@ -23,7 +23,7 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 	private Integer durationTermInMonth;
 	private Boolean subscriptionProrata;
 	private Boolean terminationProrata;
-	private Boolean applyInAdvance;
+	private Boolean applyInAdvance=false;
 	private Integer shareLevel;
 
 	public RecurringChargeTemplateDto() {
