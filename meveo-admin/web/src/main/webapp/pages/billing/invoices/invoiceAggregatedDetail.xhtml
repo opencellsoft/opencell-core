@@ -195,7 +195,15 @@
 											</p:cellEditor>
 										</p:column>
 										<p:column>
-											<h:outputText value="#{subCat.amountWithoutTax}" />
+											<p:cellEditor>
+												<f:facet name="output">
+													<h:outputText value="#{subCat.amountWithoutTax}" />
+												</f:facet>
+												<f:facet name="input">
+													<p:spinner value="#{subCat.amountWithoutTax}"></p:spinner>
+												</f:facet>
+											</p:cellEditor>
+
 										</p:column>
 										<p:column>
 											<p:cellEditor>
