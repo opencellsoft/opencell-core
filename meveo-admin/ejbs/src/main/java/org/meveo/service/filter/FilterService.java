@@ -73,7 +73,7 @@ public class FilterService extends BusinessService<Filter> {
     
     private static final List<String> requiresClassName = Arrays.asList(FilterParameterTypeEnum.ENTITY.getPrefix(), FilterParameterTypeEnum.ENUM.getPrefix());    
 
-    private Filter parse(String xmlInput) throws XStreamException {
+    public Filter parse(String xmlInput) throws XStreamException {
         xmlInput = xmlInput.trim();
         Filter result = new Filter();
 
