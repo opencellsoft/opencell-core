@@ -32,7 +32,7 @@ public class CustomEntityInstance extends BusinessCFEntity {
     public String parentEntityUuid;
 
     @Override
-    public ICustomFieldEntity getParentCFEntity() {
+    public ICustomFieldEntity[] getParentCFEntities() {
         return null;
     }
 

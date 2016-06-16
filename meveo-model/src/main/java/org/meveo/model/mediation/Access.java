@@ -157,7 +157,7 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     }
 
     @Override
-    public ICustomFieldEntity getParentCFEntity() {
-        return subscription;
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return new ICustomFieldEntity[]{subscription};
     }
 }

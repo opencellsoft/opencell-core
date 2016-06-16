@@ -1,30 +1,25 @@
 package org.meveo.service.filter;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.XStreamException;
-import com.thoughtworks.xstream.converters.collections.CollectionConverter;
-import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentCollectionConverter;
-import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentMapConverter;
-import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentSortedMapConverter;
-import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentSortedSetConverter;
-import com.thoughtworks.xstream.hibernate.converter.HibernateProxyConverter;
-import com.thoughtworks.xstream.hibernate.mapper.HibernateMapper;
-import com.thoughtworks.xstream.mapper.ClassAliasingMapper;
-import com.thoughtworks.xstream.mapper.MapperWrapper;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+
 import org.apache.commons.lang3.EnumUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.FilterDto;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -50,6 +45,18 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldException;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.XStreamException;
+import com.thoughtworks.xstream.converters.collections.CollectionConverter;
+import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentCollectionConverter;
+import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentMapConverter;
+import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentSortedMapConverter;
+import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentSortedSetConverter;
+import com.thoughtworks.xstream.hibernate.converter.HibernateProxyConverter;
+import com.thoughtworks.xstream.hibernate.mapper.HibernateMapper;
+import com.thoughtworks.xstream.mapper.ClassAliasingMapper;
+import com.thoughtworks.xstream.mapper.MapperWrapper;
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -57,10 +64,14 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 public class FilterService extends BusinessService<Filter> {
 
     @Inject
-    private FilterSelectorService filterSelectorService;
-
-    @Inject
     protected CustomFieldTemplateService customFieldTemplateService;
+    
+    @Inject
+	private Validator validator;
+    
+    private static final String POSITION_PREFIX = "tab:Custom fields:0;field:";
+    
+    private static final List<String> requiresClassName = Arrays.asList(FilterParameterTypeEnum.ENTITY.getPrefix(), FilterParameterTypeEnum.ENUM.getPrefix());    
 
     public Filter parse(String xmlInput) throws XStreamException {
         xmlInput = xmlInput.trim();
@@ -116,15 +127,8 @@ public class FilterService extends BusinessService<Filter> {
         return xStream;
     }
 
-    public void applyOmittedFields(XStream xstream, Filter filter) {
-        applyOmittedFields(xstream, filter, true);
-    }
-
-    public void applyOmittedFields(XStream xstream, Filter filter, boolean display) {
+    private void applyOmittedFields(XStream xstream, Filter filter) {
         List<String> displayOrExportFields = filter.getPrimarySelector().getDisplayFields();
-        if (!display) {
-            displayOrExportFields = filter.getPrimarySelector().getExportFields();
-        }
 
         @SuppressWarnings("rawtypes")
         Class targetClass = ReflectionUtils.createObject(filter.getPrimarySelector().getTargetEntity()).getClass();
@@ -272,7 +276,7 @@ public class FilterService extends BusinessService<Filter> {
         }
     }
 
-    public void updateFilterDetails(Filter sourceFilter, Filter targetFilter, User currentUser) throws BusinessException {
+    private void updateFilterDetails(Filter sourceFilter, Filter targetFilter, User currentUser) throws BusinessException {
 
         Provider provider = currentUser.getProvider();
 
@@ -300,40 +304,25 @@ public class FilterService extends BusinessService<Filter> {
         }
     }
 
-    public FilterCondition setProviderToFilterCondition(FilterCondition filterCondition, Provider provider) {
+    private void setProviderToFilterCondition(FilterCondition filterCondition, Provider provider) {
         if(filterCondition != null){
             filterCondition.setProvider(provider);
 
-            if (filterCondition.getFilterConditionType().equals(AndCompositeFilterCondition.class.getAnnotation(DiscriminatorValue.class).value())) {
+            if (filterCondition instanceof AndCompositeFilterCondition) {
                 AndCompositeFilterCondition andCompositeFilterCondition = (AndCompositeFilterCondition) filterCondition;
                 for (FilterCondition filterConditionLoop : andCompositeFilterCondition.getFilterConditions()) {
                     setProviderToFilterCondition(filterConditionLoop, provider);
                 }
-            }
-
-            if (filterCondition.getFilterConditionType().equals(OrCompositeFilterCondition.class.getAnnotation(DiscriminatorValue.class).value())) {
-                OrCompositeFilterCondition orCompositeFilterCondition = (OrCompositeFilterCondition) filterCondition;
+            } else if (filterCondition instanceof OrCompositeFilterCondition) {
+            	OrCompositeFilterCondition orCompositeFilterCondition = (OrCompositeFilterCondition) filterCondition;
                 for (FilterCondition filterConditionLoop : orCompositeFilterCondition.getFilterConditions()) {
                     setProviderToFilterCondition(filterConditionLoop, provider);
                 }
             }
         }
-        return filterCondition;
     }
 
-    @Override
-    public void create(Filter filter, User user) throws BusinessException {
-        persistCustomFieldTemplates(filter, user);
-        super.create(filter, user);
-    }
-
-    @Override
-    public Filter update(Filter filter, User user) throws BusinessException {
-        persistCustomFieldTemplates(filter, user);
-        return super.update(filter, user);
-    }
-
-    public void persistCustomFieldTemplates(Filter filter, User user) throws BusinessException {
+    private void persistCustomFieldTemplates(Filter filter, User user) throws BusinessException {
         try {
             List<CustomFieldTemplate> customFieldTemplates = new ArrayList<>();
             extractCustomFields(filter, filter.getFilterCondition(), user, customFieldTemplates);
@@ -343,7 +332,7 @@ public class FilterService extends BusinessService<Filter> {
         }
     }
 
-    public void extractCustomFields(ICustomFieldEntity entity, FilterCondition filterCondition, User user, List<CustomFieldTemplate> customFieldTemplates) throws CustomFieldException {
+    private void extractCustomFields(ICustomFieldEntity entity, FilterCondition filterCondition, User user, List<CustomFieldTemplate> customFieldTemplates) throws CustomFieldException {
         if(filterCondition != null){
             if (filterCondition instanceof OrCompositeFilterCondition) {
                 OrCompositeFilterCondition orCondition = (OrCompositeFilterCondition) filterCondition;
@@ -356,17 +345,17 @@ public class FilterService extends BusinessService<Filter> {
                     extractCustomFields(entity, subCondition, user, customFieldTemplates);
                 }
             } else if (filterCondition instanceof PrimitiveFilterCondition) {
-                String appliesTo = customFieldTemplateService.calculateAppliesToValue(entity);
+                String appliesTo = CustomFieldTemplateService.calculateAppliesToValue(entity);
                 PrimitiveFilterCondition condition = (PrimitiveFilterCondition) filterCondition;
                 extractCustomField(user, customFieldTemplates, appliesTo, condition);
             }
         }
     }
 
-    private void extractCustomField(User user, List<CustomFieldTemplate> customFields, String appliesTo, PrimitiveFilterCondition primitiveFilterCondition) throws CustomFieldException {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	private void extractCustomField(User user, List<CustomFieldTemplate> customFields, String appliesTo, PrimitiveFilterCondition primitiveFilterCondition) throws CustomFieldException {
         String operand = primitiveFilterCondition.getOperand();
         String[] typeAndCode = null;
-        String typePrefix = null;
         String code = null;
         String defaultValue = null;
         String className = null;
@@ -394,6 +383,7 @@ public class FilterService extends BusinessService<Filter> {
                 customField.setAllowEdit(true);
                 customField.setDefaultValue(defaultValue);
                 customField.setFieldType(type.getFieldType());
+                customField.setGuiPosition(POSITION_PREFIX + primitiveFilterCondition.getIndex());
                 switch (type){
                     case ENTITY:
                         customField.setEntityClazz(className);
@@ -401,10 +391,9 @@ public class FilterService extends BusinessService<Filter> {
                     case ENUM:
                         try {
                             Map<String, String> items = new HashMap<>();
-                            String name = null;
                             for (Object enumItem : EnumUtils.getEnumList((Class<? extends Enum>) Class.forName(className))) {
-                                name = ((Enum) enumItem).name();
-                                items.put(name, name);
+                            	Enum item = (Enum) enumItem;
+                            	items.put(item.getClass().getName() + "." + item.name(), item.name());
                             }
                             customField.setListValues(items);
                         } catch (ClassNotFoundException e) {
@@ -413,54 +402,128 @@ public class FilterService extends BusinessService<Filter> {
                             throw new CustomFieldException(message);
                         }
                         break;
+					default:
+						break;
                 }
                 customFields.add(customField);
                 break;
             }
         }
     }
-
-    public void validateUnmarshalledFilter(Filter filter) throws BusinessException {
-        validateFilterCondition(filter.getFilterCondition());
+    
+    public Filter dtoToFilter(FilterDto dto, Filter filter, User user) throws BusinessException {
+    	if(dto != null){
+    		if(filter != null){
+            	if(filter.isTransient()){
+                	filter.setCode(dto.getCode());
+                	filter.clearUuid();
+                }
+            	filter.setDescription(dto.getDescription());
+                filter.setInputXml(dto.getInputXml());
+                filter.setShared(dto.getShared());
+                parseInputXML(dto.getInputXml(), filter, user);
+            }
+    	}
+    	return filter;
     }
+    
+    public Filter parseInputXML(String inputXml, Filter targetFilter, User user) throws BusinessException {
+    	Filter parsedFilter = parse(inputXml);
+		updateFilterDetails(parsedFilter, targetFilter, user);
+		validate(targetFilter);
+		persistCustomFieldTemplates(targetFilter, user);
+		return targetFilter;
+    }
+    
+    private void validate(Filter filter) throws ConstraintViolationException, BusinessException {
+		if (filter != null) {
+			Set<ConstraintViolation<Filter>> violations = validator.validate(filter);
+			if (!violations.isEmpty()) {
+				throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+			}
+		}
+		if (filter.getOrderCondition() != null) {
+			Set<ConstraintViolation<OrderCondition>> violations = validator.validate(filter.getOrderCondition());
+			if (!violations.isEmpty()) {
+				throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+			}
+		}
+		if (filter.getPrimarySelector() != null) {
+			Set<ConstraintViolation<FilterSelector>> violations = validator.validate(filter.getPrimarySelector());
+			if (!violations.isEmpty()) {
+				throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+			}
+		}
+		if (filter.getSecondarySelectors() != null) {
+			for (FilterSelector fs : filter.getSecondarySelectors()) {
+				Set<ConstraintViolation<FilterSelector>> violations = validator.validate(fs);
+				if (!violations.isEmpty()) {
+					throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+				}
+			}
+		}
+		// filterCondition
+		if (filter.getFilterCondition() != null) {
+			validateFilterCondition(filter.getFilterCondition());
+		}
+	}
 
-    private void validateFilterCondition(FilterCondition filterCondition) throws BusinessException{
-        boolean isValid = true;
-        String fieldName = null;
-        List<String> requiresClassName = Arrays.asList(FilterParameterTypeEnum.ENTITY.getPrefix(), FilterParameterTypeEnum.ENUM.getPrefix());
-        if(filterCondition != null){
-            if(filterCondition instanceof AndCompositeFilterCondition){
-                for (FilterCondition condition : ((AndCompositeFilterCondition) filterCondition).getFilterConditions()) {
-                    validateFilterCondition(condition);
-                }
-            } else if (filterCondition instanceof OrCompositeFilterCondition){
-                for (FilterCondition condition : ((OrCompositeFilterCondition) filterCondition).getFilterConditions()) {
-                    validateFilterCondition(condition);
-                }
-            } else if (filterCondition instanceof PrimitiveFilterCondition){
-                PrimitiveFilterCondition condition = (PrimitiveFilterCondition) filterCondition;
-                String operand = condition.getOperand();
-                if(operand != null){
-                    String[] typeAndCode = operand.split(":");
-                    String type = typeAndCode[0];
-                    if(requiresClassName.contains(type)){
-                        fieldName = condition.getFieldName();
-                        if(condition.getClassName() != null){
-                            try {
-                                Class<?> conditionClass = Class.forName(condition.getClassName());
-                                isValid = conditionClass != null;
-                            } catch (ClassNotFoundException e) {
-                                isValid = false;
-                            }
-                        } else {
+	private void validateFilterCondition(FilterCondition filterCondition) throws ConstraintViolationException, BusinessException {
+		if (filterCondition instanceof OrCompositeFilterCondition) {
+			OrCompositeFilterCondition tempFilter = (OrCompositeFilterCondition) filterCondition;
+
+			if (tempFilter.getFilterConditions() != null) {
+				for (FilterCondition fc : tempFilter.getFilterConditions()) {
+					validateFilterCondition(fc);
+				}
+			}
+		} else if (filterCondition instanceof AndCompositeFilterCondition) {
+			AndCompositeFilterCondition tempFilter = (AndCompositeFilterCondition) filterCondition;
+
+			if (tempFilter.getFilterConditions() != null) {
+				for (FilterCondition fc : tempFilter.getFilterConditions()) {
+					validateFilterCondition(fc);
+				}
+			}
+		} else if (filterCondition instanceof PrimitiveFilterCondition) {
+			PrimitiveFilterCondition tempFilter = (PrimitiveFilterCondition) filterCondition;
+
+			Set<ConstraintViolation<PrimitiveFilterCondition>> violations = validator.validate(tempFilter);
+			if (!violations.isEmpty()) {
+				throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+			}
+			
+			PrimitiveFilterCondition condition = (PrimitiveFilterCondition) filterCondition;
+            String operand = condition.getOperand();
+            if(operand != null){
+            	String[] typeAndCode = operand.split(":");
+                String type = typeAndCode[0];
+                if(requiresClassName.contains(type)){
+                	boolean isValid = true;
+                	String fieldName = condition.getFieldName();
+                    if(condition.getClassName() != null){
+                        try {
+                            Class<?> conditionClass = Class.forName(condition.getClassName());
+                            isValid = conditionClass != null;
+                        } catch (ClassNotFoundException e) {
                             isValid = false;
                         }
+                    } else {
+                        isValid = false;
+                    }
+                    if(!isValid){
+                        throw new BusinessException("A valid class name must be entered for " + fieldName + " field.");
                     }
                 }
             }
-        }
-        if(!isValid){
-            throw new BusinessException("A valid class name must be entered for " + fieldName + " field.");
-        }
-    }
+			
+		} else if (filterCondition instanceof NativeFilterCondition) {
+			NativeFilterCondition tempFilter = (NativeFilterCondition) filterCondition;
+
+			Set<ConstraintViolation<NativeFilterCondition>> violations = validator.validate(tempFilter);
+			if (!violations.isEmpty()) {
+				throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+			}
+		}
+	}
 }

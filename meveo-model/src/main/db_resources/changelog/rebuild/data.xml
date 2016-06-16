@@ -7437,7 +7437,7 @@
             <column name="disabled" valueBoolean="false" />
             <column name="created" valueDate="2015-03-19 00:04:19.216" />
             <column name="pr_currency_to_this" />
-            <column name="pr_description" value="France" />
+            <column name="pr_description" value="Euro" />
             <column name="provider_id" valueNumeric="1" />
             <column name="currency_id" valueNumeric="5" />
         </insert>

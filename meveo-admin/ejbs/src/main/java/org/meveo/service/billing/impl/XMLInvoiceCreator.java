@@ -146,8 +146,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	public void createXMLInvoice(Long invoiceId, File billingRundir) throws BusinessException {
 		createXMLInvoice(invoiceId, billingRundir, false);
 	}
-
+	
 	public void createXMLInvoice(Long invoiceId, File billingRundir, boolean isInvoiceAdjustment)
+			throws BusinessException {
+		createXMLInvoice(invoiceId, billingRundir, isInvoiceAdjustment, true);
+	}
+
+	public void createXMLInvoice(Long invoiceId, File billingRundir, boolean isInvoiceAdjustment, boolean refreshInvoice)
 			throws BusinessException {
 //		 log.debug("creating xml invoice... using date pattern: " + DEFAULT_DATE_PATTERN);
 		serviceIds = new ArrayList<>();
@@ -155,7 +160,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		priceplanIds = new ArrayList<>();
 		try {
 			Invoice invoice = findById(invoiceId);
-			getEntityManager().refresh(invoice);
+			if(refreshInvoice) {
+				invoice = invoiceService.refreshOrRetrieve(invoice);
+			}
 			String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguage()
 					.getLanguageCode();
 

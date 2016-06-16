@@ -36,12 +36,11 @@ public class CustomEntityTemplateListBean extends CustomEntityTemplateBean {
             public List<CustomizedEntity> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> loadingFilters) {
 
                 List<CustomizedEntity> entities = null;
-                if(filters.get("customEntity") != null && (boolean) filters.get("customEntity")){
-                    entities = customizedEntityService.searchCustomEntityTemplates((String) filters.get("entityName"), sortField, sortOrder != null ? sortOrder.name() : null, getCurrentProvider());
-                } else {
-                    entities = customizedEntityService.searchManagedCustomEntities((String) filters.get("entityName"), sortField, sortOrder != null ? sortOrder.name() : null, getCurrentProvider());
-                }
+                String query = (String) filters.get("entityName");
+                boolean isCustomEntityOnly = filters.get("customEntity") != null && (boolean) filters.get("customEntity");
+                String sortBy = sortOrder != null ? sortOrder.name() : null;
 
+                entities = customizedEntityService.getCustomizedEntities(query, isCustomEntityOnly, false, sortField, sortBy, getCurrentProvider());
                 setRowCount(entities.size());
 
                 return entities.subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));

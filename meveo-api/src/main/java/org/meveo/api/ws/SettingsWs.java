@@ -21,7 +21,6 @@ import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
-import org.meveo.api.dto.User4_2Dto;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
@@ -48,7 +47,6 @@ import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTaxesResponse;
 import org.meveo.api.dto.response.GetTerminationReasonResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
-import org.meveo.api.dto.response.GetUser4_2Response;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.PermissionResponseDto;
@@ -103,13 +101,7 @@ public interface SettingsWs extends IBaseWs {
     // user
 
     @WebMethod
-    ActionStatus createUser4_2(@WebParam(name = "user") User4_2Dto postData);
-
-    @WebMethod
     ActionStatus createUser(@WebParam(name = "user") UserDto postData);
-
-    @WebMethod
-    ActionStatus updateUser4_2(@WebParam(name = "user") User4_2Dto postData);
 
     @WebMethod
     ActionStatus updateUser(@WebParam(name = "user") UserDto postData);
@@ -119,12 +111,6 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     GetUserResponse findUser(@WebParam(name = "username") String username);
-
-    @WebMethod
-    GetUser4_2Response findUser4_2(@WebParam(name = "username") String username);
-
-    @WebMethod
-    ActionStatus createOrUpdateUser4_2(@WebParam(name = "user") User4_2Dto postData);
 
     @WebMethod
     ActionStatus createOrUpdateUser(@WebParam(name = "user") UserDto postData);

@@ -23,9 +23,9 @@ public interface ICustomFieldEntity {
     public String clearUuid();
 
     /**
-     * Get a parent custom field entity in case custom field values should be inherited from a parent entity
+     * Get an array of parent custom field entity in case custom field values should be inherited from a parent entity
      * 
      * @return An entity
      */
-    public ICustomFieldEntity getParentCFEntity();
+    public ICustomFieldEntity[] getParentCFEntities();
 }

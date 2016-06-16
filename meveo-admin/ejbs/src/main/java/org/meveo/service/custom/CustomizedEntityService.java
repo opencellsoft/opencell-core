@@ -32,16 +32,18 @@ public class CustomizedEntityService implements Serializable {
     private CustomEntityTemplateService customEntityTemplateService;
 
     /**
-     * Get a list of customized/customizable entities optionally filtering by a name and custom entities only
+     * Get a list of customized/customizable entities optionally filtering by a name and custom entities only and whether to include non-managed entities.  
+     * Non-managed Entities are entities that will not be shown in the Entity Customization list page.
      * 
      * @param entityName Optional filter by a name
      * @param customEntityTemplatesOnly Return custom entity templates only
+     * @param includeNonManagedEntities If true, entities that are not managed through the Entity Customization list page will be included.
      * @param sortBy Sort by. Valid values are: "description" or null to sort by entity name
      * @param sortOrder Sort order. Valid values are "DESCENDING" or "ASCENDING". By default will sort in Ascending order.
      * @param currentProvider Current provider
      * @return A list of customized/customizable entities
      */
-    public List<CustomizedEntity> getCustomizedEntities(String entityName, boolean customEntityTemplatesOnly, final String sortBy, final String sortOrder, Provider currentProvider) {
+    public List<CustomizedEntity> getCustomizedEntities(String entityName, boolean customEntityTemplatesOnly, boolean includeNonManagedEntities, final String sortBy, final String sortOrder, Provider currentProvider) {
         List<CustomizedEntity> entities = new ArrayList<>();
 
         if (entityName != null) {
@@ -49,88 +51,11 @@ public class CustomizedEntityService implements Serializable {
         }
 
         if (!customEntityTemplatesOnly) {
-            entities.addAll(searchAllCustomFieldEntities(entityName, false));
+            entities.addAll(searchAllCustomFieldEntities(entityName, includeNonManagedEntities));
             entities.addAll(searchJobs(entityName));
         }
         entities.addAll(searchCustomEntityTemplates(entityName, currentProvider));
         Collections.sort(entities, sortEntitiesBy(sortBy, sortOrder));
-        return entities;
-    }
-
-    /**
-     * Searches all custom entities that can be manually managed from the Custom Entities page.
-     *
-     * @param entityName Optional filter by a name
-     * @param sortBy Sort by. Valid values are: "description" or null to sort by entity name
-     * @param sortOrder Sort order. Valid values are "DESCENDING" or "ASCENDING". By default will sort in Ascending order.
-     * @param currentProvider Current provider
-     * @return A list of customized/customizable entities excluding any entity that is set not to be manually managed.
-     */
-    public List<CustomizedEntity> searchManagedCustomEntities(final String entityName, final String sortBy, final String sortOrder, Provider currentProvider) {
-        List<CustomizedEntity> entities = new ArrayList<>();
-
-        entities.addAll(searchAllCustomFieldEntities(entityName, false));
-        entities.addAll(searchJobs(entityName));
-        entities.addAll(searchCustomEntityTemplates(entityName, currentProvider));
-        Collections.sort(entities, sortEntitiesBy(sortBy, sortOrder));
-
-        return entities;
-    }
-
-    /**
-     * List all custom entities including custom entities, jobs, and custom entity templates.
-     *
-     * @param sortBy Sort by. Valid values are: "description" or null to sort by entity name
-     * @param sortOrder Sort order. Valid values are "DESCENDING" or "ASCENDING". By default will sort in Ascending order.
-     * @param currentProvider Current provider
-     * @return A list of customized/customizable entities.
-     */
-    public List<CustomizedEntity> listAllCustomEntities(final String sortBy, final String sortOrder, Provider currentProvider) {
-        List<CustomizedEntity> entities = new ArrayList<>();
-
-        entities.addAll(searchAllCustomFieldEntities(null, true));
-        entities.addAll(searchJobs(null));
-        entities.addAll(searchCustomEntityTemplates(null, currentProvider));
-        Collections.sort(entities, sortEntitiesBy(sortBy, sortOrder));
-
-        return entities;
-    }
-
-    /**
-     * Searches all custom entities including custom entities, jobs, and custom entity templates.
-     *
-     * @param entityName Optional filter by a name
-     * @param sortBy Sort by. Valid values are: "description" or null to sort by entity name
-     * @param sortOrder Sort order. Valid values are "DESCENDING" or "ASCENDING". By default will sort in Ascending order.
-     * @param currentProvider Current provider
-     * @return A list of customized/customizable entities.
-     */
-    public List<CustomizedEntity> searchAllCustomEntities(final String entityName, final String sortBy, final String sortOrder, Provider currentProvider) {
-        List<CustomizedEntity> entities = new ArrayList<>();
-
-        entities.addAll(searchAllCustomFieldEntities(entityName, true));
-        entities.addAll(searchJobs(entityName));
-        entities.addAll(searchCustomEntityTemplates(entityName, currentProvider));
-        Collections.sort(entities, sortEntitiesBy(sortBy, sortOrder));
-
-        return entities;
-    }
-
-    /**
-     * Searches all custom entities comprised of only custom entity templates.
-     *
-     * @param entityName Optional filter by a name
-     * @param sortBy Sort by. Valid values are: "description" or null to sort by entity name
-     * @param sortOrder Sort order. Valid values are "DESCENDING" or "ASCENDING". By default will sort in Ascending order.
-     * @param currentProvider Current provider
-     * @return A list of customized/customizable entities.
-     */
-    public List<CustomizedEntity> searchCustomEntityTemplates(final String entityName, final String sortBy, final String sortOrder, Provider currentProvider) {
-        List<CustomizedEntity> entities = new ArrayList<>();
-
-        entities.addAll(searchCustomEntityTemplates(entityName, currentProvider));
-        Collections.sort(entities, sortEntitiesBy(sortBy, sortOrder));
-
         return entities;
     }
 
@@ -153,7 +78,7 @@ public class CustomizedEntityService implements Serializable {
             annotation = cfClass.getAnnotation(CustomFieldEntity.class);
             boolean isSkipped = JobInstance.class.isAssignableFrom(cfClass)
                 || Modifier.isAbstract(cfClass.getModifiers())
-                || (entityName != null && !cfClass.getSimpleName().toLowerCase().contains(entityName))
+                || (entityName != null && !cfClass.getSimpleName().toLowerCase().contains(entityName.toLowerCase()))
                 || (!includeNonManagedEntities && !annotation.isManuallyManaged());
 
             if(isSkipped){

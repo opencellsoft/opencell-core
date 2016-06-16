@@ -110,7 +110,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     public List<String> autocompleteClassNames(String query) {
         List<String> clazzNames = new ArrayList<String>();
 
-        List<CustomizedEntity> entities = customizedEntityService.searchAllCustomEntities(query, null, null, getCurrentProvider());
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, true, null, null, getCurrentProvider());
 
         for (CustomizedEntity customizedEntity : entities) {
             clazzNames.add(customizedEntity.getClassnameToDisplay());
@@ -128,7 +128,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     public List<String> autocompleteClassNamesCEIOnly(String query) {
         List<String> clazzNames = new ArrayList<String>();
 
-        List<CustomizedEntity> entities = customizedEntityService.searchCustomEntityTemplates(query, null, null, getCurrentProvider());
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, true, false, null, null, getCurrentProvider());
 
         for (CustomizedEntity customizedEntity : entities) {
             clazzNames.add(customizedEntity.getClassnameToDisplay());
@@ -146,7 +146,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     public List<String> autocompleteClassNamesHuman(String query) {
         List<String> clazzNames = new ArrayList<String>();
 
-        List<CustomizedEntity> entities = customizedEntityService.searchAllCustomEntities(query, null, null, getCurrentProvider());
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, true, null, null, getCurrentProvider());
 
         for (CustomizedEntity customizedEntity : entities) {
             clazzNames.add(customizedEntity.getClassnameToDisplayHuman());

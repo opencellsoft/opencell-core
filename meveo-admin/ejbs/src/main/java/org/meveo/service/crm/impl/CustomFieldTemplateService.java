@@ -189,9 +189,6 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     @Override
     public void remove(CustomFieldTemplate cft) {
-        if(!getEntityManager().contains(cft)){
-            cft = getEntityManager().merge(cft);
-        }
         super.remove(cft);
         customFieldsCache.removeCustomFieldTemplate(cft);
     }
@@ -314,7 +311,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates, User currentUser, boolean updateExisting, boolean removeOrphans) throws BusinessException {
 
         // Get templates corresponding to an entity type
-        Map<String, CustomFieldTemplate> allTemplates = findByAppliesTo(appliesTo, currentUser.getProvider());
+        Map<String, CustomFieldTemplate> allTemplates = findByAppliesToNoCache(appliesTo, currentUser.getProvider());
 
         if (templates != null) {
             CustomFieldTemplate existingCustomField = null;
@@ -332,6 +329,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                     existingCustomField.setFieldType(cft.getFieldType());
                     existingCustomField.setEntityClazz(cft.getEntityClazz());
                     existingCustomField.setListValues(cft.getListValues());
+                    existingCustomField.setGuiPosition(cft.getGuiPosition());
                     log.debug("Update existing CFT {} for {} entity", cft.getCode(), appliesTo);
                     update(existingCustomField, currentUser);
                 }

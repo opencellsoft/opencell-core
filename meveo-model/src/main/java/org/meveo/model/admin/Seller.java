@@ -28,7 +28,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -129,11 +128,11 @@ public class Seller extends BusinessCFEntity {
 	}
 
 	@Override
-	public ICustomFieldEntity getParentCFEntity() {
+	public ICustomFieldEntity[] getParentCFEntities() {
 		if (seller != null) {
-			return seller;
+			return new ICustomFieldEntity[]{seller};
 		}
-		return getProvider();
+		return new ICustomFieldEntity[]{getProvider()};
 	}
 
 	/**

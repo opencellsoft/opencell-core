@@ -1,12 +1,10 @@
 package org.meveo.service.filter.processor;
 
 import java.math.BigDecimal;
-import java.util.Map;
 
 import org.apache.commons.validator.routines.BigDecimalValidator;
 import org.meveo.admin.exception.FilterException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
-import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.PrimitiveFilterCondition;
 
 public class BigDecimalProcessor extends PrimitiveFilterProcessor {

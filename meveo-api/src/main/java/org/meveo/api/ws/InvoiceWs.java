@@ -8,6 +8,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
+import org.meveo.api.dto.invoice.GetInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
@@ -24,7 +25,7 @@ public interface InvoiceWs extends IBaseWs {
 
 	@WebMethod
 	public CustomerInvoicesResponse findInvoice(@WebParam(name = "customerAccountCode") String customerAccountCode);
-
+	
 	@WebMethod
 	public GenerateInvoiceResponseDto generateInvoiceData(
 			@WebParam(name = "generateInvoiceRequest") GenerateInvoiceRequestDto generateInvoiceRequestDto);
@@ -48,5 +49,9 @@ public interface InvoiceWs extends IBaseWs {
 	
 	@WebMethod
 	public ActionStatus validateInvoice(@WebParam(name = "invoiceId") Long invoiceId);	
+	
+	@WebMethod
+	public GetInvoiceResponseDto findInvoiceByIdOrType(@WebParam(name = "id") Long id, @WebParam(name = "invoiceNumber") String invoiceNumber,
+			@WebParam(name = "invoiceType") String invoiceType);
 
 }

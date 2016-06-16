@@ -21,6 +21,7 @@ package org.meveo.service.billing.impl;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -34,7 +35,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -69,6 +72,7 @@ import org.jboss.vfs.VirtualFile;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
+import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.job.PdfGeneratorConstants;
 import org.meveo.commons.exceptions.ConfigurationException;
 import org.meveo.commons.utils.ParamBean;
@@ -110,6 +114,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public final static String INVOICE_ADJUSTMENT_SEQUENCE = "INVOICE_ADJUSTMENT_SEQUENCE";
 
 	public final static String INVOICE_SEQUENCE = "INVOICE_SEQUENCE";
+	
+	@EJB
+	private PDFParametersConstruction pDFParametersConstruction;
+	
+	@EJB
+	private XMLInvoiceCreator xmlInvoiceCreator;
 
 	@Inject
 	private CustomerAccountService customerAccountService;
@@ -256,9 +266,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	public String getInvoiceNumber(Invoice invoice, User currentUser) throws BusinessException {
-		Seller seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+		String cfName = "INVOICE_SEQUENCE_"+invoice.getInvoiceType().getCode().toUpperCase();			
+		if(invoiceTypeService.getAdjustementCode().equals(invoice.getInvoiceType().getCode())){
+			cfName = "INVOICE_ADJUSTMENT_SEQUENCE";
+		}
+		if(invoiceTypeService.getCommercialCode().equals(invoice.getInvoiceType().getCode())){
+			cfName = "INVOICE_SEQUENCE";
+		}
 		
-        Sequence sequence = getSequence(invoice, seller,1,true,currentUser);
+		Seller seller = chooseSeller(invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller(), cfName, invoice.getInvoiceDate(), invoice.getInvoiceType(), currentUser);
+
+        Sequence sequence = getSequence(invoice, seller,cfName,1,true,currentUser);
 		String prefix = sequence.getPrefixEL();
 		int sequenceSize = sequence.getSequenceSize();
 
@@ -274,17 +292,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return (prefix + invoiceNumber);
 	}
 
-	public synchronized Sequence getSequence(Invoice invoice ,Seller seller,int step,boolean increment,User currentUser)throws BusinessException{			
-		String cfName = "INVOICE_SEQUENCE_"+invoice.getInvoiceType().getCode().toUpperCase();	
-		Long currentNbFromCF = null;
-		
-		if(invoiceTypeService.getAdjustementCode().equals(invoice.getInvoiceType().getCode())){
-			cfName = "INVOICE_ADJUSTMENT_SEQUENCE";
-		}
-		if(invoiceTypeService.getCommercialCode().equals(invoice.getInvoiceType().getCode())){
-			cfName = "INVOICE_SEQUENCE";
-		}
-		
+	public synchronized Sequence getSequence(Invoice invoice ,Seller seller,String cfName,int step,boolean increment,User currentUser)throws BusinessException{			
+		Long currentNbFromCF = null;		
 		Object currentValObj = customFieldInstanceService.getCFValue(seller, cfName, invoice.getInvoiceDate(), currentUser);
 		if(currentValObj != null){			
 			currentNbFromCF = (Long)currentValObj;
@@ -947,4 +956,67 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				(billingRun == null ? DateUtils.formatDateWithPattern(invoiceCreation, paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss")) : billingRun.getId());
 		return brPath;
 	}
+	
+	/**
+	 *  if the sequence not found on cust.seller, we try in seller.parent (until seller.parent=null)
+	 *  
+	 * @param seller
+	 * @param cfName
+	 * @param date
+	 * @param invoiceType
+	 * @param currentUser
+	 * @return
+	 */
+	private Seller chooseSeller(Seller seller,String cfName,Date date,InvoiceType invoiceType,User currentUser){
+		if(seller.getSeller() == null){
+			return seller;
+		}
+		Object currentValObj = customFieldInstanceService.getCFValue(seller, cfName,date, currentUser);
+		if(currentValObj != null){		
+			return seller;
+		}
+		if(invoiceType.getSellerSequence() != null && invoiceType.getSellerSequence().containsKey(seller)){
+			return  seller;
+		}
+		
+		return chooseSeller(seller.getSeller(), cfName, date, invoiceType, currentUser);
+		
+		
+	}
+	
+	public String getXMLInvoice(Invoice invoice, String invoiceNumber, User currentUser, boolean refreshInvoice) throws BusinessException, FileNotFoundException {
+		String brPath = getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), currentUser.getProvider().getCode());
+		File billingRundir = new File(brPath);
+		xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir, false, refreshInvoice);
+		String xmlCanonicalPath = brPath + File.separator + invoiceNumber + ".xml";
+		Scanner scanner = new Scanner(new File(xmlCanonicalPath));
+		String xmlContent = scanner.useDelimiter("\\Z").next();
+		scanner.close();
+		log.debug("getXMLInvoice  invoiceNumber:{} done.", invoiceNumber);
+		
+		return xmlContent;
+	}
+
+
+	public byte[] generatePdfInvoice(Invoice invoice, String invoiceNumber, User currentUser) throws Exception {
+		if (invoice.getPdf() == null) {
+			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId(), currentUser, currentUser.getProvider());
+			producePdf(parameters, currentUser);
+		}
+		findById(invoice.getId(), true);
+		log.debug("getXMLInvoice invoiceNumber:{} done.", invoiceNumber);
+		
+		return invoice.getPdf();
+	}
+	
+	public void generateXmlAndPdfInvoice(Invoice invoice, User currentUser) throws Exception {
+		getXMLInvoice(invoice, invoice.getInvoiceNumber(), currentUser, false);
+		generatePdfInvoice(invoice, invoice.getInvoiceNumber(), currentUser);
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void createNewTx(Invoice invoice, User creator) throws BusinessException {
+		create(invoice, creator);
+	}
+	
 }

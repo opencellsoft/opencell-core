@@ -642,6 +642,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="listCalendars">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="listCalendars">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listCalendarsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findDescriptions">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findDescriptions">
@@ -1471,7 +1480,9 @@
       <xs:element name="CreditCategory" type="tns:creditCategoryDto"/>
       <xs:element name="Currencies" type="tns:currenciesDto"/>
       <xs:element name="Currency" type="tns:currencyDto"/>
+      <xs:element name="CustomEntityInstance" type="tns:customEntityInstanceDto"/>
       <xs:element name="CustomField" type="tns:customFieldDto"/>
+      <xs:element name="CustomFieldMatrixColumn" type="tns:customFieldMatrixColumnDto"/>
       <xs:element name="CustomFieldTemplate" type="tns:customFieldTemplateDto"/>
       <xs:element name="CustomFieldValue" type="tns:customFieldValueDto"/>
       <xs:element name="CustomFields" type="tns:customFieldsDto"/>
@@ -1509,12 +1520,14 @@
       <xs:element name="Invoice" type="tns:invoiceDto"/>
       <xs:element name="InvoiceCategories" type="tns:invoiceCategoriesDto"/>
       <xs:element name="InvoiceCategory" type="tns:invoiceCategoryDto"/>
+      <xs:element name="InvoiceConfiguration" type="tns:invoiceConfigurationDto"/>
       <xs:element name="InvoiceSubCategories" type="tns:invoiceSubCategoriesDto"/>
       <xs:element name="InvoiceSubCategory" type="tns:invoiceSubCategoryDto"/>
       <xs:element name="InvoiceSubCategoryCountry" type="tns:invoiceSubCategoryCountryDto"/>
       <xs:element name="Language" type="tns:languageDto"/>
       <xs:element name="LanguageDescription" type="tns:languageDescriptionDto"/>
       <xs:element name="Languages" type="tns:languagesDto"/>
+      <xs:element name="ListCalendarResponse" type="tns:listCalendarResponse"/>
       <xs:element name="MatchingAmount" type="tns:matchingAmountDto"/>
       <xs:element name="MatchingAmounts" type="tns:matchingAmountsDto"/>
       <xs:element name="MatchingCode" type="tns:matchingCodeDto"/>
@@ -1650,6 +1663,8 @@
       <xs:element name="findUserResponse" type="tns:findUserResponse"/>
       <xs:element name="index" type="tns:index"/>
       <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:element name="listCalendars" type="tns:listCalendars"/>
+      <xs:element name="listCalendarsResponse" type="tns:listCalendarsResponse"/>
       <xs:element name="listDescriptions" type="tns:listDescriptions"/>
       <xs:element name="listDescriptionsResponse" type="tns:listDescriptionsResponse"/>
       <xs:element name="listPermissions" type="tns:listPermissions"/>
@@ -1894,13 +1909,13 @@
               <xs:element name="customer" type="xs:string"/>
               <xs:element name="currency" type="xs:string"/>
               <xs:element name="language" type="xs:string"/>
-              <xs:element minOccurs="0" name="status" type="xs:string"/>
-              <xs:element minOccurs="0" name="paymentMethod" type="xs:string"/>
+              <xs:element minOccurs="0" name="status" type="tns:customerAccountStatusEnum"/>
+              <xs:element minOccurs="0" name="paymentMethod" type="tns:paymentMethodEnum"/>
               <xs:element minOccurs="0" name="creditCategory" type="xs:string"/>
               <xs:element minOccurs="0" name="dateStatus" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="dateDunningLevel" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="contactInformation" type="tns:ContactInformation"/>
-              <xs:element minOccurs="0" name="dunningLevel" type="xs:string"/>
+              <xs:element minOccurs="0" name="dunningLevel" type="tns:dunningLevelEnum"/>
               <xs:element minOccurs="0" name="mandateIdentification" type="xs:string"/>
               <xs:element minOccurs="0" name="mandateDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="balance" type="xs:decimal"/>
@@ -1923,13 +1938,13 @@
               <xs:element name="billingCycle" type="xs:string"/>
               <xs:element name="country" type="xs:string"/>
               <xs:element name="language" type="xs:string"/>
-              <xs:element name="paymentMethod" type="xs:string"/>
+              <xs:element name="paymentMethod" type="tns:paymentMethodEnum"/>
               <xs:element minOccurs="0" name="nextInvoiceDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="paymentTerms" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentTerms" type="tns:paymentTermEnum"/>
               <xs:element minOccurs="0" name="electronicBilling" type="xs:boolean"/>
-              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="status" type="tns:accountStatusEnum"/>
               <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
               <xs:element minOccurs="0" name="email" type="xs:string"/>
               <xs:element minOccurs="0" name="bankCoordinates" type="tns:bankCoordinatesDto"/>
@@ -1967,9 +1982,9 @@
               <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
               <xs:element minOccurs="0" name="amountTax" type="xs:decimal"/>
               <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
-              <xs:element minOccurs="0" name="paymentMethod" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentMethod" type="tns:paymentMethodEnum"/>
               <xs:element name="PDFpresent" type="xs:boolean"/>
-              <xs:element minOccurs="0" name="type" type="xs:string"/>
+              <xs:element minOccurs="0" name="type" type="tns:invoiceTypeEnum"/>
               <xs:element minOccurs="0" name="pdf" type="xs:base64Binary"/>
               <xs:element maxOccurs="unbounded" minOccurs="0" name="subCategoryInvoiceAgregates" nillable="true" type="tns:subCategoryInvoiceAgregateDto"/>
               <xs:element maxOccurs="unbounded" minOccurs="0" name="accountOperations" nillable="true" type="tns:accountOperationDto"/>
@@ -2024,14 +2039,14 @@
               <xs:element minOccurs="0" name="dueDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="type" type="xs:string"/>
               <xs:element minOccurs="0" name="transactionDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="transactionCategory" type="xs:string"/>
+              <xs:element minOccurs="0" name="transactionCategory" type="tns:operationCategoryEnum"/>
               <xs:element minOccurs="0" name="reference" type="xs:string"/>
               <xs:element minOccurs="0" name="accountCode" type="xs:string"/>
               <xs:element minOccurs="0" name="accountCodeClientSide" type="xs:string"/>
               <xs:element minOccurs="0" name="amount" type="xs:decimal"/>
               <xs:element minOccurs="0" name="matchingAmount" type="xs:decimal"/>
               <xs:element minOccurs="0" name="unMatchingAmount" type="xs:decimal"/>
-              <xs:element minOccurs="0" name="matchingStatus" type="xs:string"/>
+              <xs:element minOccurs="0" name="matchingStatus" type="tns:matchingStatusEnum"/>
               <xs:element minOccurs="0" name="occCode" type="xs:string"/>
               <xs:element minOccurs="0" name="occDescription" type="xs:string"/>
               <xs:element minOccurs="0" name="customerAccount" type="xs:string"/>
@@ -2064,7 +2079,7 @@
       <xs:complexType name="matchingCodeDto">
         <xs:sequence>
           <xs:element minOccurs="0" name="code" type="xs:string"/>
-          <xs:element minOccurs="0" name="matchingType" type="xs:string"/>
+          <xs:element minOccurs="0" name="matchingType" type="tns:matchingTypeEnum"/>
           <xs:element minOccurs="0" name="matchingDate" type="xs:dateTime"/>
           <xs:element minOccurs="0" name="matchingAmountCredit" type="xs:decimal"/>
           <xs:element minOccurs="0" name="matchingAmountDebit" type="xs:decimal"/>
@@ -2105,7 +2120,7 @@
         <xs:complexContent>
           <xs:extension base="tns:accountOperationDto">
             <xs:sequence>
-              <xs:element minOccurs="0" name="rejectedType" type="xs:string"/>
+              <xs:element minOccurs="0" name="rejectedType" type="tns:rejectedType"/>
               <xs:element minOccurs="0" name="bankLot" type="xs:string"/>
               <xs:element minOccurs="0" name="bankReference" type="xs:string"/>
               <xs:element minOccurs="0" name="rejectedDate" type="xs:dateTime"/>
@@ -2127,7 +2142,7 @@
               <xs:element name="billingAccount" type="xs:string"/>
               <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="status" type="tns:accountStatusEnum"/>
               <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
               <xs:element minOccurs="0" name="subscriptions" type="tns:Subscriptions"/>
             </xs:sequence>
@@ -2207,6 +2222,7 @@
             <xs:element name="longValue" type="xs:long"/>
             <xs:element name="stringValue" type="xs:string"/>
             <xs:element name="entityReferenceValue" type="tns:entityReferenceDto"/>
+            <xs:element name="childEntityValue" type="tns:customEntityInstanceDto"/>
           </xs:choice>
         </xs:sequence>
       </xs:complexType>
@@ -2215,6 +2231,15 @@
         <xs:attribute name="classname" type="xs:string" use="required"/>
         <xs:attribute name="classnameCode" type="xs:string"/>
         <xs:attribute name="code" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="customEntityInstanceDto">
+        <xs:sequence>
+          <xs:element name="disabled" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
+        <xs:attribute name="cetCode" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="Accesses">
         <xs:sequence>
@@ -2243,12 +2268,14 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
-              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="status" type="tns:instanceStatusEnum"/>
+              <xs:element minOccurs="0" name="statusDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
               <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
               <xs:element minOccurs="0" name="endAgreementDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
             <xs:attribute name="description" type="xs:string"/>
@@ -2272,6 +2299,23 @@
           <xs:element minOccurs="0" name="country" type="xs:string"/>
           <xs:element minOccurs="0" name="state" type="xs:string"/>
         </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="linkedHashMap">
+        <xs:complexContent>
+          <xs:extension base="tns:hashMap">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="hashMap">
+        <xs:complexContent>
+          <xs:extension base="tns:abstractMap">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="abstractMap">
+        <xs:sequence/>
       </xs:complexType>
       <xs:complexType name="updateSellerResponse">
         <xs:sequence>
@@ -2297,28 +2341,104 @@
               <xs:element minOccurs="0" name="userAccount" type="xs:string"/>
               <xs:element minOccurs="0" name="invoiceSequenceSize" type="xs:int"/>
               <xs:element name="enterprise" type="xs:boolean"/>
+              <xs:element name="levelDuplication" type="xs:boolean"/>
               <xs:element minOccurs="0" name="invoicePrefix" type="xs:string"/>
               <xs:element minOccurs="0" name="currentInvoiceNb" type="xs:long"/>
-              <xs:element minOccurs="0" name="displaySubscriptions" type="xs:boolean"/>
-              <xs:element minOccurs="0" name="displayServices" type="xs:boolean"/>
-              <xs:element minOccurs="0" name="displayOffers" type="xs:boolean"/>
-              <xs:element minOccurs="0" name="displayEdrs" type="xs:boolean"/>
-              <xs:element minOccurs="0" name="displayProvider" type="xs:boolean"/>
               <xs:element name="displayFreeTransacInInvoice" type="xs:boolean"/>
-              <xs:element minOccurs="0" name="displayDetail" type="xs:boolean"/>
               <xs:element minOccurs="0" name="invoiceAdjustmentPrefix" type="xs:string"/>
               <xs:element minOccurs="0" name="currentInvoiceAdjustmentNb" type="xs:long"/>
               <xs:element minOccurs="0" name="invoiceAdjustmentSequenceSize" type="xs:int"/>
+              <xs:element minOccurs="0" name="rounding" type="xs:int"/>
+              <xs:element minOccurs="0" name="prepaidReservationExpirationDelayinMillisec" type="xs:long"/>
+              <xs:element minOccurs="0" name="discountAccountingCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="email" type="xs:string"/>
+              <xs:element minOccurs="0" name="bankCoordinates" type="tns:bankCoordinatesDto"/>
+              <xs:element minOccurs="0" name="invoiceConfiguration" type="tns:invoiceConfigurationDto"/>
               <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="invoiceConfigurationDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="displaySubscriptions" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="displayServices" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="displayOffers" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="displayEdrs" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="displayProvider" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="displayCfAsXML" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="displayPricePlans" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="displayDetail" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="displayChargesPeriods" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createProviderResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listCalendars">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="listCalendarsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:listCalendarResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listCalendarResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="calendars" type="tns:calendarsDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="calendarsDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="calendar" nillable="true" type="tns:Calendar"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Calendar">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="description" type="xs:string"/>
+              <xs:element name="calendarType" type="tns:calendarTypeEnum"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="days" nillable="true" type="tns:dayInYearDto"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="hours" nillable="true" type="tns:hourInDayDto"/>
+              <xs:element minOccurs="0" name="periodLength" type="xs:int"/>
+              <xs:element minOccurs="0" name="periodUnit" type="tns:calendarPeriodUnitEnum"/>
+              <xs:element minOccurs="0" name="nbPeriods" type="xs:int"/>
+              <xs:element minOccurs="0" name="joinCalendar1Code" type="xs:string"/>
+              <xs:element minOccurs="0" name="joinCalendar2Code" type="xs:string"/>
+              <xs:element minOccurs="0" name="intervalType" type="tns:calendarIntervalTypeEnum"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="intervals" nillable="true" type="tns:calendarDateIntervalDto"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="dayInYearDto">
+        <xs:sequence/>
+        <xs:attribute name="day" type="xs:int" use="required"/>
+        <xs:attribute name="month" type="tns:monthEnum" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="hourInDayDto">
+        <xs:sequence/>
+        <xs:attribute name="hour" type="xs:int" use="required"/>
+        <xs:attribute name="min" type="xs:int" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="calendarDateIntervalDto">
+        <xs:sequence/>
+        <xs:attribute name="intervalBegin" type="xs:int" use="required"/>
+        <xs:attribute name="intervalEnd" type="xs:int" use="required"/>
       </xs:complexType>
       <xs:complexType name="createCountry">
         <xs:sequence>
@@ -2381,7 +2501,8 @@
       </xs:complexType>
       <xs:complexType name="findDescriptions">
         <xs:sequence>
-          <xs:element minOccurs="0" name="descriptionsCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="entityClass" type="xs:string"/>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
           <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
@@ -2399,22 +2520,15 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType abstract="true" name="baseResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="actionStatus" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="catMessagesDto">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
-              <xs:element minOccurs="0" name="basicDescription" type="xs:string"/>
-              <xs:element minOccurs="0" name="catMessagesCode" type="xs:string"/>
+              <xs:element name="entityClass" type="xs:string"/>
+              <xs:element name="code" type="xs:string"/>
+              <xs:element name="defaultDescription" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="translatedDescriptions" type="tns:languageDescriptionDto"/>
             </xs:sequence>
-            <xs:attribute name="objectType" type="xs:string" use="required"/>
-            <xs:attribute name="languageCode" type="xs:string" use="required"/>
-            <xs:attribute name="entityCode" type="xs:string" use="required"/>
-            <xs:attribute name="descriptionTranslation" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -2422,41 +2536,6 @@
         <xs:sequence>
           <xs:element minOccurs="0" name="calendar" type="tns:Calendar"/>
         </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="Calendar">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="description" type="xs:string"/>
-              <xs:element name="calendarType" type="tns:calendarTypeEnum"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="days" nillable="true" type="tns:dayInYearDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="hours" nillable="true" type="tns:hourInDayDto"/>
-              <xs:element minOccurs="0" name="periodLength" type="xs:int"/>
-              <xs:element minOccurs="0" name="periodUnit" type="tns:calendarPeriodUnitEnum"/>
-              <xs:element minOccurs="0" name="nbPeriods" type="xs:int"/>
-              <xs:element minOccurs="0" name="joinCalendar1Code" type="xs:string"/>
-              <xs:element minOccurs="0" name="joinCalendar2Code" type="xs:string"/>
-              <xs:element minOccurs="0" name="intervalType" type="tns:calendarIntervalTypeEnum"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="intervals" nillable="true" type="tns:calendarDateIntervalDto"/>
-            </xs:sequence>
-            <xs:attribute name="code" type="xs:string" use="required"/>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="dayInYearDto">
-        <xs:sequence/>
-        <xs:attribute name="day" type="xs:int" use="required"/>
-        <xs:attribute name="month" type="xs:string" use="required"/>
-      </xs:complexType>
-      <xs:complexType name="hourInDayDto">
-        <xs:sequence/>
-        <xs:attribute name="hour" type="xs:int" use="required"/>
-        <xs:attribute name="min" type="xs:int" use="required"/>
-      </xs:complexType>
-      <xs:complexType name="calendarDateIntervalDto">
-        <xs:sequence/>
-        <xs:attribute name="intervalBegin" type="xs:int" use="required"/>
-        <xs:attribute name="intervalEnd" type="xs:int" use="required"/>
       </xs:complexType>
       <xs:complexType name="createOrUpdateCalendarResponse">
         <xs:sequence>
@@ -2636,12 +2715,12 @@
       </xs:complexType>
       <xs:complexType name="terminationReasonDto">
         <xs:sequence>
-          <xs:element minOccurs="0" name="description" type="xs:string"/>
           <xs:element name="applyAgreement" type="xs:boolean"/>
           <xs:element name="applyReimbursment" type="xs:boolean"/>
           <xs:element name="applyTerminationCharges" type="xs:boolean"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
       </xs:complexType>
       <xs:complexType name="updateTerminationReasonResponse">
         <xs:sequence>
@@ -2876,11 +2955,6 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="calendarsDto">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="calendar" nillable="true" type="tns:Calendar"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="taxesDto">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="tax" nillable="true" type="tns:taxDto"/>
@@ -3014,7 +3088,7 @@
       <xs:complexType name="occTemplateDto">
         <xs:sequence>
           <xs:element name="accountCode" type="xs:string"/>
-          <xs:element name="occCategory" type="xs:string"/>
+          <xs:element name="occCategory" type="tns:operationCategoryEnum"/>
           <xs:element minOccurs="0" name="accountCodeClientSide" type="xs:string"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
@@ -3082,9 +3156,34 @@
               <xs:element minOccurs="0" name="guiPosition" type="xs:string"/>
               <xs:element minOccurs="0" name="mapKeyType" type="tns:customFieldMapKeyEnum"/>
               <xs:element minOccurs="0" name="applicableOnEl" type="xs:string"/>
+              <xs:element minOccurs="0" name="matrixColumns">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="matrixColumn" type="tns:customFieldMatrixColumnDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="childEntityFieldsForSummary">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="fieldCode" type="xs:string"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
             <xs:attribute name="description" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customFieldMatrixColumnDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence/>
+            <xs:attribute name="position" type="xs:int" use="required"/>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="label" type="xs:string" use="required"/>
+            <xs:attribute name="keyType" type="tns:customFieldMapKeyEnum" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -3237,7 +3336,7 @@
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="paymentMethods" nillable="true" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="paymentMethods" nillable="true" type="tns:paymentMethodEnum"/>
               <xs:element minOccurs="0" name="creditCategories" type="tns:creditCategoriesDto"/>
             </xs:sequence>
           </xs:extension>
@@ -3315,7 +3414,8 @@
       </xs:complexType>
       <xs:complexType name="removeDescriptions">
         <xs:sequence>
-          <xs:element minOccurs="0" name="descriptionsCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="entityClass" type="xs:string"/>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
           <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
@@ -3696,6 +3796,8 @@
           <xs:element minOccurs="0" name="code" type="xs:string"/>
           <xs:element minOccurs="0" name="description" type="xs:string"/>
           <xs:element name="exoneratedFromTaxes" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="exonerationTaxEl" type="xs:string"/>
+          <xs:element minOccurs="0" name="exonerationReason" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="titlesDto">
@@ -3820,6 +3922,96 @@
           <xs:enumeration value="ACTION_FORBIDDEN"/>
         </xs:restriction>
       </xs:simpleType>
+      <xs:simpleType name="customerAccountStatusEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ACTIVE"/>
+          <xs:enumeration value="CLOSE"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="paymentMethodEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="CHECK"/>
+          <xs:enumeration value="DIRECTDEBIT"/>
+          <xs:enumeration value="TIP"/>
+          <xs:enumeration value="WIRETRANSFER"/>
+          <xs:enumeration value="CARD"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="dunningLevelEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="R0"/>
+          <xs:enumeration value="R1"/>
+          <xs:enumeration value="R2"/>
+          <xs:enumeration value="R3"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="paymentTermEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="CASH"/>
+          <xs:enumeration value="THREE_X"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="accountStatusEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ACTIVE"/>
+          <xs:enumeration value="CANCELED"/>
+          <xs:enumeration value="TERMINATED"/>
+          <xs:enumeration value="CLOSED"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="invoiceTypeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="COMMERCIAL"/>
+          <xs:enumeration value="SELF_BILLED"/>
+          <xs:enumeration value="PROFORMA"/>
+          <xs:enumeration value="CORRECTED"/>
+          <xs:enumeration value="CREDIT_NOTE"/>
+          <xs:enumeration value="DEBIT_NOTE"/>
+          <xs:enumeration value="CREDIT_NOTE_ADJUST"/>
+          <xs:enumeration value="DEBIT_NODE_ADJUST"/>
+          <xs:enumeration value="SELF_BILLED_CREDIT_NOTE"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="operationCategoryEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="DEBIT"/>
+          <xs:enumeration value="CREDIT"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="matchingStatusEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="O"/>
+          <xs:enumeration value="L"/>
+          <xs:enumeration value="P"/>
+          <xs:enumeration value="C"/>
+          <xs:enumeration value="I"/>
+          <xs:enumeration value="R"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="matchingTypeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="A"/>
+          <xs:enumeration value="M"/>
+          <xs:enumeration value="A_TIP"/>
+          <xs:enumeration value="A_DERICT_DEBIT"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="rejectedType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="A"/>
+          <xs:enumeration value="M"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="instanceStatusEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ACTIVE"/>
+          <xs:enumeration value="INACTIVE"/>
+          <xs:enumeration value="CANCELED"/>
+          <xs:enumeration value="TERMINATED"/>
+          <xs:enumeration value="SUSPENDED"/>
+          <xs:enumeration value="CLOSED"/>
+        </xs:restriction>
+      </xs:simpleType>
       <xs:simpleType name="calendarTypeEnum">
         <xs:restriction base="xs:string">
           <xs:enumeration value="YEARLY"/>
@@ -3828,6 +4020,22 @@
           <xs:enumeration value="INTERVAL"/>
           <xs:enumeration value="INTERSECT"/>
           <xs:enumeration value="UNION"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="monthEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="JANUARY"/>
+          <xs:enumeration value="FEBRUARY"/>
+          <xs:enumeration value="MARCH"/>
+          <xs:enumeration value="APRIL"/>
+          <xs:enumeration value="MAY"/>
+          <xs:enumeration value="JUNE"/>
+          <xs:enumeration value="JULY"/>
+          <xs:enumeration value="AUGUST"/>
+          <xs:enumeration value="SEPTEMBER"/>
+          <xs:enumeration value="OCTOBER"/>
+          <xs:enumeration value="NOVEMBER"/>
+          <xs:enumeration value="DECEMBER"/>
         </xs:restriction>
       </xs:simpleType>
       <xs:simpleType name="calendarPeriodUnitEnum">
@@ -3894,6 +4102,9 @@
   </wsdl:message>
   <wsdl:message name="createInvoiceSubCategory">
     <wsdl:part element="ns1:createInvoiceSubCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listCalendars">
+    <wsdl:part element="ns1:listCalendars" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findBillingCycleResponse">
     <wsdl:part element="ns1:findBillingCycleResponse" name="parameters"></wsdl:part>
@@ -3970,11 +4181,11 @@
   <wsdl:message name="removeInvoiceSubCategoryCountryResponse">
     <wsdl:part element="ns1:removeInvoiceSubCategoryCountryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateInvoiceSubCategoryCountryResponse">
-    <wsdl:part element="ns1:createOrUpdateInvoiceSubCategoryCountryResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeLanguageResponse">
     <wsdl:part element="ns1:removeLanguageResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateInvoiceSubCategoryCountryResponse">
+    <wsdl:part element="ns1:createOrUpdateInvoiceSubCategoryCountryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="listTaxesResponse">
     <wsdl:part element="ns1:listTaxesResponse" name="parameters"></wsdl:part>
@@ -3993,6 +4204,9 @@
   </wsdl:message>
   <wsdl:message name="createInvoiceCategoryResponse">
     <wsdl:part element="ns1:createInvoiceCategoryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listCalendarsResponse">
+    <wsdl:part element="ns1:listCalendarsResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeBillingCycleResponse">
     <wsdl:part element="ns1:removeBillingCycleResponse" name="parameters"></wsdl:part>
@@ -4156,11 +4370,11 @@
   <wsdl:message name="createCustomFieldTemplate">
     <wsdl:part element="ns1:createCustomFieldTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createProviderResponse">
-    <wsdl:part element="ns1:createProviderResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findLanguage">
     <wsdl:part element="ns1:findLanguage" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createProviderResponse">
+    <wsdl:part element="ns1:createProviderResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeBillingCycle">
     <wsdl:part element="ns1:removeBillingCycle" name="parameters"></wsdl:part>
@@ -4240,11 +4454,11 @@
   <wsdl:message name="listDescriptions">
     <wsdl:part element="ns1:listDescriptions" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findDescriptions">
-    <wsdl:part element="ns1:findDescriptions" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findLanguageResponse">
     <wsdl:part element="ns1:findLanguageResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findDescriptions">
+    <wsdl:part element="ns1:findDescriptions" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeCurrencyResponse">
     <wsdl:part element="ns1:removeCurrencyResponse" name="parameters"></wsdl:part>
@@ -4464,6 +4678,10 @@
     <wsdl:operation name="createProvider">
       <wsdl:input message="ns1:createProvider" name="createProvider"></wsdl:input>
       <wsdl:output message="ns1:createProviderResponse" name="createProviderResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listCalendars">
+      <wsdl:input message="ns1:listCalendars" name="listCalendars"></wsdl:input>
+      <wsdl:output message="ns1:listCalendarsResponse" name="listCalendarsResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createCountry">
       <wsdl:input message="ns1:createCountry" name="createCountry"></wsdl:input>
@@ -4889,7 +5107,12 @@
    <soapenv:Body>\r
       <ws:listTerminationReason/>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listTerminationReason"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/CatalogWs?wsdl" id="4ca1b71a-5a39-44e5-a167-afc247acc785" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/CatalogWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/CatalogWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CatalogWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listTerminationReason"/></con:call></con:operation><con:operation id="50dfd43f-a440-4a70-90ef-210c0ca8bea4" isOneWay="false" action="" name="listCalendars" bindingOperationName="listCalendars" type="Request-Response" outputName="listCalendarsResponse" inputName="listCalendars" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="6c4e6b1f-eacc-419f-ac13-e8ef98de5fc2" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:listCalendars/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listCalendars"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/CatalogWs?wsdl" id="4ca1b71a-5a39-44e5-a167-afc247acc785" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/CatalogWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/CatalogWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CatalogWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/CatalogWs?wsdl=CatalogWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="CatalogWsSoapBinding" type="ns1:CatalogWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -17732,7 +17955,89 @@
          <customerAccountCode>?</customerAccountCode>\r
       </ws:list>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/PaymentWs/list"/></con:call></con:operation></con:interface><con:testSuite name="postMigration TestSuite" id="17378c48-6a2d-4b07-bb26-0309b164ba88"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="cb407cf5-592e-49e5-addc-6b43d2c84b68" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog Creation TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="createCounterTemplate" id="6102ffc2-cd03-478f-abbc-2816720c0cad"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createCounterTemplate</con:operation><con:request name="createCounterTemplate" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="8f487693-453e-4107-a739-ad22020770cf"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/PaymentWs/list"/></con:call></con:operation></con:interface><con:testSuite name="postMigration TestSuite" id="17378c48-6a2d-4b07-bb26-0309b164ba88"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="af8364e1-6b6f-4cdd-876b-60d250c07e05" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Settings TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="Create InvoiceType" id="8653507e-2b8d-4762-a7d6-6c6577f6ceeb"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCountry</con:operation><con:request name="Create InvoiceType" id="6bd029ac-1593-4e78-a7e9-2cb7af69ec3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateInvoiceType>
+         <invoiceType>
+            <code>${#TestSuite#ticket}_TEST-Type</code>
+            <description>Invoice Test Type</description>
+            <occTemplateCode>FA_FACT</occTemplateCode>
+            <appliesTo>COM</appliesTo>
+            <sequenceDto>
+               <prefixEL>Fact_</prefixEL>
+               <sequenceSize>9</sequenceSize>
+               <currentInvoiceNb>9</currentInvoiceNb>
+            </sequenceDto>
+            <sellerSequences>
+               <entry>
+                  <key>preMigration_Seller1</key>
+                  <value>
+                     <prefixEL>Fact_</prefixEL>
+                     <sequenceSize>9</sequenceSize>
+                     <currentInvoiceNb>9</currentInvoiceNb>
+                  </value>
+               </entry>            
+            </sellerSequences>
+         </invoiceType>
+      </ws:createOrUpdateInvoiceType>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4fcad515-e4d3-40c2-aad2-5202b9773546"/><con:assertion type="Simple Contains" id="6cc24052-74b2-4dad-b34e-44e744ac15b2" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create BillingCycle" id="c2d9eb95-2009-4eed-bf88-85dc84f40d92"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createOrUpdateBillingCycle</con:operation><con:request name="Create BillingCycle" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7852fbd9-87ad-43f3-a3e2-d34424821239"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateBillingCycle>
+         <!--Optional:-->
+         <billingCycle code="preMigration_BC1" description="Monthly Invoice Cycle 3">
+            <!--Optional:-->
+            <transactionDateDelay>0</transactionDateDelay>
+            <invoiceDateProductionDelay>0</invoiceDateProductionDelay>            
+            <dueDateDelay>2</dueDateDelay>
+            <invoiceDateDelay>4</invoiceDateDelay>          
+            <calendar>preMigration_CAL1</calendar>
+  		  <invoiceTypeCode>${#TestSuite#ticket}_TEST-Type</invoiceTypeCode>
+         </billingCycle>
+      </ws:createOrUpdateBillingCycle>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="e37ccf70-ddcb-4fb9-829b-abbcd506beca" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createBillingCycle"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="CreateOrUpdate Seller" id="6cf8037f-3195-40f0-bb6d-429348303037" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateSeller</con:operation><con:request name="CreateOrUpdate Seller" id="37258cdf-c90b-46ae-97b3-74576d44b559"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateSeller>\r         
+		<seller code="${#TestSuite#ticket}_TestSeller" description="Test Seller">
+		     <currencyCode>EUR</currencyCode>
+		     <countryCode>FR</countryCode>
+               <languageCode>FRA</languageCode>
+               <parentSeller>MAIN_SELLER</parentSeller>
+               <provider>DEMO</provider>
+		  	<invoiceTypeSequences>
+               <!--Zero or more repetitions:-->
+	               <entry>	                  
+	                  <key>${#TestSuite#ticket}_TEST-Type</key>
+	                  <!--Optional:-->
+	                  <value>	                     
+	                     <prefixEL>Fact_</prefixEL>
+	                     <sequenceSize>9</sequenceSize>
+	                     <currentInvoiceNb>9</currentInvoiceNb>
+	                  </value>
+	               </entry>
+            	</invoiceTypeSequences>
+		</seller>         
+      </ws:createOrUpdateSeller>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5acbccda-3ff5-41f5-8aba-15c6b35387ac"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Invoice Adjustment Sequence CustomField" id="30cc89e8-a424-4838-9980-1d59cc34c97c"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createUsageChargeTemplate</con:operation><con:request name="Create Invoice Adjustment Sequence CustomField" id="2c330768-c410-4db6-b763-4ee1a3ca9308"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomFieldTemplate>
+         <customField code="INVOICE_ADJUSTMENT_SEQUENCE" description="invoice adjustement sequence">
+            <fieldType>LONG</fieldType> 
+            <accountLevel>SELLER</accountLevel> 
+            <appliesTo>SELLER</appliesTo> 
+            <storageType>SINGLE</storageType> 
+             <versionable>true</versionable>
+            <calendar>MONTHLY</calendar> 
+         </customField>
+      </ws:createCustomFieldTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="dc8e0f66-1396-4e3e-b460-7aecd651908b"/><con:assertion type="Simple Contains" name="Contains" id="35a2eed2-8c16-417d-9d9c-fba59d42a046"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="cb407cf5-592e-49e5-addc-6b43d2c84b68" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog Creation TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="createCounterTemplate" id="6102ffc2-cd03-478f-abbc-2816720c0cad"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createCounterTemplate</con:operation><con:request name="createCounterTemplate" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="8f487693-453e-4107-a739-ad22020770cf"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCounterTemplate>
@@ -17755,18 +18060,13 @@
       <ws:createTriggeredEdr>
          <!--Optional:-->
          <triggeredEdrTemplate code="${#TestSuite#ticket}_TrEDR1" description="${#TestSuite#ticket}_TrEDR1">
-            <!--Optional:-->
-            <subscriptionEl></subscriptionEl>
-            <!--Optional:-->
-            <conditionEl></conditionEl>
             <quantityEl>#{op.amountWithoutTax}</quantityEl>
             <!--Optional:-->
+            <subscriptionEl></subscriptionEl>
+            <conditionEl></conditionEl>
             <param1El></param1El>
-            <!--Optional:-->
             <param2El></param2El>
-            <!--Optional:-->
             <param3El></param3El>
-            <!--Optional:-->
             <param4El></param4El>
          </triggeredEdrTemplate>
       </ws:createTriggeredEdr>
@@ -17783,11 +18083,19 @@
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
-               <languageCode>ENG</languageCode>
-               <description>English</description>
+               <languageCode>FRA</languageCode>
+               <description>${#TestSuite#ticket} Test</description>
             </languageDescriptions>
-            <!--Optional:-->
-            <immediateInvoicing>false</immediateInvoicing>
+             <!--Optional:-->
+            <inputUnitDescription>1</inputUnitDescription>            
+            <ratingUnitDescription>1</ratingUnitDescription>            
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+            <immediateInvoicing>false</immediateInvoicing>         
+            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+		  <triggeredEdrs>
+		    <triggeredEdr code="${#TestSuite#ticket}_TrEDR1"></triggeredEdr>
+		  </triggeredEdrs>
          </oneShotChargeTemplate>
       </ws:createOneShotChargeTemplate>
    </soapenv:Body>
@@ -17800,25 +18108,27 @@
          	  <invoiceSubCategory>preMigration_IS-CAT1</invoiceSubCategory>
             <!--Optional:-->
             <calendar>preMigration_CAL1</calendar>
-            <amountEditable>FALSE</amountEditable>
+            <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
-               <languageCode>ENG</languageCode>
-               <description>English</description>
+               <languageCode>FRA</languageCode>
+               <description>${#TestSuite#ticket} Test</description>
             </languageDescriptions>
             <!--Optional:-->
-            <durationTermInMonth>12</durationTermInMonth>
-            <subscriptionProrata>false</subscriptionProrata>
+            <durationTermInMonth>4</durationTermInMonth>
+            <subscriptionProrata>true</subscriptionProrata>
             <terminationProrata>true</terminationProrata>
-            <applyInAdvance>false</applyInAdvance>
+            <applyInAdvance>true</applyInAdvance>
             <!--Optional:-->
             <inputUnitDescription>1</inputUnitDescription>
-            <!--Optional:-->
             <ratingUnitDescription>1</ratingUnitDescription>
-            <!--Optional:-->
             <unitMultiplicator>1</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
             <shareLevel>2</shareLevel>
+            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+		  <triggeredEdrs>
+		    <triggeredEdr code="${#TestSuite#ticket}_TrEDR1"></triggeredEdr>
+		  </triggeredEdrs>
          </recurringChargeTemplate>
       </ws:createRecurringChargeTemplate>
    </soapenv:Body>
@@ -17834,25 +18144,23 @@
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
-               <languageCode>ENG</languageCode>
-               <description>English</description>
+               <languageCode>FRA</languageCode>
+               <description>${#TestSuite#ticket} Test</description>
             </languageDescriptions>
             <!--Optional:-->
             <inputUnitDescription>1</inputUnitDescription> 
-            <unitMultiplicator>2</unitMultiplicator>
-            <ratingUnitDescription>Quantity</ratingUnitDescription>
+            <unitMultiplicator>1</unitMultiplicator>
+            <ratingUnitDescription>Unit</ratingUnitDescription>
             <unitNbDecimal>2</unitNbDecimal>
             <!--Optional:-->
             <filterParam1>1</filterParam1>
-            <!--Optional:-->
             <filterParam2>2</filterParam2>
-            <!--Optional:-->
             <filterParam3>3</filterParam3>
-            <!--Optional:-->
             <filterParam4>4</filterParam4>
             <!--Optional:-->
             <filterExpression></filterExpression>
             <priority>1</priority>
+            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
             <triggeredEdrs>
     			<triggeredEdr code="${#TestSuite#ticket}_TrEDR1"></triggeredEdr>
   		  </triggeredEdrs>
@@ -17864,18 +18172,11 @@
    <soapenv:Body>
       <ws:createPricePlan>
           <pricePlan code="${#TestSuite#ticket}_SUB1" description="${#TestSuite#ticket}_PP1">
-            <eventCode>${#TestSuite#ticket}_SUB1</eventCode>
+            <eventCode>${#TestSuite#ticket}_SUB1</eventCode>            
             <!--Optional:-->
-            <minQuantity>1</minQuantity>
-            <maxQuantity>10</maxQuantity>
-            <!--Optional:-->
-            <minSubscriptionAgeInMonth>0</minSubscriptionAgeInMonth>
-            <maxSubscriptionAgeInMonth>9999</maxSubscriptionAgeInMonth>
-            <!--Optional:-->
-            <amountWithoutTax>5</amountWithoutTax>
-            <amountWithTax>-2</amountWithTax>
-            <!--Optional:-->
-            <priority>2</priority>
+            <amountWithoutTax>11</amountWithoutTax>
+            <amountWithTax>15</amountWithTax>
+            <priority>1</priority>
          </pricePlan>
       </ws:createPricePlan>
    </soapenv:Body>
@@ -17886,15 +18187,8 @@
           <pricePlan code="${#TestSuite#ticket}_REC1" description="${#TestSuite#ticket}_REC1">
             <eventCode>${#TestSuite#ticket}_REC1</eventCode>
             <!--Optional:-->
-            <minQuantity>1</minQuantity>
-            <maxQuantity>10</maxQuantity>
-            <!--Optional:-->
-            <minSubscriptionAgeInMonth>0</minSubscriptionAgeInMonth>
-            <maxSubscriptionAgeInMonth>9999</maxSubscriptionAgeInMonth>
-            <!--Optional:-->
-            <amountWithoutTax>12</amountWithoutTax>
-            <amountWithTax>-4</amountWithTax>
-            <!--Optional:-->
+            <amountWithoutTax>10</amountWithoutTax>
+            <amountWithTax>12</amountWithTax>
             <priority>1</priority>
          </pricePlan>
       </ws:createPricePlan>
@@ -17906,15 +18200,8 @@
           <pricePlan code="${#TestSuite#ticket}_UC1" description="${#TestSuite#ticket}_UC1">
             <eventCode>${#TestSuite#ticket}_UC1</eventCode>
             <!--Optional:-->
-            <minQuantity>1</minQuantity>
-            <maxQuantity>10</maxQuantity>
-            <!--Optional:-->
-            <minSubscriptionAgeInMonth>0</minSubscriptionAgeInMonth>
-            <maxSubscriptionAgeInMonth>9999</maxSubscriptionAgeInMonth>
-            <!--Optional:-->
-            <amountWithoutTax>10</amountWithoutTax>
-            <amountWithTax>-1</amountWithTax>
-            <!--Optional:-->
+            <amountWithoutTax>8</amountWithoutTax>
+            <amountWithTax>13</amountWithTax>
             <priority>1</priority>
          </pricePlan>
       </ws:createPricePlan>
@@ -17925,7 +18212,7 @@
       <ws:createWalletTemplate>\r
          <walletTemplate code="${#TestSuite#ticket}_PrepaidWallet1" description="${#TestSuite#ticket}_PrepaidWallet1">\r
             <walletType>PREPAID</walletType>\r
-            <consumptionAlertSet>true</consumptionAlertSet>\r
+            <consumptionAlertSet>false</consumptionAlertSet>\r
             <fastRatingLevel>15</fastRatingLevel>\r
             <lowBalanceLevel>10</lowBalanceLevel>\r
          </walletTemplate>\r
@@ -17938,7 +18225,7 @@
       <ws:createWalletTemplate>\r
          <walletTemplate code="${#TestSuite#ticket}_PostpaidWallet1" description="${#TestSuite#ticket}_PostpaidWallet1">\r
             <walletType>POSTPAID</walletType>\r
-            <consumptionAlertSet>true</consumptionAlertSet>\r
+            <consumptionAlertSet>false</consumptionAlertSet>\r
             <fastRatingLevel>15</fastRatingLevel>\r
             <lowBalanceLevel>10</lowBalanceLevel>\r
          </walletTemplate>\r
@@ -17955,36 +18242,37 @@
             <invoicingCalendar>preMigration_CAL1</invoicingCalendar>
             <!--Optional:-->
             <serviceChargeTemplateRecurrings>
-               <!--Zero or more repetitions:-->
                <serviceChargeTemplateRecurring>
-                  <!--Optional:-->
                   <code>${#TestSuite#ticket}_REC1</code>
+                  <!--
                   <wallets>
                      <wallet>${#TestSuite#ticket}_PrepaidWallet1</wallet>
                   </wallets>
+                  -->
                </serviceChargeTemplateRecurring>
             </serviceChargeTemplateRecurrings>
             <!--Optional:-->
-            <!--
             <serviceChargeTemplateSubscriptions>
                <serviceChargeTemplateSubscription>
                   <code>${#TestSuite#ticket}_SUB1</code>
+                  <!--
                   <wallets>
                      <wallet>${#TestSuite#ticket}_PrepaidWallet1</wallet>
                   </wallets>
+                  -->
                </serviceChargeTemplateSubscription>
-            </serviceChargeTemplateSubscriptions> 
-		 -->           
+            </serviceChargeTemplateSubscriptions>     
             <serviceChargeTemplateUsages>
                <serviceChargeTemplateUsage>
                   <code>${#TestSuite#ticket}_UC1</code>
+                  <!--
                   <wallets>
                      <wallet>${#TestSuite#ticket}_PrepaidWallet1</wallet>
                   </wallets>
                   <counterTemplate>${#TestSuite#ticket}_CT1</counterTemplate>
+                  -->                  
                </serviceChargeTemplateUsage>
             </serviceChargeTemplateUsages>
-
          </serviceTemplate>
       </ws:createServiceTemplate>
    </soapenv:Body>
@@ -17999,7 +18287,7 @@
             <offerServiceTemplates>
             	<offerServiceTemplate>
 	               <!--Zero or more repetitions:-->
-	               <serviceTemplate code="${#TestSuite#ticket}_SERVICE1" description=""></serviceTemplate>
+	               <serviceTemplate code="${#TestSuite#ticket}_SERVICE1" description="${#TestSuite#ticket}_SERVICE1"></serviceTemplate>
                </offerServiceTemplate>
             </offerServiceTemplates>
          </offerTemplate>
@@ -18011,6 +18299,8 @@
       <ws:createCustomer>
          <!--Optional:-->
          <customer code="${#TestSuite#ticket}_CUST0" description="${#TestSuite#ticket}_CUST0">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
             <name>
                <title>preMigration_TITLE1</title>
                <firstName>firstname</firstName>
@@ -18055,11 +18345,18 @@
                <city>Dijon</city>
                <country>FR</country>
             </address>
+            <contactInformation>
+            	<email>${#TestSuite#ticket}@manaty.net</email>
+            	<phone>+105855234</phone>
+            	<mobile>+102154716</mobile>
+         	  </contactInformation>
+         	  <mandateIdentification>1234</mandateIdentification>
+            <mandateDate>2016-06-14</mandateDate>
             <customer>${#TestSuite#ticket}_CUST0</customer>
             <currency>EUR</currency>
-            <paymentMethod>CHECK</paymentMethod>
-            <creditCategory>preMigration_CREDIT_CAT1</creditCategory>
             <language>FRA</language>
+            <paymentMethod>CHECK</paymentMethod>
+            <creditCategory>preMigration_CREDIT_CAT1</creditCategory>            
          </customerAccount>
       </ws:createCustomerAccount>
    </soapenv:Body>
@@ -18088,12 +18385,11 @@
             <country>FR</country>
             <language>FRA</language>
             <paymentMethod>DIRECTDEBIT</paymentMethod>
-            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
+            <nextInvoiceDate>2016-07-01</nextInvoiceDate>
             <subscriptionDate>2015-01-01</subscriptionDate>
             <paymentTerms>CASH</paymentTerms>
             <electronicBilling>true</electronicBilling>
             <email>${#TestSuite#ticket}@manaty.net</email>
-            
          </billingAccount>
       </ws:createBillingAccount>
    </soapenv:Body>
@@ -18127,9 +18423,13 @@
       <ws:create>
          <subscription code="${#TestSuite#ticket}_SUB0" description="${#TestSuite#ticket}_SUB0">
             <userAccount>${#TestSuite#ticket}_UA0</userAccount>
-            <offerTemplate>${#TestSuite#ticket}_OFFER1</offerTemplate>
+            <offerTemplate>${#TestSuite#ticket}_OFFER1</offerTemplate>            
+            <subscriptionDate>2015-02-01</subscriptionDate>
+            <endAgreementDate>2015-05-01</endAgreementDate>
+            <!--            
             <subscriptionDate>2016-02-28</subscriptionDate>
             <endAgreementDate>2016-07-01</endAgreementDate>
+            -->
          </subscription>
       </ws:create>
    </soapenv:Body>
@@ -18142,7 +18442,7 @@
             <servicesToActivate>
             	<service code ='${#TestSuite#ticket}_SERVICE1'>
                   <quantity>1</quantity>
-                  <subscriptionDate>2016-02-28</subscriptionDate>
+                  <subscriptionDate>2015-02-01</subscriptionDate>
             	</service>
             </servicesToActivate>
          </activateServices>
@@ -18165,7 +18465,7 @@
    <soapenv:Body>
       <ws:chargeCdr>
          <!--Optional:-->
-         <cdr>2016-02-01T00:00:00Z;10;${#TestSuite#ticket}_ACC0;1;2;3;4</cdr>
+         <cdr>2016-04-01T00:00:00Z;10;${#TestSuite#ticket}_ACC0;1;2;3;4</cdr>
       </ws:chargeCdr>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5b02a077-1178-43ab-bc54-6a993e51798f"/><con:assertion type="Simple Contains" id="87eb8323-b324-4d78-8f53-c3da65a956c3" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Invoicing" searchProperties="true" id="927bed65-fed0-4f58-ba90-b0fd78b45756"><con:settings/><con:testStep type="request" name="GenerateInvoice" id="7dbc2531-4811-4156-a3c8-84f377e3fa9b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>generateInvoiceData</con:operation><con:request name="GenerateInvoice" id="7e62d038-732c-4fef-a703-9048e8424c07"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
@@ -18175,7 +18475,7 @@
          <!--Optional:-->
          <generateInvoiceRequest>
             <billingAccountCode>${#TestSuite#ticket}_BA0</billingAccountCode>
-            <invoicingDate>2015-06-01T00:00:00</invoicingDate>
+            <invoicingDate>2016-03-01T00:00:00</invoicingDate>
             <lastTransactionDate>2016-01-01T00:00:00</lastTransactionDate>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
@@ -18199,7 +18499,7 @@
          </jobInstanceInfo>\r
       </ws:execute>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2fa31fe9-3815-45f0-b88a-d90d6e345ec8"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Payment, Lettrage" searchProperties="true" id="0b7db426-a73e-436e-95cb-3788b2d08f42"><con:settings/><con:testStep type="request" name="create Occ Template" id="cec01aaf-3e72-45f6-8b06-93d73674601a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createOccTemplate</con:operation><con:request name="create Occ Template" id="f6ef8f54-2bcd-45f2-a5f3-35953f87ba5d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2fa31fe9-3815-45f0-b88a-d90d6e345ec8"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="delay" name="Delay" id="3e196a09-ede1-463b-bcda-ab8d107ace94"><con:settings/><con:config><delay>3000</delay></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Payment, Lettrage" searchProperties="true" id="0b7db426-a73e-436e-95cb-3788b2d08f42"><con:settings/><con:testStep type="request" name="create Occ Template" id="cec01aaf-3e72-45f6-8b06-93d73674601a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createOccTemplate</con:operation><con:request name="create Occ Template" id="f6ef8f54-2bcd-45f2-a5f3-35953f87ba5d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOccTemplate><!--Optional:-->
@@ -18226,21 +18526,29 @@
          </PaymentDto>
       </ws:create>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="0733ac94-287b-421d-814e-4c5bd62152bb"/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Reporting" searchProperties="true" id="6ed0e229-06bd-4043-bdd2-eb947a3e0f9d"><con:settings/><con:testStep type="request" name="GetInvoiceXml" id="f0f7abb9-fc55-4817-8da1-af982482549e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>findXMLInvoice</con:operation><con:request name="GetInvoiceXml" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="0733ac94-287b-421d-814e-4c5bd62152bb"/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Reporting" searchProperties="true" id="6ed0e229-06bd-4043-bdd2-eb947a3e0f9d"><con:settings/><con:testStep type="request" name="GetInvoiceXmlWithType" id="fc20e380-4ff3-4b88-9dbf-5c418accbe03"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>findXMLInvoiceWithType</con:operation><con:request name="GetInvoiceXmlWithType" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-      <ws:findXMLInvoice>
-         <!--Optional:-->
-         <invoiceNumber>Prefix_000000002</invoiceNumber>
-      </ws:findXMLInvoice>
+      <ws:findXMLInvoiceWithType>
+         	<!--Optional:-->
+         	<invoiceNumber>Fact_000000010</invoiceNumber>
+         	<!--Optional:-->
+         	<invoiceType>${#TestSuite#ticket}_TEST-Type</invoiceType>
+      </ws:findXMLInvoiceWithType>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="GetInvoicePdf" id="88da17fa-25f8-4554-8de6-c50ef5610962"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>findPdfInvoice</con:operation><con:request name="GetInvoicePdf" id="f3d0dddc-6857-4363-8f2f-917774f9fefe"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/><con:assertion type="Simple Contains" id="94ec81cb-397f-4c5c-9501-f94b65129e04" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="GetInvoicePdfWithType" id="2ec4c4af-92ac-41fe-97c3-f2079178194e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>findPdfInvoiceWithType</con:operation><con:request name="GetInvoicePdfWithType" id="f3d0dddc-6857-4363-8f2f-917774f9fefe"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-      <ws:findPdfInvoice>
-         <!--Optional:-->
-         <invoiceNumber>Prefix_000000002</invoiceNumber>
-      </ws:findPdfInvoice>
+      <ws:findPdfInvoiceWithType>
+         	<!--Optional:-->
+         	<invoiceNumber>Fact_000000010</invoiceNumber>
+         	<!--Optional:-->
+         	<invoiceType>${#TestSuite#ticket}_TEST-Type</invoiceType>
+      </ws:findPdfInvoiceWithType>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f24123ca-553d-42a4-93d9-a187f3be4240"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="33c73c60-4c46-4531-93ae-7bcda16db41b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Dunning" searchProperties="true"><con:settings/><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>postMigration1</con:value></con:property></con:properties><con:setupScript>
-testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">${#Project#meveoUrl}/SettingsWs</con:endpoint><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin" domain="" wssTimeToLive="" outgoingWss="" incomingWss="">${#Project#meveoUrl}/AccountWs</con:endpoint><con:endpoint mode="COMPLEMENT" username="" password="meveo.admin" domain="" wssTimeToLive="" wssType="" outgoingWss="" incomingWss="">${#Project#meveoUrl}/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>username</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>password</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://192.168.10.14:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:afterLoadScript/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f24123ca-553d-42a4-93d9-a187f3be4240"/><con:assertion type="Simple Contains" id="645cfbd2-46ae-4da0-8537-0fa03e53699d" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="manualTestStep" name="GUI-New Aggregated Invoice Adjustement" id="dd8fb05e-dfaa-4444-b856-d5eba69d675b"><con:description>1. Open the Meveo Admin page and log in. 
+2. Go to Invoicing-> Invoice ->Invoices ,click on Fact_000000010 (In relation with postMigration_BA0)
+3- Click on "New Aggregated Invoice Adjustement" --> click Save button</con:description><con:settings/><con:config xsi:type="con:ManualTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:expectedResult>1. Aggregated Invoice Adjustement is created</con:expectedResult></con:config></con:testStep><con:testStep type="manualTestStep" name="GUI-New Detailed Invoice Adjustement" id="4fcaa5c6-8c3c-4dd4-b553-763405ed5ab8"><con:description>1. Open the Meveo Admin page and log in. 
+2-Go to Configuration > Sellers > 'preMigration_Seller1' >  set 'periode date' and 'value=200' then click on 'add new period'
+3. Go to Invoicing-> Invoice ->Invoices ,click on Fact_000000010 (In relation with postMigration_BA0)
+4- Click on "New Detailled Invoice Adjustment" --> click Save button</con:description><con:settings/><con:config xsi:type="con:ManualTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:expectedResult>1. Invoice Adjustment is created with Success --> Value of the Adjustment number is 201</con:expectedResult></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="33c73c60-4c46-4531-93ae-7bcda16db41b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Dunning" searchProperties="true"><con:settings/><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>postMigration</con:value></con:property></con:properties><con:setupScript/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">${#Project#meveoUrl}/SettingsWs</con:endpoint><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin" domain="" wssTimeToLive="" outgoingWss="" incomingWss="">${#Project#meveoUrl}/AccountWs</con:endpoint><con:endpoint mode="COMPLEMENT" username="" password="meveo.admin" domain="" wssTimeToLive="" wssType="" outgoingWss="" incomingWss="">${#Project#meveoUrl}/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>username</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>password</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:afterLoadScript/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

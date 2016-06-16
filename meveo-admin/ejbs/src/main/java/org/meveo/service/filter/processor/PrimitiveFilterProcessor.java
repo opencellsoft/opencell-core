@@ -1,5 +1,7 @@
 package org.meveo.service.filter.processor;
 
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.validator.routines.AbstractNumberValidator;
@@ -8,9 +10,6 @@ import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.FilterCondition;
 import org.meveo.model.filter.PrimitiveFilterCondition;
-import org.meveo.service.base.PersistenceService;
-
-import java.util.Map;
 
 public abstract class PrimitiveFilterProcessor {
 
@@ -18,7 +17,7 @@ public abstract class PrimitiveFilterProcessor {
      * Checks the {@link PrimitiveFilterCondition} if the processor
      * implementation can process it.
      *
-     * @param condition The {@link PrimitiveFilterCondition} to be processed.
+     * @param condition The {@lsink PrimitiveFilterCondition} to be processed.
      * @return true if the processor matches the condition.
      */
     public abstract boolean canProccessCondition(PrimitiveFilterCondition condition);

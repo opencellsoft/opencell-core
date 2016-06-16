@@ -64,7 +64,7 @@ public class OfferTemplateCategory extends BusinessCFEntity {
 	private int level = 1;
 
 	@Override
-	public ICustomFieldEntity getParentCFEntity() {
+	public ICustomFieldEntity[] getParentCFEntities() {
 		return null;
 	}
 

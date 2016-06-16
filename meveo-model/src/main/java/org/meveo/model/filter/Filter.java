@@ -99,7 +99,11 @@ public class Filter extends BusinessCFEntity {
 	}
 
 	@Override
-	public ICustomFieldEntity getParentCFEntity() {
+	public ICustomFieldEntity[] getParentCFEntities() {
 		return null;
+	}
+	
+	public String getAppliesTo() {
+		return "FILTER_" + getCode();
 	}
 }

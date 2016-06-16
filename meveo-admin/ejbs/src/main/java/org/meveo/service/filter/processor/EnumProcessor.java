@@ -3,10 +3,7 @@ package org.meveo.service.filter.processor;
 import org.meveo.admin.exception.FilterException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.PrimitiveFilterCondition;
-
-import java.util.Map;
 
 public class EnumProcessor extends PrimitiveFilterProcessor {
 

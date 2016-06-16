@@ -175,7 +175,7 @@ public class ChargeTemplate extends BusinessCFEntity {
 	}
 
     @Override
-    public ICustomFieldEntity getParentCFEntity() {
+    public ICustomFieldEntity[] getParentCFEntities() {
         return null;
     }
 

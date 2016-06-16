@@ -561,7 +561,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     }
 
     @Override
-    public ICustomFieldEntity getParentCFEntity() {
+    public ICustomFieldEntity[] getParentCFEntities() {
         return null;
     }
 

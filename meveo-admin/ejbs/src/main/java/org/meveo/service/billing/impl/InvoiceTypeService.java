@@ -27,6 +27,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -42,8 +43,8 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 	
 	ParamBean param  = ParamBean.getInstance();
 
-	public InvoiceType getDefaultType(String typeCode, User currentUser) throws BusinessException {
-		InvoiceType defaultInvoiceType = findByCode(typeCode, currentUser.getProvider());
+	public InvoiceType getDefaultType(String invoiceTypeCode, User currentUser) throws BusinessException {
+		InvoiceType defaultInvoiceType = findByCode(invoiceTypeCode, currentUser.getProvider());
 		if (defaultInvoiceType != null) {
 			return defaultInvoiceType;
 		}
@@ -52,9 +53,11 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 
 		String occCode = "accountOperationsGenerationJob.occCode";
 		String occCodeDefaultValue = "FA_FACT";
-		if (param.getProperty("invoiceType.adjustement.code", "ADJ").equals(typeCode)) {
+		OperationCategoryEnum operationCategory = OperationCategoryEnum.DEBIT;
+		if (getAdjustementCode().equals(invoiceTypeCode)) {
 			occCode = "accountOperationsGenerationJob.occCodeAdjustement";
 			occCodeDefaultValue = "FA_ADJ";
+			operationCategory = OperationCategoryEnum.CREDIT;
 		}
 		String occTemplateCode = null;
 		try {
@@ -67,11 +70,15 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 		}
 
 		if (occTemplate == null) {
-			throw new BusinessException("Cannot found OCC Template for invoice");
+			occTemplate = new OCCTemplate();
+			occTemplate.setCode(occTemplateCode);
+			occTemplate.setDescription(occTemplateCode);
+			occTemplate.setOccCategory(operationCategory);
+			oCCTemplateService.create(occTemplate, currentUser);			
 		}
 
 		defaultInvoiceType = new InvoiceType();
-		defaultInvoiceType.setCode(typeCode);
+		defaultInvoiceType.setCode(invoiceTypeCode);
 		defaultInvoiceType.setOccTemplate(occTemplate);
 		create(defaultInvoiceType, currentUser);
 		return defaultInvoiceType;
