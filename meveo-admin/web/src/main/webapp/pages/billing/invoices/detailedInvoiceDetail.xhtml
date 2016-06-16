@@ -3,10 +3,17 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{detailedInvoiceBean.preRenderView}" />
+		</f:metadata>
 	</ui:define>
 
 	<ui:define name="body">
@@ -46,8 +53,8 @@
 
 		<p:panel header="#{messages['detailedInvoice.title']}">
 
-			<p:growl id="growl"></p:growl>
-
+			<p:growl id="growl" globalOnly="true"></p:growl>
+			
 			<p:tabView id="tabView"
 				activeIndex="#{detailedInvoiceBean.activeTab}">
 				<p:tab title="#{messages['menu.invoice']}">
@@ -55,7 +62,7 @@
 						submitPartialProcess=":tabView:formId"
 						backingBean="#{detailedInvoiceBean}"
 						showEnableDisableButton="true">
-						<hftl:formField field="invoiceType"  required="true"
+						<hftl:formField field="invoiceType" required="true"
 							label="#{messages['invoice.invoiceType']}" valueLabelField="code"
 							listBean="#{invoiceTypeBean}"></hftl:formField>
 							
@@ -137,7 +144,7 @@
 									<span style="width: 5px;"> </span> 
 								</p:column>
 								<p:column>
-									<p:dataTable editable="true" editMode="cell" id="ratedTransaction"
+									<p:dataTable editable="true" editMode="cell" id="ratedTransactionTable"
 										var="rated"
 										value="#{detailedInvoiceBean.getRatedTransactions(entity)}">
 
@@ -162,20 +169,25 @@
 													<p:inputText value="#{rated.description}"/>
 												</f:facet>
 											</p:cellEditor>
-										</p:column>
-										<p:column>
-											<h:outputText value="#{rated.unitAmountWithoutTax}" />
 										</p:column> 
 										<p:column>
-											<p:cellEditor>
-												<f:facet name="output">
-													<h:outputText value="#{rated.quantity}" />
-												</f:facet>
-												<f:facet name="input">
-													<p:spinner value="#{rated.quantity}"></p:spinner>
-												</f:facet>
-											</p:cellEditor>
-										</p:column>
+                                    <p:inputText value="#{rated.unitAmountWithoutTax}" label="#{messages['ratedTransaction.unitAmountWithoutTax']}">
+								    <pe:keyFilter mask="num" />
+									<f:converter converterId="bigDecimal4DigitsConverter" />
+									<p:ajax event="change"
+										listener="#{detailedInvoiceBean.reComputeAmountWithoutTax(rated)}"
+										update="ratedTransactionTable"></p:ajax>
+								</p:inputText>
+                                  </p:column>								
+										<p:column>
+								<p:inputText value="#{rated.quantity}" label="#{messages['ratedTransaction.quantity']}">
+								    <pe:keyFilter mask="num" />
+									<f:converter converterId="bigDecimal4DigitsConverter" />
+									<p:ajax event="change"
+										listener="#{detailedInvoiceBean.reComputeAmountWithoutTax(rated)}"
+										update="ratedTransactionTable"></p:ajax>
+								</p:inputText>
+							</p:column> 
 										<p:column>
 											<h:outputText value="#{rated.amountWithoutTax}" />
 										</p:column>
@@ -195,10 +207,12 @@
 							</p:dataTable>
 						</p:outputPanel>
 
-						<p:commandButton immediate="true"
+							
+							<p:commandButton immediate="true"
 							value="#{messages['action.invoice.importFromLinkedInvoices']}"
 							action="#{detailedInvoiceBean.importFromLinkedInvoices}"
-							update=":tabView:detailedInvoiceForm:detailedInvoicePanel :tabView:invoiceSummary :tabView:formId:messages" />
+							process=":tabView:formId @this"
+							update=":tabView:detailedInvoiceForm:detailedInvoicePanel :tabView:invoiceSummary :tabView:formId:messages :growl" />
 
 						<p:panel id="addDetailInvoiceLine" style="float: right; width: 50%;">
 							<p:row>
@@ -241,7 +255,7 @@
 										<p:inputText id="amountWithoutTax"
 											value="#{detailedInvoiceBean.amountWithoutTax}"></p:inputText>
 									</hftl:decorateFormField>
-								</p:column>
+								</p:column> 
 								<p:column>
 									<p:commandButton value="#{messages['action.invoice.addLine']}"
 										process="addDetailInvoiceLine"
@@ -275,16 +289,23 @@
 								<p:column>#{detailedInvoiceBean.netToPay}</p:column>
 							</p:row>
 						</p:panelGrid>
-					</p:outputPanel>
-
-					<div style="clear: both"></div>
-
+					</p:outputPanel> 
+<div style="clear: both"></div>
 					<h:form>
-						 
-					</h:form>
-
-					<div style="clear: both"></div>
-
+						<p:outputPanel
+							style="float: right; width: 25%; text-align: right;">
+							 <hftl:decorateFormField fieldId="includeAccountBalance"
+								label="#{messages['invoice.includeAccountBalance']}">
+								<p:selectBooleanCheckbox id="includeAccountBalance"
+									value="#{detailedInvoiceBean.includeBalance}" />
+							</hftl:decorateFormField> 
+							<p:commandButton
+								value="#{messages['action.invoice.refreshTotal']}"
+								action="#{detailedInvoiceBean.refreshTotal}"
+								update=":#{p:component('invoiceSummary')}"></p:commandButton>
+						</p:outputPanel>
+					</h:form> 
+<div style="clear: both"></div>
 
 				</p:tab>
 			</p:tabView>
