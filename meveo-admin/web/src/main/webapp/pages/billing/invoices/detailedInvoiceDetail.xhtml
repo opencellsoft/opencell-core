@@ -32,7 +32,7 @@
 			</hftl:entityPopup>
 
 			<hftl:entityPopup id="invoicePopup" header="#{messages['invoice']}"
-				updateField=":tabView:datatable_selectedLinkedInvoice"
+				updateField=":tabView:formId:datatable_selectedLinkedInvoice"
 				selection="#{detailedInvoiceBean.invoiceToAdd}"
 				backingBean="#{detailedInvoiceBean}"
 				searchField1Label="#{messages['invoice.invoiceNumber']}"
@@ -58,19 +58,22 @@
 			<p:tabView id="tabView"
 				activeIndex="#{detailedInvoiceBean.activeTab}">
 				<p:tab title="#{messages['menu.invoice']}">
+
 					<hftl:formPanel ajaxSubmit="true"
 						submitPartialProcess=":tabView:formId"
-						backingBean="#{detailedInvoiceBean}"
-						showEnableDisableButton="true">
-						<hftl:formField field="invoiceType" required="true"
+						backingBean="#{detailedInvoiceBean}" 
+						showEnableDisableButton="true" >
+						  
+							<hftl:formField field="invoiceType" required="true"  style="width:300px;"
 							label="#{messages['invoice.invoiceType']}" valueLabelField="code"
-							listBean="#{invoiceTypeBean}"></hftl:formField>
+							listBean="#{invoiceTypeBean}"/> 
 							
-						<hftl:formField id="billingAccountSelectedId"
+							<hftl:formField id="billingAccountSelectedId" 
 							label="#{messages['billingAccount']}" field="billingAccount"
 							valueLabelField="code" popup="true" popupId="billingAccountPopup"
-							required="true" showPopupOnlyOnNew="true" />
-						<hftl:decorateFormField fieldId="dueDate"
+							required="true" showPopupOnlyOnNew="true" /> 
+							
+						<hftl:decorateFormField fieldId="dueDate"  style="width:10px;"
 							label="#{messages['invoice.dueDate']}">
 							<p:calendar event="change" id="dueDate"
 								value="#{detailedInvoiceBean.entity.dueDate}"
@@ -78,19 +81,25 @@
 								<p:ajax event="dateSelect"
 									listener="#{detailedInvoiceBean.handleDateSelect}"></p:ajax>
 							</p:calendar>
-						</hftl:decorateFormField>
-					</hftl:formPanel> 
-					<hftl:dataList label="#{messages['invoice.linkedInvoices']}"
+						</hftl:decorateFormField> 
+						
+						<hftl:decorateFormField  style="width:114px;">
+					  	<hftl:dataList label="#{messages['invoice.linkedInvoices']}"
 						noClose="false" backingBean="#{detailedInvoiceBean}"
-						dataModel="#{detailedInvoiceBean.entity.linkedInvoices}"
+						dataModel="#{detailedInvoiceBean.entity.linkedInvoices}" checkMany="false"
 						resultsId="selectedLinkedInvoice">
+						<f:facet name="header">
+						#{messages['invoice.linkedInvoices']}
+					</f:facet>
+					   <hftl:column label="#{messages['invoice.invoiceType']}"
+							field="invoiceType.code" />
 						<hftl:column label="#{messages['invoice.invoiceNumber']}"
 							field="invoiceNumber" />
 						<hftl:column label="#{messages['invoice.invoiceDate']}"
 							field="invoiceDate" />
 						<hftl:column label="#{messages['invoice.amountWithoutTax']}"
 							field="amountWithoutTax" />
-						<p:column>
+						<p:column width="20px;">
 							<p:commandButton icon="ui-icon-trash"
 								action="#{detailedInvoiceBean.deleteLinkedInvoice}"
 								update="datatable_selectedLinkedInvoice">
@@ -104,12 +113,10 @@
 						<ui:define name="add-on-buttons">
 							<p:commandButton value="#{messages['action.add']}" type="button"
 								onclick="PF('dlg_invoicePopup').show();" />
-
-							<p:commandButton value="#{messages['action.deleteAll']}"
-								action="#{detailedInvoiceBean.deleteAllLinkedInvoice}"
-								update=":tabView:datatable_selectedLinkedInvoice" />
 						</ui:define>
-					</hftl:dataList> 
+					</hftl:dataList>
+					</hftl:decorateFormField>
+					</hftl:formPanel> 
 
 					<!-- detailed lines here -->
 					<h:form id="detailedInvoiceForm">

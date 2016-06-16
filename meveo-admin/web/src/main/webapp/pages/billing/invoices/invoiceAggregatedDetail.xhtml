@@ -64,7 +64,7 @@
 						submitPartialProcess=":tabView:formId"
 						backingBean="#{aggregatedDetailInvoiceBean}"
 						showEnableDisableButton="true">
-						<hftl:formField field="invoiceType" required="true"
+						<hftl:formField field="invoiceType" required="true" style="width:300px;"
 							label="#{messages['invoice.invoiceType']}"
 							listenerUpdate="linkedInvoices"
 							valueLabelField="descriptionOrCode" listBean="#{invoiceTypeBean}"></hftl:formField>
@@ -72,7 +72,7 @@
 							label="#{messages['billingAccount']}" field="billingAccount"
 							valueLabelField="code" popup="true" popupId="billingAccountPopup"
 							required="true" showPopupOnlyOnNew="true" />
-						<hftl:decorateFormField fieldId="dueDate"
+						<hftl:decorateFormField fieldId="dueDate"  style="width:10px;"
 							label="#{messages['invoice.dueDate']}">
 							<p:calendar event="change" id="dueDate"
 								value="#{aggregatedDetailInvoiceBean.entity.dueDate}"
@@ -82,7 +82,7 @@
 									listener="#{aggregatedDetailInvoiceBean.handleDateSelect}"></p:ajax>
 							</p:calendar>
 						</hftl:decorateFormField>
-
+                     <hftl:decorateFormField  style="width:120px;">
 						<p:outputPanel id="linkedInvoices">
 							<p:panel style="margin-top: 10px;"
 								rendered="#{aggregatedDetailInvoiceBean.entity.invoiceType.code eq invoiceTypeBean.adjustmentCode}">
@@ -92,14 +92,15 @@
 									var="entity">
 
 									<f:facet name="header">#{messages['invoice.linkedInvoices']}</f:facet>
-
+                            <hftl:column label="#{messages['invoice.invoiceType']}"
+							        field="invoiceType.code" />
 									<hftl:column label="#{messages['invoice.invoiceNumber']}"
 										field="invoiceNumber" />
 									<hftl:column label="#{messages['invoice.invoiceDate']}"
 										field="invoiceDate" />
 									<hftl:column label="#{messages['invoice.amountWithoutTax']}"
 										field="amountWithoutTax" />
-									<p:column>
+									<p:column width="20px;">
 										<p:commandButton icon="ui-icon-trash"
 											action="#{aggregatedDetailInvoiceBean.deleteLinkedInvoice}"
 											update=":tabView:formId:linkedInvoices">
@@ -122,6 +123,7 @@
 								</h:panelGroup>
 							</p:panel>
 						</p:outputPanel>
+						</hftl:decorateFormField>
 
 						<!-- aggregated lines here -->
 						<p:outputPanel id="aggregatedInvoicePanel">
