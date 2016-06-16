@@ -6,6 +6,13 @@
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{aggregatedDetailInvoiceBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -57,22 +64,9 @@
 						submitPartialProcess=":tabView:formId"
 						backingBean="#{aggregatedDetailInvoiceBean}"
 						showEnableDisableButton="true">
-						<!-- 						<hftl:formField field="invoiceType" required="true" -->
-						<!-- 							label="#{messages['invoice.invoiceType']}" valueLabelField="code" -->
-						<!-- 							listBean="#{invoiceTypeBean}"></hftl:formField> -->
-						<hftl:decorateFormField fieldId="invoiceType"
-							label="#{messages['invoice.invoiceType']}">
-							<p:selectOneMenu id="invoiceType" required="true"
-								value="#{aggregatedDetailInvoiceBean.entity.invoiceType}">
-								<s:objectConverter />
-								<f:selectItem noSelectionOption="" />
-								<f:selectItems value="#{invoiceTypeBean.listAll}" var="e"
-									itemValue="#{e}" itemLabel="#{e.code}"></f:selectItems>
-								<p:ajax event="valueChange" update="@this"
-									process="@this :growl"
-									listener="#{aggregatedDetailInvoiceBean.handleTypeChange()}" />
-							</p:selectOneMenu>
-						</hftl:decorateFormField>
+						<hftl:formField field="invoiceType" required="true"
+							label="#{messages['invoice.invoiceType']}" valueLabelField="code"
+							listBean="#{invoiceTypeBean}"></hftl:formField>
 						<hftl:formField id="billingAccountSelectedId"
 							label="#{messages['billingAccount']}" field="billingAccount"
 							valueLabelField="code" popup="true" popupId="billingAccountPopup"
@@ -284,7 +278,7 @@
 
 					<p:outputPanel id="invoiceSummary">
 						<p:panelGrid style="float: right; width: 50%;"
-							rendered="#{aggregatedDetailInvoiceBean.entity.invoiceAgregates.size() > 0}">
+							rendered="#{aggregatedDetailInvoiceBean.tempCategoryInvoiceAggregates.size() > 0}">
 							<f:facet name="header">
 								<p:row>
 									<p:column>#{messages['invoice.summary.totalAmountWithoutTax']}</p:column>
