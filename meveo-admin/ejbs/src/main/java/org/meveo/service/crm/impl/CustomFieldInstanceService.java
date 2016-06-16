@@ -899,12 +899,14 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         Object value = getCFValueByMatrix(entity, code, keys);
         if (value == null) {
         	ICustomFieldEntity[] cfes=entity.getParentCFEntities();
-        	for(ICustomFieldEntity cfe:cfes){
-        		ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) cfe);
-                Object cfeValue=getInheritedCFValueByMatrix(parentCFEntity, code, keys);
-                if(cfeValue!=null){
-                	return cfeValue;
-                }
+        	if(cfes!=null){
+        		for(ICustomFieldEntity cfe:cfes){
+            		ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) cfe);
+                    Object cfeValue=getInheritedCFValueByMatrix(parentCFEntity, code, keys);
+                    if(cfeValue!=null){
+                    	return cfeValue;
+                    }
+            	}
         	}
         }
         return value;
