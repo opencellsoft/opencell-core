@@ -216,7 +216,7 @@
 					</h:form>
 
 					<hftl:formPanel backingBean="#{invoiceBean}"
-						showFormButtons="false" formId="totalForm" edit="false">
+						showFormButtons="false" formId="totalForm" edit="false" showMessages="false">
 
 						<p:fieldset legend="#{messages['invoice.totals']}">
 							<hftl:formField label="#{messages['invoice.amountWithoutTax']}"
@@ -282,17 +282,20 @@
 
 							<hftl:formPanel backingBean="#{invoiceBean}"
 								showFormButtons="false" formId="invoiceAdjustmentForm"
-								edit="false">
+								edit="false" showMessages="false">
 								<p:outputPanel styleClass="action-buttons" column="2"
 									id="invoiceAdjustmentActionPanel"
 									rendered="#{not empty invoiceBean.entity.invoiceNumber}">
-									<p:button id="btnNewIAAggregated"
-										value="#{messages['invoice.adjustment.action.new.aggregated']}"
-										outcome="invoiceAggregatedDetail">
-										<f:param name="edit" value="true" />
-										<f:param name="linkedInvoiceId"
-											value="#{invoiceBean.entity.id}" />
-									</p:button>
+									<p:button id="btnNewIAAggregateds"
+									value="#{messages['invoice.adjustment.action.new.aggregated']}"
+									outcome="invoiceAdjustmentDetail">
+									<f:param name="adjustedInvoiceIdParam"
+										value="#{invoiceBean.entity.id}" />
+									<f:param name="detailedParam" value="false" />
+									<f:param name="cid"
+										value="#{javax.enterprise.context.conversation.id}" />
+									<f:param name="edit" value="true" />
+								   </p:button>
 
 									<p:button id="btnNewIADetailed"
 										value="#{messages['invoice.adjustment.action.new.detailed']}"
@@ -311,8 +314,7 @@
 				</p:tab>
 				<p:tab id="customFieldTab"
 					title="#{messages['menu.customFieldTemplates']}">
-
-					<hftl:formPanel backingBean="#{invoiceBean}"
+					<hftl:formPanel backingBean="#{invoiceBean}" showMessages="false"
 						showDeleteButton="false" showEditButton="true">
 						<hftl:customFields backingBean="#{invoiceBean}"
 							messagesId=":tabView:headerForm:messages" />

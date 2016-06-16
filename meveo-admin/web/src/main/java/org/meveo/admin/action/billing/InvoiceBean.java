@@ -689,33 +689,24 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 			if (isDetailed()) {
 				for (RatedTransaction rt : uiRatedTransactions) {
 					ratedTransactionService.create(rt, getCurrentUser());
-				}
-			} 
-			if (isDetailed()) {
-				super.saveOrUpdate(false);
-			}else{
-				entity = invoiceService.update(entity, getCurrentUser());
+				}	
 			}
+			super.saveOrUpdate(false);
 			if(billingAccountId!=0){
 				BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
 				entity.setBillingAccount(billingAccount);
 				String invoiceNumber=invoiceService.getInvoiceNumber(entity, getCurrentUser());
 				entity.setInvoiceNumber(invoiceNumber);
 			} 	 
-		}
-				
+		}	
 		if (isDetailed()) {
 			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, new Date(),getCurrentUser(), true);
 		} else {
 			if (entity.getAmountWithoutTax() == null) {
 				invoiceService.recomputeAggregates(entity, getCurrentUser());
 			}
-		}		
-		if (isDetailed()) {
-			super.saveOrUpdate(false);
-		}else{
 			entity = invoiceService.update(entity, getCurrentUser());
-		}
+		} 
 		entity = invoiceService.refreshOrRetrieve(entity);
 		entity.getAdjustedInvoice().getLinkedInvoices().add(entity);
 		invoiceService.update(entity.getAdjustedInvoice(), getCurrentUser());
