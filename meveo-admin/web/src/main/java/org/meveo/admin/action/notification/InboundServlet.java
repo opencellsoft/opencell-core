@@ -2,7 +2,6 @@ package org.meveo.admin.action.notification;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
@@ -22,10 +21,8 @@ import org.meveo.admin.exception.InactiveUserException;
 import org.meveo.admin.exception.LoginException;
 import org.meveo.admin.exception.PasswordExpiredException;
 import org.meveo.admin.exception.UnknownUserException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InboundRequestReceived;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -58,19 +55,6 @@ public class InboundServlet extends HttpServlet {
 	@InboundRequestReceived
 	protected Event<InboundRequest> eventProducer;
 
-	public static int readInputStreamWithTimeout(InputStream is, byte[] b, int timeoutMillis) throws IOException {
-		int bufferOffset = 0;
-		long maxTimeMillis = System.currentTimeMillis() + timeoutMillis;
-		while (System.currentTimeMillis() < maxTimeMillis && bufferOffset < b.length) {
-			int readLength = java.lang.Math.min(is.available(), b.length - bufferOffset);
-			// can alternatively use bufferedReader, guarded by isReady():
-			int readResult = is.read(b, bufferOffset, readLength);
-			if (readResult == -1)
-				break;
-			bufferOffset += readResult;
-		}
-		return bufferOffset;
-	}
 
 	private User authenticateRequest(HttpServletRequest req) {
         final String authorization = req.getHeader("Authorization");
@@ -115,7 +99,7 @@ public class InboundServlet extends HttpServlet {
 	}
 
 	private void doService(HttpServletRequest req, HttpServletResponse res) {
-		log.debug("received request for method {} ", req.getMethod());
+		
         User user = authenticateRequest(req);
         if(user == null){
             res.setStatus(403);
@@ -123,28 +107,10 @@ public class InboundServlet extends HttpServlet {
         }
 
         String path = req.getPathInfo();
-        Provider provider = null;
-        String providerCode = null;
-
-        if (path.startsWith("/")) {
-            providerCode = path.substring(1);
-        }
-
-        if(providerCode.contains("/")){
-            providerCode = providerCode.substring(0, providerCode.indexOf('/'));
-        }
-
-        if(!StringUtils.isBlank(providerCode)){
-            provider = providerService.findByCode(providerCode);
-            if (provider == null || !provider.getCode().equals(user.getProvider().getCode())) {
-                log.debug("Request has invalid provider code {} ", providerCode);
-                res.setStatus(404);
-                return;
-            }
-        }
+        log.debug("received request for method {} , path={}", req.getMethod(),path);
 
 		InboundRequest inReq = new InboundRequest();
-		inReq.setProvider(provider);
+		inReq.setProvider(user.getProvider());
 		inReq.setCode(req.getRemoteAddr() + ":" + req.getRemotePort() + "_" + req.getMethod() + "_" + System.nanoTime());
 
 		inReq.setContentLength(req.getContentLength());
