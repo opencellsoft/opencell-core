@@ -176,7 +176,6 @@
 													headerText="#{messages['BusinessEntity.description']}" />
 												<p:column
 													headerText="#{messages['invoice.amountWithoutTax']}" />
-												<p:column headerText="#{messages['invoice.quantity']}" />
 												<p:column headerText="#{messages['commons.actions']}" />
 											</p:row>
 										</p:columnGroup>
@@ -204,16 +203,6 @@
 												</f:facet>
 											</p:cellEditor>
 
-										</p:column>
-										<p:column>
-											<p:cellEditor>
-												<f:facet name="output">
-													<h:outputText value="#{subCat.quantity}" />
-												</f:facet>
-												<f:facet name="input">
-													<p:spinner value="#{subCat.quantity}"></p:spinner>
-												</f:facet>
-											</p:cellEditor>
 										</p:column>
 										<p:column>
 											<p:commandButton icon="ui-icon-trash"
