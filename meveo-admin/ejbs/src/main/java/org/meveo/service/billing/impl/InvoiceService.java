@@ -1014,9 +1014,4 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		generatePdfInvoice(invoice, invoice.getInvoiceNumber(), currentUser);
 	}
 	
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createNewTx(Invoice invoice, User creator) throws BusinessException {
-		create(invoice, creator);
-	}
-	
 }

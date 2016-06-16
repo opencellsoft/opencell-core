@@ -645,7 +645,7 @@ public class DetailedInvoiceBean extends CustomFieldBean<Invoice> {
 		entity.setInvoiceNumber(invoiceService.getInvoiceNumber(entity, getCurrentUser()));
 
 		// String result = super.saveOrUpdate(killConversation);
-		invoiceService.createNewTx(entity, getCurrentUser());
+		invoiceService.create(entity, getCurrentUser());
 
 		invoiceService.commit();
 

@@ -79,6 +79,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_CURRENT_PROVIDER = "currentProvider";
     public static String SEARCH_ATTR_TYPE_CLASS = "type_class";
     public static String SEARCH_IS_NULL = "IS_NULL";
+    public static String SEARCH_IS_NOT_NULL = "IS_NOT_NULL";
 
     @Inject
     @MeveoJpa
@@ -722,6 +723,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         } else {
                             if (filter instanceof String && SEARCH_IS_NULL.equals(filter)) {
                                 queryBuilder.addSql("a." + fieldName + " is null ");
+                            
+                            } else if (filter instanceof String && SEARCH_IS_NOT_NULL.equals(filter)) {
+                                    queryBuilder.addSql("a." + fieldName + " is not null ");
 
                             } else if (filter instanceof String) {
 

@@ -143,4 +143,9 @@ public class InvoiceTypeBean extends BaseBean<InvoiceType> {
                          entity.getSellerSequence().entrySet();
         return new ArrayList<Map.Entry<Seller, Sequence>>(productSet);
     }
+    
+    public String getAdjustmentCode() {
+		return invoiceTypeService.getAdjustementCode();
+	}
+    
 }

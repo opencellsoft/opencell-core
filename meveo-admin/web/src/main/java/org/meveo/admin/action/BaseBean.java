@@ -1247,5 +1247,18 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void setPartOfModules(String partOfModules) {
         this.partOfModules = partOfModules;
     }
+    
+	public String getDescriptionOrCode() {
+		if (entity instanceof BusinessEntity) {
+			BusinessEntity be = (BusinessEntity) entity;
+			if (org.meveo.commons.utils.StringUtils.isBlank(be.getDescription())) {
+				return be.getCode();
+			} else {
+				return be.getDescription();
+			}
+		}
+		
+		return null;
+	}
 
 }

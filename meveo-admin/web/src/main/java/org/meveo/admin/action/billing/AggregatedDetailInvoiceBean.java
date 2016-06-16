@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -37,6 +39,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
@@ -68,6 +71,7 @@ import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.ItemSelectEvent;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.LazyDataModel;
 
 /**
  * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that
@@ -113,6 +117,10 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 	@Inject
 	private InvoiceSubCategoryService invoiceSubCategoryService;
 
+	@Inject
+	@RequestParam()
+	private Instance<Long> linkedInvoiceId;
+
 	private long billingAccountId;
 	private Invoice invoiceToAdd;
 	private Invoice selectedInvoice;
@@ -132,6 +140,15 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 	 */
 	public AggregatedDetailInvoiceBean() {
 		super(Invoice.class);
+	}
+
+	@PostConstruct
+	private void init() throws BusinessException {
+		if (linkedInvoiceId != null && linkedInvoiceId.get() != null) {
+			Invoice invoice = invoiceService.findById(linkedInvoiceId.get());
+			getEntity().setInvoiceType(invoiceTypeService.getDefaultAdjustement(getCurrentUser()));
+			addLinkedInvoice(invoice);
+		}
 	}
 
 	@Override
@@ -168,14 +185,26 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 		selectedInvoice = null;
 	}
 
+	public LazyDataModel<Invoice> getBAInvoices() {
+		filters.put("billingAccount", entity.getBillingAccount());
+		filters.put("invoiceNumber", PersistenceService.SEARCH_IS_NOT_NULL);
+
+		return getLazyDataModel();
+	}
+
 	public void importFromLinkedInvoices() throws BusinessException {
+		boolean hasError = false;
 		if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
 			messages.error("BillingAccount is required.");
-			return;
+			hasError = true;
 		}
 
 		if (entity.getDueDate() == null) {
 			messages.error("Due date is required.");
+			hasError = true;
+		}
+
+		if (hasError) {
 			return;
 		}
 
@@ -373,13 +402,22 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 	}
 
 	public void addAggregatedLine() throws BusinessException {
+		boolean hasError = false;
 		if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
 			messages.error("BillingAccount is required.");
-			return;
+			hasError = true;
 		}
 
 		if (entity.getDueDate() == null) {
 			messages.error("Due date is required.");
+			hasError = true;
+		}
+
+		if (hasError) {
+			return;
+		}
+
+		if (amountWithoutTax == null || selectedInvoiceSubCategory == null) {
 			return;
 		}
 
@@ -471,6 +509,8 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 		refreshTotal();
 
 		selectedInvoiceSubCategory = new InvoiceSubCategory();
+		description = null;
+		amountWithoutTax = null;
 	}
 
 	@SuppressWarnings("unused")
@@ -494,6 +534,12 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 		tempCategoryInvoiceAggregates.add(newCategoryInvoiceAgregate);
 	}
 
+	public void addLinkedInvoice(Invoice invoice) {
+		if (!getEntity().getLinkedInvoices().contains(invoice)) {
+			entity.getLinkedInvoices().add(invoice);
+		}
+	}
+
 	private BigDecimal getAmountWithTax(Tax tax, BigDecimal amountWithoutTax) {
 		Integer rounding = tax.getProvider().getRounding() == null ? 2 : tax.getProvider().getRounding();
 		BigDecimal ttc = amountWithoutTax.add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100), rounding, RoundingMode.HALF_UP));
@@ -514,7 +560,8 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 		entity.setInvoiceNumber(invoiceService.getInvoiceNumber(entity, getCurrentUser()));
 
 		// String result = super.saveOrUpdate(killConversation);
-		invoiceService.createNewTx(entity, getCurrentUser());
+		// invoiceService.create(entity, getCurrentUser());
+		String result = super.saveOrUpdate(false);
 
 		invoiceService.commit();
 
@@ -526,7 +573,7 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 			messages.error("Error generating xml / pdf invoice=" + e.getMessage());
 		}
 
-		return getListViewName();
+		return result;
 	}
 
 	public void refreshTotal() throws BusinessException {
@@ -621,7 +668,7 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 					}
 
 					invoiceAgregateTax.setAmountWithoutTax(invoiceAgregateTax.getAmountWithoutTax().add(subCat.getAmountWithoutTax()));
-					//invoiceAgregateTax.setAmountWithTax(invoiceAgregateTax.getAmountWithTax().add(subCat.getAmountWithTax()));
+					// invoiceAgregateTax.setAmountWithTax(invoiceAgregateTax.getAmountWithTax().add(subCat.getAmountWithTax()));
 					invoiceAgregateTax.setAmountTax(invoiceAgregateTax.getAmountTax().add(subCat.getAmountTax()));
 
 					taxInvoiceAgregateMap.put(taxId, invoiceAgregateTax);
@@ -758,6 +805,14 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 
 	public void setIncludeBalance(boolean includeBalance) {
 		this.includeBalance = includeBalance;
+	}
+
+	public Instance<Long> getLinkedInvoiceId() {
+		return linkedInvoiceId;
+	}
+
+	public void setLinkedInvoiceId(Instance<Long> linkedInvoiceId) {
+		this.linkedInvoiceId = linkedInvoiceId;
 	}
 
 }

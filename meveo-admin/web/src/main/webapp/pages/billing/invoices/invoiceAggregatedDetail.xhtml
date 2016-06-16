@@ -33,7 +33,7 @@
 			</hftl:entityPopup>
 
 			<hftl:entityPopup id="invoicePopup" header="#{messages['invoice']}"
-				updateField=":tabView:datatable_selectedLinkedInvoice"
+				updateField=":tabView:formId:linkedInvoices :tabView:formId:importLinkedInvoices"
 				selection="#{aggregatedDetailInvoiceBean.invoiceToAdd}"
 				backingBean="#{aggregatedDetailInvoiceBean}"
 				searchField1Label="#{messages['invoice.invoiceNumber']}"
@@ -65,8 +65,9 @@
 						backingBean="#{aggregatedDetailInvoiceBean}"
 						showEnableDisableButton="true">
 						<hftl:formField field="invoiceType" required="true"
-							label="#{messages['invoice.invoiceType']}" valueLabelField="code"
-							listBean="#{invoiceTypeBean}"></hftl:formField>
+							label="#{messages['invoice.invoiceType']}"
+							listenerUpdate="linkedInvoices"
+							valueLabelField="descriptionOrCode" listBean="#{invoiceTypeBean}"></hftl:formField>
 						<hftl:formField id="billingAccountSelectedId"
 							label="#{messages['billingAccount']}" field="billingAccount"
 							valueLabelField="code" popup="true" popupId="billingAccountPopup"
@@ -81,46 +82,51 @@
 									listener="#{aggregatedDetailInvoiceBean.handleDateSelect}"></p:ajax>
 							</p:calendar>
 						</hftl:decorateFormField>
-					</hftl:formPanel>
 
-					<hftl:dataList label="#{messages['invoice.linkedInvoices']}"
-						noClose="false" backingBean="#{aggregatedDetailInvoiceBean}"
-						dataModel="#{aggregatedDetailInvoiceBean.entity.linkedInvoices}"
-						resultsId="selectedLinkedInvoice">
+						<p:outputPanel id="linkedInvoices">
+							<p:panel style="margin-top: 10px;"
+								rendered="#{aggregatedDetailInvoiceBean.entity.invoiceType.code eq invoiceTypeBean.adjustmentCode}">
+								<p:dataTable label="#{messages['invoice.linkedInvoices']}"
+									noClose="false"
+									value="#{aggregatedDetailInvoiceBean.entity.linkedInvoices}"
+									var="entity">
 
-						<f:facet name="header">#{messages['invoice.linkedInvoices']}</f:facet>
+									<f:facet name="header">#{messages['invoice.linkedInvoices']}</f:facet>
 
-						<hftl:column label="#{messages['invoice.invoiceNumber']}"
-							field="invoiceNumber" />
-						<hftl:column label="#{messages['invoice.invoiceDate']}"
-							field="invoiceDate" />
-						<hftl:column label="#{messages['invoice.amountWithoutTax']}"
-							field="amountWithoutTax" />
-						<p:column>
-							<p:commandButton icon="ui-icon-trash"
-								action="#{aggregatedDetailInvoiceBean.deleteLinkedInvoice}"
-								update="datatable_selectedLinkedInvoice">
-								<f:setPropertyActionListener value="#{entity}"
-									target="#{aggregatedDetailInvoiceBean.selectedInvoice}" />
-								<p:confirm header="#{messages['commons.confirmationHeader']}"
-									message="#{messages['commons.confirmDelete']}"
-									icon="ui-icon-alert" />
-							</p:commandButton>
-						</p:column>
-						<ui:define name="add-on-buttons">
-							<p:commandButton value="#{messages['action.add']}" type="button"
-								onclick="PF('dlg_invoicePopup').show();" />
+									<hftl:column label="#{messages['invoice.invoiceNumber']}"
+										field="invoiceNumber" />
+									<hftl:column label="#{messages['invoice.invoiceDate']}"
+										field="invoiceDate" />
+									<hftl:column label="#{messages['invoice.amountWithoutTax']}"
+										field="amountWithoutTax" />
+									<p:column>
+										<p:commandButton icon="ui-icon-trash"
+											action="#{aggregatedDetailInvoiceBean.deleteLinkedInvoice}"
+											update=":tabView:formId:linkedInvoices">
+											<f:setPropertyActionListener value="#{entity}"
+												target="#{aggregatedDetailInvoiceBean.selectedInvoice}" />
+											<p:confirm header="#{messages['commons.confirmationHeader']}"
+												message="#{messages['commons.confirmDelete']}"
+												icon="ui-icon-alert" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
 
-							<p:commandButton value="#{messages['action.deleteAll']}"
-								action="#{aggregatedDetailInvoiceBean.deleteAllLinkedInvoice}"
-								update=":tabView:datatable_selectedLinkedInvoice" />
-						</ui:define>
-					</hftl:dataList>
+								<h:panelGroup layout="block" styleClass="form-panel-actions">
+									<p:commandButton value="#{messages['action.add']}"
+										type="button" onclick="PF('dlg_invoicePopup').show();" />
 
-					<!-- aggregated lines here -->
-					<h:form id="aggregatedInvoiceForm">
+									<p:commandButton value="#{messages['action.deleteAll']}"
+										action="#{aggregatedDetailInvoiceBean.deleteAllLinkedInvoice}"
+										update=":tabView:formId:linkedInvoices" />
+								</h:panelGroup>
+							</p:panel>
+						</p:outputPanel>
+
+						<!-- aggregated lines here -->
 						<p:outputPanel id="aggregatedInvoicePanel">
-							<p:dataTable var="entity" editable="true" editMode="cell"
+							<p:dataTable style="margin-top: 10px;" var="entity"
+								editable="true" editMode="cell"
 								value="#{aggregatedDetailInvoiceBean.categoryInvoiceAggregates}">
 
 								<f:facet name="header">#{messages['invoice.aggregates']}</f:facet>
@@ -150,7 +156,7 @@
 									<span style="width: 5px;"> </span>
 									<p:commandButton icon="ui-icon-trash" immediate="true"
 										action="#{aggregatedDetailInvoiceBean.deleteLinkedInvoiceCategory}"
-										update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary">
+										update=":tabView:formId:aggregatedInvoicePanel :tabView:formId:invoiceSummary">
 										<f:setPropertyActionListener value="#{entity}"
 											target="#{aggregatedDetailInvoiceBean.selectedCategoryInvoiceAgregate}" />
 									</p:commandButton>
@@ -194,7 +200,7 @@
 													<h:outputText value="#{subCat.amountWithoutTax}" />
 												</f:facet>
 												<f:facet name="input">
-													<p:spinner value="#{subCat.amountWithoutTax}"></p:spinner>
+													<p:inputText value="#{subCat.amountWithoutTax}"></p:inputText>
 												</f:facet>
 											</p:cellEditor>
 
@@ -211,9 +217,9 @@
 										</p:column>
 										<p:column>
 											<p:commandButton icon="ui-icon-trash"
-												process=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel"
+												process=":tabView:formId:aggregatedInvoicePanel"
 												action="#{aggregatedDetailInvoiceBean.deleteLinkedInvoiceSubCategory}"
-												update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary">
+												update=":tabView:formId:aggregatedInvoicePanel :tabView:formId:invoiceSummary">
 												<f:setPropertyActionListener value="#{subCat}"
 													target="#{aggregatedDetailInvoiceBean.selectedSubCategoryInvoiceAgregate}" />
 											</p:commandButton>
@@ -225,95 +231,100 @@
 							</p:dataTable>
 						</p:outputPanel>
 
-						<p:commandButton immediate="true"
-							value="#{messages['action.invoice.importFromLinkedInvoices']}"
-							action="#{aggregatedDetailInvoiceBean.importFromLinkedInvoices}"
-							process=":tabView:formId @this"
-							update=":tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary :tabView:formId:messages :growl" />
-
-						<p:panel id="addAggregatedLine" style="float: right; width: 50%;">
-							<p:messages id="aggregatedMessages"></p:messages>
-							<p:row>
-								<p:column>
-									<hftl:decorateFormField fieldId="selectedInvoiceCatOrSubCat"
-										label="#{messages['invoice.catOrSubCat']}">
-										<p:selectOneMenu id="selectedInvoiceCatOrSubCat"
-											required="true"
-											value="#{aggregatedDetailInvoiceBean.selectedInvoiceSubCategory}"
-											converter="omnifaces.SelectItemsConverter">
-											<f:selectItem itemLabel="" noSelectionOption="true" />
-											<f:selectItems
-												value="#{aggregatedDetailInvoiceBean.invoiceCatSubCats}" />
-										</p:selectOneMenu>
-									</hftl:decorateFormField>
-								</p:column>
-								<p:column>
-									<hftl:decorateFormField fieldId="description"
-										label="#{messages['BusinessEntity.description']}">
-										<p:inputText id="description"
-											value="#{aggregatedDetailInvoiceBean.description}"></p:inputText>
-									</hftl:decorateFormField>
-								</p:column>
-								<p:column>
-									<hftl:decorateFormField fieldId="amountWithoutTax"
-										label="#{messages['invoice.amountWithoutTax']}">
-										<p:inputText id="amountWithoutTax" required="true"
-											value="#{aggregatedDetailInvoiceBean.amountWithoutTax}"></p:inputText>
-									</hftl:decorateFormField>
-								</p:column>
-								<p:column>
-									<p:commandButton value="#{messages['action.invoice.addLine']}"
-										process="addAggregatedLine"
-										action="#{aggregatedDetailInvoiceBean.addAggregatedLine()}"
-										update=":#{p:component('aggregatedMessages')} :tabView:aggregatedInvoiceForm:addAggregatedLine :tabView:aggregatedInvoiceForm:aggregatedInvoicePanel :tabView:invoiceSummary :growl"
-										style="margin-top: 20px;">
-									</p:commandButton>
-								</p:column>
-							</p:row>
-						</p:panel>
+						<p:outputPanel id="importLinkedInvoices">
+							<p:commandButton immediate="true"
+								rendered="#{aggregatedDetailInvoiceBean.entity.linkedInvoices.size() > 0}"
+								value="#{messages['action.invoice.importFromLinkedInvoices']}"
+								action="#{aggregatedDetailInvoiceBean.importFromLinkedInvoices}"
+								process=":tabView:formId @this"
+								update=":tabView:formId:aggregatedInvoicePanel :tabView:formId:invoiceSummary :tabView:formId:messages" />
+						</p:outputPanel>
 
 						<div style="clear: both"></div>
 
-					</h:form>
-
-					<p:outputPanel id="invoiceSummary">
-						<p:panelGrid style="float: right; width: 50%;"
-							rendered="#{aggregatedDetailInvoiceBean.tempCategoryInvoiceAggregates.size() > 0}">
-							<f:facet name="header">
+						<p:fieldset style="float: right; width: 60%; margin-top: 10px;">
+							<p:panel id="addAggregatedLine">
 								<p:row>
-									<p:column>#{messages['invoice.summary.totalAmountWithoutTax']}</p:column>
-									<p:column>#{messages['invoice.summary.totalTaxAmount']}</p:column>
-									<p:column>#{messages['invoice.summary.totalAmountWithTax']}</p:column>
-									<p:column>#{messages['invoice.summary.netToPay']}</p:column>
+									<p:column>
+										<hftl:decorateFormField fieldId="selectedInvoiceCatOrSubCat"
+											label="#{messages['invoice.catOrSubCat']}">
+											<p:selectOneMenu id="selectedInvoiceCatOrSubCat"
+												value="#{aggregatedDetailInvoiceBean.selectedInvoiceSubCategory}"
+												converter="omnifaces.SelectItemsConverter">
+												<f:selectItem itemLabel="" noSelectionOption="true" />
+												<f:selectItems
+													value="#{aggregatedDetailInvoiceBean.invoiceCatSubCats}" />
+											</p:selectOneMenu>
+										</hftl:decorateFormField>
+									</p:column>
+									<p:column>
+										<hftl:decorateFormField fieldId="description"
+											label="#{messages['BusinessEntity.description']}">
+											<p:inputText id="description"
+												value="#{aggregatedDetailInvoiceBean.description}"></p:inputText>
+										</hftl:decorateFormField>
+									</p:column>
+									<p:column>
+										<hftl:decorateFormField fieldId="amountWithoutTax"
+											label="#{messages['invoice.amountWithoutTax']}">
+											<p:inputText id="amountWithoutTax"
+												value="#{aggregatedDetailInvoiceBean.amountWithoutTax}"></p:inputText>
+										</hftl:decorateFormField>
+									</p:column>
+									<p:column>
+										<p:commandButton value="#{messages['action.invoice.addLine']}"
+											process="addAggregatedLine"
+											action="#{aggregatedDetailInvoiceBean.addAggregatedLine()}"
+											update=":tabView:formId:messages :tabView:formId:addAggregatedLine :tabView:formId:aggregatedInvoicePanel :tabView:formId:invoiceSummary"
+											style="margin-top: 20px;">
+										</p:commandButton>
+									</p:column>
 								</p:row>
-							</f:facet>
-							<p:row>
-								<p:column>#{aggregatedDetailInvoiceBean.computeTotalAmountWithoutTax}</p:column>
-								<p:column>#{aggregatedDetailInvoiceBean.computeTotalAmountTax}</p:column>
-								<p:column>#{aggregatedDetailInvoiceBean.computeTotalAmountWithTax}</p:column>
-								<p:column>#{aggregatedDetailInvoiceBean.netToPay}</p:column>
-							</p:row>
-						</p:panelGrid>
-					</p:outputPanel>
+							</p:panel>
+							<h:outputLabel value="#{messages['message.invoice.addAggregate.info']}"></h:outputLabel>
+						</p:fieldset>
 
-					<div style="clear: both"></div>
+						<div style="clear: both"></div>
 
-					<h:form>
-						<p:outputPanel
-							style="float: right; width: 25%; text-align: right;">
-							<hftl:decorateFormField fieldId="includeAccountBalance"
-								label="#{messages['invoice.includeAccountBalance']}">
-								<p:selectBooleanCheckbox id="includeAccountBalance"
-									value="#{aggregatedDetailInvoiceBean.includeBalance}" />
-							</hftl:decorateFormField>
-							<p:commandButton
-								value="#{messages['action.invoice.refreshTotal']}"
-								action="#{aggregatedDetailInvoiceBean.refreshTotal}"
-								update=":#{p:component('invoiceSummary')}"></p:commandButton>
+						<p:outputPanel id="invoiceSummary">
+							<p:panelGrid style="float: right; width: 50%; margin-top: 10px;"
+								rendered="#{aggregatedDetailInvoiceBean.tempCategoryInvoiceAggregates.size() > 0}">
+								<f:facet name="header">
+									<p:row>
+										<p:column>#{messages['invoice.summary.totalAmountWithoutTax']}</p:column>
+										<p:column>#{messages['invoice.summary.totalTaxAmount']}</p:column>
+										<p:column>#{messages['invoice.summary.totalAmountWithTax']}</p:column>
+										<p:column>#{messages['invoice.summary.netToPay']}</p:column>
+									</p:row>
+								</f:facet>
+								<p:row>
+									<p:column>#{aggregatedDetailInvoiceBean.computeTotalAmountWithoutTax}</p:column>
+									<p:column>#{aggregatedDetailInvoiceBean.computeTotalAmountTax}</p:column>
+									<p:column>#{aggregatedDetailInvoiceBean.computeTotalAmountWithTax}</p:column>
+									<p:column>#{aggregatedDetailInvoiceBean.netToPay}</p:column>
+								</p:row>
+							</p:panelGrid>
 						</p:outputPanel>
-					</h:form>
 
-					<div style="clear: both"></div>
+						<div style="clear: both"></div>
+
+						<p:outputPanel
+							style="float: right; width: 30%; text-align: right; margin-top: 10px;">
+							<h:panelGrid columns="2" style="float: right;">
+								<h:panelGrid columns="2">
+									<h:outputText
+										value="#{messages['invoice.includeAccountBalance']}" />
+									<p:selectBooleanCheckbox
+										value="#{aggregatedDetailInvoiceBean.includeBalance}" />
+								</h:panelGrid>
+								<p:commandButton
+									value="#{messages['action.invoice.refreshTotal']}"
+									action="#{aggregatedDetailInvoiceBean.refreshTotal}"
+									update=":#{p:component('invoiceSummary')}"></p:commandButton>
+							</h:panelGrid>
+						</p:outputPanel>
+
+					</hftl:formPanel>
 
 				</p:tab>
 			</p:tabView>
