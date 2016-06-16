@@ -27,6 +27,7 @@ import org.meveo.model.*;
 public class Filter extends BusinessCFEntity {
 
 	private static final long serialVersionUID = -6150352877726034654L;
+	private static final String FILTER_CODE_PREFIX = "FILTER_";
 
 	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinColumn(name = "FILTER_CONDITION_ID")
@@ -104,6 +105,6 @@ public class Filter extends BusinessCFEntity {
 	}
 	
 	public String getAppliesTo() {
-		return "FILTER_" + getCode();
+		return FILTER_CODE_PREFIX + getCode();
 	}
 }

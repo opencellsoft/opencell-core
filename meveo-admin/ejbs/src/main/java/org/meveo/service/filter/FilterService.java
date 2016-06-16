@@ -19,7 +19,6 @@ import javax.validation.Validator;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.FilterDto;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -321,6 +320,18 @@ public class FilterService extends BusinessService<Filter> {
             }
         }
     }
+    
+    @Override
+    public void create(Filter filter, User user) throws BusinessException {
+        parseInputXML(filter.getInputXml(), filter, user);
+        super.create(filter, user);
+    }
+
+    @Override
+    public Filter update(Filter filter, User user) throws BusinessException {
+        parseInputXML(filter.getInputXml(), filter, user);
+    	return super.update(filter, user);
+    }
 
     private void persistCustomFieldTemplates(Filter filter, User user) throws BusinessException {
         try {
@@ -409,22 +420,6 @@ public class FilterService extends BusinessService<Filter> {
                 break;
             }
         }
-    }
-    
-    public Filter dtoToFilter(FilterDto dto, Filter filter, User user) throws BusinessException {
-    	if(dto != null){
-    		if(filter != null){
-            	if(filter.isTransient()){
-                	filter.setCode(dto.getCode());
-                	filter.clearUuid();
-                }
-            	filter.setDescription(dto.getDescription());
-                filter.setInputXml(dto.getInputXml());
-                filter.setShared(dto.getShared());
-                parseInputXML(dto.getInputXml(), filter, user);
-            }
-    	}
-    	return filter;
     }
     
     public Filter parseInputXML(String inputXml, Filter targetFilter, User user) throws BusinessException {
