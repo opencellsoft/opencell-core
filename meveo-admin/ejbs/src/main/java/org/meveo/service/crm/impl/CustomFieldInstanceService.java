@@ -1175,12 +1175,14 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         if (value == null || !(value instanceof Map) || StringUtils.isEmpty(keyToMatch)) {
             return null;
         }
-
+        Logger log = LoggerFactory.getLogger(CustomFieldInstanceService.class);
         Object valueFound = null;
         Map<String, Object> mapValue = (Map<String, Object>) value;
+        log.trace("matchClosestValue keyToMatch: {} in {}", keyToMatch,mapValue);
         for (int i = keyToMatch.length(); i > 0; i--) {
             valueFound = mapValue.get(keyToMatch.substring(0, i));
             if (valueFound != null) {
+                log.trace("matchClosestValue found value: {} for key: {}", valueFound,keyToMatch.substring(0, i));
                 return valueFound;
             }
         }
