@@ -41,7 +41,6 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 

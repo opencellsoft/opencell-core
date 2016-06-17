@@ -44,7 +44,7 @@ public class BusinessEntity extends AuditableEntity {
     @Transient
     protected boolean appendGeneratedCode = false;
 
-    public String getCode() {
+    public String getCode() {    	
         return code;
     }
 
@@ -53,6 +53,9 @@ public class BusinessEntity extends AuditableEntity {
     }
 
     public String getDescription() {
+    	if(description == null || description.trim().length() == 0){
+    		return code;
+    	}
         return description;
     }
 

@@ -148,4 +148,7 @@ public class InvoiceTypeBean extends BaseBean<InvoiceType> {
 		return invoiceTypeService.getAdjustementCode();
 	}
     
+    public String getCommercialCode() {
+		return invoiceTypeService.getCommercialCode();
+	}
 }

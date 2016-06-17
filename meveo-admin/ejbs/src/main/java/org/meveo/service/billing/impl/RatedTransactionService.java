@@ -820,8 +820,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	@SuppressWarnings("unchecked")
 	public List<RatedTransaction> openRTbySubCat(WalletInstance walletInstance , InvoiceSubCategory invoiceSubCategory ) {
 		QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "rt", null,walletInstance.getProvider());
-		qb.addCriterionEntity("rt.invoiceSubCategory", invoiceSubCategory);
+		if(invoiceSubCategory != null){
+			qb.addCriterionEntity("rt.invoiceSubCategory", invoiceSubCategory);
+		}
 		qb.addCriterionEntity("rt.wallet", walletInstance);
+		qb.addSql("rt.invoice is null");
 		qb.addCriterionEnum("rt.status", RatedTransactionStatusEnum.OPEN);
 		try {
 			return (List<RatedTransaction>) qb.getQuery(getEntityManager()).getResultList();
