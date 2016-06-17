@@ -343,6 +343,14 @@
 					</hftl:formPanel>
 
 				</p:tab>
+				<p:tab id="customFieldTab"
+					title="#{messages['menu.customFieldTemplates']}">
+					<hftl:formPanel backingBean="#{invoiceBean}" showMessages="false" formId="customForm"
+						showDeleteButton="false" showEditButton="false" showBack="false">
+						<hftl:customFields backingBean="#{invoiceBean}"
+							messagesId=":tabView:formId:messages" />
+					</hftl:formPanel>
+				</p:tab>
 			</p:tabView>
 
 		</p:panel>
