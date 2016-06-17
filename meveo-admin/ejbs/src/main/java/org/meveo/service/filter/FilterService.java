@@ -332,6 +332,16 @@ public class FilterService extends BusinessService<Filter> {
         parseInputXML(filter.getInputXml(), filter, user);
     	return super.update(filter, user);
     }
+    
+    @Override
+    public void remove(Filter filter) {
+    	try {
+			customFieldTemplateService.createMissingTemplates(filter, new ArrayList<CustomFieldTemplate>(), getCurrentUser(), true, true);
+		} catch (BusinessException e) {
+			log.error("Failed to remove custom fields.", e);
+		}
+    	super.remove(filter);
+    }
 
     private void persistCustomFieldTemplates(Filter filter, User user) throws BusinessException {
         try {
