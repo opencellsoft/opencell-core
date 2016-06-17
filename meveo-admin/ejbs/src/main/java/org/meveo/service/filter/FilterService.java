@@ -423,8 +423,10 @@ public class FilterService extends BusinessService<Filter> {
     }
     
     public Filter parseInputXML(String inputXml, Filter targetFilter, User user) throws BusinessException {
-    	Filter parsedFilter = parse(inputXml);
-		updateFilterDetails(parsedFilter, targetFilter, user);
+    	if(inputXml != null){
+    		Filter parsedFilter = parse(inputXml);
+    		updateFilterDetails(parsedFilter, targetFilter, user);
+    	}
 		validate(targetFilter);
 		persistCustomFieldTemplates(targetFilter, user);
 		return targetFilter;
