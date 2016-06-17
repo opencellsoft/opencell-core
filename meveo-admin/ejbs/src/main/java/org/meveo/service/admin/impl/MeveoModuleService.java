@@ -31,8 +31,6 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -47,7 +45,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.FilterDto;
@@ -99,6 +96,7 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.EntityCustomActionService;
@@ -178,6 +176,9 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
     @Inject
     private OfferTemplateService offerTemplateService;
 
+    @Inject
+    private MeveoInstanceService meveoInstanceService;
+    
     /**
      * import module from remote meveo instance
      * 
@@ -246,7 +247,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
             module = refreshOrRetrieve(module);
             ModuleDto moduleDto = moduleToDto(module, currentUser.getProvider());
             log.debug("export module dto {}", moduleDto);
-            Response response = publishDto2MeveoInstance(url, meveoInstance, moduleDto);
+            Response response = meveoInstanceService.publishDto2MeveoInstance(url, meveoInstance, moduleDto);
             ActionStatus actionStatus = response.readEntity(ActionStatus.class);
             log.debug("response {}", actionStatus);
             if (actionStatus == null || ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
@@ -460,40 +461,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         dto.setHierarchyType(bom.getHierarchyType());
     }
 
-    /**
-     * export module dto to remote meveo instance
-     * 
-     * @param url
-     * @param meveoInstance
-     * @param dto
-     * @return
-     * @throws MeveoApiException
-     */
-    private Response publishDto2MeveoInstance(String url, MeveoInstance meveoInstance, BaseDto dto) throws BusinessException {
-        String baseurl = meveoInstance.getUrl().endsWith("/") ? meveoInstance.getUrl() : meveoInstance.getUrl() + "/";
-        String username = meveoInstance.getAuthUsername() != null ? meveoInstance.getAuthUsername() : "";
-        String password = meveoInstance.getAuthPassword() != null ? meveoInstance.getAuthPassword() : "";
-        try {
-            ResteasyClient client = new ResteasyClientBuilder().build();
-            ResteasyWebTarget target = client.target(baseurl + url);
-            BasicAuthentication basicAuthentication = new BasicAuthentication(username, password);
-            target.register(basicAuthentication);
-
-            Response response = target.request().post(Entity.entity(dto, MediaType.APPLICATION_XML));
-            if (response.getStatus() != HttpURLConnection.HTTP_OK) {
-                if (response.getStatus() == HttpURLConnection.HTTP_UNAUTHORIZED || response.getStatus() == HttpURLConnection.HTTP_FORBIDDEN) {
-                    throw new RemoteAuthenticationException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
-                } else {
-                    throw new BusinessException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
-                }
-            }
-            return response;
-        } catch (Exception e) {
-            log.error("Failed to communicate {}. Reason {}", meveoInstance.getCode(), (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
-            throw new BusinessException("Failed to communicate " + meveoInstance.getCode() + ". Error " + e.getMessage());
-        }
-    }
-
+ 
     public void loadModuleItem(MeveoModuleItem item, Provider provider) {
 
         BusinessEntity entity = null;

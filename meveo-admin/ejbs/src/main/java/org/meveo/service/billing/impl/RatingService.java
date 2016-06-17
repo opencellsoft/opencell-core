@@ -15,11 +15,17 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
+import org.meveo.admin.parse.csv.CDR;
+import org.meveo.admin.parse.csv.CdrParserProducer;
+import org.meveo.admin.parse.csv.MEVEOCdrParser;
 import org.meveo.admin.util.NumberUtil;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -53,7 +59,9 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.medina.impl.AccessService;
+import org.meveo.service.medina.impl.CSVCDRParser;
 
 @Stateless
 public class RatingService extends BusinessService<WalletOperation>{
@@ -85,7 +93,13 @@ public class RatingService extends BusinessService<WalletOperation>{
 	@Inject	
 	private BillingAccountService billingAccountService;
 	
+	@Inject
+	private MeveoInstanceService meveoInstanceService;
+	
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
+
+
+	private MEVEOCdrParser cdrParser;
 
 	/*
 	 * public int getSharedQuantity(LevelEnum level, Provider provider, String
@@ -286,39 +300,60 @@ public class RatingService extends BusinessService<WalletOperation>{
 				log.debug("checking condition for {} : {} -> {}", triggeredEDRTemplate.getCode(),
 						triggeredEDRTemplate.getConditionEl(), conditionCheck);
 				if (conditionCheck) {
-					EDR newEdr = new EDR();
-					newEdr.setCreated(new Date());
-					newEdr.setEventDate(applicationDate);
-					newEdr.setOriginBatch(EDR.EDR_TABLE_ORIGIN);
-					newEdr.setOriginRecord("CHRG_" + chargeInstance.getId() + "_" + applicationDate.getTime());
-					newEdr.setParameter1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), result, ua));
-					newEdr.setParameter2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), result, ua));
-					newEdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), result, ua));
-					newEdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), result, ua));
-					newEdr.setProvider(chargeInstance.getProvider());
-					newEdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(),
-							result, ua)));
-					newEdr.setStatus(EDRStatusEnum.OPEN);
-					Subscription sub = null;
-					if (StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
-						sub = subscription;
-					} else {
-						String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), result, ua);
-						sub = subscriptionService.findByCode(entityManager, subCode, subscription.getProvider());
-						if (sub == null) {
-							log.info("could not find subscription for code =" + subCode + " (EL="
-									+ triggeredEDRTemplate.getSubscriptionEl() + ") in triggered EDR with code "
-									+ triggeredEDRTemplate.getCode());
-						}
-					}
-					if (sub != null) {
-						newEdr.setSubscription(sub);
-						log.info("trigger EDR from code " + triggeredEDRTemplate.getCode());
-						if (chargeInstance.getAuditable() == null) {
-							log.info("trigger EDR from code " + triggeredEDRTemplate.getCode());
+					if(triggeredEDRTemplate.getMeveoInstance()==null){
+						EDR newEdr = new EDR();
+						newEdr.setCreated(new Date());
+						newEdr.setEventDate(applicationDate);
+						newEdr.setOriginBatch(EDR.EDR_TABLE_ORIGIN);
+						newEdr.setOriginRecord("CHRG_" + chargeInstance.getId() + "_" + applicationDate.getTime());
+						newEdr.setParameter1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), result, ua));
+						newEdr.setParameter2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), result, ua));
+						newEdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), result, ua));
+						newEdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), result, ua));
+						newEdr.setProvider(chargeInstance.getProvider());
+						newEdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(),
+								result, ua)));
+						newEdr.setStatus(EDRStatusEnum.OPEN);
+						Subscription sub = null;
+						if (StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
+							sub = subscription;
 						} else {
-							edrService.create(newEdr, chargeInstance.getAuditable().getCreator());
+							String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), result, ua);
+							sub = subscriptionService.findByCode(entityManager, subCode, subscription.getProvider());
+							if (sub == null) {
+								log.info("could not find subscription for code =" + subCode + " (EL="
+										+ triggeredEDRTemplate.getSubscriptionEl() + ") in triggered EDR with code "
+										+ triggeredEDRTemplate.getCode());
+							}
 						}
+						if (sub != null) {
+							newEdr.setSubscription(sub);
+							log.info("trigger EDR from code " + triggeredEDRTemplate.getCode());
+							if (chargeInstance.getAuditable() == null) {
+								log.info("trigger EDR from code " + triggeredEDRTemplate.getCode());
+							} else {
+								edrService.create(newEdr, chargeInstance.getAuditable().getCreator());
+							}
+						}
+					} else {
+						CDR cdr = new CDR();
+						String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), result, ua);
+						cdr.setAccess_id(subCode);
+						cdr.setTimestamp(applicationDate);
+						cdr.setParam1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), result, ua));
+						cdr.setParam2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), result, ua));
+						cdr.setParam3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), result, ua));
+						cdr.setParam4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), result, ua));
+						cdr.setProvider(chargeInstance.getProvider());
+						cdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(),
+								result, ua)));
+						String url="api/rest/billing/mediation/chargeCdr";
+						Response response = meveoInstanceService.callTextServiceMeveoInstance(url,triggeredEDRTemplate.getMeveoInstance(),cdr.toCsv());
+						ActionStatus actionStatus = response.readEntity(ActionStatus.class);
+			            log.debug("response {}", actionStatus);
+			            if (actionStatus == null || ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
+			                throw new BusinessException("Error charging Edr on remote instance Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
+			            }
 					}
 				}
 			}

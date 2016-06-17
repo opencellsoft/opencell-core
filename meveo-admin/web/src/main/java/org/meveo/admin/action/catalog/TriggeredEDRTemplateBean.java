@@ -30,6 +30,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
+import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
@@ -51,6 +52,9 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 	@Inject
 	private RatingCacheContainerProvider ratingCacheContainerProvider;
 
+
+    protected MeveoInstance meveoInstance;
+    
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -59,6 +63,13 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 		super(TriggeredEDRTemplate.class);
 	}
 
+    public MeveoInstance getMeveoInstance() {
+        return meveoInstance;
+    }
+
+    public void setMeveoInstance(MeveoInstance meveoInstance) {
+        this.meveoInstance = meveoInstance;
+    }
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */

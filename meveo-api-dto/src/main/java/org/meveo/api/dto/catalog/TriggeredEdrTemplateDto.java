@@ -26,6 +26,9 @@ public class TriggeredEdrTemplateDto implements Serializable {
 	private String description;
 
 	private String subscriptionEl;
+	
+	private String meveoInstanceCode;
+	
 	private String conditionEl;
 
 	@XmlElement(required = true)
@@ -44,6 +47,7 @@ public class TriggeredEdrTemplateDto implements Serializable {
 		code = e.getCode();
 		description = e.getDescription();
 		subscriptionEl = e.getSubscriptionEl();
+		meveoInstanceCode = e.getMeveoInstance()==null?null:e.getMeveoInstance().getCode();
 		conditionEl = e.getConditionEl();
 		quantityEl = e.getQuantityEl();
 		param1El = e.getParam1El();
@@ -58,6 +62,14 @@ public class TriggeredEdrTemplateDto implements Serializable {
 
 	public void setSubscriptionEl(String subscriptionEl) {
 		this.subscriptionEl = subscriptionEl;
+	}
+
+	public String getMeveoInstanceCode() {
+		return meveoInstanceCode;
+	}
+
+	public void setMeveoInstanceCode(String meveoInstanceCode) {
+		this.meveoInstanceCode = meveoInstanceCode;
 	}
 
 	public String getConditionEl() {

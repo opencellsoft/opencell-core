@@ -2,12 +2,15 @@ package org.meveo.admin.parse.csv;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import org.meveo.model.IProvider;
 import org.meveo.model.crm.Provider;
 
 public class CDR  implements Serializable,IProvider{
+
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	
 	/**
 	 * 
 	 */
@@ -24,11 +27,11 @@ public class CDR  implements Serializable,IProvider{
 	private String param7;
 	private String param8;
 	private String param9;
-	private long dateParam1;
-	private long dateParam2;
-	private long dateParam3; 
-	private long dateParam4; 
-	private long dateParam5; 
+	private Long dateParam1;
+	private Long dateParam2;
+	private Long dateParam3; 
+	private Long dateParam4; 
+	private Long dateParam5; 
 	private BigDecimal decimalParam1; 
 	private BigDecimal decimalParam2; 
 	private BigDecimal decimalParam3; 
@@ -218,7 +221,7 @@ public class CDR  implements Serializable,IProvider{
 	/**
 	 * @param dateParam1 the dateParam1 to set
 	 */
-	public void setDateParam1(long dateParam1) {
+	public void setDateParam1(Long dateParam1) {
 		this.dateParam1 = dateParam1;
 	}
 
@@ -232,7 +235,7 @@ public class CDR  implements Serializable,IProvider{
 	/**
 	 * @param dateParam2 the dateParam2 to set
 	 */
-	public void setDateParam2(long dateParam2) {
+	public void setDateParam2(Long dateParam2) {
 		this.dateParam2 = dateParam2;
 	}
 
@@ -246,7 +249,7 @@ public class CDR  implements Serializable,IProvider{
 	/**
 	 * @param dateParam3 the dateParam3 to set
 	 */
-	public void setDateParam3(long dateParam3) {
+	public void setDateParam3(Long dateParam3) {
 		this.dateParam3 = dateParam3;
 	}
 
@@ -260,7 +263,7 @@ public class CDR  implements Serializable,IProvider{
 	/**
 	 * @param dateParam4 the dateParam4 to set
 	 */
-	public void setDateParam4(long dateParam4) {
+	public void setDateParam4(Long dateParam4) {
 		this.dateParam4 = dateParam4;
 	}
 
@@ -274,7 +277,7 @@ public class CDR  implements Serializable,IProvider{
 	/**
 	 * @param dateParam5 the dateParam5 to set
 	 */
-	public void setDateParam5(long dateParam5) {
+	public void setDateParam5(Long dateParam5) {
 		this.dateParam5 = dateParam5;
 	}
 
@@ -356,7 +359,31 @@ public class CDR  implements Serializable,IProvider{
 		return "CDR [timestamp=" + timestamp + ", access_id=" + access_id + ", quantity=" + quantity + ", param1=" + param1 + ", param2=" + param2 + ", param3=" + param3 + ", param4=" + param4 + ", param5=" + param5 + ", param6=" + param6 + ", param7=" + param7 + ", param8=" + param8 + ", param9=" + param9 + ", dateParam1=" + dateParam1 + ", dateParam2=" + dateParam2 + ", dateParam3=" + dateParam3 + ", dateParam4=" + dateParam4 + ", dateParam5=" + dateParam5
 				+ ", decimalParam1=" + decimalParam1 + ", decimalParam2=" + decimalParam2 + ", decimalParam3=" + decimalParam3 + ", decimalParam4=" + decimalParam4 + ", decimalParam5=" + decimalParam5 + "]";
 	}
-
+	
+	public String toCsv() {
+		return getCsvValue(timestamp) + ";" + getCsvValue(quantity) + ";"
+	       + getCsvValue(access_id) + ";" + getCsvValue(param1) + ";" + getCsvValue(param2)
+		   + ";" + getCsvValue(param3) + ";" + getCsvValue(param4)+ ";" +getCsvValue(param5)
+		   + ";"+ getCsvValue(param6)+ ";" + getCsvValue(param7)+ ";" + getCsvValue(param8)
+		   + ";" + getCsvValue(param9) 
+		   +";"+ getCsvValue(dateParam1)+ ";" + getCsvValue(dateParam2)+ ";" + getCsvValue(dateParam3)
+		   + ";" + getCsvValue(dateParam4)+ ";" + getCsvValue(dateParam5)+ ";" + getCsvValue(decimalParam1)
+		   +";" + getCsvValue(decimalParam2)+";" + getCsvValue(decimalParam3)+";" + getCsvValue(decimalParam4)
+		   +";" + getCsvValue(decimalParam5);
+	}
+	
+	public String getCsvValue(Object o){
+		String result="";
+		if(o==null){
+			result= "";
+		}  else if(o instanceof Date){
+			result= sdf.format((Date)o);
+		} else {
+			result= o.toString();
+		}
+		return result;
+	}
+	
 	@Override
 	public Provider getProvider() {
 		return provider;
