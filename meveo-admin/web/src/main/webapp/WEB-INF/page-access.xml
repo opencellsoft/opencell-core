@@ -45,6 +45,10 @@
 		<constraint>currentUser.hasPermission('superAdmin','superAdminManagement')</constraint>
 	</page>
 	
+	<page view-id=".+\/reporting\/cache\/.*" >
+		<constraint>currentUser.hasPermission('superAdmin','superAdminManagement')</constraint>
+	</page>
+	
 	<page view-id=".+\/admin\/providers\/providerSelfDetail">
 		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>

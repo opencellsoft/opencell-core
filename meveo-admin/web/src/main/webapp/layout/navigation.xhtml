@@ -427,7 +427,7 @@
 				outcome="fileExplorer" value="#{messages['menu.fileExplorer']}" />
 
 			<p:menuitem id="cache"
-				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
+				rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}"
 				outcome="caches" value="#{messages['menu.cacheInfo']}" />
 
 		</p:submenu>
