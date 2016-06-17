@@ -355,6 +355,8 @@ public class InvoiceApi extends BaseApi {
 		response.setDueDate(invoice.getDueDate());
 		response.setInvoiceDate(invoice.getInvoiceDate());
 		response.setNetToPay(invoice.getNetToPay());
+		if(invoice.getPdf() != null)
+			response.setPdfInvoice(invoice.getPdf());
 		
 		if (invoiceDTO.isAutoValidation()) {
 			response.setInvoiceNumber(validateInvoice(invoice.getId(), currentUser));
