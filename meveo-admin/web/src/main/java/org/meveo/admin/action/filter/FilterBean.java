@@ -47,16 +47,15 @@ public class FilterBean extends BaseBean<Filter> {
 	@Override
     @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		
+
 		String inputXml = entity.getInputXml();
-		
+
 		if (inputXml != null && !StringUtils.isBlank(inputXml)) {
 			if (!XmlUtil.validate(inputXml)) {
 				messages.error(new BundleKey("messages", "message.filter.invalidXml"));
 				return "";
 			}
-
-		filterService.parseInputXML(inputXml, this.entity, getCurrentUser());		}
+		}
 		forceUpdateParameters = true;
 		return super.saveOrUpdate(killConversation);
 	}
