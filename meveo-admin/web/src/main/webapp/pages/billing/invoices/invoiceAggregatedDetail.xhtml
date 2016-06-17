@@ -288,8 +288,7 @@
 						<div style="clear: both"></div>
 
 						<p:outputPanel id="invoiceSummary">
-							<p:panelGrid
-								style="float: right; width: 40%; margin-top: 10px;"
+							<p:panelGrid style="float: right; width: 40%; margin-top: 10px;"
 								rendered="#{aggregatedDetailInvoiceBean.tempCategoryInvoiceAggregates.size() > 0}">
 								<f:facet name="header">
 									<p:row>
@@ -300,10 +299,25 @@
 									</p:row>
 								</f:facet>
 								<p:row>
-									<p:column>#{aggregatedDetailInvoiceBean.computeTotalAmountWithoutTax}</p:column>
-									<p:column>#{aggregatedDetailInvoiceBean.computeTotalAmountTax}</p:column>
-									<p:column>#{aggregatedDetailInvoiceBean.computeTotalAmountWithTax}</p:column>
-									<p:column>#{aggregatedDetailInvoiceBean.netToPay}</p:column>
+									<p:column>
+										<h:outputText
+											value="#{aggregatedDetailInvoiceBean.computeTotalAmountWithoutTax}"
+											converter="#{getConverter.forType(aggregatedDetailInvoiceBean.computeTotalAmountWithoutTax,'4digits')}" />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{aggregatedDetailInvoiceBean.computeTotalAmountTax}"
+											converter="#{getConverter.forType(aggregatedDetailInvoiceBean.computeTotalAmountTax,'4digits')}" />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{aggregatedDetailInvoiceBean.computeTotalAmountWithTax}"
+											converter="#{getConverter.forType(aggregatedDetailInvoiceBean.computeTotalAmountWithTax,'4digits')}" />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{aggregatedDetailInvoiceBean.netToPay}"
+											converter="#{getConverter.forType(aggregatedDetailInvoiceBean.netToPay,'4digits')}" />
+									</p:column>
 								</p:row>
 							</p:panelGrid>
 						</p:outputPanel>
