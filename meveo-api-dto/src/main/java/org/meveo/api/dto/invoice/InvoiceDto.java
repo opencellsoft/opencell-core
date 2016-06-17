@@ -33,6 +33,8 @@ public class InvoiceDto extends BaseDto {
 
     private static final long serialVersionUID = 1072382628068718580L;
 
+    private Long invoiceId;
+    
     @XmlElement(required = true)
     private String invoiceType;
     
@@ -54,20 +56,13 @@ public class InvoiceDto extends BaseDto {
     private List<Long> listInvoiceIdToLink= new ArrayList<Long>();
 	
     private String invoiceNumber;
-    
-
     private BigDecimal discount;
     private BigDecimal amountWithoutTax;
     private BigDecimal amountTax;
     private BigDecimal amountWithTax;
     private PaymentMethodEnum paymentMethod;
     private boolean pdfPresent;
-
     private byte[] pdf;
-    
-
-    
-    
     private boolean autoValidation =  true;
     private boolean returnXml = false;
     private boolean returnPdf = false;
@@ -75,19 +70,15 @@ public class InvoiceDto extends BaseDto {
     
     @XmlElement(required = true)
     private InvoiceModeEnum invoiceMode;
-    
-    
-    
 
     private CustomFieldsDto customFields = new CustomFieldsDto();
-    
-    
-    
+        
     public InvoiceDto() {
     }
 
     public InvoiceDto(Invoice invoice) {
         super();
+        this.setInvoiceId(invoice.getId());
         this.setBillingAccountCode(invoice.getBillingAccount().getCode());
         this.setInvoiceDate(invoice.getInvoiceDate());
         this.setDueDate(invoice.getDueDate());
@@ -232,7 +223,19 @@ public class InvoiceDto extends BaseDto {
         this.paymentMethod = paymentMethod;
     }
 
+    /**
+     * @return the invoiceId
+     */
+    public Long getInvoiceId() {
+		return invoiceId;
+	}
     
+    /**
+     * @param invoiceId
+     */
+    public void setInvoiceId(Long invoiceId) {
+		this.invoiceId = invoiceId;
+	}
 
     /**
 	 * @return the invoiceType

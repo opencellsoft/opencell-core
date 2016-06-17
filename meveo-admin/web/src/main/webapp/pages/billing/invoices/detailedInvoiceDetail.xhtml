@@ -228,14 +228,14 @@
 -->
 			</p:fieldset>
 			<div style="clear: both"></div>
-			<p:fieldset  legend="Add detail invoice line"
+			<p:fieldset legend="Add detail invoice line"
 				style="float: right; width: 100%; margin-top: 10px;">
 				<p:panel id="addDetailInvoiceLine"
 					style="float: right; width: 100%;">
 					<p:row>
 						<p:column>
 							<hftl:decorateFormField fieldId="selectedInvoiceCatOrSubCat"
-								label="#{messages['invoice.catOrSubCat']}">
+								label="#{messages['invoice.catOrSubCat']} *">
 								<p:selectOneMenu id="selectedInvoiceCatOrSubCat"
 									style="width:200px;"
 									value="#{detailedInvoiceBean.selectedInvoiceSubCategory}"
@@ -247,14 +247,14 @@
 						</p:column>
 						<p:column>
 							<hftl:decorateFormField fieldId="description"
-								label="#{messages['BusinessEntity.description']}">
+								label="#{messages['BusinessEntity.description']} *">
 								<p:inputText id="description"
-									value="#{detailedInvoiceBean.description}" size="60" ></p:inputText>
+									value="#{detailedInvoiceBean.description}" size="50"></p:inputText>
 							</hftl:decorateFormField>
 						</p:column>
 						<p:column>
 							<hftl:decorateFormField fieldId="unitAmountWithoutTax"
-								label="#{messages['ratedTransaction.unitAmountWithoutTax']}">
+								label="#{messages['ratedTransaction.unitAmountWithoutTax']} *">
 								<p:inputText id="unitAmountWithoutTax"
 									value="#{detailedInvoiceBean.unitAmountWithoutTax}">
 									<pe:keyFilter mask="num" />
@@ -263,9 +263,9 @@
 						</p:column>
 						<p:column>
 							<hftl:decorateFormField fieldId="quantity"
-								label="#{messages['ratedTransaction.quantity']}">
+								label="#{messages['ratedTransaction.quantity']} *">
 								<p:inputText id="quantity"
-									value="#{detailedInvoiceBean.quantity}">
+									value="#{detailedInvoiceBean.quantity}" size="7">
 									<pe:keyFilter mask="num" />
 								</p:inputText>
 							</hftl:decorateFormField>
@@ -275,8 +275,7 @@
 							<p:commandButton value="#{messages['action.invoice.addLine']}"
 								process="addDetailInvoiceLine"
 								action="#{detailedInvoiceBean.addDetailInvoiceLine()}"
-								update=":formId:detailedInvoicePanel :formId:invoiceSummary :formId:messages"
-								style="margin-top: 20px;">
+								update=":formId:detailedInvoicePanel :formId:invoiceSummary :formId:messages">
 							</p:commandButton>
 						</p:column>
 					</p:row>
@@ -284,9 +283,10 @@
 			</p:fieldset>
 
 			<div style="clear: both"></div>
-			<p:fieldset legend="Summary" style="float: left; width: 100%; margin-top: 10px;">
-				<p:outputPanel id="invoiceSummary">
-					<p:panelGrid  rendered="#{detailedInvoiceBean.subCategoryInvoiceAggregates.size() > 0}">
+			<p:fieldset legend="Summary"
+				style="float: left; width: 100%; margin-top: 10px;">
+				<p:panel id="invoiceSummary">
+					<p:panelGrid rendered="#{detailedInvoiceBean.entity.netToPay > 0}">
 						<f:facet name="header">
 							<p:row>
 								<p:column>#{messages['invoice.summary.totalAmountWithoutTax']}</p:column>
@@ -315,19 +315,19 @@
 									converter="#{getConverter.forType(detailedInvoiceBean.entity.netToPay,'4digits')}" />
 							</p:column>
 						</p:row>
-					</p:panelGrid>
-				</p:outputPanel>
-				<div style="clear: both"></div>
-				<p:outputPanel style="float: left;">
-					<h:panelGrid >
-						<h:panelGrid columns="2">
-							<h:outputText value="#{messages['invoice.includeAccountBalance']}" />
-							<p:selectBooleanCheckbox value="#{detailedInvoiceBean.includeBalance}" >
-							 	<p:ajax event="change" update=":formId:invoiceSummary" />
-							 </p:selectBooleanCheckbox>
-						</h:panelGrid>
-					</h:panelGrid>
-				</p:outputPanel>
+					</p:panelGrid>					
+					<div style="clear: both"></div>
+					<p:outputPanel style="float: left;">
+						<h:panelGrid>
+								<h:outputText
+									value="#{messages['invoice.includeAccountBalance']}" />
+								<p:selectBooleanCheckbox
+									value="#{detailedInvoiceBean.includeBalance}">
+									<p:ajax event="change" update=":formId:invoiceSummary" />
+								</p:selectBooleanCheckbox>
+							</h:panelGrid>
+						</p:outputPanel>
+				</p:panel>
 			</p:fieldset>
 		</hftl:formPanel>
 	</ui:define>
