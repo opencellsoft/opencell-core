@@ -86,15 +86,27 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
 			}
 		}
 	}
-	
+
+	@Override
+	public int hashCode() {
+		return id == null ? invoiceCategory.hashCode() : id.intValue();
+	}
+
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof CategoryInvoiceAgregate) {
-			CategoryInvoiceAgregate temp = (CategoryInvoiceAgregate) obj;
-			return invoiceCategory.getCode().equals(temp.getInvoiceCategory().getCode());
-		}
-		
-		return false;
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CategoryInvoiceAgregate other = (CategoryInvoiceAgregate) obj;
+		if (invoiceCategory == null) {
+			if (other.getInvoiceCategory() != null)
+				return false;
+		} else if (!invoiceCategory.equals(other.getInvoiceCategory()))
+			return false;
+		return true;
 	}
 
 }

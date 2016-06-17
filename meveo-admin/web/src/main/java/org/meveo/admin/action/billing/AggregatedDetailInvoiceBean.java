@@ -230,7 +230,7 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 						categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregateService.refreshOrRetrieve(categoryInvoiceAgregate);
 
 						CategoryInvoiceAgregate newCategoryInvoiceAgregate = new CategoryInvoiceAgregate(categoryInvoiceAgregate);
-						// newCategoryInvoiceAgregate.setInvoice(entity);
+						newCategoryInvoiceAgregate.setInvoiceCategory(categoryInvoiceAgregate.getInvoiceCategory());
 						newCategoryInvoiceAgregate.setAuditable(auditable);
 						newCategoryInvoiceAgregate.setDescription(categoryInvoiceAgregate.getDescription());
 						newCategoryInvoiceAgregate.setBillingRun(null);
@@ -245,7 +245,6 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 							for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : categoryInvoiceAgregate.getSubCategoryInvoiceAgregates()) {
 
 								SubCategoryInvoiceAgregate newSubCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate(subCategoryInvoiceAgregate);
-								// newSubCategoryInvoiceAgregate.setInvoice(entity);
 								newSubCategoryInvoiceAgregate.setAuditable(auditable);
 								newSubCategoryInvoiceAgregate.setCategoryInvoiceAgregate(newCategoryInvoiceAgregate);
 								newSubCategoryInvoiceAgregate.setDescription(subCategoryInvoiceAgregate.getDescription());
@@ -439,16 +438,15 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 
 		SubCategoryInvoiceAgregate newSubCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate();
 		newSubCategoryInvoiceAgregate.setInvoiceSubCategory(selectedInvoiceSubCategory);
-		// newSubCategoryInvoiceAgregate.setInvoice(entity);
 		newSubCategoryInvoiceAgregate.setAuditable(auditable);
 		newSubCategoryInvoiceAgregate.setAmountWithoutTax(amountWithoutTax);
-		newSubCategoryInvoiceAgregate.setInvoiceSubCategory(selectedInvoiceSubCategory);
 		newSubCategoryInvoiceAgregate.setDescription(description);
 		newSubCategoryInvoiceAgregate.setBillingRun(null);
 		newSubCategoryInvoiceAgregate.setWallet(userAccount.getWallet());
 		newSubCategoryInvoiceAgregate.setBillingAccount(billingAccount);
 		newSubCategoryInvoiceAgregate.setUserAccount(userAccount);
 		newSubCategoryInvoiceAgregate.setQuantity(new BigDecimal(1));
+		newSubCategoryInvoiceAgregate.setProvider(getCurrentUser().getProvider());
 
 		Tax currentTax = null;
 		List<Tax> taxes = new ArrayList<Tax>();
@@ -483,6 +481,7 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 		}
 
 		CategoryInvoiceAgregate newCategoryInvoiceAgregate = null;
+		newSubCategoryInvoiceAgregate.setCategoryInvoiceAgregate(newCategoryInvoiceAgregate);
 		if (!found) {
 			// create invoice category
 			newCategoryInvoiceAgregate = new CategoryInvoiceAgregate();
@@ -495,16 +494,38 @@ public class AggregatedDetailInvoiceBean extends CustomFieldBean<Invoice> {
 			newCategoryInvoiceAgregate.setBillingRun(null);
 			newCategoryInvoiceAgregate.setUserAccount(userAccount);
 			newCategoryInvoiceAgregate.setBillingAccount(billingAccount);
+			newCategoryInvoiceAgregate.setProvider(getCurrentUser().getProvider());
 			newCategoryInvoiceAgregate.addSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
+
+			newSubCategoryInvoiceAgregate.setCategoryInvoiceAgregate(newCategoryInvoiceAgregate);
 
 			tempCategoryInvoiceAggregates.add(newCategoryInvoiceAgregate);
 		} else {
+			newSubCategoryInvoiceAgregate.setCategoryInvoiceAgregate(foundCategoryInvoiceAgregate);
+
 			// update total
 			foundCategoryInvoiceAgregate.addAmountWithoutTax(newSubCategoryInvoiceAgregate.getAmountWithoutTax());
-			foundCategoryInvoiceAgregate.addSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
+			if (foundCategoryInvoiceAgregate.getSubCategoryInvoiceAgregates().contains(newSubCategoryInvoiceAgregate)) {
+				// update
+				foundCategoryInvoiceAgregate.getSubCategoryInvoiceAgregates().remove(newSubCategoryInvoiceAgregate);
+				foundCategoryInvoiceAgregate.addSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
+			} else {
+				foundCategoryInvoiceAgregate.addSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
+			}
+			// Iterator<SubCategoryInvoiceAgregate> ite =
+			// foundCategoryInvoiceAgregate.getSubCategoryInvoiceAgregates().iterator();
+			// while (ite.hasNext()) {
+			// SubCategoryInvoiceAgregate x = ite.next();
+			// log.debug("x={}", x.getInvoiceSubCategory());
+			// }
+			//
+			// log.debug("x1={}",
+			// newSubCategoryInvoiceAgregate.getInvoiceSubCategory());
+			// foundCategoryInvoiceAgregate.getSubCategoryInvoiceAgregates().remove(newSubCategoryInvoiceAgregate);
+			//
+			// log.debug("y={}",
+			// foundCategoryInvoiceAgregate.getSubCategoryInvoiceAgregates().contains(newSubCategoryInvoiceAgregate));
 		}
-
-		newSubCategoryInvoiceAgregate.setCategoryInvoiceAgregate(newCategoryInvoiceAgregate);
 
 		refreshTotal();
 

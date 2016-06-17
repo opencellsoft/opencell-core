@@ -192,13 +192,25 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	}
 	
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof SubCategoryInvoiceAgregate) {
-			SubCategoryInvoiceAgregate temp = (SubCategoryInvoiceAgregate) obj;
-			return invoiceSubCategory.getCode().equals(temp.getInvoiceSubCategory().getCode());
-		}
+	public int hashCode() {
+		return id == null ? invoiceSubCategory.hashCode() : id.intValue();
+	}
 
-		return false;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SubCategoryInvoiceAgregate other = (SubCategoryInvoiceAgregate) obj;
+		if (invoiceSubCategory == null) {
+			if (other.getInvoiceSubCategory() != null)
+				return false;
+		} else if (!invoiceSubCategory.equals(other.getInvoiceSubCategory()))
+			return false;
+		return true;
 	}
 
 }
