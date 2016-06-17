@@ -89,7 +89,15 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
 
 	@Override
 	public int hashCode() {
-		return id == null ? invoiceCategory.hashCode() : id.intValue();
+		if (id != null)
+			return id.intValue();
+		if (invoiceCategory != null)
+			return invoiceCategory.hashCode();
+
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result;
+		return result;
 	}
 
 	@Override
