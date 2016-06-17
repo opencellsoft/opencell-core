@@ -206,47 +206,55 @@ public class DetailedInvoiceBean extends CustomFieldBean<Invoice> {
 		addDetailedInvoiceLines(selectedInvoiceSubCategory);
 	}
 
-	private void addDetailedInvoiceLines(InvoiceSubCategory selectInvoiceSubCat) throws BusinessException {
-		if (entity.getBillingAccount() == null) {
-			messages.error("BillingAccount is required.");
+	private void addDetailedInvoiceLines(InvoiceSubCategory selectInvoiceSubCat)  {
+		try{
+			if (entity.getBillingAccount() == null) {
+				messages.error("BillingAccount is required.");
+				return;
+			}
+			if(StringUtils.isBlank(quantity)){
+				messages.error("Quantity is required.");
+				return;
+			}
+			if(StringUtils.isBlank(unitAmountWithoutTax)){
+				messages.error("UnitAmountWithoutTax is required.");
+				return;
+			}
+
+			BillingAccount billingAccount = billingAccountService.refreshOrRetrieve(entity.getBillingAccount());
+			List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
+			if (userAccounts == null || userAccounts.isEmpty()) {
+				messages.error("BillingAccount with code=" + entity.getBillingAccount().getCode() + " has no userAccount.");
+				return;
+			}
+			UserAccount userAccount = userAccounts.get(0);
+
+			selectInvoiceSubCat = invoiceSubCategoryService.refreshOrRetrieve(selectInvoiceSubCat);
+
+			RatedTransaction ratedTransaction = new RatedTransaction();
+			ratedTransaction.setUsageDate(new Date());
+			ratedTransaction.setUnitAmountWithoutTax(unitAmountWithoutTax);
+			ratedTransaction.setQuantity(quantity);
+			ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
+			ratedTransaction.setWallet(userAccount.getWallet());
+			ratedTransaction.setBillingAccount(billingAccount);
+			ratedTransaction.setInvoiceSubCategory(selectInvoiceSubCat);
+			ratedTransaction.setProvider(getCurrentProvider());
+			ratedTransaction.setCode("RT_" + selectInvoiceSubCat.getCode());
+			ratedTransaction.setDescription(description);
+			ratedTransaction.setInvoice(entity);
+			ratedTransaction.setInvoiceSubCategory(selectInvoiceSubCat);
+
+			agregateHandler.addRT(ratedTransaction);
+			updateAmountsAndLines(agregateHandler, billingAccount);
+		}catch(BusinessException be){
+			messages.error(be.getMessage());
 			return;
-		}
-		if(StringUtils.isBlank(quantity)){
-			messages.error("Quantity is required.");
-			return;
-		}
-		if(StringUtils.isBlank(unitAmountWithoutTax)){
-			messages.error("UnitAmountWithoutTax is required.");
+		}catch(Exception e){
+			messages.error(e.getMessage());
 			return;
 		}
 
-		BillingAccount billingAccount = billingAccountService.refreshOrRetrieve(entity.getBillingAccount());
-		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
-		if (userAccounts == null || userAccounts.isEmpty()) {
-			messages.error("BillingAccount with code=" + entity.getBillingAccount().getCode() + " has no userAccount.");
-			return;
-		}
-		// TODO : userAccount on dto ?
-		UserAccount userAccount = userAccounts.get(0);
-
-		selectInvoiceSubCat = invoiceSubCategoryService.refreshOrRetrieve(selectInvoiceSubCat);
-
-		RatedTransaction ratedTransaction = new RatedTransaction();
-		ratedTransaction.setUsageDate(new Date());
-		ratedTransaction.setUnitAmountWithoutTax(unitAmountWithoutTax);
-		ratedTransaction.setQuantity(quantity);
-		ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
-		ratedTransaction.setWallet(userAccount.getWallet());
-		ratedTransaction.setBillingAccount(billingAccount);
-		ratedTransaction.setInvoiceSubCategory(selectInvoiceSubCat);
-		ratedTransaction.setProvider(getCurrentProvider());
-		ratedTransaction.setCode("RT_" + selectInvoiceSubCat.getCode());
-		ratedTransaction.setDescription(description);
-		ratedTransaction.setInvoice(entity);
-		ratedTransaction.setInvoiceSubCategory(selectInvoiceSubCat);
-
-		agregateHandler.addRT(ratedTransaction);
-		updateAmountsAndLines(agregateHandler, billingAccount);
 	}
 
 	public void deleteRatedTransactionLine() throws BusinessException {
@@ -341,21 +349,21 @@ public class DetailedInvoiceBean extends CustomFieldBean<Invoice> {
 		if (entity.getLinkedInvoices() != null && entity.getLinkedInvoices().size() > 0) {			
 			for (Invoice invoice : entity.getLinkedInvoices()) {				
 				invoice = invoiceService.findById(invoice.getId());				
-						for (RatedTransaction rt : invoice.getRatedTransactions()) {
-							RatedTransaction newRT = new RatedTransaction();
-							newRT.setUsageDate(new Date());
-							newRT.setUnitAmountWithoutTax(rt.getUnitAmountWithoutTax());
-							newRT.setQuantity(rt.getQuantity());
-							newRT.setStatus(RatedTransactionStatusEnum.BILLED);
-							newRT.setWallet(rt.getWallet());
-							newRT.setBillingAccount(billingAccount);
-							newRT.setInvoiceSubCategory(rt.getInvoiceSubCategory());
-							newRT.setProvider(getCurrentProvider());
-							newRT.setCode(rt.getCode());
-							newRT.setDescription(rt.getDescription());
-							newRT.setInvoice(entity);							
-							agregateHandler.addRT(newRT);
-						}
+				for (RatedTransaction rt : invoice.getRatedTransactions()) {
+					RatedTransaction newRT = new RatedTransaction();
+					newRT.setUsageDate(new Date());
+					newRT.setUnitAmountWithoutTax(rt.getUnitAmountWithoutTax());
+					newRT.setQuantity(rt.getQuantity());
+					newRT.setStatus(RatedTransactionStatusEnum.BILLED);
+					newRT.setWallet(rt.getWallet());
+					newRT.setBillingAccount(billingAccount);
+					newRT.setInvoiceSubCategory(rt.getInvoiceSubCategory());
+					newRT.setProvider(getCurrentProvider());
+					newRT.setCode(rt.getCode());
+					newRT.setDescription(rt.getDescription());
+					newRT.setInvoice(entity);							
+					agregateHandler.addRT(newRT);
+				}
 
 			}
 			updateAmountsAndLines(agregateHandler, billingAccount);
@@ -364,7 +372,7 @@ public class DetailedInvoiceBean extends CustomFieldBean<Invoice> {
 		}
 
 	}
-	
+
 	public void importOpenedRT() throws BusinessException {
 		if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
 			messages.error("BillingAccount is required.");
@@ -378,7 +386,7 @@ public class DetailedInvoiceBean extends CustomFieldBean<Invoice> {
 		}
 		// TODO : userAccount on dto ?
 		UserAccount userAccount = userAccounts.get(0);
-		
+
 		if(entity.getInvoiceType().equals(invoiceTypeService.getCommercialCode())){
 			List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), null);
 			for(RatedTransaction ratedTransaction : openedRT){
@@ -388,10 +396,10 @@ public class DetailedInvoiceBean extends CustomFieldBean<Invoice> {
 				agregateHandler.addRT(ratedTransaction);
 			}
 			updateAmountsAndLines(agregateHandler, entity.getBillingAccount());
-     	}
+		}
 	}
-	
-	
+
+
 
 	public void onCellEdit(CellEditEvent event) {
 		Object oldValue = event.getOldValue();
