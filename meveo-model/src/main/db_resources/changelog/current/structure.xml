@@ -1990,6 +1990,36 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
+	<changeSet author="mhamidi" id="#1689_20160617">
+		<createProcedure procedureName="adjusted_invoice_migration">
+	    	CREATE OR REPLACE FUNCTION adjusted_invoice_migration()
+	  		RETURNS void AS
+			$BODY$
+			declare
+				cursorAdjustedInvoice cursor for
+				select * from billing_invoice where invoice_id is not null ;
+			invoiceRecord record;	
+			begin
+				open cursorAdjustedInvoice;
+				loop
+				fetch cursorAdjustedInvoice into invoiceRecord;
+				exit when not found;
+			
+				insert into billing_linked_invoices (id, linked_invoice_id) 
+				values(invoiceRecord.invoice_id, invoiceRecord.id);
+				
+				end loop;
+				close cursorAdjustedInvoice;
+			end;
+			$BODY$
+	  		LANGUAGE plpgsql VOLATILE
+	  		COST 100;	
+    	</createProcedure>
+    	
+    	<sql>select adjusted_invoice_migration()</sql>
+    	<sql>drop FUNCTION adjusted_invoice_migration()</sql> 
+    </changeSet>
      
     <changeSet author="anasseh (generated)" id="#1685_20160530-2">
         <createTable tableName="billing_seq_invtyp_sell">

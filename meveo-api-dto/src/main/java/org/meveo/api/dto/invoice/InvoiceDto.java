@@ -34,6 +34,9 @@ public class InvoiceDto extends BaseDto {
     private static final long serialVersionUID = 1072382628068718580L;
 
     @XmlElement(required = true)
+    private Long invoiceId;
+    
+    @XmlElement(required = true)
     private String invoiceType;
     
     @XmlElement(required = true)
@@ -88,6 +91,7 @@ public class InvoiceDto extends BaseDto {
 
     public InvoiceDto(Invoice invoice) {
         super();
+        this.setInvoiceId(invoice.getId());
         this.setBillingAccountCode(invoice.getBillingAccount().getCode());
         this.setInvoiceDate(invoice.getInvoiceDate());
         this.setDueDate(invoice.getDueDate());
@@ -232,7 +236,19 @@ public class InvoiceDto extends BaseDto {
         this.paymentMethod = paymentMethod;
     }
 
+    /**
+     * @return the invoiceId
+     */
+    public Long getInvoiceId() {
+		return invoiceId;
+	}
     
+    /**
+     * @param invoiceId
+     */
+    public void setInvoiceId(Long invoiceId) {
+		this.invoiceId = invoiceId;
+	}
 
     /**
 	 * @return the invoiceType
