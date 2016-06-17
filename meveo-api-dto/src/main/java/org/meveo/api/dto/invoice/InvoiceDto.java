@@ -33,7 +33,6 @@ public class InvoiceDto extends BaseDto {
 
     private static final long serialVersionUID = 1072382628068718580L;
 
-    @XmlElement(required = true)
     private Long invoiceId;
     
     @XmlElement(required = true)
@@ -57,20 +56,13 @@ public class InvoiceDto extends BaseDto {
     private List<Long> listInvoiceIdToLink= new ArrayList<Long>();
 	
     private String invoiceNumber;
-    
-
     private BigDecimal discount;
     private BigDecimal amountWithoutTax;
     private BigDecimal amountTax;
     private BigDecimal amountWithTax;
     private PaymentMethodEnum paymentMethod;
     private boolean pdfPresent;
-
     private byte[] pdf;
-    
-
-    
-    
     private boolean autoValidation =  true;
     private boolean returnXml = false;
     private boolean returnPdf = false;
@@ -78,14 +70,9 @@ public class InvoiceDto extends BaseDto {
     
     @XmlElement(required = true)
     private InvoiceModeEnum invoiceMode;
-    
-    
-    
 
     private CustomFieldsDto customFields = new CustomFieldsDto();
-    
-    
-    
+        
     public InvoiceDto() {
     }
 
