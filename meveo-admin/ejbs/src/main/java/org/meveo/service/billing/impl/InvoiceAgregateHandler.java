@@ -163,16 +163,16 @@ public class InvoiceAgregateHandler {
 		}
 
 		amountWithTax = getAmountWithTax(currentTax, amountWithoutTax);
-		log.debug("addOrRemoveLine amountWithTax {}",amountWithTax);
+		log.trace("addOrRemoveLine amountWithTax {}",amountWithTax);
 		amountTax = getAmountTax(amountWithTax, amountWithoutTax);
-		log.debug("addOrRemoveLine amountTax {}",amountTax);
+		log.trace("addOrRemoveLine amountTax {}",amountTax);
 
 		invoiceAmountWithoutTax = addOrSubtract(invoiceAmountWithoutTax, amountWithoutTax, isToAdd);
-		log.debug("addOrRemoveLine invoiceAmountWithoutTax {}",invoiceAmountWithoutTax);
+		log.trace("addOrRemoveLine invoiceAmountWithoutTax {}",invoiceAmountWithoutTax);
 		invoiceAmountTax = addOrSubtract(invoiceAmountTax, amountTax, isToAdd);
-		log.debug("addOrRemoveLine invoiceAmountTax {}",invoiceAmountTax);
+		log.trace("addOrRemoveLine invoiceAmountTax {}",invoiceAmountTax);
 		invoiceAmountWithTax = addOrSubtract(invoiceAmountWithTax, amountWithTax, isToAdd);
-		log.debug("addOrRemoveLine invoiceAmountWithTax {}",invoiceAmountWithTax);
+		log.trace("addOrRemoveLine invoiceAmountWithTax {}",invoiceAmountWithTax);
 
 		CategoryInvoiceAgregate categoryInvoiceAgregate = catInvAgregateMap.get(invoiceSubCategory.getInvoiceCategory().getCode());
 		if (categoryInvoiceAgregate == null) {

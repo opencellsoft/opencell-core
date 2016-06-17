@@ -207,15 +207,16 @@
 								process=":formId @this"
 								update=":formId:detailedInvoicePanel :formId:invoiceSummary :formId:messages" />
 						</p:outputPanel>
+						<!-- rendered="#{detailedInvoiceBean.entity.invoiceType.code eq invoiceTypeBean.commercialCode}"  
 						<p:outputPanel id="importOpendRT">
 							<p:commandButton immediate="true"	
-							rendered="#{detailedInvoiceBean.entity.invoiceType.code eq invoiceTypeBean.commercialCode}"							
+														
 								value="#{messages['action.invoice.importOpenedRT']}"
 								action="#{detailedInvoiceBean.importOpenedRT}"
 								process=":formId @this"
 								update=":formId:detailedInvoicePanel :formId:invoiceSummary :formId:messages" />
 						</p:outputPanel>						
-
+-->
 						<div style="clear: both"></div>
 
 			<p:panel id="addDetailInvoiceLine" style="float: right; width: 50%;">
