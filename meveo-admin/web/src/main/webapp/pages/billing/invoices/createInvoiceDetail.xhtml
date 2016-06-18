@@ -1,0 +1,473 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{creationInvoiceBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+
+		<c:if test="#{creationInvoiceBean.edit}">
+			<hftl:entityPopup id="billingAccountPopup"
+				header="#{messages['billingAccount']}"
+				updateField=":tabView:formId:billingAccountSelectedId :tabView:formId:billingAccountSelectedId_text"
+				selection="#{creationInvoiceBean.entity.billingAccount}"
+				backingBean="#{billingAccountBean}"
+				searchField1Label="#{messages['billingAccount.code']}"
+				searchField1="code"
+				column1Label="#{messages['billingAccount.code']}" column1="code"
+				column2Label="#{messages['BusinessEntity.description']}"
+				column2="description">
+			</hftl:entityPopup>
+			<hftl:entityPopup id="invoicePopup" header="#{messages['invoice']}"
+				updateField="tabView:formId:linkedInvoices :tabView:formId:importLinkedInvoices"
+				selection="#{creationInvoiceBean.invoiceToAdd}"
+				backingBean="#{creationInvoiceBean}"
+				searchField1Label="#{messages['invoice.invoiceNumber']}"
+				searchField1="invoiceNumber"
+				column1Label="#{messages['invoice.invoiceNumber']}"
+				column1="invoiceNumber"
+				column2Label="#{messages['invoice.amountWithTax']}"
+				column2="amountWithTax">
+			</hftl:entityPopup>
+		</c:if>
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+		<p:panel header="#{messages['invoice.detailed']}">
+			<p:tabView id="tabView"
+				activeIndex="#{creationInvoiceBean.activeTab}">
+				<p:tab title="#{messages['menu.invoice']}">
+					<hftl:formPanel ajaxSubmit="true"
+						backingBean="#{creationInvoiceBean}"
+						submitPartialProcess=":tabView:formId">
+						<p:fieldset legend="Header"
+							style="float: left; width: 100%; margin-top: 10px;">
+							<p:panel style="width: 50%; float: left;">
+								<hftl:formField field="invoiceType" required="true"
+									label="#{messages['invoice.invoiceType']}"
+									valueLabelField="descriptionOrCode"
+									listenerUpdate="linkedInvoices" listBean="#{invoiceTypeBean}"></hftl:formField>
+
+								<hftl:formField id="billingAccountSelectedId"
+									label="#{messages['billingAccount']}" field="billingAccount"
+									valueLabelField="code" popup="true"
+									popupId="billingAccountPopup" required="true"
+									showPopupOnlyOnNew="true" />
+
+								<hftl:formField field="invoiceDate" required="true"
+									label="#{messages['invoice.invoiceDate']}" />
+
+								<hftl:formField field="dueDate" required="true"
+									label="#{messages['invoice.dueDate']}" />
+							</p:panel>
+
+							<p:panel style="width: 50%; float: right;">
+								<p:outputPanel id="linkedInvoices">
+									<p:panel style="margin-top: 10px;"
+										rendered="#{creationInvoiceBean.entity.invoiceType.code eq invoiceTypeBean.adjustmentCode}">
+										<p:dataTable label="#{messages['invoice.linkedInvoices']}"
+											noClose="false"
+											value="#{creationInvoiceBean.entity.linkedInvoices}"
+											var="entity">
+
+											<f:facet name="header">#{messages['invoice.linkedInvoices']}</f:facet>
+											<hftl:column label="#{messages['invoice.invoiceType']}"
+												field="invoiceType.code" />
+											<hftl:column label="#{messages['invoice.invoiceNumber']}"
+												field="invoiceNumber" />
+											<hftl:column label="#{messages['invoice.invoiceDate']}"
+												field="invoiceDate" />
+											<hftl:column label="#{messages['invoice.amountWithoutTax']}"
+												field="amountWithoutTax" />
+											<p:column width="20px;">
+												<p:commandButton icon="ui-icon-trash"
+													action="#{creationInvoiceBean.deleteLinkedInvoice}"
+													update=":tabView:formId:linkedInvoices">
+													<f:setPropertyActionListener value="#{entity}"
+														target="#{creationInvoiceBean.selectedInvoice}" />
+													<p:confirm
+														header="#{messages['commons.confirmationHeader']}"
+														message="#{messages['commons.confirmDelete']}"
+														icon="ui-icon-alert" />
+												</p:commandButton>
+											</p:column>
+										</p:dataTable>
+
+										<h:panelGroup layout="block" styleClass="form-panel-actions">
+											<p:commandButton value="#{messages['action.add']}"
+												type="button" onclick="PF('dlg_invoicePopup').show();" />
+
+											<p:commandButton value="#{messages['action.deleteAll']}"
+												action="#{creationInvoiceBean.deleteAllLinkedInvoice}"
+												update=":tabView:formId:linkedInvoices" />
+										</h:panelGroup>
+									</p:panel>
+								</p:outputPanel>
+							</p:panel>
+						</p:fieldset>
+						<div style="clear: both"></div>
+						<!-- detailed lines here -->
+						<p:fieldset legend="Detail"
+							style="float: left; width: 100%; margin-top: 10px;"  rendered="#{creationInvoiceBean.isDetailed()}">
+							<p:outputPanel id="detailedInvoicePanel">
+								<p:dataTable var="aSubCatInvAgregate" editable="true"
+									editMode="cell"
+									value="#{creationInvoiceBean.subCategoryInvoiceAggregates}">
+									<f:facet name="header">#{messages['detailedInvoice.title']}</f:facet>
+									<p:columnGroup type="header">
+										<p:row>
+											<p:column style="width: 200px;"
+												headerText="#{messages['invoice.subCategory']}" />
+											<p:column headerText="#{messages['detailedInvoice.lines']}" />
+										</p:row>
+									</p:columnGroup>
+
+									<p:column>
+										<h:outputText
+											value="#{aSubCatInvAgregate.invoiceSubCategory.description}" />
+
+										<span style="width: 5px;"> </span>
+									</p:column>
+									<p:column>
+										<p:dataTable editable="true" editMode="cell"
+											id="ratedTransactionTable" var="rated"
+											value="#{aSubCatInvAgregate.getRatedtransactions()}">
+											<p:columnGroup type="header">
+												<p:row>
+													<p:column
+														headerText="#{messages['BusinessEntity.description']}" />
+													<p:column
+														headerText="#{messages['ratedTransaction.unitAmountWithoutTax']}" />
+													<p:column headerText="#{messages['invoice.quantity']}" />
+													<p:column headerText="#{messages['commons.actions']}" />
+												</p:row>
+											</p:columnGroup>
+											<p:column>
+												
+													
+														<h:inputText value="#{rated.description}" >
+														<p:ajax event="change"
+														listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+														update="ratedTransactionTable :tabView:formId:invoiceSummary"></p:ajax>
+														</h:inputText>
+													
+											</p:column>
+											<p:column>
+												<p:inputText value="#{rated.unitAmountWithoutTax}"
+													label="#{messages['ratedTransaction.unitAmountWithoutTax']}">
+													<pe:keyFilter mask="num" />
+													<f:converter converterId="bigDecimal4DigitsConverter" />
+													<p:ajax event="change"
+														listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+														update="ratedTransactionTable :tabView:formId:invoiceSummary"></p:ajax>
+												</p:inputText>
+											</p:column>
+											<p:column>
+												<p:inputText value="#{rated.quantity}"
+													label="#{messages['ratedTransaction.quantity']}">
+													<pe:keyFilter mask="num" />
+													<f:converter converterId="bigDecimal4DigitsConverter" />
+													<p:ajax event="change"
+														listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+														update="ratedTransactionTable :tabView:formId:invoiceSummary"></p:ajax>
+												</p:inputText>
+											</p:column>
+											<p:column>
+												<p:commandButton icon="ui-icon-trash"
+													process=":tabView:formId:detailedInvoicePanel"
+													action="#{creationInvoiceBean.deleteRatedTransactionLine}"
+													update=":tabView:formId:detailedInvoicePanel :tabView:formId:invoiceSummary">
+													<f:setPropertyActionListener value="#{rated}"
+														target="#{creationInvoiceBean.selectedRatedTransaction}" />
+												</p:commandButton>
+											</p:column>
+
+										</p:dataTable>
+									</p:column>
+
+								</p:dataTable>
+							</p:outputPanel>
+</p:fieldset>
+
+						<!-- aggregated lines here -->
+                    <p:fieldset legend="Agregates"
+							style="float: left; width: 100%; margin-top: 10px;"  rendered="#{!creationInvoiceBean.isDetailed()}">						
+						<p:outputPanel id="aggregatedInvoicePanel">
+							<p:dataTable style="margin-top: 10px;" var="entity"
+								editable="true" editMode="cell"
+								value="#{creationInvoiceBean.categoryInvoiceAggregates}">
+								<f:facet name="header">#{messages['invoice.aggregates']}</f:facet>
+								<p:columnGroup type="header">
+									<p:row>
+										<p:column style="width: 200px;"
+											headerText="#{messages['invoice.category']}" />
+										<p:column headerText="#{messages['invoice.subCategory']}" />
+									</p:row>
+								</p:columnGroup>
+
+								<p:column>
+									<h:outputText value="#{entity.invoiceCategory.description}" />
+								
+									<span style="width: 5px;"> </span>
+									<p:commandButton icon="ui-icon-trash" immediate="true"
+										action="#{creationInvoiceBean.deleteLinkedInvoiceCategory}"
+										update=":tabView:formId:aggregatedInvoicePanel :tabView:formId:invoiceSummary">
+										<f:setPropertyActionListener value="#{entity}"
+											target="#{creationInvoiceBean.selectedCategoryInvoiceAgregate}" />
+									</p:commandButton>
+								</p:column>
+
+								<p:column>
+									<p:dataTable editable="true" editMode="cell" id="subCategories"
+										var="subCat"
+										value="#{creationInvoiceBean.getSubCategoryInvoiceAggregates(entity)}">								
+										<p:columnGroup type="header">
+											<p:row>
+												<p:column headerText="#{messages['BusinessEntity.code']}" />
+												<p:column
+													headerText="#{messages['BusinessEntity.description']}" />
+												<p:column
+													headerText="#{messages['invoice.amountWithoutTax']}" />
+												<p:column headerText="#{messages['commons.actions']}" />
+											</p:row>
+										</p:columnGroup>
+
+										<p:column>
+											<h:outputText value="#{subCat.invoiceSubCategory.code}" />
+										</p:column>
+										<p:column>
+											
+													<p:inputText id="description" value="#{subCat.description}" >
+																										<p:ajax event="change"
+														listener="#{creationInvoiceBean.reComputeAmountWithoutTax(subCat)}"
+														update="subCategories :tabView:formId:invoiceSummary"></p:ajax>
+													</p:inputText>
+												
+										</p:column>
+										<p:column>
+
+													<p:inputText value="#{subCat.amountWithoutTax}">
+																										<pe:keyFilter mask="num" />
+													<f:converter converterId="bigDecimal4DigitsConverter" />
+																										<p:ajax event="change"
+														listener="#{creationInvoiceBean.reComputeAmountWithoutTax(subCat)}"
+														update="subCategories :tabView:formId:invoiceSummary"></p:ajax>
+													</p:inputText>
+												
+										</p:column>
+										<p:column>
+											<p:commandButton icon="ui-icon-trash"
+												process=":tabView:formId:aggregatedInvoicePanel"
+												action="#{creationInvoiceBean.deleteLinkedInvoiceSubCategory}"
+												update=":tabView:formId:aggregatedInvoicePanel :tabView:formId:invoiceSummary">
+												<f:setPropertyActionListener value="#{subCat}"
+													target="#{creationInvoiceBean.selectedSubCategoryInvoiceAgregate}" />
+											</p:commandButton>
+										</p:column>
+
+									</p:dataTable>
+								</p:column>
+
+							</p:dataTable>
+						</p:outputPanel>
+						</p:fieldset>
+						<div style="clear: both"></div>
+						<p:fieldset legend="Add detail invoice line"
+							style="float: left; width: 100%; margin-top: 10px;" rendered="#{creationInvoiceBean.isDetailed()}">
+							<p:panel id="addDetailInvoiceLine"
+								style="float: right; width: 100%;">
+								<p:row>
+									<p:column>
+										<hftl:decorateFormField fieldId="selectedInvoiceCatOrSubCat"
+											label="#{messages['invoice.catOrSubCat']} *">
+											<p:selectOneMenu id="selectedInvoiceCatOrSubCat"
+												style="width:200px;"
+												value="#{creationInvoiceBean.selectedInvoiceSubCategory}"
+												converter="omnifaces.SelectItemsConverter">
+												<f:selectItem itemLabel="" noSelectionOption="true" />
+												<f:selectItems
+													value="#{creationInvoiceBean.invoiceCatSubCats}" />
+											</p:selectOneMenu>
+										</hftl:decorateFormField>
+									</p:column>
+									<p:column>
+										<hftl:decorateFormField fieldId="description"
+											label="#{messages['BusinessEntity.description']} *">
+											<p:inputText id="description"
+												value="#{creationInvoiceBean.description}" size="50"></p:inputText>
+										</hftl:decorateFormField>
+									</p:column>
+									<p:column>
+										<hftl:decorateFormField fieldId="unitAmountWithoutTax"
+											label="#{messages['ratedTransaction.unitAmountWithoutTax']} *">
+											<p:inputText id="unitAmountWithoutTax"
+												value="#{creationInvoiceBean.unitAmountWithoutTax}">
+												<pe:keyFilter mask="num" />
+											</p:inputText>
+										</hftl:decorateFormField>
+									</p:column>
+									<p:column>
+										<hftl:decorateFormField fieldId="quantity"
+											label="#{messages['ratedTransaction.quantity']} *">
+											<p:inputText id="quantity"
+												value="#{creationInvoiceBean.quantity}" size="7">
+												<pe:keyFilter mask="num" />
+											</p:inputText>
+										</hftl:decorateFormField>
+									</p:column>
+
+									<p:column>
+										<p:commandButton value="#{messages['action.invoice.addLine']}"
+											process="addDetailInvoiceLine"
+											action="#{creationInvoiceBean.addDetailInvoiceLine()}"
+											update=":tabView:formId:detailedInvoicePanel :tabView:formId:invoiceSummary :tabView:formId:messages">
+										</p:commandButton>
+									</p:column>
+								</p:row>
+							</p:panel>
+						</p:fieldset>
+						<div style="clear: both"></div>
+						<p:fieldset legend="Add agregate invoice line" style="float: left; width: 100%; margin-top: 10px;" rendered="#{!creationInvoiceBean.isDetailed()}">
+							<p:panel id="addAggregatedLine">
+								<p:row>
+									<p:column>
+										<hftl:decorateFormField fieldId="selectedInvoiceCatOrSubCat_a"
+											label="#{messages['invoice.catOrSubCat']} *">
+											<p:selectOneMenu id="selectedInvoiceCatOrSubCat_a"
+												value="#{creationInvoiceBean.selectedInvoiceSubCategory}"
+												converter="omnifaces.SelectItemsConverter">
+												<f:selectItem itemLabel="" noSelectionOption="true" />
+												<f:selectItems
+													value="#{creationInvoiceBean.invoiceCatSubCats}" />
+											</p:selectOneMenu>
+										</hftl:decorateFormField>
+									</p:column>
+									<p:column>
+										<hftl:decorateFormField fieldId="description_a"
+											label="#{messages['BusinessEntity.description']}">
+											<p:inputText id="description_a"
+												value="#{creationInvoiceBean.description}" size="60" ></p:inputText>
+										</hftl:decorateFormField>
+									</p:column>
+									<p:column>
+										<hftl:decorateFormField fieldId="amountWithoutTax"
+											label="#{messages['invoice.amountWithoutTax']} *">
+											<p:inputText id="amountWithoutTax"
+												value="#{creationInvoiceBean.amountWithoutTax}"></p:inputText>
+										</hftl:decorateFormField>
+									</p:column>
+									<p:column>
+										<p:commandButton value="#{messages['action.invoice.addLine']}"
+											process="addAggregatedLine"
+											action="#{creationInvoiceBean.addAggregatedLine()}"
+											update=":tabView:formId:messages :tabView:formId:addAggregatedLine :tabView:formId:aggregatedInvoicePanel :tabView:formId:invoiceSummary"
+											style="margin-top: 20px;">
+										</p:commandButton>
+									</p:column>
+								</p:row>
+							</p:panel>							
+						</p:fieldset>	
+						<div style="clear: both"></div>					
+ <p:fieldset legend="Import"
+							style="float: left; width: 100%; margin-top: 10px;"  rendered="#{creationInvoiceBean.entity.linkedInvoices.size() > 0 or creationInvoiceBean.entity.invoiceType.code eq invoiceTypeBean.commercialCode}">	
+							<p:outputPanel id="importLinkedInvoices">
+								<p:commandButton immediate="true"
+									rendered="#{creationInvoiceBean.entity.linkedInvoices.size() > 0}"
+									value="#{messages['action.invoice.importFromLinkedInvoices']}"
+									action="#{creationInvoiceBean.importFromLinkedInvoices}"
+									process=":tabView:formId @this"
+									update=":tabView:formId:aggregatedInvoicePanel :tabView:formId:detailedInvoicePanel :tabView:formId:invoiceSummary :tabView:formId:messages" />
+							</p:outputPanel>
+							  
+						<p:outputPanel id="importOpendRT" rendered="#{creationInvoiceBean.entity.invoiceType.code eq invoiceTypeBean.commercialCode}">
+							<p:commandButton immediate="true"	
+														
+								value="#{messages['action.invoice.importOpenedRT']}"
+								action="#{creationInvoiceBean.importOpenedRT}"
+								process=":tabView:formId @this"
+								update=":tabView:formId:aggregatedInvoicePanel :tabView:formId:detailedInvoicePanel :tabView:formId:invoiceSummary :tabView:formId:messages" />
+						</p:outputPanel>						
+
+						</p:fieldset>
+						<div style="clear: both"></div>
+						<p:fieldset legend="Summary"
+							style="float: left; width: 100%; margin-top: 10px;">
+							<p:panel id="invoiceSummary">
+								<p:panelGrid
+									rendered="#{creationInvoiceBean.entity.netToPay > 0}">
+									<f:facet name="header">
+										<p:row>
+											<p:column>#{messages['invoice.summary.totalAmountWithoutTax']}</p:column>
+											<p:column>#{messages['invoice.summary.totalTaxAmount']}</p:column>
+											<p:column>#{messages['invoice.summary.totalAmountWithTax']}</p:column>
+											<p:column>#{messages['invoice.summary.netToPay']}</p:column>
+										</p:row>
+									</f:facet>
+									<p:row>
+										<p:column>
+											<h:outputText
+												value="#{creationInvoiceBean.entity.amountWithoutTax}"
+												converter="#{getConverter.forType(creationInvoiceBean.entity.amountWithoutTax,'4digits')}" />
+										</p:column>
+										<p:column>
+											<h:outputText value="#{creationInvoiceBean.entity.amountTax}"
+												converter="#{getConverter.forType(creationInvoiceBean.entity.amountTax,'4digits')}" />
+										</p:column>
+										<p:column>
+											<h:outputText
+												value="#{creationInvoiceBean.entity.amountWithTax}"
+												converter="#{getConverter.forType(creationInvoiceBean.entity.amountWithTax,'4digits')}" />
+										</p:column>
+										<p:column>
+											<h:outputText value="#{creationInvoiceBean.entity.netToPay}"
+												converter="#{getConverter.forType(creationInvoiceBean.entity.netToPay,'4digits')}" />
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+								<div style="clear: both"></div>
+								<p:outputPanel style="float: left;">
+									<h:panelGrid>
+										<h:outputText
+											value="#{messages['invoice.includeAccountBalance']}" />
+										<p:selectBooleanCheckbox
+											value="#{creationInvoiceBean.includeBalance}">
+											<p:ajax event="change"
+												update=":tabView:formId:invoiceSummary" />
+										</p:selectBooleanCheckbox>
+									</h:panelGrid>
+								</p:outputPanel>
+							</p:panel>
+						</p:fieldset>
+					</hftl:formPanel>
+				</p:tab>
+				<p:tab id="customFieldTab"
+					title="#{messages['menu.customFieldTemplates']}">
+					<hftl:formPanel backingBean="#{creationInvoiceBean}"
+						showMessages="false" formId="customForm" showDeleteButton="false"
+						showEditButton="false" showBack="false">
+						<hftl:customFields backingBean="#{creationInvoiceBean}"
+							messagesId=":tabView:formId:messages" />
+					</hftl:formPanel>
+				</p:tab>
+			</p:tabView>
+		</p:panel>
+	</ui:define>
+
+</ui:composition>

@@ -599,13 +599,23 @@
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>invoiceAggregatedDetail</from-outcome>
-			<to-view-id>/pages/billing/invoices/invoiceAggregatedDetail.xhtml</to-view-id>
-			<redirect />
+			<to-view-id>/pages/billing/invoices/createInvoiceDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>mode</name>
+					<value>agregated</value>
+				</view-param>
+			</redirect>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>detailedInvoiceDetail</from-outcome>
-			<to-view-id>/pages/billing/invoices/detailedInvoiceDetail.xhtml</to-view-id>
-			<redirect />
+			<to-view-id>/pages/billing/invoices/createInvoiceDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>mode</name>
+					<value>detailed</value>
+				</view-param>
+			</redirect>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>wallets</from-outcome>

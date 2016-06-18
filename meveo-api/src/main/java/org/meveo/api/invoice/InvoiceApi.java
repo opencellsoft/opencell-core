@@ -355,9 +355,8 @@ public class InvoiceApi extends BaseApi {
 		response.setDueDate(invoice.getDueDate());
 		response.setInvoiceDate(invoice.getInvoiceDate());
 		response.setNetToPay(invoice.getNetToPay());
-		if(invoice.getPdf() != null)
-			response.setPdfInvoice(invoice.getPdf());
 		
+		//pdf and xml are added to response in the ws impl
 		if (invoiceDTO.isAutoValidation()) {
 			response.setInvoiceNumber(validateInvoice(invoice.getId(), currentUser));
 		}

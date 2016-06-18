@@ -218,10 +218,13 @@ public class InvoiceAgregateHandler {
 			if(ratedTransaction != null){
 				ratedTransaction.setAmountTax(amountTax);
 				ratedTransaction.setAmountWithTax(amountWithTax);
+				subCategoryInvoiceAgregate.getRatedtransactions().add(ratedTransaction);
 			}
-			subCategoryInvoiceAgregate.getRatedtransactions().add(ratedTransaction);
+			
 		} else {
-			subCategoryInvoiceAgregate.getRatedtransactions().remove(ratedTransaction);
+			if(ratedTransaction != null){
+				subCategoryInvoiceAgregate.getRatedtransactions().remove(ratedTransaction);
+			}
 		}
 		subCategoryInvoiceAgregate.setAmountWithoutTax(addOrSubtract(subCategoryInvoiceAgregate.getAmountWithoutTax(), amountWithoutTax, isToAdd));
 		subCategoryInvoiceAgregate.setAmountWithTax(addOrSubtract(subCategoryInvoiceAgregate.getAmountWithTax(), amountWithTax, isToAdd));
