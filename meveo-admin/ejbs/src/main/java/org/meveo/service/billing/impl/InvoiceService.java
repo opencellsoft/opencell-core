@@ -649,8 +649,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			fileInputStream.read(fileBytes);
 			invoice.setPdf(fileBytes);
 			log.info(" \n\n\n invoice.setPdf ok:"+invoice.getPdf().toString());
-			invoice.updateAudit(currentUser);
-			updateNoCheck(invoice);
+			update(invoice, currentUser);
 			log.info("invoice.setPdf update ok");
 		} catch (Exception e) {
 			log.error("Error saving file to DB as blob. {}", e);
@@ -1005,7 +1004,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId(), currentUser, currentUser.getProvider());
 			producePdf(parameters, currentUser);
 		}
-		invoice = findById(invoice.getId(), true);
+		
 		log.debug("getXMLInvoice invoiceNumber:{} done.", invoiceNumber);
 		log.debug(" \n\n\n pdf : ", invoice.getPdf());
 		

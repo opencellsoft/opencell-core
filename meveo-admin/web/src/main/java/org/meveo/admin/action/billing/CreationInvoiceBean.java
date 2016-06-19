@@ -314,10 +314,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 		super.saveOrUpdate(false);
 
-		invoiceService.commit();
-		
-		entity = invoiceService.refreshOrRetrieve(entity);
-
 		for (Entry<String, TaxInvoiceAgregate> entry : agregateHandler.getTaxInvAgregateMap().entrySet()) {
 			TaxInvoiceAgregate taxInvAgr = entry.getValue();
 			taxInvAgr.setAuditable(auditable);
@@ -342,12 +338,16 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 				ratedTransactionService.create(rt, currentUser);
 			}
 		}
+		
+		invoiceService.commit();
+		
+		entity = invoiceService.refreshOrRetrieve(entity);
 
-//		try {
-//			invoiceService.generateXmlAndPdfInvoice(entity, getCurrentUser());
-//		} catch (Exception e) {
-//			messages.error("Error generating xml / pdf invoice=" + e.getMessage());
-//		}
+		try {
+			invoiceService.generateXmlAndPdfInvoice(entity, getCurrentUser());
+		} catch (Exception e) {
+			messages.error("Error generating xml / pdf invoice=" + e.getMessage());
+		}
 
 		return getListViewName();
 	}
