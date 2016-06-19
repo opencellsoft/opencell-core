@@ -126,11 +126,18 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	@RequestParam()
 	private Instance<String> mode;
 
+	@Inject
+	@RequestParam()
+	private Instance<Long> linkedInvoiceIdParam;
+
+
 	private List<CategoryInvoiceAgregate> categoryInvoiceAggregates = new ArrayList<CategoryInvoiceAgregate>();
 	private CategoryInvoiceAgregate selectedCategoryInvoiceAgregate;
 	private SubCategoryInvoiceAgregate selectedSubCategoryInvoiceAgregate;
 	private BigDecimal amountWithoutTax ;
 	private boolean detailled = false;
+	private Long rootInvoiceId = null;
+	private Invoice rootInvoice;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -142,25 +149,37 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 	@Override
 	public Invoice initEntity() {
-		Invoice invoice = super.initEntity();
-		invoice.setDueDate(new Date());
-		invoice.setInvoiceDate(new Date());
+		entity = super.initEntity();
+		entity.setDueDate(new Date());
+		entity.setInvoiceDate(new Date());
 		if (entity.isTransient()) {
 			if (mode != null && mode.get() != null) {
 				setDetailled("detailed".equals(mode.get()));				
-			}			
-		}		
-		return invoice;
+			}
+			if(linkedInvoiceIdParam != null && linkedInvoiceIdParam.get() != null){
+				rootInvoiceId = linkedInvoiceIdParam.get();
+				rootInvoice = invoiceService.findById(rootInvoiceId);
+				entity.setBillingAccount(rootInvoice.getBillingAccount());
+				entity.getLinkedInvoices().add(rootInvoice);
+				try {
+					entity.setInvoiceType(invoiceTypeService.getDefaultAdjustement(currentUser));
+				} catch (BusinessException e) {
+					log.error("Cant get DefaultAdjustement Type:",e);
+				}
+			}
+		}	
+
+
+		return entity;
 	}
 	/**
 	 * 
 	 * @return
 	 */
-	public boolean isDetailed() {	
-		log.info("\n\n\n detailled:"+detailled);
+	public boolean isDetailed() {			
 		return detailled;
 	}
-	
+
 
 	/**
 	 * @param detailled the detailled to set
@@ -176,7 +195,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	protected IPersistenceService<Invoice> getPersistenceService() {
 		return invoiceService;
 	}
-	
+
 	public void onRowSelect(SelectEvent event) {		
 		invoiceToAdd = (Invoice) event.getObject();		
 		if (invoiceToAdd != null && !entity.getLinkedInvoices().contains(invoiceToAdd)) {
@@ -350,9 +369,13 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 				ratedTransactionService.create(rt, currentUser);
 			}
 		}
-		
+
 		invoiceService.commit();
 		entity = invoiceService.refreshOrRetrieve(entity);
+		for (Invoice invoice : entity.getLinkedInvoices()) {
+			invoice.getLinkedInvoices().add(entity);
+			invoiceService.update(invoice, currentUser);
+		}
 
 		try {
 			invoiceService.generateXmlAndPdfInvoice(entity, getCurrentUser());
@@ -665,13 +688,42 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		this.amountWithoutTax = amountWithoutTax;
 	}
 
-	public List<Invoice> getInvoicesByTypeAndBA() throws BusinessException{
-
+	public List<Invoice> getInvoicesByTypeAndBA() throws BusinessException{	
 		List<Invoice> listInvoice = new ArrayList<Invoice>();
-		if(entity == null || entity.getInvoiceType() == null || entity.getBillingAccount() == null){
+		if(entity == null || entity.getInvoiceType() == null || entity.getBillingAccount() == null){			
 			return listInvoice;
-		}
-
-		return invoiceService.getInvoices(getFreshBA(), entity.getInvoiceType());
+		}		
+		return invoiceService.getInvoices(entity.getBillingAccount(), entity.getInvoiceType());
 	}
+
+	/**
+	 * @return the rootInvoiceId
+	 */
+	public Long getRootInvoiceId() {
+		return rootInvoiceId;
+	}
+
+	/**
+	 * @param rootInvoiceId the rootInvoiceId to set
+	 */
+	public void setRootInvoiceId(Long rootInvoiceId) {
+		this.rootInvoiceId = rootInvoiceId;
+	}
+
+
+	@Override
+	public String getBackView() {
+		//TODO use outcome and params
+		if(rootInvoiceId == null){			
+			return super.getBackView();
+		}      		
+		return "/pages/billing/invoices/invoiceDetail.xhtml?objectId="+rootInvoiceId+ "&cid="+ conversation.getId() +"&edit=true&faces-redirect=true";
+	}
+
+	@Override
+	public String getBackViewSave() {
+		return getBackView();
+	}
+
+
 }

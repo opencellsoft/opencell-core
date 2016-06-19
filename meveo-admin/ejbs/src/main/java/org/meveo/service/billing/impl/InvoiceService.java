@@ -514,21 +514,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				+ currentUser.getProvider().getCode() + File.separator;
 
 		Invoice invoice = (Invoice) parameters.get(PdfGeneratorConstants.INVOICE);
-		File billingRundir = new File(meveoDir
-				+ "invoices"
-				+ File.separator
-				+ "xml"
-				+ File.separator
-				+ (invoice.getBillingRun() == null ? DateUtils.formatDateWithPattern(invoice.getAuditable()
-						.getCreated(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss"))
-						: invoice.getBillingRun().getId()));
-
+		
+		
+		File billingRundir = new File(getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), invoice.getProvider().getCode()));
+		String thePrefix =""; 
+		if(invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode())){
+			thePrefix =paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_"); 
+		}
 		String invoiceXmlFileName = billingRundir
-				+ File.separator
+				+ File.separator+thePrefix
 				+ (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice
 						.getTemporaryInvoiceNumber()) + ".xml";
 
-		producePdf(parameters, currentUser, invoiceXmlFileName, meveoDir, false);
+		producePdf(parameters, currentUser, invoiceXmlFileName, meveoDir, invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode()));
 	}
 
 	public void producePdf(Map<String, Object> parameters, User currentUser, String invoiceXmlFileName,
@@ -872,7 +870,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		// no need to create discount aggregates we will use the one from
 		// adjustedInvoice
 
-		Object[] object = invoiceAgregateService.findTotalAmountsForDiscountAggregates(invoice.getAdjustedInvoice());
+		Object[] object = invoiceAgregateService.findTotalAmountsForDiscountAggregates(getLinkedInvoice(invoice));
 		BigDecimal discountAmountWithoutTax = (BigDecimal) object[0];
 		BigDecimal discountAmountTax = (BigDecimal) object[1];
 		BigDecimal discountAmountWithTax = (BigDecimal) object[2];
@@ -989,7 +987,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		String brPath = getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), currentUser.getProvider().getCode());
 		File billingRundir = new File(brPath);
 		xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir, false, refreshInvoice);
-		String xmlCanonicalPath = brPath + File.separator + invoiceNumber + ".xml";
+		String thePrefix =""; 
+		if(invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode())){
+			thePrefix =paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_"); 
+		}
+		String xmlCanonicalPath = brPath + File.separator + thePrefix+invoiceNumber + ".xml";
 		Scanner scanner = new Scanner(new File(xmlCanonicalPath));
 		String xmlContent = scanner.useDelimiter("\\Z").next();
 		scanner.close();
@@ -1004,10 +1006,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId(), currentUser, currentUser.getProvider());
 			producePdf(parameters, currentUser);
 		}
-		
-		log.debug("getXMLInvoice invoiceNumber:{} done.", invoiceNumber);
-		log.debug(" \n\n\n pdf : ", invoice.getPdf());
-		
+		log.debug("getXMLInvoice invoiceNumber:{} done.", invoiceNumber);		
 		return invoice.getPdf();
 	}
 	
@@ -1016,4 +1015,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		generatePdfInvoice(invoice, invoice.getInvoiceNumber(), currentUser);
 	}
 	
+	public Invoice getLinkedInvoice(Invoice invoice){
+		if(invoice == null || invoice.getLinkedInvoices() == null || invoice.getLinkedInvoices().isEmpty()){
+			return null;
+		}
+		return invoice.getLinkedInvoices().iterator().next();
+	}
 }

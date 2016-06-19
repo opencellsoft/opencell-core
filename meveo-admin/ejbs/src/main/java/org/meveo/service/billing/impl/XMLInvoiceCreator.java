@@ -130,6 +130,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     
     @Inject
     private UsageChargeTemplateService usageChargeTemplateService;
+    
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
 
 	TransformerFactory transfac = TransformerFactory.newInstance();
 
@@ -163,6 +166,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			if(refreshInvoice) {
 				invoice = invoiceService.refreshOrRetrieve(invoice);
 			}
+			isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
 			String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguage()
 					.getLanguageCode();
 
@@ -190,13 +194,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			invoiceTag.setAttribute("customerAccountCode",
 					invoice.getBillingAccount().getCustomerAccount().getCode() != null ? invoice.getBillingAccount()
 							.getCustomerAccount().getCode() : "");
-			if (invoice.getAdjustedInvoice() != null) {
-				invoiceTag.setAttribute("adjustedInvoiceNumber", invoice.getAdjustedInvoice().getInvoiceNumber());
+			if (isInvoiceAdjustment) {
+				invoiceTag.setAttribute("adjustedInvoiceNumber", getLinkedInvoicesnumberAsString(new ArrayList<Invoice>(invoice.getLinkedInvoices())));
 			}
 
 			BillingCycle billingCycle = null;
-			if (isInvoiceAdjustment && invoice.getAdjustedInvoice().getBillingRun() != null) {
-				billingCycle = invoice.getAdjustedInvoice().getBillingRun().getBillingCycle();
+			Invoice linkedInvoice = invoiceService.getLinkedInvoice(invoice);
+			if (isInvoiceAdjustment && linkedInvoice  != null && linkedInvoice.getBillingRun() != null) {
+				billingCycle = linkedInvoice.getBillingRun().getBillingCycle();
 			} else {
 				if (invoice.getBillingRun() != null && invoice.getBillingRun().getBillingCycle() != null) {
 					billingCycle = invoice.getBillingRun().getBillingCycle();
@@ -1384,5 +1389,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		}
 		return true;
 	}
-
+ private String getLinkedInvoicesnumberAsString(List<Invoice> linkedInvoices){
+	 if(linkedInvoices == null || linkedInvoices.isEmpty() ){
+		 return "";
+	 }
+	 String result = "";
+	 for(Invoice inv : linkedInvoices){
+		 result += inv.getInvoiceNumber() +" ";
+	 }
+	 return result;
+ }
 }

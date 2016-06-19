@@ -2006,8 +2006,8 @@
 				fetch cursorAdjustedInvoice into invoiceRecord;
 				exit when not found;
 			
-				insert into billing_linked_invoices (id, linked_invoice_id) 
-				values(invoiceRecord.invoice_id, invoiceRecord.id);
+				insert into billing_linked_invoices (id, linked_invoice_id) values(invoiceRecord.invoice_id, invoiceRecord.id);
+				insert into billing_linked_invoices (id, linked_invoice_id) values(invoiceRecord.id,invoiceRecord.invoice_id);
 				
 				end loop;
 				close cursorAdjustedInvoice;
