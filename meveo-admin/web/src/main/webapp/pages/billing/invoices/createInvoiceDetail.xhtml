@@ -315,9 +315,8 @@
 							style="float: left; width: 95%; margin-top: 10px;"
 							rendered="#{creationInvoiceBean.isDetailed()}">
 							<p:panel id="addDetailInvoiceLine"
-								style="float: right; width: 100%;">
-								<p:row>
-									<p:column>
+								style="float: right; width: 100%;"> 
+								<h:panelGrid columns="7"> 
 										<hftl:decorateFormField fieldId="selectedInvoiceCatOrSubCat"
 											label="#{messages['invoice.catOrSubCat']} *">
 											<p:selectOneMenu id="selectedInvoiceCatOrSubCat"
@@ -329,54 +328,44 @@
 													value="#{creationInvoiceBean.invoiceCatSubCats}" />
 													<p:ajax update="description" event="valueChange" listener="#{creationInvoiceBean.handleSelectedInvoiceCatOrSubCat}" />
 											</p:selectOneMenu>
-										</hftl:decorateFormField>
-									</p:column>
-									<p:column>
+										</hftl:decorateFormField> 
 										<hftl:decorateFormField fieldId="description"
 											label="#{messages['BusinessEntity.description']} *">
 											<p:inputText id="description"
 												value="#{creationInvoiceBean.description}" size="35"></p:inputText>
-										</hftl:decorateFormField>
-									</p:column>
-									<p:column>
+										</hftl:decorateFormField> 
 										<hftl:decorateFormField fieldId="unitAmountWithoutTax"
 											label="#{messages['ratedTransaction.unitAmountWithoutTax']} *">
 											<p:inputText id="unitAmountWithoutTax"
 												value="#{creationInvoiceBean.unitAmountWithoutTax}">
 												<pe:keyFilter mask="num" />
 											</p:inputText>
-										</hftl:decorateFormField>
-									</p:column>
-									<p:column>
+										</hftl:decorateFormField> 
 										<hftl:decorateFormField fieldId="quantity"
 											label="#{messages['ratedTransaction.quantity']} *">
 											<p:inputText id="quantity"
 												value="#{creationInvoiceBean.quantity}" size="7">
 												<pe:keyFilter mask="num" />
 											</p:inputText>
-										</hftl:decorateFormField>
-									</p:column>
-
-									<p:column>
-										<p:commandButton value="#{messages['action.invoice.addLine']}"
+										</hftl:decorateFormField> 
+ 
+										<p:commandButton value="#{messages['action.invoice.addLine']}" style="margin-top:10px" 
 											process="addDetailInvoiceLine"
 											action="#{creationInvoiceBean.addDetailInvoiceLine()}"
 											update=":formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary :formId:messages">
-										</p:commandButton>
-									</p:column>
-								</p:row>
+										</p:commandButton>  
+									</h:panelGrid> 
 							</p:panel>
 						</p:fieldset>
 						<div style="clear: both"></div>
 						<p:fieldset legend="Add agregate invoice line"
 							style="float: left; width: 95%; margin-top: 10px;"
 							rendered="#{!creationInvoiceBean.isDetailed()}">
-							<p:panel id="addAggregatedLine">
-								<p:row>
-									<p:column>
-										<hftl:decorateFormField fieldId="selectedInvoiceCatOrSubCat_a"
+							<p:panel id="addAggregatedLine"> 
+							<h:panelGrid columns="4">
+										<hftl:decorateFormField fieldId="selectedInvoiceCatOrSubCat_a" 
 											label="#{messages['invoice.catOrSubCat']} *">
-											<p:selectOneMenu id="selectedInvoiceCatOrSubCat_a"
+											<p:selectOneMenu id="selectedInvoiceCatOrSubCat_a" style="width:200px;"
 												value="#{creationInvoiceBean.selectedInvoiceSubCategory}"
 												converter="omnifaces.SelectItemsConverter">
 												<f:selectItem itemLabel="" noSelectionOption="true" />
@@ -384,31 +373,24 @@
 													value="#{creationInvoiceBean.invoiceCatSubCats}" />
 												<p:ajax update="description_a" event="valueChange" listener="#{creationInvoiceBean.handleSelectedInvoiceCatOrSubCat}" />
 											</p:selectOneMenu>
-										</hftl:decorateFormField>
-									</p:column>
-									<p:column>
+										</hftl:decorateFormField> 
 										<hftl:decorateFormField fieldId="description_a"
 											label="#{messages['BusinessEntity.description']}">
 											<p:inputText id="description_a"
 												value="#{creationInvoiceBean.description}" size="60"></p:inputText>
-										</hftl:decorateFormField>
-									</p:column>
-									<p:column>
+										</hftl:decorateFormField> 
 										<hftl:decorateFormField fieldId="amountWithoutTax"
 											label="#{messages['invoice.amountWithoutTax']} *">
 											<p:inputText id="amountWithoutTax"
 												value="#{creationInvoiceBean.amountWithoutTax}"></p:inputText>
-										</hftl:decorateFormField>
-									</p:column>
-									<p:column>
+										</hftl:decorateFormField> 
 										<p:commandButton value="#{messages['action.invoice.addLine']}"
 											process="addAggregatedLine"
 											action="#{creationInvoiceBean.addAggregatedLine()}"
 											update=":formId:messages :formId:tabView:addAggregatedLine :formId:tabView:aggregatedInvoicePanel :formId:tabView:invoiceSummary"
-											style="margin-top: 20px;">
-										</p:commandButton>
-									</p:column>
-								</p:row>
+											style="margin-top:10px;">
+										</p:commandButton> 
+										</h:panelGrid>
 							</p:panel>
 						</p:fieldset>
 						<div style="clear: both"></div>
