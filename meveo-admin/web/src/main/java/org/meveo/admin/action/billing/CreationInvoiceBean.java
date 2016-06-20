@@ -44,6 +44,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
@@ -63,6 +64,7 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.LazyDataModel;
 
 /**
  * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that
@@ -689,12 +691,25 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		this.amountWithoutTax = amountWithoutTax;
 	}
 
-	public List<Invoice> getInvoicesByTypeAndBA() throws BusinessException{	
-		List<Invoice> listInvoice = new ArrayList<Invoice>();
-		if(entity == null || entity.getInvoiceType() == null || entity.getBillingAccount() == null){			
-			return listInvoice;
-		}		
-		return invoiceService.getInvoices(entity.getBillingAccount(), entity.getInvoiceType());
+	public LazyDataModel<Invoice> getInvoicesByTypeAndBA() throws BusinessException {
+		if (getEntity().getBillingAccount() != null && !entity.getBillingAccount().isTransient()) {
+			BillingAccount ba = billingAccountService.refreshOrRetrieve(entity.getBillingAccount());
+			filters.put("billingAccount", ba);
+		}
+		if (entity.getInvoiceType() != null) {
+			InvoiceType selInvoiceType = invoiceTypeService.refreshOrRetrieve(entity.getInvoiceType());
+			List<InvoiceType> invoiceTypes = selInvoiceType.getAppliesTo();
+			if (invoiceTypes != null && invoiceTypes.size() > 0) {
+				StringBuilder invoiceTypeIds = new StringBuilder();
+				for (InvoiceType invoiceType : invoiceTypes) {
+					invoiceTypeIds.append(invoiceType.getId() + ",");
+				}
+				invoiceTypeIds.deleteCharAt(invoiceTypeIds.length() - 1);
+				filters.put("inList-invoiceType.id", invoiceTypeIds);
+			}
+		}
+		
+		return getLazyDataModel(filters, true);
 	}
 
 	/**

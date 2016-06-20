@@ -22,7 +22,7 @@
 		<c:if test="#{creationInvoiceBean.edit}">
 			<hftl:entityPopup id="billingAccountPopup"
 				header="#{messages['billingAccount']}"
-				updateField=":tabView:formId:billingAccountSelectedId :tabView:formId:billingAccountSelectedId_text"
+				updateField=":invoicePopup :tabView:formId:billingAccountSelectedId :tabView:formId:billingAccountSelectedId_text"
 				selection="#{creationInvoiceBean.entity.billingAccount}"
 				backingBean="#{billingAccountBean}"
 				searchField1Label="#{messages['billingAccount.code']}"
@@ -64,7 +64,7 @@
 								<hftl:formField field="invoiceType" required="true"
 									label="#{messages['invoice.invoiceType']}"
 									valueLabelField="descriptionOrCode"
-									 listBean="#{invoiceTypeBean}"></hftl:formField>
+									 listBean="#{invoiceTypeBean}" listenerUpdate="invoicePopup"></hftl:formField>
 
 								<hftl:formField id="billingAccountSelectedId"
 									label="#{messages['billingAccount']}" field="billingAccount"
