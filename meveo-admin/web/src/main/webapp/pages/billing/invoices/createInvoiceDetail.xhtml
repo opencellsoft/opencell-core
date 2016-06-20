@@ -51,7 +51,14 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<p:panel header="#{messages['invoice.detailed']}">
+		<p:panel>
+			<c:if test="#{creationInvoiceBean.pageMode == 'agregated'}">
+				<f:facet name="header">#{messages['invoice.aggregated']}</f:facet>
+			</c:if>
+			<c:if test="#{creationInvoiceBean.pageMode == 'detailed'}">
+				<f:facet name="header">#{messages['invoice.detailed']}</f:facet>
+			</c:if>
+			
 			<p:tabView id="tabView"
 				activeIndex="#{creationInvoiceBean.activeTab}">
 				<p:tab title="#{messages['menu.invoice']}">
@@ -433,7 +440,7 @@
 								</p:panelGrid>
 								<div style="clear: both"></div>
 								<p:outputPanel style="float: left;">
-									<h:panelGrid>
+									<h:panelGrid columns="2">
 										<h:outputText
 											value="#{messages['invoice.includeAccountBalance']}" />
 										<p:selectBooleanCheckbox
