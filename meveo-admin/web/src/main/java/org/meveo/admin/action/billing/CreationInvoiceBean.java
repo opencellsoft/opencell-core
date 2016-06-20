@@ -134,6 +134,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 	private List<CategoryInvoiceAgregate> categoryInvoiceAggregates = new ArrayList<CategoryInvoiceAgregate>();
 	private CategoryInvoiceAgregate selectedCategoryInvoiceAgregate;
+	private CategoryInvoiceAgregate selectedCategoryInvoiceAgregateDetail;
 	private SubCategoryInvoiceAgregate selectedSubCategoryInvoiceAgregate;
 	private BigDecimal amountWithoutTax;
 	private boolean detailled = false;
@@ -657,7 +658,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		}
 
 		selectedInvoiceSubCategory = invoiceSubCategoryService.refreshOrRetrieve(selectedInvoiceSubCategory);
-		// selectedInvoiceSubCategory.setDescription(description);
+		selectedInvoiceSubCategory.setDescription(description);
 
 		agregateHandler.addInvoiceSubCategory(selectedInvoiceSubCategory, getFreshBA(), getFreshUA(), amountWithoutTax, currentUser);
 		updateAmountsAndLines(agregateHandler, getFreshBA());
@@ -673,8 +674,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	public void reComputeAmountWithoutTax(SubCategoryInvoiceAgregate invSubCat) throws BusinessException {
 		agregateHandler.reset();
 		for (CategoryInvoiceAgregate cat : categoryInvoiceAggregates) {
-			for (SubCategoryInvoiceAgregate subCate : cat.getSubCategoryInvoiceAgregates()) {
-				agregateHandler.addInvoiceSubCategory(subCate.getInvoiceSubCategory(), getFreshBA(), getFreshUA(), subCate.getAmountWithoutTax(), currentUser);
+			for (SubCategoryInvoiceAgregate subCate : cat.getSubCategoryInvoiceAgregates()) {				
+				InvoiceSubCategory tmp = subCate.getInvoiceSubCategory();
+				tmp.setDescription(subCate.getDescription());
+				agregateHandler.addInvoiceSubCategory(tmp, getFreshBA(), getFreshUA(), subCate.getAmountWithoutTax(), currentUser);
 			}
 		}
 		updateAmountsAndLines(agregateHandler, getFreshBA());
