@@ -20,6 +20,7 @@ package org.meveo.admin.action.billing;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -429,6 +430,8 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 		log.info("start to download...");
 
 		File file = new File(getXmlInvoiceDir().getAbsolutePath() + File.separator + fileName);
+		OutputStream out = null;
+		InputStream fin = null;
 		try {
 			javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
 			HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
@@ -436,8 +439,8 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 			res.setContentLength((int) file.length());
 			res.addHeader("Content-disposition", "attachment;filename=\"" + fileName + "\"");
 
-			OutputStream out = res.getOutputStream();
-			InputStream fin = new FileInputStream(file);
+			 out = res.getOutputStream();
+			 fin = new FileInputStream(file);
 
 			byte[] buf = new byte[1024];
 			int sig = 0;
@@ -451,6 +454,21 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 			log.info("download over!");
 		} catch (Exception e) {
 			log.error("Error:#0, when dowload file: #1", e.getMessage(), file.getAbsolutePath());
+		}finally{
+			if(out != null){
+				try {
+					out.close();
+				} catch (IOException e) {
+					log.error("Error",e);
+				}
+			}
+			if(fin != null){
+				try {
+					fin.close();
+				} catch (IOException e) {
+					log.error("Error",e);
+				}
+			}
 		}
 		log.info("downloaded successfully!");
 		return null;

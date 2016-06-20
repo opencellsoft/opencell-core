@@ -169,7 +169,7 @@ public class InvoiceApi extends BaseApi {
 				if (invoiceTmp == null) {
 					throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
 				}
-				if (invoiceTmp.getInvoiceType().getAppliesTo().contains(invoiceType)) {				
+				if (!invoiceType.getAppliesTo().contains(invoiceTmp.getInvoiceType())) {				
 					throw new BusinessApiException("Invoice " + invoiceId + " cant be linked");
 				}
 				invoice.getLinkedInvoices().add(invoiceTmp);
