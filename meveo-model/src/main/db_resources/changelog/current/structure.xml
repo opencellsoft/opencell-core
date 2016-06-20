@@ -2126,6 +2126,7 @@ $BODY$
              id_occ_adj);
              
              INSERT INTO billing_invoice_type_applies_to(invoice_type_id, applies_to_id) VALUES ((select id from billing_invoice_type where code='COM' and provider_id = providerRecord.id ) , (select id from billing_invoice_type where code='ADJ' and provider_id = providerRecord.id ));
+              INSERT INTO billing_invoice_type_applies_to(invoice_type_id, applies_to_id) VALUES ((select id from billing_invoice_type where code='ADJ' and provider_id = providerRecord.id ),(select id from billing_invoice_type where code='COM' and provider_id = providerRecord.id ) );
 
             
 			end loop;
