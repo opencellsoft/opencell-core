@@ -367,6 +367,7 @@
 												<f:selectItem itemLabel="" noSelectionOption="true" />
 												<f:selectItems
 													value="#{creationInvoiceBean.invoiceCatSubCats}" />
+												<p:ajax update="description_a" event="valueChange" listener="#{creationInvoiceBean.handleSelectedInvoiceCatOrSubCat}" />
 											</p:selectOneMenu>
 										</hftl:decorateFormField>
 									</p:column>

@@ -741,5 +741,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		return getBackView();
 	}
 
-
+	public void handleSelectedInvoiceCatOrSubCat() {
+		if (selectedInvoiceSubCategory != null) {
+			description = selectedInvoiceSubCategory.getDescriptionOrCode();
+		}
+	}
+	
 }
