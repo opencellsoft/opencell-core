@@ -489,8 +489,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				addNameAndAdress(userAccount, doc, userAccountTag, billingAccountLanguage);
 				addCategories(userAccount, invoice, doc, invoiceTag,userAccountTag, invoice.getProvider()
 						.getInvoiceConfiguration().getDisplayDetail(), enterprise);
-			}
-			
+			}			
 			addSubscriptions(userAccount, invoice, doc, userAccountTag, invoiceTag);
 		}
 

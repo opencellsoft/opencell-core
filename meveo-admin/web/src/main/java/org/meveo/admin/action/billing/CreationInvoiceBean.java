@@ -583,7 +583,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		}
 		return userAccountService.refreshOrRetrieve(getFreshBA().getUsersAccounts().get(0));
 	}
-	///////////////////////////// aggregateds
+	
+	
 	public List<CategoryInvoiceAgregate> getCategoryInvoiceAggregates() {
 		return categoryInvoiceAggregates;
 	}

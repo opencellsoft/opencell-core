@@ -645,10 +645,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			byte[] fileBytes = new byte[(int) file.length()];
 			fileInputStream = new FileInputStream(file);
 			fileInputStream.read(fileBytes);
-			invoice.setPdf(fileBytes);
-			log.info(" \n\n\n invoice.setPdf ok:"+invoice.getPdf().toString());
+			invoice.setPdf(fileBytes);			
 			update(invoice, currentUser);
-			log.info("invoice.setPdf update ok");
+			log.debug("invoice.setPdf update ok");
 		} catch (Exception e) {
 			log.error("Error saving file to DB as blob. {}", e);
 		} finally {
@@ -986,7 +985,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public String getXMLInvoice(Invoice invoice, String invoiceNumber, User currentUser, boolean refreshInvoice) throws BusinessException, FileNotFoundException {
 		String brPath = getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), currentUser.getProvider().getCode());
 		File billingRundir = new File(brPath);
-		xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir, false, refreshInvoice);
+		xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir, invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode()), refreshInvoice);
 		String thePrefix =""; 
 		if(invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode())){
 			thePrefix =paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_"); 

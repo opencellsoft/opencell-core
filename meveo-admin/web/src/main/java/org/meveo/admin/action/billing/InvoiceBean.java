@@ -62,7 +62,6 @@ import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -398,21 +397,8 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 		return invoiceAgregateService.findDiscountAggregates(entity);
 	}
 
-	public File getXmlInvoiceDir() {
-		ParamBean param = ParamBean.getInstance();
-		String invoicesDir = param.getProperty("providers.rootDir", "/tmp/meveo");
-		File billingRundir = new File(invoicesDir
-				+ File.separator
-				+ getCurrentProvider().getCode()
-				+ File.separator
-				+ "invoices"
-				+ File.separator
-				+ "xml"
-				+ File.separator
-				+ (getEntity().getBillingRun() == null ? DateUtils.formatDateWithPattern(getEntity().getAuditable()
-						.getCreated(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss"))
-						: getEntity().getBillingRun().getId()));
-		return billingRundir;
+	public File getXmlInvoiceDir() {	
+		return new File(invoiceService.getBillingRunPath(getEntity().getBillingRun(), getEntity().getAuditable().getCreated(), getCurrentProvider().getCode()));
 	}
 
 	public void generateXMLInvoice() throws BusinessException {
@@ -472,7 +458,11 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 	public void deleteXmlInvoice() {
 		try {
-			File file = new File(getXmlInvoiceDir().getAbsolutePath() + File.separator
+			String thePrefix =""; 
+			if(getEntity().getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode())){
+				thePrefix =paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_"); 
+			}
+			File file = new File(getXmlInvoiceDir().getAbsolutePath() + File.separator+thePrefix
 					+ entity.getTemporaryInvoiceNumber() + ".xml");
 			if (file.exists()) {
 				file.delete();
@@ -484,8 +474,12 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 	}
 
 	public boolean isXmlInvoiceAlreadyGenerated() {
+		String thePrefix =""; 
+		if(getEntity().getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode())){
+			thePrefix =paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_"); 
+		} 
 		String fileDir = getXmlInvoiceDir().getAbsolutePath()
-				+ File.separator
+				+ File.separator+thePrefix
 				+ (getEntity().getInvoiceNumber() != null ? getEntity().getInvoiceNumber() : getEntity()
 						.getTemporaryInvoiceNumber()) + ".xml";
 		File file = new File(fileDir);
