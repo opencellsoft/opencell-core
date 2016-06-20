@@ -926,7 +926,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					List<RatedTransaction> transactions = ratedTransactionService.getRatedTransactions(
 							subCatInvoiceAgregate.getWallet(), subCatInvoiceAgregate.getInvoice(),
 							subCatInvoiceAgregate.getInvoiceSubCategory());
-
+								
 					String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription();
 					Element subCategory = doc.createElement("subCategory");
 					subCategories.appendChild(subCategory);
@@ -1311,10 +1311,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					Element subCategory = doc.createElement("subCategory");
 
 					InvoiceSubCategory invoiceSubCat = subCatInvoiceAgregate.getInvoiceSubCategory();
-
-					String invoiceSubCategoryLabel = invoiceSubCat != null ? catMessagesService.getMessageDescription(
-							invoiceSubCat, languageCode) : "";
-
+                     //description translated is set on aggregate  
+					String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription() == null ? "":subCatInvoiceAgregate.getDescription();
 					subCategories.appendChild(subCategory);
 					subCategory.setAttribute("label", (invoiceSubCategoryLabel != null) ? invoiceSubCategoryLabel : "");
 					subCategory.setAttribute("code", invoiceSubCat.getCode());

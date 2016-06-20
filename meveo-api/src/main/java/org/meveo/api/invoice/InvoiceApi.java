@@ -162,7 +162,7 @@ public class InvoiceApi extends BaseApi {
 		}
 		invoice.setPaymentMethod(paymentMethod);
 		invoice.setInvoiceType(invoiceType);
-
+		invoiceService.create(invoice, currentUser);
 		if (invoiceDTO.getListInvoiceIdToLink() != null) {
 			for (Long invoiceId : invoiceDTO.getListInvoiceIdToLink()) {
 				Invoice invoiceTmp = invoiceService.findById(invoiceId);
@@ -170,12 +170,14 @@ public class InvoiceApi extends BaseApi {
 					throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
 				}
 				if (!invoiceType.getAppliesTo().contains(invoiceTmp.getInvoiceType())) {				
-					throw new BusinessApiException("Invoice " + invoiceId + " cant be linked");
+					throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
 				}
 				invoice.getLinkedInvoices().add(invoiceTmp);
+				invoiceTmp.getLinkedInvoices().add(invoice);
+				invoiceService.update(invoiceTmp, currentUser);
 			}
 		}
-		invoiceService.create(invoice, currentUser);
+		invoiceService.update(invoice, currentUser);
 		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
 		if (userAccounts == null || userAccounts.isEmpty()) {
 			throw new BusinessApiException("BillingAccount " + invoiceDTO.getBillingAccountCode() + " has no userAccount");

@@ -515,7 +515,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		Invoice invoice = (Invoice) parameters.get(PdfGeneratorConstants.INVOICE);
 		
 		
-		File billingRundir = new File(getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), invoice.getProvider().getCode()));
+		File billingRundir = new File(getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), currentUser.getProvider().getCode()));
 		String thePrefix =""; 
 		if(invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode())){
 			thePrefix =paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_"); 

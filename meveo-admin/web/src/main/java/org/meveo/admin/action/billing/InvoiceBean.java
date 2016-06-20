@@ -413,7 +413,11 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 	}
 
 	public String downloadXMLInvoice() {
-		String fileName = (entity.getInvoiceNumber() != null ? entity.getInvoiceNumber() : entity
+		String thePrefix =""; 
+		if(getEntity().getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode())){
+			thePrefix =paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_"); 
+		}
+		String fileName = thePrefix+(entity.getInvoiceNumber() != null ? entity.getInvoiceNumber() : entity
 				.getTemporaryInvoiceNumber()) + ".xml";
 
 		return downloadXMLInvoice(fileName);
