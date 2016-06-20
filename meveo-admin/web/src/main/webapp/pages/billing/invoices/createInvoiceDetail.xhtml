@@ -66,7 +66,7 @@
 				activeIndex="#{creationInvoiceBean.activeTab}">
 				<p:tab title="#{messages['menu.invoice']}">
 						<p:fieldset legend="Header"
-							style="float: left; width: 100%; margin-top: 10px;">
+							style="float: left; width: 95%; margin-top: 10px;">
 							<p:panel style="width: 50%; float: left;">
 								<hftl:formField field="invoiceType" required="true"
 									label="#{messages['invoice.invoiceType']}"
@@ -138,7 +138,7 @@
 						<div style="clear: both"></div>
 						<!-- detailed lines here -->
 						<p:fieldset legend="Detail"
-							style="float: left; width: 100%; margin-top: 10px;"
+							style="float: left; width: 95%; margin-top: 10px;"
 							rendered="#{creationInvoiceBean.isDetailed()}">
 							<p:outputPanel id="detailedInvoicePanel">
 								<p:dataTable var="aSubCatInvAgregate" editable="true"
@@ -222,7 +222,7 @@
 
 						<!-- aggregated lines here -->
 						<p:fieldset legend="Agregates"
-							style="float: left; width: 100%; margin-top: 10px;"
+							style="float: left; width: 95%; margin-top: 10px;"
 							rendered="#{!creationInvoiceBean.isDetailed()}">
 							<p:outputPanel id="aggregatedInvoicePanel">
 								<p:dataTable style="margin-top: 10px;" var="entity"
@@ -305,7 +305,7 @@
 						</p:fieldset>
 						<div style="clear: both"></div>
 						<p:fieldset legend="Add detail invoice line"
-							style="float: left; width: 100%; margin-top: 10px;"
+							style="float: left; width: 95%; margin-top: 10px;"
 							rendered="#{creationInvoiceBean.isDetailed()}">
 							<p:panel id="addDetailInvoiceLine"
 								style="float: right; width: 100%;">
@@ -361,7 +361,7 @@
 						</p:fieldset>
 						<div style="clear: both"></div>
 						<p:fieldset legend="Add agregate invoice line"
-							style="float: left; width: 100%; margin-top: 10px;"
+							style="float: left; width: 95%; margin-top: 10px;"
 							rendered="#{!creationInvoiceBean.isDetailed()}">
 							<p:panel id="addAggregatedLine">
 								<p:row>
@@ -405,7 +405,7 @@
 						</p:fieldset>
 						<div style="clear: both"></div>
 						<p:fieldset legend="Summary"
-							style="float: left; width: 100%; margin-top: 10px;">
+							style="float: left; width: 95%; margin-top: 10px;">
 							<p:panel id="invoiceSummary">
 								<p:panelGrid
 									rendered="#{creationInvoiceBean.entity.netToPay > 0}">
