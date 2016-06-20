@@ -415,8 +415,7 @@
 						<p:fieldset legend="Summary"
 							style="float: left; width: 95%; margin-top: 10px;">
 							<p:panel id="invoiceSummary">
-								<p:panelGrid
-									rendered="#{creationInvoiceBean.entity.netToPay > 0}">
+								<p:panelGrid>
 									<f:facet name="header">
 										<p:row>
 											<p:column>#{messages['invoice.summary.totalAmountWithoutTax']}</p:column>
@@ -447,7 +446,7 @@
 									</p:row>
 								</p:panelGrid>
 								<div style="clear: both"></div>
-								<p:outputPanel style="float: left;">
+								<p:outputPanel style="float: left;" rendered="#{!creationInvoiceBean.entity.provider.isEntreprise()}">
 									<h:panelGrid columns="2">
 										<h:outputText
 											value="#{messages['invoice.includeAccountBalance']}" />
