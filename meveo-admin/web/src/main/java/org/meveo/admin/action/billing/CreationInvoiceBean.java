@@ -352,7 +352,11 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		entity.setDetailedInvoice(isDetailed());
 
 		entity.setInvoiceNumber(invoiceService.getInvoiceNumber(entity, getCurrentUser()));
-
+		if(entity.getAmountWithoutTax() == null){
+			entity.setAmountWithoutTax(BigDecimal.ZERO);
+			entity.setAmountWithTax(BigDecimal.ZERO);
+			entity.setAmountTax(BigDecimal.ZERO);
+		}
 		super.saveOrUpdate(false);
 
 		for (Entry<String, TaxInvoiceAgregate> entry : agregateHandler.getTaxInvAgregateMap().entrySet()) {
