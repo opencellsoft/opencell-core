@@ -33,7 +33,6 @@ import org.meveo.api.rest.security.RSSecured;
 public interface InvoiceRs extends IBaseRs {
 	
 	
-	
     /**
      * Search for an invoice given an invoice id or invoice number and invoice type.
      * @param id  invoice id
@@ -50,7 +49,7 @@ public interface InvoiceRs extends IBaseRs {
     /**
      * Create invoice. Invoice number depends on invoice type
      * 
-     * @param invoiceDto
+     * @param invoiceDto invoice dto
      * @return
      */
     @POST
@@ -58,7 +57,7 @@ public interface InvoiceRs extends IBaseRs {
     public CreateInvoiceResponseDto create(InvoiceDto invoiceDto);
 
     /**
-     * Search for a list of invoice given a customer account code.
+     * Search for a list of invoices given a customer account code.
      * 
      * @param customerAccountCode Customer account code
      * @return
@@ -68,8 +67,11 @@ public interface InvoiceRs extends IBaseRs {
     public CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode);
 
     /**
-     * This operation generates rated transaction given a billing account and invoicing date, updates billing account amounts and generates aggregates and invoice.
-     * 
+     * Launch all the invoicing process for a given billingAccount, that's mean
+	 * : <lu> <li>Create rated transactions <li>Create an exceptional billingRun
+	 * with given dates <li>Validate the pre-invoicing report <li>Validate the
+	 * post-invoicing report <li>Validate the BillingRun </lu>
+	 *  
      * @param generateInvoiceRequestDto Contains the code of the billing account, invoicing and last transaction date
      * @return
      */
@@ -78,7 +80,7 @@ public interface InvoiceRs extends IBaseRs {
     public GenerateInvoiceResponseDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto);
 
     /**
-     * Finds an invoice and return it as xml string
+     * Finds an invoice based on its invoice number and return it as xml string
      * 
      * @param invoiceNumber Invoice number
      * @return
@@ -88,7 +90,7 @@ public interface InvoiceRs extends IBaseRs {
     public GetXmlInvoiceResponseDto findXMLInvoice(String invoiceNumber);
 
     /**
-     * Finds an invoice and return it as xml string
+     * Finds an invoice based on invoice number and invoice type. It returns the result as xml string
      * 
      * @param invoiceNumber Invoice number
      * @param invoiceType Invoice type
@@ -99,7 +101,8 @@ public interface InvoiceRs extends IBaseRs {
     public GetXmlInvoiceResponseDto findXMLInvoiceWithType(@FormParam("invoiceNumber") String invoiceNumber, @FormParam("invoiceType") String invoiceType);
 
     /**
-     * Finds an invoice and return it as pdf as byte []. Invoice is not recreated, instead invoice stored as pdf in database is returned.
+     * Finds an invoice based on invoice number and return it as pdf as byte []. 
+     * Invoice is not recreated, instead invoice stored as pdf in database is returned.
      * 
      * @param invoiceNumber Invoice number
      * @return
@@ -109,7 +112,8 @@ public interface InvoiceRs extends IBaseRs {
     public GetPdfInvoiceResponseDto findPdfInvoice(String invoiceNumber);
 
     /**
-     * Finds an invoice and return it as pdf as byte []. Invoice is not recreated, instead invoice stored as pdf in database is returned.
+     * Finds an invoice based on invoice number and invoice type and return it as pdf as byte []. 
+     * Invoice is not recreated, instead invoice stored as pdf in database is returned.
      * 
      * @param invoiceNumber Invoice number
      * @param invoiceType Invoice type
@@ -120,9 +124,8 @@ public interface InvoiceRs extends IBaseRs {
     public GetPdfInvoiceResponseDto findPdfInvoiceWithType(@FormParam("invoiceNumber") String invoiceNumber, @FormParam("invoiceType") String invoiceType);
     
     /**
-     * 
-     * 
-     * @param invoiceId
+     * Cancel an invoice based on invoice id
+     * @param invoiceId Invoice id
      * @return
      */
     @POST
@@ -131,8 +134,8 @@ public interface InvoiceRs extends IBaseRs {
 	
     
     /**
-     * 
-     * @param invoiceId
+     * Validate an invoice based on the invoice id
+     * @param invoiceId Invoice id
      * @return
      */
     @POST

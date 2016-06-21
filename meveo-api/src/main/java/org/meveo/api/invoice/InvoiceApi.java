@@ -121,13 +121,13 @@ public class InvoiceApi extends BaseApi {
 	private ParamBean paramBean;
 	
 	/**
-	 * 
-	 * @param invoiceDTO
-	 * @param currentUser
-	 * @return
-	 * @throws MeveoApiException
-	 * @throws BusinessException
-	 * @throws Exception
+	 * Create an invoice based on the DTO object data and current user
+	 * @param invoiceDTO invoice DTO
+	 * @param currentUser current logged user
+	 * @return CreateInvoiceResponseDto
+	 * @throws MeveoApiException Meveo Api exception
+	 * @throws BusinessException Business exception
+	 * @throws Exception exception
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO, User currentUser) throws MeveoApiException, BusinessException, Exception {
@@ -366,11 +366,11 @@ public class InvoiceApi extends BaseApi {
 	}
 
 	/**
-	 * 
-	 * @param customerAccountCode
-	 * @param provider
-	 * @return
-	 * @throws MeveoApiException
+	 * list invoices based on a customer account and a provider
+	 * @param customerAccountCode customer account code
+	 * @param provider provider
+	 * @return list of invoice DTOs
+	 * @throws MeveoApiException Meveo Api exception
 	 */
 	public List<InvoiceDto> list(String customerAccountCode, Provider provider) throws MeveoApiException {
 		if (StringUtils.isBlank(customerAccountCode)) {
@@ -470,10 +470,10 @@ public class InvoiceApi extends BaseApi {
 	}
 
 	/**
-	 * 
-	 * @param billingAccount
-	 * @param billingRun
-	 * @param currentUser
+	 * Update total amounts for a billing account
+	 * @param billingAccount the billing account
+	 * @param billingRun the billing run
+	 * @param currentUser current logged user
 	 */
 	public void updateBAtotalAmount(BillingAccount billingAccount, BillingRun billingRun, User currentUser) {
 		billingAccountService.updateBillingAccountTotalAmounts(billingAccount, billingRun, currentUser);
@@ -481,10 +481,10 @@ public class InvoiceApi extends BaseApi {
 	}
 
 	/**
-	 * 
-	 * @param billingAccountId
-	 * @param currentUser
-	 * @param invoicingDate
+	 * Create a rated transaction
+	 * @param billingAccountId billing account id
+	 * @param currentUser current logged user
+	 * @param invoicingDate invoicing date
 	 * @throws Exception
 	 */
 	public void createRatedTransaction(Long billingAccountId, User currentUser, Date invoicingDate) throws Exception {
@@ -492,14 +492,14 @@ public class InvoiceApi extends BaseApi {
 	}
 
 	/**
-	 * 
-	 * @param billingRun
-	 * @param status
-	 * @param billingAccountNumber
-	 * @param billableBillingAcountNumber
-	 * @param currentUser
-	 * @return
-	 * @throws BusinessException
+	 * Update the billing run
+	 * @param billingRun billing run
+	 * @param status status of billing run
+	 * @param billingAccountNumber billing account number
+	 * @param billableBillingAcountNumber billable Billing account number
+	 * @param currentUser current logged user
+	 * @return the billing run
+	 * @throws BusinessException Business exception
 	 */
 	public BillingRun updateBR(BillingRun billingRun, BillingRunStatusEnum status, Integer billingAccountNumber, Integer billableBillingAcountNumber, User currentUser) throws BusinessException {
 		billingRun.setStatus(status);
@@ -511,11 +511,12 @@ public class InvoiceApi extends BaseApi {
 		}
 		return billingRunService.update(billingRun, currentUser);
 	}
+	
 	/**
-	 * 
-	 * @param billingRun
-	 * @param user
-	 * @throws BusinessException
+	 * Validate the Billing run
+	 * @param billingRun billing run to validate
+	 * @param user current logged user
+	 * @throws BusinessException business exception
 	 */
 	public void validateBR(BillingRun billingRun, User user) throws BusinessException {
 		billingRunService.forceValidate(billingRun.getId(), user);
