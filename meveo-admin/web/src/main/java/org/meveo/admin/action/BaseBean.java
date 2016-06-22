@@ -39,6 +39,7 @@ import javax.persistence.EntityExistsException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.seam.security.Identity;
@@ -49,18 +50,21 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IAuditable;
 import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
+import org.meveo.model.ModuleItem;
 import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.filter.Filter;
-import org.meveo.model.scripts.EntityActionScript;
+import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -126,6 +130,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @Inject
     private ProviderService providerService;
 
+    @Inject
+    private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
+
     /** Search filters. */
     protected Map<String, Object> filters = new HashMap<String, Object>();
 
@@ -145,6 +152,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     // private boolean editSaved;
 
     protected int dataTableFirstAttribute;
+
+    @Inject
+    private MeveoModuleService meveoModuleService;
+    private String partOfModules;
 
     /**
      * Request parameter. A custom back view page instead of a regular list page
@@ -256,6 +267,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             }
 
             loadMultiLanguageFields();
+            loadPartOfModules();
 
             // getPersistenceService().detach(entity);
         } else {
@@ -311,6 +323,26 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
         for (CatMessages msg : catMessagesService.getCatMessagesList(clazz.getSimpleName() + "_" + entity.getId())) {
             languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+        }
+    }
+
+    private boolean isPartOfModules() {
+        return clazz.isAnnotationPresent(ModuleItem.class);
+    }
+
+    private void loadPartOfModules() {
+        if ((entity instanceof BusinessEntity) && isPartOfModules()) {
+            BusinessEntity businessEntity = (BusinessEntity) entity;
+            String appliesTo = null;
+            if (ReflectionUtils.hasField(entity, "appliesTo")) {
+                try {
+                    appliesTo = (String) FieldUtils.readField(entity, "appliesTo", true);
+                } catch (IllegalAccessException e) {
+                    log.error("Failed to access 'appliesTo' field value", e);
+                }
+            }
+
+            partOfModules = meveoModuleService.getRelatedModulesAsString(businessEntity.getCode(), clazz.getName(), appliesTo, businessEntity.getProvider());
         }
     }
 
@@ -408,6 +440,21 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         RequestContext requestContext = RequestContext.getCurrentInstance();
         requestContext.addCallbackParam("result", result);
         return null;
+    }
+
+    /**
+     * Save method when used in popup - no return value. Sets validation to failed if saveOrUpdate method called does not return a value.
+     * 
+     * @return
+     * @throws BusinessException
+     */
+    @ActionMethod
+    public void saveOrUpdateForPopup() throws BusinessException {
+        String result = saveOrUpdate(false);
+        if (result == null) {
+            FacesContext.getCurrentInstance().validationFailed();
+        }
+        return;
     }
 
     /**
@@ -629,7 +676,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Get new instance for backing bean class.  
+     * Get new instance for backing bean class.
      * 
      * @return New instance.
      * 
@@ -684,7 +731,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void disable() {
         try {
             log.info("Disabling entity {} with id = {}", clazz.getName(), entity.getId());
-            entity = getPersistenceService().disable(entity);
+            entity = getPersistenceService().disable(entity, getCurrentUser());
             messages.info(new BundleKey("messages", "disabled.successful"));
 
         } catch (Exception t) {
@@ -702,7 +749,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void disable(Long id) {
         try {
             log.info("Disabling entity {} with id = {}", clazz.getName(), id);
-            getPersistenceService().disable(id);
+            getPersistenceService().disable(id, getCurrentUser());
             messages.info(new BundleKey("messages", "disabled.successful"));
 
         } catch (Throwable t) {
@@ -720,7 +767,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void enable() {
         try {
             log.info("Enabling entity {} with id = {}", clazz.getName(), entity.getId());
-            entity = getPersistenceService().enable(entity);
+            entity = getPersistenceService().enable(entity, getCurrentUser());
             messages.info(new BundleKey("messages", "enabled.successful"));
 
         } catch (Exception t) {
@@ -738,7 +785,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void enable(Long id) {
         try {
             log.info("Enabling entity {} with id = {}", clazz.getName(), id);
-            getPersistenceService().enable(id);
+            getPersistenceService().enable(id, getCurrentUser());
             messages.info(new BundleKey("messages", "enabled.successful"));
 
         } catch (Throwable t) {
@@ -828,6 +875,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public DataTable search() {
+        filterCustomFieldSearchBean.buildFilterParameters(filters);
         dataTable.reset();
         return dataTable;
     }
@@ -1052,14 +1100,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void runListFilter() {
         if (listFilter != null) {
             dataModel = null;
-            filters = new HashMap<String, Object>();
-
+            filters = new HashMap<>();
             filters.put("$FILTER", listFilter);
-
             listFiltered = true;
         } else {
             filters.remove("$FILTER");
         }
+    }
+
+    public boolean isListFiltered() {
+        return listFiltered;
     }
 
     public int getActiveTab() {
@@ -1089,7 +1139,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @return A list of entity action scripts
      */
-    public List<EntityActionScript> getCustomActions() {
+    public List<EntityCustomAction> getCustomActions() {
         return null;
     }
 
@@ -1128,7 +1178,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         values.remove(event.getOldValue());
         values.add(event.getNewValue());
 
-        // Unpredictable results when changing several values at a time, as Set does not guarantee same value oder - could be used only in Ajax and only with refresh
+        // Unpredictable results when changing several values at a time, as Set does not guarantee same value order - could be used only in Ajax and only with refresh
         // int itemIndex = (int) event.getComponent().getAttributes().get("itemIndex");
         // log.error("AKK changing value from {} to {} in index {} values {}", event.getOldValue(), event.getNewValue(), itemIndex, values.toArray());
         // ArrayList newValues = new ArrayList();
@@ -1189,4 +1239,26 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         }
         return writeAccessMap.get(requestURI);
     }
+
+    public String getPartOfModules() {
+        return partOfModules;
+    }
+
+    public void setPartOfModules(String partOfModules) {
+        this.partOfModules = partOfModules;
+    }
+    
+	public String getDescriptionOrCode() {
+		if (entity instanceof BusinessEntity) {
+			BusinessEntity be = (BusinessEntity) entity;
+			if (org.meveo.commons.utils.StringUtils.isBlank(be.getDescription())) {
+				return be.getCode();
+			} else {
+				return be.getDescription();
+			}
+		}
+		
+		return null;
+	}
+
 }

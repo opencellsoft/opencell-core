@@ -481,6 +481,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 		return "code";
 	}
 
+	@ActionMethod
 	public void duplicate() {
 	    
         if (entity != null && entity.getId() != null) {
@@ -539,9 +540,11 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 			try {
 				serviceTemplateService.create(entity, getCurrentUser());
                 customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
-			} catch (BusinessException e) {
-				log.error("error when duplicate service#{0}:#{1}",entity.getCode(),e);
-			}
+                messages.info(new BundleKey("messages", "save.successful"));
+            } catch (BusinessException e) {
+                log.error("Error encountered persisting service template entity: #{0}:#{1}", entity.getCode(), e);
+                messages.error(new BundleKey("messages", "save.unsuccessful"));
+            }
 		}
 		log.debug("Entity ID###" + (entity != null ? entity.getId() : "null"));
 	}

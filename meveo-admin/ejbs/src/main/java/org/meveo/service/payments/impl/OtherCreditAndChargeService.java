@@ -50,7 +50,7 @@ public class OtherCreditAndChargeService extends
 
 	public void addOCC(String codeOCCTemplate, String descToAppend,
 			CustomerAccount customerAccount, BigDecimal amount, Date dueDate,
-			User user) throws BusinessException, Exception {
+			User user) throws BusinessException {
 		log.info(
 				"addOCC  codeOCCTemplate:{}  customerAccount:{} amount:{} dueDate:{}",
 				new Object[] {

@@ -80,7 +80,6 @@ public class MediationJobBean {
 		if (file != null) {
 			
 			cdrFileName = file.getAbsolutePath();
-			result.setNbItemsToProcess(1);
 			log.info("InputFiles job {} in progress...", file.getName());
 
 			cdrFileName = file.getName();
@@ -115,7 +114,7 @@ public class MediationJobBean {
 				if (processed == 0) {
 					addReport("file is empty ");
 				}
-
+				result.setNbItemsToProcess(result.getNbItemsToProcess() + processed);
 				log.info("InputFiles job {} done.", file.getName());
 			} catch (Exception e) {
 				log.error("Failed to process CDR file {}", file.getName(), e);

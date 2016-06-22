@@ -35,9 +35,12 @@ public class CustomEntityTemplateListBean extends CustomEntityTemplateBean {
             @Override
             public List<CustomizedEntity> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> loadingFilters) {
 
-                List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities((String) filters.get("entityName"), filters.get("customEntity") != null
-                        && (boolean) filters.get("customEntity"), sortField, sortOrder != null ? sortOrder.name() : null, getCurrentProvider());
+                List<CustomizedEntity> entities = null;
+                String query = (String) filters.get("entityName");
+                boolean isCustomEntityOnly = filters.get("customEntity") != null && (boolean) filters.get("customEntity");
+                String sortBy = sortOrder != null ? sortOrder.name() : null;
 
+                entities = customizedEntityService.getCustomizedEntities(query, isCustomEntityOnly, false, sortField, sortBy, getCurrentProvider());
                 setRowCount(entities.size());
 
                 return entities.subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));

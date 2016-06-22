@@ -21,11 +21,11 @@ package org.meveo.service.crm.impl;
 import javax.ejb.Stateless;
 
 import org.meveo.model.crm.ProviderContact;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 /**
  * Provider service implementation.
  */
 @Stateless
-public class ProviderContactService extends PersistenceService<ProviderContact> {
+public class ProviderContactService extends BusinessService<ProviderContact> {
 }

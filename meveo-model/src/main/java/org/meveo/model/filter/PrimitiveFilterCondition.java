@@ -1,14 +1,13 @@
 package org.meveo.model.filter;
 
 import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-
 import org.meveo.model.BaseEntity;
 
 /**
@@ -33,6 +32,18 @@ public class PrimitiveFilterCondition extends FilterCondition {
 	@Column(name = "OPERAND", length = 255)
     @Size(max = 255)
 	private String operand;
+
+	@Transient
+	private String className;
+
+	@Transient
+	private String label;
+
+	@Transient
+	private String defaultValue;
+	
+	@Transient
+	private int index;
 
 	@Override
 	public boolean match(BaseEntity e) {
@@ -70,4 +81,35 @@ public class PrimitiveFilterCondition extends FilterCondition {
 		this.operand = operand;
 	}
 
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+	
+	public int getIndex() {
+		return index;
+	}
+	
+	public void setIndex(int index) {
+		this.index = index;
+	}
 }

@@ -52,7 +52,7 @@ public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification>
 	
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
-
+	
 	ParamBean paramBean = ParamBean.getInstance();
 
 	CsvReader csvReader = null;
@@ -66,7 +66,7 @@ public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification>
 	private static final int EVENT_TYPE_FILTER = 5;
 
 	private StrategyImportTypeEnum strategyImportType;
-
+	
 	CsvBuilder csv = null;
 	private String providerDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo_integr");
 	private String existingEntitiesCsvFile = null;
@@ -84,7 +84,6 @@ public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification>
     public ScriptNotification initEntity() {
     	ScriptNotification scriptNotification = super.initEntity();
         extractMapTypeFieldFromEntity(scriptNotification.getParams(), "params");
-
         return scriptNotification;
     }
 

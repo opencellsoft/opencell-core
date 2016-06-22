@@ -26,6 +26,7 @@ public class InvoiceConfigurationDto implements Serializable {
 	private Boolean displayPricePlans;
 	private Boolean displayDetail;
 	private Boolean displayChargesPeriods;
+	private boolean displayFreeTransacInInvoice;
 	
 	public InvoiceConfigurationDto() {}
 	
@@ -112,6 +113,13 @@ public class InvoiceConfigurationDto implements Serializable {
 	public void setDisplayChargesPeriods(Boolean displayChargesPeriods) {
 		this.displayChargesPeriods = displayChargesPeriods;
 	}
+	public boolean isDisplayFreeTransacInInvoice() {
+		return displayFreeTransacInInvoice;
+	}
+
+	public void setDisplayFreeTransacInInvoice(boolean displayFreeTransacInInvoice) {
+		this.displayFreeTransacInInvoice = displayFreeTransacInInvoice;
+	}	
 
 	@Override
 	public String toString() {
@@ -121,7 +129,7 @@ public class InvoiceConfigurationDto implements Serializable {
 				+ ", displayCfAsXML=" + displayCfAsXML
 				+ ", displayProvider=" + displayProvider
 				+ ", displayDetail=" + displayDetail 
-				+ ", displayChargesPeriods=" + displayChargesPeriods;
+				+ ", displayChargesPeriods=" + displayChargesPeriods+", displayFreeTransacInInvoice=" + displayFreeTransacInInvoice;
 	}
 	
 }

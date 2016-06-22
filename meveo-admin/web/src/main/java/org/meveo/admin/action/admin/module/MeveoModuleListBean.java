@@ -28,6 +28,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.module.ModuleApi;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.service.admin.impl.MeveoModuleService;
@@ -42,6 +43,7 @@ public class MeveoModuleListBean extends MeveoModuleBean {
 
     @Inject
     private ModuleApi moduleApi;
+
     @Inject
     private MeveoModuleService meveoModuleService;
 
@@ -81,10 +83,11 @@ public class MeveoModuleListBean extends MeveoModuleBean {
     }
 
     public void loadModulesFromInstance() {
-        log.debug("start loadModulesFromInstance");
+        log.debug("start loadModulesFromInstance {}", meveoInstance.getUrl());
         try {
             moduleDtos = new EntityListDataModelPF<ModuleDto>(new ArrayList<ModuleDto>());
             moduleDtos.addAll(meveoModuleService.downloadModulesFromMeveoInstance(meveoInstance));
+
         } catch (Exception e) {
             log.error("Error when retrieve modules from {}. Reason {}", meveoInstance.getCode(), e.getMessage(), e);
             messages.error(new BundleKey("messages", "meveoModule.retrieveRemoteMeveoInstanceException"), meveoInstance.getCode(), e.getMessage());
@@ -92,13 +95,44 @@ public class MeveoModuleListBean extends MeveoModuleBean {
         }
     }
 
-    public void installModule() {
+    public void downloadModule() {
         if (selectedModuleDto != null) {
             try {
                 moduleApi.createOrUpdate(selectedModuleDto, currentUser);
-                messages.info(new BundleKey("messages", "meveoModule.installSuccess"), selectedModuleDto.getCode());
+                messages.info(new BundleKey("messages", "meveoModule.downloadSuccess"), selectedModuleDto.getCode());
+
+            } catch (ActionForbiddenException e) {
+                if (e.getReason() != null) {
+                    messages.error(e.getReason());
+                } else {
+                    messages.error(new BundleKey("messages", "meveoModule.downloadFailed"), selectedModuleDto.getCode(),
+                        (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
+                }
+
             } catch (Exception e) {
-                log.error("Error when create meveo module {} from meveoInstance {}", selectedModuleDto.getCode(), meveoInstance.getCode(), e);
+                log.error("Failed to download meveo module {} from meveoInstance {}", selectedModuleDto.getCode(), meveoInstance.getCode(), e);
+                messages.error(new BundleKey("messages", "meveoModule.downloadFailed"), selectedModuleDto.getCode(),
+                    (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
+            }
+        }
+    }
+
+    public void downloadAndInstallModule() {
+        if (selectedModuleDto != null) {
+            try {
+                moduleApi.install(selectedModuleDto, currentUser);
+                messages.info(new BundleKey("messages", "meveoModule.installSuccess"), selectedModuleDto.getCode());
+
+            } catch (ActionForbiddenException e) {
+                if (e.getReason() != null) {
+                    messages.error(e.getReason());
+                } else {
+                    messages.error(new BundleKey("messages", "meveoModule.downloadFailed"), selectedModuleDto.getCode(),
+                        (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
+                }
+
+            } catch (Exception e) {
+                log.error("Failed to download and install meveo module {} ", selectedModuleDto.getCode(), e);
                 messages.error(new BundleKey("messages", "meveoModule.installFailed"), selectedModuleDto.getCode(),
                     (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
             }
@@ -112,8 +146,8 @@ public class MeveoModuleListBean extends MeveoModuleBean {
 
     private TreeNode getOrCreateNodeByClass(String classname) {
 
-        classname.replaceAll("Dto", "");
-        classname.replaceAll("DTO", "");
+        classname = classname.replaceAll("Dto", "");
+        classname = classname.replaceAll("DTO", "");
         for (TreeNode node : selectedModuleItems.getChildren()) {
             if (classname.equals(node.getType())) {
                 return node;

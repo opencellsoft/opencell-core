@@ -102,7 +102,6 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
         extractMapTypeFieldFromEntity(webhook.getHeaders(), "headers");
         extractMapTypeFieldFromEntity(webhook.getParams(), "params");
         extractMapTypeFieldFromEntity(webhook.getWebhookParams(), "webhookParams");
-        
         return webhook;
     }
 
@@ -361,5 +360,4 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
 	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
 		this.strategyImportType = strategyImportType;
 	}
-
 }

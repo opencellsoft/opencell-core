@@ -49,6 +49,9 @@
                 popupId="searchCounterTemplatePopup" clearButton="true" required="false" />
 
             <hftl:formField label="#{messages['enableEntity.disabled']}" allowEdit="false" doNotShowOnNew="true" field="disabled" isMessage="true" />
+            <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!emailNotificationBean.entity.transient}">
+            	<h:outputText value="#{emailNotificationBean.getPartOfModules()}" />
+            </hftl:decorateFormField>
         </hftl:formPanel>
 
 <!--         <p:panel rendered="#{not empty emailNotificationBean.entity.id}"> -->

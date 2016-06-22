@@ -12,8 +12,10 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
+import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
+import org.meveo.service.communication.impl.MeveoInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -23,6 +25,9 @@ public class TriggeredEdrApi extends BaseApi {
 
     @Inject
     private TriggeredEDRTemplateService triggeredEDRTemplateService;
+    
+    @Inject 
+    private MeveoInstanceService meveoInstanceService;
 
     public void create(TriggeredEdrTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getQuantityEl())) {
@@ -34,6 +39,13 @@ public class TriggeredEdrApi extends BaseApi {
             edrTemplate.setCode(postData.getCode());
             edrTemplate.setDescription(postData.getDescription());
             edrTemplate.setSubscriptionEl(postData.getSubscriptionEl());
+            if(postData.getMeveoInstanceCode()!=null){
+            	MeveoInstance meveoInstance=meveoInstanceService.findByCode(postData.getMeveoInstanceCode());
+            	if (meveoInstance == null) {
+                    throw new EntityDoesNotExistsException(MeveoInstance.class, postData.getMeveoInstanceCode());
+                }
+            	edrTemplate.setMeveoInstance(meveoInstance);
+            }
             edrTemplate.setConditionEl(postData.getConditionEl());
             edrTemplate.setQuantityEl(postData.getQuantityEl());
             edrTemplate.setParam1El(postData.getParam1El());
@@ -63,6 +75,13 @@ public class TriggeredEdrApi extends BaseApi {
 
             edrTemplate.setDescription(postData.getDescription());
             edrTemplate.setSubscriptionEl(postData.getSubscriptionEl());
+            if(postData.getMeveoInstanceCode()!=null){
+            	MeveoInstance meveoInstance=meveoInstanceService.findByCode(postData.getMeveoInstanceCode());
+            	if (meveoInstance == null) {
+                    throw new EntityDoesNotExistsException(MeveoInstance.class, postData.getMeveoInstanceCode());
+                }
+            	edrTemplate.setMeveoInstance(meveoInstance);
+            }
             edrTemplate.setConditionEl(postData.getConditionEl());
             edrTemplate.setQuantityEl(postData.getQuantityEl());
             edrTemplate.setParam1El(postData.getParam1El());

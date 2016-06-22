@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:hftl="http://hftl.org"
+	xmlns:f="http://java.sun.com/jsf/core" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{revenueRecognitionRuleListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hftl:searchPanel label="#{messages['revenueRecognitionRule.search']}" backingBean="#{revenueRecognitionRuleListBean}">
+			<hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:searchField label="#{messages['businessEntity.description']}" id="description" field="description" />
+		</hftl:searchPanel>
+
+		<hftl:dataList backingBean="#{revenueRecognitionRuleListBean}" label="#{messages['revenueRecognitionRule.title']}" sortBy="code">
+			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

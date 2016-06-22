@@ -150,7 +150,8 @@ public class CdrEdrProcessingCacheContainerProvider {
      * @return A list of accesses
      */
     public List<Access> getAccessesByAccessUserId(Long providerId, String accessUserId) {
-        return accessCache.get(providerId + "_" + accessUserId);
+        log.trace("lookup access {}_{}",providerId,accessUserId);
+    	return accessCache.get(providerId + "_" + accessUserId);
     }
 
     /**

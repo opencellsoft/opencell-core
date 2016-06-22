@@ -13,10 +13,14 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.parse.csv.CDR;
 import org.meveo.admin.util.NumberUtil;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
@@ -45,6 +49,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.util.MeveoJpa;
 import org.slf4j.Logger;
 
@@ -86,6 +91,10 @@ public class UsageRatingService {
     
     @Inject
     private BillingAccountService billingAccountService;
+    
+    @Inject
+	private MeveoInstanceService meveoInstanceService;
+	
 
 	// @PreDestroy
 	// accessing Entity manager in predestroy is bugged in jboss7.1.3
@@ -332,6 +341,7 @@ public class UsageRatingService {
 				for (CachedTriggeredEDR triggeredEDRCache : charge.getTemplateCache().getEdrTemplates()) {
 					if (triggeredEDRCache.getConditionEL() == null || "".equals(triggeredEDRCache.getConditionEL())
 							|| matchExpression(triggeredEDRCache.getConditionEL(), edr, walletOperation)) {
+						if(triggeredEDRCache.getMeveoInstanceCode()==null){
 						EDR newEdr = new EDR();
 						newEdr.setCreated(new Date());
 						newEdr.setEventDate(edr.getEventDate());
@@ -363,6 +373,31 @@ public class UsageRatingService {
 						newEdr.setSubscription(sub);
 						log.info("trigger EDR from code " + triggeredEDRCache.getCode());
 						edrService.create(newEdr, currentUser);
+						} else {
+							CDR cdr = new CDR();
+							String subCode = evaluateStringExpression(triggeredEDRCache.getSubscriptionEL(), edr,
+									walletOperation);
+							cdr.setAccess_id(subCode);
+							cdr.setTimestamp(edr.getEventDate());
+							cdr.setParam1(evaluateStringExpression(triggeredEDRCache.getParam1EL(), edr,
+									walletOperation));
+							cdr.setParam2(evaluateStringExpression(triggeredEDRCache.getParam2EL(), edr,
+									walletOperation));
+							cdr.setParam3(evaluateStringExpression(triggeredEDRCache.getParam3EL(), edr,
+									walletOperation));
+							cdr.setParam4(evaluateStringExpression(triggeredEDRCache.getParam4EL(), edr,
+									walletOperation));
+							cdr.setProvider(edr.getProvider());
+							cdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRCache.getQuantityEL(),
+									edr, walletOperation)));
+							String url="api/rest/billing/mediation/chargeCdr";
+							Response response = meveoInstanceService.callTextServiceMeveoInstance(url,triggeredEDRCache.getMeveoInstanceCode(),cdr.toCsv());
+							ActionStatus actionStatus = response.readEntity(ActionStatus.class);
+				            log.debug("response {}", actionStatus);
+				            if (actionStatus == null || ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
+				                throw new BusinessException("Error charging Edr on remote instance Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
+				            }							
+						}
 					}
 				}
 			}

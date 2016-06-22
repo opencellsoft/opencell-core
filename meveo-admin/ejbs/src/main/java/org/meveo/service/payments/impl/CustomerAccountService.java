@@ -351,7 +351,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		log.info("successfully update customer account with code:" + code);
 	}
 
-	public void closeCustomerAccount(CustomerAccount customerAccount, User user) throws BusinessException, Exception {
+	public void closeCustomerAccount(CustomerAccount customerAccount, User user) throws BusinessException {
 		log.info("closeCustomerAccount customerAccount:"
 				+ (customerAccount == null ? "null" : customerAccount.getCode()) + " user:"
 				+ (user != null ? user.getUserName() : "NULL"));
@@ -391,8 +391,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 			log.info("closeCustomerAccount customerAccountCode:" + customerAccount.getCode() + " closed successfully");
 		} catch (BusinessException be) {
 			throw be;
-		} catch (Exception e) {
-			throw e;
 		}
 	}
 

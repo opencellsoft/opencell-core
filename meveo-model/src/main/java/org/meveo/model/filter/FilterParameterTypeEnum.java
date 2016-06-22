@@ -1,42 +1,39 @@
 package org.meveo.model.filter;
 
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+
 /**
  * @author Edward P. Legaspi
  **/
 public enum FilterParameterTypeEnum {
 
-	STRING(1, "filterParameterTypeEnum.string"), 
-	DATE(2, "filterParameterTypeEnum.date"), 
-	LONG(3, "filterParameterTypeEnum.long"), 
-	DOUBLE(4, "filterParameterTypeEnum.double"), 
-	LIST(5, "filterParameterTypeEnum.list");
+	BIG_DECIMAL("cfDecimal", CustomFieldTypeEnum.DOUBLE),
+	BOOLEAN("cfBoolean", CustomFieldTypeEnum.LIST),
+	DATE("cfDate", CustomFieldTypeEnum.DATE),
+	ENTITY("cfEntity", CustomFieldTypeEnum.ENTITY),
+	ENUM("cfEnum", CustomFieldTypeEnum.LIST),
+	INTEGER("cfInteger", CustomFieldTypeEnum.LONG),
+	LONG("cfLong", CustomFieldTypeEnum.LONG),
+	STRING("cfString", CustomFieldTypeEnum.STRING);
 
-	private Integer id;
-	private String label;
+	private String prefix;
+	private CustomFieldTypeEnum fieldType;
 
-	FilterParameterTypeEnum(Integer id, String label) {
-		this.id = id;
-		this.label = label;
+	private FilterParameterTypeEnum(String prefix, CustomFieldTypeEnum fieldType){
+		this.prefix = prefix;
+		this.fieldType = fieldType;
 	}
 
-	public Integer getId() {
-		return id;
+	public String getPrefix() {
+		return prefix;
 	}
 
-	public String getLabel() {
-		return this.label;
+	public CustomFieldTypeEnum getFieldType() {
+		return fieldType;
 	}
 
-	public static FilterParameterTypeEnum getValue(Integer id) {
-		if (id != null) {
-			for (FilterParameterTypeEnum type : values()) {
-				if (id.equals(type.getId())) {
-					return type;
-				}
-			}
-		}
-
-		return null;
+	public boolean matchesPrefixOf(String prefix){
+		return prefix != null && prefix.startsWith(this.prefix);
 	}
 
 }

@@ -25,13 +25,11 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.admin.exception.InvalidScriptException;
-import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.CustomScript;
@@ -42,36 +40,6 @@ import org.meveo.model.security.Role;
 @Singleton
 @Startup
 public class ScriptInstanceService extends CustomScriptService<ScriptInstance, ScriptInterface> {
-
-    @Inject
-    private ResourceBundle resourceMessages;
-
-    @Override
-    public void create(ScriptInstance scriptInstance, User creator) throws BusinessException {
-       
-        String className = getClassName(scriptInstance.getScript());
-        if (className == null) {
-            throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
-        }
-        scriptInstance.setCode(getFullClassname(scriptInstance.getScript()));
-
-        super.create(scriptInstance, creator);
-
-    }
-
-    @Override
-    public ScriptInstance update(ScriptInstance scriptInstance, User updater) throws BusinessException {
-
-        String className = getClassName(scriptInstance.getScript());
-        if (className == null) {
-            throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
-        }
-        scriptInstance.setCode(getFullClassname(scriptInstance.getScript()));
-
-        scriptInstance = super.update(scriptInstance, updater);
-
-        return scriptInstance;
-    }
 
     /**
      * Get all ScriptInstances with error for a provider

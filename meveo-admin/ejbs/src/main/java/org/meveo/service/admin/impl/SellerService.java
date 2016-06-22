@@ -21,17 +21,25 @@ package org.meveo.service.admin.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.admin.User;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 
 @Stateless
 public class SellerService extends PersistenceService<Seller> {
+	
+	@Inject
+	private InvoiceTypeService invoiceTypeService;
 
 	public Seller findByCode(String code, Provider provider) {
 		return findByCode(code, provider, null);
@@ -77,5 +85,14 @@ public class SellerService extends PersistenceService<Seller> {
 			return false;
 		}
 	}
-
+	
+	@Override
+    public void create(Seller seller,User creator) throws BusinessException{
+        log.info("start of create seller");
+        super.create(seller, creator);
+        InvoiceType commType = invoiceTypeService.getDefaultCommertial(creator);
+        log.debug("InvoiceTypeCode for commercial bill :"+(commType==null?null:commType.getCode()));
+        InvoiceType adjType = invoiceTypeService.getDefaultAdjustement(creator);
+        log.debug("InvoiceTypeCode for adjustement bill :"+(adjType==null?null:adjType.getCode()));
+    }
 }

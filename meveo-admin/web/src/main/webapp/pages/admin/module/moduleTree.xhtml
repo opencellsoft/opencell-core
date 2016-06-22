@@ -1,77 +1,60 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:s="http://jboss.org/seam/faces"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:o="http://omnifaces.org/ui"
-	xmlns:of="http://omnifaces.org/functions" xmlns:hftl="http://hftl.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui"
+    xmlns:of="http://omnifaces.org/functions" xmlns:hftl="http://hftl.org">
 
 <ui:composition>
 
-	<hftl:decorateFormField label="#{messages['meveoModule.items']}"
-		componentWidth="100" displayOneLine="false" newLine="true">
-		<p:treeTable id="moduleItems" lazy="false" value="#{backingBean.root}"
-			var="item" nodeVar="node" reflow="false" resizableColumns="true"
-			rowIndexVar="rowIndex">
-			<p:column headerText="#{messages['businessEntity.code']}">
-				<h:outputText value="#{node.data}" styleClass="field-value"
-					rendered="#{node.type ne 'item'}" />
-				<h:outputText value="#{item.itemEntity.code}"
-					rendered="#{node.type eq 'item'}" />
-			</p:column>
-			<p:column headerText="#{messages['businessEntity.description']}">
-				<h:outputText value="#{item.itemEntity.description}"
-					rendered="#{node.type eq 'item'}" />
-			</p:column>
-			<p:column headerText="#{messages['meveoModuleItem.appliesTo']}">
-				<h:outputText value="#{item.appliesTo}"
-					converter="customFieldAppliesToConverter"
-					rendered="#{node.type eq 'item'}" />
-			</p:column>
-			<p:column headerText="#{messages['commons.actions']}">
-				<p:commandButton icon="ui-icon-minus" partialSubmit="true"
-					process="@this" update="moduleItems"
-					action="#{backingBean.removeTreeNode(node)}"
-					rendered="#{node.type eq 'item'}" />
-			</p:column>
-			<f:facet name="footer" layout="block">
-				<p:commandButton value="#{messages['meveoModuleItem.addCE']}"
-					partialSubmit="true" process="@this"
-					oncomplete="PF('dlg_searchCustomEntity').show()" />
-				<p:commandButton value="#{messages['meveoModuleItem.addCF']}"
-					partialSubmit="true" process="@this"
-					oncomplete="PF('dlg_searchCustomField').show()" />
-				<p:commandButton value="#{messages['meveoModuleItem.addFilter']}"
-					partialSubmit="true" process="@this"
-					oncomplete="PF('dlg_searchFilter').show()" />
-				<p:commandButton value="#{messages['meveoModuleItem.addJob']}"
-					partialSubmit="true" process="@this"
-					oncomplete="PF('dlg_searchJob').show()" />
-				<p:commandButton value="#{messages['meveoModuleItem.addScript']}"
-					partialSubmit="true" process="@this"
-					oncomplete="PF('dlg_searchScript').show()" />
-				<p:commandButton
-					value="#{messages['meveoModuleItem.addNotification']}"
-					partialSubmit="true" process="@this"
-					oncomplete="PF('dlg_searchNotification').show()" />
-				<p:commandButton value="#{messages['meveoModuleItem.addSubModule']}"
-					partialSubmit="true" process="@this"
-					oncomplete="PF('dlg_searchSubModules').show()" />
-				<p:commandButton
-					value="#{messages['meveoModuleItem.addMeasurableQuantity']}"
-					partialSubmit="true" process="@this"
-					oncomplete="PF('dlg_searchMeasurableQuantities').show()" />
-				<p:commandButton value="#{messages['meveoModuleItem.addChart']}"
-					partialSubmit="true" process="@this"
-					oncomplete="PF('dlg_searchCharts').show()" />
-			</f:facet>
-		</p:treeTable>
-	</hftl:decorateFormField>
+    <o:importFunctions type="org.meveo.commons.utils.ReflectionUtils" var="ref" />
+
+    <hftl:decorateFormField label="#{messages['meveoModule.items']}" componentWidth="100" displayOneLine="false" newLine="true">
+        <p:treeTable id="moduleItems" lazy="false" value="#{backingBean.root}" var="item" nodeVar="node" reflow="false" resizableColumns="true" rowIndexVar="rowIndex"
+            rendered="#{!backingBean.entity.downloaded}">
+            <p:column headerText="#{messages['businessEntity.code']}">
+                <h:outputText value="#{node.data}" styleClass="field-value" rendered="#{node.type ne 'item'}" />
+                <h:outputText value="#{item.itemEntity.code}" rendered="#{node.type eq 'item'}" />
+            </p:column>
+            <p:column headerText="#{messages['businessEntity.description']}">
+                <h:outputText value="#{item.itemEntity.description}" rendered="#{node.type eq 'item'}" />
+            </p:column>
+            <p:column headerText="#{messages['meveoModuleItem.appliesTo']}">
+                <h:outputText value="#{item.appliesTo}" converter="customFieldAppliesToConverter" rendered="#{node.type eq 'item'}" />
+            </p:column>
+            <p:column headerText="#{messages['commons.actions']}">
+                <p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this" update="moduleItems" action="#{backingBean.removeTreeNode(node)}"
+                    rendered="#{node.type eq 'item'}" />
+            </p:column>
+            <f:facet name="footer" layout="block">
+                <p:commandButton value="#{messages['meveoModuleItem.addCE']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchCustomEntity').show()" />
+                <p:commandButton value="#{messages['meveoModuleItem.addCF']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchCustomField').show()" />
+                <p:commandButton value="#{messages['meveoModuleItem.addFilter']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchFilter').show()" />
+                <p:commandButton value="#{messages['meveoModuleItem.addJob']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchJob').show()" />
+                <p:commandButton value="#{messages['meveoModuleItem.addScript']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchScript').show()" />
+                <p:commandButton value="#{messages['meveoModuleItem.addNotification']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchNotification').show()" />
+                <p:commandButton value="#{messages['meveoModuleItem.addSubModule']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchSubModules').show()" />
+                <p:commandButton value="#{messages['meveoModuleItem.addMeasurableQuantity']}" partialSubmit="true" process="@this"
+                    oncomplete="PF('dlg_searchMeasurableQuantities').show()" />
+                <p:commandButton value="#{messages['meveoModuleItem.addChart']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchCharts').show()" />
+            </f:facet>
+        </p:treeTable>
+
+        <p:treeTable id="moduleItemsDto" lazy="false" value="#{backingBean.root}" var="item" nodeVar="node" reflow="false" resizableColumns="true" rowIndexVar="rowIndex"
+            rendered="#{backingBean.entity.downloaded}">
+            <p:column headerText="#{messages['businessEntity.code']}">
+                <h:outputText value="#{node.data}" styleClass="field-value" rendered="#{node.type ne 'item'}" />
+                <h:outputText value="#{item.code}" rendered="#{node.type eq 'item'}" />
+            </p:column>
+            <p:column headerText="#{messages['businessEntity.description']}">
+                <h:outputText value="#{item.description}" rendered="#{node.type eq 'item' and ref:hasField(item, 'description')}" />
+            </p:column>
+            <p:column headerText="#{messages['meveoModuleItem.appliesTo']}">
+                <h:outputText value="#{item.appliesTo}" converter="customFieldAppliesToConverter" rendered="#{node.type eq 'item' and ref:hasField(item, 'appliesTo')}" />
+            </p:column>
+        </p:treeTable>
+
+    </hftl:decorateFormField>
 
 </ui:composition>
 

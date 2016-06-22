@@ -19,11 +19,14 @@
             <hftl:formField label="#{messages['role.name']}" field="name" required="true" />
             <hftl:formField label="#{messages['role.description']}" field="description" size="50" maxlength="50" />
             <hftl:formField label="#{messages['commons.provider']}" field="provider" listBean="#{providerBean}" valueLabelField="code" required="true" allowEdit="false"
+                actionListenerBean="#{userRoleBean}" actionListenerMethod="onProviderChange" listenerUpdate="providerDependentInfo"
                 rendered="#{identity.hasPermission('superAdmin', 'superAdminManagement')}" />
-            <hftl:formField label="#{messages['role.roles']}" field="roles" listType="pickUpList" dualListModel="#{userRoleBean.roleListModel}" valueLabelField="name"
-                styleClass="clearLeft" />
-            <hftl:formField label="#{messages['role.permission']}" field="permissions" listType="pickUpList" dualListModel="#{userRoleBean.permissionListModel}"
-                valueLabelField="name" />
+            <h:panelGroup id="providerDependentInfo">
+                <hftl:formField label="#{messages['role.roles']}" field="roles" listType="pickUpList" dualListModel="#{userRoleBean.roleListModel}" valueLabelField="name"
+                    styleClass="clearLeft" />
+                <hftl:formField label="#{messages['role.permission']}" field="permissions" listType="pickUpList" dualListModel="#{userRoleBean.permissionListModel}"
+                    valueLabelField="name" />
+            </h:panelGroup>
         </hftl:formPanel>
     </ui:define>
 </ui:composition>

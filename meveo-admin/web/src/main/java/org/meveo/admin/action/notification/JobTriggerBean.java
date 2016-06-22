@@ -91,7 +91,6 @@ public class JobTriggerBean extends UpdateMapTypeFieldBean<JobTrigger> {
     	JobTrigger jobTrigger = super.initEntity();
         extractMapTypeFieldFromEntity(jobTrigger.getJobParams(), "jobParams");
         extractMapTypeFieldFromEntity(jobTrigger.getParams(), "params");
-
         return jobTrigger;
     }
 

@@ -33,6 +33,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
@@ -42,10 +43,9 @@ import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
+import org.meveo.service.finance.RevenueRecognitionRuleService;
 
-/**
- * @author Edward P. Legaspi
- **/
+
 @Stateless
 public class OneShotChargeTemplateApi extends BaseApi {
 
@@ -75,6 +75,9 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
     @Inject
     private TriggeredEDRTemplateService triggeredEDRTemplateService;
+
+    @Inject
+    private RevenueRecognitionRuleService revenueRecognitionRuleService;
 
     public void create(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -139,7 +142,12 @@ public class OneShotChargeTemplateApi extends BaseApi {
         } else {
             chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
         }
-
+        
+        if(postData.getRevenueRecognitionRuleCode()!=null){
+        	RevenueRecognitionRule revenueRecognitionScript = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode(), provider);
+        	chargeTemplate.setRevenueRecognitionRule(revenueRecognitionScript);
+        }
+        
         if (postData.getTriggeredEdrs() != null) {
             List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
 
@@ -250,6 +258,11 @@ public class OneShotChargeTemplateApi extends BaseApi {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
             chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
+        }
+        
+        if(postData.getRevenueRecognitionRuleCode()!=null){
+        	RevenueRecognitionRule revenueRecognitionScript = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode(), provider);
+        	chargeTemplate.setRevenueRecognitionRule(revenueRecognitionScript);
         }
 
         if (postData.getTriggeredEdrs() != null) {

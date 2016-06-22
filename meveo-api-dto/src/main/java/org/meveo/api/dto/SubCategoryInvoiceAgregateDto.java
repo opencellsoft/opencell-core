@@ -25,6 +25,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -47,10 +49,13 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
 	private BigDecimal amountWithoutTax;
 	private BigDecimal amountTax;
 	private BigDecimal amountWithTax;
+	
+    @XmlElement(required = true)
 	private String invoiceSubCategoryCode;
 	private List<String> taxesCodes=new ArrayList<String>();
 	private String userAccountCode;
-	
+	@XmlElementWrapper
+    @XmlElement(name="ratedTransaction")
 	private List<RatedTransactionDto> ratedTransactions = new ArrayList<RatedTransactionDto>();
 
 	public Integer getItemNumber() {

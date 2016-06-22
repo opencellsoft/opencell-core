@@ -39,7 +39,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     @Inject
     private CustomFieldDataEntryBean customFieldDataEntryBean;
-
+    
     public JobInstanceBean() {
         super(JobInstance.class);
     }

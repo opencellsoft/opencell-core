@@ -32,15 +32,15 @@
                 </h:graphicImage>
             </p:column>
             <hftl:column label="#{messages['meveoModule.license']}" field="license.label" isMessage="true" />
-            <hftl:column label="#{messages['enableEntity.active']}" isMessage="true" field="active" />
-            <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" renderEnableLink="true">
-            </hftl:actionsColumn>
+            <p:column headerText="#{messages['commons.status']}">
+                <h:outputText value="#{messages[!entity.installed?'meveoModule.downloaded':entity.active?'meveoModule.installedAndEnabled':'meveoModule.installedAndDisabled']}"
+                    rendered="#{entity.downloaded}" />
+                <h:outputText value="#{messages[entity.active?'enableEntity.active':'enableEntity.disabled']}" rendered="#{!entity.downloaded}" />
+            </p:column>
+            <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" renderEnableLink="false" />
             <ui:define name="add-on-buttons">
-                <p:commandButton id="installMeveoModuleButton" 
-                	rendered="#{meveoModuleListBean.canUserUpdateEntity()}"
-                	value="#{messages['meveoModule.installModule']}" 
-                	update=":#{p:component('meveoModulesDialog')}"
-                    oncomplete="PF('meveoModulesDialog').show()">
+                <p:commandButton id="downloadMeveoModuleButton" rendered="#{meveoModuleListBean.canUserUpdateEntity()}" value="#{messages['meveoModule.downloadAndInstallModules']}"
+                    update=":#{p:component('meveoModulesDialog')}" oncomplete="PF('meveoModulesDialog').show()">
                 </p:commandButton>
             </ui:define>
         </hftl:dataList>
@@ -61,7 +61,7 @@
                             selection="#{meveoModuleListBean.selectedModuleDto}"
                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                             rowsPerPageTemplate="10,20,30,50" styleClass="custom-grid" resizableColumns="true">
-                            <p:column headerText="#{messages['businessEntity.code']}" sortBy="#{module.code}">                               
+                            <p:column headerText="#{messages['businessEntity.code']}" sortBy="#{module.code}">
                                 <p:commandLink value="#{module.code}" update=":#{p:component('meveoModuleDialog')}"
                                     oncomplete="PF('meveoModulesDialog').hide();PF('meveoModuleDialog').show()">
                                     <f:setPropertyActionListener value="#{module}" target="#{meveoModuleListBean.selectedModuleDto}" />
@@ -84,13 +84,13 @@
                 <ui:define name="fields">
 
                     <hftl:decorateFormField label="#{messages['businessEntity.code']}" componentWidth="25">
-                        <h:outputText value="#{meveoModuleListBean.selectedModuleDto.code}" />
+                        <h:outputText value="#{meveoModuleListBean.selectedModuleDto.code}" styleClass="field-value" />
                     </hftl:decorateFormField>
                     <hftl:decorateFormField label="#{messages['businessEntity.description']}" componentWidth="50">
-                        <h:outputText value="#{meveoModuleListBean.selectedModuleDto.description}" />
+                        <h:outputText value="#{meveoModuleListBean.selectedModuleDto.description}" styleClass="field-value" />
                     </hftl:decorateFormField>
                     <hftl:decorateFormField label="#{messages['meveoModule.license']}" componentWidth="25">
-                        <h:outputText value="#{messages[meveoModuleListBean.selectedModuleDto.license.label]}" />
+                        <h:outputText value="#{messages[meveoModuleListBean.selectedModuleDto.license.label]}" styleClass="field-value" />
                     </hftl:decorateFormField>
 
                     <hftl:decorateFormField label="#{messages['meveoModule.items']}" componentWidth="100" displayOneLine="false" newLine="true">
@@ -104,16 +104,20 @@
                                 <h:outputText value="#{item.description}" rendered="#{node.type eq 'item' and ref:hasField(item, 'description')}" />
                             </p:column>
                             <p:column headerText="#{messages['meveoModuleItem.appliesTo']}">
-                                <h:outputText value="#{item.appliesTo}" converter="customFieldAppliesToConverter" rendered="#{node.type eq 'item' and ref:hasField(item, 'appliesTo')}" />
+                                <h:outputText value="#{item.appliesTo}" converter="customFieldAppliesToConverter"
+                                    rendered="#{node.type eq 'item' and ref:hasField(item, 'appliesTo')}" />
                             </p:column>
                         </p:treeTable>
                     </hftl:decorateFormField>
                 </ui:define>
                 <ui:define name="buttons">
-                    <p:commandButton id="confirmOk" value="#{messages['meveoModule.install']}" 
-                    	rendered="#{meveoModuleListBean.canUserUpdateEntity()}"
-                    	oncomplete="PF('meveoModuleDialog').hide();PF('meveoModulesDialog').show()" process="@this"
-                        action="#{meveoModuleListBean.installModule}" update="@this :#{p:component('meveoModulesDialog')}">
+                    <p:commandButton id="download" value="#{messages['meveoModule.download']}" rendered="#{meveoModuleListBean.canUserUpdateEntity()}"
+                        oncomplete="PF('meveoModuleDialog').hide();PF('meveoModulesDialog').show()" process="@this" action="#{meveoModuleListBean.downloadModule}"
+                        update="@this :#{p:component('meveoModulesDialog')}">
+                    </p:commandButton>
+                    <p:commandButton id="downloadAndInstall" value="#{messages['meveoModule.downloadAndInstall']}" rendered="#{meveoModuleListBean.canUserUpdateEntity()}"
+                        oncomplete="PF('meveoModuleDialog').hide();PF('meveoModulesDialog').show()" process="@this" action="#{meveoModuleListBean.downloadAndInstallModule}"
+                        update="@this :#{p:component('meveoModulesDialog')}">
                     </p:commandButton>
                     <p:commandButton id="confirmKo" value="#{messages['action.cancel']}" onclick="PF('meveoModuleDialog').hide();PF('meveoModulesDialog').show()" type="button" />
                 </ui:define>

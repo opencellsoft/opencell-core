@@ -18,7 +18,9 @@
  */
 package org.meveo.service.admin.impl;
 
+import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -29,9 +31,9 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.apache.commons.lang3.StringUtils;
@@ -43,11 +45,11 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.ScriptInstanceDto;
+import org.meveo.api.dto.account.BusinessAccountModelDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
@@ -65,17 +67,18 @@ import org.meveo.api.dto.notification.JobTriggerDto;
 import org.meveo.api.dto.notification.NotificationDto;
 import org.meveo.api.dto.notification.WebhookNotificationDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
-import org.meveo.api.dto.script.OfferModelScriptDto;
-import org.meveo.api.dto.script.ServiceModelScriptDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
+import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.communication.MeveoInstance;
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobInstance;
@@ -87,16 +90,32 @@ import org.meveo.model.notification.JobTrigger;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.ScriptNotification;
 import org.meveo.model.notification.WebHook;
-import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.CounterTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.script.EntityActionScriptService;
+import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.service.custom.EntityCustomActionService;
+import org.meveo.service.filter.FilterService;
+import org.meveo.service.job.JobInstanceService;
+import org.meveo.service.job.TimerEntityService;
+import org.meveo.service.notification.EmailNotificationService;
+import org.meveo.service.notification.JobTriggerService;
+import org.meveo.service.notification.NotificationService;
+import org.meveo.service.notification.WebHookService;
+import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.module.ModuleScriptService;
 import org.meveocrm.model.dwh.BarChart;
+import org.meveocrm.model.dwh.Chart;
 import org.meveocrm.model.dwh.LineChart;
 import org.meveocrm.model.dwh.MeasurableQuantity;
 import org.meveocrm.model.dwh.PieChart;
+import org.meveocrm.services.dwh.ChartService;
+import org.meveocrm.services.dwh.MeasurableQuantityService;
 
 @Stateless
 public class MeveoModuleService extends BusinessService<MeveoModule> {
@@ -108,8 +127,58 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
     protected EntityToDtoConverter entityToDtoConverter;
 
     @Inject
-    private EntityActionScriptService entityActionScriptService;
+    private EntityCustomActionService entityActionScriptService;
 
+    @Inject
+    private ModuleScriptService moduleScriptService;
+
+    @Inject
+    private CustomEntityTemplateService customEntityTemplateService;
+
+    @Inject
+    private FilterService filterService;
+
+    @Inject
+    private TimerEntityService timerEntityService;
+
+    @Inject
+    private JobInstanceService jobInstanceService;
+
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
+
+    @Inject
+    private EmailNotificationService emailNotificationService;
+
+    @Inject
+    private JobTriggerService jobTriggerService;
+
+    @Inject
+    private WebHookService webhookNotificationService;
+
+    @Inject
+    private NotificationService scriptNotificationService;
+
+    @Inject
+    private MeasurableQuantityService measurableQuantityService;
+
+    @SuppressWarnings("rawtypes")
+    @Inject
+    private ChartService chartService;
+
+    @SuppressWarnings("rawtypes")
+    @Inject
+    private CounterTemplateService counterTemplateService;
+
+    @Inject
+    private ServiceTemplateService serviceTemplateService;
+
+    @Inject
+    private OfferTemplateService offerTemplateService;
+
+    @Inject
+    private MeveoInstanceService meveoInstanceService;
+    
     /**
      * import module from remote meveo instance
      * 
@@ -174,9 +243,11 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         final String url = "api/rest/module/createOrUpdate";
 
         try {
+
+            module = refreshOrRetrieve(module);
             ModuleDto moduleDto = moduleToDto(module, currentUser.getProvider());
             log.debug("export module dto {}", moduleDto);
-            Response response = publishDto2MeveoInstance(url, meveoInstance, moduleDto);
+            Response response = meveoInstanceService.publishDto2MeveoInstance(url, meveoInstance, moduleDto);
             ActionStatus actionStatus = response.readEntity(ActionStatus.class);
             log.debug("response {}", actionStatus);
             if (actionStatus == null || ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
@@ -196,13 +267,24 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
      * @param provider Provider
      * @return MeveoModuleDto object
      */
-    public ModuleDto moduleToDto(MeveoModule module, Provider provider) {
+    public ModuleDto moduleToDto(MeveoModule module, Provider provider) throws BusinessException {
+
+        if (module.isDownloaded() && !module.isInstalled()) {
+            try {
+                return MeveoModuleService.moduleSourceToDto(module);
+            } catch (Exception e) {
+                log.error("Failed to load module source {}", module.getCode(), e);
+                throw new BusinessException("Failed to load module source", e);
+            }
+        }
 
         Class<? extends ModuleDto> dtoClass = ModuleDto.class;
         if (module instanceof BusinessServiceModel) {
             dtoClass = BusinessServiceModelDto.class;
         } else if (module instanceof BusinessOfferModel) {
             dtoClass = BusinessOfferModelDto.class;
+        } else if (module instanceof BusinessAccountModel) {
+            dtoClass = BusinessAccountModelDto.class;
         }
 
         ModuleDto moduleDto = null;
@@ -220,6 +302,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
                 log.error("Failed to read module files {}, info {}", module.getLogoPicture(), e.getMessage(), e);
             }
         }
+
         List<MeveoModuleItem> moduleItems = module.getModuleItems();
         if (moduleItems != null) {
             for (MeveoModuleItem item : moduleItems) {
@@ -231,7 +314,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
                 if (item.getItemEntity() instanceof CustomEntityTemplate) {
                     CustomEntityTemplate customEntityTemplate = (CustomEntityTemplate) item.getItemEntity();
                     Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(customEntityTemplate.getAppliesTo(), module.getProvider());
-                    Map<String, EntityActionScript> customActions = entityActionScriptService.findByAppliesTo(customEntityTemplate.getAppliesTo(), module.getProvider());
+                    Map<String, EntityCustomAction> customActions = entityActionScriptService.findByAppliesTo(customEntityTemplate.getAppliesTo(), module.getProvider());
 
                     CustomEntityTemplateDto dto = CustomEntityTemplateDto.toDTO(customEntityTemplate, customFieldTemplates != null ? customFieldTemplates.values() : null,
                         customActions != null ? customActions.values() : null);
@@ -292,13 +375,16 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
                 }
             }
         }
-        
+
         // Finish converting subclasses of MeveoModule class
         if (module instanceof BusinessServiceModel) {
             businessServiceModelToDto((BusinessServiceModel) module, (BusinessServiceModelDto) moduleDto, provider);
 
         } else if (module instanceof BusinessOfferModel) {
             businessOfferModelToDto((BusinessOfferModel) module, (BusinessOfferModelDto) moduleDto, provider);
+
+        } else if (module instanceof BusinessAccountModel) {
+            businessAccountModelToDto((BusinessAccountModel) module, (BusinessAccountModelDto) moduleDto, provider);
         }
 
         return moduleDto;
@@ -342,9 +428,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         if (bom.getOfferTemplate() != null) {
             dto.setOfferTemplate(new OfferTemplateDto(bom.getOfferTemplate(), entityToDtoConverter.getCustomFieldsDTO(bom.getOfferTemplate())));
         }
-        if (bom.getScript() != null) {
-            dto.setScript(new OfferModelScriptDto(bom.getScript()));
-        }
+
     }
 
     /**
@@ -359,53 +443,30 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         if (bsm.getServiceTemplate() != null) {
             dto.setServiceTemplate(new ServiceTemplateDto(bsm.getServiceTemplate(), entityToDtoConverter.getCustomFieldsDTO(bsm.getServiceTemplate())));
         }
-        if (bsm.getScript() != null) {
-            dto.setScript(new ServiceModelScriptDto(bsm.getScript()));
-        }
         dto.setDuplicateService(bsm.isDuplicateService());
         dto.setDuplicatePricePlan(bsm.isDuplicatePricePlan());
 
     }
 
     /**
-     * export module dto to remote meveo instance
+     * Convert BusinessAccountModel object to DTO representation
      * 
-     * @param url
-     * @param meveoInstance
-     * @param dto
-     * @return
-     * @throws MeveoApiException
+     * @param bom BusinessAccountModel object to convert
+     * @param dto BusinessAccountModel object DTO representation (as result of base MeveoModule object conversion)
+     * @param provider Provider
+     * @return BusinessAccountModel object DTO representation
      */
-    private Response publishDto2MeveoInstance(String url, MeveoInstance meveoInstance, BaseDto dto) throws BusinessException {
-        String baseurl = meveoInstance.getUrl().endsWith("/") ? meveoInstance.getUrl() : meveoInstance.getUrl() + "/";
-        String username = meveoInstance.getAuthUsername() != null ? meveoInstance.getAuthUsername() : "";
-        String password = meveoInstance.getAuthPassword() != null ? meveoInstance.getAuthPassword() : "";
-        try {
-            ResteasyClient client = new ResteasyClientBuilder().build();
-            ResteasyWebTarget target = client.target(baseurl + url);
-            BasicAuthentication basicAuthentication = new BasicAuthentication(username, password);
-            target.register(basicAuthentication);
+    private void businessAccountModelToDto(BusinessAccountModel bom, BusinessAccountModelDto dto, Provider provider) {
 
-            Response response = target.request().post(Entity.entity(dto, MediaType.APPLICATION_XML));
-            if (response.getStatus() != HttpURLConnection.HTTP_OK) {
-                if (response.getStatus() == HttpURLConnection.HTTP_UNAUTHORIZED || response.getStatus() == HttpURLConnection.HTTP_FORBIDDEN) {
-                    throw new RemoteAuthenticationException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
-                } else {
-                    throw new BusinessException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
-                }
-            }
-            return response;
-        } catch (Exception e) {
-            log.error("Failed to communicate {}. Reason {}", meveoInstance.getCode(), (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
-            throw new BusinessException("Failed to communicate " + meveoInstance.getCode() + ". Error " + e.getMessage());
-        }
+        dto.setHierarchyType(bom.getHierarchyType());
     }
 
+ 
     public void loadModuleItem(MeveoModuleItem item, Provider provider) {
 
         BusinessEntity entity = null;
         if (CustomFieldTemplate.class.getName().equals(item.getItemClass())) {
-            entity = customFieldTemplateService.findByCode(item.getItemCode(), provider);
+            entity = customFieldTemplateService.findByCodeAndAppliesTo(item.getItemCode(), item.getAppliesTo(), provider);
 
         } else {
 
@@ -439,5 +500,368 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    public static ModuleDto moduleSourceToDto(MeveoModule module) throws JAXBException {
+        Class<? extends ModuleDto> dtoClass = ModuleDto.class;
+        if (module instanceof BusinessServiceModel) {
+            dtoClass = BusinessServiceModelDto.class;
+        } else if (module instanceof BusinessOfferModel) {
+            dtoClass = BusinessOfferModelDto.class;
+        } else if (module instanceof BusinessAccountModel) {
+            dtoClass = BusinessAccountModelDto.class;
+        }
+
+        ModuleDto moduleDto = (ModuleDto) JAXBContext.newInstance(dtoClass).createUnmarshaller().unmarshal(new StringReader(module.getModuleSource()));
+
+        return moduleDto;
+    }
+
+    public MeveoModule uninstall(MeveoModule module, User currentUser) throws BusinessException {
+        return uninstall(module, currentUser, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    private MeveoModule uninstall(MeveoModule module, User currentUser, boolean childModule) throws BusinessException {
+
+        if (!module.isInstalled()) {
+            throw new BusinessException("Module is not installed");
+        }
+
+        if (module.getScript() != null) {
+            moduleScriptService.preUninstallModule(module.getScript().getCode(), module, currentUser);
+        }
+
+        if (module instanceof BusinessServiceModel) {
+            serviceTemplateService.disable(((BusinessServiceModel) module).getServiceTemplate(), currentUser);
+        } else if (module instanceof BusinessOfferModel) {
+            offerTemplateService.disable(((BusinessOfferModel) module).getOfferTemplate(), currentUser);
+        }
+
+        for (MeveoModuleItem item : module.getModuleItems()) {
+            loadModuleItem(item, currentUser.getProvider());
+            Object itemEntity = item.getItemEntity();
+            if (itemEntity == null) {
+                continue;
+            }
+
+            if (itemEntity instanceof CustomEntityTemplate) {
+                // try {
+                // customEntityTemplateService.remove((CustomEntityTemplate) itemEntity);
+                // } catch (Exception e) {
+                customEntityTemplateService.disable((CustomEntityTemplate) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof CustomFieldTemplate) {
+                // try {
+                // customFieldTemplateService.remove((CustomFieldTemplate) itemEntity);
+                // } catch (Exception e) {
+                customFieldTemplateService.disable((CustomFieldTemplate) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof Filter) {
+                // try {
+                // filterService.remove((Filter) itemEntity);
+                // } catch (Exception e) {
+                filterService.disable((Filter) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof TimerEntity) {
+                // try {
+                // timerEntityService.remove((TimerEntity) itemEntity);
+                // } catch (Exception e) {
+                timerEntityService.disable((TimerEntity) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof JobInstance) {
+                // try {
+                // jobInstanceService.remove((JobInstance) itemEntity);
+                // } catch (Exception e) {
+                jobInstanceService.disable((JobInstance) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof ScriptInstance) {
+                // try {
+                // scriptInstanceService.remove((ScriptInstance) itemEntity);
+                // } catch (Exception e) {
+                scriptInstanceService.disable((ScriptInstance) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof EmailNotification) {
+                // try {
+                // emailNotificationService.remove((EmailNotification) itemEntity);
+                // } catch (Exception e) {
+                emailNotificationService.disable((EmailNotification) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof JobTrigger) {
+                // try {
+                // jobTriggerService.remove((JobTrigger) itemEntity);
+                // } catch (Exception e) {
+                jobTriggerService.disable((JobTrigger) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof WebHook) {
+                // try {
+                // webhookNotificationService.remove((WebHook) itemEntity);
+                // } catch (Exception e) {
+                webhookNotificationService.disable((WebHook) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof ScriptNotification) {
+                // try {
+                // scriptNotificationService.remove((ScriptNotification) itemEntity);
+                // } catch (Exception e) {
+                scriptNotificationService.disable((ScriptNotification) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof MeveoModule) {
+                uninstall((MeveoModule) itemEntity, currentUser, true);
+
+            } else if (itemEntity instanceof MeasurableQuantity) {
+                // try {
+                // measurableQuantityService.remove((MeasurableQuantity) itemEntity);
+                // } catch (Exception e) {
+                measurableQuantityService.disable((MeasurableQuantity) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof Chart) {
+                // try {
+                // chartService.remove((Chart) itemEntity);
+                // } catch (Exception e) {
+                chartService.disable((Chart) itemEntity, currentUser);
+                // }
+
+            } else if (itemEntity instanceof CounterTemplate) {
+                // try {
+                // counterTemplateService.remove((CounterTemplate) itemEntity);
+                // } catch (Exception e) {
+                counterTemplateService.disable((CounterTemplate) itemEntity, currentUser);
+                // }
+            }
+        }
+
+        if (module.getScript() != null) {
+            moduleScriptService.postUninstallModule(module.getScript().getCode(), module, currentUser);
+        }
+
+        // Remove if it is a child module
+        if (childModule) {
+            remove(module);
+            return null;
+
+            // Otherwise mark it uninstalled and clear module items
+        } else {
+            module.setInstalled(false);
+            module.getModuleItems().clear();
+            return update(module, currentUser);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public MeveoModule disable(MeveoModule module, User currentUser) throws BusinessException {
+
+        // if module is local module (was not downloaded) just disable as any other entity without iterating module items
+        if (!module.isDownloaded()) {
+            return super.disable(module, currentUser);
+        }
+
+        if (!module.isInstalled()) {
+            // throw new BusinessException("Module is not installed");
+            return module;
+        }
+
+        if (module.getScript() != null) {
+            moduleScriptService.preDisableModule(module.getScript().getCode(), module, currentUser);
+        }
+
+        if (module instanceof BusinessServiceModel) {
+            serviceTemplateService.disable(((BusinessServiceModel) module).getServiceTemplate(), currentUser);
+        } else if (module instanceof BusinessOfferModel) {
+            offerTemplateService.disable(((BusinessOfferModel) module).getOfferTemplate(), currentUser);
+        }
+
+        for (MeveoModuleItem item : module.getModuleItems()) {
+            loadModuleItem(item, currentUser.getProvider());
+            Object itemEntity = item.getItemEntity();
+            if (itemEntity == null) {
+                continue;
+            }
+
+            if (itemEntity instanceof CustomEntityTemplate) {
+                customEntityTemplateService.disable((CustomEntityTemplate) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof CustomFieldTemplate) {
+                customFieldTemplateService.disable((CustomFieldTemplate) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof Filter) {
+                filterService.disable((Filter) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof TimerEntity) {
+                timerEntityService.disable((TimerEntity) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof JobInstance) {
+                jobInstanceService.disable((JobInstance) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof ScriptInstance) {
+                scriptInstanceService.disable((ScriptInstance) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof EmailNotification) {
+                emailNotificationService.disable((EmailNotification) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof JobTrigger) {
+                jobTriggerService.disable((JobTrigger) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof WebHook) {
+                webhookNotificationService.disable((WebHook) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof ScriptNotification) {
+                scriptNotificationService.disable((ScriptNotification) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof MeveoModule) {
+                disable((MeveoModule) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof MeasurableQuantity) {
+                measurableQuantityService.disable((MeasurableQuantity) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof Chart) {
+                chartService.disable((Chart) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof CounterTemplate) {
+                counterTemplateService.disable((CounterTemplate) itemEntity, currentUser);
+            }
+        }
+
+        if (module.getScript() != null) {
+            moduleScriptService.postDisableModule(module.getScript().getCode(), module, currentUser);
+        }
+
+        return super.disable(module, currentUser);
+    }
+
+    @SuppressWarnings("unchecked")
+    public MeveoModule enable(MeveoModule module, User currentUser) throws BusinessException {
+
+        // if module is local module (was not downloaded) just disable as any other entity without iterating module items
+        if (!module.isDownloaded()) {
+            return super.enable(module, currentUser);
+        }
+
+        if (!module.isInstalled()) {
+            // throw new BusinessException("Module is not installed");
+            return module;
+        }
+
+        if (module.getScript() != null) {
+            moduleScriptService.preEnableModule(module.getScript().getCode(), module, currentUser);
+        }
+
+        if (module instanceof BusinessServiceModel) {
+            serviceTemplateService.enable(((BusinessServiceModel) module).getServiceTemplate(), currentUser);
+        } else if (module instanceof BusinessOfferModel) {
+            offerTemplateService.enable(((BusinessOfferModel) module).getOfferTemplate(), currentUser);
+        }
+
+        for (MeveoModuleItem item : module.getModuleItems()) {
+            loadModuleItem(item, currentUser.getProvider());
+            Object itemEntity = item.getItemEntity();
+            if (itemEntity == null) {
+                continue;
+            }
+
+            if (itemEntity instanceof CustomEntityTemplate) {
+                customEntityTemplateService.enable((CustomEntityTemplate) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof CustomFieldTemplate) {
+                customFieldTemplateService.enable((CustomFieldTemplate) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof Filter) {
+                filterService.enable((Filter) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof TimerEntity) {
+                timerEntityService.enable((TimerEntity) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof JobInstance) {
+                jobInstanceService.enable((JobInstance) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof ScriptInstance) {
+                scriptInstanceService.enable((ScriptInstance) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof EmailNotification) {
+                emailNotificationService.enable((EmailNotification) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof JobTrigger) {
+                jobTriggerService.enable((JobTrigger) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof WebHook) {
+                webhookNotificationService.enable((WebHook) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof ScriptNotification) {
+                scriptNotificationService.enable((ScriptNotification) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof MeveoModule) {
+                enable((MeveoModule) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof MeasurableQuantity) {
+                measurableQuantityService.enable((MeasurableQuantity) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof Chart) {
+                chartService.enable((Chart) itemEntity, currentUser);
+
+            } else if (itemEntity instanceof CounterTemplate) {
+                counterTemplateService.enable((CounterTemplate) itemEntity, currentUser);
+            }
+        }
+
+        if (module.getScript() != null) {
+            moduleScriptService.postEnableModule(module.getScript().getCode(), module, currentUser);
+        }
+
+        return super.enable(module, currentUser);
+    }
+
+    @Override
+    public void remove(MeveoModule module) {
+
+        // If module was downloaded, remove all submodules as well
+        if (module.isDownloaded() && module.getModuleItems() != null) {
+
+            for (MeveoModuleItem item : module.getModuleItems()) {
+                try {
+                    if (MeveoModule.class.isAssignableFrom(Class.forName(item.getItemClass()))) {
+                        loadModuleItem(item, module.getProvider());
+                        MeveoModule itemModule = (MeveoModule) item.getItemEntity();
+                        remove(itemModule);
+                    }
+                } catch (Exception e) {
+                    log.error("Failed to delete a submodule", e);
+                }
+            }
+        }
+
+        super.remove(module);
+    }
+
+    @SuppressWarnings("unchecked")
+    public String getRelatedModulesAsString(String itemCode, String itemClazz, String appliesTo, Provider provider) {
+        QueryBuilder qb = new QueryBuilder(MeveoModule.class, "m", Arrays.asList("moduleItems as i"), provider);
+        qb.addCriterion("i.itemCode", "=", itemCode, true);
+        qb.addCriterion("i.itemClass", "=", itemClazz, false);
+        qb.addCriterion("i.appliesTo", "=", appliesTo, false);
+        List<MeveoModule> modules = qb.getQuery(getEntityManager()).getResultList();
+
+        if (modules != null) {
+            StringBuilder sb = new StringBuilder();
+            int i = 0;
+            for (MeveoModule module : modules) {
+                if (i != 0) {
+                    sb.append(";");
+                }
+                sb.append(module.getCode());
+                i++;
+            }
+            return sb.toString();
+        }
+        return null;
     }
 }

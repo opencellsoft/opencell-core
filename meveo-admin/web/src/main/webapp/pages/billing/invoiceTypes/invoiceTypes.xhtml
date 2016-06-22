@@ -1,0 +1,39 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{invoiceTypeListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hftl:searchPanel label="#{messages['invoiceType.search']}"
+			backingBean="#{invoiceTypeListBean}">
+			<hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:searchField label="#{messages['businessEntity.description']}"
+				field="description" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['invoiceTypes.title']}"
+			backingBean="#{invoiceTypeListBean}">
+			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
+			<hftl:column label="#{messages['invoiceType.occTemplate']}" field="occTemplate.code" />
+			<hftl:column label="#{messages['invoiceType.appliesTo']}" field="appliesTo" isList="true" valueLabelField="code"
+				valueIdField="id" entityView="invoiceTypeDetail" />
+			<hftl:actionsColumn permission="#{identity.hasPermission('billing','billingManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

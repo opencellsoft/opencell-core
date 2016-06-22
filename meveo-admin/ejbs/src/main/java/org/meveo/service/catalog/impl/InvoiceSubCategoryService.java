@@ -18,17 +18,24 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.MultilanguageEntityService;
+import org.meveo.service.base.ValueExpressionWrapper;
 
 /**
  * InvoiceSubCategory service implementation.
@@ -97,4 +104,34 @@ public class InvoiceSubCategoryService extends MultilanguageEntityService<Invoic
 			return null;
 		}
 	}
+	
+	public boolean matchInvoicesubcatCountryExpression(String expression,BillingAccount billingAccount,Invoice invoice) throws BusinessException {
+		Boolean result = true;
+		if (StringUtils.isBlank(expression)) {
+			return result;
+		}
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+
+
+		if (expression.indexOf("ca") >= 0) {
+			userMap.put("ca", billingAccount.getCustomerAccount());
+		}
+		if (expression.indexOf("ba") >= 0) {
+			userMap.put("ba", billingAccount);
+		}
+		if (expression.indexOf("iv") >= 0) {
+			userMap.put("iv", invoice);
+
+		}
+		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap,
+				Boolean.class);
+		try {
+			result = (Boolean) res;
+		} catch (Exception e) {
+			throw new BusinessException("Expression " + expression
+					+ " do not evaluate to boolean but " + res);
+		}
+		return result;
+	}
+
 }

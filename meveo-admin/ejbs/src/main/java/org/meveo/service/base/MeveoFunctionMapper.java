@@ -20,7 +20,6 @@ import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.script.EntityActionScriptService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
@@ -39,8 +38,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     private Map<String, Method> functionMap = new HashMap<String, Method>();
 
     private static CustomFieldInstanceService customFieldInstanceService;
-
-    private static EntityActionScriptService entityActionScriptService;
 
     private static ScriptInstanceService scriptInstanceService;
 
@@ -112,8 +109,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "executeScript", MeveoFunctionMapper.class.getMethod("executeScript", IEntity.class, String.class, String.class, User.class));
 
             addFunction("mv", "now", MeveoFunctionMapper.class.getMethod("getNowTimestamp"));
-            
-            addFunction("mv", "formatDate", MeveoFunctionMapper.class.getMethod("formatDate", Date.class,String.class));            
+
+            addFunction("mv", "formatDate", MeveoFunctionMapper.class.getMethod("formatDate", Date.class, String.class));
 
         } catch (NoSuchMethodException | SecurityException e) {
             Logger log = LoggerFactory.getLogger(this.getClass());
@@ -165,26 +162,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
             }
         }
         return customFieldInstanceService;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static EntityActionScriptService getEntityActionScriptService() {
-
-        if (entityActionScriptService == null) {
-            try {
-                InitialContext initialContext = new InitialContext();
-                BeanManager beanManager = (BeanManager) initialContext.lookup("java:comp/BeanManager");
-
-                Bean<EntityActionScriptService> bean = (Bean<EntityActionScriptService>) beanManager.resolve(beanManager.getBeans(EntityActionScriptService.class));
-                entityActionScriptService = (EntityActionScriptService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
-
-            } catch (NamingException e) {
-                Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
-                log.error("Unable to access EntityActionScriptService", e);
-                throw new RuntimeException(e);
-            }
-        }
-        return entityActionScriptService;
     }
 
     @SuppressWarnings("unchecked")
@@ -668,12 +645,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             try {
                 result = getScriptInstanceService().execute(entity, scriptCode, encodedParameters, currentUser);
             } catch (ElementNotFoundException enf) {
-
-                try {
-                    result = getEntityActionScriptService().execute(entity, scriptCode, encodedParameters, currentUser);
-                } catch (ElementNotFoundException enf2) {
-                    result = null;
-                }
+                result = null;
             }
 
         } catch (BusinessException e) {
@@ -696,17 +668,17 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Date getNowTimestamp() {
         return new Date();
     }
-    
-    /**	
+
+    /**
      * Format date
      * 
-     * @param dateFormatPattern  standard java  date and time patterns
+     * @param dateFormatPattern standard java date and time patterns
      * @return A formated date
      */
-    public static String formatDate(Date date,String dateFormatPattern) { 
-        if(date == null){
+    public static String formatDate(Date date, String dateFormatPattern) {
+        if (date == null) {
             return DateUtils.formatDateWithPattern(new Date(), dateFormatPattern);
         }
-        return DateUtils.formatDateWithPattern(date, dateFormatPattern);	
-    }       
+        return DateUtils.formatDateWithPattern(date, dateFormatPattern);
+    }
 }

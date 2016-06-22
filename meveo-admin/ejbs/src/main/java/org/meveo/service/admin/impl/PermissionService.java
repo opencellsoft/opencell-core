@@ -100,21 +100,21 @@ public class PermissionService extends PersistenceService<Permission> {
 
         return permissionEntity;
     }
-    
-    
-    //TODO rethink all permission strategy
-    public String getResourceByPath(String path){
-    	List<Permission> listPermissions = new ArrayList<Permission>();
-    	try {
-    		QueryBuilder qb = new QueryBuilder("from Permission p ");
-    		qb.like("resource", path, QueryLikeStyleEnum.MATCH_ANYWHERE, false);
-    		listPermissions =  qb.getQuery(getEntityManager()).getResultList();
-    	} catch (Exception e) {
-    		log.trace("No permission was found. Reason {}", e.getMessage());            
-    	}
-    	if(!listPermissions.isEmpty()){
-    		return listPermissions.get(0).getResource();
-    	}
-    	return null;
+
+    // TODO rethink all permission strategy
+    @SuppressWarnings("unchecked")
+    public String getResourceByPath(String path) {
+        List<Permission> listPermissions = new ArrayList<Permission>();
+        try {
+            QueryBuilder qb = new QueryBuilder("from Permission p ");
+            qb.like("resource", path, QueryLikeStyleEnum.MATCH_ANYWHERE, false);
+            listPermissions = qb.getQuery(getEntityManager()).getResultList();
+        } catch (Exception e) {
+            log.trace("No permission was found. Reason {}", e.getMessage());
+        }
+        if (!listPermissions.isEmpty()) {
+            return listPermissions.get(0).getResource();
+        }
+        return null;
     }
 }

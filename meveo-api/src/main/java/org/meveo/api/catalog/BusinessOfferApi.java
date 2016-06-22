@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.ServiceCodeDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
@@ -32,67 +33,80 @@ public class BusinessOfferApi extends BaseApi {
 
 	public void createOfferFromBOM(BomOfferDto postData, User currentUser) throws MeveoApiException {
 		validate(postData);
-		if (!StringUtils.isBlank(postData.getBomCode())) {
-			// find bom
-			BusinessOfferModel businessOfferModel = businessOfferModelService.findByCode(postData.getBomCode(), currentUser.getProvider());
-			if (businessOfferModel == null) {
-				throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
-			}
 
-			// get the offer from bom
-			OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
-			if (bomOffer == null) {
-				throw new MeveoApiException("NO_OFFER_TEMPLATE_ATTACHED");
-			}
+		if (StringUtils.isBlank(postData.getBomCode())) {
+			missingParameters.add("bomCode");
+		}
 
-			if (bomOffer.getOfferServiceTemplates() == null || bomOffer.getOfferServiceTemplates().size() == 0) {
-				throw new MeveoApiException("NO_SERVICE_TEMPLATES_ATTACHED");
-			}
+		handleMissingParameters();
 
-			OfferTemplate newOfferTemplate = null;
-			try {
-				newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getPrefix(), postData.getDescription(), postData.getServiceCodes(),
-						currentUser);
-			} catch (BusinessException e) {
-				throw new MeveoApiException(e.getMessage());
-			}
+		// find bom
+		BusinessOfferModel businessOfferModel = businessOfferModelService.findByCode(postData.getBomCode(), currentUser.getProvider());
+		if (businessOfferModel == null) {
+			throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
+		}
 
-			// populate service custom fields
-			if (postData.getServiceCustomFields() != null) {
-				for (OfferServiceTemplate ost : newOfferTemplate.getOfferServiceTemplates()) {
-					ServiceTemplate serviceTemplate = ost.getServiceTemplate();
-					try {
-						populateCustomFields(postData.getServiceCustomFields(), serviceTemplate, true, currentUser);
-					} catch (IllegalArgumentException | IllegalAccessException e) {
-						throw new MeveoApiException(e.getMessage());
-					}
-					try {
-						serviceTemplateService.update(serviceTemplate, currentUser);
-					} catch (BusinessException e) {
-						throw new MeveoApiException(e.getMessage());
+		// get the offer from bom
+		OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
+		if (bomOffer == null) {
+			throw new MeveoApiException("NO_OFFER_TEMPLATE_ATTACHED");
+		}
+
+		if (bomOffer.getOfferServiceTemplates() == null || bomOffer.getOfferServiceTemplates().size() == 0) {
+			throw new MeveoApiException("NO_SERVICE_TEMPLATES_ATTACHED");
+		}
+
+		OfferTemplate newOfferTemplate = null;
+		try {
+			newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getPrefix(), postData.getDescription(), postData.getServiceCodes(),
+					currentUser);
+		} catch (BusinessException e) {
+			throw new MeveoApiException(e.getMessage());
+		}
+
+		// populate service custom fields
+		for (OfferServiceTemplate ost : newOfferTemplate.getOfferServiceTemplates()) {
+			ServiceTemplate serviceTemplate = ost.getServiceTemplate();
+
+			boolean toUpdate = false;
+
+			for (ServiceCodeDto serviceCodeDto : postData.getServiceCodes()) {
+				String serviceCode = postData.getPrefix() + "_" + serviceCodeDto.getCode();
+				if (serviceCode.equals(serviceTemplate.getCode())) {
+					if (serviceCodeDto.getServiceCustomFields() != null) {
+						toUpdate = true;
+						try {
+							populateCustomFields(serviceCodeDto.getServiceCustomFields(), serviceTemplate, true, currentUser);
+						} catch (IllegalArgumentException | IllegalAccessException e) {
+							throw new MeveoApiException(e.getMessage());
+						}
+						break;
 					}
 				}
 			}
 
-			// populate offer custom fields
-			if (newOfferTemplate != null && postData.getOfferCustomFields() != null) {
+			if (toUpdate) {
 				try {
-					populateCustomFields(postData.getOfferCustomFields(), newOfferTemplate, true, currentUser);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					throw new MeveoApiException(e.getMessage());
-				}
-				try {
-					offerTemplateService.update(newOfferTemplate, currentUser);
+					serviceTemplateService.update(serviceTemplate, currentUser);
 				} catch (BusinessException e) {
 					throw new MeveoApiException(e.getMessage());
 				}
 			}
-		} else {
-			if (StringUtils.isBlank(postData.getBomCode())) {
-				missingParameters.add("bomCode");
+		}
+
+		// populate offer custom fields
+		if (newOfferTemplate != null && postData.getOfferCustomFields() != null) {
+			try {
+				populateCustomFields(postData.getOfferCustomFields(), newOfferTemplate, true, currentUser);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				throw new MeveoApiException(e.getMessage());
 			}
 
-			handleMissingParameters();
+			try {
+				offerTemplateService.update(newOfferTemplate, currentUser);
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
 		}
 	}
 }

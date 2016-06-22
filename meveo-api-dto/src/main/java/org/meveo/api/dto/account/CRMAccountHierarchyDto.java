@@ -17,7 +17,6 @@ import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentTermEnum;
 
-
 /**
  * @author Edward P. Legaspi
  **/
@@ -31,7 +30,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	public static final String ACCOUNT_TYPE_CORP = "CORP";
 	public static final String ACCOUNT_TYPE_BRANCH = "BRANCH";
 
-	private AccountHierarchyTypeEnum crmAccountType;
+	private String crmAccountType;
 
 	// shared
 	private String crmParentCode;
@@ -78,25 +77,24 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	private AccountStatusEnum baStatus;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
-	
+
 	// user account
 	private AccountStatusEnum uaStatus;
-	
+
 	private CustomFieldDto cfToAdd = new CustomFieldDto();
 	private CustomFieldDto cfMapToAdd = new CustomFieldDto();
-	
+
 	private String offerCode;
 	private String serviceCode;
 	private String access;
 
-
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 
-	public AccountHierarchyTypeEnum getCrmAccountType() {
+	public String getCrmAccountType() {
 		return crmAccountType;
 	}
 
-	public void setCrmAccountType(AccountHierarchyTypeEnum crmAccountType) {
+	public void setCrmAccountType(String crmAccountType) {
 		this.crmAccountType = crmAccountType;
 	}
 
@@ -348,16 +346,27 @@ public class CRMAccountHierarchyDto extends BaseDto {
 		this.bankCoordinates = bankCoordinates;
 	}
 
-	
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "CRMAccountHierarchyDto [crmAccountType=" + crmAccountType + ", crmParentCode=" + crmParentCode + ", code=" + code + ", description=" + description + ", externalRef1=" + externalRef1 + ", externalRef2=" + externalRef2 + ", name=" + name + ", address=" + address + ", contactInformation=" + contactInformation + ", language=" + language + ", paymentMethod=" + paymentMethod + ", terminationReason=" + terminationReason + ", subscriptionDate=" + subscriptionDate
-				+ ", terminationDate=" + terminationDate + ", customerCategory=" + customerCategory + ", customerBrand=" + customerBrand + ", seller=" + seller + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + ", currency=" + currency + ", caStatus=" + caStatus + ", creditCategory=" + creditCategory + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", dunningLevel=" + dunningLevel + ", billingCycle="
-				+ billingCycle + ", country=" + country + ", nextInvoiceDate=" + nextInvoiceDate + ", paymentTerms=" + paymentTerms + ", electronicBilling=" + electronicBilling + ", baStatus=" + baStatus + ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", uaStatus=" + uaStatus + ",customFields=" + customFields + "]";
+		return "CRMAccountHierarchyDto [crmAccountType=" + crmAccountType + ", crmParentCode=" + crmParentCode
+				+ ", code=" + code + ", description=" + description + ", externalRef1=" + externalRef1
+				+ ", externalRef2=" + externalRef2 + ", name=" + name + ", address=" + address + ", contactInformation="
+				+ contactInformation + ", language=" + language + ", paymentMethod=" + paymentMethod
+				+ ", terminationReason=" + terminationReason + ", subscriptionDate=" + subscriptionDate
+				+ ", terminationDate=" + terminationDate + ", customerCategory=" + customerCategory + ", customerBrand="
+				+ customerBrand + ", seller=" + seller + ", mandateIdentification=" + mandateIdentification
+				+ ", mandateDate=" + mandateDate + ", currency=" + currency + ", caStatus=" + caStatus
+				+ ", creditCategory=" + creditCategory + ", dateStatus=" + dateStatus + ", dateDunningLevel="
+				+ dateDunningLevel + ", dunningLevel=" + dunningLevel + ", billingCycle=" + billingCycle + ", country="
+				+ country + ", nextInvoiceDate=" + nextInvoiceDate + ", paymentTerms=" + paymentTerms
+				+ ", electronicBilling=" + electronicBilling + ", baStatus=" + baStatus + ", email=" + email
+				+ ", bankCoordinates=" + bankCoordinates + ", uaStatus=" + uaStatus + ",customFields=" + customFields
+				+ "]";
 	}
 
 	public AccountStatusEnum getUaStatus() {
@@ -392,7 +401,8 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	}
 
 	/**
-	 * @param cfToAdd the cfToAdd to set
+	 * @param cfToAdd
+	 *            the cfToAdd to set
 	 */
 	public void setCfToAdd(CustomFieldDto cfToAdd) {
 		customFields.getCustomField().add(cfToAdd);
@@ -406,7 +416,8 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	}
 
 	/**
-	 * @param offerCode the offerCode to set
+	 * @param offerCode
+	 *            the offerCode to set
 	 */
 	public void setOfferCode(String offerCode) {
 		this.offerCode = offerCode;
@@ -420,7 +431,8 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	}
 
 	/**
-	 * @param serviceCode the serviceCode to set
+	 * @param serviceCode
+	 *            the serviceCode to set
 	 */
 	public void setServiceCode(String serviceCode) {
 		this.serviceCode = serviceCode;
@@ -434,7 +446,8 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	}
 
 	/**
-	 * @param access the access to set
+	 * @param access
+	 *            the access to set
 	 */
 	public void setAccess(String access) {
 		this.access = access;
@@ -448,22 +461,23 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	}
 
 	/**
-	 * @param cfMapToAdd the cfMapToAdd to set
+	 * @param cfMapToAdd
+	 *            the cfMapToAdd to set
 	 */
-	public void setCfMapToAdd(CustomFieldDto cfMapToAdd) {		
+	public void setCfMapToAdd(CustomFieldDto cfMapToAdd) {
 		CustomFieldDto customFieldDto = customFields.getCF(cfMapToAdd.getCode());
-		if(customFieldDto == null){
+		if (customFieldDto == null) {
 			customFieldDto = new CustomFieldDto();
-			customFieldDto.setCode(cfMapToAdd.getCode());	
+			customFieldDto.setCode(cfMapToAdd.getCode());
 			customFields.getCustomField().add(customFieldDto);
 		}
-		if(customFieldDto.getMapValue() == null){
-			customFieldDto.setMapValue(new LinkedHashMap<String,CustomFieldValueDto>());
+		if (customFieldDto.getMapValue() == null) {
+			customFieldDto.setMapValue(new LinkedHashMap<String, CustomFieldValueDto>());
 		}
-		if(cfMapToAdd.getDoubleValue() != null){
+		if (cfMapToAdd.getDoubleValue() != null) {
 			CustomFieldValueDto cfValue = new CustomFieldValueDto(cfMapToAdd.getDoubleValue());
-			customFieldDto.getMapValue().put(cfMapToAdd.getCode(),cfValue);
+			customFieldDto.getMapValue().put(cfMapToAdd.getCode(), cfValue);
 		}
 	}
-	
+
 }

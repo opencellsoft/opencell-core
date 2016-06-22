@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -38,9 +39,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 
 /**
@@ -52,7 +56,8 @@ import org.meveo.model.ObservableEntity;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TRANSACTION_TYPE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_ACCOUNT_OPERATION_SEQ")
-public class AccountOperation extends AuditableEntity {
+@CustomFieldEntity(cftCodePrefix = "ACC_OP")
+public class AccountOperation extends AuditableEntity implements ICustomFieldEntity{
 
 	private static final long serialVersionUID = 1L;
 
@@ -116,6 +121,10 @@ public class AccountOperation extends AuditableEntity {
 	@Column(name = "EXCLUDED_FROM_DUNNING")
 	private boolean excludedFromDunning;
 	
+    @Column(name = "UUID", nullable = false, updatable = false, length = 60)
+    @Size(max = 60)
+    @NotNull
+    private String uuid = UUID.randomUUID().toString();	
 
 	public Date getDueDate() {
 		return dueDate;
@@ -270,6 +279,25 @@ public class AccountOperation extends AuditableEntity {
 		this.excludedFromDunning = excludedFromDunning;
 	}
 	
-	
+	   @Override
+	    public String getUuid() {
+	        return uuid;
+	    }
+
+	    public void setUuid(String uuid) {
+	        this.uuid = uuid;
+	    }
+
+	    @Override
+	    public String clearUuid() {
+	        String oldUuid = uuid;
+	        uuid = UUID.randomUUID().toString();
+	        return oldUuid;
+	    }
+
+		@Override
+		public ICustomFieldEntity[] getParentCFEntities() {
+			return null;
+		}	
 
 }

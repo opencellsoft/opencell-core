@@ -29,5 +29,5 @@ public class FtpImportedFileListBean extends FtpImportedFileBean {
 	 * 
 	 */
 	private static final long serialVersionUID = 3841025497121180258L;
-	
+
 }

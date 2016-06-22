@@ -97,7 +97,6 @@ public class ImportSubscriptionsJobBean {
 		List<File> files = getFilesToProcess(dir, prefix, ext);
 		int numberOfFiles = files.size();
 		log.info("InputFiles job to import={}", numberOfFiles);
-		result.setNbItemsToProcess(numberOfFiles);
 
 		for (File file : files) {
 			File currentFile = null;
@@ -106,13 +105,10 @@ public class ImportSubscriptionsJobBean {
 				currentFile = FileUtils.addExtension(file, ".processing");
 
 				importFile(currentFile, file.getName(), currentUser);
-
 				FileUtils.moveFile(dirOK, currentFile, file.getName());
 				log.info("InputFiles job {} done.", file.getName());
-				result.registerSucces();
 			} catch (Exception e) {
 				log.error("failed to import subscriptions",e);
-				result.registerError(e.getMessage());
 				log.info("InputFiles job {} failed.", file.getName());
 				FileUtils.moveFile(dirKO, currentFile, file.getName());
 				log.error("Failed to import subscriptions job",e);
@@ -121,6 +117,12 @@ public class ImportSubscriptionsJobBean {
 					currentFile.delete();
 			}
 		}
+		
+		result.setNbItemsToProcess(nbSubscriptions);
+		result.setNbItemsCorrectlyProcessed(nbSubscriptionsCreated + nbSubscriptionsTerminated + nbSubscriptionsIgnored);
+		result.setNbItemsProcessedWithError(nbSubscriptionsError);
+		result.setNbItemsProcessedWithWarning((subscriptionsWarning.getErrors() != null  
+				&& subscriptionsWarning.getErrors().getErrorSubscription() != null) ? subscriptionsWarning.getErrors().getErrorSubscription().size() : 0);
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)

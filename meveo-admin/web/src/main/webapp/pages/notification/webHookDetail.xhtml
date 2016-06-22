@@ -53,6 +53,9 @@
             <hftl:formField label="#{messages['entity.notification.params']}" field="params" componentWidth="100" />
 
             <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />
+            <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!webHookBean.entity.transient}">
+            	<h:outputText value="#{webHookBean.getPartOfModules()}" />
+            </hftl:decorateFormField>
         </hftl:formPanel>
 
 <!--         <p:panel rendered="#{not empty webHookBean.entity.id}"> -->

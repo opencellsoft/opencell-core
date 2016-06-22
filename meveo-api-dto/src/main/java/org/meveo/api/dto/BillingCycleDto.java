@@ -45,6 +45,8 @@ public class BillingCycleDto extends BaseDto {
 	@XmlElement(required = false)
 	private BigDecimal invoicingThreshold;
 
+	private String invoiceTypeCode;
+	
 	public BillingCycleDto() {
 
 	}
@@ -59,7 +61,10 @@ public class BillingCycleDto extends BaseDto {
 			invoiceDateProductionDelay = billingCycleEntity.getInvoiceDateProductionDelay();
 			transactionDateDelay = billingCycleEntity.getTransactionDateDelay();
 			invoicingThreshold  = billingCycleEntity.getInvoicingThreshold(); 
-
+			
+			if (billingCycleEntity.getInvoiceType() != null) {
+				invoiceTypeCode = billingCycleEntity.getInvoiceType().getCode();
+			}
 			if (billingCycleEntity.getCalendar() != null) {
 				calendar = billingCycleEntity.getCalendar().getCode();
 			}
@@ -146,12 +151,25 @@ public class BillingCycleDto extends BaseDto {
 		this.invoicingThreshold = invoicingThreshold;
 	}
 
+	/**
+	 * @return the invoiceTypeCode
+	 */
+	public String getInvoiceTypeCode() {
+		return invoiceTypeCode;
+	}
+
+	/**
+	 * @param invoiceTypeCode the invoiceTypeCode to set
+	 */
+	public void setInvoiceTypeCode(String invoiceTypeCode) {
+		this.invoiceTypeCode = invoiceTypeCode;
+	}
+
 	@Override
 	public String toString() {
-		return "BillingCycleDto [code=" + code + ", description=" + description + ", billingTemplateName="
-				+ billingTemplateName + ", invoiceDateDelay=" + invoiceDateDelay + ", dueDateDelay=" + dueDateDelay
-				+ ", invoiceDateProductionDelay=" + invoiceDateProductionDelay+ ", transactionDateDelay=" + transactionDateDelay
-				+ ", calendar=" + calendar + ",invoicingThreshold:"+invoicingThreshold+"]";
+		return "BillingCycleDto [code=" + code + ", description=" + description + ", billingTemplateName=" + billingTemplateName + ", invoiceDateDelay=" + invoiceDateDelay + ", dueDateDelay=" + dueDateDelay + ", invoiceDateProductionDelay=" + invoiceDateProductionDelay + ", transactionDateDelay=" + transactionDateDelay + ", calendar=" + calendar + ", invoicingThreshold=" + invoicingThreshold + ", invoiceTypeCode=" + invoiceTypeCode + "]";
 	}
+
+
 
 }

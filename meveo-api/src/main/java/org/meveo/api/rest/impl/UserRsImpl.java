@@ -18,7 +18,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.UserRs;
 
 /**
- * @author Edward P. Legaspi
+ * @author Mohamed Hamidi
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -72,7 +72,7 @@ public class UserRsImpl extends BaseRs implements UserRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            userApi.remove(username);
+            userApi.remove(username, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -92,7 +92,7 @@ public class UserRsImpl extends BaseRs implements UserRs {
         GetUserResponse result = new GetUserResponse();
 
         try {
-            result.setUser(userApi.find(username));
+            result.setUser(userApi.find(username, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

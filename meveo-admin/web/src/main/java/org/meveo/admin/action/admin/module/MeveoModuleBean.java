@@ -18,13 +18,10 @@
  */
 package org.meveo.admin.action.admin.module;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.module.MeveoModule;
-import org.meveo.service.admin.impl.MeveoModuleService;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.omnifaces.cdi.ViewScoped;
 
@@ -40,11 +37,7 @@ import org.omnifaces.cdi.ViewScoped;
 public class MeveoModuleBean extends GenericModuleBean<MeveoModule> {
 
     private static final long serialVersionUID = 1L;
-    /**
-     * Injected @{link MeveoModule} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private MeveoModuleService meveoModuleService;
+
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -54,18 +47,13 @@ public class MeveoModuleBean extends GenericModuleBean<MeveoModule> {
 
     }
 
-    //
-    // @PostConstruct
-    // public void init() {
-    // root = new DefaultTreeNode("Root");
-    // }
-
-    /**
+	/**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
     protected IPersistenceService<MeveoModule> getPersistenceService() {
         return meveoModuleService;
     }
+
 
 }

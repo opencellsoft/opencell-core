@@ -26,26 +26,41 @@ public interface ModuleRs extends IBaseRs {
 
     @POST
     @Path("/")
-    ActionStatus create(ModuleDto moduleDto);
+    public ActionStatus create(ModuleDto moduleDto);
 
     @PUT
     @Path("/")
-    ActionStatus update(ModuleDto moduleDto);
+    public ActionStatus update(ModuleDto moduleDto);
 
     @POST
     @Path("/createOrUpdate")
-    ActionStatus createOrUpdate(ModuleDto moduleDto);
+    public ActionStatus createOrUpdate(ModuleDto moduleDto);
 
     @DELETE
     @Path("/{code}")
-    ActionStatus delete(@PathParam("code") String code);
+    public ActionStatus delete(@PathParam("code") String code);
 
     @GET
     @Path("/list")
-    MeveoModuleDtosResponse list();
+    public MeveoModuleDtosResponse list();
+
+    @PUT
+    @Path("/install")
+    public ActionStatus install(ModuleDto moduleDto);
 
     @GET
     @Path("/")
-    MeveoModuleDtoResponse get(@QueryParam("code") String code);
+    public MeveoModuleDtoResponse get(@QueryParam("code") String code);
 
+    @GET
+    @Path("/uninstall")
+    public ActionStatus uninstall(@QueryParam("code") String code);
+
+    @GET
+    @Path("/enable")
+    public ActionStatus enable(@QueryParam("code") String code);
+
+    @GET
+    @Path("/disable")
+    public ActionStatus disable(@QueryParam("code") String code);
 }

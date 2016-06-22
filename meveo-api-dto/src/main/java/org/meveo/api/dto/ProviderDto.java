@@ -30,77 +30,68 @@ public class ProviderDto extends BaseDto {
 	private boolean multiCountry;
 	private boolean multiLanguage;
 	private String userAccount;
-	private Integer invoiceSequenceSize;
-	
+
 	private boolean enterprise;
-	private boolean levelDuplication;
-	private String invoicePrefix;
-	private Long currentInvoiceNb;
-	private boolean displayFreeTransacInInvoice;
-	private String invoiceAdjustmentPrefix;
-	private Long currentInvoiceAdjustmentNb;
-	private Integer invoiceAdjustmentSequenceSize;
-	private Integer rounding=2;
-	private Long prepaidReservationExpirationDelayinMillisec ;
+	private boolean levelDuplication;	
+	private Integer rounding = 2;
+	private Long prepaidReservationExpirationDelayinMillisec;
 	private String discountAccountingCode;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
+	private boolean recognizeRevenue;
 	private InvoiceConfigurationDto invoiceConfiguration = new InvoiceConfigurationDto();
-	
-	
+
 	@XmlElement(required = false)
-    private CustomFieldsDto customFields;
+	private CustomFieldsDto customFields;
 
 	public ProviderDto() {
 
 	}
-
+	
 	public ProviderDto(Provider e, CustomFieldsDto customFieldInstances) {
+		this(e, customFieldInstances, true);
+	}
+
+	public ProviderDto(Provider e, CustomFieldsDto customFieldInstances, boolean loadProviderData) {
 		code = e.getCode();
-		description = e.getDescription();
-		invoiceSequenceSize=e.getInvoiceSequenceSize();
-		if (e.getCurrency() != null) {
-			currency = e.getCurrency().getCurrencyCode();
+		
+		if (loadProviderData) {			
+			description = e.getDescription();			
+			if (e.getCurrency() != null) {
+				currency = e.getCurrency().getCurrencyCode();
+			}
+			if (e.getCountry() != null) {
+				country = e.getCountry().getCountryCode();
+			}
+			if (e.getLanguage() != null) {
+				language = e.getLanguage().getLanguageCode();
+			}
+			multiCurrency = e.getMulticurrencyFlag();
+			multiCountry = e.getMulticountryFlag();
+			multiLanguage = e.getMultilanguageFlag();
+			rounding = e.getRounding();
+			prepaidReservationExpirationDelayinMillisec = e.getPrepaidReservationExpirationDelayinMillisec();
+			discountAccountingCode = e.getDiscountAccountingCode();
+			email = e.getEmail();			
+
+			this.setEnterprise(e.isEntreprise());
+			this.setLevelDuplication(e.isLevelDuplication());
+			
+			this.setRecognizeRevenue(e.isRecognizeRevenue());
+
+			if (e.getBankCoordinates() != null) {
+				this.setBankCoordinates(new BankCoordinatesDto(e.getBankCoordinates()));
+			}
+
+			if (e.getInvoiceConfiguration() != null) {
+				this.setInvoiceConfiguration(new InvoiceConfigurationDto(e.getInvoiceConfiguration()));
+			}else{
+				this.setInvoiceConfiguration(new InvoiceConfigurationDto());
+			}
+			this.getInvoiceConfiguration().setDisplayFreeTransacInInvoice(e.isDisplayFreeTransacInInvoice());
 		}
-		if (e.getCountry() != null) {
-			country = e.getCountry().getCountryCode();
-		}
-		if (e.getLanguage() != null) {
-			language = e.getLanguage().getLanguageCode();
-		}
-		multiCurrency = e.getMulticurrencyFlag();
-		multiCountry = e.getMulticountryFlag();
-		multiLanguage = e.getMultilanguageFlag();
-		rounding=e.getRounding();
-		prepaidReservationExpirationDelayinMillisec = e.getPrepaidReservationExpirationDelayinMillisec();
-		discountAccountingCode = e.getDiscountAccountingCode();
-		email = e.getEmail();
 		
 		customFields = customFieldInstances;
-		
-		this.setEnterprise(e.isEntreprise());
-		this.setLevelDuplication(e.isLevelDuplication());
-		this.setInvoicePrefix(e.getInvoicePrefix());
-		this.setCurrentInvoiceNb(e.getCurrentInvoiceNb());
-		this.setDisplayFreeTransacInInvoice(e.isDisplayFreeTransacInInvoice());
-		
-		if (e.getInvoiceAdjustmentPrefix() != null) {
-			this.setInvoiceAdjustmentPrefix(e.getInvoiceAdjustmentPrefix());
-		}
-		
-		if (e.getCurrentInvoiceAdjustmentNb() != null) {
-			this.setCurrentInvoiceAdjustmentNb(e.getCurrentInvoiceAdjustmentNb());
-		}
-		
-		if (e.getInvoiceAdjustmentSequenceSize() != null) {
-			this.setInvoiceAdjustmentSequenceSize(e.getInvoiceAdjustmentSequenceSize());
-		}
-		if (e.getBankCoordinates() != null) {
-	        this.setBankCoordinates(new BankCoordinatesDto(e.getBankCoordinates()));
-	    }
-		if(e.getInvoiceConfiguration() != null) {
-			this.setInvoiceConfiguration(new InvoiceConfigurationDto(e.getInvoiceConfiguration()));
-		}
 	}
 
 	public String getCode() {
@@ -183,13 +174,6 @@ public class ProviderDto extends BaseDto {
 		this.customFields = customFields;
 	}
 
-	public Integer getInvoiceSequenceSize() {
-		return invoiceSequenceSize;
-	}
-
-	public void setInvoiceSequenceSize(Integer invoiceSequenceSize) {
-		this.invoiceSequenceSize = invoiceSequenceSize;
-	}
 
 	public boolean isEnterprise() {
 		return enterprise;
@@ -198,62 +182,13 @@ public class ProviderDto extends BaseDto {
 	public void setEnterprise(boolean enterprise) {
 		this.enterprise = enterprise;
 	}
-	
+
 	public boolean isLevelDuplication() {
 		return levelDuplication;
 	}
-	
+
 	public void setLevelDuplication(boolean levelDuplication) {
 		this.levelDuplication = levelDuplication;
-	}
-
-	public String getInvoicePrefix() {
-		return invoicePrefix;
-	}
-
-	public void setInvoicePrefix(String invoicePrefix) {
-		this.invoicePrefix = invoicePrefix;
-	}
-
-	public Long getCurrentInvoiceNb() {
-		return currentInvoiceNb;
-	}
-
-	public void setCurrentInvoiceNb(Long currentInvoiceNb) {
-		this.currentInvoiceNb = currentInvoiceNb;
-	}
-
-	public boolean isDisplayFreeTransacInInvoice() {
-		return displayFreeTransacInInvoice;
-	}
-
-	public void setDisplayFreeTransacInInvoice(boolean displayFreeTransacInInvoice) {
-		this.displayFreeTransacInInvoice = displayFreeTransacInInvoice;
-	}
-	
-	public String getInvoiceAdjustmentPrefix() {
-		return invoiceAdjustmentPrefix;
-	}
-
-	public void setInvoiceAdjustmentPrefix(String invoiceAdjustmentPrefix) {
-		this.invoiceAdjustmentPrefix = invoiceAdjustmentPrefix;
-	}
-
-	public Long getCurrentInvoiceAdjustmentNb() {
-		return currentInvoiceAdjustmentNb;
-	}
-
-	public void setCurrentInvoiceAdjustmentNb(Long currentInvoiceAdjustmentNb) {
-		this.currentInvoiceAdjustmentNb = currentInvoiceAdjustmentNb;
-	}
-
-	public Integer getInvoiceAdjustmentSequenceSize() {
-		return invoiceAdjustmentSequenceSize;
-	}
-
-	public void setInvoiceAdjustmentSequenceSize(
-			Integer invoiceAdjustmentSequenceSize) {
-		this.invoiceAdjustmentSequenceSize = invoiceAdjustmentSequenceSize;
 	}
 
 	public BankCoordinatesDto getBankCoordinates() {
@@ -263,11 +198,11 @@ public class ProviderDto extends BaseDto {
 	public void setBankCoordinates(BankCoordinatesDto bankCoordinates) {
 		this.bankCoordinates = bankCoordinates;
 	}
-	
+
 	public InvoiceConfigurationDto getInvoiceConfiguration() {
 		return invoiceConfiguration;
 	}
-	
+
 	public void setInvoiceConfiguration(InvoiceConfigurationDto invoiceConfiguration) {
 		this.invoiceConfiguration = invoiceConfiguration;
 	}
@@ -279,23 +214,23 @@ public class ProviderDto extends BaseDto {
 	public void setRounding(Integer rounding) {
 		this.rounding = rounding;
 	}
-	
+
 	public Long getPrepaidReservationExpirationDelayinMillisec() {
 		return prepaidReservationExpirationDelayinMillisec;
 	}
-	
+
 	public void setPrepaidReservationExpirationDelayinMillisec(Long prepaidReservationExpirationDelayinMillisec) {
 		this.prepaidReservationExpirationDelayinMillisec = prepaidReservationExpirationDelayinMillisec;
 	}
-	
+
 	public String getDiscountAccountingCode() {
 		return discountAccountingCode;
 	}
-	
+
 	public void setDiscountAccountingCode(String discountAccountingCode) {
 		this.discountAccountingCode = discountAccountingCode;
 	}
-	
+
 	/**
 	 * @return the email
 	 */
@@ -304,36 +239,28 @@ public class ProviderDto extends BaseDto {
 	}
 
 	/**
-	 * @param email the email to set
+	 * @param email
+	 *            the email to set
 	 */
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
-	@Override
-	public String toString() {
-		return "ProviderDto [code=" + code + ", description=" + description
-				+ ", currency=" + currency + ", country=" + country
-				+ ", language=" + language + ", multiCurrency=" + multiCurrency
-				+ ", multiCountry=" + multiCountry + ", multiLanguage="
-				+ multiLanguage + ", userAccount=" + userAccount
-				+ ", invoiceSequenceSize=" + invoiceSequenceSize
-				+ ", enterprise=" + enterprise + ", levelDuplication=" + levelDuplication + ", invoicePrefix="
-				+ invoicePrefix + ", currentInvoiceNb=" + currentInvoiceNb + ", invoiceAdjustmentPrefix="
-				+ invoiceAdjustmentPrefix + ", currentInvoiceAdjustmentNb="
-				+ currentInvoiceAdjustmentNb + ", displayFreeTransacInInvoice=" + displayFreeTransacInInvoice 
-				+ ", invoiceAdjustmentSequenceSize="
-				+ invoiceAdjustmentSequenceSize + ", bankCoordinates="+ bankCoordinates 
-				+ ", invoiceConfiguration=" + invoiceConfiguration
-				+ ", prepaidReservationExpirationDelayinMillisec=" + prepaidReservationExpirationDelayinMillisec
-				+ ", discountAccountingCode=" + discountAccountingCode
-				+ ", rounding="+ rounding+", email="+ email+ ", customFields="
-				+ customFields + "]";
+
+	public boolean isRecognizeRevenue() {
+		return recognizeRevenue;
 	}
 
-	
-	
-	
+	public void setRecognizeRevenue(boolean recognizeRevenue) {
+		this.recognizeRevenue = recognizeRevenue;
+	}
+
+	@Override
+	public String toString() {
+		return "ProviderDto [code=" + code + ", description=" + description + ", currency=" + currency + ", country=" + country + ", language=" + language + ", multiCurrency=" + multiCurrency + ", multiCountry=" + multiCountry + ", multiLanguage=" + multiLanguage + ", userAccount=" + userAccount + ", enterprise=" + enterprise + ", levelDuplication=" + levelDuplication +  ", rounding=" + rounding
+				+ ", prepaidReservationExpirationDelayinMillisec=" + prepaidReservationExpirationDelayinMillisec + ", discountAccountingCode=" + discountAccountingCode + ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", recognizeRevenue=" + recognizeRevenue + ", invoiceConfiguration=" + invoiceConfiguration + ", customFields=" + customFields + "]";
+	}
+
 
 	
+
 }

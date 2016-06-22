@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveocrm.model.dwh.BarChart;
 import org.meveocrm.model.dwh.Chart;
@@ -41,13 +42,13 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 
 	@Inject
 	protected MeasuredValueService mvService;
-
+	
 	protected EM chartEntityModel;
 
 	protected List<EM> chartEntityModels = new ArrayList<EM>();
 
 	private static final long serialVersionUID = 5241132812597358412L;
-
+	
 	public ChartEntityBean() {
 		super();
 	}
@@ -360,4 +361,5 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		chartModel.setLegendCols(pieChart.getLegendCols());
 		chartModel.setLegendRows(pieChart.getLegendRows());
 	}
+
 }

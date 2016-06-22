@@ -16,14 +16,14 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
+import org.meveo.service.custom.EntityCustomActionService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
-import org.meveo.service.script.EntityActionScriptService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -66,16 +66,17 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     private SortedTreeNode groupedFields;
 
     private TreeNode selectedFieldGrouping;
+    private List<TreeNode> cachedTreeNodes;
 
-    private List<EntityActionScript> entityActions;
+    private List<EntityCustomAction> entityActions;
 
-    private EntityActionScript selectedEntityAction;
+    private EntityCustomAction selectedEntityAction;
 
     @Inject
     private CustomEntityTemplateService customEntityTemplateService;
 
     @Inject
-    private EntityActionScriptService entityActionScriptService;
+    private EntityCustomActionService entityActionScriptService;
 
     @Inject
     private JobInstanceService jobInstanceService;
@@ -192,25 +193,69 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                 }
             }
         }
+        if (cachedTreeNodes != null && !cachedTreeNodes.isEmpty()) {
+            for (TreeNode tabNode : cachedTreeNodes) {// tab
+                TreeNode existedTab = getChildNodeByValue(groupedFields, tabNode.getData().toString());
+                if (existedTab == null) {// check tab
+                    existedTab = new SortedTreeNode(CustomFieldTemplate.POSITION_TAB, tabNode.getData().toString(), groupedFields);
+                    existedTab.setExpanded(true);
+                }
+                for (TreeNode fieldGroupNode : tabNode.getChildren()) {// field groups of tab
+                    TreeNode existedFieldGroup = getChildNodeByValue(existedTab, fieldGroupNode.getData().toString());
+                    if (existedFieldGroup == null) {
+                        existedFieldGroup = new SortedTreeNode(CustomFieldTemplate.POSITION_FIELD_GROUP, fieldGroupNode.getData().toString(), existedTab);
+                    }
+                }
+            }
+        }
 
         return groupedFields;
     }
 
-    public List<EntityActionScript> getEntityActions() {
+    private TreeNode getChildNodeByValue(TreeNode parentTreeNode, String value) {
+        for (TreeNode childNode : parentTreeNode.getChildren()) {
+            if (childNode.getData().equals(value)) {
+                return childNode;
+            }
+        }
+        return null;
+    }
+
+    public List<EntityCustomAction> getEntityActions() {
 
         if (entityActions != null || cetPrefix == null) {
             return entityActions;
         }
 
-        Map<String, EntityActionScript> scripts = entityActionScriptService.findByAppliesTo(cetPrefix, getCurrentProvider());
+        Map<String, EntityCustomAction> scripts = entityActionScriptService.findByAppliesTo(cetPrefix, getCurrentProvider());
 
-        entityActions = new ArrayList<EntityActionScript>();
+        entityActions = new ArrayList<EntityCustomAction>();
         entityActions.addAll(scripts.values());
 
         return entityActions;
     }
 
+    public void removeField(TreeNode currentNode) {
+        currentNode.getParent().getChildren().remove(currentNode);
+        refreshFields();
+    }
+
     public void refreshFields() {
+        if (groupedFields != null) {
+            cachedTreeNodes = new ArrayList<TreeNode>();
+            for (TreeNode tabNode : groupedFields.getChildren()) {
+                SortedTreeNode tab = new SortedTreeNode(CustomFieldTemplate.POSITION_TAB, tabNode.getData(), null);
+                cachedTreeNodes.add(tab);
+                if (tabNode.getChildCount() != 0) {
+                    for (TreeNode fieldGroupNode : tabNode.getChildren()) {// fieldgroup
+                        SortedTreeNode fieldGroup = (SortedTreeNode) fieldGroupNode;
+                        if (fieldGroup.getType().equals(CustomFieldTemplate.POSITION_FIELD_GROUP) && fieldGroupNode.getChildCount() == 0) {
+                            new SortedTreeNode(CustomFieldTemplate.POSITION_FIELD_GROUP, fieldGroupNode.getData(), tab);
+                        }
+                    }
+                }
+            }
+        }
         groupedFields = null;
     }
 
@@ -226,11 +271,11 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         return selectedFieldGrouping;
     }
 
-    public void setSelectedEntityAction(EntityActionScript selectedEntityAction) {
+    public void setSelectedEntityAction(EntityCustomAction selectedEntityAction) {
         this.selectedEntityAction = selectedEntityAction;
     }
 
-    public EntityActionScript getSelectedEntityAction() {
+    public EntityCustomAction getSelectedEntityAction() {
         return selectedEntityAction;
     }
 
@@ -301,12 +346,13 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                 customFieldTemplateService.remove(((CustomFieldTemplate) childNode.getData()).getId());
             } else if (childNode.getType().equals(GroupedCustomField.TYPE_FIELD_GROUP)) {
                 for (TreeNode childChildNode : childNode.getChildren()) {
-                    customFieldTemplateService.remove((CustomFieldTemplate) childChildNode.getData());
+                    customFieldTemplateService.remove(((CustomFieldTemplate) childChildNode.getData()).getId());
                 }
             }
         }
 
         selectedFieldGrouping.getParent().getChildren().remove(selectedFieldGrouping);
+        refreshFields();
 
     }
 

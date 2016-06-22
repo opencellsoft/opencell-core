@@ -99,6 +99,14 @@ public class InvoiceSubCategoryApi extends BaseApi {
                 catMessagesService.create(catMsg, currentUser);
             }
         }
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), invoiceSubCategory, true, currentUser, true);
+
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }        
     }
 
     public void update(InvoiceSubCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
@@ -156,8 +164,17 @@ public class InvoiceSubCategoryApi extends BaseApi {
                 }
             }
         }
-
+        
         invoiceSubCategoryService.update(invoiceSubCategory, currentUser);
+        
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), invoiceSubCategory, false, currentUser, true);
+
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        } 
     }
 
     public InvoiceSubCategoryDto find(String code, Provider provider) throws MeveoApiException {
@@ -174,7 +191,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, code);
         }
 
-        result = new InvoiceSubCategoryDto(invoiceSubCategory);
+        result = new InvoiceSubCategoryDto(invoiceSubCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceSubCategory));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
         for (CatMessages msg : catMessagesService.getCatMessagesList(InvoiceSubCategory.class.getSimpleName() + "_" + invoiceSubCategory.getId())) {

@@ -60,7 +60,7 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 	
 	@Inject
 	private RatedTransactionService ratedTransactionService;
-   private Map<String, Currency> listCurrency = new HashMap<String, Currency>(); 
+   private Map<String, Currency> listCurrency = new HashMap<String, Currency>();
 
 
 	/**

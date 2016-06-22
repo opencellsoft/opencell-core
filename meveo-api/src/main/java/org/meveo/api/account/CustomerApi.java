@@ -54,7 +54,7 @@ public class CustomerApi extends AccountApi {
         create(postData, currentUser, true);
     }
 
-    public void create(CustomerDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, BusinessException {
+    public Customer create(CustomerDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -121,13 +121,15 @@ public class CustomerApi extends AccountApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
+        
+        return customer;
     }
 
     public void update(CustomerDto postData, User currentUser) throws MeveoApiException, BusinessException {
         update(postData, currentUser, true);
     }
 
-    public void update(CustomerDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, BusinessException {
+    public Customer update(CustomerDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -207,7 +209,7 @@ public class CustomerApi extends AccountApi {
             }
         }
 
-        customerService.updateAudit(customer, currentUser);
+        customer = customerService.update(customer, currentUser);
 
         // Validate and populate customFields
         try {
@@ -216,6 +218,8 @@ public class CustomerApi extends AccountApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
+        
+        return customer;
     }
 
     public CustomerDto find(String customerCode, Provider provider) throws MeveoApiException {

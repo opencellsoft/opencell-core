@@ -18,22 +18,28 @@
  */
 package org.meveo.model.admin;
 
-import javax.persistence.Column;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.Sequence;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -61,22 +67,6 @@ public class Seller extends BusinessCFEntity {
 	@JoinColumn(name = "TRADING_LANGUAGE_ID")
 	private TradingLanguage tradingLanguage;
 
-	@Column(name = "INVOICE_PREFIX", length = 2000)
-	@Size(max = 2000)
-	private String invoicePrefix;
-
-	@Column(name = "CURRENT_INVOICE_NB")
-	private Long currentInvoiceNb;
-
-	@Column(name = "INVOICE_ADJUSTMENT_PREFIX", length = 2000)
-	@Size(max = 2000)
-	private String invoiceAdjustmentPrefix;
-
-	@Column(name = "CURRENT_INVOICE_ADJUSTMENT_NB")
-	private Long currentInvoiceAdjustmentNb;
-
-	@Column(name = "INVOICE_ADJUSTMENT_SEQUENCE_SIZE")
-	private Integer invoiceAdjustmentSequenceSize = 9;
 	
 	@Embedded
 	private Address address = new Address();
@@ -85,8 +75,12 @@ public class Seller extends BusinessCFEntity {
 	@JoinColumn(name = "PARENT_SELLER_ID")
 	private Seller seller;
 	
-	@Column(name = "INVOICE_SEQUENCE_SIZE")
-	private Integer invoiceSequenceSize=9;
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "BILLING_SEQ_INVTYP_SELL") 
+	@MapKeyJoinColumn(name="INVOICETYPE_ID")
+	Map<InvoiceType,Sequence> invoiceTypeSequence = new HashMap<InvoiceType,Sequence>();
+	
 	
 	public Seller() {
 		super();
@@ -124,21 +118,6 @@ public class Seller extends BusinessCFEntity {
 		this.address = address;
 	}
 
-	public String getInvoicePrefix() {
-		return invoicePrefix;
-	}
-
-	public void setInvoicePrefix(String invoicePrefix) {
-		this.invoicePrefix = invoicePrefix;
-	}
-
-	public Long getCurrentInvoiceNb() {
-		return currentInvoiceNb;
-	}
-
-	public void setCurrentInvoiceNb(Long currentInvoiceNb) {
-		this.currentInvoiceNb = currentInvoiceNb;
-	}
 
 	public Seller getSeller() {
 		return seller;
@@ -149,45 +128,25 @@ public class Seller extends BusinessCFEntity {
 	}
 
 	@Override
-	public ICustomFieldEntity getParentCFEntity() {
+	public ICustomFieldEntity[] getParentCFEntities() {
 		if (seller != null) {
-			return seller;
+			return new ICustomFieldEntity[]{seller};
 		}
-		return getProvider();
+		return new ICustomFieldEntity[]{getProvider()};
 	}
 
-	public String getInvoiceAdjustmentPrefix() {
-		return invoiceAdjustmentPrefix;
+	/**
+	 * @return the invoiceTypeSequence
+	 */
+	public Map<InvoiceType, Sequence> getInvoiceTypeSequence() {
+		return invoiceTypeSequence;
 	}
 
-	public void setInvoiceAdjustmentPrefix(String invoiceAdjustmentPrefix) {
-		this.invoiceAdjustmentPrefix = invoiceAdjustmentPrefix;
+	/**
+	 * @param invoiceTypeSequence the invoiceTypeSequence to set
+	 */
+	public void setInvoiceTypeSequence(Map<InvoiceType, Sequence> invoiceTypeSequence) {
+		this.invoiceTypeSequence = invoiceTypeSequence;
 	}
-
-	public Integer getInvoiceAdjustmentSequenceSize() {
-		return invoiceAdjustmentSequenceSize;
-	}
-
-	public void setInvoiceAdjustmentSequenceSize(Integer invoiceAdjustmentSequenceSize) {
-		this.invoiceAdjustmentSequenceSize = invoiceAdjustmentSequenceSize;
-	}
-
-	public Long getCurrentInvoiceAdjustmentNb() {
-		return currentInvoiceAdjustmentNb;
-	}
-
-	public void setCurrentInvoiceAdjustmentNb(Long currentInvoiceAdjustmentNb) {
-		this.currentInvoiceAdjustmentNb = currentInvoiceAdjustmentNb;
-	}
-
-	public Integer getInvoiceSequenceSize() {
-		return invoiceSequenceSize;
-	}
-
-	public void setInvoiceSequenceSize(Integer invoiceSequenceSize) {
-		this.invoiceSequenceSize = invoiceSequenceSize;
-	}
-	
-	
 
 }

@@ -145,7 +145,7 @@ public class Customer extends AccountEntity {
 	}
 
     @Override
-    public ICustomFieldEntity getParentCFEntity() {
-        return seller;
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return new ICustomFieldEntity[]{seller};
 	}
 }

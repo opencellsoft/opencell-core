@@ -15,6 +15,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -116,20 +117,13 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 					}
 
 					if (!serviceFound) {
-						throw new BusinessException("SERVICE_NOT_FOUND_IN_OFFER");
+						throw new BusinessException("Service " + serviceCode + " is not defined in the offer");
 					}
 				}
 			}
 
-			// get the BSM from BOM
-			BusinessServiceModel bsm = null;
-			for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {
-				if (item.getItemClass().equals(BusinessServiceModel.class.getName())) {
-					bsm = businessServiceModelService.findByCode(item.getItemCode(), currentUser.getProvider());
-					break;
-				}
-			}
-
+			List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
+			List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
 			for (OfferServiceTemplate offerServiceTemplate : bomOffer.getOfferServiceTemplates()) {
 				offerServiceTemplate = offerServiceTemplateService.refreshOrRetrieve(offerServiceTemplate);
 				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode(), currentUser.getProvider());
@@ -145,6 +139,17 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 				}
 				if (!serviceFound) {
 					continue;
+				}
+
+				// get the BSM from BOM
+				BusinessServiceModel bsm = null;
+				for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {
+					if (item.getItemClass().equals(BusinessServiceModel.class.getName())) {
+						bsm = businessServiceModelService.findByCode(item.getItemCode(), currentUser.getProvider());
+						if (bsm.getServiceTemplate().equals(serviceTemplate)) {
+							break;
+						}
+					}
 				}
 
 				OfferServiceTemplate newOfferServiceTemplate = new OfferServiceTemplate();
@@ -179,14 +184,26 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 							List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode, currentUser.getProvider());
 							if (pricePlanMatrixes != null) {
 								for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+									String ppCode = prefix + pricePlanMatrix.getCode();
+									PricePlanMatrix ppMatrix = pricePlanMatrixService.findByCode(ppCode, currentUser.getProvider());
+									if (ppMatrix != null) {
+										continue;
+									}
+
 									PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
 									BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
 									newPriceplanmaMatrix.setAuditable(null);
 									newPriceplanmaMatrix.setId(null);
 									newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-									newPriceplanmaMatrix.setCode(prefix + pricePlanMatrix.getCode());
+									newPriceplanmaMatrix.setCode(ppCode);
 									newPriceplanmaMatrix.setVersion(0);
 									newPriceplanmaMatrix.setOfferTemplate(null);
+
+									if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
+										continue;
+									} else {
+										pricePlansInMemory.add(newPriceplanmaMatrix);
+									}
 
 									pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
 								}
@@ -201,14 +218,25 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 							List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode, currentUser.getProvider());
 							if (pricePlanMatrixes != null) {
 								for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+									String ppCode = prefix + pricePlanMatrix.getCode();
+									if (pricePlanMatrixService.findByCode(ppCode, currentUser.getProvider()) != null) {
+										continue;
+									}
+
 									PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
 									BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
 									newPriceplanmaMatrix.setAuditable(null);
 									newPriceplanmaMatrix.setId(null);
 									newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-									newPriceplanmaMatrix.setCode(prefix + pricePlanMatrix.getCode());
+									newPriceplanmaMatrix.setCode(ppCode);
 									newPriceplanmaMatrix.setVersion(0);
 									newPriceplanmaMatrix.setOfferTemplate(null);
+
+									if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
+										continue;
+									} else {
+										pricePlansInMemory.add(newPriceplanmaMatrix);
+									}
 
 									pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
 								}
@@ -223,14 +251,25 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 							List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode, currentUser.getProvider());
 							if (pricePlanMatrixes != null) {
 								for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+									String ppCode = prefix + pricePlanMatrix.getCode();
+									if (pricePlanMatrixService.findByCode(ppCode, currentUser.getProvider()) != null) {
+										continue;
+									}
+
 									PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
 									BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
 									newPriceplanmaMatrix.setAuditable(null);
 									newPriceplanmaMatrix.setId(null);
 									newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-									newPriceplanmaMatrix.setCode(prefix + pricePlanMatrix.getCode());
+									newPriceplanmaMatrix.setCode(ppCode);
 									newPriceplanmaMatrix.setVersion(0);
 									newPriceplanmaMatrix.setOfferTemplate(null);
+
+									if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
+										continue;
+									} else {
+										pricePlansInMemory.add(newPriceplanmaMatrix);
+									}
 
 									pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
 								}
@@ -244,14 +283,25 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 							List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode, currentUser.getProvider());
 							if (pricePlanMatrixes != null) {
 								for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+									String ppCode = prefix + pricePlanMatrix.getCode();
+									if (pricePlanMatrixService.findByCode(ppCode, currentUser.getProvider()) != null) {
+										continue;
+									}
+
 									PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
 									BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
 									newPriceplanmaMatrix.setAuditable(null);
 									newPriceplanmaMatrix.setId(null);
 									newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-									newPriceplanmaMatrix.setCode(prefix + pricePlanMatrix.getCode());
+									newPriceplanmaMatrix.setCode(ppCode);
 									newPriceplanmaMatrix.setVersion(0);
 									newPriceplanmaMatrix.setOfferTemplate(null);
+
+									if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
+										continue;
+									} else {
+										pricePlansInMemory.add(newPriceplanmaMatrix);
+									}
 
 									pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
 								}
@@ -273,6 +323,13 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 							newChargeTemplate.setVersion(0);
 							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
 							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+
+							if (chargeTemplateInMemory.contains(newChargeTemplate)) {
+								continue;
+							} else {
+								chargeTemplateInMemory.add(newChargeTemplate);
+							}
+
 							recurringChargeTemplateService.create(newChargeTemplate, currentUser);
 
 							ServiceChargeTemplateRecurring serviceChargeTemplate = new ServiceChargeTemplateRecurring();
@@ -301,6 +358,13 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 							newChargeTemplate.setVersion(0);
 							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
 							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+
+							if (chargeTemplateInMemory.contains(newChargeTemplate)) {
+								continue;
+							} else {
+								chargeTemplateInMemory.add(newChargeTemplate);
+							}
+
 							oneShotChargeTemplateService.create(newChargeTemplate, currentUser);
 
 							ServiceChargeTemplateSubscription serviceChargeTemplate = new ServiceChargeTemplateSubscription();
@@ -329,6 +393,13 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 							newChargeTemplate.setVersion(0);
 							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
 							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+
+							if (chargeTemplateInMemory.contains(newChargeTemplate)) {
+								continue;
+							} else {
+								chargeTemplateInMemory.add(newChargeTemplate);
+							}
+
 							oneShotChargeTemplateService.create(newChargeTemplate, currentUser);
 
 							ServiceChargeTemplateTermination serviceChargeTemplate = new ServiceChargeTemplateTermination();
@@ -357,6 +428,13 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 							newChargeTemplate.setVersion(0);
 							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
 							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+
+							if (chargeTemplateInMemory.contains(newChargeTemplate)) {
+								continue;
+							} else {
+								chargeTemplateInMemory.add(newChargeTemplate);
+							}
+
 							usageChargeTemplateService.create(newChargeTemplate, currentUser);
 
 							ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();

@@ -22,12 +22,16 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.payments.AutomatedPayment;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.AutomatedPaymentService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -38,7 +42,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
-public class AutomatedPaymentBean extends BaseBean<AutomatedPayment> {
+public class AutomatedPaymentBean extends CustomFieldBean<AutomatedPayment> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -48,6 +52,10 @@ public class AutomatedPaymentBean extends BaseBean<AutomatedPayment> {
 	 */
 	@Inject
 	private AutomatedPaymentService automatedPaymentService;
+	
+
+	@Inject
+	private AccountOperationService accountOperationService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -65,7 +73,7 @@ public class AutomatedPaymentBean extends BaseBean<AutomatedPayment> {
 	@Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		entity.getCustomerAccount().getAccountOperations().add(entity);
+		accountOperationService.refreshOrRetrieve(entity.getCustomerAccount().getAccountOperations()).add(entity);
 		return super.saveOrUpdate(killConversation);
 	}
 

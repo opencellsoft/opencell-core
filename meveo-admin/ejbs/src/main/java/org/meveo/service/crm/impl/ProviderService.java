@@ -24,13 +24,9 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.security.Role;
-import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 
@@ -39,12 +35,8 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class ProviderService extends PersistenceService<Provider> {
-	
     @Inject
     private UserService userService;
-    
-    @Inject
-    private RoleService roleService;
 
     public Provider findByCode(String code) {
         return findByCodeWithFetch(code, null);
@@ -75,28 +67,5 @@ public class ProviderService extends PersistenceService<Provider> {
             return null;
         }
     }
-    
-    public void create(Provider provider, User creator) throws BusinessException{
-    	boolean isNew = provider.isTransient();
-    	ParamBean paramBean = ParamBean.getInstance();
-    	super.create(provider, creator);
-    	if(isNew){
-	        Role adminRole = roleService.findById(Long.parseLong(paramBean.getProperty("systgetEntityManager().adminRoleid", "1")));
-	        Role role = new Role();
-	        role.setName(adminRole.getName());
-	        role.setDescription(adminRole.getDescription());
-	        role.getPermissions().addAll(adminRole.getPermissions());
-	
-	        role.setProvider(provider);
-	        roleService.create(role, creator);
-	
-	        User user = new User();
-	        user.setProvider(provider);
-	        user.setPassword(provider.getCode() + ".password");
-	        user.setUserName(provider.getCode() + ".ADMIN");
-	        user.getRoles().add(role);
-	        userService.create(user, creator);
-	        log.info("created default user id={} for provider {}", user.getId(), provider.getCode());
-    	}
-    }
+  
 }

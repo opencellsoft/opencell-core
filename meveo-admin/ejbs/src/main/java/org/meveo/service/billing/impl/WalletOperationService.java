@@ -21,6 +21,7 @@ import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -386,7 +387,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeTemplate.getCode(), subscription, chargeInstance,
 				ApplicationTypeEnum.PUNCTUAL, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency,
 				countryId, tax.getPercent(), null, null, invoiceSubCategory, chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), null,
-				null, null);
+				null, null, false);
 
 		return chargeApplication;
 	}
@@ -402,8 +403,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			applicationDate = new Date();
 		}
 
-		log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, multiplicator={}, applicationDate={}, chargeInstance.getId={}", new Object[] {
-				subscription.getId(), quantity, chargeInstance.getChargeTemplate().getUnitMultiplicator(), applicationDate, chargeInstance.getId() });
+		log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, multiplicator={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}", new Object[] {
+				subscription.getId(), quantity, chargeInstance.getChargeTemplate().getUnitMultiplicator(), applicationDate, chargeInstance.getId(),chargeInstance.getDescription() });
 
 		WalletOperation walletOperation = rateOneShotApplication(subscription, chargeInstance, inputQuantity, quantity, applicationDate, creator);
 		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
@@ -532,7 +533,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			result = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(), chargeInstance.getServiceInstance().getSubscription(), chargeInstance,
 					ApplicationTypeEnum.PRORATA_SUBSCRIPTION, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency,
 					countryId, tax.getPercent(), null, nextapplicationDate, recurringChargeTemplate.getInvoiceSubCategory(), chargeInstance.getCriteria1(),
-					chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), applicationDate, DateUtils.addDaysToDate(nextapplicationDate, -1), null);
+					chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), applicationDate, DateUtils.addDaysToDate(nextapplicationDate, -1), null, false);
 		} else {
 			result = chargeApplicationRatingService.prerateChargeApplication(chargeInstance.getCode(), subscriptionDate, chargeInstance.getServiceInstance().getSubscription()
 					.getOffer().getCode(), chargeInstance, ApplicationTypeEnum.PRORATA_SUBSCRIPTION, applicationDate, chargeInstance.getAmountWithoutTax(),
@@ -655,7 +656,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					.getSubscription(), chargeInstance, ApplicationTypeEnum.PRORATA_TERMINATION, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance
 					.getAmountWithTax(), inputQuantity, quantity, currency, countryId, tax.getPercent(), null, nextapplicationDate, invoiceSubCategory, chargeInstance
 					.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), periodStart, DateUtils.addDaysToDate(nextapplicationDate, -1),
-					ChargeApplicationModeEnum.REIMBURSMENT);
+					ChargeApplicationModeEnum.REIMBURSMENT, false);
 
 			chargeWalletOperation(chargeApplication, creator, chargeInstance.getProvider());
 			// create(chargeApplication, creator, chargeInstance.getProvider());
@@ -666,7 +667,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			log.debug("reimbursment-applyInAdvance applicationDate={}, nextapplicationDate={},nextChargeDate={}", applicationDate, nextapplicationDate, nextChargeDate);
 
 			if (nextChargeDate != null && nextChargeDate.getTime() > nextapplicationDate.getTime()) {
-				applyReccuringCharge(chargeInstance, true, recurringChargeTemplate, creator);
+				applyReccuringCharge(chargeInstance, true, recurringChargeTemplate, false,creator);
 			}
 		} else {
 			Date nextChargeDate = chargeInstance.getChargeDate();
@@ -688,7 +689,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	 * @param creator
 	 * @throws BusinessException
 	 */
-	public void applyReccuringCharge(RecurringChargeInstance chargeInstance, boolean reimbursement, RecurringChargeTemplate recurringChargeTemplate, User creator)
+	public void applyReccuringCharge(RecurringChargeInstance chargeInstance, boolean reimbursement, RecurringChargeTemplate recurringChargeTemplate,boolean forSchedule, User creator)
 			throws BusinessException {
 
 		Date applicationDate = chargeInstance.getNextChargeDate();
@@ -760,9 +761,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					.getSubscription(), chargeInstance, reimbursement ? ApplicationTypeEnum.PRORATA_TERMINATION : ApplicationTypeEnum.RECURRENT, applicationDate, chargeInstance
 					.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency, countryId, tax.getPercent(), null, nextapplicationDate,
 					invoiceSubCategory, chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), applicationDate, DateUtils.addDaysToDate(
-							nextapplicationDate, -1), reimbursement ? ChargeApplicationModeEnum.REIMBURSMENT : ChargeApplicationModeEnum.SUBSCRIPTION);
+							nextapplicationDate, -1), reimbursement ? ChargeApplicationModeEnum.REIMBURSMENT : ChargeApplicationModeEnum.SUBSCRIPTION, forSchedule);
 			chargeApplication.setSubscriptionDate(chargeInstance.getServiceInstance().getSubscriptionDate());
 
+			if(forSchedule){
+				chargeApplication.setStatus(WalletOperationStatusEnum.SCHEDULED);
+			}
+			
 			chargeWalletOperation(chargeApplication, creator, chargeInstance.getProvider());
 			// create(chargeApplication, creator, chargeInstance.getProvider());
 			chargeInstance.setChargeDate(applicationDate);
@@ -870,7 +875,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					chargeInstance, reimbursement ? ApplicationTypeEnum.PRORATA_TERMINATION : applicationTypeEnum, nextapplicationDate, chargeInstance.getAmountWithoutTax(),
 					chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency, countryId, tax.getPercent(), null, nextapplicationDate, invoiceSubCategory,
 					chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), applicationDate, DateUtils.addDaysToDate(nextapplicationDate, -1),
-					reimbursement ? ChargeApplicationModeEnum.REIMBURSMENT : ChargeApplicationModeEnum.SUBSCRIPTION);
+					reimbursement ? ChargeApplicationModeEnum.REIMBURSMENT : ChargeApplicationModeEnum.SUBSCRIPTION, false);
 			walletOperation.setSubscriptionDate(chargeInstance.getServiceInstance().getSubscriptionDate());
 
 			List<WalletOperation> oprations = chargeWalletOperation(walletOperation, creator, chargeInstance.getProvider());
@@ -975,7 +980,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(), chargeInstance.getServiceInstance()
 					.getSubscription(), chargeInstance, type, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity,
 					currency, countryId, tax.getPercent(), null, nextapplicationDate, invoiceSubCategory, chargeInstance.getCriteria1(), chargeInstance.getCriteria2(),
-					chargeInstance.getCriteria3(), applicationDate, endDate, ChargeApplicationModeEnum.AGREEMENT);
+					chargeInstance.getCriteria3(), applicationDate, endDate, ChargeApplicationModeEnum.AGREEMENT, false);
 
 			chargeWalletOperation(chargeApplication, creator, chargeInstance.getProvider());
 			// create(chargeApplication, creator, chargeInstance.getProvider());
@@ -1075,12 +1080,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 	@SuppressWarnings("unchecked")
 	public List<WalletOperation> findByUserAccountAndWalletCode(String walletCode, UserAccount userAccount, Boolean orderAscending) {
-		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w");
-		qb.addCriterionEntity("wallet.userAccount", userAccount);
+		
+		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w", Arrays.asList("chargeInstance"), null);
+		
+		qb.addCriterionEntity("w.wallet.userAccount", userAccount);
         // qb.addCriterionEntity("provider", userAccount.getProvider()); // No need as userAccount is provider based already
-		qb.addCriterion("wallet.code", "=", walletCode, true);
+		qb.addCriterion("w.wallet.code", "=", walletCode, true);
 		if (orderAscending != null) {
-			qb.addOrderCriterion("operationDate", orderAscending);
+			qb.addOrderCriterion("w.operationDate", orderAscending);
 		}
 
 		try {
@@ -1152,7 +1159,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	public List<WalletOperation> chargeWalletOperation(WalletOperation op, User creator, Provider provider) throws BusinessException {
 		List<WalletOperation> result = new ArrayList<>();
 		log.debug("chargeWalletOperation on chargeInstanceId:{}", op.getChargeInstance().getId());
-		if (walletCacheContainerProvider.isWalletIdsCached(op.getChargeInstance().getId())) {
+		//case of scheduled operation (for revenue recognition)
+		if(op.getChargeInstance().getId()==null){
+			op.setWallet(op.getChargeInstance().getSubscription().getUserAccount().getWallet());
+			log.debug("chargeWalletOperation is create schedule on wallet {}", op.getWallet());
+			result.add(op);
+			create(op, creator);
+		} else if (walletCacheContainerProvider.isWalletIdsCached(op.getChargeInstance().getId())) {
 			List<Long> walletIds = walletCacheContainerProvider.getWallets(op.getChargeInstance().getId());
 			log.debug("chargeWalletOperation chargeInstanceId found in usageCache with {} wallet ids", walletIds.size());
 			result = chargeOnWalletIds(walletIds, op, creator, provider);

@@ -18,6 +18,7 @@
 	<p:tooltip for="taxes">#{help['menu.taxes']}</p:tooltip>
 	<p:tooltip for="invoiceCategories">#{help['menu.invoiceCategories']}</p:tooltip>
 	<p:tooltip for="invoiceSubCategories">#{help['menu.invoiceSubCategories']}</p:tooltip>
+	<p:tooltip for="invoiceTypes">#{help['menu.invoiceTypes']}</p:tooltip>
 	<p:tooltip for="providerContacts">#{help['menu.providerContacts']}</p:tooltip>
 	<p:tooltip for="customerBrands">#{help['menu.customerBrands']}</p:tooltip>
 	<p:tooltip for="customerCategories">#{help['menu.customerCategories']}</p:tooltip>
@@ -112,9 +113,7 @@
 					<p:menuitem id="catMessages" outcome="catMessagess"
 						value="#{messages['menu.catMessages']}" />
 					
-					<p:menuitem id="emailTemplates"
-						rendered="#{identity.hasPermission('administration','administrationVisualization')}"
-						outcome="emailTemplates" value="#{messages['menu.emailTemplates']}" />	
+					<p:menuitem id="emailTemplates" outcome="emailTemplates" value="#{messages['menu.emailTemplates']}" />	
 				</p:submenu>
 				
 				<p:menuitem
@@ -141,6 +140,10 @@
 					rendered="#{identity.hasPermission('catalog','catalogVisualization')}"
 					outcome="invoiceSubCategories"
 					value="#{messages['menu.invoiceSubCategories']}" />
+				<p:menuitem id="invoiceTypes"
+					rendered="#{identity.hasPermission('billing','billingVisualization')}"
+					outcome="invoiceTypes"
+					value="#{messages['menu.invoiceTypes']}" />					
 			</p:submenu>
 			
 			<p:menuitem id="terminationReasons"
@@ -255,6 +258,10 @@
 			<p:menuitem id="accessPoints"
 				rendered="#{identity.hasPermission('account','accountVisualization')}"
 				outcome="access" value="#{messages['menu.accessPoints']}" />
+				
+			<p:menuitem id="businessAccountModels"
+				rendered="#{identity.hasPermission('account','accountVisualization')}"
+				outcome="businessAccountModels" value="#{messages['menu.businessAccountModels']}" />
 		</p:submenu>
 
 		<p:submenu id="mediation" label="#{messages['menu.mediation']}"
@@ -277,21 +284,29 @@
 		<p:submenu id="invoicing" label="#{messages['menu.invoicing']}"
 			rendered="#{identity.hasPermission('billing','billingVisualization')}">
 
-			<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing"
-				rendered="#{identity.hasPermission('billing','billingManagement')}"
-				value="#{messages['menu.globalExecution']}" />
+			<p:submenu id="billingRun" label="#{messages['menu.billingRun']}"
+				rendered="#{identity.hasPermission('billing','billingManagement')}">
+				<p:menuitem id="billingRuns" outcome="billingRuns"
+					value="#{messages['menu.billingRuns']}" />
+				<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing"
+					rendered="#{identity.hasPermission('billing','billingManagement')}"
+					value="#{messages['menu.globalExecution']}" />
+				<p:menuitem id="exceptionalInvoicing" outcome="exceptionelInvoicing"
+					value="#{messages['menu.exceptionalInvoicing']}" />
+			</p:submenu>
 
-			<p:menuitem id="exceptionalInvoicing" outcome="exceptionelInvoicing"
-				value="#{messages['menu.exceptionalInvoicing']}" />
-
-			<p:menuitem id="billingRuns" outcome="billingRuns"
-				value="#{messages['menu.billingRuns']}" />
-				
 			<p:menuitem id="ratedTransactions" outcome="ratedTransactions"
 				value="#{messages['menu.ratedTransactions']}" />
-				
-			<p:menuitem id="invoices" outcome="invoices"
-				value="#{messages['menu.invoices']}" />	
+
+			<p:submenu id="invoice" label="#{messages['menu.invoice']}"
+				rendered="#{identity.hasPermission('billing','billingManagement')}">
+				<p:menuitem id="invoices" outcome="invoices"
+					value="#{messages['menu.invoices']}" />
+				<p:menuitem id="aggregateInvoices" outcome="invoiceAggregatedDetail"
+					value="#{messages['menu.invoice.createAggregated']}" />
+				<p:menuitem id="detailedInvoices" outcome="detailedInvoiceDetail"
+					value="#{messages['menu.invoice.createDetailed']}" />
+			</p:submenu>
 
 		</p:submenu>
 
@@ -304,6 +319,16 @@
 				value="#{messages['menu.ddrequestLotOp']}" />
 			<p:menuitem id="ddrequestLots" outcome="ddrequestLots"
 				value="#{messages['menu.ddrequestLot']}" />
+		</p:submenu>
+
+		<p:submenu id="finance" label="#{messages['menu.finance']}"
+			rendered="#{identity.hasPermission('billing','billingManagement')}">
+
+			<p:menuitem id="revenueRecognitionRules" outcome="revenueRecognitionRules"
+				value="#{messages['menu.revenueRecognitionRules']}" />
+				
+			<p:menuitem id="revenueSchedules" outcome="revenueSchedules"
+				value="#{messages['menu.revenueSchedules']}" />
 		</p:submenu>
 		
 		<p:submenu id="reporting" label="#{messages['menu.reporting']}"
@@ -402,7 +427,7 @@
 				outcome="fileExplorer" value="#{messages['menu.fileExplorer']}" />
 
 			<p:menuitem id="cache"
-				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
+				rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}"
 				outcome="caches" value="#{messages['menu.cacheInfo']}" />
 
 		</p:submenu>

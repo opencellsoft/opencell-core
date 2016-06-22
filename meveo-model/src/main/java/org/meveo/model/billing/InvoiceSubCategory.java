@@ -35,8 +35,10 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.MultilanguageEntity;
 
 @Entity
@@ -44,18 +46,16 @@ import org.meveo.model.MultilanguageEntity;
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_INVOICE_SUB_CAT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SUB_CAT_SEQ")
-@NamedQueries({			
-@NamedQuery(name = "invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", 
-	           query = "select count(*) from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null)"
-	        		   + " and v.id not in (select inv.invoiceSubCategory.id from InvoiceSubcategoryCountry inv where inv.invoiceSubCategory.id is not null)"
-	           		+ " and v.provider=:provider"),
-	           
-@NamedQuery(name = "invoiceSubCategory.getInvoiceSubCatNotAssociated", 
-            query = "from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null) "
-            		+ " and v.id not in (select inv.invoiceSubCategory.id from InvoiceSubcategoryCountry inv where inv.invoiceSubCategory.id is not null)"
-		            + " and v.provider=:provider")           	                  	         
-})
-public class InvoiceSubCategory extends BusinessEntity {
+@CustomFieldEntity(cftCodePrefix = "INV_SUB_CAT")
+@NamedQueries({
+		@NamedQuery(name = "invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", query = "select count(*) from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null)"
+				+ " and v.id not in (select inv.invoiceSubCategory.id from InvoiceSubcategoryCountry inv where inv.invoiceSubCategory.id is not null)"
+				+ " and v.provider=:provider"),
+
+		@NamedQuery(name = "invoiceSubCategory.getInvoiceSubCatNotAssociated", query = "from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null) "
+				+ " and v.id not in (select inv.invoiceSubCategory.id from InvoiceSubcategoryCountry inv where inv.invoiceSubCategory.id is not null)"
+				+ " and v.provider=:provider") })
+public class InvoiceSubCategory extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -103,6 +103,35 @@ public class InvoiceSubCategory extends BusinessEntity {
 
 	public void setDiscount(BigDecimal discount) {
 		this.discount = discount;
+	}
+
+	@Override
+	public ICustomFieldEntity[] getParentCFEntities() {
+		return new ICustomFieldEntity[] { invoiceCategory };
+	}
+
+	@Override
+	public int hashCode() {
+		return id != null ? id.intValue() : super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		
+		InvoiceSubCategory other = (InvoiceSubCategory) obj;
+		if (code == null) {
+			if (other.getCode() != null)
+				return false;
+		} else if (!code.equals(other.getCode()))
+			return false;
+		
+		return true;
 	}
 
 }

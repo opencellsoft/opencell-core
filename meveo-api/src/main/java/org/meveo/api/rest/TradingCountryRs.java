@@ -13,7 +13,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CountryDto;
-import org.meveo.api.dto.response.GetCountryIsoResponse;
 import org.meveo.api.dto.response.GetTradingCountryResponse;
 import org.meveo.api.rest.security.RSSecured;
 

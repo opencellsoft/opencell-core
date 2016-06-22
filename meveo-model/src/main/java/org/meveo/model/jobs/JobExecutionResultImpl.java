@@ -39,7 +39,7 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
     private Date endDate;
 
     @Column(name = "NB_TO_PROCESS")
-    private long nbItemsToProcess = -1;
+    private long nbItemsToProcess;
 
     @Column(name = "NB_SUCCESS")
     private long nbItemsCorrectlyProcessed;

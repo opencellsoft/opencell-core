@@ -19,8 +19,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.codec.binary.Base64;
+import org.meveo.model.ModuleItem;
 
 @Entity
+@ModuleItem
 @Table(name = "ADM_NOTIF_WEBHOOKS")
 public class WebHook extends Notification {
 

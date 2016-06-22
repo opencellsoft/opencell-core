@@ -238,5 +238,4 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
 		this.strategyImportType = strategyImportType;
 	}
-
 }

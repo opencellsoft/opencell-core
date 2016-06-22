@@ -210,7 +210,7 @@ public class UserAccount extends AccountEntity {
 	}
 
     @Override
-    public ICustomFieldEntity getParentCFEntity() {
-        return billingAccount;
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return new ICustomFieldEntity[]{billingAccount};
 	}
 }

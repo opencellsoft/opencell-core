@@ -18,8 +18,12 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,11 +33,13 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.Sequence;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.omnifaces.cdi.ViewScoped;
 
 @Named
@@ -48,6 +54,15 @@ public class SellerBean extends CustomFieldBean<Seller> {
 	 */
 	@Inject
 	private SellerService sellerService;
+	
+	 @Inject
+	 private InvoiceTypeService invoiceTypeService;
+	 
+	 private String prefixEl;
+	 private Integer sequenceSize= 9;
+	 private Long currentInvoiceNb = 0L; 
+	 private String invoiceTypeCode;
+	 private boolean editSellerSequence=false;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -83,13 +98,110 @@ public class SellerBean extends CustomFieldBean<Seller> {
 	@Override
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		return super.saveOrUpdate(killConversation);
 		// prefix must be set
-		if (entity.getCurrentInvoiceNb() != null && StringUtils.isBlank(entity.getInvoicePrefix())) {
-			messages.error(new BundleKey("messages", "message.error.seller.invoicePrefix.required"));
-			return null;
-		} else {
-			return super.saveOrUpdate(killConversation);
-		}
+//		if (entity.getCurrentInvoiceNb() != null && StringUtils.isBlank(entity.getInvoicePrefix())) {
+//			messages.error(new BundleKey("messages", "message.error.seller.invoicePrefix.required"));
+//			return null;
+//		} else {
+//			return super.saveOrUpdate(killConversation);
+//		}
 	}
+	
+	public List<Map.Entry<InvoiceType,Sequence>> getInvoiceTypeSequencesList() {
+		Set<Entry<InvoiceType,Sequence>> sequencesSet = 
+				entity.getInvoiceTypeSequence().entrySet();
+		return new ArrayList<Map.Entry<InvoiceType,Sequence>>(sequencesSet);
+	}
+	 private Sequence getSequence(){
+			Sequence sequence = new Sequence();
+			sequence.setPrefixEL(getPrefixEl());
+			sequence.setSequenceSize(getSequenceSize());
+			sequence.setCurrentInvoiceNb(getCurrentInvoiceNb());
+			return sequence;
+		}
+	 public void saveOrUpdateSequence() throws BusinessException{ 
+		 if(getCurrentInvoiceNb().longValue()< invoiceTypeService.getMaxCurrentInvoiceNumber(getCurrentProvider(), invoiceTypeCode).longValue()) {
+			 messages.error(new BundleKey("messages", "invoice.downgrade.cuurrentNb.error.msg"));
+			 return;
+		 }
+		 InvoiceType invoiceType=invoiceTypeService.findByCode(invoiceTypeCode, getCurrentProvider());
+		 if(invoiceType!=null){
+			 if(!editSellerSequence){
+				 if(entity.getInvoiceTypeSequence().containsKey(invoiceType)){
+					 messages.error(new BundleKey("messages","seller.sellerSequence.unique")); 
+				 }else{
+					 entity.getInvoiceTypeSequence().put(invoiceType, getSequence());
+					 messages.info(new BundleKey("messages","save.successful"));	 
+				 }
+			 }else{ 
+				 entity.getInvoiceTypeSequence().put(invoiceType,getSequence());
+				 messages.info(new BundleKey("messages","update.successful"));
+			 }
+		 }
+		 resetSequenceField();	 
+		 super.saveOrUpdate(false);
+	 }	
+	 
+	 public void deleteSellerSequence(InvoiceType invoiceType){
+		 entity.getInvoiceTypeSequence().remove(invoiceType);
+		 messages.info(new BundleKey("messages", "delete.successful"));
+	 }
+	
+	public void getSequenceSelected(InvoiceType invoiceType){  
+		invoiceTypeCode=invoiceType.getCode(); 
+		prefixEl=entity.getInvoiceTypeSequence().get(invoiceType).getPrefixEL();
+		sequenceSize=entity.getInvoiceTypeSequence().get(invoiceType).getSequenceSize();
+		currentInvoiceNb=entity.getInvoiceTypeSequence().get(invoiceType).getCurrentInvoiceNb();
+		editSellerSequence=true;
+	}
+	public void resetSequenceField(){
+		invoiceTypeCode=null;
+		prefixEl="";
+		sequenceSize=9;
+		currentInvoiceNb=0L;
+		editSellerSequence=false;
+	}
+	public String getPrefixEl() {
+		return prefixEl;
+	}
+
+	public void setPrefixEl(String prefixEl) {
+		this.prefixEl = prefixEl;
+	}
+
+	public Integer getSequenceSize() {
+		return sequenceSize;
+	}
+
+	public void setSequenceSize(Integer sequenceSize) {
+		this.sequenceSize = sequenceSize;
+	}
+
+	public Long getCurrentInvoiceNb() {
+		return currentInvoiceNb;
+	}
+
+	public void setCurrentInvoiceNb(Long currentInvoiceNb) {
+		this.currentInvoiceNb = currentInvoiceNb;
+	}
+
+	public String getInvoiceTypeCode() {
+		return invoiceTypeCode;
+	}
+
+	public void setInvoiceTypeCode(String invoiceTypeCode) {
+		this.invoiceTypeCode = invoiceTypeCode;
+	}
+
+	public boolean isEditSellerSequence() {
+		return editSellerSequence;
+	}
+
+	public void setEditSellerSequence(boolean editSellerSequence) {
+		this.editSellerSequence = editSellerSequence;
+	}
+
+
 
 }

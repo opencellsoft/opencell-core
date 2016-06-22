@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.scripts.EntityActionScript;
+import org.meveo.model.crm.custom.EntityCustomAction;
 
 /**
  * @author Andrius Karpavicius
@@ -33,7 +33,7 @@ public class EntityCustomizationDto extends BaseDto {
 
     @XmlElementWrapper(name = "actions")
     @XmlElement(name = "action")
-    private List<EntityActionScriptDto> actions;
+    private List<EntityCustomActionDto> actions;
 
     public EntityCustomizationDto() {
 
@@ -55,11 +55,11 @@ public class EntityCustomizationDto extends BaseDto {
         this.fields = fields;
     }
 
-    public List<EntityActionScriptDto> getActions() {
+    public List<EntityCustomActionDto> getActions() {
         return actions;
     }
 
-    public void setActions(List<EntityActionScriptDto> actions) {
+    public void setActions(List<EntityCustomActionDto> actions) {
         this.actions = actions;
     }
 
@@ -72,7 +72,7 @@ public class EntityCustomizationDto extends BaseDto {
      * @return A CustomEntityTemplateDto object with fields set
      */
     @SuppressWarnings("rawtypes")
-    public static EntityCustomizationDto toDTO(Class clazz, Collection<CustomFieldTemplate> cetFields, Collection<EntityActionScript> cetActions) {
+    public static EntityCustomizationDto toDTO(Class clazz, Collection<CustomFieldTemplate> cetFields, Collection<EntityCustomAction> cetActions) {
         EntityCustomizationDto dto = new EntityCustomizationDto();
         dto.setClassname(clazz.getName());
 
@@ -85,9 +85,9 @@ public class EntityCustomizationDto extends BaseDto {
         }
 
         if (cetActions != null) {
-            List<EntityActionScriptDto> actions = new ArrayList<EntityActionScriptDto>();
-            for (EntityActionScript action : cetActions) {
-                actions.add(new EntityActionScriptDto(action));
+            List<EntityCustomActionDto> actions = new ArrayList<EntityCustomActionDto>();
+            for (EntityCustomAction action : cetActions) {
+                actions.add(new EntityCustomActionDto(action));
             }
             dto.setActions(actions);
         }

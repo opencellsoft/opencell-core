@@ -1,0 +1,34 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="revenueSchedules"
+						value="#{messages['menu.revenueSchedules']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+	
+		<hftl:formPanel label="#{messages['revenueSchedule.panel']}" backingBean="#{revenueScheduleBean}" >
+			<hftl:formEntityField label="#{messages['revenueSchedule.chargeInstance']}" id="chargeInstance" fieldItem="chargeInstance"/>
+			<hftl:formField label="#{messages['revenueSchedule.revenueDate']}" id="revenueDate" field="revenueDate" useConverter="false" maxlength="50" />
+			<hftl:formField label="#{messages['revenueSchedule.recognizedRevenue']}" id="recognizedRevenue" field="recognizedRevenue" useConverter="false" maxlength="50" />
+			<hftl:formField label="#{messages['revenueSchedule.invoicedRevenue']}" id="invoicedRevenue" field="invoicedRevenue" useConverter="false" maxlength="50" />
+			<hftl:formField label="#{messages['revenueSchedule.accruedRevenue']}" id="accruedRevenue" field="accruedRevenue" useConverter="false" maxlength="50" />
+			<hftl:formField label="#{messages['revenueSchedule.defferedRevenue']}" id="defferedRevenue" field="defferedRevenue" useConverter="false" maxlength="50" />
+		</hftl:formPanel>
+	</ui:define>
+
+</ui:composition>

@@ -14,11 +14,11 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
-import org.meveo.api.dto.EntityActionScriptDto;
+import org.meveo.api.dto.EntityCustomActionDto;
 import org.meveo.api.dto.EntityCustomizationDto;
 import org.meveo.api.dto.response.CustomEntityTemplateResponseDto;
 import org.meveo.api.dto.response.CustomEntityTemplatesResponseDto;
-import org.meveo.api.dto.response.EntityActionScriptResponseDto;
+import org.meveo.api.dto.response.EntityCustomActionResponseDto;
 import org.meveo.api.dto.response.EntityCustomizationResponseDto;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -169,7 +169,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @POST
     @Path("/action/")
-    public ActionStatus createAction(EntityActionScriptDto postData);
+    public ActionStatus createAction(EntityCustomActionDto postData);
 
     /**
      * Update existing entity action definition
@@ -179,7 +179,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @PUT
     @Path("/action/")
-    public ActionStatus updateAction(EntityActionScriptDto dto);
+    public ActionStatus updateAction(EntityCustomActionDto dto);
 
     /**
      * Remove entity action definition given its code and entity it applies to
@@ -201,7 +201,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @GET
     @Path("/action/")
-    public EntityActionScriptResponseDto findAction(@QueryParam("actionCode") String actionCode, @QueryParam("appliesTo") String appliesTo);
+    public EntityCustomActionResponseDto findAction(@QueryParam("actionCode") String actionCode, @QueryParam("appliesTo") String appliesTo);
 
     /**
      * Define new or update existing entity action definition
@@ -211,6 +211,6 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @POST
     @Path("/action/createOrUpdate")
-    public ActionStatus createOrUpdateAction(EntityActionScriptDto dto);
+    public ActionStatus createOrUpdateAction(EntityCustomActionDto dto);
 
 }

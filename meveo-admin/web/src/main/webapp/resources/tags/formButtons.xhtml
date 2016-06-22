@@ -27,7 +27,7 @@
         killConversationOnSave - should conversation be killed uppon saving
         killConversationOnBack - should conversation be killed uppon navigating back
         showBackButton - show a default "navigate back" button
-        showEditButton - show a default "edit" button
+        showEditButton - show a default "edit"/"save" button
         showEnableDisableButton - show a default "enable/disable" button
         useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation
         updateConfirmationMessage - if not empty, update will show a confirmation dialog with this message  
@@ -87,12 +87,25 @@
             action="#{cc.attrs.backingBean.enable}" update="@form">
             <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
         </p:commandButton>
+        
+        <script type="text/javascript">
+			//<![CDATA[
+				function delayDisable(button){
+					setTimeout(function(){
+		            	button.disabled = true;
+		            }, 100);
+				}
+			//]]>
+		</script>
 
 		<p:commandButton id="saveButton"
-			rendered="#{cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and !cc.attrs.ajaxSubmit and cc.attrs.backingBean.canUserUpdateEntity()}"
+			rendered="#{cc.attrs.edit and cc.attrs.showEditButton and empty(cc.attrs.updateConfirmationMessage) and !cc.attrs.ajaxSubmit and cc.attrs.backingBean.canUserUpdateEntity()}"
 			value="#{messages['action.save']}"
+			onclick="delayDisable(this);"
+			oncomplete="this.disabled=false;"
 			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
-			icon="ui-icon-check" ajax="false">
+			icon="ui-icon-check" 
+			ajax="false">
 			<f:param name="edit" value="#{cc.attrs.edit}" />
 			<c:if test="#{cc.attrs.submitActionListener}">
             	<f:actionListener binding="#{cc.attrs.backingBean.submitActionListener()}"></f:actionListener>
@@ -100,10 +113,13 @@
 		</p:commandButton>
 
         <p:commandButton id="saveButtonAjax"
-            rendered="#{cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit and cc.attrs.backingBean.canUserUpdateEntity()}"
-            value="#{messages['action.save']} " oncomplete="$('html,body').scrollTop(0);"
+            rendered="#{cc.attrs.edit and cc.attrs.showEditButton and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit and cc.attrs.backingBean.canUserUpdateEntity()}"
+            value="#{messages['action.save']}"  onclick="delayDisable(this);" oncomplete="$('html,body').scrollTop(0);"
             action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
-            icon="ui-icon-check" process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="#{cc.attrs.submitUpdate}">
+            icon="ui-icon-check" process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" 
+            partialSubmit="#{cc.attrs.submitPartialProcess !=null}" 
+            partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" 
+            update="#{cc.attrs.submitUpdate}">
             <f:param name="edit" value="#{cc.attrs.edit}" />
             <c:if test="#{cc.attrs.submitActionListener}">
             	<f:actionListener binding="#{cc.attrs.backingBean.submitActionListener()}"></f:actionListener>
@@ -130,7 +146,7 @@
             update="#{cc.attrs.submitUpdate}" name="#{cc.attrs.formId}updateWithMessagePartialSubmit" oncomplete="handleUpdateWithMessageComplete(xhr,status,args)" />            
             
 		<p:commandButton id="saveButtonWithMessage"
-			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId) and !empty(cc.attrs.updateConfirmationMessage) and cc.attrs.backingBean.canUserUpdateEntity()}"
+			rendered="#{cc.attrs.edit and cc.attrs.showEditButton and !empty(cc.attrs.backingBean.objectId) and !empty(cc.attrs.updateConfirmationMessage) and cc.attrs.backingBean.canUserUpdateEntity()}"
 			value="#{messages['action.save']}" icon="ui-icon-check"
 			oncomplete="#{cc.attrs.formId}#{cc.attrs.submitPartialProcess==null?'updateWithMessage()':'updateWithMessagePartialSubmit()'}" >
 			<c:if test="#{cc.attrs.submitActionListener}">
@@ -142,7 +158,7 @@
 		<cc:insertChildren />
 
 		<hf:clearButton id="resetButton" label="#{messages['action.reset']}"
-			edit="#{cc.attrs.edit}" rendered="#{cc.attrs.backingBean.canUserUpdateEntity()}"
+			edit="#{cc.attrs.edit}" rendered="#{cc.attrs.showEditButton and cc.attrs.backingBean.canUserUpdateEntity()}"
 			resetAction="#{cc.attrs.backingBean.resetFormEntity()}" includeViewParams="true"/>
 
 		<p:button id="backButton" value="#{messages['action.back']}"

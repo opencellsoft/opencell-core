@@ -3,8 +3,9 @@ package org.meveo.service.filter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.DiscriminatorValue;
@@ -88,7 +89,7 @@ public class FilteredQueryBuilderTest extends BaseFilterTest {
 		AndCompositeFilterCondition andCompositeFilterCondition = new AndCompositeFilterCondition();
 		andCompositeFilterCondition.setFilterConditionType(AndCompositeFilterCondition.class.getAnnotation(
 				DiscriminatorValue.class).value());
-		List<FilterCondition> andFilterConditions = new ArrayList<>();
+		Set<FilterCondition> andFilterConditions = new HashSet<>();
 
 		NativeFilterCondition nativeFilterCondition = new NativeFilterCondition();
 		nativeFilterCondition.setFilterConditionType(NativeFilterCondition.class
@@ -100,7 +101,7 @@ public class FilteredQueryBuilderTest extends BaseFilterTest {
 		OrCompositeFilterCondition orCompositeFilterCondition = new OrCompositeFilterCondition();
 		orCompositeFilterCondition.setFilterConditionType(OrCompositeFilterCondition.class.getAnnotation(
 				DiscriminatorValue.class).value());
-		List<FilterCondition> orFilterConditions = new ArrayList<>();
+		Set<FilterCondition> orFilterConditions = new HashSet<>();
 
 		NativeFilterCondition nativeFilterCondition2 = new NativeFilterCondition();
 		nativeFilterCondition2.setFilterConditionType(NativeFilterCondition.class.getAnnotation(

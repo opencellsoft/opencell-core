@@ -38,7 +38,8 @@
 			<hftl:column label="#{messages['billingCycle.calendar']}"
 				field="calendar.code" />
 			<hftl:column label="#{messages['billingCycle.invoicingThreshold']}"
-				field="invoicingThreshold" />				
+				field="invoicingThreshold" />	
+		    <hftl:column label="#{messages['invoiceType.name']}" field="invoiceType.code" />			
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('billing','billingManagement')}" />

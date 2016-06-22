@@ -26,7 +26,7 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
 	public OneShotChargeTemplateDto() {
 
 	}
-
+	
 	public OneShotChargeTemplateDto(OneShotChargeTemplate e, CustomFieldsDto customFieldInstances) {
 		super(e, customFieldInstances);
 		oneShotChargeTemplateType = e.getOneShotChargeTemplateType();

@@ -1,54 +1,44 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:p="http://primefaces.org/ui"
+    template="/layout/template.xhtml">
 
-	<f:metadata>
-		<f:event type="preRenderView"
-			listener="#{businessOfferModelListBean.preRenderView}" />
-	</f:metadata>
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{businessOfferModelListBean.preRenderView}" />
+    </f:metadata>
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-	<ui:define name="body">
+    <ui:define name="body">
 
-		<hftl:searchPanel label="#{messages['businessOffer.search']}"
-			backingBean="#{businessOfferModelListBean}" columns="1">
-			<hftl:searchField label="#{messages['BusinessEntity.code']}"
-				field="code" />
-			<hftl:searchField label="#{messages['BusinessEntity.description']}"
-				field="description" size="100" />
-		</hftl:searchPanel>
+        <hftl:searchPanel label="#{messages['businessOffer.search']}" backingBean="#{businessOfferModelListBean}" columns="1">
+            <hftl:searchField label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:searchField label="#{messages['BusinessEntity.description']}" field="description" size="100" />
+        </hftl:searchPanel>
 
-		<hftl:dataList label="#{messages['businessOffer.title']}"
-			backingBean="#{businessOfferModelListBean}" sortBy="code">
-			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['BusinessEntity.description']}"
-				field="description" />
-			<hftl:column label="#{messages['offerTemplate.title']}"
-				field="offerTemplate.code" />
+        <hftl:dataList label="#{messages['businessOffer.title']}" backingBean="#{businessOfferModelListBean}" sortBy="code">
+            <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
+            <hftl:column label="#{messages['offerTemplate.title']}" field="offerTemplate.code" />
 
-			<p:column headerText="#{messages['menu.businessServiceModels']}">
-				<ui:repeat
-					value="#{businessOfferModelListBean.getBusinessServiceModels(entity)}"
-					var="c">
-					<hf:linkToEntity linkId="bsm_message_link" entity="#{c}"
-						objectIdParamName="objectId" entityId="#{c.id}"
-						propagateConversation="true" value="#{c.code}"
-						view="businessServiceModelDetail" />
-					<br />
-				</ui:repeat>
-			</p:column>
+            <p:column headerText="#{messages['menu.businessServiceModels']}">
+                <ui:repeat value="#{businessOfferModelListBean.getBusinessServiceModels(entity)}" var="c">
+                    <hf:linkToEntity linkId="bsm_message_link" entity="#{c}" objectIdParamName="objectId" entityId="#{c.id}" propagateConversation="true" value="#{c.code}"
+                        view="businessServiceModelDetail" />
+                    <br />
+                </ui:repeat>
+            </p:column>
 
-			<hftl:actionsColumn
-				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
-		</hftl:dataList>
+            <p:column headerText="#{messages['commons.status']}">
+                <h:outputText value="#{messages[!entity.installed?'meveoModule.downloaded':entity.active?'meveoModule.installedAndEnabled':'meveoModule.installedAndDisabled']}"
+                    rendered="#{entity.downloaded}" />
+                <h:outputText value="#{messages[entity.active?'enableEntity.active':'enableEntity.disabled']}" rendered="#{!entity.downloaded}" />
+            </p:column>
 
-	</ui:define>
+            <hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+        </hftl:dataList>
+
+    </ui:define>
 
 </ui:composition>

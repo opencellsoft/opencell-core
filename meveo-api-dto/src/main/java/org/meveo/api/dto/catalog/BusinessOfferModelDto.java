@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.module.ModuleDto;
-import org.meveo.api.dto.script.OfferModelScriptDto;
 import org.meveo.model.module.MeveoModule;
 
 @XmlRootElement(name = "BusinessOfferModel")
@@ -19,8 +18,6 @@ public class BusinessOfferModelDto extends ModuleDto {
     @NotNull
     @XmlElement(required = true)
     private OfferTemplateDto offerTemplate;
-
-    private OfferModelScriptDto script;
 
     public BusinessOfferModelDto() {
     }
@@ -37,16 +34,8 @@ public class BusinessOfferModelDto extends ModuleDto {
         return offerTemplate;
     }
 
-    public void setScript(OfferModelScriptDto script) {
-        this.script = script;
-    }
-
-    public OfferModelScriptDto getScript() {
-        return script;
-    }
-
     @Override
     public String toString() {
-        return "BusinessOfferModelDto [offerTemplate=" + offerTemplate + ", script=" + script + "]";
+        return "BusinessOfferModelDto [offerTemplate=" + offerTemplate + "]";
     }
 }

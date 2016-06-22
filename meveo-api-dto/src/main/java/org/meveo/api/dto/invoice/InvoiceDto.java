@@ -8,22 +8,19 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.CategoryInvoiceAgregateDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
-import org.meveo.api.dto.payment.AccountOperationDto;
-import org.meveo.api.dto.payment.MatchingAmountDto;
-import org.meveo.api.dto.payment.MatchingAmountsDto;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
-import org.meveo.model.billing.InvoiceTypeEnum;
+import org.meveo.model.billing.InvoiceModeEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
@@ -36,55 +33,74 @@ public class InvoiceDto extends BaseDto {
 
     private static final long serialVersionUID = 1072382628068718580L;
 
+    private Long invoiceId;
+    
+    @XmlElement(required = true)
+    private String invoiceType;
+    
     @XmlElement(required = true)
     private String billingAccountCode;
 
     @XmlElement(required = true)
     private Date dueDate;
-
-    private String invoiceNumber;
+    
+    @XmlElement(required = true)
     private Date invoiceDate;
+    
+	@XmlElementWrapper
+    @XmlElement(name="categoryInvoiceAgregate",required = true)
+    private List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregateDto>();
+	
+	@XmlElementWrapper
+    @XmlElement(name="invoiceIdToLink")
+    private List<Long> listInvoiceIdToLink= new ArrayList<Long>();
+	
+    private String invoiceNumber;
     private BigDecimal discount;
     private BigDecimal amountWithoutTax;
     private BigDecimal amountTax;
     private BigDecimal amountWithTax;
     private PaymentMethodEnum paymentMethod;
-    private boolean PDFpresent;
-    private InvoiceTypeEnum type;
+    private boolean pdfPresent;
     private byte[] pdf;
-    private List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
-    private List<AccountOperationDto> accountOperations = new ArrayList<AccountOperationDto>();
+    private boolean autoValidation =  true;
+    private boolean returnXml = false;
+    private boolean returnPdf = false;
+    private boolean includeBalance = false;
+    
+    @XmlElement(required = true)
+    private InvoiceModeEnum invoiceMode;
 
+    private CustomFieldsDto customFields = new CustomFieldsDto();
+        
     public InvoiceDto() {
     }
 
-    public InvoiceDto(Invoice invoice, String billingAccountCode) {
+    public InvoiceDto(Invoice invoice) {
         super();
-        this.setBillingAccountCode(billingAccountCode);
+        this.setInvoiceId(invoice.getId());
+        this.setBillingAccountCode(invoice.getBillingAccount().getCode());
         this.setInvoiceDate(invoice.getInvoiceDate());
         this.setDueDate(invoice.getDueDate());
-        this.pdf = invoice.getPdf();
 
         this.setAmountWithoutTax(invoice.getAmountWithoutTax());
         this.setAmountTax(invoice.getAmountTax());
         this.setAmountWithTax(invoice.getAmountWithTax());
         this.setInvoiceNumber(invoice.getInvoiceNumber());
         this.setPaymentMethod(invoice.getPaymentMethod());
-        this.setPDFpresent(invoice.getPdf() != null);
-
-        this.type = invoice.getInvoiceTypeEnum();
-        if (this.type == null) {
-            this.setType(InvoiceTypeEnum.COMMERCIAL);
-        }
-
+        this.setPdfPresent(invoice.getPdf() != null);
+        this.setInvoiceType(invoice.getInvoiceType().getCode());
+        
         SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
-
+        CategoryInvoiceAgregateDto  categoryInvoiceAgregateDto = new CategoryInvoiceAgregateDto();
+        
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
 
             subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
 
-            if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-                subCategoryInvoiceAgregateDto.setType("R");
+            if (invoiceAgregate instanceof CategoryInvoiceAgregate) {            	
+                subCategoryInvoiceAgregateDto.setType("R");               
+                categoryInvoiceAgregateDto.setCategoryInvoiceCode(((CategoryInvoiceAgregate) invoiceAgregate).getInvoiceCategory().getCode());
             } else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
                 subCategoryInvoiceAgregateDto.setType("F");
             } else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
@@ -99,67 +115,48 @@ public class InvoiceDto extends BaseDto {
             subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
             subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
             subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
-            this.getSubCategoryInvoiceAgregates().add(subCategoryInvoiceAgregateDto);
+            
+            categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
+            
+            boolean agregateAlreadyExists = false;
+            for(CategoryInvoiceAgregateDto ciadto : this.getCategoryInvoiceAgregates()) {
+        		if(ciadto.getCategoryInvoiceCode() != null  
+        				&&  ciadto.getCategoryInvoiceCode().equals(categoryInvoiceAgregateDto.getCategoryInvoiceCode())) {
+        			agregateAlreadyExists = true;
+        			break;
+        		}
+        	}
+            
+            if(!agregateAlreadyExists) {
+            	this.getCategoryInvoiceAgregates().add(categoryInvoiceAgregateDto);
+        	}
         }
 
-        CustomerAccount ca = invoice.getBillingAccount().getCustomerAccount();
-        AccountOperationDto accountOperationDto = null;
-        for (AccountOperation accountOp : ca.getAccountOperations()) {
-            accountOperationDto = new AccountOperationDto();
-            accountOperationDto.setId(accountOp.getId());
-            accountOperationDto.setDueDate(accountOp.getDueDate());
-            accountOperationDto.setType(accountOp.getType());
-            accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
-            accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory());
-            accountOperationDto.setReference(accountOp.getReference());
-            accountOperationDto.setAccountCode(accountOp.getAccountCode());
-            accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
-            accountOperationDto.setAmount(accountOp.getAmount());
-            accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());
-            accountOperationDto.setUnMatchingAmount(accountOp.getUnMatchingAmount());
-            accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus());
-            accountOperationDto.setOccCode(accountOp.getOccCode());
-            accountOperationDto.setOccDescription(accountOp.getOccDescription());
-
-            List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
-            MatchingAmountDto matchingAmountDto = null;
-            MatchingAmountsDto matchingAmountsDto = new MatchingAmountsDto();
-            if (matchingAmounts != null && matchingAmounts.size() > 0) {
-                for (MatchingAmount matchingAmount : matchingAmounts) {
-                    matchingAmountDto = new MatchingAmountDto();
-                    matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
-                    matchingAmountDto.setMatchingAmount(matchingAmount.getMatchingAmount());
-                    matchingAmountsDto.getMatchingAmount().add(matchingAmountDto);
-                }
-                accountOperationDto.setMatchingAmounts(matchingAmountsDto);
-            }
-
-            this.getAccountOperations().add(accountOperationDto);
-        }
     }
 
-    public String getInvoiceNumber() {
-        return invoiceNumber;
-    }
+  
 
-    public void setInvoiceNumber(String invoiceNumber) {
-        this.invoiceNumber = invoiceNumber;
-    }
 
-    public String getBillingAccountCode() {
+	/**
+	 * @return the listInvoiceIdToLink
+	 */
+	public List<Long> getListInvoiceIdToLink() {
+		return listInvoiceIdToLink;
+	}
+
+	/**
+	 * @param listInvoiceIdToLink the listInvoiceIdToLink to set
+	 */
+	public void setListInvoiceIdToLink(List<Long> listInvoiceIdToLink) {
+		this.listInvoiceIdToLink = listInvoiceIdToLink;
+	}
+
+	public String getBillingAccountCode() {
         return billingAccountCode;
     }
 
     public void setBillingAccountCode(String billingAccountCode) {
         this.billingAccountCode = billingAccountCode;
-    }
-
-    public List<SubCategoryInvoiceAgregateDto> getSubCategoryInvoiceAgregates() {
-        return subCategoryInvoiceAgregates;
-    }
-
-    public void setSubCategoryInvoiceAgregates(List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates) {
-        this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
     }
 
     public Date getInvoiceDate() {
@@ -210,12 +207,12 @@ public class InvoiceDto extends BaseDto {
         this.amountWithTax = amountWithTax;
     }
 
-    public boolean isPDFpresent() {
-        return PDFpresent;
+    public boolean isPdfPresent() {
+        return pdfPresent;
     }
 
-    public void setPDFpresent(boolean pDFpresent) {
-        PDFpresent = pDFpresent;
+    public void setPdfPresent(boolean pDFpresent) {
+        pdfPresent = pDFpresent;
     }
 
     public PaymentMethodEnum getPaymentMethod() {
@@ -226,21 +223,34 @@ public class InvoiceDto extends BaseDto {
         this.paymentMethod = paymentMethod;
     }
 
-    public InvoiceTypeEnum getType() {
-        return type;
-    }
+    /**
+     * @return the invoiceId
+     */
+    public Long getInvoiceId() {
+		return invoiceId;
+	}
+    
+    /**
+     * @param invoiceId
+     */
+    public void setInvoiceId(Long invoiceId) {
+		this.invoiceId = invoiceId;
+	}
 
-    public void setType(InvoiceTypeEnum type) {
-        this.type = type;
-    }
+    /**
+	 * @return the invoiceType
+	 */
+	public String getInvoiceType() {
+		return invoiceType;
+	}
 
-    public List<AccountOperationDto> getAccountOperations() {
-        return accountOperations;
-    }
+	/**
+	 * @param invoiceType the invoiceType to set
+	 */
+	public void setInvoiceType(String invoiceType) {
+		this.invoiceType = invoiceType;
+	}
 
-    public void setAccountOperations(List<AccountOperationDto> accountOperations) {
-        this.accountOperations = accountOperations;
-    }
 
     public byte[] getPdf() {
         return pdf;
@@ -250,11 +260,121 @@ public class InvoiceDto extends BaseDto {
         this.pdf = pdf;
     }
 
-    @Override
-    public String toString() {
-        return "InvoiceDto [billingAccountCode=" + billingAccountCode + ", dueDate=" + dueDate + ", invoiceNumber=" + invoiceNumber + ", invoiceDate=" + invoiceDate
-                + ", discount=" + discount + ", amountWithoutTax=" + amountWithoutTax + ", amountTax=" + amountTax + ", amountWithTax=" + amountWithTax + ", paymentMethod="
-                + paymentMethod + ", PDFpresent=" + PDFpresent + ", type=" + type + ", subCategoryInvoiceAgregates=" + subCategoryInvoiceAgregates + "accountOperations "
-                + accountOperations + "]";
-    }
+    
+    /**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}
+
+	/**
+	 * @return the categoryInvoiceAgregates
+	 */
+	public List<CategoryInvoiceAgregateDto> getCategoryInvoiceAgregates() {
+		return categoryInvoiceAgregates;
+	}
+
+	/**
+	 * @param categoryInvoiceAgregates the categoryInvoiceAgregates to set
+	 */
+	public void setCategoryInvoiceAgregates(List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates) {
+		this.categoryInvoiceAgregates = categoryInvoiceAgregates;
+	}
+	
+	
+	
+
+	/**
+	 * @return the autoValidation
+	 */
+	public boolean isAutoValidation() {
+		return autoValidation;
+	}
+
+	/**
+	 * @param autoValidation the autoValidation to set
+	 */
+	public void setAutoValidation(boolean autoValidation) {
+		this.autoValidation = autoValidation;
+	}
+
+	/**
+	 * @return the returnXml
+	 */
+	public boolean isReturnXml() {
+		return returnXml;
+	}
+
+	/**
+	 * @param returnXml the returnXml to set
+	 */
+	public void setReturnXml(boolean returnXml) {
+		this.returnXml = returnXml;
+	}
+
+	/**
+	 * @return the returnPdf
+	 */
+	public boolean isReturnPdf() {
+		return returnPdf;
+	}
+
+	/**
+	 * @param returnPdf the returnPdf to set
+	 */
+	public void setReturnPdf(boolean returnPdf) {
+		this.returnPdf = returnPdf;
+	}
+
+	/**
+	 * @return the invoiceMode
+	 */
+	public InvoiceModeEnum getInvoiceMode() {
+		return invoiceMode;
+	}
+
+	/**
+	 * @param invoiceMode the invoiceMode to set
+	 */
+	public void setInvoiceMode(InvoiceModeEnum invoiceMode) {
+		this.invoiceMode = invoiceMode;
+	}
+
+	/**
+	 * @return the invoiceNumber
+	 */
+	public String getInvoiceNumber() {
+		return invoiceNumber;
+	}
+
+	/**
+	 * @param invoiceNumber the invoiceNumber to set
+	 */
+	public void setInvoiceNumber(String invoiceNumber) {
+		this.invoiceNumber = invoiceNumber;
+	}
+
+	/**
+	 * @return the includeBalance
+	 */
+	public boolean isIncludeBalance() {
+		return includeBalance;
+	}
+
+	/**
+	 * @param includeBalance the includeBalance to set
+	 */
+	public void setIncludeBalance(boolean includeBalance) {
+		this.includeBalance = includeBalance;
+	}
+
+	
 }

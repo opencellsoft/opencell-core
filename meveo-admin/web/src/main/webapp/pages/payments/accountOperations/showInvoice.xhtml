@@ -10,9 +10,11 @@
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 	<ui:define name="body">
-		<hftl:formPanel showFormButtons="#{false}" edit="#{false}" formId="formOccInvoice"
+		<hftl:formPanel  edit="#{true}" formId="formOccInvoice"
 			label="#{messages['accountOperation_I.form']}" 
-			backingBean="#{recordedInvoiceBean}" >
+			backingBean="#{recordedInvoiceBean}" showDeleteButton="false" showEditButton="true" showBackButton="false"  >
+			<p:tabView id="tabView" activeIndex="#{invoiceCategoryBean.activeTab}"  >
+				<p:tab title="#{messages['customer.tab.information']}"> 
 				<hftl:formField
 					label="#{messages['accountOperation.transactionDate']}"
 					field="transactionDate" disabled="true" />
@@ -33,7 +35,10 @@
 				<hftl:formField label="#{messages['accountOperation.amountHT']}"
 					field="amountWithoutTax" disabled="true" converter="bigDecimal4DigitsConverter" />
 				<hftl:formField label="#{messages['accountOperation.amountTax']}"
-					field="taxAmount" disabled="true" converter="bigDecimal4DigitsConverter"/> 
+					field="taxAmount" disabled="true" converter="bigDecimal4DigitsConverter"/>
+			</p:tab>
+				<hftl:customFields backingBean="#{recordedInvoiceBean}" messagesId=":formOccInvoice:messages" />
+			</p:tabView>	
                
                <ui:param name="buttons" value="true"/>
                <ui:define name="buttons"> 		   

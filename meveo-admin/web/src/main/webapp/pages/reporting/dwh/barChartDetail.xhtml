@@ -91,6 +91,9 @@
 				field="showDataTip" />
 			<hftl:formField label="#{messages['barChart.datatipFormat']}"
 				field="datatipFormat" />
+			<hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!barCharBean.entity.transient}">
+                <h:outputText value="#{barChartBean.getPartOfModules()}" />
+            </hftl:decorateFormField>
 
 <!-- 			<p:commandButton id="showPreview"
 				action="#{barChartBean.getChartEntityModel()}"

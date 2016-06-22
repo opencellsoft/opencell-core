@@ -32,7 +32,7 @@
         <c:set var="ajax" value="true" />
     </c:if>
     <c:if test="${empty(ajaxUpdateIds)}">
-        <c:set var="ajaxUpdateIds" value="results_panel" />
+        <c:set var="ajaxUpdateIds" value="results_panel filterParameters" />
     </c:if>
     <c:if test="${empty(renderAdvancedLink)}">
         <c:set var="renderAdvancedLink" value="false" />
@@ -58,6 +58,11 @@
                             <p:ajax listener="#{backingBean.runListFilter()}" update="#{ajaxUpdateIds}"></p:ajax>
                         </p:selectOneMenu>
                     </hftl:decorateFormField>
+                    <p:panel id="filterParameters">
+                        <p:panel rendered="#{backingBean.listFilter ne null}">
+                            <hftl:customFields backingBean="#{filterBean}" entity="#{backingBean.listFilter}" messagesId=":formId:search_messages" />
+                        </p:panel>
+                    </p:panel>
                 </h:panelGroup>
 
                 <h:panelGroup layout="block" styleClass="search-panel-actions">

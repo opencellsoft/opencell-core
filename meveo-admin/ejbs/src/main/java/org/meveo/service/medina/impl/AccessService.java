@@ -132,15 +132,15 @@ public class AccessService extends PersistenceService<Access> {
     }
 
     @Override
-    public Access disable(Access access) {
-        access = super.disable(access);
+    public Access disable(Access access, User currentUser) throws BusinessException {
+        access = super.disable(access, currentUser);
         cdrEdrProcessingCacheContainerProvider.removeAccessFromCache(access);
         return access;
     }
 
     @Override
-    public Access enable(Access access) {
-        access = super.enable(access);
+    public Access enable(Access access, User currentUser) throws BusinessException {
+        access = super.enable(access, currentUser);
         cdrEdrProcessingCacheContainerProvider.addAccessToCache(access);
         return access;
     }

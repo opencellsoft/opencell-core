@@ -96,10 +96,17 @@ import org.meveo.model.rating.EDR;
 			query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet.id=:walletId and "
 					+ "(o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN or "
 					+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.RESERVED) "),
-	 @NamedQuery(name = "WalletOperation.setStatusToRerate",   
+	@NamedQuery(name = "WalletOperation.setStatusToRerate",   
 					     query = "update WalletOperation w set w.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE"
 					    		  + " where (w.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN OR w.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED)"
-					        + " and w.id IN :notBilledWalletIdList")
+					        + " and w.id IN :notBilledWalletIdList"),
+	@NamedQuery(name = "WalletOperation.listByChargeInstance", 
+	query = "SELECT o FROM WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "
+					+ " AND o.provider=:provider"),							
+	@NamedQuery(name = "WalletOperation.deleteScheduled", 
+		query = "DELETE WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "
+				+ " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"
+				+ " AND o.provider=:provider"),
 })
 public class WalletOperation extends BusinessEntity {
 

@@ -20,4 +20,10 @@ public @interface CustomFieldEntity {
      * Additional fields of an entity that should be included to complete a custom field template code value
      */
     String[] cftCodeFields() default {};
+
+    /**
+     * Setting to true will allow the entity to be shown in the Custom Entities page.
+     */
+    boolean isManuallyManaged() default true;
+
 }

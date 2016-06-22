@@ -22,11 +22,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
@@ -45,7 +47,9 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.ToggleEvent;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.Visibility;
 
 /**
  * Standard backing bean for {@link PricePlanMatrix} (extends {@link BaseBean}
@@ -86,6 +90,8 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 	private String backPage;
 	
 	private long chargeTemplateId;
+	
+	private List<Boolean> columnVisibilitylist;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -268,13 +274,19 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
    	      return "/pages/catalog/"+chargeName+"/"+backPage+".xhtml?objectId="+chargeTemplateId+"&edit=true&faces-redirect=true&includeViewParams=true"; 
 	    }
  
-	 
-	 public void duplicate() throws BusinessException {
+	 @ActionMethod
+	 public void duplicate(){
 			if (entity != null && entity.getId() != null) {
 				pricePlanMatrixService.detach(entity);
 				entity.setId(null);
 				entity.setCode(entity.getCode() + "_copy");
-				pricePlanMatrixService.create(entity, getCurrentUser());
+				try {
+					pricePlanMatrixService.create(entity, getCurrentUser());
+					messages.info(new BundleKey("messages", "save.successful"));
+	            } catch (BusinessException e) {
+	                log.error("Error encountered persisting price plan matrix entity: #{0}:#{1}", entity.getCode(), e);
+	                messages.error(new BundleKey("messages", "save.unsuccessful"));
+	            }
 			}
 		}
 	 
@@ -283,6 +295,21 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 		return chargeTemplateId;
 	}
   
+	/**
+	 * initialize the list of table columns to be visible
+	 */
+	@PostConstruct
+	 public void init() {
+		columnVisibilitylist = Arrays.asList(true, true, true, true, true, true, false, 
+	     		false, false, false, false, false, false, false, 
+	     		false, false, false, false, false, false, false, false);
+	 }
+	 public List<Boolean> getColumnVisibilitylist() {
+	     return columnVisibilitylist;
+	 }
+	 public void onToggle(ToggleEvent e) {
+	 	columnVisibilitylist.set((Integer) e.getData(), e.getVisibility() == Visibility.VISIBLE);
+	 }
 	
 }
 

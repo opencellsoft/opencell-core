@@ -82,7 +82,7 @@ public class CustomFieldAppliesToConverter implements Converter, Serializable {
 
         appliesToMap = new HashMap<String, String>();
 
-        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(null, false, null, null, getCurrentProvider());
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(null, false, true, null, null, getCurrentProvider());
 
         for (CustomizedEntity customizedEntity : entities) {
 

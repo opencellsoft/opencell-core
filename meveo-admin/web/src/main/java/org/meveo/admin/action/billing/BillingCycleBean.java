@@ -49,6 +49,7 @@ public class BillingCycleBean extends BaseBean<BillingCycle> {
 	 */
 	@Inject
 	private BillingCycleService billingCycleService;
+	
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

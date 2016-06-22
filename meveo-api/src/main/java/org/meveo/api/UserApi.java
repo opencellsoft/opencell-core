@@ -1,5 +1,6 @@
 package org.meveo.api;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -37,7 +39,7 @@ public class UserApi extends BaseApi {
     @Inject
     private UserService userService;
 
-    public void create(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
+      public void create(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getUsername())) {
             missingParameters.add("username");
@@ -45,19 +47,34 @@ public class UserApi extends BaseApi {
         if (StringUtils.isBlank(postData.getEmail())) {
             missingParameters.add("email");
         }
-        if (StringUtils.isBlank(postData.getProvider())) {
-            missingParameters.add("provider");
-        }
-        if (StringUtils.isBlank(postData.getRole())) {
-            missingParameters.add("role");
+
+        if ((postData.getRoles() == null || postData.getRoles().isEmpty()) && StringUtils.isBlank(postData.getRole())) {
+            missingParameters.add("roles");
         }
 
         handleMissingParameters();
+        
+        if(!StringUtils.isBlank(postData.getRole())){
+        	if(postData.getRoles() == null){
+        		postData.setRoles(new ArrayList<String>());
+        	}
+        	postData.getRoles().add(postData.getRole());
+        }
 
-        // find provider
-        Provider provider = providerService.findByCode(postData.getProvider());
-        if (provider == null) {
-            throw new EntityDoesNotExistsException(Provider.class, postData.getProvider());
+        // Find provider and check if user has access to manage that provider data
+        Provider provider = null;
+        if (!StringUtils.isBlank(postData.getProvider())) {
+            provider = providerService.findByCode(postData.getProvider());
+            if (provider == null) {
+                throw new EntityDoesNotExistsException(Provider.class, postData.getProvider());
+            }
+        } else {
+            provider = currentUser.getProvider();
+        }
+
+        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider
+            .equals(currentUser.getProvider())))) {
+            throw new LoginException("User has no permission to manage users for provider " + provider.getCode());
         }
 
         // check if the user already exists
@@ -66,9 +83,13 @@ public class UserApi extends BaseApi {
         }
 
         // find role
-        Role role = roleService.findByName(postData.getRole(), currentUser.getProvider());
-        if (role == null) {
-            throw new EntityDoesNotExistsException(Role.class, postData.getRole());
+        Set<Role> roles = new HashSet<Role>();
+        for (String rl : postData.getRoles()) {
+            Role role = roleService.findByName(rl, provider);
+            if (role == null) {
+                throw new EntityDoesNotExistsException(Role.class, rl);
+            }
+            roles.add(role);
         }
 
         User user = new User();
@@ -81,9 +102,6 @@ public class UserApi extends BaseApi {
         user.setPassword(postData.getPassword());
         user.setLastPasswordModification(new Date());
         user.setProvider(provider);
-
-        Set<Role> roles = new HashSet<Role>();
-        roles.add(role);
         user.setRoles(roles);
 
         userService.create(user, currentUser);
@@ -97,14 +115,18 @@ public class UserApi extends BaseApi {
         if (StringUtils.isBlank(postData.getEmail())) {
             missingParameters.add("email");
         }
-        if (StringUtils.isBlank(postData.getProvider())) {
-            missingParameters.add("provider");
-        }
-        if (StringUtils.isBlank(postData.getRole())) {
-            missingParameters.add("role");
+        if ((postData.getRoles() == null || postData.getRoles().isEmpty()) && StringUtils.isBlank(postData.getRole())) {
+            missingParameters.add("roles");
         }
 
         handleMissingParameters();
+        
+        if(!StringUtils.isBlank(postData.getRole())){
+        	if(postData.getRoles() == null){
+        		postData.setRoles(new ArrayList<String>());
+        	}
+        	postData.getRoles().add(postData.getRole());
+        }
 
         // find user
         User user = userService.findByUsername(postData.getUsername());
@@ -113,16 +135,19 @@ public class UserApi extends BaseApi {
             throw new EntityDoesNotExistsException(User.class, postData.getUsername(), "username");
         }
 
-        // find provider
-        Provider provider = providerService.findByCode(postData.getProvider());
-        if (provider == null) {
-            throw new EntityDoesNotExistsException(Provider.class, postData.getProvider());
+        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && user.getProvider()
+            .equals(currentUser.getProvider())))) {
+            throw new LoginException("User has no permission to manage users for provider " + user.getProvider().getCode());
         }
 
-        // find role
-        Role role = roleService.findByName(postData.getRole(), currentUser.getProvider());
-        if (role == null) {
-            throw new EntityDoesNotExistsException(Role.class, postData.getRole());
+        // find roles
+        Set<Role> roles = new HashSet<Role>();
+        for (String rl : postData.getRoles()) {
+            Role role = roleService.findByName(rl, user.getProvider());
+            if (role == null) {
+                throw new EntityDoesNotExistsException(Role.class, rl);
+            }
+            roles.add(role);
         }
 
         user.setUserName(postData.getUsername());
@@ -132,29 +157,44 @@ public class UserApi extends BaseApi {
         name.setLastName(postData.getLastName());
         name.setFirstName(postData.getFirstName());
         user.setName(name);
-        user.setProvider(provider);
-        Set<Role> roles = new HashSet<Role>();
-        roles.add(role);
         user.setRoles(roles);
 
         userService.update(user, currentUser);
     }
 
-    public void remove(String username) throws MeveoApiException {
+    public void remove(String username, User currentUser) throws MeveoApiException {
         User user = userService.findByUsername(username);
 
         if (user == null) {
             throw new EntityDoesNotExistsException(User.class, username, "username");
         }
 
+        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && user.getProvider()
+            .equals(currentUser.getProvider())))) {
+            throw new LoginException("User has no permission to manage users for provider " + user.getProvider().getCode());
+        }
+
         userService.remove(user);
     }
 
-    public UserDto find(String username) throws MeveoApiException {
+
+    public UserDto find(String username, User currentUser) throws MeveoApiException {
+
+        if (StringUtils.isBlank(username)) {
+            missingParameters.add("username");
+        }
+
+        handleMissingParameters();
+
         User user = userService.findByUsernameWithFetch(username, Arrays.asList("provider", "roles"));
 
         if (user == null) {
             throw new EntityDoesNotExistsException(User.class, username, "username");
+        }
+
+        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && user.getProvider()
+            .equals(currentUser.getProvider())))) {
+            throw new LoginException("User has no permission to access users for provider " + user.getProvider().getCode());
         }
 
         UserDto result = new UserDto(user);

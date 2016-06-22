@@ -21,7 +21,7 @@ package org.meveo.model.billing;
 public enum WalletOperationStatusEnum {
 	OPEN(1, "walletOperationStatus.open"), TREATED(2, "walletOperationStatus.treated"), CANCELED(3,
 			"walletOperationStatus.canceled"), RESERVED(4, "walletOperationStatus.reserved"), TO_RERATE(5,
-			"walletOperationStatus.to_rerate"), RERATED(6, "walletOperationStatus.rerated") ;
+			"walletOperationStatus.to_rerate"), RERATED(6, "walletOperationStatus.rerated"), SCHEDULED(7,"walletOperationStatus.scheduled") ;
 
 	private Integer id;
 	private String label;

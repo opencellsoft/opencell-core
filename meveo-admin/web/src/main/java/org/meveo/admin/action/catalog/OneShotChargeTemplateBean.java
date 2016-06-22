@@ -20,6 +20,7 @@ package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,6 +32,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -42,6 +44,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.LazyDataModel;
 
 /**
  * Standard backing bean for {@link OneShotChargeTemplate} (extends
@@ -74,7 +77,7 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
     protected CustomFieldInstanceService customFieldInstanceService;
 
 	private DualListModel<TriggeredEDRTemplate> edrTemplates;
-	
+
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -191,6 +194,7 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 	@Inject
 	private TriggeredEDRTemplateService edrTemplateService;
 	
+	@ActionMethod
 	public void duplicate() {
 
         if (entity != null && entity.getId() != null) {
@@ -219,8 +223,10 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
             try {
                 oneShotChargeTemplateService.create(entity, getCurrentUser());
                 customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
-            } catch (Exception e) {
-                log.error("error when duplicate recurringChargeTemplate#{0}:#{1}", entity.getCode(), e);
+                messages.info(new BundleKey("messages", "save.successful"));
+            } catch (BusinessException e) {
+                log.error("Error encountered persisting one shot charge template entity: #{0}:#{1}", entity.getCode(), e);
+                messages.error(new BundleKey("messages", "save.unsuccessful"));
             }
 		}
 	}
@@ -229,5 +235,13 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 		return (getEntity() != null && !getEntity().isTransient() && (oneShotChargeTemplateService.findByCode(
 				getEntity().getCode(), getCurrentProvider()) != null)) ? true : false;
 	}
-	
+
+	public LazyDataModel<OneShotChargeTemplate> getOtherTypeCharges(){
+		if (filters == null){
+			filters = new HashMap<>();
+		}
+		filters.put("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.OTHER);
+		return getLazyDataModel();
+	}
+
 }

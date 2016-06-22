@@ -2,6 +2,7 @@ package org.meveo.api.account;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -11,6 +12,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.SellersDto;
+import org.meveo.api.dto.SequenceDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -19,12 +21,14 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 
@@ -45,12 +49,15 @@ public class SellerApi extends BaseApi {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
+    
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
 
     public void create(SellerDto postData, User currentUser) throws MeveoApiException, BusinessException {
         create(postData, currentUser, true);
     }
 
-    public void create(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException, BusinessException {
+    public Seller create(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -66,14 +73,17 @@ public class SellerApi extends BaseApi {
         Seller seller = new Seller();
         seller.setCode(postData.getCode());
         seller.setDescription(postData.getDescription());
-        seller.setInvoicePrefix(postData.getInvoicePrefix());
-        seller.setInvoiceAdjustmentPrefix(postData.getInvoiceAdjustmentPrefix());
-        seller.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
-        seller.setInvoiceAdjustmentSequenceSize(postData.getInvoiceAdjustmentSequenceSize());
-        seller.setCurrentInvoiceAdjustmentNb(postData.getCurrentInvoiceAdjustmentNb());
-        seller.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
-        seller.setProvider(provider);
-
+        seller.setProvider(provider);       
+        if(postData.getInvoiceTypeSequences() != null){
+        	for(Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet() ){
+        		InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey(), currentUser.getProvider());
+        		if(invoiceType == null){
+        			 throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
+        		}
+        		seller.getInvoiceTypeSequence().put(invoiceType, entry.getValue().fromDto());
+        	}
+        }
+        
         // check trading entities
         if (!StringUtils.isBlank(postData.getCurrencyCode())) {
             TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode(), provider);
@@ -122,13 +132,15 @@ public class SellerApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
+        
+        return seller;
     }
 
     public void update(SellerDto postData, User currentUser) throws MeveoApiException, BusinessException {
         update(postData, currentUser, true);
     }
 
-    public void update(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException, BusinessException {
+    public Seller update(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -143,13 +155,21 @@ public class SellerApi extends BaseApi {
         }
 
         seller.setDescription(postData.getDescription());
-        seller.setInvoicePrefix(postData.getInvoicePrefix());
-        seller.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
-        seller.setInvoiceAdjustmentPrefix(postData.getInvoiceAdjustmentPrefix());
-        seller.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
-        seller.setInvoiceAdjustmentSequenceSize(postData.getInvoiceAdjustmentSequenceSize());
-        seller.setCurrentInvoiceAdjustmentNb(postData.getCurrentInvoiceAdjustmentNb());
-        seller.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
+        if(postData.getInvoiceTypeSequences() != null){
+        	for(Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet() ){
+        		InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey(), currentUser.getProvider());
+        		if(invoiceType == null){
+        			 throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
+        		}
+        		
+        		if(entry.getValue().getCurrentInvoiceNb().longValue() 
+        				< invoiceTypeService.getMaxCurrentInvoiceNumber(currentUser.getProvider(), invoiceType.getCode()).longValue()) {
+                	throw new MeveoApiException("Not able to update, check the current number");
+                }
+        		
+        		seller.getInvoiceTypeSequence().put(invoiceType, entry.getValue().fromDto());
+        	}
+        }
         // check trading entities
         if (!StringUtils.isBlank(postData.getCurrencyCode())) {
             TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode(), provider);
@@ -208,6 +228,7 @@ public class SellerApi extends BaseApi {
             throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
 
+        return seller;
     }
 
     public SellerDto find(String sellerCode, Provider provider) throws MeveoApiException {

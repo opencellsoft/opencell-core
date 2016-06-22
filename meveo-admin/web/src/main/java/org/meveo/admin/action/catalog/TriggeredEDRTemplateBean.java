@@ -24,11 +24,13 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
+import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
@@ -48,9 +50,11 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 	private TriggeredEDRTemplateService triggeredEdrService;
 
 	@Inject
-    private RatingCacheContainerProvider ratingCacheContainerProvider;
+	private RatingCacheContainerProvider ratingCacheContainerProvider;
 
-	
+
+    protected MeveoInstance meveoInstance;
+    
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -59,6 +63,13 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 		super(TriggeredEDRTemplate.class);
 	}
 
+    public MeveoInstance getMeveoInstance() {
+        return meveoInstance;
+    }
+
+    public void setMeveoInstance(MeveoInstance meveoInstance) {
+        this.meveoInstance = meveoInstance;
+    }
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
@@ -88,29 +99,30 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 	}
 
 	@Override
-    @ActionMethod
+	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String result = super.saveOrUpdate(killConversation);
 		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(entity);
 		return result;
 	}
-	
-    public void duplicate() {
-        if (entity == null || entity.getId() == null) {
-            return;
-        }
-        entity = triggeredEdrService.refreshOrRetrieve(entity);
 
-        // Detach and clear ids of entity and related entities
-        triggeredEdrService.detach(entity);
-        entity.setId(null);
-        entity.setCode(entity.getCode() + "_copy");
+	public void duplicate() {
+		if (entity == null || entity.getId() == null) {
+			return;
+		}
+		entity = triggeredEdrService.refreshOrRetrieve(entity);
 
-        try {
-            triggeredEdrService.create(entity, getCurrentUser());
+		// Detach and clear ids of entity and related entities
+		triggeredEdrService.detach(entity);
+		entity.setId(null);
+		entity.setCode(entity.getCode() + "_copy");
+		try {
+			triggeredEdrService.create(entity, getCurrentUser());
+			messages.info(new BundleKey("messages", "save.successful"));
+		} catch (BusinessException e) {
+			log.error("Error encountered persisting triggered EDR template entity: {}: {}", entity.getCode(), e);
+			messages.error(new BundleKey("messages", "save.unsuccessful"));
+		}
+	}
 
-        } catch (BusinessException e) {
-            log.error("error when duplicate offer#{0}:#{1}", entity.getCode(), e);
-        }
-    }
 }

@@ -133,7 +133,7 @@ public class FlatFileProcessingJobBean {
                         outputRecord(recordContext);
                         result.registerSucces();
                     } catch (Throwable e) {
-                    	String erreur =  recordContext.getReason() == null  ? e.getMessage() : recordContext.getReason();
+                    	String erreur = (recordContext == null || recordContext.getReason() == null)  ? e.getMessage() : recordContext.getReason();
                     	log.warn("error on reject record ", e);
                         result.registerError("file=" + fileName + ", line=" + cpLines + ": " + erreur);
                         rejectRecord(recordContext, erreur);
@@ -230,7 +230,7 @@ public class FlatFileProcessingJobBean {
                 log.error("Failed to create a rejection file {}", rejectFile.getAbsolutePath());
             }
         }
-        rejectFileWriter.println((record == null ? null : record.getLineContent().toString()) + ";" + reason);
+        rejectFileWriter.println((record == null ? null : record.getLineContent()) + ";" + reason);
     }
 
 }

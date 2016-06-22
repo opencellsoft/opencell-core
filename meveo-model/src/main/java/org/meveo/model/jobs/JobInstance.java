@@ -40,8 +40,10 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.ModuleItem;
 
 @Entity
+@ModuleItem
 @CustomFieldEntity(cftCodePrefix = "JOB", cftCodeFields = "jobTemplate")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "MEVEO_JOB_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
@@ -171,7 +173,7 @@ public class JobInstance extends BusinessCFEntity {
     }
 
     @Override
-    public ICustomFieldEntity getParentCFEntity() {
+    public ICustomFieldEntity[] getParentCFEntities() {
         return null;
     }
 }

@@ -6,8 +6,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.account.BusinessAccountModelDto;
+import org.meveo.api.dto.catalog.BusinessOfferModelDto;
+import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.module.ModuleDto;
 import org.meveo.api.dto.response.BaseResponse;
 
@@ -20,9 +24,10 @@ import org.meveo.api.dto.response.BaseResponse;
 public class MeveoModuleDtosResponse extends BaseResponse {
 
     private static final long serialVersionUID = 1L;
-    
+
     @XmlElementWrapper(name = "modules")
-    @XmlElement(name = "module")
+    @XmlElements({ @XmlElement(name = "businessServiceModel", type = BusinessServiceModelDto.class), @XmlElement(name = "businessOfferModel", type = BusinessOfferModelDto.class),
+            @XmlElement(name = "businessAccountModel", type = BusinessAccountModelDto.class), @XmlElement(name = "module", type = ModuleDto.class) })
     private List<ModuleDto> modules;
 
     public MeveoModuleDtosResponse() {

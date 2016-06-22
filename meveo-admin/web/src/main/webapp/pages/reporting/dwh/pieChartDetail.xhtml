@@ -84,6 +84,9 @@
 				field="legendCols" />
 			<hftl:formField label="#{messages['pieChart.legendRows']}"
 				field="legendRows" />
+			<hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!pieChartBean.entity.transient}">
+                <h:outputText value="#{pieChartBean.getPartOfModules()}" />
+            </hftl:decorateFormField>
 
 
 

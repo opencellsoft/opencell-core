@@ -49,6 +49,7 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
 
 @Stateless
 public class RecurringChargeInstanceService extends BusinessService<RecurringChargeInstance> {
@@ -59,6 +60,8 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 	@Inject
 	private WalletOperationService walletOperationService;
 	
+	@Inject
+	private RevenueRecognitionScriptService revenueRecognitionScriptService;
 
 	@Inject
 	@Rejected
@@ -270,6 +273,19 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 			//} else {
 			//	applicationDate = activeRecurringChargeInstance.getChargeDate();
 			//}
+				
+			//If we recognize revenue we first delete all SCHEDULED wallet operations
+			if(user.getProvider().isRecognizeRevenue()){
+			  try {
+				log.debug("delete scheduled charges applications on chargeInstance {}", chargeInstanceId);
+				getEntityManager().createNamedQuery("WalletOperation.deleteScheduled")
+				  .setParameter("chargeInstance", activeRecurringChargeInstance).setParameter("provider", user.getProvider())
+							.executeUpdate();
+			  }catch (Exception e) {
+				e.printStackTrace();
+				log.error("error while trying to delete scheduled charges applications on chargeInstance {}", chargeInstanceId);
+			  }
+			}
 
 			while (nbRating<MaxRecurringRatingHistory && (applicationDate.getTime() <= maxDate.getTime())) {
 				nbRating++;
@@ -279,9 +295,10 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 					walletOperationService
 							.applyNotAppliedinAdvanceReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate, user);
 				} else {
-					walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate, user);
+					walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate,false, user);
 				}
-				log.debug("nextChargeDate {}, chargeDate {}.",activeRecurringChargeInstance.getChargeDate(),activeRecurringChargeInstance.getNextChargeDate());
+				log.debug("chargeDate {}, nextChargeDate {}, wo size {}",activeRecurringChargeInstance.getChargeDate()
+						,activeRecurringChargeInstance.getNextChargeDate(),activeRecurringChargeInstance.getWalletOperations().size());
 				//if (recurringChargeTemplate.getApplyInAdvance()) {
 					applicationDate = activeRecurringChargeInstance.getNextChargeDate();
 				//} else {
@@ -292,6 +309,36 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				activeRecurringChargeInstance.updateAudit(user);
 				updateNoCheck(activeRecurringChargeInstance);
 			}
+			//If we recognize revenue we create SCHEDULED wallet op until the end of the contract
+			if(user.getProvider().isRecognizeRevenue() && !activeRecurringChargeInstance.getPrepaid()){
+				Date endContractDate = activeRecurringChargeInstance.getSubscription().getEndAgreementDate();
+				log.debug("apply scheduled charges until {}",endContractDate);
+				if(endContractDate==null){
+					log.error("error while trying to schedule revenue for chargeInstance {},"
+							+ " the subscription has no end agreeement date",chargeInstanceId);
+				} else {
+					Date chargeDate = activeRecurringChargeInstance.getChargeDate();
+					Date nextChargeDate  = activeRecurringChargeInstance.getNextChargeDate();
+					while (applicationDate.getTime() <= endContractDate.getTime()) {
+						log.info("Schedule applicationDate={}", applicationDate);
+						applicationDate = DateUtils.setTimeToZero(applicationDate);
+						if (!recurringChargeTemplate.getApplyInAdvance()) {
+							walletOperationService
+									.applyNotAppliedinAdvanceReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate, user);
+						} else {
+							walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate,true, user);
+						}
+						log.debug("chargeDate {},nextChargeDate {},  wo size {}",activeRecurringChargeInstance.getChargeDate()
+								,activeRecurringChargeInstance.getNextChargeDate(),activeRecurringChargeInstance.getWalletOperations().size());
+						applicationDate = activeRecurringChargeInstance.getNextChargeDate();
+								
+					} 
+					activeRecurringChargeInstance.setChargeDate(chargeDate);
+					activeRecurringChargeInstance.setNextChargeDate(nextChargeDate);
+				}
+				revenueRecognitionScriptService.createRevenueSchedule(activeRecurringChargeInstance.getChargeTemplate().getRevenueRecognitionRule().getScript().getCode(), activeRecurringChargeInstance, user);
+			}
+			
 		} catch (Exception e) {
             rejectededChargeProducer.fire("RecurringCharge " + chargeInstanceId);
             throw new BusinessException(e);

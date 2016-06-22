@@ -18,6 +18,16 @@
 </tr>
 <tr>
 	<td>store</td>
+	<td>id=menu:aggregateInvoices</td>
+	<td>AggregateInvoices</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=menu:detailedInvoices</td>
+	<td>DetailedInvoices</td>
+</tr>
+<tr>
+	<td>store</td>
 	<td>id=searchForm:billingAccountId_selectLink</td>
 	<td>SearchWithBillingAccount</td>
 </tr>
@@ -68,12 +78,12 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=invoiceAdjustmentForm:btnNewIAAggregated</td>
+	<td>//*[contains(@id, 'invoiceAdjustmentForm:btnNewIAAggregated')]</td>
 	<td>NewAggregatedInvoiceAdjustment</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=invoiceAdjustmentForm:btnNewIADetailed</td>
+	<td>//*[contains(@id, 'invoiceAdjustmentForm:btnNewIADetailed')]</td>
 	<td>NewDetailedInvoiceAdjustment</td>
 </tr>
 <tr>
@@ -98,8 +108,88 @@
 </tr>
 <tr>
 	<td>store</td>
+	<td>//*[contains(@id, 'invoiceDate_input')]</td>
+	<td>AdjustmentDate</td>
+</tr>
+<tr>
+	<td>store</td>
 	<td>document.formId.elements[4]</td>
 	<td>SaveInvoiceAdjustment</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'invoiceType_entity_label')]</td>
+	<td>SelectInvoiceType</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formId:tabView:billingAccountSelectedId_selectLink</td>
+	<td>SelectBillingAccount</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formId:tabView:invoiceDate_date_input</td>
+	<td>InvoiceDate</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formId:tabView:dueDate_date_input</td>
+	<td>DueDate</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//div[2]/button</td>
+	<td>AddLinkedInvoice</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>document.formId.elements[9]</td>
+	<td>DeleteAllLinkedInvoice</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>document.formId.elements[12]</td>
+	<td>ImportFromLinkedInvoices</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formId:tabView:selectedInvoiceCatOrSubCat_a_label</td>
+	<td>SelectInvoiceCatOrSubCat</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formId:tabView:description_a</td>
+	<td>DescriptionInvoiceCatOrSubCat</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formId:tabView:amountWithoutTax</td>
+	<td>AmtWithoutTaxes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//div[@id='formId:tabView:addAggregatedLine_content']/table/tbody/tr/td[4]/button</td>
+	<td>AddLineAgregatedInvoice</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formId:tabView:selectedInvoiceCatOrSubCat_label</td>
+	<td>SelectInvoiceCatOrSubCatDetailedInv</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formId:tabView:unitAmountWithoutTax</td>
+	<td>UnitAmtWithoutTax</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formId:tabView:quantity</td>
+	<td>Quantity</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//fieldset[3]/div/div/div/table/tbody/tr/td[5]/button</td>
+	<td>AddLineDetailedInvoice</td>
 </tr>
 </tbody></table>
 </body>

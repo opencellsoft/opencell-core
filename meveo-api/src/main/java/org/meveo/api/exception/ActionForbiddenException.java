@@ -12,6 +12,8 @@ public class ActionForbiddenException extends MeveoApiException {
 
     private static final long serialVersionUID = -3436733471648721659L;
 
+    private String reason;
+
     public ActionForbiddenException() {
     }
 
@@ -22,8 +24,14 @@ public class ActionForbiddenException extends MeveoApiException {
 
     @SuppressWarnings("rawtypes")
     public ActionForbiddenException(Class entityClass, String entityCode, String action, String reason) {
-        super("Action '" + action + "' on entity '" + entityClass.getName() + "' with code '" + entityCode + "' is not allowed  for reason" + reason + "'");
+        super("Action '" + action + "' on entity '" + entityClass.getName() + "' with code '" + entityCode + "' is not allowed  for reason: " + reason + "'");
 
+        this.reason = reason;
+        
         setErrorCode(MeveoApiErrorCodeEnum.ACTION_FORBIDDEN);
+    }
+
+    public String getReason() {
+        return reason;
     }
 }

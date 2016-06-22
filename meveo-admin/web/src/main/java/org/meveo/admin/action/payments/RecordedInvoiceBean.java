@@ -24,6 +24,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.payments.RecordedInvoice;
@@ -40,7 +41,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
-public class RecordedInvoiceBean extends BaseBean<RecordedInvoice> {
+public class RecordedInvoiceBean extends CustomFieldBean<RecordedInvoice> {
 
 	private static final long serialVersionUID = 1L;
 

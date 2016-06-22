@@ -15,6 +15,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
 import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
+import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -68,4 +69,15 @@ public interface BillingAccountRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(BillingAccountDto postData);
+    
+    /**
+     * filter counters by period date
+     * @param billingAccountCode
+     * @param date
+     * @return
+     */
+    @GET
+    @Path("/filterCountersByPeriod")
+	GetCountersInstancesResponseDto filterBillingAccountCountersByPeriod(@QueryParam("billingAccountCode") String billingAccountCode, 
+			@QueryParam("date") String date);
 }

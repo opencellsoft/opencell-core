@@ -1,0 +1,90 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<hftl:entityPopup id="searchOccTemplatePopup"
+			header="#{messages['invoiceType.occTemplate']}"
+			updateField=":formInvoiceType:occTemplateSelectedId :formInvoiceType:occTemplateSelectedId_text"
+			selection="#{invoiceTypeBean.entity.occTemplate}"
+			backingBean="#{occTemplateBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>	
+		<hftl:entityPopup id="searchOccTemplateNegativePopup"
+			header="#{messages['invoiceType.occTemplate']}"
+			updateField=":formInvoiceType:occTemplateNegativeSelectedId :formInvoiceType:occTemplateNegativeSelectedId_text"
+			selection="#{invoiceTypeBean.entity.occTemplateNegative}"
+			backingBean="#{occTemplateBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="invoiceTypes"
+						value="#{messages['menu.invoiceTypes']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+		<hftl:formPanel formId="formInvoiceType" edit="#{invoiceTypeBean.edit}" label="#{messages['invoiceType.panel']}" backingBean="#{invoiceTypeBean}">
+			<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"  size="60" maxlength="60" />
+			<hftl:formField label="#{messages['businessEntity.description']}" id="description" field="description" useConverter="false" size="100" maxlength="100" />
+			<hftl:formField label="#{messages['invoiceType.occTemplate']}" id="occTemplateSelectedId" field="occTemplate"  valueLabelField="code"  
+							popup="true" popupId="searchOccTemplatePopup" clearButton="true" required="true"/>
+			<hftl:formField label="#{messages['invoiceType.occTemplateNegative']}" id="occTemplateNegativeSelectedId" field="occTemplateNegative"  valueLabelField="code"  
+							popup="true" popupId="searchOccTemplateNegativePopup" clearButton="true" required="false"/>							
+			<hftl:formField label="#{messages['invoiceType.prefix']}" field="sequence"  childField="prefixEL" id="prefix" textArea="true" rows="1" maxlength="2000" />
+			<hftl:formField label="#{messages['invoiceType.sequenceSize']}" field="sequence"  childField="sequenceSize" id="sequenceSize" />
+			<hftl:formField label="#{messages['seller.currentInvoiceNb']}" field="sequence"  childField="currentInvoiceNb" id="currentInvoiceNb" />
+            <hftl:formField label="#{messages['invoiceType.appliesTo']}" field="appliesTo" listType="pickUpList" valueLabelField="code" dualListModel="#{invoiceTypeBean.dualListModel}" 
+            newLine="true"  id="appliesTo"/> 
+        <h:panelGroup rendered="#{not empty invoiceTypeBean.entity.id}">		 
+		  <p:dataTable id="sellerSequenceTable" width="80px;" label="#{messages['inboundRequest.responseHeaders']}" style="width:70%;"
+			value="#{invoiceTypeBean.getSellerSequencesList}" 
+			var="sellerSeq" paginator="false"  resizableColumns="true" >
+	       <f:facet name="header">
+            #{messages['invoiceType.sellerSequences']}
+           </f:facet>
+		   <p:column>
+		   <f:facet name="header">
+				<h:outputText value="#{messages['seller.title']}" />
+			</f:facet>
+			  <h:outputText value="#{sellerSeq.key.code}" />
+		   </p:column>
+		   <p:column>
+			<f:facet name="header">
+				<h:outputText value="#{messages['invoiceType.sequence.prefixEl']}" />
+			</f:facet>
+			 <h:outputText value="#{sellerSeq.value.prefixEL}" />  
+		  </p:column>
+		    <p:column>
+			<f:facet name="header">
+				<h:outputText value="#{messages['seller.currentInvoiceNb']}" />
+			</f:facet>
+			 <h:outputText value="#{sellerSeq.value.currentInvoiceNb}" />  
+		  </p:column>
+           <p:column>
+			<f:facet name="header">
+				<h:outputText value="#{messages['seller.invoiceSequenceSize']}" />
+			</f:facet>
+			 <h:outputText value="#{sellerSeq.value.sequenceSize}" />  
+		  </p:column> 		  
+		</p:dataTable> 
+		</h:panelGroup>
+		</hftl:formPanel>
+	</ui:define>
+</ui:composition>

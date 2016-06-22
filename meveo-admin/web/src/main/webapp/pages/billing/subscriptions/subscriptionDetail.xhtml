@@ -407,14 +407,18 @@
 																	label="#{messages['chargeApplication.status']}"
 																	field="status" />
 																<hftl:column
-																	label="#{messages['oneShotChargeInstance.criteria1']}"
-																	field="criteria1" />
+																	label="#{messages['oneShotChargeInstance.chargeDate']}"
+																	field="chargeDate" />
 																<hftl:column
-																	label="#{messages['oneShotChargeInstance.criteria2']}"
-																	field="criteria2" />
-																<hftl:column
-																	label="#{messages['oneShotChargeInstance.criteria3']}"
-																	field="criteria3" />
+																	label="#{messages['pricePlanMatrix.amountWithoutTax']}"
+																	field="amountWithoutTax" isMessage="false" />
+																<p:column
+																	headerText="#{messages['pricePlanMatrix.amountWithTax']}"
+																	rendered="#{!subscriptionBean.entity.provider.entreprise}">
+																	<h:outputText value="#{entity.amountWithTax}"
+																				  converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
+																</p:column>
+
 
 																<p:column styleClass="actions-column">
 																	<f:facet name="header">
@@ -456,6 +460,7 @@
 																<hftl:entityPopup id="oneShotChargeTmpPopup"
 																	header="#{messages['oneShotChargeTmp.popup.header']}"
 																	backingBean="#{oneShotChargeTemplateBean}"
+																	dataModel="#{oneShotChargeTemplateBean.getOtherTypeCharges}"
 																	searchField1Label="#{messages['chargeTemplate.code']}"
 																	searchField1="code"
 																	searchField2Label="#{messages['chargeTemplate.description']}"
@@ -496,22 +501,28 @@
 																			fieldId="chargeTemplateSelectId_text"
 																			label="#{messages['businessEntity.code']}">
 																			<p:inputText id="chargeTemplateSelectId_text"
-																				required="true"
-																				value="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.code}"
-																				disabled="true" />
+																				 required="true"
+																				 value="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.code}"
+																				 disabled="true" />
 																			<p:commandButton
 																				id="chargeTemplateSelectId_selectLink"
 																				onclick="PF('dlg_oneShotChargeTmpPopup').show()"
+																				rendered="#{subscriptionBean.oneShotChargeInstance.isTransient()}"
 																				icon="ui-icon-search" type="button" />
 																			<p:tooltip for="chargeTemplateSelectId_selectLink"
-																				value="#{messages['commons.search']}" />
+																					   value="#{messages['commons.search']}" />
 																		</hftl:decorateFormField>
 																	</h:panelGroup>
+																	
+																	<hftl:decorateFormField fieldId="oneshot_description"
+																		label="#{messages['businessEntity.description']}">
+																		<p:inputText id="oneshot_description"
+																			value="#{subscriptionBean.oneShotChargeInstance.description}"
+																			size="50" 
+																			disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
+																		</p:inputText>
+																	</hftl:decorateFormField>
 
-																	<hftl:formField id="oneshot_description"
-																		label="#{messages['businessEntity.description']}"
-																		field="description" size="50" maxlength="50"
-																		textArea="true" rows="1" disabled="true" edit="true" />
 																	<hftl:formField
 																		label="#{messages['oneShotChargeInstance.chargeDate']}"
 																		required="true" field="chargeDate" edit="true" />
@@ -538,22 +549,20 @@
 																	</h:panelGroup>
 
 																	<hftl:decorateFormField fieldId="amountWithoutTax2"
-																		label="#{messages['oneShotChargeInstance.amountWithoutTax']}">
+																		label="#{messages['oneShotChargeInstance.amountWithoutTax']}"
+																		rendered="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
 																		<p:inputText id="amountWithoutTax2"
 																			value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}"
-																			size="5" converter="bigDecimalConverter"
-																			onkeyup="validateAmounts();"
-																			disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and subscriptionBean.oneShotChargeInstance.id != null}">
+																			size="5" converter="bigDecimalConverter">
 																		</p:inputText>
 																	</hftl:decorateFormField>
 																	<hftl:decorateFormField fieldId="amountWithTax"
 																		label="#{messages['oneShotChargeInstance.amountWithTax']}"
-																		rendered="#{!subscriptionBean.entity.provider.entreprise}">
+																		rendered="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and !subscriptionBean.entity.provider.entreprise}">
 																		<p:inputText id="amountWithTax"
 																			value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
 																			size="5" converter="bigDecimalConverter"
-																			onkeyup="validateAmounts();"
-																			disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and subscriptionBean.oneShotChargeInstance.id != null}">
+																			disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
 																		</p:inputText>
 																	</hftl:decorateFormField>
 																	<hftl:formField
@@ -607,7 +616,6 @@
 																				<hftl:column
 																					label="#{messages['chargeApplication.description']}"
 																					field="description" />
-																				<!-- 																<hftl:column label="#{messages['chargeApplication.amountWithoutTax']}" showSortLinks="false" field="amountWithoutTax" /> -->
 																				<p:column>
 																					<f:facet name="header">
 																						<h:outputText
@@ -616,7 +624,6 @@
 																	#{oneShotWalletOp.amountWithoutTax}
 																</p:column>
 
-																				<!-- 																<hftl:column label="#{messages['walletOperation.amountWithTax']}" showSortLinks="false" field="amountWithTax" /> -->
 																				<p:column
 																					rendered="#{!subscriptionBean.entity.provider.entreprise}">
 																					<f:facet name="header">
@@ -626,129 +633,20 @@
 																	#{oneShotWalletOp.amountWithTax}
 																</p:column>
 
-																				<!-- 																<hftl:column label="#{messages['currency.codeCurrency']}" field="currency" /> -->
 																				<hftl:column
 																					label="#{messages['chargeApplication.status']}"
 																					field="status" />
 																			</p:dataTable>
 																		</h:panelGroup>
 																	</p:outputPanel>
-
-																	<script type="text/javascript">
-    //<![CDATA[
-
-    var validAmount;
-    var amountWithoutTax;
-    var chargeTemplate;
-    var amountWithTax;
-    var calculatedAmount;
-    var calculatedAmountWithoutTax;
-    var formatedValue;
-    var formatedValueHT;
-
-    function caseTTCamount(){
-//     	if ((document.getElementById('{rich:clientId('amountWithTax')}').value!='')&&(document.getElementById('{rich:clientId('amountWithoutTax')}').value=='')) 
-//     	{return true;} else {return false;}
-    }
-    function caseHTamount(){
-//     	if ((document.getElementById('{rich:clientId('amountWithTax')}').value=='')&&(document.getElementById('{rich:clientId('amountWithoutTax')}').value!='')) 
-//     	{return true;} else {return false;}
-    }
-    function caseHTandTTCamouts(){
-//     	if ((document.getElementById('{rich:clientId('amountWithTax')}').value!='')&&(document.getElementById('{rich:clientId('amountWithoutTax')}').value!='')) 
-//     	{return true;} else {return false;}
-    }
-	
-    function getValidAmout(){
-    	validateAmounts();
-       	return validAmount;
-    }
-    function getValidFormat(amount){
-    	Seam.Component.getInstance("javaScriptAction").getFormatedAmountString(amount,function(result) {formatedValue=result;});
-    }
-    function getValidFormatHT(amount){
-    	Seam.Component.getInstance("javaScriptAction").getFormatedAmountString(amount,function(result) {formatedValueHT=result;});
-    }
-
-	function getAlertTextForCaseHTandTTCamouts(){
-		var text =  'Attention : pour le Montant HT '+amountWithoutTax +', le Montant TTC attendu est '+calculatedAmount+'. Confirmez-vous les montants saisis ?';
-		return text;
-	}
-	function getAlertTextForCaseTTCamount(){
-		var text =  'Attention : pour le Montant TTC '+amountWithTax +', le Montant HT attendu est '+calculatedAmountWithoutTax;
-		return text;
-	}
-	function getAlertTextForCaseHTamount(){
-		var text =  'Attention : pour le Montant HT '+amountWithoutTax+', le Montant TTC attendu est '+calculatedAmount;
-		return text;
-	}
-
-
-	var exceptionHandler = function(ex) { alert("Error: " + ex.getMessage()); };
-	
-	function validateAmounts(){
-//        	amountWithoutTax = document.getElementById('{rich:clientId('amountWithoutTax')}').value; 
-//     	chargeTemplate= document.getElementById('{rich:clientId('chargeTemplateSelectId')}').value;
-//     	amountWithTax = document.getElementById('{rich:clientId('amountWithTax')}').value;
-//     	if ((document.getElementById('{rich:clientId('amountWithTax')}').value=='')&&(document.getElementById('{rich:clientId('amountWithoutTax')}').value=='')) 
-//     	{validAmount = true;}
-//     	else {
-//     		if(document.getElementById('{rich:clientId('amountWithoutTax')}').value!='') {
-//     	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmount(chargeTemplate, amountWithoutTax,function(result) {calculatedAmount=result;}, exceptionHandler);
-//     	getValidFormatHT(amountWithoutTax);
-// 		amountWithoutTax = formatedValueHT;
-// 		}
-//     	if(document.getElementById('{rich:clientId('amountWithTax')}').value!='') {
-//     	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmountWithoutTax(chargeTemplate, amountWithTax, function(result) {calculatedAmountWithoutTax=result;}, exceptionHandler);
-//     	getValidFormat(amountWithTax);
-// 		amountWithTax = formatedValue;
-//     	}
-//     	if (calculatedAmount==amountWithTax)
-// 		 {validAmount = true;}
-// 		 else {validAmount = false;}
-//     	}
-	}
-	function validation(){
-		var resultValidAmout=getValidAmout();
-		if(resultValidAmout==false){
-            if(caseTTCamount()==true){
-                alert(getAlertTextForCaseTTCamount());
-                return false;
-            }
-            if(caseHTamount()==true){
-                alert(getAlertTextForCaseHTamount());
-                return false;
-            }
-            if(caseHTandTTCamouts()==true){
-                if(!confirm(getAlertTextForCaseHTandTTCamouts())){
-                    return false;}
-                }
-            }
-		else {
-			return true;
-		}
-	}
-	
-    // ]]>
-  </script>
-
 																    <ui:param name="buttons" value="true"/>
                                                                     <ui:define name="buttons">    
-																		<h:commandButton
-																			action="#{subscriptionBean.saveOneShotChargeIns}"
-																			value="#{messages['action.save']}"
-																			rendered="#{currentProvider.amountValidation and subscriptionBean.canUserUpdateEntity()}">
-																			<!-- 															<a:ajax event="click" render="OS_oneShot_results_form" -->
-																			<!-- 																onsubmit="return validation();" -->
-																			<!-- 																oncomplete="document.getElementById('oneShotChgDiv').style.display='none';" /> -->
-																		</h:commandButton>
 
 																		<p:commandButton
 																			action="#{subscriptionBean.saveOneShotChargeIns}"
 																			value="#{messages['action.save']}"
 																			update=":subscriptionTab:oneShotPanel"
-																			rendered="#{!currentProvider.amountValidation and subscriptionBean.canUserUpdateEntity()}" />
-
+																			rendered="#{subscriptionBean.canUserUpdateEntity() and subscriptionBean.oneShotChargeInstance.id==null}" />
 																		<p:commandButton value="#{messages['action.cancel']}"
 																			update=":#{p:component('oneShotChgDiv')}"
 																			rendered="#{subscriptionBean.canUserUpdateEntity()}"
@@ -803,14 +701,20 @@
 																label="#{messages['chargeApplication.status']}"
 																field="status" />
 															<hftl:column
-																label="#{messages['oneShotChargeInstance.criteria1']}"
-																field="criteria1" isMessage="true" />
-															<hftl:column
 																label="#{messages['oneShotChargeInstance.chargeDate']}"
 																field="chargeDate" isDate="true" />
 															<hftl:column
 																label="#{messages['recurringChargeInstance.nextChargeDate']}"
 																field="nextChargeDate" isDate="true" />
+															<hftl:column
+																label="#{messages['pricePlanMatrix.amountWithoutTax']}"
+																field="amountWithoutTax" isMessage="false" />
+															<p:column
+																headerText="#{messages['pricePlanMatrix.amountWithTax']}"
+																rendered="#{!subscriptionBean.entity.provider.entreprise}">
+																<h:outputText value="#{entity.amountWithTax}"
+																	  converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
+															</p:column>
 
 															<p:column styleClass="actions-column">
 																<f:facet name="header">
@@ -862,8 +766,11 @@
 															label="#{messages['BusinessEntity.description']}"
 															field="description" isMessage="false" />
 														<hftl:column
-															label="#{messages['chargeApplication.status']}"
+															label="#{messages['serviceInstance.status']}"
 															field="status" />
+														<hftl:column
+															label="#{messages['chargeInstance.chargeDate']}"
+															field="chargeDate" isDate="true" />
 														<hftl:column
 															label="#{messages['pricePlanMatrix.amountWithoutTax']}"
 															field="amountWithoutTax" isMessage="false" />
@@ -873,15 +780,6 @@
 															<h:outputText value="#{entity.amountWithTax}"
 																converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
 														</p:column>
-														<hftl:column
-															label="#{messages['oneShotChargeInstance.criteria1']}"
-															field="criteria1" isMessage="false" />
-														<hftl:column
-															label="#{messages['oneShotChargeInstance.criteria2']}"
-															field="criteria2" isMessage="false" />
-														<hftl:column
-															label="#{messages['oneShotChargeInstance.criteria3']}"
-															field="criteria3" isMessage="false" />
 														<hftl:column label="#{messages['counterTemplate.title']}"
 															field="counter.description" />
 														<p:column styleClass="actions-column">
@@ -1010,27 +908,35 @@
 					formId="usageChgForm1" showFormButtons="false" ajaxSubmit="true" rendered="#{subscriptionBean.usageChargeInstance!=null}">
 						<hftl:formField id="USchargeTemplateSelectId" label="#{messages['businessEntity.code']}"
 							field="chargeTemplate" valueLabelField="code" edit="false" />
+						<hftl:formField label="#{messages['commons.status']}"
+							field="status" edit="false" />
 						<hftl:formField label="#{messages['businessEntity.description']}"
 							field="description" edit="false" />
-                            
-						<hftl:formField rendered="#{!subscriptionBean.entity.provider.entreprise}"
-							label="#{messages['oneShotChargeInstance.amountWithTax']}"
-							field="amountWithTax" edit="true" newLine="true"/>
+
 						<hftl:formField
-							label="#{messages['oneShotChargeInstance.amountWithoutTax']}"
-							field="amountWithoutTax" edit="true" newLine="#{subscriptionBean.entity.provider.entreprise}"/>
-						<!--<hftl:formField
-							label="#{messages['oneShotChargeInstance.criteria1']}"
-							field="criteria1" edit="false" isMessage="false" />
+							label="#{messages['chargeInstance.criteria1']}"
+							field="criteria1" edit="false" isMessage="false" newLine="true" />
 						<hftl:formField
-							label="#{messages['oneShotChargeInstance.criteria2']}"
+							label="#{messages['chargeInstance.criteria2']}"
 							field="criteria2" edit="false" isMessage="false" />
 						<hftl:formField
-							label="#{messages['oneShotChargeInstance.criteria3']}"
-							field="criteria3" edit="false" isMessage="false" />-->
+							label="#{messages['chargeInstance.criteria3']}"
+							field="criteria3" edit="false" isMessage="false" />
+
+
+						<hftl:formField
+							label="#{messages['chargeInstance.chargeDate']}"
+							field="chargeDate" edit="false" newLine="true" />
 						<hftl:formField label="#{messages['counterTemplate.title']}"
 							field="counter" valueLabelField="descriptionOrCode" edit="false" />
-                       
+						<hftl:formField rendered="#{!subscriptionBean.entity.provider.entreprise}"
+							label="#{messages['chargeInstance.amountWithTax']}"
+							field="amountWithTax" edit="true" newLine="true" />
+						<hftl:formField
+							label="#{messages['chargeInstance.amountWithoutTax']}"
+							field="amountWithoutTax" edit="true" newLine="#{subscriptionBean.entity.provider.entreprise}"/>
+
+
                         <ui:param name="buttons" value="true"/>
                         <ui:define name="buttons">    
     						<p:commandButton
@@ -1039,8 +945,9 @@
     							value="#{messages['action.save']}"
     							update=":#{p:component('OS_usage_results_form')}"
     							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_usageChgPopup').hide()" />
-    						<p:button value="#{messages['action.cancel']}"
-    							onclick="PF('dlg_usageChgPopup').hide()" type="button" />
+							<p:commandButton value="#{messages['action.cancel']}"
+								 onclick="PF('dlg_usageChgPopup').hide()"
+								 type="button" />
                         </ui:define>
 				</hftl:formPanel>
 			</p:outputPanel>
@@ -1059,13 +966,13 @@
 						<hftl:formField id="RCchargeTemplateSelectId"
 							label="#{messages['businessEntity.code']}" field="chargeTemplate"
 							valueLabelField="code" popup="true" popupId="recurringChargeTmpPopup"
-							edit="true" />
+							edit="false" />
 						<hftl:formField label="#{messages['businessEntity.description']}"
-							field="description" size="50" maxlength="50" disabled="true" />
+							field="description" size="50" maxlength="50" disabled="true" componentWidth="40"/>
 						<hftl:formField
 							label="#{messages['recurringChargeInstance.subscriptionDate']}"
-							field="subscriptionDate" edit="false" />
-                        <hftl:decorateFormField fieldId="RCamountWithoutTax" label="#{messages['recurringChargeInstance.amountWithoutTax']}" >
+							field="subscriptionDate" edit="false" componentWidth="15"/>
+                        <hftl:decorateFormField fieldId="RCamountWithoutTax" label="#{messages['recurringChargeInstance.amountWithoutTax']}" componentWidth="15">
 							<p:inputText id="RCamountWithoutTax"
 								value="#{subscriptionBean.recurringChargeInstance.amountWithoutTax}"
 								size="5" converter="bigDecimalConverter"
@@ -1102,7 +1009,7 @@
     							value="#{messages['action.save']}" 
     							rendered="#{subscriptionBean.canUserUpdateEntity()}"
     							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_recurringChgPopup').hide()" />
-    						<p:button value="#{messages['action.cancel']}"
+    						<p:commandButton value="#{messages['action.cancel']}"
     							onclick="PF('dlg_recurringChgPopup').hide()" type="button" />
 						</ui:define>
 				</hftl:formPanel>
@@ -1111,23 +1018,45 @@
 <!-- 					<h:outputText value="#{messages['commons.noItems']}" -->
 <!-- 						rendered="#{empty subscriptionBean.recurringWalletOperations}" /> -->
 <!-- 					<h:panelGroup rendered="#{not empty subscriptionBean.recurringWalletOperations}"> -->
+                       
 						<h:outputText
 							value="#{subscriptionBean.recurringWalletOperations.size()} #{messages['commons.itemsFound']}" />
-						<p:dataTable id="recurringWalletOperationTable"
+						<h:form id="recurringWalletForm">
+						<p:dataTable id="recurringWalletOperationTable" widgetVar="recurringWidget"
 							value="#{subscriptionBean.recurringWalletOperations}"
-							var="shotApplication" paginator="true" rows="10" resizableColumns="true"
+							var="shotApplication" paginator="true" rows="5" resizableColumns="true"
 							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-							rowsPerPageTemplate="10,20,30" styleClass="custom-grid">
-							<p:column>
-								<f:facet name="header">
-									<h:outputText
-										value="#{messages['walletOperation.operationDate']}" />
-								</f:facet>
-								<h:outputText value="#{shotApplication.operationDate}">
-									<f:convertDateTime pattern="dd/MM/yyyy" />
-								</h:outputText>
-							</p:column>
-							<p:column>
+							rowsPerPageTemplate="5,10,20,30" styleClass="custom-grid" >
+
+                            <p:column headerText="date" filterBy="#{shotApplication.operationDate}" filterFunction="#{subscriptionBean.filterByDate}" sortBy="#{shotApplication.operationDate}" sortOrder="descending">
+                                <f:facet name="filter">
+                                    <h:inputHidden id="filter" />
+                                </f:facet>
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{messages['walletOperation.operationDate']}" />
+                                    <br />
+                                    <p:calendar id="from" pattern="dd/MM/yyyy" size="9" readonly="true">
+									<p:watermark for="from" value="#{messages['commons.from']}" />
+                                        <p:ajax event="dateSelect"
+                                            onstart="$(PrimeFaces.escapeClientId('#{p:component('filter')}'))[0].value = $(PrimeFaces.escapeClientId('#{p:component('from')}_input'))[0].value + '-' + $(PrimeFaces.escapeClientId('#{p:component('to')}_input'))[0].value"
+                                            oncomplete="PF('recurringWidget').filter()" />
+                                    </p:calendar>
+                                    <p:calendar id="to" pattern="dd/MM/yyyy" size="9" readonly="true">
+									<p:watermark for="to" value="#{messages['commons.to']}" />
+                                        <p:ajax event="dateSelect"
+                                            onstart="$(PrimeFaces.escapeClientId('#{p:component('filter')}'))[0].value = $(PrimeFaces.escapeClientId('#{p:component('from')}_input'))[0].value + '-' + $(PrimeFaces.escapeClientId('#{p:component('to')}_input'))[0].value"
+                                            oncomplete="PF('recurringWidget').filter()" />
+                                    </p:calendar>
+									<p:commandButton  process="@this" update="recurringWalletForm" action="#{subscriptionBean.resetFilters}" icon="ui-icon-close">
+									<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+									</p:commandButton>
+                                </f:facet>
+                                <h:outputText value="#{shotApplication.operationDate}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+							
+                            </p:column>
+                            <p:column width="60" sortBy="#{shotApplication.startDate}">
 								<f:facet name="header">
 									<h:outputText value="#{messages['walletOperation.startDate']}" />
 								</f:facet>
@@ -1135,57 +1064,50 @@
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
 							</p:column>
-							<p:column>
+							<p:column width="60" sortBy="#{shotApplication.endDate}">
 								<f:facet name="header">
 									<h:outputText value="#{messages['walletOperation.endDate']}" />
 								</f:facet>
 								<h:outputText value="#{shotApplication.endDate}">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
-								</h:outputText>
-							</p:column>
-							<p:column>
+								</h:outputText> 
+							</p:column> 
+							<p:column sortBy="#{shotApplication.quantity}">
 								<f:facet name="header">
 									<h:outputText value="#{messages['walletOperation.quantity']}" />
 								</f:facet>
 								<h:outputText value="#{shotApplication.quantity}">
 								</h:outputText>
-							</p:column>
-							<p:column>
-								<f:facet name="header">
-									<h:outputText
-										value="#{messages['walletOperation.description']}" />
-								</f:facet>
-								<h:outputText value="#{shotApplication.description}">
-								</h:outputText>
-							</p:column>
-							<p:column>
+							</p:column> 
+							<p:column sortBy="#{shotApplication.parameter2}">
 								<f:facet name="header">
 									<h:outputText value="#{messages['walletOperation.parameter2']}" />
 								</f:facet>
 								<h:outputText value="#{shotApplication.parameter2}">
 								</h:outputText>
 							</p:column>
-							<p:column>
+							<p:column sortBy="#{shotApplication.amountWithoutTax}">
 								<f:facet name="header">
 									<h:outputText
 										value="#{messages['walletOperation.amountWithoutTax']}" />
 								</f:facet>
 								<h:outputText value="#{shotApplication.amountWithoutTax}" />
 							</p:column>
-							<p:column rendered="#{!subscriptionBean.entity.provider.entreprise}">
+							<p:column rendered="#{!subscriptionBean.entity.provider.entreprise}" sortBy="#{shotApplication.amountWithTax}">
 								<f:facet name="header">
 									<h:outputText
 										value="#{messages['walletOperation.amountWithTax']}" />
 								</f:facet>
 								<h:outputText value="#{shotApplication.amountWithTax}" />
 							</p:column>
-							<p:column>
+							<p:column width="44px;"  sortBy="#{shotApplication.status}">
 								<f:facet name="header">
 									<h:outputText value="#{messages['walletOperation.status']}" />
 								</f:facet>
 								<h:outputText value="#{messages[shotApplication.status.label]}" />
 							</p:column>
 						</p:dataTable>
+						</h:form>
 <!-- 					</h:panelGroup> -->
 				</p:outputPanel>
 			</p:outputPanel>

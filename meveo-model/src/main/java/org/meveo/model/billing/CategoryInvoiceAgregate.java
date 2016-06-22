@@ -81,8 +81,40 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
 		}
 
 		if (subCategoryInvoiceAgregate != null) {
-			subCategoryInvoiceAgregates.add(subCategoryInvoiceAgregate);
+			if (!subCategoryInvoiceAgregates.contains(subCategoryInvoiceAgregate)) {
+				subCategoryInvoiceAgregates.add(subCategoryInvoiceAgregate);
+			}
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		if (id != null)
+			return id.intValue();
+		if (invoiceCategory != null)
+			return invoiceCategory.hashCode();
+
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CategoryInvoiceAgregate other = (CategoryInvoiceAgregate) obj;
+		if (invoiceCategory == null) {
+			if (other.getInvoiceCategory() != null)
+				return false;
+		} else if (!invoiceCategory.equals(other.getInvoiceCategory()))
+			return false;
+		return true;
 	}
 
 }

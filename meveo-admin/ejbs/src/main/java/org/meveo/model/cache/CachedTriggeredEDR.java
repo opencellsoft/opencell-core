@@ -10,6 +10,7 @@ public class CachedTriggeredEDR {
     private Long id;
     private String code;
     private String subscriptionEL;
+    private String meveoInstanceCode;
     private String conditionEL;
     private String quantityEL;
     private String param1EL;
@@ -28,6 +29,7 @@ public class CachedTriggeredEDR {
         id = edrTemplate.getId();
         code = edrTemplate.getCode();
         subscriptionEL = edrTemplate.getSubscriptionEl();
+        meveoInstanceCode = edrTemplate.getMeveoInstance()==null?null:edrTemplate.getMeveoInstance().getCode();
 
         if (edrTemplate.getQuantityEl() == null || (edrTemplate.getQuantityEl().equals(""))) {
             Logger log = LoggerFactory.getLogger(this.getClass());
@@ -60,7 +62,11 @@ public class CachedTriggeredEDR {
         return subscriptionEL;
     }
 
-    public String getConditionEL() {
+    public String getMeveoInstanceCode() {
+		return meveoInstanceCode;
+	}
+
+	public String getConditionEL() {
         return conditionEL;
     }
 

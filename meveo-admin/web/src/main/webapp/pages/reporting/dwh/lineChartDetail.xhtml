@@ -98,6 +98,9 @@
 				field="showDataTip" />
 			<hftl:formField label="#{messages['lineChart.datatipFormat']}"
 				field="datatipFormat" />
+			<hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!lineChartBean.entity.transient}">
+                <h:outputText value="#{lineChartBean.getPartOfModules()}" />
+            </hftl:decorateFormField>
 
 			<!-- <p:commandButton id="showPreview"
 				action="#{lineChartBean.getChartEntityModel()}"

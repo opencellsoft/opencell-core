@@ -150,6 +150,7 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
 	@Inject
 	private TriggeredEDRTemplateService edrTemplateService;
 	
+	@ActionMethod
 	public void duplicate() {
         
         if (entity != null && entity.getId() != null) {
@@ -178,9 +179,10 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
             try {
                 usageChargeTemplateService.create(entity, getCurrentUser());
                 customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
-
-            } catch (Exception e) {
-                log.error("error when duplicate usageChargeTemplate#{0}:#{1}", entity.getCode(), e);
+                messages.info(new BundleKey("messages", "save.successful"));
+            } catch (BusinessException e) {
+                log.error("Error encountered persisting usage charge template entity: #{0}:#{1}", entity.getCode(), e);
+                messages.error(new BundleKey("messages", "save.unsuccessful"));
             }
 		}
 	}

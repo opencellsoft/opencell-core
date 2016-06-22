@@ -19,12 +19,16 @@
 package org.meveo.admin.action.billing;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -49,6 +53,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
@@ -62,6 +67,7 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.component.datatable.DataTable;
 import org.slf4j.Logger;
 
 /**
@@ -265,13 +271,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         	if(selectedWalletTemplate.getCode()==null){
         		selectedWalletTemplate.setCode(WalletTemplate.PRINCIPAL);
         	}
-            if (oneShotChargeInstance != null && oneShotChargeInstance.getId() != null) {
-                oneShotChargeInstanceService.update(oneShotChargeInstance, getCurrentUser());
-            } else {
-
                 entity = subscriptionService.attach(entity);
+                String description = oneShotChargeInstance.getDescription();
                 oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplateService.attach((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate()));
-                
+                oneShotChargeInstance.setDescription(description);
                 if (oneShotChargeInstance.getChargeDate() == null) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date());
@@ -286,9 +289,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 oneShotChargeInstance.setCountry(entity.getUserAccount().getBillingAccount().getTradingCountry());
                 oneShotChargeInstanceService.oneShotChargeApplication(entity, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),selectedWalletTemplate.getCode(),
                     oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
-                    oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), getCurrentUser(), true);
-            }
-
+                    oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), oneShotChargeInstance.getDescription(), getCurrentUser(), true);
+           
             oneShotChargeInstance = null;
             oneShotChargeInstances = null;
             clearObjectId();
@@ -658,6 +660,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	}
 
 	public List<Access> getAccess() {
+		if(entity.getId() == null)
+			return null;
 		return accessService.listBySubscription(entity);
 	}
 
@@ -802,4 +806,34 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         recurringChargeInstances = null;
         usageChargeInstances = null;
     }
+     
+    public boolean filterByDate(Object value, Object filter, Locale locale) throws ParseException { 
+        String filterText = (filter == null) ? null : filter.toString().trim();
+        if (filterText == null || filterText.isEmpty()) {
+            return true;
+        }
+        if (value == null) {
+            return false;
+        }
+        Date filterDate;
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String filterFormat=formatter.format((Date)value);
+        Date dateFrom;
+        Date dateTo;
+        String fromPart = filterText.substring(0, filterText.indexOf("-"));
+		String toPart = filterText.substring(filterText.indexOf("-") + 1);
+		filterDate =    DateUtils.parseDateWithPattern(filterFormat, "dd/MM/yyyy");
+		dateFrom =  fromPart.isEmpty() ? null : DateUtils.parseDateWithPattern(fromPart, "dd/MM/yyyy");
+		dateTo   =  toPart.isEmpty() ? null : DateUtils.parseDateWithPattern(toPart, "dd/MM/yyyy");
+		return (dateFrom == null || filterDate.after(dateFrom) || filterDate.equals(dateFrom)) && (dateTo == null || filterDate.before(dateTo) || filterDate.equals(dateTo));
+	    
+    }
+    public void resetFilters() {
+        DataTable dataTable = (DataTable) FacesContext.getCurrentInstance().getViewRoot()
+             .findComponent("recurringWalletForm:recurringWalletOperationTable");
+        if (dataTable != null) {
+            dataTable.reset();
+        }
+    }
+ 
 }

@@ -29,9 +29,11 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.IEntity;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
@@ -57,7 +59,7 @@ import org.primefaces.model.LazyDataModel;
  */
 @Named
 @ViewScoped
-public class AccountOperationBean extends BaseBean<AccountOperation> {
+public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -353,6 +355,13 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	public void deleteInlist() {
 		//	accountOperationService.getEntityManager().refresh(entity.getCustomerAccount());
 	    super.deleteInlist();	
+	}
+	
+	@Override
+	@ActionMethod
+	public String saveOrUpdate(boolean killConversation) throws BusinessException { 
+		super.saveOrUpdate(killConversation);
+		return null;
 	}
 
 }

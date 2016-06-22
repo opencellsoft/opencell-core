@@ -108,7 +108,6 @@
     <p:panel id="#{resultsId}_panel" width="100">
 
         <h:form id="#{formId}" prependId="false">
-			<p:remoteCommand name="tableRefresh" update="datatable_#{resultsId}"/>
             <p:dataTable id="datatable_#{resultsId}" var="entity" scrollable="#{scrollable}" value="#{dataModel}" paginator="true" rows="10" editable="#{editable}"
                 editMode="#{editMode}" widgetVar="cellEntity_#{resultsId}" selection="#{backingBean.selectedEntities}" sortBy="#{'sortBy'}" sortField="#{sortBy}"
                 sortOrder="#{sortOrder}" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -121,7 +120,7 @@
                 <p:ajax event="rowSelect" />
                 <p:ajax event="rowUnselect" />
                 <c:if test="#{editable}">
-                	<p:ajax event="cellEdit" listener="#{backingBean.onCellEdit}" oncomplete="tableRefresh();"/>
+                	<p:ajax event="cellEdit" listener="#{backingBean.onCellEdit}"/>
                 </c:if>
                 <p:column selectionMode="multiple" width="4%" rendered="#{checkMany}" exportable="false" toggleable="false" />
                 <ui:insert />

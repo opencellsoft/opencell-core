@@ -20,6 +20,7 @@ package org.meveo.admin.action.billing;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -42,6 +43,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
@@ -57,21 +59,18 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceCategoryDTO;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
-import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
@@ -84,7 +83,7 @@ import org.primefaces.model.LazyDataModel;
  */
 @Named
 @ViewScoped
-public class InvoiceBean extends BaseBean<Invoice> {
+public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -109,15 +108,15 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 	@Inject
 	InvoiceAgregateService invoiceAgregateService;
+	
+	@Inject
+	InvoiceTypeService invoiceTypeService;	
 
 	@Inject
 	XMLInvoiceCreator xmlInvoiceCreator;
 
 	@Inject
 	private PDFParametersConstruction pDFParametersConstruction;
-	
-	@Inject
-	private BillingRunService billingRunService;
 	
 	@Inject
 	@RequestParam()
@@ -164,10 +163,14 @@ public class InvoiceBean extends BaseBean<Invoice> {
 				invoice.setBillingRun(adjustedInvoice.getBillingRun());
 				invoice.setDueDate(new Date());
 				invoice.setInvoiceDate(new Date());				
-				invoice.setPaymentMethod(adjustedInvoice.getPaymentMethod());
-				invoice.setInvoiceTypeEnum(InvoiceTypeEnum.CREDIT_NOTE_ADJUST);
+				invoice.setPaymentMethod(adjustedInvoice.getPaymentMethod());				
+				try {
+					invoice.setInvoiceType(invoiceTypeService.getDefaultAdjustement(getCurrentUser()));
+				} catch (BusinessException e) {					
+					log.error("cant get InvoiceType ",e);
+				}
 				if(adjustedInvoice.getBillingAccount()!=null){
-				billingAccountId=adjustedInvoice.getBillingAccount().getId();
+					billingAccountId=adjustedInvoice.getBillingAccount().getId();
 				}
 
 				// duplicate rated transaction for detailed
@@ -268,7 +271,11 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			log.warn("No billingAccount code");
 		} else {
 			filters.put("billingAccount", ba);
-			filters.put("invoiceTypeEnum", InvoiceTypeEnum.COMMERCIAL);
+			try {
+				filters.put("invoiceType", invoiceTypeService.getDefaultCommertial(ba.getAuditable().getCreator()));
+			} catch (BusinessException e) {				
+				log.error("Error on geting invoiceType",e);
+			}
 			return getLazyDataModel();
 		}
 
@@ -391,21 +398,8 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		return invoiceAgregateService.findDiscountAggregates(entity);
 	}
 
-	public File getXmlInvoiceDir() {
-		ParamBean param = ParamBean.getInstance();
-		String invoicesDir = param.getProperty("providers.rootDir", "/tmp/meveo");
-		File billingRundir = new File(invoicesDir
-				+ File.separator
-				+ getCurrentProvider().getCode()
-				+ File.separator
-				+ "invoices"
-				+ File.separator
-				+ "xml"
-				+ File.separator
-				+ (getEntity().getBillingRun() == null ? DateUtils.formatDateWithPattern(getEntity().getAuditable()
-						.getCreated(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss"))
-						: getEntity().getBillingRun().getId()));
-		return billingRundir;
+	public File getXmlInvoiceDir() {	
+		return new File(invoiceService.getBillingRunPath(getEntity().getBillingRun(), getEntity().getAuditable().getCreated(), getCurrentProvider().getCode()));
 	}
 
 	public void generateXMLInvoice() throws BusinessException {
@@ -419,7 +413,11 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	}
 
 	public String downloadXMLInvoice() {
-		String fileName = (entity.getInvoiceNumber() != null ? entity.getInvoiceNumber() : entity
+		String thePrefix =""; 
+		if(getEntity().getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode())){
+			thePrefix =paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_"); 
+		}
+		String fileName = thePrefix+(entity.getInvoiceNumber() != null ? entity.getInvoiceNumber() : entity
 				.getTemporaryInvoiceNumber()) + ".xml";
 
 		return downloadXMLInvoice(fileName);
@@ -436,6 +434,8 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		log.info("start to download...");
 
 		File file = new File(getXmlInvoiceDir().getAbsolutePath() + File.separator + fileName);
+		OutputStream out = null;
+		InputStream fin = null;
 		try {
 			javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
 			HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
@@ -443,8 +443,8 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			res.setContentLength((int) file.length());
 			res.addHeader("Content-disposition", "attachment;filename=\"" + fileName + "\"");
 
-			OutputStream out = res.getOutputStream();
-			InputStream fin = new FileInputStream(file);
+			 out = res.getOutputStream();
+			 fin = new FileInputStream(file);
 
 			byte[] buf = new byte[1024];
 			int sig = 0;
@@ -458,6 +458,21 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			log.info("download over!");
 		} catch (Exception e) {
 			log.error("Error:#0, when dowload file: #1", e.getMessage(), file.getAbsolutePath());
+		}finally{
+			if(out != null){
+				try {
+					out.close();
+				} catch (IOException e) {
+					log.error("Error",e);
+				}
+			}
+			if(fin != null){
+				try {
+					fin.close();
+				} catch (IOException e) {
+					log.error("Error",e);
+				}
+			}
 		}
 		log.info("downloaded successfully!");
 		return null;
@@ -465,7 +480,11 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 	public void deleteXmlInvoice() {
 		try {
-			File file = new File(getXmlInvoiceDir().getAbsolutePath() + File.separator
+			String thePrefix =""; 
+			if(getEntity().getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode())){
+				thePrefix =paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_"); 
+			}
+			File file = new File(getXmlInvoiceDir().getAbsolutePath() + File.separator+thePrefix
 					+ entity.getTemporaryInvoiceNumber() + ".xml");
 			if (file.exists()) {
 				file.delete();
@@ -477,8 +496,12 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	}
 
 	public boolean isXmlInvoiceAlreadyGenerated() {
+		String thePrefix =""; 
+		if(getEntity().getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode())){
+			thePrefix =paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_"); 
+		} 
 		String fileDir = getXmlInvoiceDir().getAbsolutePath()
-				+ File.separator
+				+ File.separator+thePrefix
 				+ (getEntity().getInvoiceNumber() != null ? getEntity().getInvoiceNumber() : getEntity()
 						.getTemporaryInvoiceNumber()) + ".xml";
 		File file = new File(fileDir);
@@ -682,41 +705,33 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			if (isDetailed()) {
 				for (RatedTransaction rt : uiRatedTransactions) {
 					ratedTransactionService.create(rt, getCurrentUser());
-				}
-			} 
+				}	
+			}
+			super.saveOrUpdate(false);
 			if(billingAccountId!=0){
 				BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
 				entity.setBillingAccount(billingAccount);
-				String invoiceNumber=invoiceService.getInvoiceAdjustmentNumber(entity, getCurrentUser());
+				String invoiceNumber=invoiceService.getInvoiceNumber(entity, getCurrentUser());
 				entity.setInvoiceNumber(invoiceNumber);
 			} 	 
-		}
-		if (isDetailed()) {
-			super.saveOrUpdate(false);
-		}else{
-			entity = invoiceService.update(entity, getCurrentUser());
-		}		
+		}	
 		if (isDetailed()) {
 			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, new Date(),getCurrentUser(), true);
 		} else {
 			if (entity.getAmountWithoutTax() == null) {
 				invoiceService.recomputeAggregates(entity, getCurrentUser());
 			}
-		}		
-		if (isDetailed()) {
-			super.saveOrUpdate(false);
-		}else{
 			entity = invoiceService.update(entity, getCurrentUser());
-		}		
+		} 
+		entity = invoiceService.refreshOrRetrieve(entity);
+		entity.getAdjustedInvoice().getLinkedInvoices().add(entity);
+		invoiceService.update(entity.getAdjustedInvoice(), getCurrentUser());
+
 		invoiceService.commit();
 		// create xml invoice adjustment
-		String invoicesDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo");
-		File billingRundir = new File(invoicesDir + File.separator + getCurrentProvider().getCode() + File.separator
-				+ "invoices" + File.separator + "xml" + File.separator
-				+ entity.getAdjustedInvoice().getBillingRun().getId());
-		billingRundir.mkdirs();
+		String brPath = invoiceService.getBillingRunPath(entity.getBillingRun(), entity.getAuditable().getCreated(),currentUser.getProvider().getCode());
+		File billingRundir = new File(brPath);		
 		xmlInvoiceCreator.createXMLInvoiceAdjustment(entity.getId(), billingRundir);
-
 		// create pdf
         Map<String, Object> parameters = pDFParametersConstruction.constructParameters(entity.getId(), currentUser, currentUser.getProvider());
 		invoiceService.produceInvoiceAdjustmentPdf(parameters, currentUser);
@@ -764,14 +779,13 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	public void setDetailedInvoiceAdjustment(Boolean detailedInvoiceAdjustment) {
 		this.detailedInvoiceAdjustment = detailedInvoiceAdjustment;
 	}
-	
-	public List<Invoice> findInvoiceAdjustmentByInvoice(Invoice adjustedInvoice) {
-		return invoiceService.findInvoiceAdjustmentByInvoice(adjustedInvoice);
-	}
 
 	public long getBillingAccountId() {
 		return billingAccountId;
 	}
 	
+	public Set<Invoice> getLinkedInvoices(Invoice invoice){
+		return invoiceService.refreshOrRetrieve(invoice).getLinkedInvoices();
+	}
 
 }

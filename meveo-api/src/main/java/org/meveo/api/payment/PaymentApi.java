@@ -12,6 +12,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -37,8 +38,6 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
 @Stateless
 public class PaymentApi extends BaseApi {
 
-	private static final java.util.logging.Logger log = java.util.logging.Logger.getLogger(PaymentApi.class.getName());
-
 	@Inject
 	AutomatedPaymentService automatedPaymentService;
 
@@ -62,7 +61,7 @@ public class PaymentApi extends BaseApi {
 	
 	
 
-	public void createPayment(PaymentDto paymentDto, User currentUser) throws Exception {
+	public void createPayment(PaymentDto paymentDto, User currentUser) throws  MeveoApiException, BusinessException {
 		log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching() + "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
 
 		if (StringUtils.isBlank(paymentDto.getAmount())) {
@@ -111,8 +110,14 @@ public class PaymentApi extends BaseApi {
 		automatedPayment.setTransactionDate(paymentDto.getTransactionDate());
 		automatedPayment.setMatchingStatus(MatchingStatusEnum.O);
 		automatedPaymentService.create(automatedPayment, currentUser);
+		// populate customFields
+        try {
+            populateCustomFields(paymentDto.getCustomFields(), automatedPayment, true, currentUser); 
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
 		int nbOccMatched = 0;
-
 		if (paymentDto.isToMatching()) {
 			MatchingCode matchingCode = new MatchingCode();
 			BigDecimal amountToMatch = BigDecimal.ZERO;
@@ -148,7 +153,6 @@ public class PaymentApi extends BaseApi {
 			log.info("no matching created ");
 		}
 		log.info("automatedPayment created for amount:" + automatedPayment.getAmount());
-
 	}
 
 	public List<PaymentDto> getPaymentList(String customerAccountCode, User currentUser) throws Exception {
@@ -178,7 +182,8 @@ public class PaymentApi extends BaseApi {
 				paymentDto.setOccTemplateCode(p.getOccCode());
 				paymentDto.setPaymentMethod(p.getPaymentMethod());
 				paymentDto.setReference(p.getReference());
-				paymentDto.setTransactionDate(p.getTransactionDate());
+				paymentDto.setTransactionDate(p.getTransactionDate()); 
+				paymentDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op));
 				if (p instanceof AutomatedPayment) {
 					AutomatedPayment ap = (AutomatedPayment) p;
 					paymentDto.setBankCollectionDate(ap.getBankCollectionDate());

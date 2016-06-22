@@ -46,7 +46,7 @@ public class RatedTransactionsJobBean {
 		try {			
 			List<Long> walletOperationIds = walletOperationService.listToInvoiceIds(new Date(), currentUser.getProvider());
 			log.info("WalletOperations to convert into rateTransactions={}", walletOperationIds.size());
-
+			result.setNbItemsToProcess(walletOperationIds.size());
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{

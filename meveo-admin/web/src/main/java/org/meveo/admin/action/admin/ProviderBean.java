@@ -25,15 +25,10 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.Language;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.security.Role;
-import org.meveo.service.admin.impl.RoleService;
-import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.ViewScoped;
@@ -47,14 +42,6 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 
     @Inject
     private ProviderService providerService;
-
-    @Inject
-    private UserService userService;
-
-    @Inject
-    private RoleService roleService;
-
-    private static ParamBean paramBean = ParamBean.getInstance();
 
     public ProviderBean() {
         super(Provider.class);
@@ -111,20 +98,11 @@ public class ProviderBean extends CustomFieldBean<Provider> {
      */
     @Override
     protected Provider saveOrUpdate(Provider entity) throws BusinessException {
-
         boolean isNew = entity.isTransient();
-
         if (isNew) {
             entity.getInvoiceConfiguration().setProvider(entity);
         }
-
         entity = super.saveOrUpdate(entity);
-
-        // Create a default role and a user
-        if (isNew) {
-            messages.info(new BundleKey("messages", "provider.createdWithDefaultUser"), entity.getCode() + ".ADMIN", entity.getCode() + ".password");
-        }
-
         return entity;
     }
 
@@ -143,4 +121,5 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         }
         return null;
     }
+
 }

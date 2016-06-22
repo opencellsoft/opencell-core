@@ -190,5 +190,35 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	public void setOldAmountWithTax(BigDecimal oldAmountWithTax) {
 		this.oldAmountWithTax = oldAmountWithTax;
 	}
+	
+	@Override
+	public int hashCode() {
+		if (id != null)
+			return id.intValue();
+		if (invoiceSubCategory != null)
+			return invoiceSubCategory.hashCode();
+
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SubCategoryInvoiceAgregate other = (SubCategoryInvoiceAgregate) obj;
+		if (invoiceSubCategory == null) {
+			if (other.getInvoiceSubCategory() != null)
+				return false;
+		} else if (!invoiceSubCategory.equals(other.getInvoiceSubCategory()))
+			return false;
+		return true;
+	}
 
 }

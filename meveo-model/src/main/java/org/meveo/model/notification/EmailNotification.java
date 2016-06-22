@@ -14,9 +14,11 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.ModuleItem;
 import org.meveo.model.admin.User;
 
 @Entity
+@ModuleItem
 @Table(name="ADM_NOTIF_EMAIL")
 public class EmailNotification extends Notification {
 	

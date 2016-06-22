@@ -49,6 +49,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.finance.RevenueRecognitionRule;
 
 @Entity
 @ObservableEntity
@@ -95,7 +96,11 @@ public class ChargeTemplate extends BusinessCFEntity {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ROUNDING_MODE")
-	private RoundingModeEnum roundingMode = RoundingModeEnum.NEAREST; 	
+	private RoundingModeEnum roundingMode = RoundingModeEnum.NEAREST; 
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "REVENUE_RECOG_RULE_ID")
+	private RevenueRecognitionRule revenueRecognitionRule;
 
 	public OperationTypeEnum getType() {
 		return type;
@@ -170,7 +175,7 @@ public class ChargeTemplate extends BusinessCFEntity {
 	}
 
     @Override
-    public ICustomFieldEntity getParentCFEntity() {
+    public ICustomFieldEntity[] getParentCFEntities() {
         return null;
     }
 
@@ -187,5 +192,14 @@ public class ChargeTemplate extends BusinessCFEntity {
 	public void setRoundingMode(RoundingModeEnum roundingMode) {
 		this.roundingMode = roundingMode;
 	}
+
+	public RevenueRecognitionRule getRevenueRecognitionRule() {
+		return revenueRecognitionRule;
+	}
+
+	public void setRevenueRecognitionRule(RevenueRecognitionRule revenueRecognitionRule) {
+		this.revenueRecognitionRule = revenueRecognitionRule;
+	}
+
     
 }

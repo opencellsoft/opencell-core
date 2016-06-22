@@ -80,7 +80,7 @@ public class OfferTemplate extends BusinessCFEntity {
 	}
 
 	@Override
-	public ICustomFieldEntity getParentCFEntity() {
+	public ICustomFieldEntity[] getParentCFEntities() {
 		return null;
 	}
 

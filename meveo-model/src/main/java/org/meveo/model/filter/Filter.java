@@ -13,38 +13,37 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.ExportIdentifier;
+import org.meveo.model.*;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Entity
+@ModuleItem
 @ExportIdentifier({ "code", "provider" })
+@CustomFieldEntity(cftCodePrefix = "FILTER", cftCodeFields = "code", isManuallyManaged = false)
 @Table(name = "MEVEO_FILTER")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_FILTER_SEQ")
-public class Filter extends BusinessEntity {
+public class Filter extends BusinessCFEntity {
 
 	private static final long serialVersionUID = -6150352877726034654L;
+	private static final String FILTER_CODE_PREFIX = "FILTER_";
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinColumn(name = "FILTER_CONDITION_ID")
 	private FilterCondition filterCondition;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ORDER_CONDITION_ID")
 	private OrderCondition orderCondition;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "PRIMARY_SELECTOR_ID")
 	private FilterSelector primarySelector;
 
-	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL,fetch=FetchType.EAGER)
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinColumn(name = "FILTER_ID")
 	private List<FilterSelector> secondarySelectors=new ArrayList<FilterSelector>();
-
-//	@OneToMany(mappedBy = "filter")
-//	public List<FilterParameter> filterParameters;
 
 	@Column(name = "INPUT_XML", columnDefinition = "TEXT")
 	private String inputXml;
@@ -100,12 +99,12 @@ public class Filter extends BusinessEntity {
 		this.shared = shared;
 	}
 
-//	public List<FilterParameter> getFilterParameters() {
-//		return filterParameters;
-//	}
-//
-//	public void setFilterParameters(List<FilterParameter> filterParameters) {
-//		this.filterParameters = filterParameters;
-//	}
-
+	@Override
+	public ICustomFieldEntity[] getParentCFEntities() {
+		return null;
+	}
+	
+	public String getAppliesTo() {
+		return FILTER_CODE_PREFIX + getCode();
+	}
 }

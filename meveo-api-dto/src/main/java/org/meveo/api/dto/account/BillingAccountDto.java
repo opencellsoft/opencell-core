@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.meveo.api.dto.invoice.InvoiceDto;
+import org.meveo.api.dto.invoice.Invoice4_2Dto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentTermEnum;
@@ -49,7 +49,7 @@ public class BillingAccountDto extends AccountDto {
 	private String terminationReason;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
-	private List<InvoiceDto> invoices = new ArrayList<InvoiceDto>();
+	private List<Invoice4_2Dto> invoices = new ArrayList<Invoice4_2Dto>();
 	/**
 	 * Use for GET / LIST only.
 	 */
@@ -187,11 +187,11 @@ public class BillingAccountDto extends AccountDto {
 		this.bankCoordinates = bankCoordinates;
 	}
 
-	public List<InvoiceDto> getInvoices() {
+	public List<Invoice4_2Dto> getInvoices() {
 		return invoices;
 	}
 
-	public void setInvoices(List<InvoiceDto> invoices) {
+	public void setInvoices(List<Invoice4_2Dto> invoices) {
 		this.invoices = invoices;
 	}
 

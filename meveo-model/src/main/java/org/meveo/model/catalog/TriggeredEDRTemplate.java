@@ -2,6 +2,8 @@ package org.meveo.model.catalog;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -10,6 +12,7 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.communication.MeveoInstance;
 
 @Entity
 @ObservableEntity
@@ -22,6 +25,10 @@ public class TriggeredEDRTemplate extends BusinessEntity {
 	@Column(name = "SUBSCRIPTION_EL", length = 2000)
 	@Size(max = 2000)
 	private String subscriptionEl;
+	
+	@ManyToOne
+	@JoinColumn(name = "MEVEO_INSTANCE_ID")
+	MeveoInstance meveoInstance;
 
 	@Column(name = "CONDITION_EL", length = 2000)
 	@Size(max = 2000)
@@ -53,6 +60,14 @@ public class TriggeredEDRTemplate extends BusinessEntity {
 
 	public void setSubscriptionEl(String subscriptionEl) {
 		this.subscriptionEl = subscriptionEl;
+	}
+
+	public MeveoInstance getMeveoInstance() {
+		return meveoInstance;
+	}
+
+	public void setMeveoInstance(MeveoInstance meveoInstance) {
+		this.meveoInstance = meveoInstance;
 	}
 
 	public String getConditionEl() {

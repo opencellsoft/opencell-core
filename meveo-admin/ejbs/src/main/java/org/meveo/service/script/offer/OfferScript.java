@@ -4,12 +4,12 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
-import org.meveo.service.script.Script;
+import org.meveo.service.script.module.ModuleScript;
 
 /**
  * @author Edward P. Legaspi
  **/
-public class OfferScript extends Script implements OfferScriptInterface {
+public class OfferScript extends ModuleScript implements OfferScriptInterface {
 
     public static String CONTEXT_ACTIVATION_DATE = "CONTEXT_ACTIVATION_DATE";
     public static String CONTEXT_SUSPENSION_DATE = "CONTEXT_SUSPENSION_DATE";
@@ -17,32 +17,32 @@ public class OfferScript extends Script implements OfferScriptInterface {
     public static String CONTEXT_TERMINATION_REASON = "CONTEXT_TERMINATION_REASON";
 
     @Override
-    public void createOfferTemplate(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+    public void createOfferTemplate(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
 
     @Override
-    public void updateOfferTemplate(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+    public void updateOfferTemplate(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
 
     @Override
-    public void subscribe(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+    public void subscribe(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
 
     @Override
-    public void suspendSubscription(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+    public void suspendSubscription(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
 
     @Override
-    public void reactivateSubscription(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+    public void reactivateSubscription(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
 
     @Override
-    public void terminateSubscription(Map<String, Object> methodContext, User currentUser) throws BusinessException {
+    public void terminateSubscription(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
 }

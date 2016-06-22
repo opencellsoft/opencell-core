@@ -18,13 +18,28 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>//*[contains(@id, 'description')]</td>
+	<td>//*[contains(@id, 'moduleForm:code_txt')]</td>
+	<td>CodeModule</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'moduleForm:description')]</td>
 	<td>DescriptionModule</td>
 </tr>
 <tr>
 	<td>store</td>
 	<td>//*[contains(@id, 'license_label')]</td>
 	<td>License</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'moduleForm:script_addLink')]</td>
+	<td>AddModuleInstallationAndActivationScript</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'moduleForm:script_selectLink')]</td>
+	<td>ChooseModuleInstallationAndActivationScript</td>
 </tr>
 <tr>
 	<td>store</td>
@@ -43,11 +58,6 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=installMeveoModuleButton</td>
-	<td>InstallMeveoModuleButton</td>
-</tr>
-<tr>
-	<td>store</td>
 	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span</td>
 	<td>CleanFilters</td>
 </tr>
@@ -63,47 +73,47 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>//div[@id='formId:moduleItems']/div/button</td>
+	<td>//div[@id='moduleForm:moduleItems']/div/button</td>
 	<td>AddCustomEntity</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>//div[@id='formId:moduleItems']/div/button[2]</td>
+	<td>//div[@id='moduleForm:moduleItems']/div/button[2]</td>
 	<td>AddCustomField</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>//div[@id='formId:moduleItems']/div/button[3]</td>
+	<td>//div[@id='moduleForm:moduleItems']/div/button[3]</td>
 	<td>AddFilter</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>//div[@id='formId:moduleItems']/div/button[4]</td>
+	<td>//div[@id='moduleForm:moduleItems']/div/button[4]</td>
 	<td>AddJobInstance</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>//div[@id='formId:moduleItems']/div/button[5]</td>
+	<td>//div[@id='moduleForm:moduleItems']/div/button[5]</td>
 	<td>AddScript</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>//div[@id='formId:moduleItems']/div/button[6]</td>
+	<td>//div[@id='moduleForm:moduleItems']/div/button[6]</td>
 	<td>AddNotification</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>//div[@id='formId:moduleItems']/div/button[7]</td>
+	<td>//div[@id='moduleForm:moduleItems']/div/button[7]</td>
 	<td>AddSubModule</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>//div[@id='formId:moduleItems']/div/button[8]</td>
+	<td>//div[@id='moduleForm:moduleItems']/div/button[8]</td>
 	<td>AddMeasurableQTT</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>//div[@id='formId:moduleItems']/div/button[9]</td>
+	<td>//div[@id='moduleForm:moduleItems']/div/button[9]</td>
 	<td>AddChart</td>
 </tr>
 <tr>
@@ -128,7 +138,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=installMeveoModuleButton</td>
+	<td>id=downloadMeveoModuleButton</td>
 	<td>DownloadAndInstallModule</td>
 </tr>
 <tr>
@@ -150,6 +160,46 @@
 	<td>store</td>
 	<td>id=module:confirmKo</td>
 	<td>PublishNo</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=module:downloadAndInstall</td>
+	<td>DownloadAndInstall</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=module:download</td>
+	<td>Download</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>document.moduleForm.elements[1]</td>
+	<td>InstallModule</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>document.moduleForm.elements[2]</td>
+	<td>DisableModule</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>document.moduleForm.elements[2]</td>
+	<td>EnableModule</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>document.moduleForm.elements[1]</td>
+	<td>UnInstallModule</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//button[contains(@class,'ui-confirmdialog-no')]</td>
+	<td>UnInstallModuleNo</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//button[contains(@class,'ui-confirmdialog-yes')]</td>
+	<td>UnInstallModuleYes</td>
 </tr>
 </tbody></table>
 </body>

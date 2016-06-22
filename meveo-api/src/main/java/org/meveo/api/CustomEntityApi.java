@@ -12,7 +12,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
-import org.meveo.api.dto.EntityActionScriptDto;
+import org.meveo.api.dto.EntityCustomActionDto;
 import org.meveo.api.dto.EntityCustomizationDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -21,13 +21,13 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
-import org.meveo.service.script.EntityActionScriptService;
+import org.meveo.service.custom.EntityCustomActionService;
 import org.meveo.util.EntityCustomizationUtils;
 
 /**
@@ -49,10 +49,10 @@ public class CustomEntityApi extends BaseApi {
     private CustomFieldTemplateService customFieldTemplateService;
 
     @Inject
-    private EntityActionScriptService entityActionScriptService;
+    private EntityCustomActionService entityActionScriptService;
 
     @Inject
-    private ScriptInstanceApi scriptInstanceApi;
+    private EntityCustomActionApi entityCustomActionApi;
 
     public void createEntityTemplate(CustomEntityTemplateDto dto, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -79,8 +79,8 @@ public class CustomEntityApi extends BaseApi {
         }
 
         if (dto.getActions() != null) {
-            for (EntityActionScriptDto actionDto : dto.getActions()) {
-                scriptInstanceApi.createOrUpdate(actionDto, cet.getAppliesTo(), currentUser);
+            for (EntityCustomActionDto actionDto : dto.getActions()) {
+                entityCustomActionApi.createOrUpdate(actionDto, cet.getAppliesTo(), currentUser);
             }
         }
     }
@@ -138,7 +138,7 @@ public class CustomEntityApi extends BaseApi {
         }
         Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo(), currentUser.getProvider());
 
-        Map<String, EntityActionScript> cetActions = entityActionScriptService.findByAppliesTo(cet.getAppliesTo(), currentUser.getProvider());
+        Map<String, EntityCustomAction> cetActions = entityActionScriptService.findByAppliesTo(cet.getAppliesTo(), currentUser.getProvider());
 
         return CustomEntityTemplateDto.toDTO(cet, cetFields.values(), cetActions.values());
     }
@@ -281,7 +281,7 @@ public class CustomEntityApi extends BaseApi {
         for (CustomEntityTemplate cet : cets) {
 
             Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo(), currentUser.getProvider());
-            Map<String, EntityActionScript> cetActions = entityActionScriptService.findByAppliesTo(cet.getAppliesTo(), currentUser.getProvider());
+            Map<String, EntityCustomAction> cetActions = entityActionScriptService.findByAppliesTo(cet.getAppliesTo(), currentUser.getProvider());
 
             cetDtos.add(CustomEntityTemplateDto.toDTO(cet, cetFields.values(), cetActions.values()));
         }
@@ -310,7 +310,7 @@ public class CustomEntityApi extends BaseApi {
         synchronizeCustomFieldsAndActions(appliesTo, dto.getFields(), dto.getActions(), currentUser);
     }
 
-    private void synchronizeCustomFieldsAndActions(String appliesTo, List<CustomFieldTemplateDto> fields, List<EntityActionScriptDto> actions, User currentUser)
+    private void synchronizeCustomFieldsAndActions(String appliesTo, List<CustomFieldTemplateDto> fields, List<EntityCustomActionDto> actions, User currentUser)
             throws MeveoApiException, BusinessException {
 
         Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo, currentUser.getProvider());
@@ -346,15 +346,15 @@ public class CustomEntityApi extends BaseApi {
             customFieldTemplateService.remove(cft.getId());
         }
 
-        Map<String, EntityActionScript> cetActions = entityActionScriptService.findByAppliesTo(appliesTo, currentUser.getProvider());
+        Map<String, EntityCustomAction> cetActions = entityActionScriptService.findByAppliesTo(appliesTo, currentUser.getProvider());
 
         // Create, update or remove fields as necessary
-        List<EntityActionScript> actionsToRemove = new ArrayList<EntityActionScript>();
+        List<EntityCustomAction> actionsToRemove = new ArrayList<EntityCustomAction>();
         if (actions != null && !actions.isEmpty()) {
 
-            for (EntityActionScript action : cetActions.values()) {
+            for (EntityCustomAction action : cetActions.values()) {
                 boolean found = false;
-                for (EntityActionScriptDto actionDto : actions) {
+                for (EntityCustomActionDto actionDto : actions) {
                     if (actionDto.getCode().equals(action.getLocalCodeForRead())) {
                         found = true;
                         break;
@@ -367,15 +367,15 @@ public class CustomEntityApi extends BaseApi {
                 }
             }
             // Update or create custom field templates
-            for (EntityActionScriptDto actionDto : actions) {
-                scriptInstanceApi.createOrUpdate(actionDto, appliesTo, currentUser);
+            for (EntityCustomActionDto actionDto : actions) {
+                entityCustomActionApi.createOrUpdate(actionDto, appliesTo, currentUser);
             }
 
         } else {
             actionsToRemove.addAll(cetActions.values());
         }
 
-        for (EntityActionScript action : actionsToRemove) {
+        for (EntityCustomAction action : actionsToRemove) {
             entityActionScriptService.remove(action.getId());
         }
     }
@@ -399,7 +399,7 @@ public class CustomEntityApi extends BaseApi {
 
         Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo, currentUser.getProvider());
 
-        Map<String, EntityActionScript> cetActions = entityActionScriptService.findByAppliesTo(appliesTo, currentUser.getProvider());
+        Map<String, EntityCustomAction> cetActions = entityActionScriptService.findByAppliesTo(appliesTo, currentUser.getProvider());
 
         return EntityCustomizationDto.toDTO(clazz, cetFields.values(), cetActions.values());
     }

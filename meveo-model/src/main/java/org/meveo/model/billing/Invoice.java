@@ -21,7 +21,10 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -31,24 +34,30 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 
 @Entity
 @ObservableEntity
-@Table(name = "BILLING_INVOICE", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID", "INVOICE_NUMBER", "INVOICE_TYPE" }))
+@Table(name = "BILLING_INVOICE", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID", "INVOICE_NUMBER", "INVOICE_TYPE_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SEQ")
-public class Invoice extends AuditableEntity {
+@CustomFieldEntity(cftCodePrefix = "INVOICE")
+public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -111,7 +120,7 @@ public class Invoice extends AuditableEntity {
 	private String iban;
 
 	@Column(name = "ALIAS", length = 255)
-    @Size(max = 255)
+	@Size(max = 255)
 	private String alias;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -144,12 +153,18 @@ public class Invoice extends AuditableEntity {
 	@JoinColumn(name = "INVOICE_ID")
 	private Invoice adjustedInvoice;
 
-	@OneToMany(mappedBy = "adjustedInvoice", fetch = FetchType.LAZY)
-	private List<Invoice> invoiceAdjustments;
+	@ManyToOne
+	@JoinColumn(name = "INVOICE_TYPE_ID")
+	private InvoiceType invoiceType;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "INVOICE_TYPE")
-	private InvoiceTypeEnum invoiceTypeEnum;
+	@Column(name = "UUID", nullable = false, updatable = false, length = 60)
+	@Size(max = 60)
+	@NotNull
+	private String uuid = UUID.randomUUID().toString();
+
+	@ManyToMany
+	@JoinTable(name = "BILLING_LINKED_INVOICES", joinColumns = { @JoinColumn(name = "ID") }, inverseJoinColumns = { @JoinColumn(name = "LINKED_INVOICE_ID") })
+	private Set<Invoice> linkedInvoices = new HashSet<>();
 
 	@Transient
 	private Long invoiceAdjustmentCurrentSellerNb;
@@ -299,7 +314,7 @@ public class Invoice extends AuditableEntity {
 			amountWithoutTax = BigDecimal.ZERO;
 		}
 		if (amountToAdd != null) {
-		amountWithoutTax = amountWithoutTax.add(amountToAdd);
+			amountWithoutTax = amountWithoutTax.add(amountToAdd);
 		}
 	}
 
@@ -308,7 +323,7 @@ public class Invoice extends AuditableEntity {
 			amountTax = BigDecimal.ZERO;
 		}
 		if (amountToAdd != null) {
-		amountTax = amountTax.add(amountToAdd);	
+			amountTax = amountTax.add(amountToAdd);
 		}
 	}
 
@@ -409,22 +424,6 @@ public class Invoice extends AuditableEntity {
 		this.adjustedInvoice = adjustedInvoice;
 	}
 
-	public InvoiceTypeEnum getInvoiceTypeEnum() {
-		return invoiceTypeEnum;
-	}
-
-	public void setInvoiceTypeEnum(InvoiceTypeEnum invoiceTypeEnum) {
-		this.invoiceTypeEnum = invoiceTypeEnum;
-	}
-
-	public List<Invoice> getInvoiceAdjustments() {
-		return invoiceAdjustments;
-	}
-
-	public void setInvoiceAdjustments(List<Invoice> invoiceAdjustments) {
-		this.invoiceAdjustments = invoiceAdjustments;
-	}
-
 	public Long getInvoiceAdjustmentCurrentSellerNb() {
 		return invoiceAdjustmentCurrentSellerNb;
 	}
@@ -456,5 +455,55 @@ public class Invoice extends AuditableEntity {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * @return the invoiceType
+	 */
+	public InvoiceType getInvoiceType() {
+		return invoiceType;
+	}
+
+	/**
+	 * @param invoiceType
+	 *            the invoiceType to set
+	 */
+	public void setInvoiceType(InvoiceType invoiceType) {
+		this.invoiceType = invoiceType;
+	}
+
+	@Override
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	@Override
+	public String clearUuid() {
+		String oldUuid = uuid;
+		uuid = UUID.randomUUID().toString();
+		return oldUuid;
+	}
+
+	@Override
+	public ICustomFieldEntity[] getParentCFEntities() {
+		return null;
+	}
+
+	public Set<Invoice> getLinkedInvoices() {
+		return linkedInvoices;
+	}
+
+	public void setLinkedInvoices(Set<Invoice> linkedInvoices) {
+		this.linkedInvoices = linkedInvoices;
+	}
+	
+	public void addInvoiceAggregate(InvoiceAgregate obj) {
+		if (!invoiceAgregates.contains(obj)) {
+			invoiceAgregates.add(obj);
+		}
 	}
 }

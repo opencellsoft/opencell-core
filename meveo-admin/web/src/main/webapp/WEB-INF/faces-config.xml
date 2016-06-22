@@ -598,6 +598,26 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>invoiceAggregatedDetail</from-outcome>
+			<to-view-id>/pages/billing/invoices/createInvoiceDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>mode</name>
+					<value>agregated</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>detailedInvoiceDetail</from-outcome>
+			<to-view-id>/pages/billing/invoices/createInvoiceDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>mode</name>
+					<value>detailed</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>wallets</from-outcome>
 			<to-view-id>/pages/billing/wallets/wallets.xhtml</to-view-id>
 			<redirect />
@@ -847,6 +867,12 @@
 			</to-view-id>
 			<redirect />
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>invoiceTypes</from-outcome>
+			<to-view-id>/pages/billing/invoiceTypes/invoiceTypes.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>		
 		<navigation-case>
 			<from-outcome>invoiceCategoryDetail</from-outcome>
 			<to-view-id>/pages/catalog/invoiceCategories/invoiceCategoryDetail.xhtml
@@ -1776,6 +1802,19 @@
 	
 	<navigation-rule>
 		<navigation-case>
+			<from-outcome>businessAccountModels</from-outcome>
+			<to-view-id>/pages/crm/businessAccountModels/businessAccountModels.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>businessAccountModelDetail</from-outcome>
+			<to-view-id>/pages/crm/businessAccountModels/businessAccountModelDetail.xhtml</to-view-id>
+			<redirect include-view-params="true"/>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
 			<from-outcome>creditCategories</from-outcome>
 			<to-view-id>/pages/admin/creditCategories/creditCategories.xhtml</to-view-id>
 			<redirect />
@@ -1844,6 +1883,34 @@
 			</to-view-id>
 			<redirect include-view-params="true"/>
 		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>revenueRecognitionRules</from-outcome>
+			<to-view-id>/pages/finance/revenueRecognitionRules/revenueRecognitionRules.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>revenueRecognitionRuleDetail</from-outcome>
+			<to-view-id>/pages/finance/revenueRecognitionRules/revenueRecognitionRuleDetail.xhtml
+			</to-view-id>
+			<redirect include-view-params="true"/>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>revenueSchedules</from-outcome>
+			<to-view-id>/pages/finance/revenueSchedules/revenueSchedules.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>revenueScheduleDetail</from-outcome>
+			<to-view-id>/pages/finance/revenueSchedules/revenueScheduleDetail.xhtml
+			</to-view-id>
+			<redirect include-view-params="true"/>
+		</navigation-case>
+		
+		
 	</navigation-rule>
 
 

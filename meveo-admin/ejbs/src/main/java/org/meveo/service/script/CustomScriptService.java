@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -40,6 +41,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.admin.exception.InvalidScriptException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -53,6 +55,9 @@ import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.service.base.BusinessService;
 
 public abstract class CustomScriptService<T extends CustomScript, SI extends ScriptInterface> extends BusinessService<T> {
+
+    @Inject
+    private ResourceBundle resourceMessages;
 
     protected final Class<SI> scriptInterfaceClass;
 
@@ -120,6 +125,12 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     @Override
     public void create(T script, User creator) throws BusinessException {
 
+        String className = getClassName(script.getScript());
+        if (className == null) {
+            throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
+        }
+        script.setCode(getFullClassname(script.getScript()));
+
         super.create(script, creator);
         compileScript(script, false);
     }
@@ -127,7 +138,14 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     @Override
     public T update(T script, User updater) throws BusinessException {
 
+        String className = getClassName(script.getScript());
+        if (className == null) {
+            throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
+        }
+        script.setCode(getFullClassname(script.getScript()));
+
         script = super.update(script, updater);
+
         compileScript(script, false);
 
         return script;
@@ -295,7 +313,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             }
             compileScript(script, false);
             if (script.isError()) {
-                log.debug("ScriptInstance {} failed to compile", scriptCode);
+                log.debug("ScriptInstance {} failed to compile. Errors: {}", scriptCode, script.getScriptErrors());
                 throw new InvalidScriptException(scriptCode, getEntityClass().getName());
             }
             result = allScriptInterfaces.get(provider.getCode()).get(scriptCode);

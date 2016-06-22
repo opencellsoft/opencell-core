@@ -11,6 +11,17 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<hftl:entityPopup id="searchInvoiceTypePopup"
+			header="#{messages['invoiceType.panel']}"
+			updateField=":formBillingCycle:invoiceTypeSelectedId :formBillingCycle:invoiceTypeSelectedId_text"
+			selection="#{billingCycleBean.entity.invoiceType}"
+			backingBean="#{invoiceTypeBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>		
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -21,7 +32,7 @@
 			</h:form>
 		</p:panel>
 
-		<hftl:formPanel edit="#{billingCycleBean.edit}"
+		<hftl:formPanel edit="#{billingCycleBean.edit}" formId="formBillingCycle" 
 			label="#{messages['billingCycle.panel']}"
 			backingBean="#{billingCycleBean}">
 			<hftl:formField label="#{messages['billingCycle.code']}" field="code"
@@ -44,7 +55,9 @@
 				field="calendar" valueLabelField="code" required="true"
 				listBean="#{calendarBean}" />
 			<hftl:formField label="#{messages['billingCycle.invoicingThreshold']}"
-				field="invoicingThreshold"	required="false" />				
+				field="invoicingThreshold"	required="false" />
+			<hftl:formField label="#{messages['invoiceType.name']}" id="invoiceTypeSelectedId" field="invoiceType"  valueLabelField="code"  
+							popup="true" popupId="searchInvoiceTypePopup" clearButton="true" required="false"/>					
 		</hftl:formPanel>
 
 	</ui:define>

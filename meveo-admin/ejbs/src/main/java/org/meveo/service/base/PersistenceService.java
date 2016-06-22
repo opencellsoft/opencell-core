@@ -59,6 +59,7 @@ import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.security.MeveoUser;
@@ -78,6 +79,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_CURRENT_PROVIDER = "currentProvider";
     public static String SEARCH_ATTR_TYPE_CLASS = "type_class";
     public static String SEARCH_IS_NULL = "IS_NULL";
+    public static String SEARCH_IS_NOT_NULL = "IS_NOT_NULL";
 
     @Inject
     @MeveoJpa
@@ -268,18 +270,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#disable(java.lang.Long)
+     * @see org.meveo.service.base.local.IPersistenceService#disable(java.lang.Long, org.meveo.model.admin.User)
      */
     @Override
-    public void disable(Long id) {
+    public void disable(Long id, User currentUser) throws BusinessException {
         E e = findById(id);
         if (e != null) {
-            disable(e);
+            disable(e, currentUser);
         }
     }
 
     @Override
-    public E disable(E e) {
+    public E disable(E e, User currentUser) throws BusinessException {
         if (e instanceof EnableEntity && ((EnableEntity) e).isActive()) {
             log.trace("start of disable {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
             ((EnableEntity) e).setDisabled(true);
@@ -297,18 +299,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#enable(java.lang.Long)
+     * @see org.meveo.service.base.local.IPersistenceService#enable(java.lang.Long, org.meveo.model.admin.User)
      */
     @Override
-    public void enable(Long id) {
+    public void enable(Long id, User currentUser) throws BusinessException {
         E e = findById(id);
         if (e != null) {
-            enable(e);
+            enable(e, currentUser);
         }
     }
 
     @Override
-    public E enable(E e) {
+    public E enable(E e, User currentUser) throws BusinessException {
         if (e instanceof EnableEntity && ((EnableEntity) e).isDisabled()) {
             log.trace("start of enable {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
             ((EnableEntity) e).setDisabled(false);
@@ -596,7 +598,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (filters != null && !filters.isEmpty()) {
 
             if (filters.containsKey("$FILTER")) {
-                queryBuilder = new FilteredQueryBuilder((Filter) filters.get("$FILTER"), false, false);
+                Filter filter = (Filter) filters.get("$FILTER");
+                Map<CustomFieldTemplate, Object> parameterMap = (Map<CustomFieldTemplate, Object>) filters.get("$FILTER_PARAMETERS");
+                queryBuilder = new FilteredQueryBuilder(filter, parameterMap, false, false);
             } else {
 
                 for (String key : filters.keySet()) {
@@ -653,16 +657,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                                 }
 
                                 if (condition == null) {
-                                    queryBuilder.addSqlCriterion("a.type in (:typeClass)", "typeClass", classes);
+                                    queryBuilder.addSqlCriterion("type(a) in (:typeClass)", "typeClass", classes);
                                 } else if ("ne".equalsIgnoreCase(condition)) {
-                                    queryBuilder.addSqlCriterion("a.type not in (:typeClass)", "typeClass", classes);
+                                    queryBuilder.addSqlCriterion("type(a) not in (:typeClass)", "typeClass", classes);
                                 }
 
                             } else if (filter instanceof Class) {
                                 if (condition == null) {
-                                    queryBuilder.addSqlCriterion("a.type = :typeClass", "typeClass", filter);
+                                    queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", filter);
                                 } else if ("ne".equalsIgnoreCase(condition)) {
-                                    queryBuilder.addSqlCriterion("a.type != :typeClass", "typeClass", filter);
+                                    queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", filter);
                                 }
 
                             } else if (filter instanceof String) {
@@ -718,8 +722,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             // if not ranged search
                         } else {
                             if (filter instanceof String && SEARCH_IS_NULL.equals(filter)) {
-                                queryBuilder.addSql("a." + fieldName+" is null ");
-                                
+                                queryBuilder.addSql("a." + fieldName + " is null ");
+                            
+                            } else if (filter instanceof String && SEARCH_IS_NOT_NULL.equals(filter)) {
+                                    queryBuilder.addSql("a." + fieldName + " is not null ");
+
                             } else if (filter instanceof String) {
 
                                 // if contains dot, that means join is needed

@@ -11,9 +11,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.meveo.model.ModuleItem;
 import org.meveo.model.jobs.JobInstance;
 
 @Entity
+@ModuleItem
 @Table(name="ADM_NOTIF_JOB")
 public class JobTrigger extends Notification {
 	
