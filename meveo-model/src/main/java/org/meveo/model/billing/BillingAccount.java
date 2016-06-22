@@ -207,7 +207,9 @@ public class BillingAccount extends AccountEntity {
 
 	public void setStatus(AccountStatusEnum status) {
 		this.status = status;
-		this.statusDate = new Date();
+		if(this.status!=status){
+			this.statusDate = new Date();
+		}
 	}
 
 	public Date getStatusDate() {
