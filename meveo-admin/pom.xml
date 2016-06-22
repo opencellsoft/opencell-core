@@ -4,7 +4,7 @@
         <artifactId>meveo</artifactId>
         <groupId>org.meveo</groupId>
         <relativePath>../pom.xml</relativePath>
-        <version>4.3</version>
+        <version>4.4-SNAPSHOT</version>
     </parent>
     <artifactId>meveo-admin</artifactId>
     <packaging>pom</packaging>
