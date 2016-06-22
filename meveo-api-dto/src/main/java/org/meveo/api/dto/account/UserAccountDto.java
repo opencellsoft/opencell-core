@@ -27,6 +27,7 @@ public class UserAccountDto extends AccountDto {
 	private Date subscriptionDate;
 	private Date terminationDate;
 	private AccountStatusEnum status;
+	private Date statusDate;
 	private String terminationReason;
 
 	/**
@@ -41,7 +42,7 @@ public class UserAccountDto extends AccountDto {
 	@Override
 	public String toString() {
 		return "UserAccountDto [billingAccount=" + billingAccount + ", subscriptionDate=" + subscriptionDate + ", terminationDate=" + terminationDate + ", status=" + status
-				+ ", terminationReason=" + terminationReason + ", subscriptions=" + subscriptions + "]";
+				+ ",statusDate="+statusDate+", terminationReason=" + terminationReason + ", subscriptions=" + subscriptions + "]";
 	}
 
 	public String getBillingAccount() {
@@ -74,6 +75,14 @@ public class UserAccountDto extends AccountDto {
 
 	public void setStatus(AccountStatusEnum status) {
 		this.status = status;
+	}
+
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
 	}
 
 	public String getTerminationReason() {

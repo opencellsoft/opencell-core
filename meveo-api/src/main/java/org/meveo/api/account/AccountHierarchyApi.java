@@ -2518,6 +2518,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		dto.setStatus(ca.getStatus());
+		dto.setDateStatus(ca.getDateStatus());
 		dto.setPaymentMethod(ca.getPaymentMethod());
 		try {
 			dto.setCreditCategory(ca.getCreditCategory().getCode());
@@ -2569,6 +2570,7 @@ public class AccountHierarchyApi extends BaseApi {
 		dto.setPaymentTerms(ba.getPaymentTerm());
 		dto.setElectronicBilling(ba.getElectronicBilling());
 		dto.setStatus(ba.getStatus());
+		dto.setStatusDate(ba.getStatusDate());
 		if (ba.getTerminationReason() != null) {
 			dto.setTerminationReason(ba.getTerminationReason().getCode());
 		}
@@ -2602,7 +2604,7 @@ public class AccountHierarchyApi extends BaseApi {
 		dto.setSubscriptionDate(ua.getSubscriptionDate());
 		dto.setTerminationDate(ua.getTerminationDate());
 		dto.setStatus(ua.getStatus());
-
+		dto.setStatusDate(ua.getStatusDate());
 		dto.setLoaded(true);
 
 		return dto;

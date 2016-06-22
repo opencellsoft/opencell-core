@@ -652,6 +652,8 @@ public class SubscriptionApi extends BaseApi {
         SubscriptionDto dto = new SubscriptionDto();
         dto.setCode(subscription.getCode());
         dto.setDescription(subscription.getDescription());
+        dto.setStatus(subscription.getStatus());
+        dto.setStatusDate(subscription.getStatusDate());
 
         if (subscription.getUserAccount() != null) {
             dto.setUserAccount(subscription.getUserAccount().getCode());
