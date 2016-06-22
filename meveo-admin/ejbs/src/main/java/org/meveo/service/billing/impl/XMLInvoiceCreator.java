@@ -923,7 +923,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 				for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
 					InvoiceSubCategory invoiceSubCat = subCatInvoiceAgregate.getInvoiceSubCategory();
-					List<RatedTransaction> transactions = ratedTransactionService.getRatedTransactions(
+					List<RatedTransaction> transactions = ratedTransactionService.getRatedTransactionsForXmlInvoice(
 							subCatInvoiceAgregate.getWallet(), subCatInvoiceAgregate.getInvoice(),
 							subCatInvoiceAgregate.getInvoiceSubCategory());
 								

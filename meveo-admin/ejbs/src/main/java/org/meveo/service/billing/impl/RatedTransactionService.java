@@ -547,19 +547,51 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	}
 
 	public Boolean isBillingAccountBillable(BillingAccount billingAccount,Date lastTransactionDate) {
-		TypedQuery<Long> q = null;
-
-		if (billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
-			q = getEntityManager().createNamedQuery("RatedTransaction.countNotInvoincedDisplayFree", Long.class);
-		} else {
-			q = getEntityManager().createNamedQuery("RatedTransaction.countNotInvoinced", Long.class);
-		}
-
+		TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countNotInvoinced", Long.class);
 		long count = q.setParameter("billingAccount", billingAccount)
 				.setParameter("lastTransactionDate", lastTransactionDate).getSingleResult();
 		log.debug("isBillingAccountBillable code={},lastTransactionDate={}, displayFreeTransac={}) : {}"
 				,billingAccount.getCode(),lastTransactionDate,billingAccount.getProvider().isDisplayFreeTransacInInvoice(),count);
 		return count > 0 ? true : false;
+	}
+	/**
+	 * This method is only for generating Xml invoice {@link org.meveo.service.billing.impl.XMLInvoiceCreator 
+	 * #createXMLInvoice(Long, java.io.File, boolean, boolean) createXMLInvoice}
+	 * 
+	 * <p>If the provider's displayFreeTransacInInvoice of the current invoice is <tt>false</tt>, RatedTransaction 
+	 * with amount=0 don't show up in the XML. If displayFreeTransacInInvoice is <tt>true</tt>, RT, which status is OPEN and
+	 * not linked to a invoice, will appear in the XML invoice</p>
+	 * @param wallet
+	 * @param invoice
+	 * @param invoiceSubCategory
+	 * @return
+	 */
+	public List<RatedTransaction> getRatedTransactionsForXmlInvoice(WalletInstance wallet, Invoice invoice,
+			InvoiceSubCategory invoiceSubCategory) {
+		long startDate = System.currentTimeMillis();
+		QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c", Arrays.asList("priceplan"),
+				invoice.getProvider());
+		qb.addCriterionEntity("c.wallet", wallet);
+		qb.addCriterionEntity("c.invoiceSubCategory", invoiceSubCategory);
+
+		if (!invoice.getProvider().isDisplayFreeTransacInInvoice()) {
+			qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.BILLED);
+			qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
+			qb.addCriterionEntity("c.invoice", invoice);
+		}else{
+			qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.OPEN);
+			qb.addSql(" c.invoice is null ");
+		}
+
+		qb.addOrderCriterion("c.usageDate", true);
+
+		@SuppressWarnings("unchecked")
+		List<RatedTransaction> ratedTransactions = qb.getQuery(getEntityManager()).getResultList();
+
+		log.debug("getRatedTransactions time: " + (System.currentTimeMillis() - startDate));
+
+		return ratedTransactions;
+
 	}
 
 	public List<RatedTransaction> getRatedTransactions(WalletInstance wallet, Invoice invoice,
@@ -571,10 +603,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		qb.addCriterionEntity("c.wallet", wallet);
 		qb.addCriterionEntity("c.invoice", invoice);
 		qb.addCriterionEntity("c.invoiceSubCategory", invoiceSubCategory);
-
-		if (!invoice.getProvider().isDisplayFreeTransacInInvoice()) {
-			qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
-		}
 
 		qb.addOrderCriterion("c.usageDate", true);
 
