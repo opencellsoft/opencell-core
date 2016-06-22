@@ -244,10 +244,29 @@
                     <artifactId>commons-logging</artifactId>
                     <groupId>commons-logging</groupId>
                 </exclusion>
+                <exclusion>
+                	<artifactId>lucene-core</artifactId>
+                	<groupId>org.apache.lucene</groupId>
+                </exclusion>
+                <exclusion>
+                	<artifactId>lucene-analyzers-common</artifactId>
+                	<groupId>org.apache.lucene</groupId>
+                </exclusion>
+                <exclusion>
+                	<artifactId>lucene-queryparser</artifactId>
+                	<groupId>org.apache.lucene</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
-
-        <dependency>
+        
+        
+		<dependency>
+		    <groupId>org.elasticsearch</groupId>
+		    <artifactId>elasticsearch</artifactId>
+		    <version>2.3.3</version>
+		</dependency>
+		
+	    <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
@@ -390,6 +409,7 @@
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
+            <version>0.9.10</version>
         </dependency>
         <dependency>
             <groupId>jivesoftware</groupId>
@@ -460,6 +480,7 @@
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
         </dependency>
+		        
     </dependencies>
 
     <profiles>

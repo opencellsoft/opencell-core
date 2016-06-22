@@ -50,6 +50,7 @@ import org.meveo.event.qualifier.Enabled;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.IAuditable;
 import org.meveo.model.ICustomFieldEntity;
@@ -62,6 +63,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.index.ElasticClient;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -88,6 +90,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Inject
     @MeveoJpaForJobs
     private EntityManager emfForJobs;
+    
+    @Inject
+    private ElasticClient elasticClient;
 
     @Inject
     private Conversation conversation;
@@ -383,6 +388,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         checkProvider(e);
 
         e = getEntityManager().merge(e);
+        log.debug("updated class {}, is BusinessEntity :",e.getClass(),BusinessEntity.class.isAssignableFrom(e.getClass()));
+        if(BusinessEntity.class.isAssignableFrom(e.getClass())){
+        	elasticClient.update((BusinessEntity)e, updater);
+        }
         if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
             entityUpdatedEventProducer.fire(e);
         }
@@ -412,6 +421,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
 
         getEntityManager().persist(e);
+        if(BusinessEntity.class.isAssignableFrom(e.getClass())){
+        	elasticClient.create((BusinessEntity)e, creator);
+        }
         if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
             entityCreatedEventProducer.fire(e);
         }
