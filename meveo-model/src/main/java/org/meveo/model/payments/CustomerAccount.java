@@ -95,7 +95,7 @@ public class CustomerAccount extends AccountEntity {
 
 	@Column(name = "DATE_STATUS")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateStatus;
+	private Date dateStatus=new Date();
 
 	@Column(name = "DATE_DUNNING_LEVEL")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -154,6 +154,9 @@ public class CustomerAccount extends AccountEntity {
 
 	public void setStatus(CustomerAccountStatusEnum status) {
 		this.status = status;
+		if(this.status!=status){
+			this.dateStatus = new Date();
+		}
 	}
 
 	public PaymentMethodEnum getPaymentMethod() {

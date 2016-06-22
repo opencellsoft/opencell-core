@@ -53,10 +53,6 @@ import org.meveo.model.rating.EDR;
 		@NamedQuery(name = "RatedTransaction.countNotInvoinced", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount"
 				+ " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
 				+ " AND r.usageDate<:lastTransactionDate "
-				+ " AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null "),
-		@NamedQuery(name = "RatedTransaction.countNotInvoincedDisplayFree", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount"
-				+ " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
-				+ " AND r.usageDate<:lastTransactionDate "
 				+ " AND r.doNotTriggerInvoicing=false AND r.invoice is null "),
 		@NamedQuery(name = "RatedTransaction.sumbillingRunByCycle", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r"
 				+ " WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null"

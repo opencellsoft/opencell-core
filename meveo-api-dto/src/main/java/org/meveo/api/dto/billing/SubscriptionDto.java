@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessesDto;
+import org.meveo.model.billing.SubscriptionStatusEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -42,7 +43,8 @@ public class SubscriptionDto extends BaseDto {
     
     private Date endAgreementDate;
     
-    private String status;
+    private SubscriptionStatusEnum status;
+    private Date statusDate;
 
     @XmlElement(required = false)
     private CustomFieldsDto customFields = new CustomFieldsDto();
@@ -110,7 +112,7 @@ public class SubscriptionDto extends BaseDto {
     @Override
     public String toString() {
         return "SubscriptionDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", offerTemplate=" + offerTemplate + ", subscriptionDate="
-                + subscriptionDate + ", terminationDate=" + terminationDate + ", status=" + status + ", customFields=" + customFields + ", accesses=" + accesses + ", services="
+                + subscriptionDate + ", terminationDate=" + terminationDate + ", status=" + status + ",statusDate="+statusDate+", customFields=" + customFields + ", accesses=" + accesses + ", services="
                 + services + ", terminationReason=" + terminationReason + "]";
     }
 
@@ -122,15 +124,23 @@ public class SubscriptionDto extends BaseDto {
         this.description = description;
     }
 
-    public String getStatus() {
+    public SubscriptionStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(SubscriptionStatusEnum status) {
         this.status = status;
     }
 
-    public AccessesDto getAccesses() {
+    public Date getStatusDate() {
+		return statusDate;
+	}
+
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
+	}
+
+	public AccessesDto getAccesses() {
         return accesses;
     }
 

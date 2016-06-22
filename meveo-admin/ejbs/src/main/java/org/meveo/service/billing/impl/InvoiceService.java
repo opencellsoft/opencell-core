@@ -293,7 +293,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	public synchronized Sequence getSequence(Invoice invoice ,Seller seller,String cfName,int step,boolean increment,User currentUser)throws BusinessException{			
-		Long currentNbFromCF = null;		
+		Long currentNbFromCF = null;				
 		Object currentValObj = customFieldInstanceService.getCFValue(seller, cfName, invoice.getInvoiceDate(), currentUser);
 		if(currentValObj != null){			
 			currentNbFromCF = (Long)currentValObj;
@@ -313,27 +313,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 		
 		InvoiceType invoiceType = invoice.getInvoiceType();
-		Sequence sequence = null;
-		
-		if(invoiceType.getSellerSequence() != null && invoiceType.getSellerSequence().containsKey(seller)){
-			
+		invoiceType = invoiceTypeService.refreshOrRetrieve(invoiceType);
+		Sequence sequence = null;			
+		if(invoiceType.getSellerSequence() != null && invoiceType.getSellerSequence().containsKey(seller)){			
 			sequence =  invoiceType.getSellerSequence().get(seller);
-			if(increment && currentNbFromCF == null){
+			if(increment && currentNbFromCF == null){				
 				sequence.setCurrentInvoiceNb((sequence.getCurrentInvoiceNb() == null?0L:sequence.getCurrentInvoiceNb()) +step);
 				invoiceType.getSellerSequence().put(seller,sequence);
 				invoiceTypeService.update(invoiceType,currentUser);
 			}
-		}else{
-			if(invoiceType.getSequence() != null){
+		}else{			
+			if(invoiceType.getSequence() != null){				
 				sequence =  invoiceType.getSequence();
-				if(increment && currentNbFromCF == null){
+				if(increment && currentNbFromCF == null){					
 					sequence.setCurrentInvoiceNb((sequence.getCurrentInvoiceNb() == null?0L:sequence.getCurrentInvoiceNb()) +step);
 					invoiceType.setSequence(sequence);
 					invoiceTypeService.update(invoiceType,currentUser);
 				}
 			}
 		}
-		if(sequence == null){
+		if(sequence == null){			
 			sequence = new Sequence();
 			sequence.setCurrentInvoiceNb(1L);
 			sequence.setSequenceSize(9);
@@ -341,7 +340,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			invoiceType.setSequence(sequence);
 			invoiceTypeService.update(invoiceType,currentUser);			
 		}
-		if(currentNbFromCF != null){
+		if(currentNbFromCF != null){			
 			sequence.setCurrentInvoiceNb(currentNbFromCF);
 		}		
 		return sequence;		
@@ -516,7 +515,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		Invoice invoice = (Invoice) parameters.get(PdfGeneratorConstants.INVOICE);
 		
 		
-		File billingRundir = new File(getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), invoice.getProvider().getCode()));
+		File billingRundir = new File(getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), currentUser.getProvider().getCode()));
 		String thePrefix =""; 
 		if(invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode())){
 			thePrefix =paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_"); 

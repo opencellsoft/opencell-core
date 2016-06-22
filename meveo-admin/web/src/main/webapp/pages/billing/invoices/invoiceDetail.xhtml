@@ -10,14 +10,14 @@
 
 	<ui:define name="body">
 		<p:panel>
-			<p:tabView id="tabView"
-				activeIndex="#{invoiceCategoryBean.activeTab}">
-				<p:tab title="#{messages['customer.tab.information']}">
+			
 					<hftl:formPanel label="#{messages['invoice.panel']} #{invoiceBean.entity.invoiceType.description}"
 						backingBean="#{invoiceBean}" showFormButtons="false"
 						formId="headerForm" edit="false">
-
-
+                <p:tabView id="tabView"
+				activeIndex="#{invoiceCategoryBean.activeTab}">
+				<p:tab title="#{messages['customer.tab.information']}">
+                         <p:outputPanel>
 						<h:panelGrid columns="2">
 							<p:fieldset legend="#{messages['invoice.header']}">
 								<h:panelGroup>
@@ -84,7 +84,7 @@
 											<p:commandButton icon="ui-icon-close"
 												rendered="#{invoiceBean.entity.invoiceNumber==null}"
 												action="#{invoiceBean.deleteInvoicePdf}"
-												update=":totalForm:buttonGenerate,@form" />
+												update=":buttonGenerate,@form" />
 										</p:outputPanel>
 										<p:outputPanel
 											rendered="#{invoiceBean.isXmlInvoiceAlreadyGenerated}">
@@ -101,13 +101,13 @@
 												rendered="#{invoiceBean.entity.invoiceNumber==null}"
 												icon="ui-icon-close"
 												action="#{invoiceBean.deleteXmlInvoice}"
-												update=":totalForm:buttonGenerate,@form" />
+												update=":buttonGenerate,@form" />
 										</p:outputPanel>
 									</p:panelGrid>
 								</p:fieldset>
 							</p:outputPanel>
 						</h:panelGrid>
-
+                     </p:outputPanel>
 
 						<p:fieldset legend="#{messages['invoice.discounts']}"
 							style="width:60%"
@@ -139,7 +139,7 @@
 							</p:dataTable>
 						</p:fieldset>
 
-					</hftl:formPanel>
+					
 					<h:form id="form">
 						<p:fieldset legend="#{messages['invoice.details']}">
 							<p:dataTable id="catTable" var="cat"
@@ -214,9 +214,7 @@
 							</p:dataTable>
 						</p:fieldset>
 					</h:form>
-
-					<hftl:formPanel backingBean="#{invoiceBean}"
-						showFormButtons="false" formId="totalForm" edit="false" showMessages="false">
+ 
 
 						<p:fieldset legend="#{messages['invoice.totals']}">
 							<hftl:formField label="#{messages['invoice.amountWithoutTax']}"
@@ -233,33 +231,27 @@
 						</p:fieldset>
 						<br />
 						<p:outputPanel column="2" id="buttonGenerate">
-							<p:button outcome="billingAccountDetail"
+							<p:button outcome="invoices"
 								value="#{messages['action.back']}">
-								<f:param name="billingAccountId"
-									value="#{invoiceBean.entity.getBillingAccount().getId}" />
-								<f:param name="edit" value="false" />
-								<f:param name="cid"
-									value="#{javax.enterprise.context.conversation.id}" />
 							</p:button>
 							<p:commandButton value="#{messages['invoice.generatePdf']}"
 								icon="ui-icon-refresh"
 								disabled="#{invoiceBean.entity.pdf!=null}"
 								action="#{invoiceBean.generatePdf()}"
-								update=":tabView:headerForm,buttonGenerate" />
+								update=":headerForm:tabView,buttonGenerate" />
 							<p:commandButton value="#{messages['invoice.generateXml']}"
 								icon="ui-icon-refresh"
 								disabled="#{invoiceBean.isXmlInvoiceAlreadyGenerated}"
 								action="#{invoiceBean.generateXMLInvoice}"
-								update=":tabView:headerForm,buttonGenerate" />
-						</p:outputPanel>
-					</hftl:formPanel>
+								update=":headerForm:tabView,buttonGenerate" />
+						</p:outputPanel> 
 
 					<p:panel>
 						<h:panelGroup layout="block" styleClass="form-panel">
 							<p:fieldset legend="#{messages['invoice.adjustment']}">
 								<hftl:dataList label="#{messages['invoice.adjustment']}"
 									backingBean="#{invoiceListBean}"
-									dataModel="#{invoiceBean.entity.linkedInvoices}">
+									dataModel="#{invoiceBean.entity.linkedInvoices}" datatable_results="ok">
 									<p:column headerText="#{messages['invoice.invoiceNumber']}">
 										<h:link value="#{entity.invoiceNumber}"
 											outcome="invoiceDetail">
@@ -310,15 +302,10 @@
 						</h:panelGroup>
 					</p:panel>
 				</p:tab>
-				<p:tab id="customFieldTab"
-					title="#{messages['menu.customFieldTemplates']}">
-					<hftl:formPanel backingBean="#{invoiceBean}" showMessages="false"
-						showDeleteButton="false" showEditButton="true">
-						<hftl:customFields backingBean="#{invoiceBean}"
-							messagesId=":tabView:headerForm:messages" />
-					</hftl:formPanel>
-				</p:tab>
+				<hftl:customFields backingBean="#{invoiceBean}"
+							messagesId=":headerForm:messages" /> 			
 			</p:tabView>
+			</hftl:formPanel>
 		</p:panel>
 	</ui:define>
 

@@ -46,6 +46,7 @@ public class BillingAccountDto extends AccountDto {
 	private PaymentTermEnum paymentTerms;
 	private Boolean electronicBilling;
 	private AccountStatusEnum status;
+	private Date statusDate;
 	private String terminationReason;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
@@ -127,7 +128,7 @@ public class BillingAccountDto extends AccountDto {
 	public String toString() {
 		return "BillingAccountDto [customerAccount=" + customerAccount + ", billingCycle=" + billingCycle + ", country=" + country + ", language=" + language + ", paymentMethod="
 				+ paymentMethod + ", nextInvoiceDate=" + nextInvoiceDate + ", subscriptionDate=" + subscriptionDate + ", terminationDate=" + terminationDate + ", paymentTerms="
-				+ paymentTerms + ", electronicBilling=" + electronicBilling + ", status=" + status + ", terminationReason=" + terminationReason + ", email=" + email
+				+ paymentTerms + ", electronicBilling=" + electronicBilling + ", status=" + status + ", statusDate="+statusDate+",terminationReason=" + terminationReason + ", email=" + email
 				+ ", bankCoordinates=" + bankCoordinates + ", userAccounts=" + userAccounts + "]";
 	}
 
@@ -153,6 +154,14 @@ public class BillingAccountDto extends AccountDto {
 
 	public void setStatus(AccountStatusEnum status) {
 		this.status = status;
+	}
+
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
 	}
 
 	public String getTerminationReason() {

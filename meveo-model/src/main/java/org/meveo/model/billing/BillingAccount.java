@@ -71,7 +71,7 @@ public class BillingAccount extends AccountEntity {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "STATUS_DATE")
-	private Date statusDate;
+	private Date statusDate=new Date();
 
 	@Embedded
 	private BankCoordinates bankCoordinates = new BankCoordinates();
@@ -207,7 +207,9 @@ public class BillingAccount extends AccountEntity {
 
 	public void setStatus(AccountStatusEnum status) {
 		this.status = status;
-		this.statusDate = new Date();
+		if(this.status!=status){
+			this.statusDate = new Date();
+		}
 	}
 
 	public Date getStatusDate() {

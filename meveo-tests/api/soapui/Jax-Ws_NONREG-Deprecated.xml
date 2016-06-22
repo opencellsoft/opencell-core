@@ -10124,8 +10124,8 @@
       <wsdl:output message="ns1:confirmReservationResponse" name="confirmReservationResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>${#Project#meveoUrl}/MediationWs</con:endpoint><con:endpoint>${#Project#meveoUrl}/MediationWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="e8133311-245f-46b9-8c4d-e329e622e40c"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="reserveCdr" bindingOperationName="reserveCdr" type="Request-Response" outputName="reserveCdrResponse" inputName="reserveCdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="6144bd35-5ff8-4c85-9d7b-249ed872e154"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="chargeCdr" bindingOperationName="chargeCdr" type="Request-Response" outputName="chargeCdrResponse" inputName="chargeCdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="a7b80668-be08-450c-a00b-c6b8c9a5935f"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="cancelReservation" bindingOperationName="cancelReservation" type="Request-Response" outputName="cancelReservationResponse" inputName="cancelReservation" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="fa4df813-9abe-46c0-8d82-75b5c16726e9"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="registerCdrList" bindingOperationName="registerCdrList" type="Request-Response" outputName="registerCdrListResponse" inputName="registerCdrList" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="fbfd2be1-fae0-496c-b4d7-4f43e32f9017"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="confirmReservation" bindingOperationName="confirmReservation" type="Request-Response" outputName="confirmReservationResponse" inputName="confirmReservation" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="f5d3340b-4783-4039-8a0e-92b9f307adda"><con:settings/></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WalletWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}WalletWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://meveo.cloudapp.net/meveo/WalletWs?wsdl" id="6d14342b-3f94-4326-909a-2c1fb20c6666" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://meveo.cloudapp.net/meveo/WalletWs?wsdl"><con:part><con:url>http://meveo.cloudapp.net/meveo/WalletWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="WalletWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
-  <wsdl:import location="http://meveo.cloudapp.net/meveo/WalletWs?wsdl=WalletWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>${#Project#meveoUrl}/MediationWs</con:endpoint><con:endpoint>${#Project#meveoUrl}/MediationWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="e8133311-245f-46b9-8c4d-e329e622e40c"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="reserveCdr" bindingOperationName="reserveCdr" type="Request-Response" outputName="reserveCdrResponse" inputName="reserveCdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="6144bd35-5ff8-4c85-9d7b-249ed872e154"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="chargeCdr" bindingOperationName="chargeCdr" type="Request-Response" outputName="chargeCdrResponse" inputName="chargeCdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="a7b80668-be08-450c-a00b-c6b8c9a5935f"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="cancelReservation" bindingOperationName="cancelReservation" type="Request-Response" outputName="cancelReservationResponse" inputName="cancelReservation" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="fa4df813-9abe-46c0-8d82-75b5c16726e9"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="registerCdrList" bindingOperationName="registerCdrList" type="Request-Response" outputName="registerCdrListResponse" inputName="registerCdrList" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="fbfd2be1-fae0-496c-b4d7-4f43e32f9017"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="confirmReservation" bindingOperationName="confirmReservation" type="Request-Response" outputName="confirmReservationResponse" inputName="confirmReservation" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="f5d3340b-4783-4039-8a0e-92b9f307adda"><con:settings/></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WalletWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}WalletWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WalletWs?wsdl" id="6d14342b-3f94-4326-909a-2c1fb20c6666" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://192.168.10.14:8080/meveo/WalletWs?wsdl"><con:part><con:url>http://192.168.10.14:8080/meveo/WalletWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="WalletWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:import location="http://192.168.10.14:8080/meveo/WalletWs?wsdl=WalletWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="WalletWsSoapBinding" type="ns1:WalletWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="reservedBalance">
@@ -10266,18 +10266,20 @@
   </wsdl:binding>
   <wsdl:service name="WalletWs">
     <wsdl:port binding="tns:WalletWsSoapBinding" name="WalletWsImplPort">
-      <soap:address location="http://meveo.cloudapp.net/meveo/WalletWs"/>
+      <soap:address location="http://192.168.10.14:8080/meveo/WalletWs"/>
     </wsdl:port>
   </wsdl:service>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://meveo.cloudapp.net/meveo/WalletWs?wsdl=WalletWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="WalletWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://192.168.10.14:8080/meveo/WalletWs?wsdl=WalletWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="WalletWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
-      <xs:element name="ActionStatus" type="tns:actionStatus"/>
+      <xs:element name="ActionStatus" type="tns:ActionStatus"/>
+      <xs:element name="FindWalletOperations" type="tns:FindWalletOperations"/>
       <xs:element name="FindWalletOperationsResponse" type="tns:findWalletOperationsResponseDto"/>
       <xs:element name="GetWalletTemplateResponse" type="tns:getWalletTemplateResponseDto"/>
       <xs:element name="WalletBalance" type="tns:walletBalanceDto"/>
       <xs:element name="WalletOperation" type="tns:walletOperationDto"/>
       <xs:element name="WalletReservation" type="tns:walletReservationDto"/>
+      <xs:element name="WalletTemplate" type="tns:WalletTemplate"/>
       <xs:element name="cancelReservation" type="tns:cancelReservation"/>
       <xs:element name="cancelReservationResponse" type="tns:cancelReservationResponse"/>
       <xs:element name="confirmReservation" type="tns:confirmReservation"/>
@@ -10331,13 +10333,13 @@
       </xs:complexType>
       <xs:complexType name="reservedBalanceResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="actionStatus">
+      <xs:complexType name="ActionStatus">
         <xs:sequence>
           <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="errorCode" type="tns:meveoApiErrorCodeEnum"/>
           <xs:element name="message" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
@@ -10369,7 +10371,7 @@
       </xs:complexType>
       <xs:complexType name="createReservationResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateWalletTemplate">
@@ -10381,19 +10383,19 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
-              <xs:element minOccurs="0" name="walletType" type="xs:string"/>
+              <xs:element minOccurs="0" name="walletType" type="tns:billingWalletTypeEnum"/>
               <xs:element name="consumptionAlertSet" type="xs:boolean"/>
               <xs:element name="fastRatingLevel" type="xs:int"/>
               <xs:element minOccurs="0" name="lowBalanceLevel" type="xs:decimal"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="description" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="createOrUpdateWalletTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOperation">
@@ -10411,8 +10413,8 @@
               <xs:element name="seller" type="xs:string"/>
               <xs:element name="chargeInstance" type="xs:string"/>
               <xs:element minOccurs="0" name="currency" type="xs:string"/>
-              <xs:element minOccurs="0" name="type" type="xs:string"/>
-              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="type" type="tns:operationTypeEnum"/>
+              <xs:element minOccurs="0" name="status" type="tns:walletOperationStatusEnum"/>
               <xs:element minOccurs="0" name="ratingUnitDescription" type="xs:string"/>
               <xs:element minOccurs="0" name="taxPercent" type="xs:decimal"/>
               <xs:element minOccurs="0" name="unitAmountWithoutTax" type="xs:decimal"/>
@@ -10432,13 +10434,13 @@
               <xs:element minOccurs="0" name="offerCode" type="xs:string"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="description" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="createOperationResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findOperations">
@@ -10450,7 +10452,7 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
-              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="status" type="tns:walletOperationStatusEnum"/>
               <xs:element minOccurs="0" name="walletTemplate" type="xs:string"/>
               <xs:element name="userAccount" type="xs:string"/>
             </xs:sequence>
@@ -10473,7 +10475,7 @@
       </xs:complexType>
       <xs:complexType abstract="true" name="baseResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateWalletTemplate">
@@ -10483,7 +10485,7 @@
       </xs:complexType>
       <xs:complexType name="updateWalletTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeWalletTemplate">
@@ -10493,7 +10495,7 @@
       </xs:complexType>
       <xs:complexType name="removeWalletTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="index">
@@ -10501,7 +10503,7 @@
       </xs:complexType>
       <xs:complexType name="indexResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="currentBalance">
@@ -10511,7 +10513,7 @@
       </xs:complexType>
       <xs:complexType name="currentBalanceResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="openBalance">
@@ -10521,7 +10523,7 @@
       </xs:complexType>
       <xs:complexType name="openBalanceResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findWalletTemplate">
@@ -10550,7 +10552,7 @@
       </xs:complexType>
       <xs:complexType name="createWalletTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="cancelReservation">
@@ -10560,7 +10562,7 @@
       </xs:complexType>
       <xs:complexType name="cancelReservationResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateReservation">
@@ -10570,7 +10572,7 @@
       </xs:complexType>
       <xs:complexType name="updateReservationResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="confirmReservation">
@@ -10580,13 +10582,51 @@
       </xs:complexType>
       <xs:complexType name="confirmReservationResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:simpleType name="actionStatusEnum">
         <xs:restriction base="xs:string">
           <xs:enumeration value="SUCCESS"/>
           <xs:enumeration value="FAIL"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="meveoApiErrorCodeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ENTITY_DOES_NOT_EXISTS_EXCEPTION"/>
+          <xs:enumeration value="ENTITY_ALREADY_EXISTS_EXCEPTION"/>
+          <xs:enumeration value="DELETE_REFERENCED_ENTITY_EXCEPTION"/>
+          <xs:enumeration value="MISSING_PARAMETER"/>
+          <xs:enumeration value="INVALID_PARAMETER"/>
+          <xs:enumeration value="INVALID_ENUM_VALUE"/>
+          <xs:enumeration value="DUPLICATE_ACCESS"/>
+          <xs:enumeration value="INSUFFICIENT_BALANCE"/>
+          <xs:enumeration value="GENERIC_API_EXCEPTION"/>
+          <xs:enumeration value="BUSINESS_API_EXCEPTION"/>
+          <xs:enumeration value="AUTHENTICATION_AUTHORIZATION_EXCEPTION"/>
+          <xs:enumeration value="ACTION_FORBIDDEN"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="billingWalletTypeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="POSTPAID"/>
+          <xs:enumeration value="PREPAID"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="operationTypeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="CREDIT"/>
+          <xs:enumeration value="DEBIT"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="walletOperationStatusEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="OPEN"/>
+          <xs:enumeration value="TREATED"/>
+          <xs:enumeration value="CANCELED"/>
+          <xs:enumeration value="RESERVED"/>
+          <xs:enumeration value="TO_RERATE"/>
+          <xs:enumeration value="RERATED"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:schema>
@@ -24772,7 +24812,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
       <ws:createRecurringChargeTemplate>
          <!--Optional:-->
          <recurringChargeTemplate code="${#TestSuite#ticket}_REC1" description="${#TestSuite#ticket}_REC1">
-            <invoiceSubCategory>SOAP_TEST</invoiceSubCategory>
+            <invoiceSubCategory>CMP_DATA</invoiceSubCategory>
             <disabled>false</disabled>
             <!--Optional:-->
             <amountEditable>false</amountEditable>
@@ -24800,7 +24840,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
       <ws:createUsageChargeTemplate>
          <!--Optional:-->
          <usageChargeTemplate code="${#TestSuite#ticket}_USG1" description="${#TestSuite#ticket}_USG1" disabled="false">
-         	  <invoiceSubCategory>SOAP_TEST</invoiceSubCategory>
+         	  <invoiceSubCategory>CMP_DATA</invoiceSubCategory>
             <!--Optional:-->
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
@@ -24921,7 +24961,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             </address>
             
             <customerCategory>CLIENT</customerCategory>
-            <customerBrand>DEFAULTY</customerBrand>
+            <customerBrand>DEFAULT</customerBrand>
             <seller>MAIN_SELLER</seller>
             <contactInformation>
                <email>invoicing@manaty.net</email>
@@ -24981,11 +25021,12 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
             </address>
              <customFields>
               <!--Zero or more repetitions:-->
-              <customField code="CF_BA" description="?">
-                 <!--Optional:-->
+              <!--Optional:-->
+              <!--
+              <customField code="CF_BA" description="?">                 
                  <stringValue>BA</stringValue>
               </customField>
-              <!--
+              
                <customField code="ENGAGEMENT">
                   <longValue>36</longValue>
                </customField>
@@ -25105,7 +25146,64 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <cdr>2015-02-01T00:00:00Z;10;${#TestSuite#ticket}_ACC;USAGE;1;2;3;4;5;8;7;9;2012-04-01T00:00:00Z;2013-04-01T00:00:00Z;2014-04-01T00:00:00Z;2015-04-01T00:00:00Z;2016-04-01T00:00:00Z;44;10.8;666.2;77.91;12.8</cdr>
       </ws:chargeCdr>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5b02a077-1178-43ab-bc54-6a993e51798f"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="InvoicingOperations" searchProperties="true" id="0b5d38e1-9ecf-4456-94cb-09916262979e"><con:settings/><con:testStep type="request" name="GenerateInvoice" id="21f25b5f-0f47-415e-ad38-8bcc6def760b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>generateInvoiceData</con:operation><con:request name="GenerateInvoice" id="7e62d038-732c-4fef-a703-9048e8424c07"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5b02a077-1178-43ab-bc54-6a993e51798f"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Rerating EDR" searchProperties="true" id="efb3301e-bbed-46d8-b847-3262a959aeb4"><con:settings/><con:testStep type="request" name="Execute URating-Job" id="018bc225-b924-4510-9f54-f8554213f519"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>execute</con:operation><con:request name="Execute URating-Job" id="4db3f47b-d7b8-4e24-a49a-fdfab5b029c6"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+       <ws:execute>
+         <!--Optional:-->
+         <jobInstanceInfo>
+            <timerName>U_Job</timerName>  
+         </jobInstanceInfo>
+      </ws:execute>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="be19f3d2-7aff-4d8b-ae63-07fecc59ac48"/><con:assertion type="Simple Contains" id="392d1385-fd96-407a-a5a7-d26ba17979f4" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="delay" name="Delay 1" id="76405dbe-fdeb-466b-9a05-4af8c8dd517d"><con:settings/><con:config><delay>3000</delay></con:config></con:testStep><con:testStep type="request" name="find WalletOperation 1" id="9531d4b0-7206-489d-a944-21a99f7f36b2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WalletWsSoapBinding</con:interface><con:operation>findOperations</con:operation><con:request name="find WalletOperation 1" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="fc4b7ac4-d141-4bf0-bfd0-6ea9a1fd3dd2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findOperations>
+         <!--Optional:-->
+         	<findWalletOperations>
+         	<status></status>
+  		<walletTemplate></walletTemplate>
+  		<userAccount>${#TestSuite#ticket}_UA</userAccount>
+  		</findWalletOperations>
+      </ws:findOperations>     
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="e0755c53-acda-4dc7-b887-0e3f2387c65a" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findUserAccount"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update  priceplan recurring" id="b2cc05da-b7ec-4926-b3ce-e2cff4a12094"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>updatePricePlan</con:operation><con:request name="Update  priceplan recurring" id="e29aff53-bf33-4976-8a06-3e9a0fb6bf02"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updatePricePlan>
+         <pricePlan code="${#TestSuite#ticket}_REC1" description="${#TestSuitease#ticket}_REC1">
+            <eventCode>${#TestSuite#ticket}_REC1</eventCode>
+            <amountWithoutTax>20</amountWithoutTax>
+            <amountWithTax>12</amountWithTax>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:updatePricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="0f7e852a-ba33-4223-9b36-13aa4ac3680a"/><con:assertion type="Simple Contains" name="Contains" id="0283e850-baba-4662-b30e-d89745c72b54"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="manualTestStep" name="WalletOpertaion-Icône Relpay" id="baf7ffd2-5e53-4360-87fa-3de012c7cf5a"><con:description>- Go to the menu Rating ->Wallet Operations page 
+- For the created wallet --> Click into Replay Icon </con:description><con:settings/><con:config xsi:type="con:ManualTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:testStep><con:testStep type="request" name="Execute Rerating-Job" id="7c1409fd-d9b2-4f98-b8f6-0e3fb7b7c1b9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>execute</con:operation><con:request name="Execute Rerating-Job" id="4db3f47b-d7b8-4e24-a49a-fdfab5b029c6"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+       <ws:execute>
+         <!--Optional:-->
+         <jobInstanceInfo>
+            <timerName>Rerate_Job</timerName>  
+         </jobInstanceInfo>
+      </ws:execute>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="be19f3d2-7aff-4d8b-ae63-07fecc59ac48"/><con:assertion type="Simple Contains" id="392d1385-fd96-407a-a5a7-d26ba17979f4" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="delay" name="Delay 2" id="e53ae93a-b5c5-437c-bdbc-edf6816c1c21"><con:settings/><con:config><delay>3000</delay></con:config></con:testStep><con:testStep type="request" name="find WalletOperation 2" id="7b0cc0ef-b056-4769-824b-319c9a004ea8"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WalletWsSoapBinding</con:interface><con:operation>findOperations</con:operation><con:request name="find WalletOperation 2" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="fc4b7ac4-d141-4bf0-bfd0-6ea9a1fd3dd2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findOperations>
+         <!--Optional:-->
+         	<findWalletOperations>
+         		<status></status>
+  			<walletTemplate></walletTemplate>
+  			<userAccount>${#TestSuite#ticket}_UA</userAccount>
+  		</findWalletOperations>
+      </ws:findOperations>     
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="e0755c53-acda-4dc7-b887-0e3f2387c65a" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findUserAccount"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="InvoicingOperations" searchProperties="true" id="0b5d38e1-9ecf-4456-94cb-09916262979e"><con:settings/><con:testStep type="request" name="GenerateInvoice" id="21f25b5f-0f47-415e-ad38-8bcc6def760b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>generateInvoiceData</con:operation><con:request name="GenerateInvoice" id="7e62d038-732c-4fef-a703-9048e8424c07"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:generateInvoiceData>

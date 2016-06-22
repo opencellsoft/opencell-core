@@ -61,8 +61,8 @@ public class InvoiceAgregateHandler {
 	 * @param amountWithoutTax
 	 * @throws BusinessException
 	 */
-	public void addInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount,UserAccount userAccount, BigDecimal amountWithoutTax, User currentUser) throws BusinessException {
-		addLine(invoiceSubCategory, billingAccount,userAccount, amountWithoutTax, null, currentUser);
+	public void addInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount,UserAccount userAccount,String description,  BigDecimal amountWithoutTax, User currentUser) throws BusinessException {
+		addLine(invoiceSubCategory, billingAccount,userAccount, description,amountWithoutTax, null, currentUser);
 
 	}
 
@@ -73,8 +73,8 @@ public class InvoiceAgregateHandler {
 	 * @param amountWithoutTax
 	 * @throws BusinessException
 	 */
-	public void removeInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount,UserAccount userAccount,  BigDecimal amountWithoutTax, User currentUser) throws BusinessException {
-		removeLine(invoiceSubCategory, billingAccount,userAccount, amountWithoutTax, null, currentUser);
+	public void removeInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount,UserAccount userAccount,String description,   BigDecimal amountWithoutTax, User currentUser) throws BusinessException {
+		removeLine(invoiceSubCategory, billingAccount,userAccount, description,amountWithoutTax, null, currentUser);
 
 	}
 	
@@ -83,7 +83,7 @@ public class InvoiceAgregateHandler {
 	 * @param ratedTRansaction
 	 * @throws BusinessException
 	 */
-	public void removeRT(RatedTransaction ratedTRansaction,UserAccount userAccount, User currentUser) throws BusinessException {
+	public void removeRT(RatedTransaction ratedTRansaction,String description, UserAccount userAccount, User currentUser) throws BusinessException {
 		InvoiceSubCategory invoiceSubCategory = ratedTRansaction.getInvoiceSubCategory();
 		BillingAccount billingAccount = ratedTRansaction.getBillingAccount();
 
@@ -94,7 +94,7 @@ public class InvoiceAgregateHandler {
 			ratedTRansaction.setAmountWithoutTax(ratedTRansaction.getUnitAmountWithoutTax().multiply(ratedTRansaction.getQuantity()));
 		}
 
-		removeLine(invoiceSubCategory, billingAccount,userAccount, ratedTRansaction.getAmountWithoutTax(), ratedTRansaction, currentUser);
+		removeLine(invoiceSubCategory, billingAccount,userAccount, description,ratedTRansaction.getAmountWithoutTax(), ratedTRansaction, currentUser);
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class InvoiceAgregateHandler {
 	 * @param ratedTRansaction
 	 * @throws BusinessException
 	 */
-	public void addRT(RatedTransaction ratedTRansaction,UserAccount userAccount, User currentUser) throws BusinessException {
+	public void addRT(RatedTransaction ratedTRansaction,String description, UserAccount userAccount, User currentUser) throws BusinessException {
 		InvoiceSubCategory invoiceSubCategory = ratedTRansaction.getInvoiceSubCategory();
 		BillingAccount billingAccount = ratedTRansaction.getBillingAccount();		
 		if (ratedTRansaction.getAmountWithoutTax() == null) {
@@ -112,7 +112,7 @@ public class InvoiceAgregateHandler {
 			ratedTRansaction.setAmountWithoutTax(ratedTRansaction.getUnitAmountWithoutTax().multiply(ratedTRansaction.getQuantity()));
 		}
 
-		addLine(invoiceSubCategory, billingAccount,userAccount, ratedTRansaction.getAmountWithoutTax(), ratedTRansaction, currentUser);
+		addLine(invoiceSubCategory, billingAccount,userAccount, description,ratedTRansaction.getAmountWithoutTax(), ratedTRansaction, currentUser);
 	}
 
 	/**
@@ -123,8 +123,8 @@ public class InvoiceAgregateHandler {
 	 * @param ratedTransaction
 	 * @throws BusinessException
 	 */
-	public void addLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount,UserAccount userAccount,  BigDecimal amountWithoutTax, RatedTransaction ratedTransaction, User currentUser) throws BusinessException {
-		addOrRemoveLine(invoiceSubCategory, billingAccount,userAccount, amountWithoutTax, ratedTransaction, true, currentUser);
+	public void addLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount,UserAccount userAccount,  String description,BigDecimal amountWithoutTax, RatedTransaction ratedTransaction, User currentUser) throws BusinessException {
+		addOrRemoveLine(invoiceSubCategory, billingAccount,userAccount, description,amountWithoutTax, ratedTransaction, true, currentUser);
 	}
 
 	/**
@@ -135,8 +135,8 @@ public class InvoiceAgregateHandler {
 	 * @param ratedTransaction
 	 * @throws BusinessException
 	 */
-	public void removeLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount,UserAccount userAccount,  BigDecimal amountWithoutTax, RatedTransaction ratedTransaction, User currentUser) throws BusinessException {
-		addOrRemoveLine(invoiceSubCategory, billingAccount,userAccount, amountWithoutTax, ratedTransaction, false, currentUser);
+	public void removeLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount,UserAccount userAccount, String description,  BigDecimal amountWithoutTax, RatedTransaction ratedTransaction, User currentUser) throws BusinessException {
+		addOrRemoveLine(invoiceSubCategory, billingAccount,userAccount, description,amountWithoutTax, ratedTransaction, false, currentUser);
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class InvoiceAgregateHandler {
 	 * @param isToAdd
 	 * @throws BusinessException
 	 */
-	public void addOrRemoveLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount,UserAccount userAccount, BigDecimal amountWithoutTax, RatedTransaction ratedTransaction, boolean isToAdd, User currentUser) throws BusinessException {
+	public void addOrRemoveLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount,UserAccount userAccount,String description, BigDecimal amountWithoutTax, RatedTransaction ratedTransaction, boolean isToAdd, User currentUser) throws BusinessException {
 		log.debug("addOrRemoveLine amountWithoutTax {} ...",amountWithoutTax);
 		
 		Auditable auditable = new Auditable();
@@ -210,7 +210,7 @@ public class InvoiceAgregateHandler {
 			subCategoryInvoiceAgregate.setAuditable(auditable);
 			subCategoryInvoiceAgregate.setCategoryInvoiceAgregate(categoryInvoiceAgregate);
 			subCategoryInvoiceAgregate.setInvoiceSubCategory(invoiceSubCategory);
-			subCategoryInvoiceAgregate.setDescription(invoiceSubCategory.getDescription());
+			subCategoryInvoiceAgregate.setDescription(description);
 			subCategoryInvoiceAgregate.setBillingRun(null);
 			subCategoryInvoiceAgregate.setWallet(userAccount.getWallet());
 			subCategoryInvoiceAgregate.setUserAccount(userAccount);

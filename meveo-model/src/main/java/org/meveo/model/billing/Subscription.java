@@ -140,7 +140,9 @@ public class Subscription extends BusinessCFEntity{
 
 	public void setStatus(SubscriptionStatusEnum status) {
 		this.status = status;
-		this.statusDate = new Date();
+		if(this.status!=status){
+			this.statusDate = new Date();
+		}
 	}
 
 	public Date getStatusDate() {
