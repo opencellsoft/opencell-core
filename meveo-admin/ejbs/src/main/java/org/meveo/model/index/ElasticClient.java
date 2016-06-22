@@ -3,6 +3,9 @@ package org.meveo.model.index;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -14,7 +17,10 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
 import org.apache.commons.lang.StringUtils;
 
@@ -35,12 +41,18 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
  *
  */
 public class ElasticClient {
-
+	
+	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+	
 	@Inject
 	private Logger log;
 
+	@Inject
+	private CustomFieldInstanceService cfiService;
+	
 	private ParamBean paramBean=ParamBean.getInstance();
 
+	
 	TransportClient client = null;
 
 	@PostConstruct
@@ -78,21 +90,30 @@ public class ElasticClient {
 					.startObject()
 					    .field("updated",e.getAuditable().getUpdated())
 					    .field("updater",e.getAuditable().getUpdater().getUserName());
-				if(e instanceof BusinessCFEntity){
-						
+				if(ICustomFieldEntity.class.isAssignableFrom(e.getClass())){
+					Map<String, List<CustomFieldInstance>> customFieldsMap = cfiService.getCustomFieldInstances((ICustomFieldEntity) e);
+			        for (List<CustomFieldInstance> customFields : customFieldsMap.values()) {
+			            for (CustomFieldInstance cf : customFields) {
+			            	//TODO : get the json value (beware of MAPS and versionned fields)
+			            	//builder.field(cf.getCode(),cf.getCfValue());
+			            }
+			        }		
 				}
+				builder.endObject();
+				log.debug("prepareIndex for json"+builder.string());
 				String index=updater.getProvider().getCode().toLowerCase();
 				String type =  e.getClass().getName().toLowerCase();
+				
 				IndexResponse response = client.prepareIndex(index,type,e.getCode())
-			        .setSource(builder.endObject())
+			        .setSource(builder)
 			        .get();
 				if(response.isCreated()){
 					log.warn("added new entity {} of type {} to index {}",e.getCode(),type,index);
 				} else {
 					log.debug("updated entity {} of type {} to index {}, version={}",e.getCode(),type,index,response.getVersion());
 				}
-			} catch (IOException e1) {
-				throw new BusinessException(e1);
+			}catch (IOException e1) {
+					throw new BusinessException(e1);
 			}
 		}
 	}
