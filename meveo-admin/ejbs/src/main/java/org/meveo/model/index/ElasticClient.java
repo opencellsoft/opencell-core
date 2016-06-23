@@ -47,8 +47,8 @@ public class ElasticClient {
 	@Inject
 	private Logger log;
 
-	@Inject
-	private CustomFieldInstanceService cfiService;
+	//@Inject
+	//private CustomFieldInstanceService cfiService;
 	
 	private ParamBean paramBean=ParamBean.getInstance();
 
@@ -90,15 +90,15 @@ public class ElasticClient {
 					.startObject()
 					    .field("updated",e.getAuditable().getUpdated())
 					    .field("updater",e.getAuditable().getUpdater().getUserName());
-				if(ICustomFieldEntity.class.isAssignableFrom(e.getClass())){
-					Map<String, List<CustomFieldInstance>> customFieldsMap = cfiService.getCustomFieldInstances((ICustomFieldEntity) e);
-			        for (List<CustomFieldInstance> customFields : customFieldsMap.values()) {
-			            for (CustomFieldInstance cf : customFields) {
+				//if(ICustomFieldEntity.class.isAssignableFrom(e.getClass())){
+					//Map<String, List<CustomFieldInstance>> customFieldsMap = cfiService.getCustomFieldInstances((ICustomFieldEntity) e);
+			        //for (List<CustomFieldInstance> customFields : customFieldsMap.values()) {
+			          //  for (CustomFieldInstance cf : customFields) {
 			            	//TODO : get the json value (beware of MAPS and versionned fields)
 			            	//builder.field(cf.getCode(),cf.getCfValue());
-			            }
-			        }		
-				}
+			            //}
+			        //}		
+				//}
 				builder.endObject();
 				log.debug("prepareIndex for json"+builder.string());
 				String index=updater.getProvider().getCode().toLowerCase();
