@@ -225,7 +225,7 @@
 								field="amountWithTax" converter="bigDecimal4DigitsConverter" />
 							<hftl:decorateFormField fieldId="netTopayId"
 								label="#{messages['invoice.netToPay']}">
-								<h:outputText id="netTopayId" value="#{invoiceBean.netToPay}"
+								<h:outputText id="netTopayId" value="#{invoiceBean.entity.netToPay}"
 									styleClass="field-value" />
 							</hftl:decorateFormField>
 						</p:fieldset>
