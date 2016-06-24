@@ -243,6 +243,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 				messages.error("Invoice sub category is required.");
 				return;
 			}
+			if (StringUtils.isBlank(description)) {
+				messages.error("Description is required.");
+				return;
+			}
 			if (StringUtils.isBlank(quantity)) {
 				messages.error("Quantity is required.");
 				return;
@@ -660,6 +664,11 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 		if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
 			messages.error("BillingAccount is required.");
+			return;
+		}
+		
+		if (StringUtils.isBlank(description)) {
+			messages.error("Description is required.");
 			return;
 		}
 
