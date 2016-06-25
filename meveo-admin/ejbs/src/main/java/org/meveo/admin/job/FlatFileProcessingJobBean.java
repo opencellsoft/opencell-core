@@ -125,7 +125,7 @@ public class FlatFileProcessingJobBean {
                     cpLines++;
                     try {
                         recordContext = fileParser.getNextRecord();
-                        log.debug("recordObject:{}", recordContext.getLineContent());
+                        log.debug("record line content:{}", recordContext.getLineContent());
                         Map<String, Object> executeParams = new HashMap<String, Object>();
                         executeParams.put(recordVariableName, recordContext.getRecord());
                         executeParams.put(originFilename, fileName);

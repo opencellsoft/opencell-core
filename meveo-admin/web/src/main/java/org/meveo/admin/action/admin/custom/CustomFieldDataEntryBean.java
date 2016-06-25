@@ -43,7 +43,10 @@ import org.meveo.model.crm.custom.CustomFieldValueHolder;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.index.ElasticClient;
+import org.meveo.model.index.ElasticDocument;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -109,9 +112,15 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     @Inject
     protected Messages messages;
+    
+    @Inject
+    private EntityToDtoConverter entityToDtoConverter;
+   
+    @Inject
+    private ElasticClient elasticClient;
 
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());    
 
     /**
      * Explicitly refresh fields and action definitions. Should be used on some field value change event when that field is used to determine what fields and actions apply. E.g.
@@ -663,6 +672,9 @@ public class CustomFieldDataEntryBean implements Serializable {
         			}
         		}
         	}
+        	ElasticDocument esDoc = new ElasticDocument((BusinessEntity)entity);
+        	esDoc.setCustomFieldsDto(entityToDtoConverter.getCustomFieldsDTO(entity));    
+        	elasticClient.createOrUpdate(esDoc, entity.getClass().getName(), currentUser.getProvider().getCode());        		        			
         }
     }
 

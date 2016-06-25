@@ -390,7 +390,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         e = getEntityManager().merge(e);
         log.debug("updated class {}, is BusinessEntity :",e.getClass(),BusinessEntity.class.isAssignableFrom(e.getClass()));
         if(BusinessEntity.class.isAssignableFrom(e.getClass())){
-        	elasticClient.update((BusinessEntity)e, updater);
+        	elasticClient.createOrUpdate((BusinessEntity)e, updater);
         }
         if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
             entityUpdatedEventProducer.fire(e);
@@ -422,7 +422,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         getEntityManager().persist(e);
         if(BusinessEntity.class.isAssignableFrom(e.getClass())){
-        	elasticClient.create((BusinessEntity)e, creator);
+        	elasticClient.createOrUpdate((BusinessEntity)e, creator);
         }
         if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
             entityCreatedEventProducer.fire(e);

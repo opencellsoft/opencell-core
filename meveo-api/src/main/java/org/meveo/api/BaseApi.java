@@ -26,6 +26,7 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldInstance;
@@ -35,6 +36,8 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.model.index.ElasticClient;
+import org.meveo.model.index.ElasticDocument;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -64,6 +67,9 @@ public abstract class BaseApi {
 
     @Inject
     private Validator validator;
+    
+    @Inject
+    private ElasticClient elasticClient;
 
     protected List<String> missingParameters = new ArrayList<String>();
 
@@ -206,6 +212,10 @@ public abstract class BaseApi {
                     }
                 }
             }
+        	ElasticDocument esDoc = new ElasticDocument((BusinessEntity)entity);
+        	esDoc.setCustomFieldsDto(entityToDtoConverter.getCustomFieldsDTO(entity));    
+        	elasticClient.createOrUpdate(esDoc, entity.getClass().getName(), currentUser.getProvider().getCode());  
+            
         }
 
         // After saving passed CF values, validate that CustomField value is not empty when field is mandatory

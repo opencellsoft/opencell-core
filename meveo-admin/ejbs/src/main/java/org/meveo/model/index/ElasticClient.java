@@ -25,8 +25,9 @@ import org.slf4j.Logger;
 import org.apache.commons.lang.StringUtils;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.*;
+
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.client.transport.*;
+import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -46,9 +47,6 @@ public class ElasticClient {
 	
 	@Inject
 	private Logger log;
-
-	//@Inject
-	//private CustomFieldInstanceService cfiService;
 	
 	private ParamBean paramBean=ParamBean.getInstance();
 
@@ -82,68 +80,40 @@ public class ElasticClient {
 			e.printStackTrace();
 		}
 	}
-	
-	public void update(BusinessEntity e,User updater) throws BusinessException {
+		
+	/**
+	 * 
+	 * @param esDoc
+	 * @param type
+	 * @param index
+	 */
+	public void createOrUpdate(ElasticDocument esDoc,String type,String index){
 		if(client!=null){
 			try {
-				XContentBuilder builder = jsonBuilder()
-					.startObject()
-					    .field("updated",e.getAuditable().getUpdated())
-					    .field("updater",e.getAuditable().getUpdater().getUserName());
-				//if(ICustomFieldEntity.class.isAssignableFrom(e.getClass())){
-					//Map<String, List<CustomFieldInstance>> customFieldsMap = cfiService.getCustomFieldInstances((ICustomFieldEntity) e);
-			        //for (List<CustomFieldInstance> customFields : customFieldsMap.values()) {
-			          //  for (CustomFieldInstance cf : customFields) {
-			            	//TODO : get the json value (beware of MAPS and versionned fields)
-			            	//builder.field(cf.getCode(),cf.getCfValue());
-			            //}
-			        //}		
-				//}
-				builder.endObject();
-				log.debug("prepareIndex for json"+builder.string());
-				String index=updater.getProvider().getCode().toLowerCase();
-				String type =  e.getClass().getName().toLowerCase();
-				
-				IndexResponse response = client.prepareIndex(index,type,e.getCode())
-			        .setSource(builder)
-			        .get();
+				log.debug("added elasticSearch doc {} ",esDoc.toJson());
+				IndexResponse response = client.prepareIndex(index.toLowerCase(),type.toLowerCase(),esDoc.getCode()).setSource(esDoc.toJson()).get();
 				if(response.isCreated()){
-					log.warn("added new entity {} of type {} to index {}",e.getCode(),type,index);
+					log.debug("added entity {} of type {} to index {}",esDoc.getCode(),type,index);
 				} else {
-					log.debug("updated entity {} of type {} to index {}, version={}",e.getCode(),type,index,response.getVersion());
+					log.warn("updated existing entity {} of type {} to index {}, version={}",esDoc.getCode(),type,index,response.getVersion());
 				}
-			}catch (IOException e1) {
-					throw new BusinessException(e1);
+			} catch (Exception e1) {
+				log.error("cant create ES Document",e1);
 			}
+		}else{
+			log.warn("Elastic client down");
 		}
+		
 	}
-	
-	public void create(BusinessEntity e,User creator) throws BusinessException {
-		if(client!=null){
-			try {
-			XContentBuilder builder = jsonBuilder()
-				.startObject()
-				    .field("code",e.getCode())
-				    .field("description",e.getDescription())
-				    .field("created",e.getAuditable().getCreated())
-				    .field("creator",e.getAuditable().getCreator().getUserName());
-				if(e instanceof BusinessCFEntity){
-						
-				}
-				String index=creator.getProvider().getCode().toLowerCase();
-				String type =  e.getClass().getName().toLowerCase();
-				IndexResponse response = client.prepareIndex(index,type,e.getCode())
-			        .setSource(builder.endObject())
-			        .get();
-				if(response.isCreated()){
-					log.debug("added entity {} of type {} to index {}",e.getCode(),type,index);
-				} else {
-					log.warn("updated existing entity {} of type {} to index {}, version={}",e.getCode(),type,index,response.getVersion());
-				}
-			} catch (IOException e1) {
-				throw new BusinessException(e1);
-			}
-		}
+    
+	/**
+	 * 
+	 * @param e
+	 * @param creator
+	 */
+	public void createOrUpdate(BusinessEntity e,User creator){		
+		ElasticDocument esDoc = new ElasticDocument(e);		
+		createOrUpdate(esDoc, e.getClass().getName(), e.getProvider().getCode());		
 	}
 	
 	
