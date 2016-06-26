@@ -153,10 +153,10 @@ public class CustomerAccount extends AccountEntity {
 	}
 
 	public void setStatus(CustomerAccountStatusEnum status) {
-		this.status = status;
 		if(this.status!=status){
 			this.dateStatus = new Date();
 		}
+		this.status = status;
 	}
 
 	public PaymentMethodEnum getPaymentMethod() {

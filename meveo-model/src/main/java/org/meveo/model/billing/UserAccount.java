@@ -125,10 +125,10 @@ public class UserAccount extends AccountEntity {
 	}
 
 	public void setStatus(AccountStatusEnum status) {
-		this.status = status;
 		if(this.status!=status){
 			this.statusDate = new Date();
 		}
+		this.status = status;
 	}
 
 	public Date getStatusDate() {
