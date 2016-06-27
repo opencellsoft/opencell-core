@@ -656,8 +656,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			}
 			Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(initCalendarDate);
 			billingAccount.setNextInvoiceDate(nextCalendarDate);
-			billingAccount.updateAudit(currentUser);
-			log.info(" \n\n\n Invoice Number:"+invoice.getInvoiceNumber()+" \n\n\n ");
+			billingAccount.updateAudit(currentUser);			
 			invoiceService.update(invoice, currentUser);
 		}
 		billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
