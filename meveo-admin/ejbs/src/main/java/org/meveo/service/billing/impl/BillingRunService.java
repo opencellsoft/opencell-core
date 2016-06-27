@@ -646,8 +646,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	
 	private void incrementInvoiceDatesAndValidate(BillingRun billingRun,User currentUser) throws BusinessException{
 		log.debug("incrementInvoiceDatesAndValidate");
-		for (Invoice invoice : billingRun.getInvoices()) {
-			invoiceService.setInvoiceNumber(invoice, currentUser);
+		for (Invoice invoice : billingRun.getInvoices()) {			
+			invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice, currentUser));
 			invoice.setPdf(null);
 			BillingAccount billingAccount = invoice.getBillingAccount();
 			Date initCalendarDate = billingAccount.getSubscriptionDate();
@@ -657,6 +657,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(initCalendarDate);
 			billingAccount.setNextInvoiceDate(nextCalendarDate);
 			billingAccount.updateAudit(currentUser);
+			log.info(" \n\n\n Invoice Number:"+invoice.getInvoiceNumber()+" \n\n\n ");
 			invoiceService.update(invoice, currentUser);
 		}
 		billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
