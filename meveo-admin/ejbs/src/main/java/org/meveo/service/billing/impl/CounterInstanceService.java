@@ -304,10 +304,11 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
 		try {
 			result = (BigDecimal) res;
+			result = result.setScale(rounding,RoundingMode.HALF_UP);
 		} catch (Exception e) {
 			throw new BusinessException("Expression " + expression + " do not evaluate to BigDecimal but " + res);
 		}
-		return result.setScale(rounding,RoundingMode.HALF_UP);
+		return result;
 	}
 
     /**
