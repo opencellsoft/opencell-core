@@ -460,6 +460,7 @@ public class AccountHierarchyApi extends BaseApi {
 		billingAccount.setTradingLanguage(tradingLanguage);
 		billingAccount.setBillingCycle(billingCycle);
 		billingAccount.setProvider(provider);
+		billingAccount.setAddress(address);
 
 		billingAccountService.createBillingAccount(billingAccount, currentUser);
 
@@ -468,6 +469,7 @@ public class AccountHierarchyApi extends BaseApi {
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
 		userAccount.setBillingAccount(billingAccount);
 		userAccount.setCode(userAccountCode);
+		userAccount.setAddress(address);
 		try {
 			userAccountService.createUserAccount(billingAccount, userAccount, currentUser);
 		} catch (AccountAlreadyExistsException e) {
@@ -709,6 +711,7 @@ public class AccountHierarchyApi extends BaseApi {
 		billingAccount.setTradingCountry(tradingCountry);
 		billingAccount.setTradingLanguage(tradingLanguage);
 		billingAccount.setBillingCycle(billingCycle);
+		billingAccount.setAddress(address);
 
 		if (billingAccount.isTransient()) {
 			billingAccountService.createBillingAccount(billingAccount, currentUser);
@@ -724,6 +727,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
 		userAccount.setBillingAccount(billingAccount);
+		userAccount.setAddress(address);
 
 		if (userAccount.isTransient()) {
 			String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
