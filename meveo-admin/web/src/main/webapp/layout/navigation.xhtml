@@ -320,7 +320,7 @@
 			<p:menuitem id="ddrequestLots" outcome="ddrequestLots"
 				value="#{messages['menu.ddrequestLot']}" />
 		</p:submenu>
-
+<!-- to be uncommented in 4.5
 		<p:submenu id="finance" label="#{messages['menu.finance']}"
 			rendered="#{identity.hasPermission('billing','billingManagement')}">
 
@@ -330,7 +330,7 @@
 			<p:menuitem id="revenueSchedules" outcome="revenueSchedules"
 				value="#{messages['menu.revenueSchedules']}" />
 		</p:submenu>
-		
+ -->		
 		<p:submenu id="reporting" label="#{messages['menu.reporting']}"
 			 rendered="#{identity.hasPermission('reporting','reportingVisualization')}">
 
