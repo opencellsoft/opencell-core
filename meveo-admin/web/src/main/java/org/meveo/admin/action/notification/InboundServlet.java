@@ -102,7 +102,8 @@ public class InboundServlet extends HttpServlet {
 		
         User user = authenticateRequest(req);
         if(user == null){
-            res.setStatus(403);
+            res.addHeader("WWW-Authenticate",  "Basic");
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 

@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -350,23 +349,6 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 			}
 		}
 		return new ArrayList<InvoiceCategoryDTO>(headerCategories.values());
-	}
-
-	public String getNetToPay() throws BusinessException {
-		BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, entity.getBillingAccount()
-				.getCustomerAccount().getCode(), entity.getDueDate(), entity.getProvider());
-
-		if (balance == null) {
-			throw new BusinessException("account balance calculation failed");
-		}
-
-		BigDecimal netToPay = BigDecimal.ZERO;
-		if (entity.getProvider().isEntreprise()) {
-			netToPay = entity.getAmountWithTax();
-		} else {
-			netToPay = entity.getAmountWithTax().add(balance);
-		}
-		return netToPay.setScale(2, RoundingMode.HALF_UP).toString();
 	}
 
 	public void deleteInvoicePdf() {

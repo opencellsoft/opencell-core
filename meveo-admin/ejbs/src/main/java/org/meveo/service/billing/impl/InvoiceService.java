@@ -300,6 +300,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			if(increment){
 				currentNbFromCF = currentNbFromCF + step;
 				 customFieldInstanceService.setCFValue(seller, cfName,currentNbFromCF, invoice.getInvoiceDate(), currentUser);
+				 customFieldInstanceService.commit();
 			}
 		}else{
 			currentValObj = customFieldInstanceService.getCFValue(seller.getProvider(), cfName, invoice.getInvoiceDate(), currentUser);
@@ -308,6 +309,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				if(increment){
 					currentNbFromCF = currentNbFromCF + step;
 					 customFieldInstanceService.setCFValue(seller.getProvider(), cfName,currentNbFromCF, invoice.getInvoiceDate(), currentUser);
+					 customFieldInstanceService.commit();
 				}
 			}
 		}
@@ -343,6 +345,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if(currentNbFromCF != null){			
 			sequence.setCurrentInvoiceNb(currentNbFromCF);
 		}		
+		invoiceTypeService.commit();
 		return sequence;		
 	}
 	

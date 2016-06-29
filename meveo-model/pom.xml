@@ -190,13 +190,12 @@
         <dependency>
 		    <groupId>com.google.guava</groupId>
 		    <artifactId>guava</artifactId>
-		    <version>19.0</version>
+		    <version>18.0</version>
 		</dependency>
 
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-    		<version>0.9.10</version>
             <exclusions>
                 <exclusion>
 				    <groupId>com.google.guava</groupId>

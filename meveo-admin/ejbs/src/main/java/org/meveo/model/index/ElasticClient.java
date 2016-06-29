@@ -53,7 +53,7 @@ public class ElasticClient {
 	
 	TransportClient client = null;
 
-	@PostConstruct
+	//@PostConstruct
 	private void init() throws UnknownHostException {
 		try{
 		String clusterName = paramBean.getProperty("elasticsearch.cluster.name", "elasticsearch");

@@ -171,6 +171,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			}
 		}
 
+		entity.setAmountWithoutTax(BigDecimal.ZERO);
+		entity.setAmountWithTax(BigDecimal.ZERO);
+		entity.setAmountTax(BigDecimal.ZERO);
+		entity.setNetToPay(BigDecimal.ZERO);
 		return entity;
 	}
 
@@ -237,6 +241,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			}
 			if (selectInvoiceSubCat == null) {
 				messages.error("Invoice sub category is required.");
+				return;
+			}
+			if (StringUtils.isBlank(description)) {
+				messages.error("Description is required.");
 				return;
 			}
 			if (StringUtils.isBlank(quantity)) {
@@ -352,11 +360,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		entity.setDetailedInvoice(isDetailed());
 
 		entity.setInvoiceNumber(invoiceService.getInvoiceNumber(entity, getCurrentUser()));
-		if(entity.getAmountWithoutTax() == null){
-			entity.setAmountWithoutTax(BigDecimal.ZERO);
-			entity.setAmountWithTax(BigDecimal.ZERO);
-			entity.setAmountTax(BigDecimal.ZERO);
-		}
 		super.saveOrUpdate(false);
 
 		for (Entry<String, TaxInvoiceAgregate> entry : agregateHandler.getTaxInvAgregateMap().entrySet()) {
@@ -661,6 +664,11 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 		if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
 			messages.error("BillingAccount is required.");
+			return;
+		}
+		
+		if (StringUtils.isBlank(description)) {
+			messages.error("Description is required.");
 			return;
 		}
 
