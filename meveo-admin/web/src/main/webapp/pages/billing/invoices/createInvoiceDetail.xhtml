@@ -378,7 +378,7 @@
 								<h:panelGrid columns="5">										 										
 										<hftl:decorateFormField fieldId="usageDate"
 											label="#{messages['ratedTransaction.usageDate']} *">
-											<p:calendar id="usageDate" value="#{creationInvoiceBean.usageDate}"  pattern="#{ParamBean.getInstance().getProperty('meveo.dateFormat','dd/MM/yyyy')}" />										
+											<p:calendar id="usageDate" value="#{creationInvoiceBean.usageDate}"  pattern="#{paramBean.getInstance().getProperty('meveo.dateFormat','dd/MM/yyyy')}" />										
 										</hftl:decorateFormField> 										
 										<hftl:decorateFormField fieldId="unitAmountWithoutTax"
 											label="#{messages['ratedTransaction.unitAmountWithoutTax']} *">
