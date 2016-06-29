@@ -717,7 +717,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	}
 
 	public LazyDataModel<Invoice> getInvoicesByTypeAndBA() throws BusinessException {
-		if (getEntity().getBillingAccount() != null && !entity.getBillingAccount().isTransient()) {
+	    if (getEntity().getBillingAccount() != null && !entity.getBillingAccount().isTransient()) {
 			BillingAccount ba = billingAccountService.refreshOrRetrieve(entity.getBillingAccount());
 			filters.put("billingAccount", ba);
 		}
@@ -734,7 +734,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			}
 		}
 
-		return getLazyDataModel(filters, true);
+		return getLazyDataModel();
 	}
 
 	/**

@@ -106,7 +106,7 @@ public class BusinessEntity extends AuditableEntity {
 
         BusinessEntity other = (BusinessEntity) obj;
 
-        if (getId() != null && other.getId() != null && getId() == other.getId()) {
+        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
             // return true;
         }
         if (code == null) {

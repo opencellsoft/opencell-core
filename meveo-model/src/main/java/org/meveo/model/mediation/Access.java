@@ -143,7 +143,7 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
 
         IEntity other = (IEntity) obj;
 
-        if (getId() != null && other.getId() != null && getId() == other.getId()) {
+        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
             return true;
         }
 

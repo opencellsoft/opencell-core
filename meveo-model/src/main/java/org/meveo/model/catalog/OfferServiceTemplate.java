@@ -106,7 +106,7 @@ public class OfferServiceTemplate extends BaseEntity {
 
         OfferServiceTemplate other = (OfferServiceTemplate) obj;
 
-        if (getId() != null && other.getId() != null && getId() == other.getId()) {
+        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
             // return true;
         }
 

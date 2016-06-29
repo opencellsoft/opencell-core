@@ -410,11 +410,14 @@ public class AccountHierarchyApi extends BaseApi {
 		if (customer != null) {
 			throw new EntityAlreadyExistsException(Customer.class, customerCode);
 		}
+		
+		Name name = new Name();
+		name.setTitle(title);
+		name.setFirstName(postData.getFirstName());
+		name.setLastName(postData.getLastName());
 
 		customer = new Customer();
-		customer.getName().setLastName(postData.getLastName());
-		customer.getName().setFirstName(postData.getFirstName());
-		customer.getName().setTitle(title);
+		customer.setName(name);
 		customer.setContactInformation(contactInformation);
 		customer.setAddress(address);
 		customer.setCode(CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId));
@@ -427,9 +430,7 @@ public class AccountHierarchyApi extends BaseApi {
 		customerAccount.setCustomer(customer);
 		customerAccount.setAddress(address);
 		customerAccount.setContactInformation(contactInformation);
-		customerAccount.getName().setFirstName(postData.getFirstName());
-		customerAccount.getName().setLastName(postData.getLastName());
-		customerAccount.getName().setTitle(title);
+		customerAccount.setName(name);
 		customerAccount.setCode(CUSTOMER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId));
 		customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 		customerAccount.setPaymentMethod(PaymentMethodEnum.getValue(caPaymentMethod));
@@ -449,6 +450,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		BillingAccount billingAccount = new BillingAccount();
+		billingAccount.setName(name);
 		billingAccount.setEmail(postData.getEmail());
 		billingAccount.setPaymentMethod(PaymentMethodEnum.getValue(postData.getPaymentMethod()));
 		billingAccount.setCode(BILLING_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId));
@@ -460,14 +462,17 @@ public class AccountHierarchyApi extends BaseApi {
 		billingAccount.setTradingLanguage(tradingLanguage);
 		billingAccount.setBillingCycle(billingCycle);
 		billingAccount.setProvider(provider);
+		billingAccount.setAddress(address);
 
 		billingAccountService.createBillingAccount(billingAccount, currentUser);
 
 		String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
 		UserAccount userAccount = new UserAccount();
+		userAccount.setName(name);
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
 		userAccount.setBillingAccount(billingAccount);
 		userAccount.setCode(userAccountCode);
+		userAccount.setAddress(address);
 		try {
 			userAccountService.createUserAccount(billingAccount, userAccount, currentUser);
 		} catch (AccountAlreadyExistsException e) {
@@ -636,7 +641,7 @@ public class AccountHierarchyApi extends BaseApi {
 		address.setZipCode(postData.getZipCode());
 		address.setCity(postData.getCity());
 		address.setCountry(postData.getCountryCode());
-
+		
 		ContactInformation contactInformation = new ContactInformation();
 		contactInformation.setEmail(postData.getEmail());
 		contactInformation.setPhone(postData.getPhoneNumber());
@@ -645,10 +650,13 @@ public class AccountHierarchyApi extends BaseApi {
 		if (!StringUtils.isBlank(postData.getTitleCode())) {
 			title = titleService.findByCode(StringUtils.normalizeHierarchyCode(postData.getTitleCode()), provider);
 		}
+		
+		Name name = new Name();
+		name.setTitle(title);
+		name.setFirstName(postData.getFirstName());
+		name.setLastName(postData.getLastName());
 
-		customer.getName().setLastName(postData.getLastName());
-		customer.getName().setFirstName(postData.getFirstName());
-		customer.getName().setTitle(title);
+		customer.setName(name);
 		customer.setAddress(address);
 		customer.setCustomerBrand(customerBrand);
 		customer.setCustomerCategory(customerCategory);
@@ -669,9 +677,7 @@ public class AccountHierarchyApi extends BaseApi {
 		customerAccount.setAddress(address);
 		customerAccount.setContactInformation(contactInformation);
 
-		customerAccount.getName().setFirstName(postData.getFirstName());
-		customerAccount.getName().setLastName(postData.getLastName());
-		customerAccount.getName().setTitle(title);
+		customerAccount.setName(name);
 		customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 		customerAccount.setPaymentMethod(PaymentMethodEnum.getValue(caPaymentMethod));
 		if (!StringUtils.isBlank(creditCategory)) {
@@ -701,6 +707,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		billingAccount.setEmail(postData.getEmail());
+		billingAccount.setName(name);
 		billingAccount.setPaymentMethod(PaymentMethodEnum.getValue(postData.getPaymentMethod()));
 		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 		billingAccount.setCustomerAccount(customerAccount);
@@ -709,6 +716,7 @@ public class AccountHierarchyApi extends BaseApi {
 		billingAccount.setTradingCountry(tradingCountry);
 		billingAccount.setTradingLanguage(tradingLanguage);
 		billingAccount.setBillingCycle(billingCycle);
+		billingAccount.setAddress(address);
 
 		if (billingAccount.isTransient()) {
 			billingAccountService.createBillingAccount(billingAccount, currentUser);
@@ -722,8 +730,10 @@ public class AccountHierarchyApi extends BaseApi {
 			userAccount = new UserAccount();
 		}
 
+		userAccount.setName(name);
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
 		userAccount.setBillingAccount(billingAccount);
+		userAccount.setAddress(address);
 
 		if (userAccount.isTransient()) {
 			String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
