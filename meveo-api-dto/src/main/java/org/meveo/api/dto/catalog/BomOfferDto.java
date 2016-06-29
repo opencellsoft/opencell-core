@@ -27,17 +27,12 @@ public class BomOfferDto extends BaseDto {
 	private String description;
 
 	private CustomFieldsDto offerCustomFields;
-	@Deprecated
-	/**
-	 * Moved inside serviceCodes.
-	 */
-	private CustomFieldsDto serviceCustomFields;
 
 	private String prefix;
 
-	@XmlElementWrapper(name = "serviceCodes")
-	@XmlElement(name = "serviceCode")
-	private List<ServiceCodeDto> serviceCodes;
+	@XmlElementWrapper(name = "servicesToActivate")
+	@XmlElement(name = "serviceToActivate")
+	private List<ServiceCodeDto> servicesToActivate;
 
 	public String getBomCode() {
 		return bomCode;
@@ -65,16 +60,8 @@ public class BomOfferDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "BomOfferDto [bomCode=" + bomCode + ", description=" + description + ", offerCustomFields=" + offerCustomFields + ", serviceCustomFields=" + serviceCustomFields
-				+ ", prefix=" + prefix + ", serviceCodes=" + serviceCodes + "]";
-	}
-
-	public CustomFieldsDto getServiceCustomFields() {
-		return serviceCustomFields;
-	}
-
-	public void setServiceCustomFields(CustomFieldsDto serviceCustomFields) {
-		this.serviceCustomFields = serviceCustomFields;
+		return "BomOfferDto [bomCode=" + bomCode + ", description=" + description + ", offerCustomFields=" + offerCustomFields + ", prefix=" + prefix + ", servicesToActivate="
+				+ servicesToActivate + "]";
 	}
 
 	public String getDescription() {
@@ -85,12 +72,12 @@ public class BomOfferDto extends BaseDto {
 		this.description = description;
 	}
 
-	public List<ServiceCodeDto> getServiceCodes() {
-		return serviceCodes;
+	public List<ServiceCodeDto> getServicesToActivate() {
+		return servicesToActivate;
 	}
 
-	public void setServiceCodes(List<ServiceCodeDto> serviceCodes) {
-		this.serviceCodes = serviceCodes;
+	public void setServicesToActivate(List<ServiceCodeDto> servicesToActivate) {
+		this.servicesToActivate = servicesToActivate;
 	}
 
 }

@@ -58,7 +58,7 @@ public class BusinessOfferApi extends BaseApi {
 
 		OfferTemplate newOfferTemplate = null;
 		try {
-			newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getPrefix(), postData.getDescription(), postData.getServiceCodes(),
+			newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getPrefix(), postData.getDescription(), postData.getServicesToActivate(),
 					currentUser);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
@@ -70,7 +70,7 @@ public class BusinessOfferApi extends BaseApi {
 
 			boolean toUpdate = false;
 
-			for (ServiceCodeDto serviceCodeDto : postData.getServiceCodes()) {
+			for (ServiceCodeDto serviceCodeDto : postData.getServicesToActivate()) {
 				String serviceCode = postData.getPrefix() + "_" + serviceCodeDto.getCode();
 				if (serviceCode.equals(serviceTemplate.getCode())) {
 					if (serviceCodeDto.getServiceCustomFields() != null) {
