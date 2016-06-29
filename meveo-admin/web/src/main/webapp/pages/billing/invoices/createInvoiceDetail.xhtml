@@ -198,7 +198,7 @@
 											</p:columnGroup>
 											<p:column>
 											<hftl:decorateFormField fieldId="usageDate">
-                                                 <p:calendar id="usageDate" value="#{rated.usageDate}"  pattern="#{ParamBean.getInstance().getProperty('meveo.dateFormat','dd/MM/yyyy')}" >												
+                                                 <p:calendar id="usageDate" value="#{rated.usageDate}"  pattern="#{paramBean.getInstance().getProperty('meveo.dateFormat','dd/MM/yyyy')}" >												
 													<p:ajax event="change"
 														listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
 														update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
