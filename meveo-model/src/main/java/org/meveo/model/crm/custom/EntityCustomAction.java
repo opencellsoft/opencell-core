@@ -116,7 +116,7 @@ public class EntityCustomAction extends BusinessEntity {
 
         EntityCustomAction other = (EntityCustomAction) obj;
 
-        if (getId() != null && other.getId() != null && getId() == other.getId()) {
+        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
             // return true;
         }
 
