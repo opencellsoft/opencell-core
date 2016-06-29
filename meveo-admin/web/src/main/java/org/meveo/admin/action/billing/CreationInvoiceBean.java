@@ -50,6 +50,7 @@ import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -59,6 +60,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -109,6 +111,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 	@Inject
 	private UserAccountService userAccountService;
+	
+	@Inject
+	private ChargeTemplateServiceAll chargeTemplateServiceAll;
 
 	private Invoice invoiceToAdd;
 	private Invoice selectedInvoice;
@@ -116,8 +121,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	private BigDecimal quantity;
 	private BigDecimal unitAmountWithoutTax;
 	private String description;
+	private Date usageDate = new Date();
 	private RatedTransaction selectedRatedTransaction;
 	private List<SelectItem> invoiceCategoriesGUI;
+	private ChargeTemplate selectedCharge;
 
 	private boolean includeBalance;
 
@@ -170,7 +177,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 				}
 			}
 		}
-
 		entity.setAmountWithoutTax(BigDecimal.ZERO);
 		entity.setAmountWithTax(BigDecimal.ZERO);
 		entity.setAmountTax(BigDecimal.ZERO);
@@ -255,11 +261,19 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 				messages.error("UnitAmountWithoutTax is required.");
 				return;
 			}
+			if (StringUtils.isBlank(selectedCharge)) {
+				messages.error("Charge is required.");
+				return;
+			}
+//			if (StringUtils.isBlank(usageDate)) {
+//				messages.error("UsageDate is required.");
+//				return;
+//			}
 
 			selectInvoiceSubCat = invoiceSubCategoryService.refreshOrRetrieve(selectInvoiceSubCat);
 
 			RatedTransaction ratedTransaction = new RatedTransaction();
-			ratedTransaction.setUsageDate(new Date());
+			ratedTransaction.setUsageDate(usageDate);
 			ratedTransaction.setUnitAmountWithoutTax(unitAmountWithoutTax);
 			ratedTransaction.setQuantity(quantity);
 			ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
@@ -267,12 +281,12 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			ratedTransaction.setBillingAccount(getFreshBA());
 			ratedTransaction.setInvoiceSubCategory(selectInvoiceSubCat);
 			ratedTransaction.setProvider(getCurrentProvider());
-			ratedTransaction.setCode("RT_" + selectInvoiceSubCat.getCode());
+			ratedTransaction.setCode(selectedCharge.getCode());
 			ratedTransaction.setDescription(description);
 			ratedTransaction.setInvoice(entity);
 			ratedTransaction.setInvoiceSubCategory(selectInvoiceSubCat);
 
-			agregateHandler.addRT(ratedTransaction,description, getFreshUA(), currentUser);
+			agregateHandler.addRT(ratedTransaction,selectInvoiceSubCat.getDescription(), getFreshUA(), currentUser);
 			updateAmountsAndLines(agregateHandler, getFreshBA());
 		} catch (BusinessException be) {
 			messages.error(be.getMessage());
@@ -316,14 +330,14 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	 * @throws BusinessException
 	 */
 	public void deleteRatedTransactionLine() throws BusinessException {
-		agregateHandler.removeRT(selectedRatedTransaction,selectedRatedTransaction.getDescription(), getFreshUA(), currentUser);
+		agregateHandler.removeRT(selectedRatedTransaction,selectedRatedTransaction.getInvoiceSubCategory().getDescription(), getFreshUA(), currentUser);
 		updateAmountsAndLines(agregateHandler, getFreshBA());
 	}
 
 	public void deleteLinkedInvoiceCategoryDetaild() throws BusinessException {		
 		for(int i=0 ; i< selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactions().size();i++){
 			agregateHandler.removeRT(selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactions().get(i),
-					selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactions().get(i).getDescription(),getFreshUA(), currentUser);
+					selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactions().get(i).getInvoiceSubCategory().getDescription(),getFreshUA(), currentUser);
 		}
 		updateAmountsAndLines(agregateHandler, getFreshBA());
 	}
@@ -340,10 +354,31 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
 			for (RatedTransaction rt : subcat.getRatedtransactions()) {
 				rt.setAmountWithoutTax(null);
-				agregateHandler.addRT(rt,rt.getDescription(), getFreshUA(), currentUser);
+				agregateHandler.addRT(rt,rt.getInvoiceSubCategory().getDescription(), getFreshUA(), currentUser);
 			}
 		}
 		updateAmountsAndLines(agregateHandler, ratedTx.getBillingAccount());
+	}
+	
+	/**
+	 * Include original opened ratedTransaction
+	 * 
+	 * @throws BusinessException
+	 */
+
+	public void importOpenedRT() throws BusinessException {
+		if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
+			messages.error("BillingAccount is required.");
+			return;
+		}
+
+		if (entity.getInvoiceType().getCode().equals(invoiceTypeService.getCommercialCode())) {
+			List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(getFreshUA().getWallet(), null);			
+			for (RatedTransaction ratedTransaction : openedRT) {
+				agregateHandler.addRT(ratedTransaction,ratedTransaction.getInvoiceSubCategory().getDescription(), getFreshUA(), currentUser);
+			}
+			updateAmountsAndLines(agregateHandler, entity.getBillingAccount());
+		}
 	}
 
 	/**
@@ -361,7 +396,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 		entity.setInvoiceNumber(invoiceService.getInvoiceNumber(entity, getCurrentUser()));
 		super.saveOrUpdate(false);
-
+		
 		for (Entry<String, TaxInvoiceAgregate> entry : agregateHandler.getTaxInvAgregateMap().entrySet()) {
 			TaxInvoiceAgregate taxInvAgr = entry.getValue();
 			taxInvAgr.setAuditable(auditable);
@@ -383,7 +418,13 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			invoiceAgregateService.create(subcat, currentUser);
 			for (RatedTransaction rt : subcat.getRatedtransactions()) {
 				rt.setInvoice(entity);
-				ratedTransactionService.create(rt, currentUser);
+				rt.setStatus(RatedTransactionStatusEnum.BILLED);
+				if(rt.isTransient()){					
+					ratedTransactionService.create(rt, currentUser);
+				}else{					
+					ratedTransactionService.update(rt, currentUser);
+				}
+				
 			}
 		}
 
@@ -434,7 +475,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 					newRT.setCode(rt.getCode());
 					newRT.setDescription(rt.getDescription());
 					newRT.setInvoice(entity);
-					agregateHandler.addRT(newRT,newRT.getDescription(), getFreshUA(), currentUser);
+					agregateHandler.addRT(newRT,rt.getInvoiceSubCategory().getDescription(), getFreshUA(), currentUser);
 				}
 			} else {
 				for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
@@ -448,31 +489,11 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		}
 		updateAmountsAndLines(agregateHandler, getFreshBA());
 	}
-
+    
 	/**
-	 * Include original opened ratedTransaction
 	 * 
-	 * @throws BusinessException
+	 * @return
 	 */
-
-	public void importOpenedRT() throws BusinessException {
-		if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
-			messages.error("BillingAccount is required.");
-			return;
-		}
-
-		if (entity.getInvoiceType().equals(invoiceTypeService.getCommercialCode())) {
-			List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(getFreshUA().getWallet(), null);
-			for (RatedTransaction ratedTransaction : openedRT) {
-				ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
-				ratedTransaction.setInvoice(entity);
-				ratedTransactionService.update(ratedTransaction, currentUser);
-				agregateHandler.addRT(ratedTransaction,ratedTransaction.getDescription(), getFreshUA(), currentUser);
-			}
-			updateAmountsAndLines(agregateHandler, entity.getBillingAccount());
-		}
-	}
-
 	public List<SelectItem> getInvoiceCatSubCats() {
 		if (invoiceCategoriesGUI != null) {
 			return invoiceCategoriesGUI;
@@ -493,74 +514,16 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 		return invoiceCategoriesGUI;
 	}
-
-	public Invoice getInvoiceToAdd() {
-		return invoiceToAdd;
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public List<ChargeTemplate> getCharges() {			
+		return chargeTemplateServiceAll.findByInvoiceSubCategory(selectedInvoiceSubCategory);
 	}
 
-	public void setInvoiceToAdd(Invoice invoiceToAdd) {
-		this.invoiceToAdd = invoiceToAdd;
-	}
 
-	public Invoice getSelectedInvoice() {
-		return selectedInvoice;
-	}
-
-	public void setSelectedInvoice(Invoice selectedInvoice) {
-		this.selectedInvoice = selectedInvoice;
-	}
-
-	public BigDecimal getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
-
-	public BigDecimal getUnitAmountWithoutTax() {
-		return unitAmountWithoutTax;
-	}
-
-	public void setUnitAmountWithoutTax(BigDecimal unitAmountWithoutTax) {
-		this.unitAmountWithoutTax = unitAmountWithoutTax;
-	}
-
-	public List<SelectItem> getInvoiceCategoriesGUI() {
-		return invoiceCategoriesGUI;
-	}
-
-	public void setInvoiceCategoriesGUI(List<SelectItem> invoiceCategoriesGUI) {
-		this.invoiceCategoriesGUI = invoiceCategoriesGUI;
-	}
-
-	public InvoiceSubCategory getSelectedInvoiceSubCategory() {
-		return selectedInvoiceSubCategory;
-	}
-
-	public void setSelectedInvoiceSubCategory(InvoiceSubCategory selectedInvoiceSubCategory) {
-		this.selectedInvoiceSubCategory = selectedInvoiceSubCategory;
-	}
-
-	public RatedTransaction getSelectedRatedTransaction() {
-		return selectedRatedTransaction;
-	}
-
-	public void setSelectedRatedTransaction(RatedTransaction selectedRatedTransaction) {
-		this.selectedRatedTransaction = selectedRatedTransaction;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public boolean isIncludeBalance() {
-		return includeBalance;
-	}
 
 	public void setIncludeBalance(boolean includeBalance) {
 		this.includeBalance = includeBalance;
@@ -700,24 +663,14 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		}
 		updateAmountsAndLines(agregateHandler, getFreshBA());
 	}
-
+	
 	/**
-	 * @return the amountWithoutTax
+	 * 
+	 * @return
+	 * @throws BusinessException
 	 */
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
-
-	/**
-	 * @param amountWithoutTax
-	 *            the amountWithoutTax to set
-	 */
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
-
 	public LazyDataModel<Invoice> getInvoicesByTypeAndBA() throws BusinessException {
-	    if (getEntity().getBillingAccount() != null && !entity.getBillingAccount().isTransient()) {
+		if (getEntity().getBillingAccount() != null && !entity.getBillingAccount().isTransient()) {
 			BillingAccount ba = billingAccountService.refreshOrRetrieve(entity.getBillingAccount());
 			filters.put("billingAccount", ba);
 		}
@@ -734,7 +687,46 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			}
 		}
 
-		return getLazyDataModel();
+		return getLazyDataModel(filters, true);
+	}
+	
+	@Override
+	public String getBackView() {
+		// TODO use outcome and params
+		if (rootInvoiceId == null) {
+			return super.getBackView();
+		}
+		return "/pages/billing/invoices/invoiceDetail.xhtml?objectId=" + rootInvoiceId + "&cid=" + conversation.getId() + "&edit=true&faces-redirect=true";
+	}
+
+	@Override
+	public String getBackViewSave() {
+		return getBackView();
+	}
+	
+	
+	/*###################################################################################################
+	  #  Setters and Getters                                                                            #
+	  ###################################################################################################*/
+
+	public void handleSelectedInvoiceCatOrSubCat() {		    
+		if (selectedInvoiceSubCategory != null) {
+			description = selectedInvoiceSubCategory.getDescriptionOrCode();
+		}
+	}
+	
+	public void handleSelectedCharge() {		    
+		if (selectedCharge != null) {
+			description = selectedCharge.getDescriptionOrCode();
+		}
+	}
+	
+	public String getPageMode() {
+		if (mode != null && !StringUtils.isBlank(mode.get())) {
+			return mode.get();
+		}
+
+		return "agregated";
 	}
 
 	/**
@@ -752,33 +744,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		this.rootInvoiceId = rootInvoiceId;
 	}
 
-	@Override
-	public String getBackView() {
-		// TODO use outcome and params
-		if (rootInvoiceId == null) {
-			return super.getBackView();
-		}
-		return "/pages/billing/invoices/invoiceDetail.xhtml?objectId=" + rootInvoiceId + "&cid=" + conversation.getId() + "&edit=true&faces-redirect=true";
-	}
-
-	@Override
-	public String getBackViewSave() {
-		return getBackView();
-	}
-
-	public void handleSelectedInvoiceCatOrSubCat() {		    
-		if (selectedInvoiceSubCategory != null) {
-			description = selectedInvoiceSubCategory.getDescriptionOrCode();
-		}
-	}
-	
-	public String getPageMode() {
-		if (mode != null && !StringUtils.isBlank(mode.get())) {
-			return mode.get();
-		}
-
-		return "agregated";
-	}
 
 	/**
 	 * @return the selectedSubCategoryInvoiceAgregateDetaild
@@ -794,4 +759,113 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		this.selectedSubCategoryInvoiceAgregateDetaild = selectedSubCategoryInvoiceAgregateDetaild;
 	}
 
+	/**
+	 * @return the usageDate
+	 */
+	public Date getUsageDate() {
+		return usageDate;
+	}
+
+	/**
+	 * @param usageDate the usageDate to set
+	 */
+	public void setUsageDate(Date usageDate) {
+		this.usageDate = usageDate;
+	}
+
+	/**
+	 * @return the selectedCharge
+	 */
+	public ChargeTemplate getSelectedCharge() {
+		return selectedCharge;
+	}
+
+	/**
+	 * @param selectedCharge the selectedCharge to set
+	 */
+	public void setSelectedCharge(ChargeTemplate selectedCharge) {
+		this.selectedCharge = selectedCharge;
+	}
+
+	/**
+	 * @return the amountWithoutTax
+	 */
+	public BigDecimal getAmountWithoutTax() {
+		return amountWithoutTax;
+	}
+
+	/**
+	 * @param amountWithoutTax
+	 *            the amountWithoutTax to set
+	 */
+	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+		this.amountWithoutTax = amountWithoutTax;
+	}
+	public Invoice getInvoiceToAdd() {
+		return invoiceToAdd;
+	}
+
+	public void setInvoiceToAdd(Invoice invoiceToAdd) {
+		this.invoiceToAdd = invoiceToAdd;
+	}
+
+	public Invoice getSelectedInvoice() {
+		return selectedInvoice;
+	}
+
+	public void setSelectedInvoice(Invoice selectedInvoice) {
+		this.selectedInvoice = selectedInvoice;
+	}
+
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+
+	public BigDecimal getUnitAmountWithoutTax() {
+		return unitAmountWithoutTax;
+	}
+
+	public void setUnitAmountWithoutTax(BigDecimal unitAmountWithoutTax) {
+		this.unitAmountWithoutTax = unitAmountWithoutTax;
+	}
+
+	public List<SelectItem> getInvoiceCategoriesGUI() {
+		return invoiceCategoriesGUI;
+	}
+
+	public void setInvoiceCategoriesGUI(List<SelectItem> invoiceCategoriesGUI) {
+		this.invoiceCategoriesGUI = invoiceCategoriesGUI;
+	}
+
+	public InvoiceSubCategory getSelectedInvoiceSubCategory() {
+		return selectedInvoiceSubCategory;
+	}
+
+	public void setSelectedInvoiceSubCategory(InvoiceSubCategory selectedInvoiceSubCategory) {	
+		this.selectedInvoiceSubCategory = selectedInvoiceSubCategory;
+	}
+
+	public RatedTransaction getSelectedRatedTransaction() {
+		return selectedRatedTransaction;
+	}
+
+	public void setSelectedRatedTransaction(RatedTransaction selectedRatedTransaction) {
+		this.selectedRatedTransaction = selectedRatedTransaction;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public boolean isIncludeBalance() {
+		return includeBalance;
+	}	
 }
