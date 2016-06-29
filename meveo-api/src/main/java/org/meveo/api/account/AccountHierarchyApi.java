@@ -1009,7 +1009,7 @@ public class AccountHierarchyApi extends BaseApi {
 								}
 
 								customerAccount.setDateStatus(customerAccountDto.getDateStatus());
-								customerAccount.setDateDunningLevel(customerAccount.getDateDunningLevel());
+								customerAccount.setDateDunningLevel(customerAccountDto.getDateDunningLevel());
 
 								customerAccount.setMandateDate(customerAccountDto.getMandateDate());
 								customerAccount.setMandateIdentification(customerAccountDto.getMandateIdentification());
@@ -1051,7 +1051,7 @@ public class AccountHierarchyApi extends BaseApi {
 										customerAccount.setDateStatus(customerAccountDto.getDateStatus());
 									}
 									if (!StringUtils.isBlank(customerAccountDto.getDateDunningLevel())) {
-										customerAccount.setDateDunningLevel(customerAccount.getDateDunningLevel());
+										customerAccount.setDateDunningLevel(customerAccountDto.getDateDunningLevel());
 									}
 									if (!StringUtils.isBlank(customerAccountDto.getMandateDate())) {
 										customerAccount.setMandateDate(customerAccountDto.getMandateDate());
