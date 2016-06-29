@@ -81,6 +81,7 @@ public class FrontendServlet extends HttpServlet {
 
         // Get requested file by path info.
         String requestedFile = request.getPathInfo();
+        log.debug("requestedFile={}",requestedFile);
         String providerCode = null;
         // Validate the requested file ------------------------------------------------------------
     	if (requestedFile.startsWith("/")) {
