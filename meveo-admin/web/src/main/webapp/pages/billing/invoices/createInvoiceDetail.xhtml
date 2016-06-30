@@ -142,7 +142,7 @@
 							process=":formId:tabView @this"
 							update=":formId:tabView:aggregatedInvoicePanel :formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary :formId:messages" />	
 							<h:outputText value="&#160;" /><h:outputText value="&#160;" /><h:outputText value="&#160;" /><h:outputText value="&#160;" /><h:outputText value="&#160;" />
-						<p:commandButton immediate="true"
+						<p:commandButton immediate="true" rendered="#{creationInvoiceBean.isDetailed()}"
 						    disabled = "#{creationInvoiceBean.entity.invoiceType.code ne invoiceTypeBean.commercialCode}"
 							value="#{messages['action.invoice.importOpenedRT']}"
 							action="#{creationInvoiceBean.importOpenedRT}"
