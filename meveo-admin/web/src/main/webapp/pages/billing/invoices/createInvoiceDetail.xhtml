@@ -41,7 +41,8 @@
 				column1Label="#{messages['invoice.invoiceNumber']}"
 				column1="invoiceNumber"
 				column2Label="#{messages['invoice.amountWithTax']}"
-				column2="amountWithTax">
+				column2="amountWithTax"
+				column2Converter="4digits">
 			</hftl:entityPopup>
 		</c:if>
 		<p:panel>
@@ -199,7 +200,7 @@
 											<p:column>
 											<hftl:decorateFormField fieldId="usageDate">
                                                  <p:calendar id="usageDate" value="#{rated.usageDate}"  pattern="#{paramBean.getInstance().getProperty('meveo.dateFormat','dd/MM/yyyy')}" >												
-													<p:ajax event="change"
+													<p:ajax event="dateSelect"
 														listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
 														update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
 												</p:calendar>

@@ -962,12 +962,19 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						Element line = doc.createElement("line");
 						String code = "", description = ""; Date periodStartDate=null;Date periodEndDate=null;
 						WalletOperation walletOperation = null;
+						code = ratedTransaction.getCode();
+						description = ratedTransaction.getDescription();
+												
 						if (ratedTransaction.getWalletOperationId() != null) {
 							walletOperation = getEntityManager().find(WalletOperation.class,
 									ratedTransaction.getWalletOperationId());
 							if(walletOperation!=null){	
-								code = walletOperation.getCode();
-								description = walletOperation.getDescription();
+								if(StringUtils.isBlank(code)){
+									code = walletOperation.getCode();
+								}
+								if(StringUtils.isBlank(description)){
+									description = walletOperation.getDescription();
+								}
 
 								if(walletOperation.getProvider().getInvoiceConfiguration().getDisplayChargesPeriods()){
 									ChargeInstance chargeInstance=(ChargeInstance) chargeInstanceService.findById(walletOperation.getChargeInstance().getId(),true); 
@@ -993,9 +1000,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 											 DateUtils.formatDateWithPattern(periodEndDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
 								}
 							}
-						} else {
-							code = ratedTransaction.getCode();
-							description = ratedTransaction.getDescription();
 						} 
 										
 						line.setAttribute("code", code != null ? code : "");

@@ -265,10 +265,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 				messages.error("Charge is required.");
 				return;
 			}
-//			if (StringUtils.isBlank(usageDate)) {
-//				messages.error("UsageDate is required.");
-//				return;
-//			}
+			if (StringUtils.isBlank(usageDate)) {
+				messages.error("UsageDate is required.");
+				return;
+			}
 
 			selectInvoiceSubCat = invoiceSubCategoryService.refreshOrRetrieve(selectInvoiceSubCat);
 
@@ -391,9 +391,12 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 				messages.error("BillingAccount is required.");
 				return;
 			}
-	
 			if (entity.getInvoiceType().getCode().equals(invoiceTypeService.getCommercialCode())) {
-				List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(getFreshUA().getWallet(), null);			
+				List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(getFreshUA().getWallet(), null);	
+				if(openedRT != null && openedRT.isEmpty()){
+					messages.error("No opened RatedTransactions");
+					return;
+				}
 				for (RatedTransaction ratedTransaction : openedRT) {
 					agregateHandler.addRT(ratedTransaction,ratedTransaction.getInvoiceSubCategory().getDescription(), getFreshUA(), currentUser);
 					updateAmountsAndLines(agregateHandler, entity.getBillingAccount());
