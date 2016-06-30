@@ -221,4 +221,13 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "SubCategoryInvoiceAgregate [id="+id+",invoiceSubCategory=" + invoiceSubCategory + ", subCategoryTaxes=" + subCategoryTaxes + ", categoryInvoiceAgregate=" + categoryInvoiceAgregate + ", wallet=" + wallet + ", ratedtransactions=" + ratedtransactions + ", discountPlanCode=" + discountPlanCode + ", discountPlanItemCode=" + discountPlanItemCode + ", discountPercent=" + discountPercent + ", oldAmountWithoutTax=" + oldAmountWithoutTax + ", oldAmountWithTax="
+				+ oldAmountWithTax + "]";
+	}
+
 }

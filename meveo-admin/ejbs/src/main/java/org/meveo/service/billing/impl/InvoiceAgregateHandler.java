@@ -86,14 +86,6 @@ public class InvoiceAgregateHandler {
 	public void removeRT(RatedTransaction ratedTRansaction,String description, UserAccount userAccount, User currentUser) throws BusinessException {
 		InvoiceSubCategory invoiceSubCategory = ratedTRansaction.getInvoiceSubCategory();
 		BillingAccount billingAccount = ratedTRansaction.getBillingAccount();
-
-		if (ratedTRansaction.getAmountWithoutTax() == null) {
-			if (ratedTRansaction.getUnitAmountWithoutTax() == null || ratedTRansaction.getQuantity() == null) {
-				throw new BusinessException("RT.unitAmountWithoutTax or RT.quantity are null");
-			}
-			ratedTRansaction.setAmountWithoutTax(ratedTRansaction.getUnitAmountWithoutTax().multiply(ratedTRansaction.getQuantity()));
-		}
-
 		removeLine(invoiceSubCategory, billingAccount,userAccount, description,ratedTRansaction.getAmountWithoutTax(), ratedTRansaction, currentUser);
 	}
 
@@ -232,8 +224,8 @@ public class InvoiceAgregateHandler {
 			}
 			
 		} else {
-			if(ratedTransaction != null){
-				subCategoryInvoiceAgregate.getRatedtransactions().remove(ratedTransaction);
+			if(ratedTransaction != null){				
+				subCategoryInvoiceAgregate.getRatedtransactions().remove(ratedTransaction);				
 			}
 		}
 		subCategoryInvoiceAgregate.setAmountWithoutTax(addOrSubtract(subCategoryInvoiceAgregate.getAmountWithoutTax(), amountWithoutTax, isToAdd));

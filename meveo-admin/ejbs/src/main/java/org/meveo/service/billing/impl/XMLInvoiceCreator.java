@@ -921,10 +921,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = categoryInvoiceAgregate
 						.getSubCategoryInvoiceAgregates();
 
-				for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
+				for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {									
 					InvoiceSubCategory invoiceSubCat = subCatInvoiceAgregate.getInvoiceSubCategory();
 					List<RatedTransaction> transactions = ratedTransactionService.getRatedTransactions(
-							subCatInvoiceAgregate.getWallet(), subCatInvoiceAgregate.getInvoice(),
+							subCatInvoiceAgregate.getWallet(), invoice,
 							subCatInvoiceAgregate.getInvoiceSubCategory());
 								
 					String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription();
