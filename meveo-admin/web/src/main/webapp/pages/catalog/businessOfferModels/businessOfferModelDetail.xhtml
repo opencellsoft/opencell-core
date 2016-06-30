@@ -3,7 +3,7 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewParam name="objectId" value="#{businessOfferModelBean.objectId}" />
+            <f:viewParam name="businessOfferModelId" value="#{businessOfferModelBean.objectIdFromSet}" />
         </f:metadata>
     </ui:define>
 
@@ -38,14 +38,14 @@
 
             <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />
             <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description" />
-           
+
             <hftl:formField id="offerSelectId" label="#{messages['pricePlanMatrix.offerCode']}" field="offerTemplate" valueLabelField="code" required="true" popup="true"
                 popupId="offerTemplatePopup" rendered="#{!businessOfferModelBean.entity.downloaded}" />
-                
+
             <hftl:decorateFormField fieldId="offerId" label="#{messages['pricePlanMatrix.offerCode']}" required="true" rendered="#{businessOfferModelBean.entity.downloaded}">
                 <h:outputText id="offerId" value="#{businessOfferModelBean.offerTemplateCodeFromModuleSource}" styleClass="field-value" />
             </hftl:decorateFormField>
-            
+
             <hftl:formField id="script" label="#{messages['meveoModule.script']}" field="script" valueLabelField="code" componentWidth="30" popup="true" popupId="moduleScriptPopup"
                 createEditPopup="true" createEditPopupId="scriptDialog" createEditPopupListenerBean="#{businessOfferModelBean}" createEditPopupListenerViewMethod="viewEditScript"
                 createEditPopupListenerNewMethod="newScript" createEditPopupListenerUpdate=":scriptForm" />
@@ -64,7 +64,8 @@
             <ui:param name="buttons" value="true" />
             <ui:define name="buttons">
                 <hf:formButtons backingBean="#{businessOfferModelBean}" edit="true" showEditButton="#{!businessOfferModelBean.entity.downloaded}"
-                    showEnableDisableButton="#{!businessOfferModelBean.entity.downloaded}" showDeleteButton="#{!businessOfferModelBean.entity.downloaded}" formId="moduleId">
+                    showEnableDisableButton="#{!businessOfferModelBean.entity.downloaded}" showDeleteButton="#{!businessOfferModelBean.entity.downloaded}" formId="moduleId"
+                    useCustomIdParam="true">
 
                     <p:commandButton value="#{messages['meveoModule.install']}" action="#{businessOfferModelBean.install}" update="@all"
                         rendered="#{businessOfferModelBean.entity.downloaded and !businessOfferModelBean.entity.installed}" />
@@ -103,7 +104,8 @@
             </p:panel>
         </h:form>
 
-        <h:panelGroup layout="block" styleClass="form-panel-actions" rendered="#{!businessOfferModelBean.entity.isTransient() and (!businessOfferModelBean.entity.downloaded or businessOfferModelBean.entity.installed)}">
+        <h:panelGroup layout="block" styleClass="form-panel-actions"
+            rendered="#{!businessOfferModelBean.entity.isTransient() and (!businessOfferModelBean.entity.downloaded or businessOfferModelBean.entity.installed)}">
             <p:commandButton actionListener="#{businessOfferModelBean.createOfferFromBOMPopup()}" icon="ui-icon-extlink" value="#{messages['action.createOfferFromBOM']}">
                 <f:param name="objectId" value="#{businessOfferModelBean.entity.id}"></f:param>
                 <p:ajax event="dialogReturn" listener="#{businessOfferModelBean.onBOMOfferCreation}" update=":moduleForm:messages" />

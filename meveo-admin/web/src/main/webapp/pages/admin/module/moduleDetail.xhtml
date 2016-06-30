@@ -4,7 +4,7 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewParam name="objectId" value="#{meveoModuleBean.objectId}" />
+            <f:viewParam name="meveoModuleId" value="#{meveoModuleBean.objectIdFromSet}" />
         </f:metadata>
     </ui:define>
 
@@ -28,7 +28,8 @@
         </ui:include>
 
 
-        <hftl:formPanel formId="moduleForm" label="#{messages['meveoModule.title']}" showFormButtons="false" backingBean="#{meveoModuleBean}" edit="#{!meveoModuleBean.entity.downloaded}">
+        <hftl:formPanel formId="moduleForm" label="#{messages['meveoModule.title']}" showFormButtons="false" backingBean="#{meveoModuleBean}"
+            edit="#{!meveoModuleBean.entity.downloaded}">
             <hftl:formField label="#{messages['businessEntity.code']}" field="code" maxlength="35" required="true" validateUnique="true" />
             <hftl:formField label="#{messages['businessEntity.description']}" field="description" required="true" id="description" maxlength="100" />
             <hftl:formField label="#{messages['meveoModule.license']}" required="true" field="license" id="license" isMessage="true" newLine="true" />
@@ -65,7 +66,8 @@
             <ui:param name="buttons" value="true" />
             <ui:define name="buttons">
                 <hf:formButtons backingBean="#{meveoModuleBean}" edit="true" showEditButton="#{!meveoModuleBean.entity.downloaded}"
-                    showEnableDisableButton="#{!meveoModuleBean.entity.downloaded}" showDeleteButton="#{!meveoModuleBean.entity.downloaded}" formId="moduleId">
+                    showEnableDisableButton="#{!meveoModuleBean.entity.downloaded}" showDeleteButton="#{!meveoModuleBean.entity.downloaded}" formId="moduleId"
+                    useCustomIdParam="true">
 
                     <p:commandButton value="#{messages['meveoModule.install']}" action="#{meveoModuleBean.install}" update="@form"
                         rendered="#{meveoModuleBean.entity.downloaded and !meveoModuleBean.entity.installed}" />
