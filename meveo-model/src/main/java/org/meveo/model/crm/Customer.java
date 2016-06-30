@@ -40,11 +40,13 @@ import org.meveo.model.AccountEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.SecuredBusinessEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
 
 @Entity
+@SecuredBusinessEntity
 @CustomFieldEntity(cftCodePrefix = "CUST")
 @ExportIdentifier({ "code", "provider" })
 @DiscriminatorValue(value = "ACCT_CUST")

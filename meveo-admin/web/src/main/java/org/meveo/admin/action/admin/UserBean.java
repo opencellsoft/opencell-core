@@ -29,8 +29,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.faces.event.ActionEvent;
@@ -44,7 +46,11 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.SecuredBusinessEntity;
+import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
@@ -53,6 +59,9 @@ import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.security.SecuredBusinessEntityService;
+import org.meveo.service.security.SecuredBusinessEntityServiceFactory;
+import org.meveo.service.security.SecuredEntityService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -81,6 +90,12 @@ public class UserBean extends BaseBean<User> {
 
     @Inject
     private ProviderService providerService;
+    
+    @Inject
+    private SecuredEntityService securedEntityService;
+    
+    @Inject
+    private SecuredBusinessEntityServiceFactory securedBusinessEntityServiceFactory;
 
     @Inject
     private Messages messages;
@@ -113,6 +128,11 @@ public class UserBean extends BaseBean<User> {
     private String directoryName;
     private List<File> fileList;
     private UploadedFile file;
+    private boolean forceUpdate;
+    private String entityClass;
+    private Map<String, String> securedEntityTypes;
+    private DualListModel<BusinessEntity> securedEntities;
+    
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
 
@@ -543,4 +563,105 @@ public class UserBean extends BaseBean<User> {
     public void onProviderChange() {
         rolesDM = null;
     }
+    
+	public String getEntityClass() {
+		return entityClass;
+	}
+
+	public void setEntityClass(String entityClass) {
+		this.entityClass = entityClass;
+	}
+
+	public void editSecuredEntity(SecuredEntity entity) {
+		this.entityClass = entity.getEntityClass();
+		forceUpdate = true;
+	}
+
+	@ActionMethod
+	public void deleteSecuredEntity(SecuredEntity entity) throws BusinessException {
+		getEntity().getSecuredEntities().remove(entity);
+		entity = securedEntityService.refreshOrRetrieve(entity);
+		securedEntityService.remove(entity);
+		clearSecuredEntity();
+	}
+
+	@ActionMethod
+	public void updateEntityClass() {
+		forceUpdate = true;
+	}
+
+	public Map<String, String> getSecuredEntityTypes() {
+		if (securedEntityTypes == null) {
+			securedEntityTypes = new HashMap<>();
+			Set<Class<?>> securedEntityClasses = ReflectionUtils.getClassesAnnotatedWith(SecuredBusinessEntity.class);
+			String key = null;
+			String value = null;
+			for (Class<?> securedEntityClass : securedEntityClasses) {
+				value = ReflectionUtils.getHumanClassName(securedEntityClass.getSimpleName());
+				key = securedEntityClass.getTypeName();
+				securedEntityTypes.put(key, value);
+			}
+		}
+		return securedEntityTypes;
+	}
+
+	@ActionMethod
+	public void saveSecuredEntity() throws BusinessException {
+		List<SecuredEntity> newEntities = new ArrayList<>();
+		SecuredEntity newEntity = null;
+		SecuredEntity existingEntity = null;
+		List<String> selectedEntityCodes = new ArrayList<>();
+		for(SecuredEntity selectedEntity : getEntity().getSecuredEntities()) {
+			selectedEntityCodes.add(selectedEntity.getCode());
+		}
+		for (BusinessEntity businessEntity : securedEntities.getTarget()) {
+			if(!selectedEntityCodes.contains(businessEntity.getCode())){
+				existingEntity = securedEntityService.findByCodeAndUser(businessEntity.getCode(), getEntity(), getCurrentUser().getProvider());
+				if(existingEntity == null){
+					newEntity = new SecuredEntity(businessEntity);
+					newEntity.setEntityClass(getEntityClass());
+					newEntity.setUser(getEntity());
+					newEntities.add(newEntity);
+				}
+			}
+		}
+		getEntity().getSecuredEntities().addAll(newEntities);
+		super.saveOrUpdate(true);
+		clearSecuredEntity();
+	}
+
+	@ActionMethod
+	public void clearSecuredEntity() {
+		setEntityClass("");
+		forceUpdate = true;
+	}
+
+	public DualListModel<BusinessEntity> getSecuredEntitiesByType() {
+		if (forceUpdate || securedEntities == null) {
+			forceUpdate = false;
+			SecuredBusinessEntityService service = null;
+			List<BusinessEntity> source = new ArrayList<>();
+			List<BusinessEntity> target = new ArrayList<>();
+			if (getEntityClass() != null) {
+				service = securedBusinessEntityServiceFactory.getService(getEntityClass());
+				if (service != null) {
+					source.addAll(service.list());
+					if (getEntity() != null && getEntity().getSecuredEntities() != null && !getEntity().getSecuredEntities().isEmpty()) {
+						for (SecuredEntity securedEntity : getEntity().getSecuredEntities()) {
+							if(securedEntity.getEntityClass().equals(entityClass)){
+								target.add(securedEntity);
+							}
+						}
+					}
+					source.removeAll(target);
+				}
+			}
+			securedEntities = new DualListModel<BusinessEntity>(source, target);
+		}
+		return securedEntities;
+	}
+
+	public void setSecuredEntitiesByType(DualListModel<BusinessEntity> securedEntities) {
+		this.securedEntities = securedEntities;
+	}
 }

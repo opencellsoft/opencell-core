@@ -38,6 +38,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.SecuredBusinessEntity;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.Sequence;
 import org.meveo.model.billing.TradingCountry;
@@ -47,6 +48,7 @@ import org.meveo.model.shared.Address;
 
 @Entity
 @ObservableEntity
+@SecuredBusinessEntity
 @CustomFieldEntity(cftCodePrefix = "SELLER")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "CRM_SELLER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))

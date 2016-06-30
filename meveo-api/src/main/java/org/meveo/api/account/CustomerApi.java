@@ -17,6 +17,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.SecuredBusinessEntityProperty;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Customer;
@@ -54,6 +55,7 @@ public class CustomerApi extends AccountApi {
         create(postData, currentUser, true);
     }
 
+    @SecuredBusinessEntityProperty(property = "postData.seller", entityClass = Seller.class)
     public Customer create(CustomerDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -70,6 +72,7 @@ public class CustomerApi extends AccountApi {
         }
 
         handleMissingParameters();
+        
         
         // check if customer already exists
         if (customerService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {

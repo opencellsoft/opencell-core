@@ -16,33 +16,120 @@
                 </p:breadCrumb>
             </h:form>
         </p:panel>
-        <hftl:formPanel label="#{messages['user.userPanel']}" backingBean="#{userBean}" columns="1">
-            <hftl:formField label="#{messages['user.userName']}" field="userName" required="true" validateUnique="true" useConverter="false" />
-            <hftl:formField label="#{messages['contactInformation.email']}" field="email" required="true" useConverter="false" validatorId="emailValidator" />
-            <p:commandLink value="#{messages['menutop.changePassword']}" action="#{userBean.showHidePassword}" update="passwordPanel"
-                rendered="#{!(userBean.entity.id==null) and userBean.edit and userBean.canUserUpdateEntity()}" partialSubmit="true" process="@this" style="text-align:right;" />
-
-
-            <p:outputPanel id="passwordPanel" styleClass="clearLeft">
-                <h:panelGroup rendered="#{(userBean.show or userBean.entity.id==null) and userBean.edit}">
-                    <hftl:decorateFormField fieldId="password" label="#{messages['user.password']}">
-                        <p:password autocomplete="off" id="password" feedback="true" value="#{userBean.password}" required="true" match="repeatedPassword" />
-                    </hftl:decorateFormField>
-                    <hftl:decorateFormField id="repeatedPassword" fieldId="repeatedPassword" label="#{messages['user.repeatedPassword']}">
-                        <p:password id="repeatedPassword" value="#{userBean.repeatedPassword}" autocomplete="off" />
-                    </hftl:decorateFormField>
-                </h:panelGroup>
-            </p:outputPanel>
-
-            <hftl:formField label="#{messages['commons.provider']}" field="provider" listBean="#{providerBean}" valueLabelField="code" required="true" allowEdit="false"
-                rendered="#{identity.hasPermission('superAdmin', 'superAdminManagement')}" newLine="true" listenerUpdate="userRoles" actionListenerBean="#{userBean}"
-                actionListenerMethod="onProviderChange" />
-
-            <hftl:formField id="userRoles" label="#{messages['user.roles']}" field="roles" listType="pickUpList" valueLabelField="name" required="true"
-                dualListModel="#{userBean.dualListModel}" newLine="true" />
-
-        </hftl:formPanel>
-
+        
+        <p:panel header="#{messages['user.userPanel']}">
+        	<p:tabView id="tabView" activeIndex="#{userBean.activeTab}">
+	        	<p:tab title="#{messages['commons.tab.information']}">
+	        		<hftl:formPanel label="#{messages['user.userPanel']}" backingBean="#{userBean}" columns="1">
+			            <hftl:formField label="#{messages['user.userName']}" field="userName" required="true" validateUnique="true" useConverter="false" />
+			            <hftl:formField label="#{messages['contactInformation.email']}" field="email" required="true" useConverter="false" validatorId="emailValidator" />
+			            <p:commandLink value="#{messages['menutop.changePassword']}" action="#{userBean.showHidePassword}" update="passwordPanel"
+			                rendered="#{!(userBean.entity.id==null) and userBean.edit and userBean.canUserUpdateEntity()}" partialSubmit="true" process="@this" style="text-align:right;" />
+			
+			
+			            <p:outputPanel id="passwordPanel" styleClass="clearLeft">
+			                <h:panelGroup rendered="#{(userBean.show or userBean.entity.id==null) and userBean.edit}">
+			                    <hftl:decorateFormField fieldId="password" label="#{messages['user.password']}">
+			                        <p:password autocomplete="off" id="password" feedback="true" value="#{userBean.password}" required="true" match="repeatedPassword" />
+			                    </hftl:decorateFormField>
+			                    <hftl:decorateFormField id="repeatedPassword" fieldId="repeatedPassword" label="#{messages['user.repeatedPassword']}">
+			                        <p:password id="repeatedPassword" value="#{userBean.repeatedPassword}" autocomplete="off" />
+			                    </hftl:decorateFormField>
+			                </h:panelGroup>
+			            </p:outputPanel>
+			
+			            <hftl:formField label="#{messages['commons.provider']}" field="provider" listBean="#{providerBean}" valueLabelField="code" required="true" allowEdit="false"
+			                rendered="#{identity.hasPermission('superAdmin', 'superAdminManagement')}" newLine="true" listenerUpdate="userRoles" actionListenerBean="#{userBean}"
+			                actionListenerMethod="onProviderChange" />
+			
+			            <hftl:formField id="userRoles" label="#{messages['user.roles']}" field="roles" listType="pickUpList" valueLabelField="name" required="true"
+			                dualListModel="#{userBean.dualListModel}" newLine="true" />
+			
+			        </hftl:formPanel>
+	        	</p:tab>
+	        	<p:tab title="#{messages['user.securedEntitiesTab']}">
+	        		<p:panel id="selectedEntitiesPanel">
+						<hftl:dataList id="securedEntitiesTable"
+							backingBean="#{userBean}"
+							dataModel="#{userBean.entity.securedEntities}"
+							resultsId="securedEntity_results" 
+							exportToExcel="false" 
+							exportToXml="false" 
+							exportToCsv="false">
+							<hftl:column
+								label="#{messages['BusinessEntity.type']}"
+								field="readableEntityClass"/>
+							<hftl:column
+								label="#{messages['BusinessEntity.code']}"
+								field="code"/>
+							<hftl:column
+								label="#{messages['BusinessEntity.description']}"
+								field="description"/>
+							<p:column styleClass="actions-column"
+								rendered="#{userBean.edit}">
+								<f:facet name="header">
+									<h:outputText value="#{messages['commons.actions']}" />
+								</f:facet>
+								<p:commandButton
+									action="#{userBean.editSecuredEntity(entity)}"
+									icon="ui-icon-document" 
+									update=":tabView:securedEntityForm:entitiesSelectionPanel" />
+								<p:commandButton
+									action="#{userBean.deleteSecuredEntity(entity)}"
+									rendered="#{userBean.canUserUpdateEntity()}"
+									icon="ui-icon-trash"
+									update=":tabView:selectedEntitiesPanel :tabView:securedEntityForm:entitiesSelectionPanel" />
+							</p:column>
+						</hftl:dataList>
+					</p:panel>
+		
+					<p:panel rendered="#{userBean.edit}">
+						<hftl:formPanel formId="securedEntityForm"
+							edit="#{userBean.edit}"
+							backingBean="#{userBean}"
+							showFormButtons="false" ajaxSubmit="true">
+							<p:panel id="entitiesSelectionPanel">
+								<hftl:decorateFormField fieldId="entityClass" label="#{messages['BusinessEntity.type']}">
+									<p:selectOneMenu id="entityClass" value="#{userBean.entityClass}">
+										<f:selectItem itemLabel=""/>
+										<f:selectItems value="#{userBean.securedEntityTypes.entrySet()}" var="item" itemLabel="#{item.value}" itemValue="#{item.key}"/>
+										<p:ajax listener="#{userBean.updateEntityClass}" update=":tabView:securedEntityForm" event="change" />
+									</p:selectOneMenu>
+								</hftl:decorateFormField>
+								
+								<hftl:formField id="securedEntities"
+									label="#{messages['user.securedEntities']}"
+									field="securedEntities" 
+									entity="#{userBean.entity}"
+									listType="pickUpList"
+									valueLabelField="code" required="false"
+									dualListModel="#{userBean.securedEntitiesByType}"
+									newLine="true" />
+							</p:panel>
+							
+							<ui:param name="buttons" value="true" />
+							<ui:define name="buttons">
+								<p:commandButton
+									rendered="#{userBean.canUserUpdateEntity()}"
+									action="#{userBean.saveSecuredEntity()}"
+									value="#{messages['action.addSave']}"
+									update=":tabView:selectedEntitiesPanel :tabView:securedEntityForm:entitiesSelectionPanel" >
+									<f:param name="objectId" value="#{userBean.entity.id}"></f:param>
+								</p:commandButton>
+								<p:commandButton value="#{messages['action.cancel']}"
+									action="#{userBean.newSecuredEntity()}"
+									update=":tabView:securedEntityForm:entitiesSelectionPanel" />
+								<p:button id="buttonBack" value="#{messages['action.back']}"
+									outcome="#{userBean.back()}" includeViewParams="true">
+									<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+								</p:button>
+							</ui:define>
+							
+						</hftl:formPanel>
+					</p:panel>
+	        	</p:tab>
+	        </p:tabView>
+        </p:panel>
     </ui:define>
 
 </ui:composition>

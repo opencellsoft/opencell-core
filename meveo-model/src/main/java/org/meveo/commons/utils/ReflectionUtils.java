@@ -21,6 +21,7 @@ package org.meveo.commons.utils;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.Vector;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -187,5 +189,16 @@ public class ReflectionUtils {
         Reflections reflections = new Reflections("org.meveo.model");
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(annotationClass);
         return classes;
+    }
+    
+    public static Annotation getMethodAnnotations(Class<?> objectClass, String methodName, Class<? extends Annotation> annotationClass){
+    	Annotation annotation = null;
+    	for(Method method : MethodUtils.getMethodsListWithAnnotation(objectClass, annotationClass)){
+    		if(method.getName().equals(methodName)){
+    			annotation = method.getAnnotation(annotationClass);
+    			break;
+    		}
+    	}
+    	return annotation;
     }
 }
