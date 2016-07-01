@@ -1,7 +1,6 @@
 package org.meveo.api;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -22,12 +21,9 @@ import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.custom.CustomizedEntity;
-import org.meveo.service.custom.CustomizedEntityService;
-import org.meveo.util.EntityCustomizationUtils;
+
 
 /**
  * @author Edward P. Legaspi
@@ -40,9 +36,6 @@ public class CustomFieldTemplateApi extends BaseApi {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService; 
-
-    @Inject
-    private CustomizedEntityService customizedEntityService;
 
     public void create(CustomFieldTemplateDto postData, String appliesTo, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -83,9 +76,7 @@ public class CustomFieldTemplateApi extends BaseApi {
                 appliesTo = postData.getAppliesTo();
             }
         }
-        if(!getCustomizedEntitiesAppliesTo(currentUser.getProvider()).contains(appliesTo)){ 
-        	throw new InvalidParameterException("appliesTo", appliesTo);
-          }
+
         if (customFieldTemplateService.findByCodeAndAppliesToNoCache(postData.getCode(), appliesTo, currentUser.getProvider()) != null) {
             throw new EntityAlreadyExistsException(CustomFieldTemplate.class, postData.getCode());
         }
@@ -135,9 +126,7 @@ public class CustomFieldTemplateApi extends BaseApi {
                 appliesTo = postData.getAppliesTo();
             }
         }
-        if(!getCustomizedEntitiesAppliesTo(currentUser.getProvider()).contains(appliesTo)){ 
-        	throw new InvalidParameterException("appliesTo", appliesTo);
-          }
+
         CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesToNoCache(postData.getCode(), appliesTo, currentUser.getProvider());
         if (cft == null) {
             throw new EntityDoesNotExistsException(CustomFieldTemplate.class, postData.getCode());
@@ -158,9 +147,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         handleMissingParameters();
-        if(!getCustomizedEntitiesAppliesTo(provider).contains(appliesTo)){ 
-        	throw new InvalidParameterException("appliesTo", appliesTo);
-          }
+
         CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, provider);
         if (cft != null) {
             customFieldTemplateService.remove(cft.getId());
@@ -178,9 +165,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         handleMissingParameters();
-        if(!getCustomizedEntitiesAppliesTo(provider).contains(appliesTo)){ 
-        	throw new InvalidParameterException("appliesTo", appliesTo);
-          }
+
         CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, provider);
 
         if (cft == null) {
@@ -298,12 +283,5 @@ public class CustomFieldTemplateApi extends BaseApi {
         return cft;
     }
     
-    private List<String> getCustomizedEntitiesAppliesTo(Provider provider){
-    	List<String> cftAppliesto=new ArrayList<String>();
-        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(null, false, true, null, null, provider);
-        for (CustomizedEntity customizedEntity : entities) { 
-        	cftAppliesto.add(EntityCustomizationUtils.getAppliesTo(customizedEntity.getEntityClass(), customizedEntity.getClassnameToDisplayHuman()));
-        }
-        return cftAppliesto;
-   }
+  
 }
