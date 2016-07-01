@@ -727,7 +727,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			}
 		}
 
-		return getLazyDataModel(filters, true);
+		return getLazyDataModel();
 	}
 	
 	@Override
@@ -894,8 +894,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	}
 
 	public void setSelectedRatedTransaction(RatedTransaction selectedRatedTransaction) {
-		log.info(" \n\n\n setSelectedRatedTransaction selectedRatedTransaction:"+selectedRatedTransaction.getQuantity());
-		log.info(" \n\n\n setSelectedRatedTransaction selectedRatedTransaction:"+selectedRatedTransaction);
 		this.selectedRatedTransaction = selectedRatedTransaction;
 	}
 
