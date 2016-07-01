@@ -84,7 +84,7 @@ public class BusinessOfferModelBean extends GenericModuleBean<BusinessOfferModel
             serviceCodeDtos.add(serviceCodeDto);
         }
 
-        businessOfferModelService.createOfferFromBOM(getEntity(), bomOfferInstancePrefix, "", serviceCodeDtos, currentUser);
+        businessOfferModelService.createOfferFromBOM(getEntity(), null, bomOfferInstancePrefix, "", serviceCodeDtos, currentUser);
         RequestContext.getCurrentInstance().closeDialog(getEntity());
     }
 

@@ -27,24 +27,6 @@ public interface ServiceScriptInterface extends ScriptInterface {
 	void afterCreateServiceFromBSM(Map<String, Object> methodContext, User user) throws BusinessException;
 
     /**
-     * Called after ServiceTemplate entity creation
-     * 
-     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceTemplate
-     * @param user Current user
-     * @throws BusinessException
-     */
-    public void createServiceTemplate(Map<String, Object> methodContext, User user) throws BusinessException;
-
-    /**
-     * Called after ServiceTemplate entity update
-     * 
-     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceTemplate
-     * @param user Current user
-     * @throws BusinessException
-     */
-    public void updateServiceTemplate(Map<String, Object> methodContext, User user) throws BusinessException;
-
-    /**
      * Called after ServiceInstance instantiation 
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceInstance

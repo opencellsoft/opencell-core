@@ -27,24 +27,6 @@ public interface OfferScriptInterface extends ScriptInterface {
 	void afterCreateOfferFromBOM(Map<String, Object> methodContext, User user) throws BusinessException;
 
     /**
-     * Called after OfferTemplate entity creation
-     * 
-     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=OfferTemplate
-     * @param user Current user
-     * @throws BusinessException
-     */
-    public void createOfferTemplate(Map<String, Object> methodContext, User user) throws BusinessException;
-
-    /**
-     * Called after OfferTemplate entity update.
-     * 
-     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=OfferTemplate
-     * @param user Current user
-     * @throws BusinessException
-     */
-    public void updateOfferTemplate(Map<String, Object> methodContext, User user) throws BusinessException;
-
-    /**
      * Called after Subscription entity creation
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=Subscription

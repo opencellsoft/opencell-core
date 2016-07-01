@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.CustomFieldDto;
 
 @XmlRootElement(name = "BomOffer")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -28,7 +28,7 @@ public class BomOfferDto extends BaseDto {
 
 	@XmlElementWrapper(name = "parameters")
 	@XmlElement(name = "parameter")
-	private CustomFieldsDto offerCustomFields;
+	private List<CustomFieldDto> customFields;
 
 	private String prefix;
 
@@ -44,26 +44,12 @@ public class BomOfferDto extends BaseDto {
 		this.bomCode = bomCode;
 	}
 
-	public CustomFieldsDto getOfferCustomFields() {
-		return offerCustomFields;
-	}
-
-	public void setOfferCustomFields(CustomFieldsDto offerCustomFields) {
-		this.offerCustomFields = offerCustomFields;
-	}
-
 	public String getPrefix() {
 		return prefix;
 	}
 
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
-	}
-
-	@Override
-	public String toString() {
-		return "BomOfferDto [bomCode=" + bomCode + ", description=" + description + ", offerCustomFields=" + offerCustomFields + ", prefix=" + prefix + ", servicesToActivate="
-				+ servicesToActivate + "]";
 	}
 
 	public String getDescription() {
@@ -80,6 +66,20 @@ public class BomOfferDto extends BaseDto {
 
 	public void setServicesToActivate(List<ServiceConfigurationDto> servicesToActivate) {
 		this.servicesToActivate = servicesToActivate;
+	}
+
+	public List<CustomFieldDto> getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(List<CustomFieldDto> customFields) {
+		this.customFields = customFields;
+	}
+
+	@Override
+	public String toString() {
+		return "BomOfferDto [bomCode=" + bomCode + ", description=" + description + ", customFields=" + customFields + ", prefix=" + prefix + ", servicesToActivate="
+				+ servicesToActivate + "]";
 	}
 
 }

@@ -15,16 +15,7 @@ public class ServiceScript extends ModuleScript implements ServiceScriptInterfac
     public static String CONTEXT_SUSPENSION_DATE = "CONTEXT_SUSPENSION_DATE";
     public static String CONTEXT_TERMINATION_DATE = "CONTEXT_TERMINATION_DATE";
     public static String CONTEXT_TERMINATION_REASON = "CONTEXT_TERMINATION_REASON";
-
-    @Override
-    public void createServiceTemplate(Map<String, Object> methodContext, User user) throws BusinessException {
-
-    }
-
-    @Override
-    public void updateServiceTemplate(Map<String, Object> methodContext, User user) throws BusinessException {
-
-    }
+    public static String CONTEXT_PARAMETERS = "CONTEXT_PARAMETERS";
 
     @Override
     public void instantiateServiceInstance(Map<String, Object> methodContext, User user) throws BusinessException {
@@ -50,4 +41,16 @@ public class ServiceScript extends ModuleScript implements ServiceScriptInterfac
     public void terminateServiceInstance(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
+
+	@Override
+	public void beforeCreateServiceFromBSM(Map<String, Object> methodContext, User user) throws BusinessException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void afterCreateServiceFromBSM(Map<String, Object> methodContext, User user) throws BusinessException {
+		// TODO Auto-generated method stub
+		
+	}
 }
