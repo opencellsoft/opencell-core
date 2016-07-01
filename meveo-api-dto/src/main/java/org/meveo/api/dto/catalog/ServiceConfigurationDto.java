@@ -4,6 +4,8 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
@@ -11,9 +13,9 @@ import org.meveo.api.dto.CustomFieldsDto;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "ServiceCode")
+@XmlRootElement(name = "ServiceConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceCodeDto {
+public class ServiceConfigurationDto {
 
 	@NotNull
 	@XmlAttribute
@@ -21,7 +23,9 @@ public class ServiceCodeDto {
 
 	@XmlAttribute
 	private String description;
-	
+
+	@XmlElementWrapper(name = "parameters")
+	@XmlElement(name = "parameter")
 	private CustomFieldsDto serviceCustomFields;
 
 	public String getCode() {

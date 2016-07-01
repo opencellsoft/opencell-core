@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.dto.catalog.ServiceCodeDto;
+import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -78,7 +78,7 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 	@Inject
 	private OfferTemplateService offerTemplateService;
 
-	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, String prefix, String offerDescription, List<ServiceCodeDto> serviceCodes, User currentUser)
+	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, String prefix, String offerDescription, List<ServiceConfigurationDto> serviceCodes, User currentUser)
 			throws BusinessException {
 		OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
 
@@ -105,7 +105,7 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 			// check if service template exists
 			if (serviceCodes != null && serviceCodes.size() > 0) {
 				boolean serviceFound = false;
-				for (ServiceCodeDto serviceCodeDto : serviceCodes) {
+				for (ServiceConfigurationDto serviceCodeDto : serviceCodes) {
 					String serviceCode = serviceCodeDto.getCode();
 
 					for (OfferServiceTemplate offerServiceTemplate : bomOffer.getOfferServiceTemplates()) {
@@ -129,8 +129,8 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode(), currentUser.getProvider());
 
 				boolean serviceFound = false;
-				ServiceCodeDto serviceCodeDto = new ServiceCodeDto();
-				for (ServiceCodeDto tempServiceCodeDto : serviceCodes) {
+				ServiceConfigurationDto serviceCodeDto = new ServiceConfigurationDto();
+				for (ServiceConfigurationDto tempServiceCodeDto : serviceCodes) {
 					String serviceCode = tempServiceCodeDto.getCode();
 					if (serviceCode.equals(serviceTemplate.getCode())) {
 						serviceCodeDto = tempServiceCodeDto;

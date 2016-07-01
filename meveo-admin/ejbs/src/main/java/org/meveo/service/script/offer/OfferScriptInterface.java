@@ -7,6 +7,24 @@ import org.meveo.model.admin.User;
 import org.meveo.service.script.ScriptInterface;
 
 public interface OfferScriptInterface extends ScriptInterface {
+	
+	/**
+     * Called at the beginning of BusinessOfferModelService.createOfferFromBOM method.
+     * 
+     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=OfferTemplate
+     * @param user Current user
+     * @throws BusinessException
+     */
+	void beforeCreateOfferFromBOM(Map<String, Object> methodContext, User user) throws BusinessException;
+	
+	/**
+     * Called at the end of BusinessOfferModelService.createOfferFromBOM method.
+     * 
+     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=OfferTemplate
+     * @param user Current user
+     * @throws BusinessException
+     */
+	void afterCreateOfferFromBOM(Map<String, Object> methodContext, User user) throws BusinessException;
 
     /**
      * Called after OfferTemplate entity creation

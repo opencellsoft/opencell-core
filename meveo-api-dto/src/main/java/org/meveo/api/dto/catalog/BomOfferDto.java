@@ -26,13 +26,15 @@ public class BomOfferDto extends BaseDto {
 	@XmlAttribute
 	private String description;
 
+	@XmlElementWrapper(name = "parameters")
+	@XmlElement(name = "parameter")
 	private CustomFieldsDto offerCustomFields;
 
 	private String prefix;
 
 	@XmlElementWrapper(name = "servicesToActivate")
 	@XmlElement(name = "serviceToActivate")
-	private List<ServiceCodeDto> servicesToActivate;
+	private List<ServiceConfigurationDto> servicesToActivate;
 
 	public String getBomCode() {
 		return bomCode;
@@ -72,11 +74,11 @@ public class BomOfferDto extends BaseDto {
 		this.description = description;
 	}
 
-	public List<ServiceCodeDto> getServicesToActivate() {
+	public List<ServiceConfigurationDto> getServicesToActivate() {
 		return servicesToActivate;
 	}
 
-	public void setServicesToActivate(List<ServiceCodeDto> servicesToActivate) {
+	public void setServicesToActivate(List<ServiceConfigurationDto> servicesToActivate) {
 		this.servicesToActivate = servicesToActivate;
 	}
 

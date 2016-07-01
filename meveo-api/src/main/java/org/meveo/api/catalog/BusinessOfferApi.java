@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.BomOfferDto;
-import org.meveo.api.dto.catalog.ServiceCodeDto;
+import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
@@ -70,7 +70,7 @@ public class BusinessOfferApi extends BaseApi {
 
 			boolean toUpdate = false;
 
-			for (ServiceCodeDto serviceCodeDto : postData.getServicesToActivate()) {
+			for (ServiceConfigurationDto serviceCodeDto : postData.getServicesToActivate()) {
 				String serviceCode = postData.getPrefix() + "_" + serviceCodeDto.getCode();
 				if (serviceCode.equals(serviceTemplate.getCode())) {
 					if (serviceCodeDto.getServiceCustomFields() != null) {
