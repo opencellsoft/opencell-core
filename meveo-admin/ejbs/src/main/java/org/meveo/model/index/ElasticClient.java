@@ -1,11 +1,9 @@
 package org.meveo.model.index;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -13,24 +11,16 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.CustomFieldInstance;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.slf4j.Logger;
 import org.apache.commons.lang.StringUtils;
-
-import static org.elasticsearch.common.xcontent.XContentFactory.*;
-
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.User;
+import org.slf4j.Logger;
 
 @Startup
 @Singleton
@@ -53,10 +43,10 @@ public class ElasticClient {
 	
 	TransportClient client = null;
 
-	//@PostConstruct
+	@PostConstruct
 	private void init() throws UnknownHostException {
 		try{
-		String clusterName = paramBean.getProperty("elasticsearch.cluster.name", "elasticsearch");
+		String clusterName = paramBean.getProperty("elasticsearch.cluster.name", "");
 		String[] hosts=paramBean.getProperty("elasticsearch.hosts", "localhost").split(";");
 		String portStr = paramBean.getProperty("elasticsearch.port", "9300");
 		String sniffingStr = paramBean.getProperty("elasticsearch.client.transport.sniff", "false").toLowerCase();
@@ -73,11 +63,17 @@ public class ElasticClient {
 			for(String host:hosts){
 				client.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));
 			}
-			log.debug("connected elasticsearch nodes : {}",client.connectedNodes());
+			List<DiscoveryNode> nodes = client.connectedNodes();
+	        if (nodes.isEmpty()) {
+	        	log.error("No nodes available. Verify ES is running!");
+				shutdown();
+	        } else {
+				log.debug("connected elasticsearch to {} nodes",nodes.size());
+	        }
 		}
 		} catch (Error e){
-			log.error("Error while initializing elastic search");
-			e.printStackTrace();
+			log.error("Error while initializing elastic search {}",e.getMessage());
+			shutdown();
 		}
 	}
 		
@@ -97,13 +93,10 @@ public class ElasticClient {
 				} else {
 					log.warn("updated existing entity {} of type {} to index {}, version={}",esDoc.getCode(),type,index,response.getVersion());
 				}
-			} catch (Exception e1) {
+			} catch (Error e1) {
 				log.error("cant create ES Document",e1);
 			}
-		}else{
-			log.warn("Elastic client down");
 		}
-		
 	}
     
 	/**
@@ -119,6 +112,12 @@ public class ElasticClient {
 	
 	@PreDestroy
 	private void shutdown(){
-		client.close();
+		if(client!=null){
+			try{
+				client.close();
+			}catch(Error e){
+				log.error("cant close ES client",e);
+			}
+		}
 	}
 }
