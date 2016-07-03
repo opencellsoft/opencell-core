@@ -1,6 +1,7 @@
 package org.meveo.api.account;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -1377,7 +1378,7 @@ public class AccountHierarchyApi extends BaseApi {
 														}
 													}
 
-													Subscription subscription = subscriptionService.findByCode(subscriptionDto.getCode(), provider);
+													Subscription subscription = subscriptionService.findByCode(subscriptionDto.getCode(), provider,Arrays.asList("offer"));
 													if (subscription == null) {
 
 														subscription = new Subscription();
