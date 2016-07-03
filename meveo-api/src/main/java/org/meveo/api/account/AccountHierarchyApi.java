@@ -891,6 +891,12 @@ public class AccountHierarchyApi extends BaseApi {
 						log.warn("code is null={}", customerDto);
 						continue;
 					}
+					if(!StringUtils.isBlank(customerDto.getSeller())&&!customerDto.getSeller().equalsIgnoreCase(sellerDto.getCode())){
+						Seller parentSeller=sellerService.findByCode(customerDto.getSeller(), provider);
+						if(parentSeller==null){
+							throw new EntityDoesNotExistsException(Seller.class, customerDto.getSeller());
+						}
+					}
 
 					Customer customer = customerService.findByCode(customerDto.getCode(), provider);
 					if (customer == null) {
@@ -983,6 +989,12 @@ public class AccountHierarchyApi extends BaseApi {
 							if (StringUtils.isBlank(customerAccountDto.getCode())) {
 								log.warn("code is null={}", customerAccountDto);
 								continue;
+							}
+							if(!StringUtils.isBlank(customerAccountDto.getCustomer())&&!customerAccountDto.getCustomer().equalsIgnoreCase(customerDto.getCode())){
+								Customer parentCustomer=customerService.findByCode(customerAccountDto.getCustomer(), provider);
+								if(parentCustomer==null){
+									throw new EntityDoesNotExistsException(Customer.class, customerAccountDto.getCustomer());
+								}
 							}
 
 							CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountDto.getCode(), provider);
@@ -1127,6 +1139,12 @@ public class AccountHierarchyApi extends BaseApi {
 										log.warn("code is null={}", billingAccountDto);
 										continue;
 									}
+									if(!StringUtils.isBlank(billingAccountDto.getCustomerAccount())&&!billingAccountDto.getCustomerAccount().equalsIgnoreCase(customerAccountDto.getCode())){
+										CustomerAccount parentCustomerAccount=customerAccountService.findByCode(billingAccountDto.getCustomerAccount(), provider);
+										if(parentCustomerAccount==null){
+											throw new EntityDoesNotExistsException(CustomerAccount.class, billingAccountDto.getCustomerAccount());
+										}
+									}
 
 									BillingAccount billingAccount = billingAccountService.findByCode(billingAccountDto.getCode(), provider);
 									if (billingAccount == null) {
@@ -1270,6 +1288,12 @@ public class AccountHierarchyApi extends BaseApi {
 												log.warn("code is null={}", userAccountDto);
 												continue;
 											}
+											if(!StringUtils.isBlank(userAccountDto.getBillingAccount())&&!userAccountDto.getBillingAccount().equalsIgnoreCase(billingAccountDto.getCode())){
+												BillingAccount parentBillingAccount=billingAccountService.findByCode(userAccountDto.getBillingAccount(), provider);
+												if(parentBillingAccount==null){
+													throw new EntityDoesNotExistsException(BillingAccount.class, userAccountDto.getBillingAccount());
+												}
+											}
 
 											UserAccount userAccount = userAccountService.findByCode(userAccountDto.getCode(), provider);
 											if (userAccount == null) {
@@ -1345,6 +1369,12 @@ public class AccountHierarchyApi extends BaseApi {
 													if (StringUtils.isBlank(subscriptionDto.getCode())) {
 														log.warn("code is null={}", subscriptionDto);
 														continue;
+													}
+													if(!StringUtils.isBlank(subscriptionDto.getUserAccount())&&!subscriptionDto.getUserAccount().equalsIgnoreCase(userAccountDto.getCode())){
+														UserAccount parentUserAccount=userAccountService.findByCode(subscriptionDto.getUserAccount(), provider);
+														if(parentUserAccount==null){
+															throw new EntityDoesNotExistsException(UserAccount.class,subscriptionDto.getUserAccount());
+														}
 													}
 
 													Subscription subscription = subscriptionService.findByCode(subscriptionDto.getCode(), provider);
@@ -1444,6 +1474,12 @@ public class AccountHierarchyApi extends BaseApi {
 															if (StringUtils.isBlank(accessDto.getCode())) {
 																log.warn("code is null={}", accessDto);
 																continue;
+															}
+															if(!StringUtils.isBlank(accessDto.getSubscription())&&!accessDto.getSubscription().equalsIgnoreCase(subscriptionDto.getCode())){
+																Subscription parentSubscription=subscriptionService.findByCode(accessDto.getSubscription(), provider);
+																if(parentSubscription==null){
+																	throw new EntityDoesNotExistsException(Subscription.class, accessDto.getSubscription());
+																}
 															}
 
 															Access access = accessService.findByUserIdAndSubscription(accessDto.getCode(), subscription);

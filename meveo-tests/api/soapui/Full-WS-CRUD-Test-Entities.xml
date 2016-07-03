@@ -31957,8 +31957,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                <electronicBilling>true</electronicBilling>
                <status>ACTIVE</status>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="871e0695-22d5-43ff-85cd-41b116b2c651" name="Contains 2"><con:configuration><token>               &lt;email>${#Project#entityPrefix}@manaty.net&lt;/email>
                &lt;bankCoordinates/>
-               &lt;userAccounts/>
-            &lt;/billingAccount></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="e7f80d30-339f-43c1-ae39-cfc2ee43c01f" name="XPath Match"><con:configuration><path>exists (//billingAccount/statusDate)</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find update Billing Account with min req Vals" id="17f9a65f-92b0-4d00-a342-f1373c6f4946"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomerAccount</con:operation><con:request name="find update Billing Account with min req Vals" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+              </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="e7f80d30-339f-43c1-ae39-cfc2ee43c01f" name="XPath Match"><con:configuration><path>exists (//billingAccount/statusDate)</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find update Billing Account with min req Vals" id="17f9a65f-92b0-4d00-a342-f1373c6f4946"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomerAccount</con:operation><con:request name="find update Billing Account with min req Vals" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findBillingAccount>
@@ -32021,7 +32020,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
    <soapenv:Body>
       <ws:updateBillingAccount>
          <billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_BA2">
-            <customerAccount>${#Project#baseEntityPrefix}_CA_BAK</customerAccount>
+            <customerAccount>${#Project#baseEntityPrefix}_CA</customerAccount>
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <country>FR</country>
             <language>FRA</language>
@@ -32056,7 +32055,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                   <city>Dijon</city>
                   <country>FR</country>
                </address>
-               <customerAccount>WS_BASE_CA_BAK</customerAccount>
+               <customerAccount>WS_BASE_CA</customerAccount>
                <billingCycle>CYC_INV_MT_2</billingCycle>
                <country>FR</country>
                <language>FRA</language>
@@ -32066,9 +32065,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                <paymentTerms>CASH</paymentTerms>
                <electronicBilling>true</electronicBilling>
                <status>ACTIVE</status>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="871e0695-22d5-43ff-85cd-41b116b2c651" name="Contains 2"><con:configuration><token>               &lt;email>${#Project#entityPrefix}@manaty.net&lt;/email>
-               &lt;bankCoordinates/>
-               &lt;userAccounts/>
-            &lt;/billingAccount></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="e7f80d30-339f-43c1-ae39-cfc2ee43c01f" name="XPath Match"><con:configuration><path>exists (//billingAccount/statusDate)</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find update Billing Account with min req Vals, Update CA" id="efb4b705-a163-427c-ba4a-5de2dda23edd"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomerAccount</con:operation><con:request name="find update Billing Account with min req Vals, Update CA" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+               &lt;bankCoordinates/></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="e7f80d30-339f-43c1-ae39-cfc2ee43c01f" name="XPath Match"><con:configuration><path>exists (//billingAccount/statusDate)</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find update Billing Account with min req Vals, Update CA" id="efb4b705-a163-427c-ba4a-5de2dda23edd"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomerAccount</con:operation><con:request name="find update Billing Account with min req Vals, Update CA" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findBillingAccount>
@@ -32079,7 +32076,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
 </soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" name="Contains" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="a70700f8-c28e-433b-bb52-267e87637a3d" name="Contains 1"><con:configuration><token><![CDATA[<billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_BA2" description="${#Project#entityPrefix}_${#TestSuite#index}_BA2">
                <name/>
                <address/>
-               <customerAccount>${#Project#baseEntityPrefix}_CA_BAK</customerAccount>
+               <customerAccount>${#Project#baseEntityPrefix}_CA</customerAccount>
                <billingCycle>CYC_INV_MT_1</billingCycle>
                <country>FR</country>
                <language>FRA</language>
@@ -32186,7 +32183,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                <billingAccount>WS_BASE_BA</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="d337536a-58c8-4036-91b2-3f03f9dc380b" name="Contains 2"><con:configuration><token>&lt;status>ACTIVE&lt;/status>
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="32be8b41-77f9-4169-9f3f-75bc9ffc9a2a" name="Contains 3"><con:configuration><token>               &lt;subscriptions/>
             &lt;/userAccount>
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="d3aded3b-2420-43e0-acb7-16b7e60e5492" name="XPath Match"><con:configuration><path>exists (//userAccount/statusDate)</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="fb804166-9822-47c1-88a0-28b6f0783737" name="XPath Match 1"><con:configuration><path>//userAccount/subscriptionDate</path><content>2016-03-10*</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find Create User Account with min req Vals" id="40bb5796-2cd0-4319-ba6f-32fb0631e406"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findUserAccount</con:operation><con:request name="find Create User Account with min req Vals" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="d3aded3b-2420-43e0-acb7-16b7e60e5492" name="XPath Match"><con:configuration><path>exists (//userAccount/statusDate)</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="fb804166-9822-47c1-88a0-28b6f0783737" name="XPath Match 1"><con:configuration><path>exists(//userAccount/subscriptionDate)</path><content>true</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find Create User Account with min req Vals" id="40bb5796-2cd0-4319-ba6f-32fb0631e406"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findUserAccount</con:operation><con:request name="find Create User Account with min req Vals" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
        <ws:findUserAccount>
@@ -32806,7 +32803,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                                                 <endAgreementDate>2016-06-07</endAgreementDate>
                                                 <accesses>
                                                    <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACC1">
-                                                      <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB</subscription>
+                                                      <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_HIER</subscription>
                                                       <startDate>2016-02-28</startDate>
   		  								    <endDate>2016-04-01</endDate>
                                                    </access>
@@ -33042,16 +33039,36 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                         <paymentMethod>CHECK</paymentMethod>
                         <creditCategory>NEWCUSTOMER</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="3b879291-96e5-4111-a3f4-414e18641154" name="find BA Part3"><con:configuration><token><![CDATA[<billingAccounts>
                            <billingAccount code="BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1" description="BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
-                              <name/>
-                              <address/>
+                              <name>
+                                 <title>M</title>
+                                 <firstName>firstName</firstName>
+                                 <lastName>lastName</lastName>
+                              </name>
+                              <address>
+                                 <address1>Address1</address1>
+                                 <address2>Address2</address2>
+                                 <zipCode>75001</zipCode>
+                                 <city>Tunisia</city>
+                                 <country>US</country>
+                              </address>
                               <customerAccount>CA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</customerAccount>
                               <billingCycle>CYC_INV_MT_1</billingCycle>
                               <country>US</country>
                               <language>ENG</language>
                               <paymentMethod>CHECK</paymentMethod>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="8917d615-9e61-464a-9c32-920f6351c420" name="find UA Part4"><con:configuration><token><![CDATA[<userAccounts>
                                  <userAccount code="UA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1" description="UA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
-                                    <name/>
-                                    <address/>
+                                    <name>
+                                       <title>M</title>
+                                       <firstName>firstName</firstName>
+                                       <lastName>lastName</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>Address1</address1>
+                                       <address2>Address2</address2>
+                                       <zipCode>75001</zipCode>
+                                       <city>Tunisia</city>
+                                       <country>US</country>
+                                    </address>
                                     <billingAccount>BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update AccountHierarchy" id="2cc40a9b-047a-4c11-add1-bfe44fd28feb"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>updateAccountHierarchy</con:operation><con:request name="update AccountHierarchy" id="32fc6647-cfd9-43f4-a8b7-f11e69aba7f3"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -33146,16 +33163,36 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                         <paymentMethod>CHECK</paymentMethod>
                         <creditCategory>NEWCUSTOMER</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="ecaaa369-be17-4293-8a40-d4778ad72112" name="find BA Part3"><con:configuration><token><![CDATA[ <billingAccounts>
                            <billingAccount code="BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1" description="BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
-                              <name/>
-                              <address/>
+                              <name>
+                                 <title>M</title>
+                                 <firstName>Saidani</firstName>
+                                 <lastName>Hatem</lastName>
+                              </name>
+                              <address>
+                                 <address1>Address1</address1>
+                                 <address2>Address2</address2>
+                                 <zipCode>75055</zipCode>
+                                 <city>Dijon</city>
+                                 <country>FR</country>
+                              </address>
                               <customerAccount>CA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</customerAccount>
                               <billingCycle>CYC_INV_MT_2</billingCycle>
                               <country>FR</country>
                               <language>FRA</language>
                               <paymentMethod>CHECK</paymentMethod>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="bcfed88d-ccc9-46c4-b2ed-a448efb78fd6" name="find UA Part4"><con:configuration><token><![CDATA[<userAccounts>
                                  <userAccount code="UA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1" description="UA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
-                                    <name/>
-                                    <address/>
+                                    <name>
+                                       <title>M</title>
+                                       <firstName>Saidani</firstName>
+                                       <lastName>Hatem</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>Address1</address1>
+                                       <address2>Address2</address2>
+                                       <zipCode>75055</zipCode>
+                                       <city>Dijon</city>
+                                       <country>FR</country>
+                                    </address>
                                     <billingAccount>BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update AccountHierarchy - new CustomerBrand and CustomerCategory codes" id="975a5d5b-a97a-4820-a0ab-e0f9b9fb57af"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>updateAccountHierarchy</con:operation><con:request name="update AccountHierarchy - new CustomerBrand and CustomerCategory codes" id="32fc6647-cfd9-43f4-a8b7-f11e69aba7f3"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -33250,16 +33287,36 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                         <paymentMethod>CHECK</paymentMethod>
                         <creditCategory>NEWCUSTOMER</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="ecaaa369-be17-4293-8a40-d4778ad72112" name="find BA Part3"><con:configuration><token><![CDATA[ <billingAccounts>
                            <billingAccount code="BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1" description="BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
-                              <name/>
-                              <address/>
+                              <name>
+                                 <title>M</title>
+                                 <firstName>Saidani</firstName>
+                                 <lastName>Hatem</lastName>
+                              </name>
+                              <address>
+                                 <address1>Address1</address1>
+                                 <address2>Address2</address2>
+                                 <zipCode>75055</zipCode>
+                                 <city>Dijon</city>
+                                 <country>FR</country>
+                              </address>
                               <customerAccount>CA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</customerAccount>
                               <billingCycle>CYC_INV_MT_2</billingCycle>
                               <country>FR</country>
                               <language>FRA</language>
                               <paymentMethod>CHECK</paymentMethod>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="bcfed88d-ccc9-46c4-b2ed-a448efb78fd6" name="find UA Part4"><con:configuration><token><![CDATA[<userAccounts>
                                  <userAccount code="UA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1" description="UA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
-                                    <name/>
-                                    <address/>
+                                    <name>
+                                       <title>M</title>
+                                       <firstName>Saidani</firstName>
+                                       <lastName>Hatem</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>Address1</address1>
+                                       <address2>Address2</address2>
+                                       <zipCode>75055</zipCode>
+                                       <city>Dijon</city>
+                                       <country>FR</country>
+                                    </address>
                                     <billingAccount>BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create CRMAccountHierarchy" id="ef4c3efe-9e0a-4279-8ad4-9fd3bd61acd9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCRMAccountHierarchy</con:operation><con:request name="create CRMAccountHierarchy" id="bd7804c7-f1cc-4ac8-bdea-fc46ec8faeb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -33851,7 +33908,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                      </billingAccounts>
                   </customerAccount>
                </customerAccounts>
-            </customer>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="9c82948f-4c04-4e6a-a66a-6cdda8307ae1" name="XPath Match CA dateStatus"><con:configuration><path>exists(//customer/customerAccounts/customerAccount/dateStatus)</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="e7d7af26-8252-4e20-952a-2a5860f70377" name="XPath Match BA statusDate"><con:configuration><path>exists(//customer/customerAccounts/customerAccount/billingAccounts/billingAccount/statusDate)</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="c6ca6d75-b6a0-4083-ad86-5ef33fc6091e" name="XPath Match UA statusDate"><con:configuration><path>exists(//customer/customerAccounts/customerAccount/billingAccounts/billingAccount/userAccounts/userAccount/statusDate)</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findSeller"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Customer Hierarchy update,update UA parent" id="8b89d5d6-9a4e-412e-bbf5-2b0ac6ed7aa0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Customer Hierarchy update,update UA parent" id="e1b0feec-6dd5-4190-bacc-23528f07519b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+            </customer>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="9c82948f-4c04-4e6a-a66a-6cdda8307ae1" name="XPath Match CA dateStatus"><con:configuration><path>exists(//customer/customerAccounts/customerAccount/dateStatus)</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="e7d7af26-8252-4e20-952a-2a5860f70377" name="XPath Match BA statusDate"><con:configuration><path>exists(//customer/customerAccounts/customerAccount/billingAccounts/billingAccount/statusDate)</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="c6ca6d75-b6a0-4083-ad86-5ef33fc6091e" name="XPath Match UA statusDate"><con:configuration><path>exists(//customer/customerAccounts/customerAccount/billingAccounts/billingAccount/userAccounts/userAccount/statusDate)</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findSeller"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Customer Hierarchy update,update nonexited SUB parent" id="f43c86e6-06ae-41d3-838c-8ef31ca7c3dc"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Customer Hierarchy update,update nonexited SUB parent" id="e1b0feec-6dd5-4190-bacc-23528f07519b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:customerHierarchyUpdate>
@@ -33992,7 +34049,984 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                                                 <endAgreementDate>2016-06-07</endAgreementDate>
                                                 <accesses>
                                                    <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACC1">
-                                                      <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB</subscription>
+                                                      <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_HIER_nonexisted</subscription>
+                                                      <startDate>2016-02-28</startDate>
+  		  								    <endDate>2016-04-01</endDate>
+                                                   </access>
+                                                </accesses>
+                                             </subscription>
+                                          </subscriptions>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="bcda2769-e741-4e8b-9a05-f5d2d3cc24b7"/><con:assertion type="Simple Contains" id="3cf56664-ef8b-45dd-baec-60c0216bb60f" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Customer Hierarchy update,update nonexited UA parent" id="70222c77-e354-480e-8900-a2574381a952"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Customer Hierarchy update,update nonexited UA parent" id="e1b0feec-6dd5-4190-bacc-23528f07519b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <customerHierarchy>
+            <sellers>
+               <seller code="SELLER_FR" description="France Seller">
+                  <!--<invoicePrefix>E_</invoicePrefix> -->
+                  <currencyCode>USD</currencyCode>
+                  <countryCode>US</countryCode>
+                  <languageCode>ENG</languageCode>
+                  <parentSeller>MAIN_SELLER</parentSeller>
+                  <customers>
+                     <customer code="${#Project#baseEntityPrefix}_CUST" description="${#Project#baseEntityPrefix}_CUST">
+                        <externalRef1>1</externalRef1>
+                        <externalRef2>1</externalRef2>
+                        <name>
+                           <title>M</title>
+                           <firstName>firstName</firstName>
+                           <lastName>lastName</lastName>
+                        </name>
+                        <address>
+                           <address1>address1</address1>
+                           <address2>address2</address2>
+                           <address3>address3</address3>
+                           <zipCode>75001</zipCode>
+                           <city>Tunis</city>
+                           <country>TUNISIA</country>
+                           <state></state>
+                        </address>
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>DEFAULT</customerBrand>
+                        <mandateIdentification>M1</mandateIdentification>
+                        <mandateDate>2016-02-28</mandateDate>
+                        <contactInformation>
+                           <email>${#Project#entityPrefix}@manaty.net</email>
+                           <phone>1234</phone>
+                           <mobile>092152154716</mobile>
+                           <fax>1234</fax>
+                        </contactInformation>
+                        <customerAccounts>
+                           <customerAccount code="${#Project#baseEntityPrefix}_CA" description="${#Project#baseEntityPrefix}_CA">
+                              <externalRef1>1</externalRef1>
+                              <externalRef2>1</externalRef2>
+                              <name>
+	                           <title>M</title>
+	                           <firstName>firstName</firstName>
+	                           <lastName>lastName</lastName>
+	                        </name>
+	                        <address>
+	                           <address1>address1</address1>
+	                           <address2>address2</address2>
+	                           <address3>address3</address3>
+	                           <zipCode>75001</zipCode>
+	                           <city>Tunis</city>
+	                           <country>TUNISIA</country>
+	                           <state></state>
+	                        </address>
+                              <currency>USD</currency>
+                              <language>ENG</language>
+                              <paymentMethod>CHECK</paymentMethod>
+                              <creditCategory>NEWCUSTOMER</creditCategory>
+                              <dateStatus>2016-02-28</dateStatus>
+                              <dateDunningLevel>2016-02-28</dateDunningLevel>
+                              <contactInformation>
+		                      <email>${#Project#entityPrefix}@manaty.net</email>
+		                      <phone>1234</phone>
+		                      <mobile>092152154716</mobile>
+		                      <fax>1234</fax>
+		                   </contactInformation>
+                              <dunningLevel>R0</dunningLevel>
+                              <mandateIdentification>1234</mandateIdentification>
+                              <mandateDate>2016-02-28</mandateDate>
+                              <billingAccounts>
+                                 <billingAccount code="${#Project#baseEntityPrefix}_BA" description="${#Project#baseEntityPrefix}_BA">
+                                    <externalRef1>1</externalRef1>
+                                    <externalRef2>1</externalRef2>
+                                   <name>
+		                           <title>M</title>
+		                           <firstName>firstName</firstName>
+		                           <lastName>lastName</lastName>
+		                        	</name>
+		                         <address>
+		                           <address1>address1</address1>
+		                           <address2>address2</address2>
+		                           <address3>address3</address3>
+		                           <zipCode>75001</zipCode>
+		                           <city>Tunis</city>
+		                           <country>TUNISIA</country>
+		                           <state></state>
+		                        </address>
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>
+                                    <country>US</country>
+                                    <language>ENG</language>
+                                    <paymentMethod>CHECK</paymentMethod>
+                                    <nextInvoiceDate>2016-02-28</nextInvoiceDate>
+                                    <subscriptionDate>2016-02-28</subscriptionDate>
+                                    <paymentTerms>CASH</paymentTerms>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>${#Project#entityPrefix}@manaty.net</email>
+                                    <bankCoordinates>
+							   <bankCode>BPI</bankCode>
+							   <branchCode>LB</branchCode>
+							   <accountNumber>1234</accountNumber>
+							   <key>1234</key>
+							   <iban>1234</iban>
+                                       <bic>1234</bic>
+                                       <accountOwner>Edward P. Legaspi</accountOwner>
+                                       <bankName>Bank of the Philippine Islands</bankName>
+                                       <bankId>BPI</bankId>
+                                       <issuerNumber>1</issuerNumber>
+                                       <issuerName>BPI</issuerName>
+                                       <ics>NA</ics>
+                                    </bankCoordinates>
+                                    <userAccounts>
+                                       <userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
+                                          <externalRef1>1</externalRef1>
+                                          <externalRef2>1</externalRef2>
+                                          <name>
+				                           <title>M</title>
+				                           <firstName>firstName</firstName>
+				                           <lastName>lastName</lastName>
+				                        </name>
+				                        <address>
+				                           <address1>address1</address1>
+				                           <address2>address2</address2>
+				                           <address3>address3</address3>
+				                           <zipCode>75001</zipCode>
+				                           <city>Tunis</city>
+				                           <country>TUNISIA</country>
+				                           <state></state>
+				                        </address>
+                                          <subscriptionDate>2016-02-28</subscriptionDate>
+                                          <subscriptions>
+                                             <subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB_HIER" description="${#Project#entityPrefix}_${#TestSuite#index}_SUB">
+                                                <userAccount>${#Project#entityPrefix}_${#TestSuite#index}_UA_nonexisted</userAccount>
+                                                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+                                                <subscriptionDate>2016-02-28</subscriptionDate>
+                                                <endAgreementDate>2016-06-07</endAgreementDate>
+                                                <accesses>
+                                                   <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACC1">
+                                                      <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_HIER</subscription>
+                                                      <startDate>2016-02-28</startDate>
+  		  								    <endDate>2016-04-01</endDate>
+                                                   </access>
+                                                </accesses>
+                                             </subscription>
+                                          </subscriptions>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="bcda2769-e741-4e8b-9a05-f5d2d3cc24b7"/><con:assertion type="Simple Contains" id="3cf56664-ef8b-45dd-baec-60c0216bb60f" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Customer Hierarchy update,update nonexited BA parent" id="0db78655-0ecc-4d9e-9f03-41e9bd3ab8ab"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Customer Hierarchy update,update nonexited BA parent" id="e1b0feec-6dd5-4190-bacc-23528f07519b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <customerHierarchy>
+            <sellers>
+               <seller code="SELLER_FR" description="France Seller">
+                  <!--<invoicePrefix>E_</invoicePrefix> -->
+                  <currencyCode>USD</currencyCode>
+                  <countryCode>US</countryCode>
+                  <languageCode>ENG</languageCode>
+                  <parentSeller>MAIN_SELLER</parentSeller>
+                  <customers>
+                     <customer code="${#Project#baseEntityPrefix}_CUST" description="${#Project#baseEntityPrefix}_CUST">
+                        <externalRef1>1</externalRef1>
+                        <externalRef2>1</externalRef2>
+                        <name>
+                           <title>M</title>
+                           <firstName>firstName</firstName>
+                           <lastName>lastName</lastName>
+                        </name>
+                        <address>
+                           <address1>address1</address1>
+                           <address2>address2</address2>
+                           <address3>address3</address3>
+                           <zipCode>75001</zipCode>
+                           <city>Tunis</city>
+                           <country>TUNISIA</country>
+                           <state></state>
+                        </address>
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>DEFAULT</customerBrand>
+                        <mandateIdentification>M1</mandateIdentification>
+                        <mandateDate>2016-02-28</mandateDate>
+                        <contactInformation>
+                           <email>${#Project#entityPrefix}@manaty.net</email>
+                           <phone>1234</phone>
+                           <mobile>092152154716</mobile>
+                           <fax>1234</fax>
+                        </contactInformation>
+                        <customerAccounts>
+                           <customerAccount code="${#Project#baseEntityPrefix}_CA" description="${#Project#baseEntityPrefix}_CA">
+                              <externalRef1>1</externalRef1>
+                              <externalRef2>1</externalRef2>
+                              <name>
+	                           <title>M</title>
+	                           <firstName>firstName</firstName>
+	                           <lastName>lastName</lastName>
+	                        </name>
+	                        <address>
+	                           <address1>address1</address1>
+	                           <address2>address2</address2>
+	                           <address3>address3</address3>
+	                           <zipCode>75001</zipCode>
+	                           <city>Tunis</city>
+	                           <country>TUNISIA</country>
+	                           <state></state>
+	                        </address>
+                              <currency>USD</currency>
+                              <language>ENG</language>
+                              <paymentMethod>CHECK</paymentMethod>
+                              <creditCategory>NEWCUSTOMER</creditCategory>
+                              <dateStatus>2016-02-28</dateStatus>
+                              <dateDunningLevel>2016-02-28</dateDunningLevel>
+                              <contactInformation>
+		                      <email>${#Project#entityPrefix}@manaty.net</email>
+		                      <phone>1234</phone>
+		                      <mobile>092152154716</mobile>
+		                      <fax>1234</fax>
+		                   </contactInformation>
+                              <dunningLevel>R0</dunningLevel>
+                              <mandateIdentification>1234</mandateIdentification>
+                              <mandateDate>2016-02-28</mandateDate>
+                              <billingAccounts>
+                                 <billingAccount code="${#Project#baseEntityPrefix}_BA" description="${#Project#baseEntityPrefix}_BA">
+                                    <externalRef1>1</externalRef1>
+                                    <externalRef2>1</externalRef2>
+                                   <name>
+		                           <title>M</title>
+		                           <firstName>firstName</firstName>
+		                           <lastName>lastName</lastName>
+		                        	</name>
+		                         <address>
+		                           <address1>address1</address1>
+		                           <address2>address2</address2>
+		                           <address3>address3</address3>
+		                           <zipCode>75001</zipCode>
+		                           <city>Tunis</city>
+		                           <country>TUNISIA</country>
+		                           <state></state>
+		                        </address>
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>
+                                    <country>US</country>
+                                    <language>ENG</language>
+                                    <paymentMethod>CHECK</paymentMethod>
+                                    <nextInvoiceDate>2016-02-28</nextInvoiceDate>
+                                    <subscriptionDate>2016-02-28</subscriptionDate>
+                                    <paymentTerms>CASH</paymentTerms>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>${#Project#entityPrefix}@manaty.net</email>
+                                    <bankCoordinates>
+							   <bankCode>BPI</bankCode>
+							   <branchCode>LB</branchCode>
+							   <accountNumber>1234</accountNumber>
+							   <key>1234</key>
+							   <iban>1234</iban>
+                                       <bic>1234</bic>
+                                       <accountOwner>Edward P. Legaspi</accountOwner>
+                                       <bankName>Bank of the Philippine Islands</bankName>
+                                       <bankId>BPI</bankId>
+                                       <issuerNumber>1</issuerNumber>
+                                       <issuerName>BPI</issuerName>
+                                       <ics>NA</ics>
+                                    </bankCoordinates>
+                                    <userAccounts>
+                                       <userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
+                                          <externalRef1>1</externalRef1>
+                                          <externalRef2>1</externalRef2>
+                                          <name>
+				                           <title>M</title>
+				                           <firstName>firstName</firstName>
+				                           <lastName>lastName</lastName>
+				                        </name>
+				                        <address>
+				                           <address1>address1</address1>
+				                           <address2>address2</address2>
+				                           <address3>address3</address3>
+				                           <zipCode>75001</zipCode>
+				                           <city>Tunis</city>
+				                           <country>TUNISIA</country>
+				                           <state></state>
+				                        </address>
+                                          <subscriptionDate>2016-02-28</subscriptionDate>
+                                          <billingAccount>${#Project#entityPrefix}_${#TestSuite#index}_BA_nonexisted</billingAccount>
+                                          <subscriptions>
+                                             <subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB_HIER" description="${#Project#entityPrefix}_${#TestSuite#index}_SUB">
+                                                <userAccount>${#Project#entityPrefix}_${#TestSuite#index}_UA</userAccount>
+                                                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+                                                <subscriptionDate>2016-02-28</subscriptionDate>
+                                                <endAgreementDate>2016-06-07</endAgreementDate>
+                                                <accesses>
+                                                   <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACC1">
+                                                      <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_HIER</subscription>
+                                                      <startDate>2016-02-28</startDate>
+  		  								    <endDate>2016-04-01</endDate>
+                                                   </access>
+                                                </accesses>
+                                             </subscription>
+                                          </subscriptions>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="bcda2769-e741-4e8b-9a05-f5d2d3cc24b7"/><con:assertion type="Simple Contains" id="3cf56664-ef8b-45dd-baec-60c0216bb60f" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Customer Hierarchy update,update nonexited CA parent" id="812fc91f-d1cc-40a5-8ed3-2f381ad6458e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Customer Hierarchy update,update nonexited CA parent" id="e1b0feec-6dd5-4190-bacc-23528f07519b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <customerHierarchy>
+            <sellers>
+               <seller code="SELLER_FR" description="France Seller">
+                  <!--<invoicePrefix>E_</invoicePrefix> -->
+                  <currencyCode>USD</currencyCode>
+                  <countryCode>US</countryCode>
+                  <languageCode>ENG</languageCode>
+                  <parentSeller>MAIN_SELLER</parentSeller>
+                  <customers>
+                     <customer code="${#Project#baseEntityPrefix}_CUST" description="${#Project#baseEntityPrefix}_CUST">
+                        <externalRef1>1</externalRef1>
+                        <externalRef2>1</externalRef2>
+                        <name>
+                           <title>M</title>
+                           <firstName>firstName</firstName>
+                           <lastName>lastName</lastName>
+                        </name>
+                        <address>
+                           <address1>address1</address1>
+                           <address2>address2</address2>
+                           <address3>address3</address3>
+                           <zipCode>75001</zipCode>
+                           <city>Tunis</city>
+                           <country>TUNISIA</country>
+                           <state></state>
+                        </address>
+                        <seller>SELLER_FR_nonexisted</seller>
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>DEFAULT</customerBrand>
+                        <mandateIdentification>M1</mandateIdentification>
+                        <mandateDate>2016-02-28</mandateDate>
+                        <contactInformation>
+                           <email>${#Project#entityPrefix}@manaty.net</email>
+                           <phone>1234</phone>
+                           <mobile>092152154716</mobile>
+                           <fax>1234</fax>
+                        </contactInformation>
+                        <customerAccounts>
+                           <customerAccount code="${#Project#baseEntityPrefix}_CA" description="${#Project#baseEntityPrefix}_CA">
+                              <externalRef1>1</externalRef1>
+                              <externalRef2>1</externalRef2>
+                              <name>
+	                           <title>M</title>
+	                           <firstName>firstName</firstName>
+	                           <lastName>lastName</lastName>
+	                        </name>
+	                        <address>
+	                           <address1>address1</address1>
+	                           <address2>address2</address2>
+	                           <address3>address3</address3>
+	                           <zipCode>75001</zipCode>
+	                           <city>Tunis</city>
+	                           <country>TUNISIA</country>
+	                           <state></state>
+	                        </address>
+	                         <customer>${#Project#baseEntityPrefix}_CU_nonexisted</customer>
+                              <currency>USD</currency>
+                              <language>ENG</language>
+                              <paymentMethod>CHECK</paymentMethod>
+                              <creditCategory>NEWCUSTOMER</creditCategory>
+                              <dateStatus>2016-02-28</dateStatus>
+                              <dateDunningLevel>2016-02-28</dateDunningLevel>
+                              <contactInformation>
+		                      <email>${#Project#entityPrefix}@manaty.net</email>
+		                      <phone>1234</phone>
+		                      <mobile>092152154716</mobile>
+		                      <fax>1234</fax>
+		                   </contactInformation>
+                              <dunningLevel>R0</dunningLevel>
+                              <mandateIdentification>1234</mandateIdentification>
+                              <mandateDate>2016-02-28</mandateDate>
+                              <billingAccounts>
+                                 <billingAccount code="${#Project#baseEntityPrefix}_BA" description="${#Project#baseEntityPrefix}_BA">
+                                    <externalRef1>1</externalRef1>
+                                    <externalRef2>1</externalRef2>
+                                   <name>
+		                           <title>M</title>
+		                           <firstName>firstName</firstName>
+		                           <lastName>lastName</lastName>
+		                        	</name>
+		                         <address>
+		                           <address1>address1</address1>
+		                           <address2>address2</address2>
+		                           <address3>address3</address3>
+		                           <zipCode>75001</zipCode>
+		                           <city>Tunis</city>
+		                           <country>TUNISIA</country>
+		                           <state></state>
+		                        </address>
+		                          <customerAccount>${#Project#entityPrefix}_${TestSuite#index}_CA_nonexisted</customerAccount>
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>
+                                    <country>US</country>
+                                    <language>ENG</language>
+                                    <paymentMethod>CHECK</paymentMethod>
+                                    <nextInvoiceDate>2016-02-28</nextInvoiceDate>
+                                    <subscriptionDate>2016-02-28</subscriptionDate>
+                                    <paymentTerms>CASH</paymentTerms>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>${#Project#entityPrefix}@manaty.net</email>
+                                    <bankCoordinates>
+							   <bankCode>BPI</bankCode>
+							   <branchCode>LB</branchCode>
+							   <accountNumber>1234</accountNumber>
+							   <key>1234</key>
+							   <iban>1234</iban>
+                                       <bic>1234</bic>
+                                       <accountOwner>Edward P. Legaspi</accountOwner>
+                                       <bankName>Bank of the Philippine Islands</bankName>
+                                       <bankId>BPI</bankId>
+                                       <issuerNumber>1</issuerNumber>
+                                       <issuerName>BPI</issuerName>
+                                       <ics>NA</ics>
+                                    </bankCoordinates>
+                                    <userAccounts>
+                                       <userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
+                                          <externalRef1>1</externalRef1>
+                                          <externalRef2>1</externalRef2>
+                                          <name>
+				                           <title>M</title>
+				                           <firstName>firstName</firstName>
+				                           <lastName>lastName</lastName>
+				                        </name>
+				                        <address>
+				                           <address1>address1</address1>
+				                           <address2>address2</address2>
+				                           <address3>address3</address3>
+				                           <zipCode>75001</zipCode>
+				                           <city>Tunis</city>
+				                           <country>TUNISIA</country>
+				                           <state></state>
+				                        </address>
+                                          <subscriptionDate>2016-02-28</subscriptionDate>
+                                          <billingAccount>${#Project#entityPrefix}_${#TestSuite#index}_BA</billingAccount>
+                                          <subscriptions>
+                                             <subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB_HIER" description="${#Project#entityPrefix}_${#TestSuite#index}_SUB">
+                                                <userAccount>${#Project#entityPrefix}_${#TestSuite#index}_UA</userAccount>
+                                                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+                                                <subscriptionDate>2016-02-28</subscriptionDate>
+                                                <endAgreementDate>2016-06-07</endAgreementDate>
+                                                <accesses>
+                                                   <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACC1">
+                                                      <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_HIER</subscription>
+                                                      <startDate>2016-02-28</startDate>
+  		  								    <endDate>2016-04-01</endDate>
+                                                   </access>
+                                                </accesses>
+                                             </subscription>
+                                          </subscriptions>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="bcda2769-e741-4e8b-9a05-f5d2d3cc24b7"/><con:assertion type="Simple Contains" id="3cf56664-ef8b-45dd-baec-60c0216bb60f" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Customer Hierarchy update,update nonexited CU parent" id="0a2dc57b-9c7c-4969-a227-8754daba2c65"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Customer Hierarchy update,update nonexited CU parent" id="e1b0feec-6dd5-4190-bacc-23528f07519b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <customerHierarchy>
+            <sellers>
+               <seller code="SELLER_FR" description="France Seller">
+                  <!--<invoicePrefix>E_</invoicePrefix> -->
+                  <currencyCode>USD</currencyCode>
+                  <countryCode>US</countryCode>
+                  <languageCode>ENG</languageCode>
+                  <parentSeller>MAIN_SELLER</parentSeller>
+                  <customers>
+                     <customer code="${#Project#baseEntityPrefix}_CUST" description="${#Project#baseEntityPrefix}_CUST">
+                        <externalRef1>1</externalRef1>
+                        <externalRef2>1</externalRef2>
+                        <name>
+                           <title>M</title>
+                           <firstName>firstName</firstName>
+                           <lastName>lastName</lastName>
+                        </name>
+                        <address>
+                           <address1>address1</address1>
+                           <address2>address2</address2>
+                           <address3>address3</address3>
+                           <zipCode>75001</zipCode>
+                           <city>Tunis</city>
+                           <country>TUNISIA</country>
+                           <state></state>
+                        </address>
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>DEFAULT</customerBrand>
+                        <mandateIdentification>M1</mandateIdentification>
+                        <mandateDate>2016-02-28</mandateDate>
+                        <contactInformation>
+                           <email>${#Project#entityPrefix}@manaty.net</email>
+                           <phone>1234</phone>
+                           <mobile>092152154716</mobile>
+                           <fax>1234</fax>
+                        </contactInformation>
+                        <customerAccounts>
+                           <customerAccount code="${#Project#baseEntityPrefix}_CA" description="${#Project#baseEntityPrefix}_CA">
+                              <externalRef1>1</externalRef1>
+                              <externalRef2>1</externalRef2>
+                              <name>
+	                           <title>M</title>
+	                           <firstName>firstName</firstName>
+	                           <lastName>lastName</lastName>
+	                        </name>
+	                        <address>
+	                           <address1>address1</address1>
+	                           <address2>address2</address2>
+	                           <address3>address3</address3>
+	                           <zipCode>75001</zipCode>
+	                           <city>Tunis</city>
+	                           <country>TUNISIA</country>
+	                           <state></state>
+	                        </address>
+	                        <customer>${#Project#baseEntityPrefix}_CUST_nonexisted</customer>
+                              <currency>USD</currency>
+                              <language>ENG</language>
+                              <paymentMethod>CHECK</paymentMethod>
+                              <creditCategory>NEWCUSTOMER</creditCategory>
+                              <dateStatus>2016-02-28</dateStatus>
+                              <dateDunningLevel>2016-02-28</dateDunningLevel>
+                              <contactInformation>
+		                      <email>${#Project#entityPrefix}@manaty.net</email>
+		                      <phone>1234</phone>
+		                      <mobile>092152154716</mobile>
+		                      <fax>1234</fax>
+		                   </contactInformation>
+                              <dunningLevel>R0</dunningLevel>
+                              <mandateIdentification>1234</mandateIdentification>
+                              <mandateDate>2016-02-28</mandateDate>
+                              <billingAccounts>
+                                 <billingAccount code="${#Project#baseEntityPrefix}_BA" description="${#Project#baseEntityPrefix}_BA">
+                                    <externalRef1>1</externalRef1>
+                                    <externalRef2>1</externalRef2>
+                                   <name>
+		                           <title>M</title>
+		                           <firstName>firstName</firstName>
+		                           <lastName>lastName</lastName>
+		                        	</name>
+		                         <address>
+		                           <address1>address1</address1>
+		                           <address2>address2</address2>
+		                           <address3>address3</address3>
+		                           <zipCode>75001</zipCode>
+		                           <city>Tunis</city>
+		                           <country>TUNISIA</country>
+		                           <state></state>
+		                        </address>
+		                          <customerAccount>${#Project#baseEntityPrefix}_CA</customerAccount>
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>
+                                    <country>US</country>
+                                    <language>ENG</language>
+                                    <paymentMethod>CHECK</paymentMethod>
+                                    <nextInvoiceDate>2016-02-28</nextInvoiceDate>
+                                    <subscriptionDate>2016-02-28</subscriptionDate>
+                                    <paymentTerms>CASH</paymentTerms>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>${#Project#entityPrefix}@manaty.net</email>
+                                    <bankCoordinates>
+							   <bankCode>BPI</bankCode>
+							   <branchCode>LB</branchCode>
+							   <accountNumber>1234</accountNumber>
+							   <key>1234</key>
+							   <iban>1234</iban>
+                                       <bic>1234</bic>
+                                       <accountOwner>Edward P. Legaspi</accountOwner>
+                                       <bankName>Bank of the Philippine Islands</bankName>
+                                       <bankId>BPI</bankId>
+                                       <issuerNumber>1</issuerNumber>
+                                       <issuerName>BPI</issuerName>
+                                       <ics>NA</ics>
+                                    </bankCoordinates>
+                                    <userAccounts>
+                                       <userAccount code="${#Project#baseEntityPrefix}_UA" description="${#Project#baseEntityPrefix}_UA">
+                                          <externalRef1>1</externalRef1>
+                                          <externalRef2>1</externalRef2>
+                                          <name>
+				                           <title>M</title>
+				                           <firstName>firstName</firstName>
+				                           <lastName>lastName</lastName>
+				                        </name>
+				                        <address>
+				                           <address1>address1</address1>
+				                           <address2>address2</address2>
+				                           <address3>address3</address3>
+				                           <zipCode>75001</zipCode>
+				                           <city>Tunis</city>
+				                           <country>TUNISIA</country>
+				                           <state></state>
+				                        </address>
+                                          <subscriptionDate>2016-02-28</subscriptionDate>
+                                          <billingAccount>${#Project#baseEntityPrefix}_BA</billingAccount>
+                                          <subscriptions>
+                                             <subscription code="${#Project#baseEntityPrefix}_SUB" description="${#Project#baseEntityPrefix}_SUB">
+                                                <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+                                                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+                                                <subscriptionDate>2016-02-28</subscriptionDate>
+                                                <endAgreementDate>2016-06-07</endAgreementDate>
+                                                <accesses>
+                                                   <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACC1">
+                                                      <subscription>${#Project#baseEntityPrefix}_SUB</subscription>
+                                                      <startDate>2016-02-28</startDate>
+  		  								    <endDate>2016-04-01</endDate>
+                                                   </access>
+                                                </accesses>
+                                             </subscription>
+                                          </subscriptions>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="bcda2769-e741-4e8b-9a05-f5d2d3cc24b7"/><con:assertion type="Simple Contains" id="3cf56664-ef8b-45dd-baec-60c0216bb60f" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Customer Hierarchy update,update nonexited Seller parent" id="c3f6f253-f08a-41c8-bfbb-9e4581be6520"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Customer Hierarchy update,update nonexited Seller parent" id="e1b0feec-6dd5-4190-bacc-23528f07519b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <customerHierarchy>
+            <sellers>
+               <seller code="SELLER_FR" description="France Seller">
+                  <!--<invoicePrefix>E_</invoicePrefix> -->
+                  <currencyCode>USD</currencyCode>
+                  <countryCode>US</countryCode>
+                  <languageCode>ENG</languageCode>
+                  <parentSeller>MAIN_SELLER</parentSeller>
+                  <customers>
+                     <customer code="${#Project#baseEntityPrefix}_CUST" description="${#Project#baseEntityPrefix}_CUST">
+                        <externalRef1>1</externalRef1>
+                        <externalRef2>1</externalRef2>
+                        <name>
+                           <title>M</title>
+                           <firstName>firstName</firstName>
+                           <lastName>lastName</lastName>
+                        </name>
+                        <address>
+                           <address1>address1</address1>
+                           <address2>address2</address2>
+                           <address3>address3</address3>
+                           <zipCode>75001</zipCode>
+                           <city>Tunis</city>
+                           <country>TUNISIA</country>
+                           <state></state>
+                        </address>
+                        <seller>SELLER_FR_nonexisted</seller>
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>DEFAULT</customerBrand>
+                        <mandateIdentification>M1</mandateIdentification>
+                        <mandateDate>2016-02-28</mandateDate>
+                        <contactInformation>
+                           <email>${#Project#entityPrefix}@manaty.net</email>
+                           <phone>1234</phone>
+                           <mobile>092152154716</mobile>
+                           <fax>1234</fax>
+                        </contactInformation>
+                        <customerAccounts>
+                           <customerAccount code="${#Project#baseEntityPrefix}_CA" description="${#Project#baseEntityPrefix}_CA">
+                              <externalRef1>1</externalRef1>
+                              <externalRef2>1</externalRef2>
+                              <name>
+	                           <title>M</title>
+	                           <firstName>firstName</firstName>
+	                           <lastName>lastName</lastName>
+	                        </name>
+	                        <address>
+	                           <address1>address1</address1>
+	                           <address2>address2</address2>
+	                           <address3>address3</address3>
+	                           <zipCode>75001</zipCode>
+	                           <city>Tunis</city>
+	                           <country>TUNISIA</country>
+	                           <state></state>
+	                        </address>
+                              <currency>USD</currency>
+                              <language>ENG</language>
+                              <paymentMethod>CHECK</paymentMethod>
+                              <creditCategory>NEWCUSTOMER</creditCategory>
+                              <dateStatus>2016-02-28</dateStatus>
+                              <dateDunningLevel>2016-02-28</dateDunningLevel>
+                              <contactInformation>
+		                      <email>${#Project#entityPrefix}@manaty.net</email>
+		                      <phone>1234</phone>
+		                      <mobile>092152154716</mobile>
+		                      <fax>1234</fax>
+		                   </contactInformation>
+                              <dunningLevel>R0</dunningLevel>
+                              <mandateIdentification>1234</mandateIdentification>
+                              <mandateDate>2016-02-28</mandateDate>
+                              <billingAccounts>
+                                 <billingAccount code="${#Project#baseEntityPrefix}_BA" description="${#Project#baseEntityPrefix}_BA">
+                                    <externalRef1>1</externalRef1>
+                                    <externalRef2>1</externalRef2>
+                                   <name>
+		                           <title>M</title>
+		                           <firstName>firstName</firstName>
+		                           <lastName>lastName</lastName>
+		                        	</name>
+		                         <address>
+		                           <address1>address1</address1>
+		                           <address2>address2</address2>
+		                           <address3>address3</address3>
+		                           <zipCode>75001</zipCode>
+		                           <city>Tunis</city>
+		                           <country>TUNISIA</country>
+		                           <state></state>
+		                        </address>
+		                          <customerAccount>${#Project#baseEntityPrefix}_CA</customerAccount>
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>
+                                    <country>US</country>
+                                    <language>ENG</language>
+                                    <paymentMethod>CHECK</paymentMethod>
+                                    <nextInvoiceDate>2016-02-28</nextInvoiceDate>
+                                    <subscriptionDate>2016-02-28</subscriptionDate>
+                                    <paymentTerms>CASH</paymentTerms>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>${#Project#entityPrefix}@manaty.net</email>
+                                    <bankCoordinates>
+							   <bankCode>BPI</bankCode>
+							   <branchCode>LB</branchCode>
+							   <accountNumber>1234</accountNumber>
+							   <key>1234</key>
+							   <iban>1234</iban>
+                                       <bic>1234</bic>
+                                       <accountOwner>Edward P. Legaspi</accountOwner>
+                                       <bankName>Bank of the Philippine Islands</bankName>
+                                       <bankId>BPI</bankId>
+                                       <issuerNumber>1</issuerNumber>
+                                       <issuerName>BPI</issuerName>
+                                       <ics>NA</ics>
+                                    </bankCoordinates>
+                                    <userAccounts>
+                                       <userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
+                                          <externalRef1>1</externalRef1>
+                                          <externalRef2>1</externalRef2>
+                                          <name>
+				                           <title>M</title>
+				                           <firstName>firstName</firstName>
+				                           <lastName>lastName</lastName>
+				                        </name>
+				                        <address>
+				                           <address1>address1</address1>
+				                           <address2>address2</address2>
+				                           <address3>address3</address3>
+				                           <zipCode>75001</zipCode>
+				                           <city>Tunis</city>
+				                           <country>TUNISIA</country>
+				                           <state></state>
+				                        </address>
+                                          <subscriptionDate>2016-02-28</subscriptionDate>
+                                          <billingAccount>${#Project#baseEntityPrefix}_BA</billingAccount>
+                                          <subscriptions>
+                                             <subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB_HIER" description="${#Project#entityPrefix}_${#TestSuite#index}_SUB">
+                                                <userAccount>${#Project#entityPrefix}_${#TestSuite#index}_UA</userAccount>
+                                                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+                                                <subscriptionDate>2016-02-28</subscriptionDate>
+                                                <endAgreementDate>2016-06-07</endAgreementDate>
+                                                <accesses>
+                                                   <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACC1">
+                                                      <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_HIER</subscription>
+                                                      <startDate>2016-02-28</startDate>
+  		  								    <endDate>2016-04-01</endDate>
+                                                   </access>
+                                                </accesses>
+                                             </subscription>
+                                          </subscriptions>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="bcda2769-e741-4e8b-9a05-f5d2d3cc24b7"/><con:assertion type="Simple Contains" id="3cf56664-ef8b-45dd-baec-60c0216bb60f" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Customer Hierarchy update,update UA parent" id="8b89d5d6-9a4e-412e-bbf5-2b0ac6ed7aa0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Customer Hierarchy update,update UA parent" id="e1b0feec-6dd5-4190-bacc-23528f07519b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <customerHierarchy>
+            <sellers>
+               <seller code="SELLER_FR" description="France Seller">
+                  <!--<invoicePrefix>E_</invoicePrefix> -->
+                  <currencyCode>USD</currencyCode>
+                  <countryCode>US</countryCode>
+                  <languageCode>ENG</languageCode>
+                  <parentSeller>MAIN_SELLER</parentSeller>
+                  <customers>
+                     <customer code="${#Project#baseEntityPrefix}_CUST" description="${#Project#baseEntityPrefix}_CUST">
+                        <externalRef1>1</externalRef1>
+                        <externalRef2>1</externalRef2>
+                        <name>
+                           <title>M</title>
+                           <firstName>firstName</firstName>
+                           <lastName>lastName</lastName>
+                        </name>
+                        <address>
+                           <address1>address1</address1>
+                           <address2>address2</address2>
+                           <address3>address3</address3>
+                           <zipCode>75001</zipCode>
+                           <city>Tunis</city>
+                           <country>TUNISIA</country>
+                           <state></state>
+                        </address>
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>DEFAULT</customerBrand>
+                        <mandateIdentification>M1</mandateIdentification>
+                        <mandateDate>2016-02-28</mandateDate>
+                        <contactInformation>
+                           <email>${#Project#entityPrefix}@manaty.net</email>
+                           <phone>1234</phone>
+                           <mobile>092152154716</mobile>
+                           <fax>1234</fax>
+                        </contactInformation>
+                        <customerAccounts>
+                           <customerAccount code="${#Project#baseEntityPrefix}_CA" description="${#Project#baseEntityPrefix}_CA">
+                              <externalRef1>1</externalRef1>
+                              <externalRef2>1</externalRef2>
+                              <name>
+	                           <title>M</title>
+	                           <firstName>firstName</firstName>
+	                           <lastName>lastName</lastName>
+	                        </name>
+	                        <address>
+	                           <address1>address1</address1>
+	                           <address2>address2</address2>
+	                           <address3>address3</address3>
+	                           <zipCode>75001</zipCode>
+	                           <city>Tunis</city>
+	                           <country>TUNISIA</country>
+	                           <state></state>
+	                        </address>
+                              <currency>USD</currency>
+                              <language>ENG</language>
+                              <paymentMethod>CHECK</paymentMethod>
+                              <creditCategory>NEWCUSTOMER</creditCategory>
+                              <dateStatus>2016-02-28</dateStatus>
+                              <dateDunningLevel>2016-02-28</dateDunningLevel>
+                              <contactInformation>
+		                      <email>${#Project#entityPrefix}@manaty.net</email>
+		                      <phone>1234</phone>
+		                      <mobile>092152154716</mobile>
+		                      <fax>1234</fax>
+		                   </contactInformation>
+                              <dunningLevel>R0</dunningLevel>
+                              <mandateIdentification>1234</mandateIdentification>
+                              <mandateDate>2016-02-28</mandateDate>
+                              <billingAccounts>
+                                 <billingAccount code="${#Project#baseEntityPrefix}_BA" description="${#Project#baseEntityPrefix}_BA">
+                                    <externalRef1>1</externalRef1>
+                                    <externalRef2>1</externalRef2>
+                                   <name>
+		                           <title>M</title>
+		                           <firstName>firstName</firstName>
+		                           <lastName>lastName</lastName>
+		                        	</name>
+		                         <address>
+		                           <address1>address1</address1>
+		                           <address2>address2</address2>
+		                           <address3>address3</address3>
+		                           <zipCode>75001</zipCode>
+		                           <city>Tunis</city>
+		                           <country>TUNISIA</country>
+		                           <state></state>
+		                        </address>
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>
+                                    <country>US</country>
+                                    <language>ENG</language>
+                                    <paymentMethod>CHECK</paymentMethod>
+                                    <nextInvoiceDate>2016-02-28</nextInvoiceDate>
+                                    <subscriptionDate>2016-02-28</subscriptionDate>
+                                    <paymentTerms>CASH</paymentTerms>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>${#Project#entityPrefix}@manaty.net</email>
+                                    <bankCoordinates>
+							   <bankCode>BPI</bankCode>
+							   <branchCode>LB</branchCode>
+							   <accountNumber>1234</accountNumber>
+							   <key>1234</key>
+							   <iban>1234</iban>
+                                       <bic>1234</bic>
+                                       <accountOwner>Edward P. Legaspi</accountOwner>
+                                       <bankName>Bank of the Philippine Islands</bankName>
+                                       <bankId>BPI</bankId>
+                                       <issuerNumber>1</issuerNumber>
+                                       <issuerName>BPI</issuerName>
+                                       <ics>NA</ics>
+                                    </bankCoordinates>
+                                    <userAccounts>
+                                       <userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
+                                          <externalRef1>1</externalRef1>
+                                          <externalRef2>1</externalRef2>
+                                          <name>
+				                           <title>M</title>
+				                           <firstName>firstName</firstName>
+				                           <lastName>lastName</lastName>
+				                        </name>
+				                        <address>
+				                           <address1>address1</address1>
+				                           <address2>address2</address2>
+				                           <address3>address3</address3>
+				                           <zipCode>75001</zipCode>
+				                           <city>Tunis</city>
+				                           <country>TUNISIA</country>
+				                           <state></state>
+				                        </address>
+                                          <subscriptionDate>2016-02-28</subscriptionDate>
+                                          <subscriptions>
+                                             <subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB_HIER" description="${#Project#entityPrefix}_${#TestSuite#index}_SUB">
+                                                <userAccount>${#Project#entityPrefix}_${#TestSuite#index}_UA</userAccount>
+                                                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+                                                <subscriptionDate>2016-02-28</subscriptionDate>
+                                                <endAgreementDate>2016-06-07</endAgreementDate>
+                                                <accesses>
+                                                   <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACC1">
+                                                      <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_HIER</subscription>
                                                       <startDate>2016-02-28</startDate>
   		  								    <endDate>2016-04-01</endDate>
                                                    </access>
@@ -34153,7 +35187,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                                                 <endAgreementDate>2016-06-07</endAgreementDate>
                                                 <accesses>
                                                    <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACC1">
-                                                      <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB</subscription>
+                                                      <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_HIER</subscription>
                                                       <startDate>2016-02-28</startDate>
   		  								    <endDate>2016-04-01</endDate>
                                                    </access>
@@ -34314,7 +35348,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
                                                 <endAgreementDate>2016-06-07</endAgreementDate>
                                                 <accesses>
                                                    <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACC1">
-                                                      <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB</subscription>
+                                                      <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_HIER</subscription>
                                                       <startDate>2016-02-28</startDate>
   		  								    <endDate>2016-04-01</endDate>
                                                    </access>
@@ -35610,7 +36644,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
       </ws:findCustomer>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e401886d-40b4-4124-b0da-17e5c12aa472"/><con:assertion type="Simple Contains" id="4cf3e5f9-853b-4b0b-a220-e7422c7b2c30" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="XPath Match" id="d4f67382-3f3f-4758-9e95-2b9bf607688d" name="Response"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:findCustomerResponse[1]/return[1]/actionStatus[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="Customer"><con:configuration><path>//return/customer/@code</path><content>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="Customer Account"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/@code</path><content>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="Billing Account"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/@code</path><content>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="User Account"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/userAccounts[1]/userAccount/@code</path><content>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="Billing Account - Terminated"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/status</path><content>TERMINATED</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="User Account - Terminated"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/userAccounts[1]/userAccount/status</path><content>TERMINATED</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="Customer Account - Closed"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/status</path><content>CLOSE</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="script.closeAccount"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/externalRef2</path><content>script.closeAccount</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="User Account - script.terminateScript"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/userAccounts[1]/userAccount/externalRef2</path><content>script.terminateAccount</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="User Account - script.createScript"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/userAccounts[1]/userAccount/externalRef1</path><content>script.createAccount</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="User Account - script.updateScript"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/userAccounts[1]/userAccount/name/lastName</path><content>script.updateAccount</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>20</con:value></con:property></con:properties><con:setupScript>
+//ns2:findCustomerResponse[1]/return[1]/actionStatus[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="Customer"><con:configuration><path>//return/customer/@code</path><content>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="Customer Account"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/@code</path><content>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="Billing Account"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/@code</path><content>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="User Account"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/userAccounts[1]/userAccount/@code</path><content>${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="Billing Account - Terminated"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/status</path><content>TERMINATED</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="User Account - Terminated"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/userAccounts[1]/userAccount/status</path><content>TERMINATED</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="Customer Account - Closed"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/status</path><content>CLOSE</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="script.closeAccount"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/externalRef2</path><content>script.closeAccount</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="User Account - script.terminateScript"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/userAccounts[1]/userAccount/externalRef2</path><content>script.terminateAccount</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="User Account - script.createScript"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/userAccounts[1]/userAccount/externalRef1</path><content>script.createAccount</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="XPath Match" id="9235d641-c033-41c4-b557-f476e846e810" name="User Account - script.updateScript"><con:configuration><path>//return/customer/customerAccounts[1]/customerAccount/billingAccounts[1]/billingAccount/userAccounts[1]/userAccount/name/lastName</path><content>script.updateAccount</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>22</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite id="c53779ef-2907-445a-9d72-4e4816cb2d01" name="CRUD Rating"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="87abb0b0-f3a5-429b-9e88-165bfc9edaf5" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD DiscountPlan" searchProperties="true"><con:settings/><con:testStep type="request" name="create DiscountPlan with All Vals" id="d4da562a-97e6-401c-b740-853e373050c3"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createDiscountPlan</con:operation><con:request name="create DiscountPlan with All Vals" id="654ed8a5-1982-4ed6-8fbe-e6d82fdce941"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
