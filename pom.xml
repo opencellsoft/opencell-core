@@ -4,7 +4,7 @@
     <groupId>org.meveo</groupId>
     <artifactId>meveo</artifactId>
     <packaging>pom</packaging>
-    <version>4.3.1-SNAPSHOT</version>
+    <version>4.3.1</version>
     <name>MEVEO Parent Project</name>
     <url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
