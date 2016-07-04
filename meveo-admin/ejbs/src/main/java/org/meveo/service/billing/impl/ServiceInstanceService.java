@@ -42,6 +42,8 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.OfferServiceTemplate;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
@@ -50,6 +52,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.OfferServiceTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.script.service.ServiceModelScriptService;
 
@@ -73,6 +76,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @Inject
     ServiceTemplateService serviceTemplateService;
+    @Inject
+    private OfferServiceTemplateService offerServiceTemplateService;
 
     public ServiceInstance findByCodeAndSubscription(String code, Subscription subscription) {
         return findByCodeAndSubscription(getEntityManager(), code, subscription);
@@ -126,13 +131,29 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     public void serviceInstanciation(ServiceInstance serviceInstance, User creator) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         serviceInstanciation(serviceInstance, creator, null, null);
     }
+    // validate service is in offer service list
+    private boolean validateServiceInOffer(OfferTemplate offer,ServiceTemplate service) throws BusinessException{
+    	if(service==null||offer==null){
+    		throw new BusinessException("Service "+service+" or offer "+offer+" is null");
+    	}
+    	OfferServiceTemplate offerServiceTemplate=offerServiceTemplateService.findByOfferAndServiceTemplate(offer, service);
+        return offerServiceTemplate!=null;
+    }
 
     public void serviceInstanciation(ServiceInstance serviceInstance, User creator, BigDecimal subscriptionAmount, BigDecimal terminationAmount)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         log.debug("serviceInstanciation serviceID={}, code={}", serviceInstance.getId(), serviceInstance.getCode());
 
+        ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
         String serviceCode = serviceInstance.getServiceTemplate().getCode();
         Subscription subscription = serviceInstance.getSubscription();
+        
+        OfferTemplate offer=subscription.getOffer();
+        
+        boolean isServiceInOffer=validateServiceInOffer(offer,serviceTemplate);
+        if(!isServiceInOffer){
+        	throw new BusinessException("Service "+serviceTemplate.getCode()+" doesn't belong to offer "+offer.getCode());
+        }
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new IncorrectSusbcriptionException("subscription is not active");
@@ -156,7 +177,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         serviceInstance.setInvoicingCalendar(serviceInstance.getServiceTemplate().getInvoicingCalendar());
         create(serviceInstance, creator); // AKK was with subscription.getProvider()
         subscription.getServiceInstances().add(serviceInstance);
-        ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
 
         serviceTemplate = serviceTemplateService.attach(serviceTemplate);
 
@@ -216,6 +236,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
             throw new IncorrectServiceInstanceException("ServiceInstance is " + serviceInstance.getStatus());
+        }
+        
+        OfferTemplate offer=subscription.getOffer();
+        ServiceTemplate serviceTemplate=serviceInstance.getServiceTemplate();
+        boolean isServiceInOffer=validateServiceInOffer(offer,serviceTemplate);
+        if(!isServiceInOffer){
+        	throw new BusinessException("Service "+serviceTemplate.getCode()+" doesn't belong to offer "+offer.getCode());
         }
 
         subscription.setStatus(SubscriptionStatusEnum.ACTIVE);

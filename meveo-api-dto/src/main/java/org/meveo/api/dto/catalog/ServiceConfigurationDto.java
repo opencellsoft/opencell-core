@@ -1,19 +1,23 @@
 package org.meveo.api.dto.catalog;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.CustomFieldDto;
 
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "ServiceCode")
+@XmlRootElement(name = "ServiceConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceCodeDto {
+public class ServiceConfigurationDto {
 
 	@NotNull
 	@XmlAttribute
@@ -21,8 +25,10 @@ public class ServiceCodeDto {
 
 	@XmlAttribute
 	private String description;
-	
-	private CustomFieldsDto serviceCustomFields;
+
+	@XmlElementWrapper(name = "parameters")
+	@XmlElement(name = "parameter")
+	private List<CustomFieldDto> customFields;
 
 	public String getCode() {
 		return code;
@@ -40,17 +46,17 @@ public class ServiceCodeDto {
 		this.description = description;
 	}
 
+	public List<CustomFieldDto> getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(List<CustomFieldDto> customFields) {
+		this.customFields = customFields;
+	}
+
 	@Override
 	public String toString() {
-		return "ServiceCodeDto [code=" + code + ", description=" + description + ", serviceCustomFields=" + serviceCustomFields + "]";
-	}
-
-	public CustomFieldsDto getServiceCustomFields() {
-		return serviceCustomFields;
-	}
-
-	public void setServiceCustomFields(CustomFieldsDto serviceCustomFields) {
-		this.serviceCustomFields = serviceCustomFields;
+		return "ServiceConfigurationDto [code=" + code + ", description=" + description + ", customFields=" + customFields + "]";
 	}
 
 }

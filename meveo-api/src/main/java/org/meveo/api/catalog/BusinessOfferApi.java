@@ -5,8 +5,9 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.BomOfferDto;
-import org.meveo.api.dto.catalog.ServiceCodeDto;
+import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
@@ -16,20 +17,12 @@ import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.ServiceTemplateService;
 
 @Stateless
 public class BusinessOfferApi extends BaseApi {
 
 	@Inject
 	private BusinessOfferModelService businessOfferModelService;
-
-	@Inject
-	private ServiceTemplateService serviceTemplateService;
-
-	@Inject
-	private OfferTemplateService offerTemplateService;
 
 	public void createOfferFromBOM(BomOfferDto postData, User currentUser) throws MeveoApiException {
 		validate(postData);
@@ -49,17 +42,17 @@ public class BusinessOfferApi extends BaseApi {
 		// get the offer from bom
 		OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
 		if (bomOffer == null) {
-			throw new MeveoApiException("NO_OFFER_TEMPLATE_ATTACHED");
+			throw new MeveoApiException("No offer template attached");
 		}
 
 		if (bomOffer.getOfferServiceTemplates() == null || bomOffer.getOfferServiceTemplates().size() == 0) {
-			throw new MeveoApiException("NO_SERVICE_TEMPLATES_ATTACHED");
+			throw new MeveoApiException("No service template attached");
 		}
 
 		OfferTemplate newOfferTemplate = null;
 		try {
-			newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getPrefix(), postData.getDescription(), postData.getServicesToActivate(),
-					currentUser);
+			newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getCustomFields(), postData.getPrefix(), postData.getDescription(),
+					postData.getServicesToActivate(), currentUser);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
 		}
@@ -68,15 +61,14 @@ public class BusinessOfferApi extends BaseApi {
 		for (OfferServiceTemplate ost : newOfferTemplate.getOfferServiceTemplates()) {
 			ServiceTemplate serviceTemplate = ost.getServiceTemplate();
 
-			boolean toUpdate = false;
-
-			for (ServiceCodeDto serviceCodeDto : postData.getServicesToActivate()) {
+			for (ServiceConfigurationDto serviceCodeDto : postData.getServicesToActivate()) {
 				String serviceCode = postData.getPrefix() + "_" + serviceCodeDto.getCode();
 				if (serviceCode.equals(serviceTemplate.getCode())) {
-					if (serviceCodeDto.getServiceCustomFields() != null) {
-						toUpdate = true;
+					if (serviceCodeDto.getCustomFields() != null) {
 						try {
-							populateCustomFields(serviceCodeDto.getServiceCustomFields(), serviceTemplate, true, currentUser);
+							CustomFieldsDto cfsDto = new CustomFieldsDto();
+							cfsDto.setCustomField(serviceCodeDto.getCustomFields());
+							populateCustomFields(cfsDto, serviceTemplate, true, currentUser);
 						} catch (IllegalArgumentException | IllegalAccessException e) {
 							throw new MeveoApiException(e.getMessage());
 						}
@@ -84,27 +76,15 @@ public class BusinessOfferApi extends BaseApi {
 					}
 				}
 			}
-
-			if (toUpdate) {
-				try {
-					serviceTemplateService.update(serviceTemplate, currentUser);
-				} catch (BusinessException e) {
-					throw new MeveoApiException(e.getMessage());
-				}
-			}
 		}
 
 		// populate offer custom fields
-		if (newOfferTemplate != null && postData.getOfferCustomFields() != null) {
+		if (newOfferTemplate != null && postData.getCustomFields() != null) {
 			try {
-				populateCustomFields(postData.getOfferCustomFields(), newOfferTemplate, true, currentUser);
+				CustomFieldsDto cfsDto = new CustomFieldsDto();
+				cfsDto.setCustomField(postData.getCustomFields());
+				populateCustomFields(cfsDto, newOfferTemplate, true, currentUser);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
-				throw new MeveoApiException(e.getMessage());
-			}
-
-			try {
-				offerTemplateService.update(newOfferTemplate, currentUser);
-			} catch (BusinessException e) {
 				throw new MeveoApiException(e.getMessage());
 			}
 		}

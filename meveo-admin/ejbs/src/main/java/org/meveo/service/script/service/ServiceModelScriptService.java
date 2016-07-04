@@ -3,6 +3,7 @@ package org.meveo.service.script.service;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Singleton;
@@ -12,6 +13,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidScriptException;
+import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubscriptionTerminationReason;
@@ -30,20 +32,6 @@ public class ServiceModelScriptService implements Serializable {
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
-
-    public void createServiceTemplate(ServiceTemplate entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
-        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
-        Map<String, Object> scriptContext = new HashMap<>();
-        scriptContext.put(Script.CONTEXT_ENTITY, entity);
-        scriptInterface.createServiceTemplate(scriptContext, currentUser);
-    }
-
-    public void updateServiceTemplate(ServiceTemplate entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
-        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
-        Map<String, Object> scriptContext = new HashMap<>();
-        scriptContext.put(Script.CONTEXT_ENTITY, entity);
-        scriptInterface.updateServiceTemplate(scriptContext, currentUser);
-    }
 
     public void instantiateServiceInstance(ServiceInstance entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
         ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
@@ -87,4 +75,20 @@ public class ServiceModelScriptService implements Serializable {
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
         scriptInterface.terminateServiceInstance(scriptContext, currentUser);
     }
+    
+    public void beforeCreateServiceFromBSM(List<CustomFieldDto> customFields, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+        Map<String, Object> scriptContext = new HashMap<>();
+        scriptContext.put(ServiceScript.CONTEXT_PARAMETERS, customFields);
+        scriptInterface.beforeCreateServiceFromBSM(scriptContext, currentUser);
+    }
+
+    public void afterCreateServiceFromBSM(ServiceTemplate entity, List<CustomFieldDto> customFields, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+        Map<String, Object> scriptContext = new HashMap<>();
+        scriptContext.put(Script.CONTEXT_ENTITY, entity);
+        scriptContext.put(ServiceScript.CONTEXT_PARAMETERS, customFields);
+        scriptInterface.afterCreateServiceFromBSM(scriptContext, currentUser);
+    }
+    
 }

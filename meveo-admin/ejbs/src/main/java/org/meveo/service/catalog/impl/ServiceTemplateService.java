@@ -21,7 +21,6 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -32,7 +31,6 @@ import org.meveo.model.admin.User;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.script.service.ServiceModelScriptService;
 
 /**
  * Service Template service implementation.
@@ -41,34 +39,14 @@ import org.meveo.service.script.service.ServiceModelScriptService;
 @Stateless
 public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 	
-	@Inject
-	private ServiceModelScriptService serviceModelScriptService;
-	
 	@Override
 	public void create(ServiceTemplate serviceTemplate, User creator) throws BusinessException {
 		super.create(serviceTemplate, creator);
-
-		if (serviceTemplate.getBusinessServiceModel() != null && serviceTemplate.getBusinessServiceModel().getScript() != null) {
-			try {
-				serviceModelScriptService.createServiceTemplate(serviceTemplate, serviceTemplate.getBusinessServiceModel().getScript().getCode(), creator);
-			} catch (BusinessException e) {
-				log.error("Failed to execute a script {}", serviceTemplate.getBusinessServiceModel().getScript().getCode(), e);
-			}
-		}
 	}
 
 	@Override
 	public ServiceTemplate update(ServiceTemplate serviceTemplate, User updater) throws BusinessException {
 		ServiceTemplate result = super.update(serviceTemplate, updater);
-
-		if (serviceTemplate.getBusinessServiceModel() != null && serviceTemplate.getBusinessServiceModel().getScript() != null) {
-			try {
-				serviceModelScriptService.updateServiceTemplate(serviceTemplate, serviceTemplate.getBusinessServiceModel().getScript().getCode(), updater);
-			} catch (BusinessException e) {
-				log.error("Failed to execute a script {}", serviceTemplate.getBusinessServiceModel().getScript().getCode(), e);
-			}
-		}
-
 		return result;
 	}
 

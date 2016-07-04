@@ -76,9 +76,6 @@ public class UserAccountApi extends AccountApi {
 		userAccount.setProvider(currentUser.getProvider());
 		userAccount.setExternalRef1(postData.getExternalRef1());
 		userAccount.setExternalRef2(postData.getExternalRef2());
-		if(!StringUtils.isBlank(postData.getSubscriptionDate())){
-			userAccount.setSubscriptionDate(postData.getSubscriptionDate());
-		}
 
 		try {
 			userAccountService.createUserAccount(billingAccount, userAccount, currentUser);
@@ -132,9 +129,6 @@ public class UserAccountApi extends AccountApi {
 		}
 		if (!StringUtils.isBlank(postData.getExternalRef1())) {
 			userAccount.setExternalRef2(postData.getExternalRef2());
-		}
-		if(!StringUtils.isBlank(postData.getSubscriptionDate())){
-			userAccount.setSubscriptionDate(postData.getSubscriptionDate());
 		}
 
 		updateAccount(userAccount, postData, currentUser, checkCustomFields);

@@ -10,7 +10,8 @@ import javax.inject.Inject;
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.dto.catalog.ServiceCodeDto;
+import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -32,6 +33,8 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.script.offer.OfferModelScriptService;
+import org.meveo.service.script.service.ServiceModelScriptService;
 
 /**
  * @author Edward P. Legaspi
@@ -78,8 +81,14 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 	@Inject
 	private OfferTemplateService offerTemplateService;
 
-	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, String prefix, String offerDescription, List<ServiceCodeDto> serviceCodes, User currentUser)
-			throws BusinessException {
+	@Inject
+	private ServiceModelScriptService serviceModelScriptService;
+	
+	@Inject
+	private OfferModelScriptService offerModelScriptService;
+
+	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String prefix, String offerDescription, List<ServiceConfigurationDto> serviceCodes,
+			User currentUser) throws BusinessException {
 		OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
 
 		// 1 create offer
@@ -88,6 +97,14 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 		// check if offer already exists
 		if (offerTemplateService.findByCode(prefix + bomOffer.getCode(), currentUser.getProvider()) != null) {
 			throw new BusinessException("" + MeveoApiErrorCodeEnum.ENTITY_ALREADY_EXISTS_EXCEPTION);
+		}
+		
+		if (businessOfferModel != null && businessOfferModel.getScript() != null) {
+			try {
+				offerModelScriptService.beforeCreateOfferFromBOM(customFields, businessOfferModel.getScript().getCode(), currentUser);
+			} catch (BusinessException e) {
+				log.error("Failed to execute a script {}", businessOfferModel.getScript().getCode(), e);
+			}
 		}
 
 		newOfferTemplate.setCode(prefix);
@@ -105,7 +122,7 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 			// check if service template exists
 			if (serviceCodes != null && serviceCodes.size() > 0) {
 				boolean serviceFound = false;
-				for (ServiceCodeDto serviceCodeDto : serviceCodes) {
+				for (ServiceConfigurationDto serviceCodeDto : serviceCodes) {
 					String serviceCode = serviceCodeDto.getCode();
 
 					for (OfferServiceTemplate offerServiceTemplate : bomOffer.getOfferServiceTemplates()) {
@@ -129,8 +146,8 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode(), currentUser.getProvider());
 
 				boolean serviceFound = false;
-				ServiceCodeDto serviceCodeDto = new ServiceCodeDto();
-				for (ServiceCodeDto tempServiceCodeDto : serviceCodes) {
+				ServiceConfigurationDto serviceCodeDto = new ServiceConfigurationDto();
+				for (ServiceConfigurationDto tempServiceCodeDto : serviceCodes) {
 					String serviceCode = tempServiceCodeDto.getCode();
 					if (serviceCode.equals(serviceTemplate.getCode())) {
 						serviceCodeDto = tempServiceCodeDto;
@@ -149,6 +166,14 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 						if (bsm.getServiceTemplate().equals(serviceTemplate)) {
 							break;
 						}
+					}
+				}
+
+				if (bsm != null && bsm.getScript() != null) {
+					try {
+						serviceModelScriptService.beforeCreateServiceFromBSM(serviceCodeDto.getCustomFields(), bsm.getScript().getCode(), currentUser);
+					} catch (BusinessException e) {
+						log.error("Failed to execute a script {}", bsm.getScript().getCode(), e);
 					}
 				}
 
@@ -462,6 +487,14 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 						}
 					}
 
+					if (bsm != null && bsm.getScript() != null) {
+						try {
+							serviceModelScriptService.afterCreateServiceFromBSM(newServiceTemplate, serviceCodeDto.getCustomFields(), bsm.getScript().getCode(), currentUser);
+						} catch (BusinessException e) {
+							log.error("Failed to execute a script {}", bsm.getScript().getCode(), e);
+						}
+					}
+
 					newOfferServiceTemplate.setServiceTemplate(newServiceTemplate);
 					newOfferServiceTemplates.add(newOfferServiceTemplate);
 				} catch (IllegalAccessException | InvocationTargetException e) {
@@ -476,6 +509,15 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 			offerServiceTemplateService.create(newOfferServiceTemplate, currentUser);
 
 			newOfferTemplate.addOfferServiceTemplate(newOfferServiceTemplate);
+		}
+		
+		if (newOfferTemplate.getBusinessOfferModel() != null && newOfferTemplate.getBusinessOfferModel().getScript() != null) {
+			try {
+				offerModelScriptService.afterCreateOfferFromBOM(newOfferTemplate, customFields, newOfferTemplate.getBusinessOfferModel().getScript().getCode(),
+						currentUser);
+			} catch (BusinessException e) {
+				log.error("Failed to execute a script {}", newOfferTemplate.getBusinessOfferModel().getScript().getCode(), e);
+			}
 		}
 
 		return newOfferTemplate;

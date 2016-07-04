@@ -7,24 +7,24 @@ import org.meveo.model.admin.User;
 import org.meveo.service.script.ScriptInterface;
 
 public interface ServiceScriptInterface extends ScriptInterface {
-
-    /**
-     * Called after ServiceTemplate entity creation
+	
+	/**
+     * Called at the beginning of BusinessOfferModelService.createOfferFromBOM method at the beginning of service template creation for each service to duplicate.
      * 
-     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceTemplate
+     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=OfferTemplate
      * @param user Current user
      * @throws BusinessException
      */
-    public void createServiceTemplate(Map<String, Object> methodContext, User user) throws BusinessException;
-
-    /**
-     * Called after ServiceTemplate entity update
+	void beforeCreateServiceFromBSM(Map<String, Object> methodContext, User user) throws BusinessException;
+	
+	/**
+     * Called at the end of BusinessOfferModelService.createOfferFromBOM method at the end of service template creation for each service to duplicate.
      * 
-     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceTemplate
+     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=OfferTemplate
      * @param user Current user
      * @throws BusinessException
      */
-    public void updateServiceTemplate(Map<String, Object> methodContext, User user) throws BusinessException;
+	void afterCreateServiceFromBSM(Map<String, Object> methodContext, User user) throws BusinessException;
 
     /**
      * Called after ServiceInstance instantiation 

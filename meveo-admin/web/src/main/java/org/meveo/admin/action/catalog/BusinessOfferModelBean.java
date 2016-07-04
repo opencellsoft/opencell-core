@@ -12,7 +12,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.admin.module.GenericModuleBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
-import org.meveo.api.dto.catalog.ServiceCodeDto;
+import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.OfferServiceTemplate;
@@ -77,14 +77,14 @@ public class BusinessOfferModelBean extends GenericModuleBean<BusinessOfferModel
     }
 
     public void createOfferFromBOM() throws BusinessException {
-        List<ServiceCodeDto> serviceCodeDtos = new ArrayList<>();
+        List<ServiceConfigurationDto> serviceCodeDtos = new ArrayList<>();
         for (ServiceTemplate st : serviceDualListModel.getTarget()) {
-            ServiceCodeDto serviceCodeDto = new ServiceCodeDto();
+            ServiceConfigurationDto serviceCodeDto = new ServiceConfigurationDto();
             serviceCodeDto.setCode(st.getCode());
             serviceCodeDtos.add(serviceCodeDto);
         }
 
-        businessOfferModelService.createOfferFromBOM(getEntity(), bomOfferInstancePrefix, "", serviceCodeDtos, currentUser);
+        businessOfferModelService.createOfferFromBOM(getEntity(), null, bomOfferInstancePrefix, "", serviceCodeDtos, currentUser);
         RequestContext.getCurrentInstance().closeDialog(getEntity());
     }
 

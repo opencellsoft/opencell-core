@@ -15,16 +15,7 @@ public class OfferScript extends ModuleScript implements OfferScriptInterface {
     public static String CONTEXT_SUSPENSION_DATE = "CONTEXT_SUSPENSION_DATE";
     public static String CONTEXT_TERMINATION_DATE = "CONTEXT_TERMINATION_DATE";
     public static String CONTEXT_TERMINATION_REASON = "CONTEXT_TERMINATION_REASON";
-
-    @Override
-    public void createOfferTemplate(Map<String, Object> methodContext, User user) throws BusinessException {
-
-    }
-
-    @Override
-    public void updateOfferTemplate(Map<String, Object> methodContext, User user) throws BusinessException {
-
-    }
+    public static String CONTEXT_PARAMETERS = "CONTEXT_PARAMETERS";
 
     @Override
     public void subscribe(Map<String, Object> methodContext, User user) throws BusinessException {
@@ -45,4 +36,16 @@ public class OfferScript extends ModuleScript implements OfferScriptInterface {
     public void terminateSubscription(Map<String, Object> methodContext, User user) throws BusinessException {
 
     }
+
+	@Override
+	public void beforeCreateOfferFromBOM(Map<String, Object> methodContext, User user) throws BusinessException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void afterCreateOfferFromBOM(Map<String, Object> methodContext, User user) throws BusinessException {
+		// TODO Auto-generated method stub
+		
+	}
 }
