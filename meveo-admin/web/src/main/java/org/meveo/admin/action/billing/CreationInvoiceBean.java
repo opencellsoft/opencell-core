@@ -147,6 +147,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	private boolean detailled = false;
 	private Long rootInvoiceId = null;
 	private Invoice rootInvoice;
+	private boolean rtxHasImported = false;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -387,6 +388,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 	public void importOpenedRT(){
 		try{
+			if(isRtxHasImported()){
+				messages.error("Rtx already imported");
+				return;
+			}
 			if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
 				messages.error("BillingAccount is required.");
 				return;
@@ -401,6 +406,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 					agregateHandler.addRT(ratedTransaction,ratedTransaction.getInvoiceSubCategory().getDescription(), getFreshUA(), currentUser);
 					updateAmountsAndLines(agregateHandler, entity.getBillingAccount());
 				}
+				setRtxHasImported(true);
 				
 			}
 		}catch(BusinessException be){
@@ -744,6 +750,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		return getBackView();
 	}
 	
+	public boolean isCanAddLinkedInvoice(){
+		return entity.getBillingAccount() != null && entity.getInvoiceType() != null;
+	}
+	
 	
 	/*###################################################################################################
 	  #  Setters and Getters                                                                            #
@@ -907,5 +917,21 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 	public boolean isIncludeBalance() {
 		return includeBalance;
+	}
+
+	/**
+	 * @return the rtxHasImported
+	 */
+	public boolean isRtxHasImported() {
+		return rtxHasImported;
+	}
+
+	/**
+	 * @param rtxHasImported the rtxHasImported to set
+	 */
+	public void setRtxHasImported(boolean rtxHasImported) {
+		this.rtxHasImported = rtxHasImported;
 	}	
+	
+	
 }

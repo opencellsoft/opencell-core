@@ -73,13 +73,13 @@
 								<hftl:formField field="invoiceType" required="true"
 									label="#{messages['invoice.invoiceType']}"
 									valueLabelField="descriptionOrCode"
-									listBean="#{invoiceTypeBean}" listenerUpdate="invoicePopup :formId:tabView:ImportRTs"></hftl:formField>
+									listBean="#{invoiceTypeBean}" listenerUpdate="invoicePopup :formId:tabView:ImportRTs :formId:tabView:panelAddLinkedInvoice"></hftl:formField>
 
 								<hftl:formField id="billingAccountSelectedId"
 									label="#{messages['billingAccount']}" field="billingAccount"
 									valueLabelField="code" popup="true"
 									popupId="billingAccountPopup" required="true" 
-									showPopupOnlyOnNew="true" />
+									showPopupOnlyOnNew="true" listenerUpdate="invoicePopup :formId:tabView:ImportRTs :formId:tabView:panelAddLinkedInvoice" />
 
 								<hftl:formField field="invoiceDate" required="true"
 									label="#{messages['invoice.invoiceDate']}" />
@@ -119,9 +119,9 @@
 											</p:column>
 										</p:dataTable>
 
-										<h:panelGroup layout="block" styleClass="form-panel-actions">
+										<h:panelGroup layout="block" styleClass="form-panel-actions" id="panelAddLinkedInvoice">
 											<p:commandButton value="#{messages['action.add']}"
-												type="button" onclick="PF('dlg_invoicePopup').show();" />
+												type="button" onclick="PF('dlg_invoicePopup').show();"  disabled ="#{not creationInvoiceBean.isCanAddLinkedInvoice()}" />
 
 											<p:commandButton value="#{messages['action.deleteAll']}"
 												action="#{creationInvoiceBean.deleteAllLinkedInvoice}"
