@@ -1,23 +1,20 @@
 package org.meveo.api.Interceptor;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
-import org.apache.commons.lang3.ObjectUtils.Null;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jboss.seam.international.status.Messages;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.SBEParam;
+import org.meveo.model.SBEParamType;
 import org.meveo.model.SecuredBusinessEntityProperty;
-import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.security.SecuredBusinessEntityService;
@@ -55,10 +52,16 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 		String objectName = objectClass.getSimpleName();
 		String methodName = context.getMethod().getName();
 
-		log.debug(LOG_LINE_SEPARATOR);
-		log.debug("Checking method {}.{} for secured BusinessEntities", objectName, methodName);
+		SecuredBusinessEntityProperty annotation = context.getMethod().getAnnotation(SecuredBusinessEntityProperty.class);
 
-		validateUserAccessToSecuredEntities(context);
+		if (annotation == null) {
+			log.debug(LOG_LINE_SEPARATOR);
+			log.debug("Method {}.{} is not annotated with @SecuredBusinessEntityProperty.  No need to check for authorization.", objectName, methodName);
+		} else {
+			log.debug(LOG_LINE_SEPARATOR);
+			log.debug("Checking method {}.{} for secured BusinessEntities", objectName, methodName);
+			validateUserAccessToSecuredEntities(context, annotation);
+		}
 
 		log.debug(LOG_LINE_SEPARATOR);
 		log.debug("Allowing method {}.{} to be invoked.", objectName, methodName);
@@ -66,92 +69,92 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 		return context.proceed();
 	}
 
-	private void validateUserAccessToSecuredEntities(InvocationContext context) throws MeveoApiException {
+	private void validateUserAccessToSecuredEntities(InvocationContext context, SecuredBusinessEntityProperty annotation) throws MeveoApiException {
 
-		SecuredBusinessEntityProperty annotation = context.getMethod().getAnnotation(SecuredBusinessEntityProperty.class);
+		SBEParam[] sbeParams = annotation.parameters();
+		Object[] parameters = context.getParameters();
 
-		if (annotation != null) {
+		Class<?> entityClass = annotation.entityClass();
 
-			String property = annotation.property();
-			Class<?> dtoClass = annotation.dtoClass();
-			Class<?> entityClass = annotation.entityClass();
+		User user = getUserFromParameters(sbeParams, parameters);
 
-			Map<Class<?>, Object> parameterMap = parameterToMap(context.getParameters());
-			User user = getUserFromParameters(parameterMap);
+		if (user.getSecuredEntities() == null || user.getSecuredEntities().isEmpty()) {
+			log.debug(LOG_LINE_SEPARATOR);
+			log.debug("User does not have any restrictions.");
+			return;
+		}
 
-			if (user.getSecuredEntities() != null && !user.getSecuredEntities().isEmpty()) {
-				try {
-					String code = null;
-					if (dtoClass.equals(Null.class)) {
-						code = (String) parameterMap.get(String.class);
-					} else {
-						Object dto = parameterMap.get(dtoClass);
-						code = (String) getPropertyValue(dto, property);
-					}
+		try {
 
-					if (code != null) {
-						BusinessEntity entity = (BusinessEntity) entityClass.newInstance();
-						entity.setCode(code);
-						Set<SecuredEntity> securedEntities = user.getSecuredEntities();
-						boolean allow = entityFoundInSecuredEntities(entity, securedEntities);
-						if (!allow) {
-							// Check entity parents if they are found in
-							// securedEntities. In order to get the entity's
-							// parents, the entity is retrieved from DB.
-							SecuredBusinessEntityService service = factory.getService(entity.getClass().getTypeName());
-							entity = service.getEntityByCode(code, user);
-							if (entity != null) {
-								for (BusinessEntity parentEntity : service.getParentEntities(entity)) {
-									if (entityFoundInSecuredEntities(parentEntity, securedEntities)) {
-										allow = true;
-										break;
-									}
-								}
-							} else {
-								// If the entity was not found, it does not
-								// exist, i.e. nothing to secure. Therefore,
-								// there is no need to check further.
-								allow = true;
-							}
+			String code = null;
+			SBEParam dtoParam = getSBEParamByType(sbeParams, SBEParamType.REQUEST_DTO);
 
-						}
-
-						// Still not found? it means user has no access to the
-						// entity.
-						if (!allow) {
-							throwErrorMessage(entityClass);
-						}
-
-					} else {
-						// The user is only allowed to access specific entities.
-						// The entity's code must be provided.
-						throwErrorMessage(entityClass);
-					}
-
-				} catch (IllegalAccessException e) {
-					String message = String.format(FAILED_TO_RETRIEVE_PROPERTY, dtoClass.getSimpleName(), property);
-					log.error(LOG_LINE_SEPARATOR);
-					log.error(message, e);
-					throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, message);
-				} catch (InstantiationException e) {
-					String message = String.format(FAILED_TO_INSTANTIATE_INSTANCE, entityClass.getSimpleName());
-					log.error(LOG_LINE_SEPARATOR);
-					log.error(message, e);
-					throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, message);
-				}
+			if (dtoParam == null) {
+				SBEParam codeParam = getSBEParamByType(sbeParams, SBEParamType.CODE);
+				code = (String) getValueByType(codeParam, parameters);
 			} else {
-				log.debug(LOG_LINE_SEPARATOR);
-				log.debug("User does not have any related secured entities.");
+				code = (String) getDtoPropertyValue(dtoParam, parameters);
 			}
+
+			if (code == null) {
+				// The user is only allowed to access specific entities. The
+				// entity's code must be provided.
+				throwErrorMessage(entityClass);
+			}
+
+			BusinessEntity entity = (BusinessEntity) entityClass.newInstance();
+			entity.setCode(code);
+			boolean allow = SecuredBusinessEntityService.isEntityAllowed(entity, user, factory, false);
+			if (!allow) {
+				throwErrorMessage(entityClass);
+			}
+		} catch (IllegalAccessException | InstantiationException e) {
+			String message = String.format(FAILED_TO_INSTANTIATE_INSTANCE, entityClass.getSimpleName());
+			log.error(LOG_LINE_SEPARATOR);
+			log.error(message, e);
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, message);
 		}
 	}
 
-	private User getUserFromParameters(Map<Class<?>, Object> parameterMap) {
-		User user = (User) parameterMap.get(User.class);
+	private SBEParam getSBEParamByType(SBEParam[] sbeParameters, SBEParamType type) {
+		for (SBEParam sbeParam : sbeParameters) {
+			if (type.equals(sbeParam.type())) {
+				return sbeParam;
+			}
+		}
+		return null;
+	}
+
+	private Object getValueByType(SBEParam sbeParameter, Object[] contextParameters) {
+		if (sbeParameter == null) {
+			return null;
+		}
+		return contextParameters[sbeParameter.index()];
+	}
+
+	private User getUserFromParameters(SBEParam[] sbeParams, Object[] parameters) {
+		SBEParam userParam = getSBEParamByType(sbeParams, SBEParamType.USER);
+		User user = (User) getValueByType(userParam, parameters);
 		if (user != null) {
 			user = userService.refreshOrRetrieve(user);
 		}
 		return user;
+	}
+
+	private String getDtoPropertyValue(SBEParam dtoParam, Object[] parameters) throws MeveoApiException {
+		Class<?> dtoClass = dtoParam.dataClass();
+		String property = dtoParam.property();
+		String code = null;
+		try {
+			Object dto = getValueByType(dtoParam, parameters);
+			code = (String) getPropertyValue(dto, dtoParam.property());
+		} catch (IllegalAccessException e) {
+			String message = String.format(FAILED_TO_RETRIEVE_PROPERTY, dtoClass.getSimpleName(), property);
+			log.error(LOG_LINE_SEPARATOR);
+			log.error(message, e);
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, message);
+		}
+		return code;
 	}
 
 	private void throwErrorMessage(Class<?> entityClass) throws MeveoApiException {
@@ -159,28 +162,6 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 		log.error(LOG_LINE_SEPARATOR);
 		log.error(message);
 		throw new MeveoApiException(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION, message);
-	}
-
-	private boolean entityFoundInSecuredEntities(BusinessEntity entity, Set<SecuredEntity> securedEntities) {
-		boolean found = false;
-		for (SecuredEntity securedEntity : securedEntities) {
-			if (entity.equals(securedEntity)) {
-				found = true;
-				break;
-			}
-		}
-		return found;
-	}
-
-	private Map<Class<?>, Object> parameterToMap(Object[] parameters) {
-		Map<Class<?>, Object> parameterMap = new HashMap<>();
-		if (parameters != null) {
-			for (Object parameter : parameters) {
-				log.debug("Parameter {}", parameter == null ? null : parameter.toString());
-				parameterMap.put(parameter.getClass(), parameter);
-			}
-		}
-		return parameterMap;
 	}
 
 	private Object getPropertyValue(Object obj, String property) throws IllegalAccessException {

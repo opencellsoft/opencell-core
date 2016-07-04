@@ -7,11 +7,13 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
@@ -22,6 +24,8 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.SBEParam;
+import org.meveo.model.SBEParamType;
 import org.meveo.model.SecuredBusinessEntityProperty;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCurrency;
@@ -43,6 +47,7 @@ import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class CustomerAccountApi extends AccountApi {
 
 	@Inject
@@ -256,7 +261,13 @@ public class CustomerAccountApi extends AccountApi {
 		return customerAccount;
 	}
 
-	@SecuredBusinessEntityProperty(entityClass = CustomerAccount.class)
+	@SecuredBusinessEntityProperty(
+		entityClass = CustomerAccount.class,
+		parameters = { 
+			@SBEParam(type = SBEParamType.CODE),
+			@SBEParam(dataClass = User.class, index = 1, type = SBEParamType.USER) 
+		}
+	)
 	public CustomerAccountDto find(String customerAccountCode, User currentUser) throws Exception {
 
 		if (StringUtils.isBlank(customerAccountCode)) {

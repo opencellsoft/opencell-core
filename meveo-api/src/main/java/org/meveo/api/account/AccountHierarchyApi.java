@@ -48,6 +48,8 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.Auditable;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.SBEParam;
+import org.meveo.model.SBEParamType;
 import org.meveo.model.SecuredBusinessEntityProperty;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
@@ -1738,7 +1740,13 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	@SecuredBusinessEntityProperty(dtoClass=CRMAccountHierarchyDto.class, property="crmParentCode", entityClass=Seller.class)
+	@SecuredBusinessEntityProperty(
+		entityClass = Seller.class,
+		parameters = { 
+			@SBEParam(dataClass = CRMAccountHierarchyDto.class, property = "crmParentCode", type = SBEParamType.REQUEST_DTO),
+			@SBEParam(dataClass = User.class, index = 1, type = SBEParamType.USER) 
+		}
+	)
 	public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {
@@ -2013,7 +2021,13 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	@SecuredBusinessEntityProperty(dtoClass=CRMAccountHierarchyDto.class, property="crmParentCode", entityClass=Seller.class)
+	@SecuredBusinessEntityProperty(
+		entityClass = Seller.class,
+		parameters = { 
+			@SBEParam(dataClass = CRMAccountHierarchyDto.class, property = "crmParentCode", type = SBEParamType.REQUEST_DTO),
+			@SBEParam(dataClass = User.class, index = 1, type = SBEParamType.USER) 
+		}
+	)
 	public void updateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {
@@ -2313,7 +2327,13 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	@SecuredBusinessEntityProperty(dtoClass=CRMAccountHierarchyDto.class, property="crmParentCode", entityClass=Seller.class)
+	@SecuredBusinessEntityProperty(
+		entityClass = Seller.class,
+		parameters = { 
+			@SBEParam(dataClass = CRMAccountHierarchyDto.class, property = "crmParentCode", type = SBEParamType.REQUEST_DTO),
+			@SBEParam(dataClass = User.class, index = 1, type = SBEParamType.USER) 
+		}
+	)
 	public void createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {

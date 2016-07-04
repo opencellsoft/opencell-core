@@ -6,13 +6,22 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Identifies DTO properties that require proper user permissions to access.
- *
+ * 
+ * This contains data on how to retrieve the parameters of a
+ * {@link SecuredBusinessEntityProperty} annotated method.
+ * 
  * @author Tony Alejandro
+ *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
-public @interface SecuredBusinessEntityProperty {
-    SBEParam[] parameters();
-    Class<? extends BusinessEntity> entityClass();
+public @interface SBEParam {
+
+	String property() default "";
+
+	Class<?> dataClass() default String.class;
+
+	int index() default 0;
+
+	SBEParamType type();
 }

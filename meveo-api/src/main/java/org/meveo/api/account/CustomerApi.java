@@ -19,6 +19,8 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.SBEParam;
+import org.meveo.model.SBEParamType;
 import org.meveo.model.SecuredBusinessEntityProperty;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -227,7 +229,13 @@ public class CustomerApi extends AccountApi {
         return customer;
     }
 
-	@SecuredBusinessEntityProperty(entityClass = Customer.class)
+	@SecuredBusinessEntityProperty(
+		entityClass = Customer.class,
+		parameters = { 
+			@SBEParam(type = SBEParamType.CODE),
+			@SBEParam(dataClass = User.class, index = 1, type = SBEParamType.USER) 
+		}
+	)
 	public CustomerDto find(String customerCode, User user) throws MeveoApiException {
         if (StringUtils.isBlank(customerCode)) {
             missingParameters.add("customerCode");

@@ -188,4 +188,10 @@ public class ReflectionUtils {
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(annotationClass);
         return classes;
     }
+    
+    public static <T> Set<Class<? extends T>> getSubTypesOf(Class<T> type) {
+        Reflections reflections = new Reflections("org.meveo.model");
+        Set<Class<? extends T>> classes = reflections.getSubTypesOf(type);
+        return classes;
+    }
 }

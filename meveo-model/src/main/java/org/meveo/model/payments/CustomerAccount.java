@@ -39,6 +39,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AccountEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
@@ -60,7 +61,7 @@ import org.meveo.model.shared.ContactInformation;
 @Table(name = "AR_CUSTOMER_ACCOUNT")
 public class CustomerAccount extends AccountEntity {
 
-    public static final String ACCOUNT_TYPE = ((DiscriminatorValue) CustomerAccount.class.getAnnotation(DiscriminatorValue.class)).value();
+	public static final String ACCOUNT_TYPE = ((DiscriminatorValue) CustomerAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
 	private static final long serialVersionUID = 1L;
 
@@ -97,7 +98,7 @@ public class CustomerAccount extends AccountEntity {
 
 	@Column(name = "DATE_STATUS")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateStatus=new Date();
+	private Date dateStatus = new Date();
 
 	@Column(name = "DATE_DUNNING_LEVEL")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -125,15 +126,15 @@ public class CustomerAccount extends AccountEntity {
 	@Column(name = "MANDATE_DATE")
 	@Temporal(TemporalType.DATE)
 	private Date mandateDate;
-	
+
 	public CustomerAccount() {
-        accountType = ACCOUNT_TYPE;
-    }
-	
+		accountType = ACCOUNT_TYPE;
+	}
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TRADING_LANGUAGE_ID")
 	private TradingLanguage tradingLanguage;
-	
+
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -155,7 +156,7 @@ public class CustomerAccount extends AccountEntity {
 	}
 
 	public void setStatus(CustomerAccountStatusEnum status) {
-		if(this.status!=status){
+		if (this.status != status) {
 			this.dateStatus = new Date();
 		}
 		this.status = status;
@@ -228,7 +229,6 @@ public class CustomerAccount extends AccountEntity {
 		this.password = password;
 	}
 
-
 	public List<ActionDunning> getActionDunnings() {
 		return actionDunnings;
 	}
@@ -236,7 +236,6 @@ public class CustomerAccount extends AccountEntity {
 	public void setActionDunnings(List<ActionDunning> actionDunnings) {
 		this.actionDunnings = actionDunnings;
 	}
-
 
 	public String getMandateIdentification() {
 		return mandateIdentification;
@@ -270,8 +269,13 @@ public class CustomerAccount extends AccountEntity {
 		this.creditCategory = creditCategory;
 	}
 
-    @Override
-    public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[]{customer};
-    }	
+	@Override
+	public ICustomFieldEntity[] getParentCFEntities() {
+		return new ICustomFieldEntity[] { customer };
+	}
+
+	@Override
+	public BusinessEntity getParentEntity() {
+		return customer;
+	}
 }
