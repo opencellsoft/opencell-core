@@ -19,6 +19,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.SecuredBusinessEntityProperty;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
@@ -328,12 +329,13 @@ public class BillingAccountApi extends AccountApi {
 		return billingAccount;
 	}
 
-	public BillingAccountDto find(String billingAccountCode, Provider provider) throws MeveoApiException {
+	@SecuredBusinessEntityProperty(entityClass = BillingAccount.class)
+	public BillingAccountDto find(String billingAccountCode, User user) throws MeveoApiException {
 		if (StringUtils.isBlank(billingAccountCode)) {
 			missingParameters.add("billingAccountCode");
 			handleMissingParameters();
 		}
-		BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, provider);
+		BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, user.getProvider());
 		if (billingAccount == null) {
 			throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
 		}

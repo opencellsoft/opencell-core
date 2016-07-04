@@ -8,12 +8,14 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.SellerDto;
@@ -46,6 +48,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.Auditable;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.SecuredBusinessEntityProperty;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -121,6 +124,7 @@ import org.meveo.util.MeveoParamBean;
  */
 
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class AccountHierarchyApi extends BaseApi {
 
 	@Inject
@@ -1734,6 +1738,7 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
+	@SecuredBusinessEntityProperty(dtoClass=CRMAccountHierarchyDto.class, property="crmParentCode", entityClass=Seller.class)
 	public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {
@@ -2008,6 +2013,7 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
+	@SecuredBusinessEntityProperty(dtoClass=CRMAccountHierarchyDto.class, property="crmParentCode", entityClass=Seller.class)
 	public void updateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {
@@ -2307,6 +2313,7 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
+	@SecuredBusinessEntityProperty(dtoClass=CRMAccountHierarchyDto.class, property="crmParentCode", entityClass=Seller.class)
 	public void createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {

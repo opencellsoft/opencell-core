@@ -5,9 +5,11 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
@@ -33,6 +35,7 @@ import org.meveo.service.crm.impl.CustomerService;
  * @author Edward P. Legaspi
  **/
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class CustomerApi extends AccountApi {
 
 
@@ -55,8 +58,7 @@ public class CustomerApi extends AccountApi {
         create(postData, currentUser, true);
     }
 
-    @SecuredBusinessEntityProperty(property = "postData.seller", entityClass = Seller.class)
-    public Customer create(CustomerDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, BusinessException {
+	public Customer create(CustomerDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -225,13 +227,14 @@ public class CustomerApi extends AccountApi {
         return customer;
     }
 
-    public CustomerDto find(String customerCode, Provider provider) throws MeveoApiException {
+	@SecuredBusinessEntityProperty(entityClass = Customer.class)
+	public CustomerDto find(String customerCode, User user) throws MeveoApiException {
         if (StringUtils.isBlank(customerCode)) {
             missingParameters.add("customerCode");
         }
         handleMissingParameters();
 
-        Customer customer = customerService.findByCode(customerCode, provider);
+        Customer customer = customerService.findByCode(customerCode, user.getProvider());
         if (customer == null) {
             throw new EntityDoesNotExistsException(Customer.class, customerCode);
         }

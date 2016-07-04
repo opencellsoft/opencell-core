@@ -5,14 +5,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.commons.lang3.ObjectUtils.Null;
+
 /**
- * Idenitifies DTO properties that require proper user permissions to access.
+ * Identifies DTO properties that require proper user permissions to access.
  *
  * @author Tony Alejandro
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
 public @interface SecuredBusinessEntityProperty {
-    String property();
-    Class<?> entityClass();
+    String property() default "";
+    Class<?> dtoClass() default Null.class;
+    Class<? extends BusinessEntity> entityClass();
 }

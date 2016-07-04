@@ -22,6 +22,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.SecuredBusinessEntityProperty;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -255,6 +256,7 @@ public class CustomerAccountApi extends AccountApi {
 		return customerAccount;
 	}
 
+	@SecuredBusinessEntityProperty(entityClass = CustomerAccount.class)
 	public CustomerAccountDto find(String customerAccountCode, User currentUser) throws Exception {
 
 		if (StringUtils.isBlank(customerAccountCode)) {

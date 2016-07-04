@@ -144,7 +144,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         GetCustomerResponseDto result = new GetCustomerResponseDto();
 
         try {
-            result.setCustomer(customerApi.find(customerCode, getCurrentUser().getProvider()));
+            result.setCustomer(customerApi.find(customerCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -464,7 +464,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         GetBillingAccountResponseDto result = new GetBillingAccountResponseDto();
 
         try {
-            result.setBillingAccount(billingAccountApi.find(billingAccountCode, getCurrentUser().getProvider()));
+            result.setBillingAccount(billingAccountApi.find(billingAccountCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -544,7 +544,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         GetUserAccountResponseDto result = new GetUserAccountResponseDto();
 
         try {
-            result.setUserAccount(userAccountApi.find(userAccountCode, getCurrentUser().getProvider()));
+            result.setUserAccount(userAccountApi.find(userAccountCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

@@ -19,6 +19,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.SecuredBusinessEntityProperty;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
@@ -150,14 +151,15 @@ public class UserAccountApi extends AccountApi {
 		return userAccount;
 	}
 
-	public UserAccountDto find(String userAccountCode, Provider provider) throws MeveoApiException {
+	@SecuredBusinessEntityProperty(entityClass = UserAccount.class)
+	public UserAccountDto find(String userAccountCode, User user) throws MeveoApiException {
 
 		if (StringUtils.isBlank(userAccountCode)) {
 			missingParameters.add("userAccountCode");
 			handleMissingParameters();
 		}
 
-		UserAccount userAccount = userAccountService.findByCode(userAccountCode, provider);
+		UserAccount userAccount = userAccountService.findByCode(userAccountCode, user.getProvider());
 		if (userAccount == null) {
 			throw new EntityDoesNotExistsException(UserAccount.class, userAccountCode);
 		}
