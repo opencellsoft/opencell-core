@@ -7,9 +7,7 @@ import javax.jws.WebService;
 import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.dto.response.billing.FilteredListResponseDto;
 
-/**
- * @author Edward P. Legaspi
- **/
+
 @WebService
 public interface FilteredListWs extends IBaseWs {
 
@@ -19,5 +17,8 @@ public interface FilteredListWs extends IBaseWs {
 
 	@WebMethod
 	FilteredListResponseDto listByXmlInput(@WebParam(name = "filter") FilteredListDto postData);
+	
+	@WebMethod
+	FilteredListResponseDto search(@WebParam(name = "classnames")String[] classnames,@WebParam(name ="query") String query);
 
 }

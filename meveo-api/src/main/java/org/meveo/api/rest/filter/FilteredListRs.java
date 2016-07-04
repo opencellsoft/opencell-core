@@ -13,9 +13,6 @@ import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
-/**
- * @author Edward P. Legaspi
- **/
 @Path("/filteredList")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -29,5 +26,10 @@ public interface FilteredListRs extends IBaseRs {
     @Path("/xmlInput")
     @POST
     Response listByXmlInput(FilteredListDto postData);
+    
+    @Path("/search")
+    @GET
+    Response search(@QueryParam("classnames") String[] classnames,@QueryParam("query") String query);
+
 
 }

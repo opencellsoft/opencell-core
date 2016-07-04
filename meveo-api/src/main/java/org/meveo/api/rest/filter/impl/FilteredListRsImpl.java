@@ -14,9 +14,7 @@ import org.meveo.api.rest.filter.FilteredListRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.slf4j.Logger;
 
-/**
- * @author Edward P. Legaspi
- **/
+
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
@@ -67,5 +65,25 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
         }
 
         return responseBuilder.build();
+    }
+    
+    public Response search(String[] classnames, String query){ 
+	    Response.ResponseBuilder responseBuilder = null;
+	    FilteredListResponseDto result = new FilteredListResponseDto();
+	
+	    try {
+	        String response = filteredListApi.search(classnames, query, getCurrentUser());
+	        result.getActionStatus().setMessage(response);
+	        responseBuilder = Response.ok();
+	        responseBuilder.entity(result);
+	    } catch (MeveoApiException e) {
+	        log.debug("RESPONSE={}", e);
+	        responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+	    } catch (Exception e) {
+	        log.debug("RESPONSE={}", e);
+	        responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+	    }
+	
+	    return responseBuilder.build();
     }
 }

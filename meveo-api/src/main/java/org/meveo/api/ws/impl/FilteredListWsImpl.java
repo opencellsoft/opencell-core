@@ -15,9 +15,6 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.FilteredListWs;
 import org.slf4j.Logger;
 
-/**
- * @author Edward P. Legaspi
- **/
 @WebService(serviceName = "FilteredListWs", endpointInterface = "org.meveo.api.ws.FilteredListWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
@@ -66,6 +63,25 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
         }
 
         return result;
+    }
+    
+    public FilteredListResponseDto search(String[] classnames,String query){
+    	 FilteredListResponseDto result = new FilteredListResponseDto();
+         try {
+             String response = filteredListApi.search(classnames, query, getCurrentUser());
+             result.getActionStatus().setMessage(response);
+         } catch (MeveoApiException e) {
+             result.getActionStatus().setErrorCode(e.getErrorCode());
+             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+             result.getActionStatus().setMessage(e.getMessage());
+         } catch (Exception e) {
+             log.error("Failed to execute API", e);
+             result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+             result.getActionStatus().setMessage(e.getMessage());
+         }
+
+         return result;
     }
 
 }
