@@ -41,6 +41,7 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -899,10 +900,7 @@ public class AccountHierarchyApi extends BaseApi {
 						continue;
 					}
 					if(!StringUtils.isBlank(customerDto.getSeller())&&!customerDto.getSeller().equalsIgnoreCase(sellerDto.getCode())){
-						Seller parentSeller=sellerService.findByCode(customerDto.getSeller(), provider);
-						if(parentSeller==null){
-							throw new EntityDoesNotExistsException(Seller.class, customerDto.getSeller());
-						}
+						throw new InvalidParameterException("Customer's seller "+customerDto.getSeller()+" doesn't match with parent seller "+sellerDto.getCode());
 					}
 
 					Customer customer = customerService.findByCode(customerDto.getCode(), provider);
@@ -998,10 +996,7 @@ public class AccountHierarchyApi extends BaseApi {
 								continue;
 							}
 							if(!StringUtils.isBlank(customerAccountDto.getCustomer())&&!customerAccountDto.getCustomer().equalsIgnoreCase(customerDto.getCode())){
-								Customer parentCustomer=customerService.findByCode(customerAccountDto.getCustomer(), provider);
-								if(parentCustomer==null){
-									throw new EntityDoesNotExistsException(Customer.class, customerAccountDto.getCustomer());
-								}
+								throw new InvalidParameterException("CustomerAccount's customer "+customerAccountDto.getCustomer()+" doesn't match with parent Customer "+customerDto.getCode());
 							}
 
 							CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountDto.getCode(), provider);
@@ -1147,10 +1142,7 @@ public class AccountHierarchyApi extends BaseApi {
 										continue;
 									}
 									if(!StringUtils.isBlank(billingAccountDto.getCustomerAccount())&&!billingAccountDto.getCustomerAccount().equalsIgnoreCase(customerAccountDto.getCode())){
-										CustomerAccount parentCustomerAccount=customerAccountService.findByCode(billingAccountDto.getCustomerAccount(), provider);
-										if(parentCustomerAccount==null){
-											throw new EntityDoesNotExistsException(CustomerAccount.class, billingAccountDto.getCustomerAccount());
-										}
+										throw new InvalidParameterException("BillingAccount's customerAccount "+billingAccountDto.getCustomerAccount()+" doesn't match with parent customerAccount "+customerAccountDto.getCode());
 									}
 
 									BillingAccount billingAccount = billingAccountService.findByCode(billingAccountDto.getCode(), provider);
@@ -1296,10 +1288,7 @@ public class AccountHierarchyApi extends BaseApi {
 												continue;
 											}
 											if(!StringUtils.isBlank(userAccountDto.getBillingAccount())&&!userAccountDto.getBillingAccount().equalsIgnoreCase(billingAccountDto.getCode())){
-												BillingAccount parentBillingAccount=billingAccountService.findByCode(userAccountDto.getBillingAccount(), provider);
-												if(parentBillingAccount==null){
-													throw new EntityDoesNotExistsException(BillingAccount.class, userAccountDto.getBillingAccount());
-												}
+												throw new InvalidParameterException("UserAccount's billingAccount "+userAccountDto.getBillingAccount()+" doesn't match with parent billingAccount "+billingAccountDto.getCode());
 											}
 
 											UserAccount userAccount = userAccountService.findByCode(userAccountDto.getCode(), provider);
@@ -1378,10 +1367,7 @@ public class AccountHierarchyApi extends BaseApi {
 														continue;
 													}
 													if(!StringUtils.isBlank(subscriptionDto.getUserAccount())&&!subscriptionDto.getUserAccount().equalsIgnoreCase(userAccountDto.getCode())){
-														UserAccount parentUserAccount=userAccountService.findByCode(subscriptionDto.getUserAccount(), provider);
-														if(parentUserAccount==null){
-															throw new EntityDoesNotExistsException(UserAccount.class,subscriptionDto.getUserAccount());
-														}
+														throw new InvalidParameterException("Subscription's userAccount "+subscriptionDto.getUserAccount()+" doesn't match with parent userAccount "+userAccountDto.getCode());
 													}
 
 													Subscription subscription = subscriptionService.findByCode(subscriptionDto.getCode(), provider,Arrays.asList("offer"));
@@ -1483,10 +1469,7 @@ public class AccountHierarchyApi extends BaseApi {
 																continue;
 															}
 															if(!StringUtils.isBlank(accessDto.getSubscription())&&!accessDto.getSubscription().equalsIgnoreCase(subscriptionDto.getCode())){
-																Subscription parentSubscription=subscriptionService.findByCode(accessDto.getSubscription(), provider);
-																if(parentSubscription==null){
-																	throw new EntityDoesNotExistsException(Subscription.class, accessDto.getSubscription());
-																}
+																throw new InvalidParameterException("Access's subscription "+accessDto.getSubscription()+" doesn't match with parent subscription "+subscriptionDto.getCode());
 															}
 
 															Access access = accessService.findByUserIdAndSubscription(accessDto.getCode(), subscription);

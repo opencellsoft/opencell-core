@@ -13,10 +13,15 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
@@ -109,6 +114,23 @@ public class ElasticClient {
 		createOrUpdate(esDoc, e.getClass().getName(), e.getProvider().getCode());		
 	}
 	
+	public String search(String[] classnames,String query,User user){
+		String result="";
+		String index = user.getProvider().getCode().toLowerCase();
+		if(classnames.length>0){
+			String[] classNameLc = new String[classnames.length];
+			for(int i=0;i<classnames.length;i++){
+				classNameLc[i]=classnames[i].toLowerCase();
+			}
+			log.debug("Execute search query {} on index {}",query,index);
+			SearchRequestBuilder reqBuilder = client.prepareSearch(index)
+					.setTypes(classNameLc) 
+					.setQuery(QueryBuilders.queryStringQuery(query));
+			SearchResponse response = reqBuilder.execute().actionGet();
+			result= response.toString();
+		} 
+		return result;
+	}
 	
 	@PreDestroy
 	private void shutdown(){

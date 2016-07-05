@@ -10,6 +10,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.admin.User;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.index.ElasticClient;
 import org.meveo.service.filter.FilterService;
 
 /**
@@ -21,6 +22,9 @@ public class FilteredListApi extends BaseApi {
 	@Inject
 	private FilterService filterService;
 
+	@Inject
+	private ElasticClient elasticClient;
+	
 	public String list(String filterCode, Integer firstRow, Integer numberOfRows, User currentUser)
 			throws MeveoApiException {
 		String result = "";
@@ -67,6 +71,10 @@ public class FilteredListApi extends BaseApi {
 		}
 
 		return result;
+	}
+	
+	public String search(String[] classnames,String query,User user){
+		return elasticClient.search(classnames, query, user);
 	}
 
 }
