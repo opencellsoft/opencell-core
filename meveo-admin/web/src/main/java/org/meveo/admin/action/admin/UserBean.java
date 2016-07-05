@@ -598,7 +598,7 @@ public class UserBean extends BaseBean<User> {
 			String value = null;
 			for (Class<?> securedEntityClass : securedEntityClasses) {
 				value = ReflectionUtils.getHumanClassName(securedEntityClass.getSimpleName());
-				key = securedEntityClass.getTypeName();
+				key = ReflectionUtils.getCleanClassName(securedEntityClass.getTypeName());
 				securedEntityTypes.put(key, value);
 			}
 		}

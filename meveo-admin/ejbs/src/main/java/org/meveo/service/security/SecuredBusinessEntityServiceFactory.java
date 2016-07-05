@@ -31,10 +31,9 @@ public class SecuredBusinessEntityServiceFactory implements Serializable{
 				}
 			}
 		} catch (ClassNotFoundException e) {
-			log.error("Class: " + entityClassName + " not found.");
+			log.error("Class: {} not found.", entityClassName);
 		}
 		return null;
 	}
-
 	
 }

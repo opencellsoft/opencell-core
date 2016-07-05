@@ -14,5 +14,8 @@ import java.lang.annotation.Target;
 @Target({ ElementType.METHOD })
 public @interface SecuredBusinessEntityProperty {
     SBEParam[] parameters();
+    
     Class<? extends BusinessEntity> entityClass();
+    
+    Class<? extends SecuredBusinessEntityFilter> filterClass() default NullSecuredBusinessEntityFilter.class;
 }

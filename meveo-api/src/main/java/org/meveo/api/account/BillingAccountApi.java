@@ -42,6 +42,7 @@ import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.security.filter.BillingAccountDtoFilter;
 
 /**
  * @author Edward P. Legaspi
@@ -335,6 +336,7 @@ public class BillingAccountApi extends AccountApi {
 
 	@SecuredBusinessEntityProperty(
 		entityClass = BillingAccount.class,
+		filterClass = BillingAccountDtoFilter.class,
 		parameters = { 
 			@SBEParam(type = SBEParamType.CODE),
 			@SBEParam(dataClass = User.class, index = 1, type = SBEParamType.USER) 

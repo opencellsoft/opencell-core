@@ -32,6 +32,7 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.security.filter.CustomerDtoFilter;
 
 /**
  * @author Edward P. Legaspi
@@ -231,6 +232,7 @@ public class CustomerApi extends AccountApi {
 
 	@SecuredBusinessEntityProperty(
 		entityClass = Customer.class,
+		filterClass = CustomerDtoFilter.class,
 		parameters = { 
 			@SBEParam(type = SBEParamType.CODE),
 			@SBEParam(dataClass = User.class, index = 1, type = SBEParamType.USER) 

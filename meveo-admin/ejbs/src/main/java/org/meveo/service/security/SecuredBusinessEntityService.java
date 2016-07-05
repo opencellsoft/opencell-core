@@ -12,7 +12,7 @@ import org.meveo.model.admin.User;
 import org.slf4j.Logger;
 
 /**
- * SecuredBusinessEntity Service implementation.
+ * SecuredBusinessEntity Service base class.
  *
  * @author Tony Alejandro
  */
@@ -35,16 +35,18 @@ public abstract class SecuredBusinessEntityService {
 		}
 
 		// Check if entity exists. This will also fetch the parent entity.
-		String cleanClassName = ReflectionUtils.getCleanClassName(entity.getClass().getTypeName());
-		SecuredBusinessEntityService service = factory.getService(cleanClassName);
-		entity = service.getEntityByCode(entity.getCode(), user);
+		if (entity != null) {
+			String cleanClassName = ReflectionUtils.getCleanClassName(entity.getClass().getTypeName());
+			SecuredBusinessEntityService service = factory.getService(cleanClassName);
+			entity = service.getEntityByCode(entity.getCode(), user);
+		}
 		if (entity == null && !isParentEntity) {
-			// If entity does not exist, then there's no need to check
-			// authorization, nothing will be returned anyway. This only applies
-			// to the entity and not its parent.
+			// If entity does not exist and it is not a parent entity, then
+			// there's no need to check authorization, nothing will be returned
+			// anyway.
 			return true;
 		}
-		return entity.getParentEntity() != null && isEntityAllowed(entity.getParentEntity(), user, factory, true);
+		return entity != null && entity.getParentEntity() != null && isEntityAllowed(entity.getParentEntity(), user, factory, true);
 	}
 
 	private static boolean entityFoundInSecuredEntities(BusinessEntity entity, Set<SecuredEntity> securedEntities) {
@@ -56,6 +58,6 @@ public abstract class SecuredBusinessEntityService {
 			}
 		}
 		return found;
-	}
+	}	
 
 }

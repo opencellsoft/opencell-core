@@ -45,6 +45,7 @@ import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.security.filter.CustomerAccountDtoFilter;
 
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -263,6 +264,7 @@ public class CustomerAccountApi extends AccountApi {
 
 	@SecuredBusinessEntityProperty(
 		entityClass = CustomerAccount.class,
+		filterClass = CustomerAccountDtoFilter.class,
 		parameters = { 
 			@SBEParam(type = SBEParamType.CODE),
 			@SBEParam(dataClass = User.class, index = 1, type = SBEParamType.USER) 
