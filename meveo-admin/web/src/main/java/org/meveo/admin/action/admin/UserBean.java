@@ -578,11 +578,10 @@ public class UserBean extends BaseBean<User> {
 	}
 
 	@ActionMethod
-	public void deleteSecuredEntity(SecuredEntity entity) throws BusinessException {
-		getEntity().getSecuredEntities().remove(entity);
-		entity = securedEntityService.refreshOrRetrieve(entity);
-		securedEntityService.remove(entity);
-		clearSecuredEntity();
+	public void deleteSecuredEntity(SecuredEntity securedEntity) throws BusinessException {
+		removeSecuredEntity(securedEntity);
+		messages.info(new BundleKey("messages", "delete.successful"));
+		forceUpdate = true;
 	}
 
 	@ActionMethod
@@ -607,27 +606,48 @@ public class UserBean extends BaseBean<User> {
 
 	@ActionMethod
 	public void saveSecuredEntity() throws BusinessException {
+		
+		List<SecuredEntity> userAccessibleEntities = new ArrayList<>();
+		for(SecuredEntity userAccessibleEntity : getEntity().getSecuredEntities()){
+			userAccessibleEntities.add(userAccessibleEntity);
+		}
+		
+		List<BusinessEntity> selectedEntities = securedEntities.getTarget();
+		List<BusinessEntity> removedEntities = securedEntities.getSource();
+		
+		selectedEntities.removeAll(userAccessibleEntities);
+		removedEntities.retainAll(userAccessibleEntities);
+		
+		boolean hasChanged = !selectedEntities.isEmpty() || !removedEntities.isEmpty();
+		
+		SecuredEntity removedItem = null;
+		for(BusinessEntity removedEntity : removedEntities){
+			removedItem = userAccessibleEntities.get(userAccessibleEntities.indexOf(removedEntity));
+			removeSecuredEntity(removedItem);
+		}
+		
 		List<SecuredEntity> newEntities = new ArrayList<>();
 		SecuredEntity newEntity = null;
-		SecuredEntity existingEntity = null;
-		List<String> selectedEntityCodes = new ArrayList<>();
-		for(SecuredEntity selectedEntity : getEntity().getSecuredEntities()) {
-			selectedEntityCodes.add(selectedEntity.getCode());
+		for(BusinessEntity selectedEntity : selectedEntities){
+			newEntity = new SecuredEntity(selectedEntity);
+			newEntity.setEntityClass(getEntityClass());
+			newEntity.setUser(getEntity());
+			newEntities.add(newEntity);
 		}
-		for (BusinessEntity businessEntity : securedEntities.getTarget()) {
-			if(!selectedEntityCodes.contains(businessEntity.getCode())){
-				existingEntity = securedEntityService.findByCodeAndUser(businessEntity.getCode(), getEntity(), getCurrentUser().getProvider());
-				if(existingEntity == null){
-					newEntity = new SecuredEntity(businessEntity);
-					newEntity.setEntityClass(getEntityClass());
-					newEntity.setUser(getEntity());
-					newEntities.add(newEntity);
-				}
-			}
+		
+		if(hasChanged){
+			getEntity().getSecuredEntities().addAll(newEntities);
+			super.saveOrUpdate(true);
+			messages.info(new BundleKey("messages", "update.successful"));
 		}
-		getEntity().getSecuredEntities().addAll(newEntities);
-		super.saveOrUpdate(true);
-		clearSecuredEntity();
+		forceUpdate = true;
+	}
+	
+	private void removeSecuredEntity(SecuredEntity securedEntity) throws BusinessException{
+		entity.getSecuredEntities().remove(securedEntity);
+		entity = getPersistenceService().update(entity, getCurrentUser());
+		securedEntity = securedEntityService.refreshOrRetrieve(securedEntity);
+		securedEntityService.remove(securedEntity);
 	}
 
 	@ActionMethod

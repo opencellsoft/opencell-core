@@ -48,7 +48,7 @@
 			        </hftl:formPanel>
 	        	</p:tab>
 	        	<p:tab title="#{messages['user.securedEntitiesTab']}">
-	        		<p:panel id="selectedEntitiesPanel">
+	        		<h:panelGroup id="selectedEntitiesPanel">
 						<hftl:dataList id="securedEntitiesTable"
 							backingBean="#{userBean}"
 							dataModel="#{userBean.entity.securedEntities}"
@@ -73,15 +73,15 @@
 								<p:commandButton
 									action="#{userBean.editSecuredEntity(entity)}"
 									icon="ui-icon-document" 
-									update=":tabView:securedEntityForm:entitiesSelectionPanel" />
+									update=":tabView:securedEntityForm" />
 								<p:commandButton
 									action="#{userBean.deleteSecuredEntity(entity)}"
 									rendered="#{userBean.canUserUpdateEntity()}"
 									icon="ui-icon-trash"
-									update=":tabView:selectedEntitiesPanel :tabView:securedEntityForm:entitiesSelectionPanel" />
+									update=":tabView:selectedEntitiesPanel :tabView:securedEntityForm" />
 							</p:column>
 						</hftl:dataList>
-					</p:panel>
+					</h:panelGroup>
 		
 					<p:panel rendered="#{userBean.edit}">
 						<hftl:formPanel formId="securedEntityForm"
