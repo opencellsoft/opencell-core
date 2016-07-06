@@ -1,11 +1,11 @@
 package org.meveo.service.security;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
@@ -26,18 +26,27 @@ public abstract class SecuredBusinessEntityService {
 
 	public abstract Class<? extends BusinessEntity> getEntityClass();
 
-	public static boolean isEntityAllowed(BusinessEntity entity, User user, SecuredBusinessEntityServiceFactory factory, boolean isParentEntity) {
+	public static boolean isEntityAllowed(BusinessEntity entity, User user, SecuredBusinessEntityServiceFactory factory, Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap,
+			boolean isParentEntity) {
 		// Doing this check first allows verification without going to DB.
-		boolean found = entityFoundInSecuredEntities(entity, user.getSecuredEntities());
-		if (found) {
+		if (entityFoundInSecuredEntities(entity, user.getSecuredEntities())) {
 			// Match was found authorization successful
 			return true;
 		}
 
-		// Check if entity exists. This will also fetch the parent entity.
+		// Check if entity exists.
 		if (entity != null) {
-			String cleanClassName = ReflectionUtils.getCleanClassName(entity.getClass().getTypeName());
-			SecuredBusinessEntityService service = factory.getService(cleanClassName);
+			// Check if entity's type is restricted to a specific group of
+			// entities. i.e. only specific Customers, CA, BA, etc.
+			Set<SecuredEntity> securedEntities = securedEntitiesMap.get(entity.getClass());
+			if (securedEntities != null && !securedEntities.isEmpty()) {
+				// This means that the entity type is being restricted. Since
+				// the entity did not match anything above, the authorization
+				// automatically fails.
+				return false;
+			}
+			// Get entity from DB to get parent entities as well.
+			SecuredBusinessEntityService service = factory.getService(entity.getClass());
 			entity = service.getEntityByCode(entity.getCode(), user);
 		}
 		if (entity == null && !isParentEntity) {
@@ -46,7 +55,7 @@ public abstract class SecuredBusinessEntityService {
 			// anyway.
 			return true;
 		}
-		return entity != null && entity.getParentEntity() != null && isEntityAllowed(entity.getParentEntity(), user, factory, true);
+		return entity != null && entity.getParentEntity() != null && isEntityAllowed(entity.getParentEntity(), user, factory, securedEntitiesMap, true);
 	}
 
 	private static boolean entityFoundInSecuredEntities(BusinessEntity entity, Set<SecuredEntity> securedEntities) {
@@ -58,6 +67,6 @@ public abstract class SecuredBusinessEntityService {
 			}
 		}
 		return found;
-	}	
+	}
 
 }

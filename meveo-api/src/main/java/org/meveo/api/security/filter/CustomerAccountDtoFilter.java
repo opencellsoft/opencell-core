@@ -1,31 +1,28 @@
-package org.meveo.service.security.filter;
+package org.meveo.api.security.filter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
-import org.meveo.model.SecuredBusinessEntityFilter;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.service.security.SecuredBusinessEntityService;
 import org.meveo.service.security.SecuredBusinessEntityServiceFactory;
 
-@Stateless
-public class CustomerAccountDtoFilter extends SecuredBusinessEntityFilter {
+public class CustomerAccountDtoFilter extends SecureMethodResultFilter {
 
 	@Inject
 	private SecuredBusinessEntityServiceFactory serviceFactory;
 	
 	@Inject
-	private SecuredBusinessEntityFilterFactory filterFactory;
+	private SecureMethodResultFilterFactory filterFactory;
 	
 	@Override
 	public Object filterResult(Object result, User user, Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap) {
@@ -43,7 +40,7 @@ public class CustomerAccountDtoFilter extends SecuredBusinessEntityFilter {
 
 		List<BillingAccountDto> filteredList = new ArrayList<>();
 		Set<SecuredEntity> allowedBillingAccounts = securedEntitiesMap.get(BillingAccount.class);
-		SecuredBusinessEntityFilter billingAccountDtoFilter = filterFactory.getFilter(BillingAccountDtoFilter.class);
+		SecureMethodResultFilter billingAccountDtoFilter = filterFactory.getFilter(BillingAccountDtoFilter.class);
 
 		for (BillingAccountDto billingAccountDto : billingAccountsDto.getBillingAccount()) {
 			billingAccount = new BillingAccount();
@@ -65,7 +62,7 @@ public class CustomerAccountDtoFilter extends SecuredBusinessEntityFilter {
 				// accounts allowed, so we check the entity and its parents for
 				// access
 				log.debug("Checking billing account access authorization.");
-				entityAllowed = SecuredBusinessEntityService.isEntityAllowed(billingAccount, user, serviceFactory, false);
+				entityAllowed = SecuredBusinessEntityService.isEntityAllowed(billingAccount, user, serviceFactory, securedEntitiesMap, false);
 			}
 			if (entityAllowed) {
 				log.debug("Adding billing account {} to filtered list.", billingAccount);

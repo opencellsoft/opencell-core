@@ -1,4 +1,4 @@
-package org.meveo.service.security.filter;
+package org.meveo.api.security.filter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,18 +10,17 @@ import javax.inject.Inject;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.account.UserAccountsDto;
-import org.meveo.model.SecuredBusinessEntityFilter;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.service.security.SecuredBusinessEntityService;
 import org.meveo.service.security.SecuredBusinessEntityServiceFactory;
 
-public class BillingAccountDtoFilter extends SecuredBusinessEntityFilter {
+public class BillingAccountDtoFilter extends SecureMethodResultFilter {
 
 	@Inject
 	private SecuredBusinessEntityServiceFactory serviceFactory;
-	
+
 	@Override
 	public Object filterResult(Object result, User user, Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap) {
 		if (result != null && !BillingAccountDto.class.isAssignableFrom(result.getClass())) {
@@ -59,7 +58,7 @@ public class BillingAccountDtoFilter extends SecuredBusinessEntityFilter {
 				// accounts allowed, so we check the entity and its parents for
 				// access
 				log.debug("Checking user account access authorization.");
-				entityAllowed = SecuredBusinessEntityService.isEntityAllowed(userAccount, user, serviceFactory, false);
+				entityAllowed = SecuredBusinessEntityService.isEntityAllowed(userAccount, user, serviceFactory, securedEntitiesMap, false);
 			}
 			if (entityAllowed) {
 				log.debug("Adding billing account {} to filtered list.", userAccount);
@@ -70,7 +69,7 @@ public class BillingAccountDtoFilter extends SecuredBusinessEntityFilter {
 		userAccountsDto.getUserAccount().clear();
 		userAccountsDto.getUserAccount().addAll(filteredList);
 		log.debug("New user accounts dto: {}", userAccountsDto);
-		
+
 		return dto;
 	}
 

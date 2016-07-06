@@ -12,7 +12,6 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.invoice.Invoice4_2Dto;
@@ -20,10 +19,13 @@ import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.filter.BillingAccountDtoFilter;
+import org.meveo.api.security.parameter.CodeParser;
+import org.meveo.api.security.parameter.SecureMethodParameter;
+import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.SBEParam;
-import org.meveo.model.SBEParamType;
-import org.meveo.model.SecuredBusinessEntityProperty;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
@@ -42,7 +44,6 @@ import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.security.filter.BillingAccountDtoFilter;
 
 /**
  * @author Edward P. Legaspi
@@ -334,14 +335,7 @@ public class BillingAccountApi extends AccountApi {
 		return billingAccount;
 	}
 
-	@SecuredBusinessEntityProperty(
-		entityClass = BillingAccount.class,
-		filterClass = BillingAccountDtoFilter.class,
-		parameters = { 
-			@SBEParam(type = SBEParamType.CODE),
-			@SBEParam(dataClass = User.class, index = 1, type = SBEParamType.USER) 
-		}
-	)
+	@SecuredBusinessEntityMethod(resultFilter = BillingAccountDtoFilter.class, validate = @SecureMethodParameter(entity = BillingAccount.class), user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public BillingAccountDto find(String billingAccountCode, User user) throws MeveoApiException {
 		if (StringUtils.isBlank(billingAccountCode)) {
 			missingParameters.add("billingAccountCode");

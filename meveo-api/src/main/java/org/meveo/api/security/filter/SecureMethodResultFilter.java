@@ -1,4 +1,4 @@
-package org.meveo.model;
+package org.meveo.api.security.filter;
 
 import java.util.Map;
 import java.util.Set;
@@ -14,12 +14,12 @@ import org.slf4j.Logger;
  *
  * @author Tony Alejandro
  */
-public abstract class SecuredBusinessEntityFilter {
+public abstract class SecureMethodResultFilter {
 	
 	@Inject
 	protected Logger log;
 	
-	public Class<? extends SecuredBusinessEntityFilter> getFilterClass(){
+	public Class<? extends SecureMethodResultFilter> getFilterClass(){
 		return this.getClass();
 	}
 	

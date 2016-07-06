@@ -1,31 +1,28 @@
-package org.meveo.service.security.filter;
+package org.meveo.api.security.filter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
 import org.meveo.api.dto.account.CustomerDto;
-import org.meveo.model.SecuredBusinessEntityFilter;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.security.SecuredBusinessEntityService;
 import org.meveo.service.security.SecuredBusinessEntityServiceFactory;
 
-@Stateless
-public class CustomerDtoFilter extends SecuredBusinessEntityFilter {
+public class CustomerDtoFilter extends SecureMethodResultFilter {
 
 	@Inject
 	private SecuredBusinessEntityServiceFactory serviceFactory;
 	
 	@Inject
-	private SecuredBusinessEntityFilterFactory filterFactory;
+	private SecureMethodResultFilterFactory filterFactory;
 
 	@Override
 	public Object filterResult(Object result, User user, Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap) {
@@ -44,7 +41,7 @@ public class CustomerDtoFilter extends SecuredBusinessEntityFilter {
 
 		List<CustomerAccountDto> filteredList = new ArrayList<>();
 		Set<SecuredEntity> allowedCustomerAccounts = securedEntitiesMap.get(CustomerAccount.class);
-		SecuredBusinessEntityFilter customerAccountDtoFilter = filterFactory.getFilter(CustomerAccountDtoFilter.class);
+		SecureMethodResultFilter customerAccountDtoFilter = filterFactory.getFilter(CustomerAccountDtoFilter.class);
 
 		for (CustomerAccountDto customerAccountDto : customerAccountsDto.getCustomerAccount()) {
 			customerAccount = new CustomerAccount();
@@ -66,7 +63,7 @@ public class CustomerDtoFilter extends SecuredBusinessEntityFilter {
 				// accounts allowed, so we check the entity and its parents for
 				// access
 				log.debug("Checking customer account access authorization.");
-				entityAllowed = SecuredBusinessEntityService.isEntityAllowed(customerAccount, user, serviceFactory, false);
+				entityAllowed = SecuredBusinessEntityService.isEntityAllowed(customerAccount, user, serviceFactory, securedEntitiesMap, false);
 			}
 			if (entityAllowed) {
 				log.debug("Adding customer account {} to filtered list.", customerAccount);

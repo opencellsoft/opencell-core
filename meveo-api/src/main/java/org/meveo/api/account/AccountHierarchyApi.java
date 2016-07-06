@@ -15,7 +15,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.SellerDto;
@@ -43,15 +42,17 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.parameter.CRMAccountHierarchyDtoParser;
+import org.meveo.api.security.parameter.SecureMethodParameter;
+import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.Auditable;
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.SBEParam;
-import org.meveo.model.SBEParamType;
-import org.meveo.model.SecuredBusinessEntityProperty;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -1723,13 +1724,7 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	@SecuredBusinessEntityProperty(
-		entityClass = Seller.class,
-		parameters = { 
-			@SBEParam(dataClass = CRMAccountHierarchyDto.class, property = "crmParentCode", type = SBEParamType.REQUEST_DTO),
-			@SBEParam(dataClass = User.class, index = 1, type = SBEParamType.USER) 
-		}
-	)
+	@SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class), user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {
@@ -2004,13 +1999,7 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	@SecuredBusinessEntityProperty(
-		entityClass = Seller.class,
-		parameters = { 
-			@SBEParam(dataClass = CRMAccountHierarchyDto.class, property = "crmParentCode", type = SBEParamType.REQUEST_DTO),
-			@SBEParam(dataClass = User.class, index = 1, type = SBEParamType.USER) 
-		}
-	)
+	@SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class), user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public void updateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {
@@ -2310,13 +2299,7 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	@SecuredBusinessEntityProperty(
-		entityClass = Seller.class,
-		parameters = { 
-			@SBEParam(dataClass = CRMAccountHierarchyDto.class, property = "crmParentCode", type = SBEParamType.REQUEST_DTO),
-			@SBEParam(dataClass = User.class, index = 1, type = SBEParamType.USER) 
-		}
-	)
+	@SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class), user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public void createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {

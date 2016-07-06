@@ -13,7 +13,6 @@ import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
@@ -23,10 +22,12 @@ import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.filter.CustomerAccountDtoFilter;
+import org.meveo.api.security.parameter.SecureMethodParameter;
+import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.SBEParam;
-import org.meveo.model.SBEParamType;
-import org.meveo.model.SecuredBusinessEntityProperty;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -45,7 +46,6 @@ import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.security.filter.CustomerAccountDtoFilter;
 
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -262,14 +262,7 @@ public class CustomerAccountApi extends AccountApi {
 		return customerAccount;
 	}
 
-	@SecuredBusinessEntityProperty(
-		entityClass = CustomerAccount.class,
-		filterClass = CustomerAccountDtoFilter.class,
-		parameters = { 
-			@SBEParam(type = SBEParamType.CODE),
-			@SBEParam(dataClass = User.class, index = 1, type = SBEParamType.USER) 
-		}
-	)
+	@SecuredBusinessEntityMethod(resultFilter = CustomerAccountDtoFilter.class, validate = @SecureMethodParameter(entity = CustomerAccount.class), user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public CustomerAccountDto find(String customerAccountCode, User currentUser) throws Exception {
 
 		if (StringUtils.isBlank(customerAccountCode)) {
