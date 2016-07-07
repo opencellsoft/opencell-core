@@ -1,7 +1,10 @@
 package org.meveo.admin.action;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
@@ -34,6 +37,26 @@ public abstract class ImageStreamer<T extends BaseEntity> {
 				return new DefaultStreamedContent();
 			}
 		}
+	}
+
+	protected byte[] downloadUrl(URL toDownload) {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+		try {
+			byte[] chunk = new byte[4096];
+			int bytesRead;
+			InputStream stream = toDownload.openStream();
+
+			while ((bytesRead = stream.read(chunk)) > 0) {
+				outputStream.write(chunk, 0, bytesRead);
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		return outputStream.toByteArray();
 	}
 
 	public abstract PersistenceService<T> getPersistenceService();
