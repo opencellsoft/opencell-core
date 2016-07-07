@@ -1913,6 +1913,14 @@
 		
 	</navigation-rule>
 
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>mmCatalogView</from-outcome>
+			<to-view-id>/pages/marketingManager/catalogView.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+	</navigation-rule>
 
 	<!-- Exception handling -->
 	<!-- <exception class="org.jboss.seam.security.NotLoggedInException"> -->
