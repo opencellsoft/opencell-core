@@ -42,7 +42,6 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -76,8 +75,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @Inject
     ServiceTemplateService serviceTemplateService;
-    @Inject
-    private OfferServiceTemplateService offerServiceTemplateService;
 
     public ServiceInstance findByCodeAndSubscription(String code, Subscription subscription) {
         return findByCodeAndSubscription(getEntityManager(), code, subscription);
@@ -132,12 +129,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         serviceInstanciation(serviceInstance, creator, null, null);
     }
     // validate service is in offer service list
-    private boolean validateServiceInOffer(OfferTemplate offer,ServiceTemplate service) throws BusinessException{
-    	if(service==null||offer==null){
-    		throw new BusinessException("Service "+service+" or offer "+offer+" is null");
-    	}
-    	OfferServiceTemplate offerServiceTemplate=offerServiceTemplateService.findByOfferAndServiceTemplate(offer, service);
-        return offerServiceTemplate!=null;
+    private boolean checkServiceAssociatedWithOffer(ServiceInstance serviceInstance) throws BusinessException{
+    	OfferTemplate offer = serviceInstance.getSubscription().getOffer();
+        if (offer != null && !offer.containsServiceTemplate(serviceInstance.getServiceTemplate())) {
+            throw new BusinessException("Service " + serviceInstance.getCode() + " is not associated with Offer");
+        }
+        log.debug("check service {} is associatede with offer {}",serviceInstance.getCode(),offer.getCode());
+        return true;
     }
 
     public void serviceInstanciation(ServiceInstance serviceInstance, User creator, BigDecimal subscriptionAmount, BigDecimal terminationAmount)
@@ -150,10 +148,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         
         OfferTemplate offer=subscription.getOffer();
         
-        boolean isServiceInOffer=validateServiceInOffer(offer,serviceTemplate);
-        if(!isServiceInOffer){
-        	throw new BusinessException("Service "+serviceTemplate.getCode()+" doesn't belong to offer "+offer.getCode());
-        }
+        checkServiceAssociatedWithOffer(serviceInstance);
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new IncorrectSusbcriptionException("subscription is not active");
@@ -238,12 +233,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectServiceInstanceException("ServiceInstance is " + serviceInstance.getStatus());
         }
         
-        OfferTemplate offer=subscription.getOffer();
-        ServiceTemplate serviceTemplate=serviceInstance.getServiceTemplate();
-        boolean isServiceInOffer=validateServiceInOffer(offer,serviceTemplate);
-        if(!isServiceInOffer){
-        	throw new BusinessException("Service "+serviceTemplate.getCode()+" doesn't belong to offer "+offer.getCode());
-        }
+        checkServiceAssociatedWithOffer(serviceInstance);
 
         subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 
