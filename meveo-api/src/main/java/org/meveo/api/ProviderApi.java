@@ -156,8 +156,9 @@ public class ProviderApi extends BaseApi {
         provider.setMultilanguageFlag(postData.isMultiLanguage());
 
         provider.setEntreprise(postData.isEnterprise());
-
-        provider.setDisplayFreeTransacInInvoice(postData.getInvoiceConfiguration().isDisplayFreeTransacInInvoice());
+        if(postData.getInvoiceConfiguration()!=null){
+        	provider.setDisplayFreeTransacInInvoice(postData.getInvoiceConfiguration().isDisplayFreeTransacInInvoice());
+		}
         provider.setRounding(postData.getRounding());
         provider.setEmail(postData.getEmail());
         provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
