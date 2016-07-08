@@ -2307,5 +2307,16 @@ $BODY$
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_meveo_instance" />
 		
 	</changeSet>
+	
+	<changeSet id="#1821_20160707" author="EdwardLegaspi">
+		<addColumn tableName="cat_offer_template">
+			<column name="valid_from" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+			<column name="valid_to" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+		</addColumn>
+		<addColumn tableName="cat_offer_serv_templates">
+			<column name="valid_from" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+			<column name="valid_to" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+		</addColumn>
+	</changeSet>
 	    	
 </databaseChangeLog>
