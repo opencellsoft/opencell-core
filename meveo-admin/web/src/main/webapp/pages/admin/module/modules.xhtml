@@ -21,7 +21,7 @@
         </hftl:searchPanel>
 
         <hftl:dataList label="#{messages['meveoModule.title']}" backingBean="#{meveoModuleListBean}">
-            <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:column label="#{messages['BusinessEntity.code']}" field="code" useCustomIdParam="true"/>
             <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
             <p:column headerText="#{messages['meveoModule.logo']}">
                 <c:set var="pictureDestUrl"
@@ -37,7 +37,7 @@
                     rendered="#{entity.downloaded}" />
                 <h:outputText value="#{messages[entity.active?'enableEntity.active':'enableEntity.disabled']}" rendered="#{!entity.downloaded}" />
             </p:column>
-            <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" renderEnableLink="false" />
+            <hftl:actionsColumn useCustomIdParam="true" permission="#{identity.hasPermission('administration','administrationManagement')}" renderEnableLink="false" />
             <ui:define name="add-on-buttons">
                 <p:commandButton id="downloadMeveoModuleButton" rendered="#{meveoModuleListBean.canUserUpdateEntity()}" value="#{messages['meveoModule.downloadAndInstallModules']}"
                     update=":#{p:component('meveoModulesDialog')}" oncomplete="PF('meveoModulesDialog').show()">

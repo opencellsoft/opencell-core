@@ -292,6 +292,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return (prefix + invoiceNumber);
 	}
 
+	
 	public synchronized Sequence getSequence(Invoice invoice ,Seller seller,String cfName,int step,boolean increment,User currentUser)throws BusinessException{			
 		Long currentNbFromCF = null;				
 		Object currentValObj = customFieldInstanceService.getCFValue(seller, cfName, invoice.getInvoiceDate(), currentUser);
@@ -344,8 +345,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 		if(currentNbFromCF != null){			
 			sequence.setCurrentInvoiceNb(currentNbFromCF);
-		}		
+		}	
+		log.debug("getSequence:"+sequence);
 		invoiceTypeService.commit();
+		
 		return sequence;		
 	}
 	

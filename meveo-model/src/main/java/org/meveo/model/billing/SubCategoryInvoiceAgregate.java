@@ -59,7 +59,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	@JoinColumn(name = "WALLET_ID")
 	private WalletInstance wallet;
 
-	@OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY)
 	private List<RatedTransaction> ratedtransactions = new ArrayList<RatedTransaction>();
 
 	@Column(name = "DISCOUNT_PLAN_CODE", length = 50)
@@ -219,6 +219,15 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 		} else if (!invoiceSubCategory.equals(other.getInvoiceSubCategory()))
 			return false;
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "SubCategoryInvoiceAgregate [id="+id+",invoiceSubCategory=" + invoiceSubCategory + ", subCategoryTaxes=" + subCategoryTaxes + ", categoryInvoiceAgregate=" + categoryInvoiceAgregate + ", wallet=" + wallet + ", ratedtransactions=" + ratedtransactions + ", discountPlanCode=" + discountPlanCode + ", discountPlanItemCode=" + discountPlanItemCode + ", discountPercent=" + discountPercent + ", oldAmountWithoutTax=" + oldAmountWithoutTax + ", oldAmountWithTax="
+				+ oldAmountWithTax + "]";
 	}
 
 }

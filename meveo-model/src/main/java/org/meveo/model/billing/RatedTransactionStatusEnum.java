@@ -24,8 +24,8 @@ public enum RatedTransactionStatusEnum {
     BILLED(2, "ratedTransactionStatus.billed"), 
     REJECTED(3,"ratedTransactionStatus.rejected"),
     RERATED(4, "ratedTransactionStatus.rerated"), 
-    CANCELED(5,"ratedTransactionStatus.canceled"), 
-    MANUAL(6,"ratedTransactionStatus.manual");
+    CANCELED(5,"ratedTransactionStatus.canceled");
+   
 
 	private Integer id;
 	private String label;

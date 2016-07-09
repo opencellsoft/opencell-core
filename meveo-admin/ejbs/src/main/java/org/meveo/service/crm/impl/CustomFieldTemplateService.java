@@ -189,8 +189,8 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     @Override
     public void remove(CustomFieldTemplate cft) {
-        super.remove(cft);
         customFieldsCache.removeCustomFieldTemplate(cft);
+        super.remove(cft);
     }
 
     @Override
