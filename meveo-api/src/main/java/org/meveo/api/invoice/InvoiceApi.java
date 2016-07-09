@@ -402,6 +402,7 @@ public class InvoiceApi extends BaseApi {
                 customerInvoiceDto.setInvoiceType(invoice.getInvoiceType().getCode());
                 customerInvoiceDto.setPdfPresent(invoice.getPdf() != null);
                 customerInvoiceDto.setPdf(invoice.getPdf());
+                customerInvoiceDto.setInvoiceId(invoice.getId());
                 
 
                 SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;

@@ -543,8 +543,11 @@ public class RatedTransaction extends BaseEntity {
 	        }
          RatedTransaction other = (RatedTransaction) obj;
 
-	        if (getId() != null && other.getId() != null && getId() == other.getId()) {
+	        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
 	             return true;
+	        }
+	        if(isTransient() || other.isTransient()){
+	        	return false;
 	        }
 	        return true;
 	    }

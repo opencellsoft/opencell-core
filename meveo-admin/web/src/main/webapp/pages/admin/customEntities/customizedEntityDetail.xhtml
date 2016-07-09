@@ -41,7 +41,7 @@
             </hftl:formPanel>
         </h:panelGroup>
         <h:panelGroup rendered="#{! customEntityTemplateBean.customEntityTemplate}">
-            <hftl:decorateFormPanel label="#{messages['customizedEntities.detail']} - #{customEntityTemplateBean.customizedEntity.entityName}">
+            <hftl:decorateFormPanel label="#{messages['customizedEntities.detail']} - #{customEntityTemplateBean.customizedEntity.classnameToDisplayHuman}">
             </hftl:decorateFormPanel>
         </h:panelGroup>
 

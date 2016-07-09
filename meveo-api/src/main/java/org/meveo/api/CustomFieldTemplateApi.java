@@ -1,6 +1,7 @@
 package org.meveo.api;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -13,7 +14,6 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -24,6 +24,9 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.custom.CustomizedEntity;
+import org.meveo.service.custom.CustomizedEntityService;
+import org.meveo.util.EntityCustomizationUtils;
 
 /**
  * @author Edward P. Legaspi
@@ -36,6 +39,9 @@ public class CustomFieldTemplateApi extends BaseApi {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
+
+    @Inject
+    private CustomizedEntityService customizedEntityService;
 
     public void create(CustomFieldTemplateDto postData, String appliesTo, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -59,24 +65,27 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
         if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (postData.getStorageType() != CustomFieldStorageTypeEnum.LIST || postData.isVersionable())) {
             throw new InvalidParameterException("Custom field of type CHILD_ENTITY only supports unversioned values and storage type of LIST");
-        }        
-        if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (postData.getChildEntityFieldsForSummary() == null || postData.getChildEntityFieldsForSummary().isEmpty())) {
+        }
+        if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY
+                && (postData.getChildEntityFieldsForSummary() == null || postData.getChildEntityFieldsForSummary().isEmpty())) {
             missingParameters.add("childEntityFieldsForSummary");
         }
-
         handleMissingParameters();
 
         if (appliesTo != null) {
             postData.setAppliesTo(appliesTo);
 
         } else {
-
             // Support for old API
             if (postData.getAppliesTo() == null && postData.getAccountLevel() != null) {
                 appliesTo = postData.getAccountLevel();
             } else {
                 appliesTo = postData.getAppliesTo();
             }
+        }
+
+        if (!getCustomizedEntitiesAppliesTo(currentUser.getProvider()).contains(appliesTo)) {
+            throw new InvalidParameterException("appliesTo", appliesTo);
         }
 
         if (customFieldTemplateService.findByCodeAndAppliesToNoCache(postData.getCode(), appliesTo, currentUser.getProvider()) != null) {
@@ -110,8 +119,9 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
         if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (postData.getStorageType() != CustomFieldStorageTypeEnum.LIST || postData.isVersionable())) {
             throw new InvalidParameterException("Custom field of type CHILD_ENTITY only supports unversioned values and storage type of LIST");
-        }      
-        if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (postData.getChildEntityFieldsForSummary() == null || postData.getChildEntityFieldsForSummary().isEmpty())) {
+        }
+        if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY
+                && (postData.getChildEntityFieldsForSummary() == null || postData.getChildEntityFieldsForSummary().isEmpty())) {
             missingParameters.add("childEntityFieldsForSummary");
         }
 
@@ -129,6 +139,10 @@ public class CustomFieldTemplateApi extends BaseApi {
             }
         }
 
+        if (!getCustomizedEntitiesAppliesTo(currentUser.getProvider()).contains(appliesTo)) {
+            throw new InvalidParameterException("appliesTo", appliesTo);
+        }
+
         CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesToNoCache(postData.getCode(), appliesTo, currentUser.getProvider());
         if (cft == null) {
             throw new EntityDoesNotExistsException(CustomFieldTemplate.class, postData.getCode());
@@ -140,7 +154,7 @@ public class CustomFieldTemplateApi extends BaseApi {
 
     }
 
-    public void remove(String code, String appliesTo, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
+    public void remove(String code, String appliesTo, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
@@ -149,6 +163,10 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         handleMissingParameters();
+
+        if (!getCustomizedEntitiesAppliesTo(provider).contains(appliesTo)) {
+            throw new InvalidParameterException("appliesTo", appliesTo);
+        }
 
         CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, provider);
         if (cft != null) {
@@ -158,7 +176,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
     }
 
-    public CustomFieldTemplateDto find(String code, String appliesTo, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
+    public CustomFieldTemplateDto find(String code, String appliesTo, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
@@ -167,6 +185,10 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         handleMissingParameters();
+
+        if (!getCustomizedEntitiesAppliesTo(provider).contains(appliesTo)) {
+            throw new InvalidParameterException("appliesTo", appliesTo);
+        }
 
         CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, provider);
 
@@ -283,5 +305,14 @@ public class CustomFieldTemplateApi extends BaseApi {
             }
         }
         return cft;
+    }
+
+    private List<String> getCustomizedEntitiesAppliesTo(Provider provider) {
+        List<String> cftAppliesto = new ArrayList<String>();
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(null, false, true, null, null, provider);
+        for (CustomizedEntity customizedEntity : entities) {
+            cftAppliesto.add(EntityCustomizationUtils.getAppliesTo(customizedEntity.getEntityClass(), customizedEntity.getEntityCode()));
+        }
+        return cftAppliesto;
     }
 }

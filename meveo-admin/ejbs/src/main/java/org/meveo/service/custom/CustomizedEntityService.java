@@ -147,7 +147,7 @@ public class CustomizedEntityService implements Serializable {
                     return StringUtils.compare(o1.getDescription(), o2.getDescription()) * order;
 
                 } else {
-                    return StringUtils.compare(o1.getEntityName(), o2.getEntityName()) * order;
+                    return StringUtils.compare(o1.getClassnameToDisplayHuman(), o2.getClassnameToDisplayHuman()) * order;
                 }
             }
 

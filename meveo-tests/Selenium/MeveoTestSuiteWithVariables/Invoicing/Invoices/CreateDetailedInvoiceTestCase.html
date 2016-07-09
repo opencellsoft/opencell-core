@@ -287,6 +287,36 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForValue</td>
+	<td>${descriptionText}</td>
+	<td>${TestData1}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ChargeBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCharges}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectCharges}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${DetailedChargeValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
 	<td>if</td>
 	<td>${DescriptionBool}==true</td>
 	<td></td>
@@ -299,7 +329,32 @@
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>${DescriptionInvoiceCatOrSubCatValue}</td>
+	<td>${DescriptionDetailedInvoiceValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${UsageDateBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${UsageDate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>${UsageDate}</td>
+	<td>${TodayDate}</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${UsageDate}</td>
+	<td>${UsageDateValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>

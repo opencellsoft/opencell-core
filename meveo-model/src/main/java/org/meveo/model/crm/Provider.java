@@ -533,7 +533,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 
         Provider other = (Provider) obj;
 
-        if (getId() != null && other.getId() != null && getId() == other.getId()) {
+        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
             // return true;
         }
 

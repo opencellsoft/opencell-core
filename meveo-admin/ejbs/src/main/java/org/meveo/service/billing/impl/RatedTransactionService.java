@@ -785,6 +785,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				walletOperation.getParameter2(), walletOperation.getParameter3(),
 				walletOperation.getRatingUnitDescription(), walletOperation.getPriceplan(),
 				walletOperation.getOfferCode(),walletOperation.getEdr());
+		ratedTransaction.setDescription(walletOperation.getDescription());
+		ratedTransaction.setCode(walletOperation.getCode());
+		
 		create(ratedTransaction, currentUser);
 
 		walletOperation.setStatus(WalletOperationStatusEnum.TREATED);

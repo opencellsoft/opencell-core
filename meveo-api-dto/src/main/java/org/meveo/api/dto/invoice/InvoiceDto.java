@@ -131,6 +131,10 @@ public class InvoiceDto extends BaseDto {
             	this.getCategoryInvoiceAgregates().add(categoryInvoiceAgregateDto);
         	}
         }
+        
+        for(Invoice inv : invoice.getLinkedInvoices()) {
+        	this.getListInvoiceIdToLink().add(inv.getId());
+        }
 
     }
 

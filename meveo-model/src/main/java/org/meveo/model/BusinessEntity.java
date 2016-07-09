@@ -53,9 +53,6 @@ public class BusinessEntity extends AuditableEntity {
     }
 
     public String getDescription() {
-    	if(description == null || description.trim().length() == 0){
-    		return code;
-    	}
         return description;
     }
 
@@ -106,7 +103,7 @@ public class BusinessEntity extends AuditableEntity {
 
         BusinessEntity other = (BusinessEntity) obj;
 
-        if (getId() != null && other.getId() != null && getId() == other.getId()) {
+        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
             // return true;
         }
         if (code == null) {

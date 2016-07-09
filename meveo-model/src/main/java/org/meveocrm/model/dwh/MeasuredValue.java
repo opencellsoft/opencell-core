@@ -154,7 +154,7 @@ public class MeasuredValue extends BaseEntity {
 
 	        MeasuredValue other = (MeasuredValue) obj;
 
-	        return getId() == other.getId();
+	        return getId().equals(other.getId());
 	    }
 
 }

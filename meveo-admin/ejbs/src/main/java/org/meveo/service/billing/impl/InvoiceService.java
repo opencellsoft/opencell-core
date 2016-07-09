@@ -292,6 +292,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return (prefix + invoiceNumber);
 	}
 
+	
 	public synchronized Sequence getSequence(Invoice invoice ,Seller seller,String cfName,int step,boolean increment,User currentUser)throws BusinessException{			
 		Long currentNbFromCF = null;				
 		Object currentValObj = customFieldInstanceService.getCFValue(seller, cfName, invoice.getInvoiceDate(), currentUser);
@@ -300,6 +301,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			if(increment){
 				currentNbFromCF = currentNbFromCF + step;
 				 customFieldInstanceService.setCFValue(seller, cfName,currentNbFromCF, invoice.getInvoiceDate(), currentUser);
+				 customFieldInstanceService.commit();
 			}
 		}else{
 			currentValObj = customFieldInstanceService.getCFValue(seller.getProvider(), cfName, invoice.getInvoiceDate(), currentUser);
@@ -308,6 +310,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				if(increment){
 					currentNbFromCF = currentNbFromCF + step;
 					 customFieldInstanceService.setCFValue(seller.getProvider(), cfName,currentNbFromCF, invoice.getInvoiceDate(), currentUser);
+					 customFieldInstanceService.commit();
 				}
 			}
 		}
@@ -342,7 +345,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 		if(currentNbFromCF != null){			
 			sequence.setCurrentInvoiceNb(currentNbFromCF);
-		}		
+		}	
+		log.debug("getSequence:"+sequence);
+		invoiceTypeService.commit();
+		
 		return sequence;		
 	}
 	

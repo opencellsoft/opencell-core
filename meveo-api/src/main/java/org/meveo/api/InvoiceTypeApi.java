@@ -122,14 +122,16 @@ public class InvoiceTypeApi extends BaseApi {
         if (invoiceType == null) {
             throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeDto.getCode());
         } 
-        
-        if(invoiceTypeDto.getSequenceDto().getCurrentInvoiceNb().longValue() 
-        		< invoiceTypeService.getMaxCurrentInvoiceNumber(provider, invoiceTypeDto.getCode()).longValue()) {
-        	throw new MeveoApiException("Not able to update, check the current number");
+        if(invoiceTypeDto.getSequenceDto() != null && invoiceTypeDto.getSequenceDto().getCurrentInvoiceNb() != null){
+	        if(invoiceTypeDto.getSequenceDto().getCurrentInvoiceNb().longValue() 
+	        		< invoiceTypeService.getMaxCurrentInvoiceNumber(provider, invoiceTypeDto.getCode()).longValue()) {
+	        	throw new MeveoApiException("Not able to update, check the current number");
+	        }
+	        
         }
-        
-        invoiceType.setSequence(invoiceTypeDto.getSequenceDto().fromDto());
-        
+        if(invoiceTypeDto.getSequenceDto() != null){
+	        invoiceType.setSequence(invoiceTypeDto.getSequenceDto().fromDto());
+        }
         OCCTemplate occTemplate = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateCode(), provider);        
         if (occTemplate == null) {
             throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateCode());

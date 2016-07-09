@@ -50,6 +50,7 @@ import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -59,6 +60,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -109,6 +111,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 	@Inject
 	private UserAccountService userAccountService;
+	
+	@Inject
+	private ChargeTemplateServiceAll chargeTemplateServiceAll;
 
 	private Invoice invoiceToAdd;
 	private Invoice selectedInvoice;
@@ -116,8 +121,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	private BigDecimal quantity;
 	private BigDecimal unitAmountWithoutTax;
 	private String description;
+	private Date usageDate = new Date();
 	private RatedTransaction selectedRatedTransaction;
 	private List<SelectItem> invoiceCategoriesGUI;
+	private ChargeTemplate selectedCharge;
 
 	private boolean includeBalance;
 
@@ -140,6 +147,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	private boolean detailled = false;
 	private Long rootInvoiceId = null;
 	private Invoice rootInvoice;
+	private boolean rtxHasImported = false;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -170,7 +178,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 				}
 			}
 		}
-
+		entity.setAmountWithoutTax(BigDecimal.ZERO);
+		entity.setAmountWithTax(BigDecimal.ZERO);
+		entity.setAmountTax(BigDecimal.ZERO);
+		entity.setNetToPay(BigDecimal.ZERO);
 		return entity;
 	}
 
@@ -239,6 +250,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 				messages.error("Invoice sub category is required.");
 				return;
 			}
+			if (StringUtils.isBlank(description)) {
+				messages.error("Description is required.");
+				return;
+			}
 			if (StringUtils.isBlank(quantity)) {
 				messages.error("Quantity is required.");
 				return;
@@ -247,11 +262,19 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 				messages.error("UnitAmountWithoutTax is required.");
 				return;
 			}
+			if (StringUtils.isBlank(selectedCharge)) {
+				messages.error("Charge is required.");
+				return;
+			}
+			if (StringUtils.isBlank(usageDate)) {
+				messages.error("UsageDate is required.");
+				return;
+			}
 
 			selectInvoiceSubCat = invoiceSubCategoryService.refreshOrRetrieve(selectInvoiceSubCat);
 
 			RatedTransaction ratedTransaction = new RatedTransaction();
-			ratedTransaction.setUsageDate(new Date());
+			ratedTransaction.setUsageDate(usageDate);
 			ratedTransaction.setUnitAmountWithoutTax(unitAmountWithoutTax);
 			ratedTransaction.setQuantity(quantity);
 			ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
@@ -259,12 +282,12 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			ratedTransaction.setBillingAccount(getFreshBA());
 			ratedTransaction.setInvoiceSubCategory(selectInvoiceSubCat);
 			ratedTransaction.setProvider(getCurrentProvider());
-			ratedTransaction.setCode("RT_" + selectInvoiceSubCat.getCode());
+			ratedTransaction.setCode(selectedCharge.getCode());
 			ratedTransaction.setDescription(description);
 			ratedTransaction.setInvoice(entity);
 			ratedTransaction.setInvoiceSubCategory(selectInvoiceSubCat);
 
-			agregateHandler.addRT(ratedTransaction,description, getFreshUA(), currentUser);
+			agregateHandler.addRT(ratedTransaction,selectInvoiceSubCat.getDescription(), getFreshUA(), currentUser);
 			updateAmountsAndLines(agregateHandler, getFreshBA());
 		} catch (BusinessException be) {
 			messages.error(be.getMessage());
@@ -307,17 +330,31 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	 * 
 	 * @throws BusinessException
 	 */
-	public void deleteRatedTransactionLine() throws BusinessException {
-		agregateHandler.removeRT(selectedRatedTransaction,selectedRatedTransaction.getDescription(), getFreshUA(), currentUser);
-		updateAmountsAndLines(agregateHandler, getFreshBA());
+	public void deleteRatedTransactionLine(){
+		try{
+			agregateHandler.removeRT(selectedRatedTransaction,selectedRatedTransaction.getInvoiceSubCategory().getDescription(), getFreshUA(), currentUser);
+			updateAmountsAndLines(agregateHandler, getFreshBA());
+		}catch(BusinessException be){
+			messages.error(be.getMessage());
+			return;
+		}
 	}
 
-	public void deleteLinkedInvoiceCategoryDetaild() throws BusinessException {		
-		for(int i=0 ; i< selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactions().size();i++){
-			agregateHandler.removeRT(selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactions().get(i),
-					selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactions().get(i).getDescription(),getFreshUA(), currentUser);
+	/**
+	 * 
+	 * @throws BusinessException
+	 */
+	public void deleteLinkedInvoiceCategoryDetaild(){		
+		try{
+			for(int i=0 ; i< selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactions().size();i++){
+				agregateHandler.removeRT(selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactions().get(i),
+						selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactions().get(i).getInvoiceSubCategory().getDescription(),getFreshUA(), currentUser);
+				updateAmountsAndLines(agregateHandler, getFreshBA());
+			}		
+		}catch(BusinessException be){
+			messages.error(be.getMessage());
+			return;
 		}
-		updateAmountsAndLines(agregateHandler, getFreshBA());
 	}
 	
 	/**
@@ -327,77 +364,121 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	 * @param ratedTx
 	 * @throws BusinessException
 	 */
-	public void reComputeAmountWithoutTax(RatedTransaction ratedTx) throws BusinessException {
-		agregateHandler.reset();
-		for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
-			for (RatedTransaction rt : subcat.getRatedtransactions()) {
-				rt.setAmountWithoutTax(null);
-				agregateHandler.addRT(rt,rt.getDescription(), getFreshUA(), currentUser);
+	public void reComputeAmountWithoutTax(RatedTransaction ratedTx) {
+		try{
+			agregateHandler.reset();
+			for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
+				for (RatedTransaction rt : subcat.getRatedtransactions()) {
+					rt.setAmountWithoutTax(null);
+					agregateHandler.addRT(rt,rt.getInvoiceSubCategory().getDescription(), getFreshUA(), currentUser);
+					updateAmountsAndLines(agregateHandler, ratedTx.getBillingAccount());
+				}
 			}
+		}catch(BusinessException be){
+			messages.error(be.getMessage());
+			return;
 		}
-		updateAmountsAndLines(agregateHandler, ratedTx.getBillingAccount());
+	}
+	
+	/**
+	 * Include original opened ratedTransaction
+	 * 
+	 * @throws BusinessException
+	 */
+
+	public void importOpenedRT(){
+		try{
+			if(isRtxHasImported()){
+				messages.error("Rtx already imported");
+				return;
+			}
+			if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
+				messages.error("BillingAccount is required.");
+				return;
+			}
+			if (entity.getInvoiceType().getCode().equals(invoiceTypeService.getCommercialCode())) {
+				List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(getFreshUA().getWallet(), null);	
+				if(openedRT != null && openedRT.isEmpty()){
+					messages.error("No opened RatedTransactions");
+					return;
+				}
+				for (RatedTransaction ratedTransaction : openedRT) {
+					agregateHandler.addRT(ratedTransaction,ratedTransaction.getInvoiceSubCategory().getDescription(), getFreshUA(), currentUser);
+					updateAmountsAndLines(agregateHandler, entity.getBillingAccount());
+				}
+				setRtxHasImported(true);
+				
+			}
+		}catch(BusinessException be){
+			messages.error(be.getMessage());
+			return;
+		}
 	}
 
 	/**
 	 * 
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-
-		Auditable auditable = new Auditable();
-		auditable.setCreator(getCurrentUser());
-		auditable.setCreated(new Date());
-
-		entity.setBillingAccount(getFreshBA());
-		entity.setDetailedInvoice(isDetailed());
-
-		entity.setInvoiceNumber(invoiceService.getInvoiceNumber(entity, getCurrentUser()));
-		if(entity.getAmountWithoutTax() == null){
-			entity.setAmountWithoutTax(BigDecimal.ZERO);
-			entity.setAmountWithTax(BigDecimal.ZERO);
-			entity.setAmountTax(BigDecimal.ZERO);
-		}
-		super.saveOrUpdate(false);
-
-		for (Entry<String, TaxInvoiceAgregate> entry : agregateHandler.getTaxInvAgregateMap().entrySet()) {
-			TaxInvoiceAgregate taxInvAgr = entry.getValue();
-			taxInvAgr.setAuditable(auditable);
-			taxInvAgr.setInvoice(entity);
-			invoiceAgregateService.create(taxInvAgr, currentUser);
-		}
-
-		for (Entry<String, CategoryInvoiceAgregate> entry : agregateHandler.getCatInvAgregateMap().entrySet()) {
-
-			CategoryInvoiceAgregate catInvAgr = entry.getValue();
-			catInvAgr.setAuditable(auditable);
-			catInvAgr.setInvoice(entity);
-			invoiceAgregateService.create(catInvAgr, currentUser);
-		}
-
-		for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
-			subcat.setAuditable(auditable);
-			subcat.setInvoice(entity);
-			invoiceAgregateService.create(subcat, currentUser);
-			for (RatedTransaction rt : subcat.getRatedtransactions()) {
-				rt.setInvoice(entity);
-				ratedTransactionService.create(rt, currentUser);
+	public String saveOrUpdate(boolean killConversation){
+        try{
+			Auditable auditable = new Auditable();
+			auditable.setCreator(getCurrentUser());
+			auditable.setCreated(new Date());
+	
+			entity.setBillingAccount(getFreshBA());
+			entity.setDetailedInvoice(isDetailed());
+	
+			entity.setInvoiceNumber(invoiceService.getInvoiceNumber(entity, getCurrentUser()));
+			super.saveOrUpdate(false);
+			invoiceService.commit();
+			entity = invoiceService.refreshOrRetrieve(entity);
+			for (Entry<String, TaxInvoiceAgregate> entry : agregateHandler.getTaxInvAgregateMap().entrySet()) {
+				TaxInvoiceAgregate taxInvAgr = entry.getValue();
+				taxInvAgr.setAuditable(auditable);
+				taxInvAgr.setInvoice(entity);
+				invoiceAgregateService.create(taxInvAgr, currentUser);
 			}
+	
+			for (Entry<String, CategoryInvoiceAgregate> entry : agregateHandler.getCatInvAgregateMap().entrySet()) {
+	
+				CategoryInvoiceAgregate catInvAgr = entry.getValue();
+				catInvAgr.setAuditable(auditable);
+				catInvAgr.setInvoice(entity);
+				invoiceAgregateService.create(catInvAgr, currentUser);
+			}
+	
+			for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
+				subcat.setAuditable(auditable);
+				subcat.setInvoice(entity);
+				invoiceAgregateService.create(subcat, currentUser);
+				for (RatedTransaction rt : subcat.getRatedtransactions()) {
+					rt.setInvoice(entity);
+					rt.setStatus(RatedTransactionStatusEnum.BILLED);
+					if(rt.isTransient()){					
+						ratedTransactionService.create(rt, currentUser);
+					}else{					
+						ratedTransactionService.update(rt, currentUser);
+					}
+					
+				}
+			}
+	
+			for (Invoice invoice : entity.getLinkedInvoices()) {
+				invoice.getLinkedInvoices().add(entity);
+				invoiceService.update(invoice, currentUser);
+			}
+	
+			try {
+				invoiceService.generateXmlAndPdfInvoice(entity, getCurrentUser());
+			} catch (Exception e) {
+				messages.error("Error generating xml / pdf invoice=" + e.getMessage());
+			}
+	
+			return getListViewName();
+        }catch(BusinessException be){
+			messages.error(be.getMessage());
+			return null;
 		}
-
-		invoiceService.commit();
-		entity = invoiceService.refreshOrRetrieve(entity);
-		for (Invoice invoice : entity.getLinkedInvoices()) {
-			invoice.getLinkedInvoices().add(entity);
-			invoiceService.update(invoice, currentUser);
-		}
-
-		try {
-			invoiceService.generateXmlAndPdfInvoice(entity, getCurrentUser());
-		} catch (Exception e) {
-			messages.error("Error generating xml / pdf invoice=" + e.getMessage());
-		}
-
-		return getListViewName();
 	}
 
 	/**
@@ -405,7 +486,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	 * 
 	 * @throws BusinessException
 	 */
-	public void importFromLinkedInvoices() throws BusinessException {
+	public void importFromLinkedInvoices(){
+		try{
 		if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
 			messages.error("BillingAccount is required.");
 			return;
@@ -420,7 +502,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			if (isDetailed()) {
 				for (RatedTransaction rt : invoice.getRatedTransactions()) {
 					RatedTransaction newRT = new RatedTransaction();
-					newRT.setUsageDate(new Date());
+					newRT.setUsageDate(rt.getUsageDate());
 					newRT.setUnitAmountWithoutTax(rt.getUnitAmountWithoutTax());
 					newRT.setQuantity(rt.getQuantity());
 					newRT.setStatus(RatedTransactionStatusEnum.BILLED);
@@ -431,45 +513,31 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 					newRT.setCode(rt.getCode());
 					newRT.setDescription(rt.getDescription());
 					newRT.setInvoice(entity);
-					agregateHandler.addRT(newRT,newRT.getDescription(), getFreshUA(), currentUser);
+					agregateHandler.addRT(newRT,rt.getInvoiceSubCategory().getDescription(), getFreshUA(), currentUser);
+					updateAmountsAndLines(agregateHandler, getFreshBA());
 				}
 			} else {
 				for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
 					if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
 						agregateHandler.addInvoiceSubCategory(((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory(), getFreshBA(), getFreshUA(),invoiceAgregate.getDescription(),
 								invoiceAgregate.getAmountWithoutTax(), currentUser);
+						updateAmountsAndLines(agregateHandler, getFreshBA());
 					}
 				}
 			}
 
 		}
-		updateAmountsAndLines(agregateHandler, getFreshBA());
-	}
-
-	/**
-	 * Include original opened ratedTransaction
-	 * 
-	 * @throws BusinessException
-	 */
-
-	public void importOpenedRT() throws BusinessException {
-		if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
-			messages.error("BillingAccount is required.");
+		}catch(BusinessException be){
+			messages.error(be.getMessage());
 			return;
 		}
-
-		if (entity.getInvoiceType().equals(invoiceTypeService.getCommercialCode())) {
-			List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(getFreshUA().getWallet(), null);
-			for (RatedTransaction ratedTransaction : openedRT) {
-				ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
-				ratedTransaction.setInvoice(entity);
-				ratedTransactionService.update(ratedTransaction, currentUser);
-				agregateHandler.addRT(ratedTransaction,ratedTransaction.getDescription(), getFreshUA(), currentUser);
-			}
-			updateAmountsAndLines(agregateHandler, entity.getBillingAccount());
-		}
+		
 	}
-
+    
+	/**
+	 * 
+	 * @return
+	 */
 	public List<SelectItem> getInvoiceCatSubCats() {
 		if (invoiceCategoriesGUI != null) {
 			return invoiceCategoriesGUI;
@@ -490,74 +558,16 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 		return invoiceCategoriesGUI;
 	}
-
-	public Invoice getInvoiceToAdd() {
-		return invoiceToAdd;
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public List<ChargeTemplate> getCharges() {			
+		return chargeTemplateServiceAll.findByInvoiceSubCategory(selectedInvoiceSubCategory);
 	}
 
-	public void setInvoiceToAdd(Invoice invoiceToAdd) {
-		this.invoiceToAdd = invoiceToAdd;
-	}
 
-	public Invoice getSelectedInvoice() {
-		return selectedInvoice;
-	}
-
-	public void setSelectedInvoice(Invoice selectedInvoice) {
-		this.selectedInvoice = selectedInvoice;
-	}
-
-	public BigDecimal getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
-
-	public BigDecimal getUnitAmountWithoutTax() {
-		return unitAmountWithoutTax;
-	}
-
-	public void setUnitAmountWithoutTax(BigDecimal unitAmountWithoutTax) {
-		this.unitAmountWithoutTax = unitAmountWithoutTax;
-	}
-
-	public List<SelectItem> getInvoiceCategoriesGUI() {
-		return invoiceCategoriesGUI;
-	}
-
-	public void setInvoiceCategoriesGUI(List<SelectItem> invoiceCategoriesGUI) {
-		this.invoiceCategoriesGUI = invoiceCategoriesGUI;
-	}
-
-	public InvoiceSubCategory getSelectedInvoiceSubCategory() {
-		return selectedInvoiceSubCategory;
-	}
-
-	public void setSelectedInvoiceSubCategory(InvoiceSubCategory selectedInvoiceSubCategory) {
-		this.selectedInvoiceSubCategory = selectedInvoiceSubCategory;
-	}
-
-	public RatedTransaction getSelectedRatedTransaction() {
-		return selectedRatedTransaction;
-	}
-
-	public void setSelectedRatedTransaction(RatedTransaction selectedRatedTransaction) {
-		this.selectedRatedTransaction = selectedRatedTransaction;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public boolean isIncludeBalance() {
-		return includeBalance;
-	}
 
 	public void setIncludeBalance(boolean includeBalance) {
 		this.includeBalance = includeBalance;
@@ -611,8 +621,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	public void deleteLinkedInvoiceCategory() throws BusinessException {
 		for (SubCategoryInvoiceAgregate subCat : selectedCategoryInvoiceAgregate.getSubCategoryInvoiceAgregates()) {
 			agregateHandler.removeInvoiceSubCategory(subCat.getInvoiceSubCategory(), getFreshBA(), getFreshUA(), subCat.getDescription(),subCat.getAmountWithoutTax(), currentUser);
+			updateAmountsAndLines(agregateHandler, getFreshBA());
 		}
-		updateAmountsAndLines(agregateHandler, getFreshBA());
+		
 	}
 
 	/**
@@ -663,6 +674,11 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			messages.error("BillingAccount is required.");
 			return;
 		}
+		
+		if (StringUtils.isBlank(description)) {
+			messages.error("Description is required.");
+			return;
+		}
 
 		if (amountWithoutTax == null || selectedInvoiceSubCategory == null) {
 			messages.error("AmountWithoutTax and InvoiceSubCategory is required.");
@@ -688,26 +704,17 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			for (SubCategoryInvoiceAgregate subCate : cat.getSubCategoryInvoiceAgregates()) {				
 				InvoiceSubCategory tmp = subCate.getInvoiceSubCategory();
 				agregateHandler.addInvoiceSubCategory(tmp, getFreshBA(), getFreshUA(), subCate.getDescription(), subCate.getAmountWithoutTax(), currentUser);
+				updateAmountsAndLines(agregateHandler, getFreshBA());
 			}
 		}
-		updateAmountsAndLines(agregateHandler, getFreshBA());
+		
 	}
-
+	
 	/**
-	 * @return the amountWithoutTax
+	 * 
+	 * @return
+	 * @throws BusinessException
 	 */
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
-
-	/**
-	 * @param amountWithoutTax
-	 *            the amountWithoutTax to set
-	 */
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
-
 	public LazyDataModel<Invoice> getInvoicesByTypeAndBA() throws BusinessException {
 		if (getEntity().getBillingAccount() != null && !entity.getBillingAccount().isTransient()) {
 			BillingAccount ba = billingAccountService.refreshOrRetrieve(entity.getBillingAccount());
@@ -726,7 +733,50 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			}
 		}
 
-		return getLazyDataModel(filters, true);
+		return getLazyDataModel();
+	}
+	
+	@Override
+	public String getBackView() {
+		// TODO use outcome and params
+		if (rootInvoiceId == null) {
+			return super.getBackView();
+		}
+		return "/pages/billing/invoices/invoiceDetail.xhtml?objectId=" + rootInvoiceId + "&cid=" + conversation.getId() + "&edit=true&faces-redirect=true";
+	}
+
+	@Override
+	public String getBackViewSave() {
+		return getBackView();
+	}
+	
+	public boolean isCanAddLinkedInvoice(){
+		return entity.getBillingAccount() != null && entity.getInvoiceType() != null;
+	}
+	
+	
+	/*###################################################################################################
+	  #  Setters and Getters                                                                            #
+	  ###################################################################################################*/
+
+	public void handleSelectedInvoiceCatOrSubCat() {		    
+		if (selectedInvoiceSubCategory != null) {
+			description = selectedInvoiceSubCategory.getDescriptionOrCode();
+		}
+	}
+	
+	public void handleSelectedCharge() {		    
+		if (selectedCharge != null) {
+			description = selectedCharge.getDescriptionOrCode();
+		}
+	}
+	
+	public String getPageMode() {
+		if (mode != null && !StringUtils.isBlank(mode.get())) {
+			return mode.get();
+		}
+
+		return "agregated";
 	}
 
 	/**
@@ -744,33 +794,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		this.rootInvoiceId = rootInvoiceId;
 	}
 
-	@Override
-	public String getBackView() {
-		// TODO use outcome and params
-		if (rootInvoiceId == null) {
-			return super.getBackView();
-		}
-		return "/pages/billing/invoices/invoiceDetail.xhtml?objectId=" + rootInvoiceId + "&cid=" + conversation.getId() + "&edit=true&faces-redirect=true";
-	}
-
-	@Override
-	public String getBackViewSave() {
-		return getBackView();
-	}
-
-	public void handleSelectedInvoiceCatOrSubCat() {		    
-		if (selectedInvoiceSubCategory != null) {
-			description = selectedInvoiceSubCategory.getDescriptionOrCode();
-		}
-	}
-	
-	public String getPageMode() {
-		if (mode != null && !StringUtils.isBlank(mode.get())) {
-			return mode.get();
-		}
-
-		return "agregated";
-	}
 
 	/**
 	 * @return the selectedSubCategoryInvoiceAgregateDetaild
@@ -786,4 +809,129 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		this.selectedSubCategoryInvoiceAgregateDetaild = selectedSubCategoryInvoiceAgregateDetaild;
 	}
 
+	/**
+	 * @return the usageDate
+	 */
+	public Date getUsageDate() {
+		return usageDate;
+	}
+
+	/**
+	 * @param usageDate the usageDate to set
+	 */
+	public void setUsageDate(Date usageDate) {
+		this.usageDate = usageDate;
+	}
+
+	/**
+	 * @return the selectedCharge
+	 */
+	public ChargeTemplate getSelectedCharge() {
+		return selectedCharge;
+	}
+
+	/**
+	 * @param selectedCharge the selectedCharge to set
+	 */
+	public void setSelectedCharge(ChargeTemplate selectedCharge) {
+		this.selectedCharge = selectedCharge;
+	}
+
+	/**
+	 * @return the amountWithoutTax
+	 */
+	public BigDecimal getAmountWithoutTax() {
+		return amountWithoutTax;
+	}
+
+	/**
+	 * @param amountWithoutTax
+	 *            the amountWithoutTax to set
+	 */
+	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+		this.amountWithoutTax = amountWithoutTax;
+	}
+	public Invoice getInvoiceToAdd() {
+		return invoiceToAdd;
+	}
+
+	public void setInvoiceToAdd(Invoice invoiceToAdd) {
+		this.invoiceToAdd = invoiceToAdd;
+	}
+
+	public Invoice getSelectedInvoice() {
+		return selectedInvoice;
+	}
+
+	public void setSelectedInvoice(Invoice selectedInvoice) {
+		this.selectedInvoice = selectedInvoice;
+	}
+
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+
+	public BigDecimal getUnitAmountWithoutTax() {
+		return unitAmountWithoutTax;
+	}
+
+	public void setUnitAmountWithoutTax(BigDecimal unitAmountWithoutTax) {
+		this.unitAmountWithoutTax = unitAmountWithoutTax;
+	}
+
+	public List<SelectItem> getInvoiceCategoriesGUI() {
+		return invoiceCategoriesGUI;
+	}
+
+	public void setInvoiceCategoriesGUI(List<SelectItem> invoiceCategoriesGUI) {
+		this.invoiceCategoriesGUI = invoiceCategoriesGUI;
+	}
+
+	public InvoiceSubCategory getSelectedInvoiceSubCategory() {
+		return selectedInvoiceSubCategory;
+	}
+
+	public void setSelectedInvoiceSubCategory(InvoiceSubCategory selectedInvoiceSubCategory) {	
+		this.selectedInvoiceSubCategory = selectedInvoiceSubCategory;
+	}
+
+	public RatedTransaction getSelectedRatedTransaction() {
+		return selectedRatedTransaction;
+	}
+
+	public void setSelectedRatedTransaction(RatedTransaction selectedRatedTransaction) {
+		this.selectedRatedTransaction = selectedRatedTransaction;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public boolean isIncludeBalance() {
+		return includeBalance;
+	}
+
+	/**
+	 * @return the rtxHasImported
+	 */
+	public boolean isRtxHasImported() {
+		return rtxHasImported;
+	}
+
+	/**
+	 * @param rtxHasImported the rtxHasImported to set
+	 */
+	public void setRtxHasImported(boolean rtxHasImported) {
+		this.rtxHasImported = rtxHasImported;
+	}	
+	
+	
 }

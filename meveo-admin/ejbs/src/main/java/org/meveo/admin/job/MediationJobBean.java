@@ -102,7 +102,7 @@ public class MediationJobBean {
                     	addReport("Line=" + processed ,e.getClass().getSimpleName(),e.getMessage());
                         log.warn("error while parsing cdr {} {}", e.getClass().getSimpleName(), e.getMessage());
 						result.registerError("file=" + file.getName() + ", line=" + processed + ": " + e.getRejectionCause().name());
-						rejectCDR(e.getCdr(), e.getRejectionCause());
+						rejectCDR(line, e.getRejectionCause());
 					} catch (Exception e) {
 						addReport("Line=" + processed ,e.getMessage());
 						log.warn("error on reject cdr ",e);
@@ -191,7 +191,7 @@ public class MediationJobBean {
 		outputFileWriter.println(line);
 	}
 
-	private void rejectCDR(Serializable cdr, CDRRejectionCauseEnum reason) {
+	private void rejectCDR(String line, CDRRejectionCauseEnum reason) {
 
 		if (rejectFileWriter == null) {
 			File rejectFile = new File(rejectDir + File.separator + cdrFileName + ".rejected");
@@ -201,11 +201,9 @@ public class MediationJobBean {
 				log.error("Failed to create a rejection file {}", rejectFile.getAbsolutePath());
 			}
 		}
-		if (cdr instanceof String) {
-			rejectFileWriter.println(cdr + "\t" + reason.name());
-		} else {
-			rejectFileWriter.println(cdrParser.getCDRLine(cdr, reason.name()));
-		}
+		
+		rejectFileWriter.println(line + "\t" + reason.name());
+		
 
 	}
 

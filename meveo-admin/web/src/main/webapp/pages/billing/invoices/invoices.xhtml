@@ -44,8 +44,9 @@
 		   <hftl:searchField label="#{messages['billingAccount.billingAccountPanel']}" id="billingAccountId" field="billingAccount"
 		        valueLabelField="code" popup="true" popupId="searchBillingAccountPopup" clearButton="true" />
 			<hftl:searchField label="#{messages['invoice.invoiceNumber']}"
-				field="invoiceNumber" /> 
-			<hftl:searchField label="#{messages['invoice.invoiceType']}" field="invoiceType"  />	
+				field="invoiceNumber" /> 	
+			 <hftl:searchField id="invoiceTypeField" label="#{messages['invoice.invoiceType']}" field="invoiceType" valueLabelField="code"
+                listBean="#{invoiceTypeBean}" />
 			<hftl:searchField label="#{messages['invoice.invoiceDate']}"
 				field="invoiceDate" />
 			<hftl:searchField label="#{messages['invoice.dueDate']}"

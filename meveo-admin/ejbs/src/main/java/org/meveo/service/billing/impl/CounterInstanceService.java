@@ -19,6 +19,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -284,6 +285,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 	
     public BigDecimal evaluateCeilingElExpression(String expression, ChargeInstance charge, ServiceInstance serviceInstance,Subscription subscription)
 			throws BusinessException {
+    	int rounding = subscription.getProvider().getRounding() == null ? 3 : subscription.getProvider().getRounding();
     	BigDecimal result = null;
 		if (StringUtils.isBlank(expression)) {
 			return result;
@@ -302,6 +304,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
 		try {
 			result = (BigDecimal) res;
+			result = result.setScale(rounding,RoundingMode.HALF_UP);
 		} catch (Exception e) {
 			throw new BusinessException("Expression " + expression + " do not evaluate to BigDecimal but " + res);
 		}
