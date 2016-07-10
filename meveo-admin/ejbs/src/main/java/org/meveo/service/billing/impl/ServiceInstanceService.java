@@ -51,7 +51,6 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.catalog.impl.OfferServiceTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.script.service.ServiceModelScriptService;
 
@@ -134,7 +133,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (offer != null && !offer.containsServiceTemplate(serviceInstance.getServiceTemplate())) {
             throw new BusinessException("Service " + serviceInstance.getCode() + " is not associated with Offer");
         }
-        log.debug("check service {} is associatede with offer {}",serviceInstance.getCode(),offer.getCode());
+        log.debug("check service {} is associated with offer {}",serviceInstance.getCode(),offer.getCode());
         return true;
     }
 
@@ -142,13 +141,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         log.debug("serviceInstanciation serviceID={}, code={}", serviceInstance.getId(), serviceInstance.getCode());
 
-        ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
         String serviceCode = serviceInstance.getServiceTemplate().getCode();
         Subscription subscription = serviceInstance.getSubscription();
-        
-        OfferTemplate offer=subscription.getOffer();
-        
-        checkServiceAssociatedWithOffer(serviceInstance);
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new IncorrectSusbcriptionException("subscription is not active");
@@ -160,6 +154,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectServiceInstanceException("Service instance with code=" + serviceInstance.getCode() + ", subscription code=" + subscription.getCode()
                     + " and status is [ACTIVE or INACTIVE or SUSPENDED] is already created.");
         }
+        checkServiceAssociatedWithOffer(serviceInstance);
 
         UserAccount userAccount = subscription.getUserAccount();
 
@@ -172,6 +167,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         serviceInstance.setInvoicingCalendar(serviceInstance.getServiceTemplate().getInvoicingCalendar());
         create(serviceInstance, creator); // AKK was with subscription.getProvider()
         subscription.getServiceInstances().add(serviceInstance);
+        ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
 
         serviceTemplate = serviceTemplateService.attach(serviceTemplate);
 
@@ -467,6 +463,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (serviceInstance.getStatus() != InstanceStatusEnum.SUSPENDED) {
             throw new IncorrectServiceInstanceException("service instance is not suspended. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
         }
+        checkServiceAssociatedWithOffer(serviceInstance);
 
         serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
         serviceInstance.setSubscriptionDate(reactivationDate);
