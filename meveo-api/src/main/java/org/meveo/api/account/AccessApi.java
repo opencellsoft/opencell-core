@@ -206,4 +206,27 @@ public class AccessApi extends BaseApi {
             update(postData, currentUser);
         }
     }
+    public void createOrUpdatePartial(AccessDto accessDto,User currentUser) throws MeveoApiException, BusinessException{
+    	AccessDto existedAccessDto = null;
+		try {
+			existedAccessDto = find(accessDto.getCode(), accessDto.getSubscription(), currentUser.getProvider());
+		} catch (Exception e) {
+			existedAccessDto = null;
+		}
+		if (existedAccessDto == null) {
+			create(accessDto, currentUser);
+		} else {
+
+			if (!StringUtils.isBlank(accessDto.getStartDate())) {
+				existedAccessDto.setStartDate(accessDto.getStartDate());
+			}
+			if (!StringUtils.isBlank(accessDto.getEndDate())) {
+				existedAccessDto.setEndDate(accessDto.getEndDate());
+			}
+			if(!StringUtils.isBlank(accessDto.getCustomFields())){
+				existedAccessDto.setCustomFields(accessDto.getCustomFields());
+			}
+			update(existedAccessDto, currentUser);
+		}
+    }
 }

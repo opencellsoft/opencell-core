@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.account.AccessApi;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
@@ -81,6 +82,9 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private WalletTemplateService walletTemplateService;
+    
+    @Inject
+    private AccessApi accessApi;
 
     @SuppressWarnings("rawtypes")
     @Inject
@@ -681,5 +685,121 @@ public class SubscriptionApi extends BaseApi {
             }
         }
         return dto;
+    }
+    public void createOrUpdatePartial(SubscriptionDto subscriptionDto,User currentUser) throws MeveoApiException, BusinessException{
+
+		SubscriptionDto existedSubscriptionDto = null;
+		try {
+			existedSubscriptionDto = findSubscription(subscriptionDto.getCode(), currentUser.getProvider());
+		} catch (Exception e) {
+			existedSubscriptionDto = null;
+		}
+
+		log.debug("createOrUpdate subscription {}",subscriptionDto);
+		if (existedSubscriptionDto == null) {
+			create(subscriptionDto, currentUser);
+		} else {
+			if (!StringUtils.isBlank(subscriptionDto.getTerminationDate())) {
+				TerminateSubscriptionRequestDto terminateSubscriptionDto = new TerminateSubscriptionRequestDto();
+				terminateSubscriptionDto.setSubscriptionCode(subscriptionDto.getCode());
+				terminateSubscriptionDto.setTerminationDate(subscriptionDto.getTerminationDate());
+				terminateSubscriptionDto.setTerminationReason(subscriptionDto.getTerminationReason());
+				terminateSubscription(terminateSubscriptionDto, currentUser);
+				return;
+			} else {
+
+				if (!StringUtils.isBlank(subscriptionDto.getOfferTemplate())) {
+					existedSubscriptionDto.setOfferTemplate(subscriptionDto.getOfferTemplate());
+				}
+
+				if (!StringUtils.isBlank(subscriptionDto.getDescription())) {
+					existedSubscriptionDto.setDescription(subscriptionDto.getDescription());
+				}
+				if (!StringUtils.isBlank(subscriptionDto.getSubscriptionDate())) {
+					existedSubscriptionDto.setSubscriptionDate(subscriptionDto.getSubscriptionDate());
+				}
+
+				if (!StringUtils.isBlank(subscriptionDto.getEndAgreementDate())) {
+					existedSubscriptionDto.setEndAgreementDate(subscriptionDto.getEndAgreementDate());
+				}
+
+				if(!StringUtils.isBlank(subscriptionDto.getCustomFields())){
+					existedSubscriptionDto.setCustomFields(subscriptionDto.getCustomFields());
+				}
+				update(existedSubscriptionDto, currentUser);
+			}
+		}
+		// accesses
+		if (subscriptionDto.getAccesses() != null) {
+			for (AccessDto accessDto : subscriptionDto.getAccesses().getAccess()) {
+				if (StringUtils.isBlank(accessDto.getCode())) {
+					log.warn("code is null={}", accessDto);
+					continue;
+				}
+				if (!StringUtils.isBlank(accessDto.getSubscription())
+						&& !accessDto.getSubscription().equalsIgnoreCase(subscriptionDto.getCode())) {
+					throw new MeveoApiException("Access's subscription " + accessDto.getSubscription()
+							+ " doesn't match with parent subscription " + subscriptionDto.getCode());
+				} else {
+					accessDto.setSubscription(subscriptionDto.getCode());
+				}
+				accessApi.createOrUpdatePartial(accessDto,currentUser);
+			}
+		}
+
+		if (subscriptionDto.getServices() != null) {
+			InstantiateServicesRequestDto instantiateServicesDto = new InstantiateServicesRequestDto();
+			instantiateServicesDto.setSubscription(subscriptionDto.getCode());
+			List<ServiceToInstantiateDto> serviceToInstantiates = instantiateServicesDto.getServicesToInstantiate().getService();
+
+			ActivateServicesRequestDto activateServicesDto = new ActivateServicesRequestDto();
+			activateServicesDto.setSubscription(subscriptionDto.getCode());
+			List<ServiceToActivateDto> serviceToActivates = activateServicesDto.getServicesToActivateDto().getService();
+
+			for (ServiceInstanceDto serviceInstanceDto : subscriptionDto.getServices().getServiceInstance()) {
+				if (StringUtils.isBlank(serviceInstanceDto.getCode())) {
+					log.warn("code is null={}", serviceInstanceDto);
+					continue;
+				}
+
+				if (serviceInstanceDto.getTerminationDate() != null) {
+					TerminateSubscriptionServicesRequestDto terminateServiceDto = new TerminateSubscriptionServicesRequestDto();
+					terminateServiceDto.getServices().add(serviceInstanceDto.getCode());
+					terminateServiceDto.setSubscriptionCode(subscriptionDto.getCode());
+					terminateServiceDto.setTerminationDate(serviceInstanceDto.getTerminationDate());
+					terminateServiceDto.setTerminationReason(serviceInstanceDto.getTerminationReason());
+					terminateServices(terminateServiceDto, currentUser);
+					continue;
+				}
+
+				if (StringUtils.isBlank(serviceInstanceDto.getSubscriptionDate())) {//instance service in sub's
+					ServiceToInstantiateDto serviceToInstantiate = new ServiceToInstantiateDto();
+					serviceToInstantiate.setCode(serviceInstanceDto.getCode());
+					serviceToInstantiate.setQuantity(serviceInstanceDto.getQuantity());
+					serviceToInstantiate.setCustomFields(serviceInstanceDto.getCustomFields());
+					serviceToInstantiates.add(serviceToInstantiate);
+				}else {
+					ServiceToActivateDto serviceToActivateDto = new ServiceToActivateDto();
+					serviceToActivateDto.setCode(serviceInstanceDto.getCode());
+					serviceToActivateDto.setSubscriptionDate(serviceInstanceDto.getSubscriptionDate());
+					serviceToActivateDto.setQuantity(serviceInstanceDto.getQuantity());
+					serviceToActivateDto.setCustomFields(serviceInstanceDto.getCustomFields());
+					serviceToActivates.add(serviceToActivateDto);
+				}
+				if (!serviceToInstantiates.isEmpty()) {
+					try{
+						instantiateServices(instantiateServicesDto, currentUser);
+					}catch(Exception e){
+						log.error("instantiate service",e);
+					}
+					serviceToInstantiates.clear();
+				}
+
+				if (!serviceToActivates.isEmpty()) {
+					activateServices(activateServicesDto, currentUser, true);
+					serviceToActivates.clear();
+				}
+			}
+		}
     }
 }

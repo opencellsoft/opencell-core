@@ -459,4 +459,69 @@ public class CustomerAccountApi extends AccountApi {
 
 		return customerAccount;
 	}
+	public void createOrUpdatePartial(CustomerAccountDto customerAccountDto,User currentUser) throws MeveoApiException, BusinessException{
+		CustomerAccountDto existedCustomerAccountDto = null;
+		try {
+			existedCustomerAccountDto = find(customerAccountDto.getCode(), currentUser);
+		} catch (Exception e) {
+			existedCustomerAccountDto = null;
+		}
+		log.debug("createOrUpdate customerAccount {}",customerAccountDto);
+		if (existedCustomerAccountDto == null) {// create
+			create(customerAccountDto,currentUser);
+		} else {// update
+
+			if (!StringUtils.isBlank(customerAccountDto.getCurrency())) {
+				existedCustomerAccountDto.setCurrency(customerAccountDto.getCurrency());
+			}
+			if (!StringUtils.isBlank(customerAccountDto.getLanguage())) {
+				existedCustomerAccountDto.setLanguage(customerAccountDto.getLanguage());
+			}
+			if (!StringUtils.isBlank(customerAccountDto.getStatus())) {
+				existedCustomerAccountDto.setStatus(customerAccountDto.getStatus());
+			}
+			if (!StringUtils.isBlank(customerAccountDto.getDateStatus())) {
+				existedCustomerAccountDto.setDateStatus(customerAccountDto.getDateStatus());
+			}
+			if (!StringUtils.isBlank(customerAccountDto.getDateDunningLevel())) {
+				existedCustomerAccountDto.setDateDunningLevel(customerAccountDto.getDateDunningLevel());
+			}
+			if (!StringUtils.isBlank(customerAccountDto.getMandateDate())) {
+				existedCustomerAccountDto.setMandateDate(customerAccountDto.getMandateDate());
+			}
+			if (!StringUtils.isBlank(customerAccountDto.getMandateIdentification())) {
+				existedCustomerAccountDto.setMandateIdentification(customerAccountDto.getMandateIdentification());
+			}
+
+			if (customerAccountDto.getPaymentMethod() != null) {
+				existedCustomerAccountDto.setPaymentMethod(customerAccountDto.getPaymentMethod());
+			}
+			if (!StringUtils.isBlank(customerAccountDto.getCreditCategory())) {
+				existedCustomerAccountDto.setCreditCategory(customerAccountDto.getCreditCategory());
+			}
+			if (customerAccountDto.getDunningLevel() != null) {
+				existedCustomerAccountDto.setDunningLevel(customerAccountDto.getDunningLevel());
+			}
+			//
+			if (customerAccountDto.getContactInformation() != null) {
+				if (!StringUtils.isBlank(customerAccountDto.getContactInformation().getEmail())) {
+					existedCustomerAccountDto.getContactInformation().setEmail(customerAccountDto.getContactInformation().getEmail());
+				}
+				if (!StringUtils.isBlank(customerAccountDto.getContactInformation().getPhone())) {
+					existedCustomerAccountDto.getContactInformation().setPhone(customerAccountDto.getContactInformation().getPhone());
+				}
+				if (!StringUtils.isBlank(customerAccountDto.getContactInformation().getMobile())) {
+					existedCustomerAccountDto.getContactInformation().setMobile(customerAccountDto.getContactInformation().getMobile());
+				}
+				if (!StringUtils.isBlank(customerAccountDto.getContactInformation().getFax())) {
+					existedCustomerAccountDto.getContactInformation().setFax(customerAccountDto.getContactInformation().getFax());
+				}
+			}
+			accountHierarchyApi.populateNameAddress(existedCustomerAccountDto, customerAccountDto, currentUser);
+			if(StringUtils.isBlank(customerAccountDto.getCustomFields())){
+				existedCustomerAccountDto.setCustomFields(customerAccountDto.getCustomFields());
+			}
+			update(existedCustomerAccountDto,currentUser);
+		}
+	}
 }

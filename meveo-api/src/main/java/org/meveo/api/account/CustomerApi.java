@@ -454,4 +454,60 @@ public class CustomerApi extends AccountApi {
             updateBrand(postData, currentUser);
         }
     }
+    
+    public void createOrUpdatePartial(CustomerDto customerDto,User currentUser) throws MeveoApiException, BusinessException{
+    	CustomerDto existedCustomerDto = null;
+		try {
+			existedCustomerDto = find(customerDto.getCode(), currentUser.getProvider());
+		} catch (Exception e) {
+			existedCustomerDto=null;
+		}
+		log.debug("createOrUpdate customer {}",customerDto);
+		if (existedCustomerDto == null) {
+			create(customerDto,currentUser);
+		} else {
+			existedCustomerDto.setSeller(customerDto.getSeller());
+			String customerBrandCode = StringUtils.normalizeHierarchyCode(customerDto.getCustomerBrand());
+			if (!StringUtils.isBlank(customerDto.getCustomerBrand())) {
+				CustomerBrandDto customerBrand=new CustomerBrandDto();
+				customerBrand.setCode(customerBrandCode);
+				customerBrand.setDescription(customerBrandCode);
+				createOrUpdateBrand(customerBrand, currentUser);
+				existedCustomerDto.setCustomerBrand(customerBrandCode);
+			}
+			String customerCategoryCode = StringUtils.normalizeHierarchyCode(customerDto.getCustomerCategory());
+			if (!StringUtils.isBlank(customerDto.getCustomerCategory())) {
+				CustomerCategoryDto customerCategory=new CustomerCategoryDto();
+				customerCategory.setCode(customerCategoryCode);
+				customerCategory.setDescription(customerCategoryCode);
+				createOrUpdateCategory(customerCategory, currentUser);
+				existedCustomerDto.setCustomerCategory(customerCategoryCode);
+			}
+			if (!StringUtils.isBlank(customerDto.getMandateDate())) {
+				existedCustomerDto.setMandateDate(customerDto.getMandateDate());
+			}
+			if (!StringUtils.isBlank(customerDto.getMandateIdentification())) {
+				existedCustomerDto.setMandateIdentification(customerDto.getMandateIdentification());
+			}
+			if (customerDto.getContactInformation() != null) {
+				if (!StringUtils.isBlank(customerDto.getContactInformation().getEmail())) {
+					existedCustomerDto.getContactInformation().setEmail(customerDto.getContactInformation().getEmail());
+				}
+				if (!StringUtils.isBlank(customerDto.getContactInformation().getPhone())) {
+					existedCustomerDto.getContactInformation().setPhone(customerDto.getContactInformation().getPhone());
+				}
+				if (!StringUtils.isBlank(customerDto.getContactInformation().getMobile())) {
+					existedCustomerDto.getContactInformation().setMobile(customerDto.getContactInformation().getMobile());
+				}
+				if (!StringUtils.isBlank(customerDto.getContactInformation().getFax())) {
+					existedCustomerDto.getContactInformation().setFax(customerDto.getContactInformation().getFax());
+				}
+			}
+			accountHierarchyApi.populateNameAddress(existedCustomerDto, customerDto, currentUser);
+			if(!StringUtils.isBlank(customerDto.getCustomFields())){
+				existedCustomerDto.setCustomFields(customerDto.getCustomFields());
+			}
+			update(existedCustomerDto,currentUser);
+		}
+    }
 }
