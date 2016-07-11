@@ -5,7 +5,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.communication.EmailTemplateDto;
@@ -13,6 +12,7 @@ import org.meveo.api.dto.communication.EmailTemplatesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.crm.Provider;
@@ -30,53 +30,61 @@ public class EmailTemplateApi extends BaseApi {
 	@Inject
 	private EmailTemplateService emailTemplateService;
 	public void create(EmailTemplateDto emailTemplateDto,User currentUser) throws MeveoApiException,BusinessException{
-		if(StringUtils.isNotEmpty(emailTemplateDto.getCode())){
-			EmailTemplate existedEmailTemplate=emailTemplateService.findByCode(emailTemplateDto.getCode(), currentUser.getProvider());
-			if(existedEmailTemplate!=null){
-				throw new EntityAlreadyExistsException(EmailTemplate.class, emailTemplateDto.getCode());
-			}
-			EmailTemplate emailTemplate=new EmailTemplate();
-			emailTemplate.setCode(emailTemplateDto.getCode());
-			emailTemplate.setDescription(emailTemplateDto.getDescription());
-			emailTemplate.setMedia(emailTemplateDto.getMedia());
-			emailTemplate.setTagStartDelimiter(emailTemplateDto.getTagStartDelimiter());
-			emailTemplate.setTagEndDelimiter(emailTemplateDto.getTagEndDelimiter());
-			emailTemplate.setStartDate(emailTemplateDto.getStartDate());
-			emailTemplate.setEndDate(emailTemplateDto.getEndDate());
-			emailTemplate.setType(emailTemplateDto.getType());
-			emailTemplate.setSubject(emailTemplateDto.getSubject());
-			emailTemplate.setHtmlContent(emailTemplateDto.getHtmlContent());
-			emailTemplate.setTextContent(emailTemplateDto.getTextContent());
-			emailTemplateService.create(emailTemplate, currentUser);
-		}else{
+		if(StringUtils.isBlank(emailTemplateDto.getCode())){
 			missingParameters.add("code");
-			handleMissingParameters();
 		}
+		handleMissingParameters();
+		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateDto.getCode(), currentUser.getProvider());
+		if(emailTemplate!=null){
+			throw new EntityAlreadyExistsException(EmailTemplate.class, emailTemplateDto.getCode());
+		}
+		emailTemplate=new EmailTemplate();
+		emailTemplate.setCode(emailTemplateDto.getCode());
+		emailTemplate.setDescription(emailTemplateDto.getDescription());
+		emailTemplate.setMedia(emailTemplateDto.getMedia());
+		if(!StringUtils.isBlank(emailTemplateDto.getTagStartDelimiter())){
+			emailTemplate.setTagStartDelimiter(emailTemplateDto.getTagStartDelimiter());
+		}
+		if(!StringUtils.isBlank(emailTemplateDto.getTagEndDelimiter())){
+			emailTemplate.setTagEndDelimiter(emailTemplateDto.getTagEndDelimiter());
+		}
+		emailTemplate.setStartDate(emailTemplateDto.getStartDate());
+		emailTemplate.setEndDate(emailTemplateDto.getEndDate());
+		emailTemplate.setType(emailTemplateDto.getType());
+		emailTemplate.setSubject(emailTemplateDto.getSubject());
+		emailTemplate.setHtmlContent(emailTemplateDto.getHtmlContent());
+		emailTemplate.setTextContent(emailTemplateDto.getTextContent());
+		emailTemplateService.create(emailTemplate, currentUser);
 	}
 	public void update(EmailTemplateDto emailTemplateDto,User currentUser) throws MeveoApiException,BusinessException{
-		if(StringUtils.isNotEmpty(emailTemplateDto.getCode())){
-			EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateDto.getCode(), currentUser.getProvider());
-			if(emailTemplate==null){
-				throw new EntityDoesNotExistsException(EmailTemplate.class, emailTemplateDto.getCode());
-			}
-			emailTemplate.setDescription(emailTemplateDto.getDescription());
-			emailTemplate.setMedia(emailTemplateDto.getMedia());
-			emailTemplate.setTagStartDelimiter(emailTemplateDto.getTagStartDelimiter());
-			emailTemplate.setTagEndDelimiter(emailTemplateDto.getTagEndDelimiter());
-			emailTemplate.setStartDate(emailTemplateDto.getStartDate());
-			emailTemplate.setEndDate(emailTemplateDto.getEndDate());
-			emailTemplate.setType(emailTemplateDto.getType());
-			emailTemplate.setSubject(emailTemplateDto.getSubject());
-			emailTemplate.setHtmlContent(emailTemplateDto.getHtmlContent());
-			emailTemplate.setTextContent(emailTemplateDto.getTextContent());
-			emailTemplateService.update(emailTemplate, currentUser);
-		}else{
+		if(StringUtils.isBlank(emailTemplateDto.getCode())){
 			missingParameters.add("code");
-			handleMissingParameters();
 		}
+		handleMissingParameters();
+		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateDto.getCode(), currentUser.getProvider());
+		if(emailTemplate==null){
+			throw new EntityDoesNotExistsException(EmailTemplate.class, emailTemplateDto.getCode());
+		}
+		emailTemplate.setDescription(emailTemplateDto.getDescription());
+		if(!StringUtils.isBlank(emailTemplateDto.getMedia())){
+			emailTemplate.setMedia(emailTemplateDto.getMedia());
+		}
+		if(!StringUtils.isBlank(emailTemplateDto.getTagStartDelimiter())){
+			emailTemplate.setTagStartDelimiter(emailTemplateDto.getTagStartDelimiter());
+		}
+		if(!StringUtils.isBlank(emailTemplateDto.getTagEndDelimiter())){
+			emailTemplate.setTagEndDelimiter(emailTemplateDto.getTagEndDelimiter());
+		}
+		emailTemplate.setStartDate(emailTemplateDto.getStartDate());
+		emailTemplate.setEndDate(emailTemplateDto.getEndDate());
+		emailTemplate.setType(emailTemplateDto.getType());
+		emailTemplate.setSubject(emailTemplateDto.getSubject());
+		emailTemplate.setHtmlContent(emailTemplateDto.getHtmlContent());
+		emailTemplate.setTextContent(emailTemplateDto.getTextContent());
+		emailTemplateService.update(emailTemplate, currentUser);
 	}
 	public EmailTemplateDto find(String code,Provider currentProvider) throws MeveoApiException,BusinessException{
-		if(StringUtils.isEmpty(code)){
+		if(StringUtils.isBlank(code)){
 			missingParameters.add("code");
 			handleMissingParameters();
 		}
@@ -87,16 +95,15 @@ public class EmailTemplateApi extends BaseApi {
 		return new EmailTemplateDto(emailTemplate);
 	}
 	public void remove(String code,Provider provider) throws MeveoApiException{
-		if(StringUtils.isNotEmpty(code)){
-			EmailTemplate emailTemplate=emailTemplateService.findByCode(code, provider);
-			if(emailTemplate==null){
-				throw new EntityDoesNotExistsException(EmailTemplate.class, code);
-			}
-			emailTemplateService.remove(emailTemplate);
-		}else{
+		if(StringUtils.isBlank(code)){
 			missingParameters.add("code");
 		}
 		handleMissingParameters();
+		EmailTemplate emailTemplate=emailTemplateService.findByCode(code, provider);
+		if(emailTemplate==null){
+			throw new EntityDoesNotExistsException(EmailTemplate.class, code);
+		}
+		emailTemplateService.remove(emailTemplate);
 	}
 	public EmailTemplatesDto list(Provider provider) throws MeveoApiException{
 		EmailTemplatesDto result=new EmailTemplatesDto();

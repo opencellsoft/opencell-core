@@ -1,16 +1,10 @@
 package org.meveo.api.dto.communication;
 
-import java.util.Date;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.meveo.api.dto.BaseDto;
-import org.meveo.model.communication.MediaEnum;
-import org.meveo.model.communication.MessageTemplateTypeEnum;
 import org.meveo.model.communication.email.EmailTemplate;
 
 /**
@@ -22,19 +16,13 @@ import org.meveo.model.communication.email.EmailTemplate;
 @XmlType(name = "EmailTemplate")
 @XmlRootElement(name = "EmailTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EmailTemplateDto extends BaseDto{
+public class EmailTemplateDto extends MessageTemplateDto{
 
-	private static final long serialVersionUID = 7503268654503865318L;
-	@XmlElement(required=true)
-	private String code;
-	private String description;
-	private MediaEnum media;
-	private String tagStartDelimiter="#{";
-	private String tagEndDelimiter="}";
-	private Date startDate;
-	private Date endDate;
-	private MessageTemplateTypeEnum type;
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1739876218558380262L;
 	private String subject;
 	private String htmlContent;
 	private String textContent;
@@ -42,66 +30,12 @@ public class EmailTemplateDto extends BaseDto{
 		super();
 	}
 	public EmailTemplateDto(EmailTemplate emailTemplate) {
-		this.code=emailTemplate.getCode();
-		this.description=emailTemplate.getDescription();
-		this.media=emailTemplate.getMedia();
-		this.tagStartDelimiter=emailTemplate.getTagStartDelimiter();
-		this.tagEndDelimiter=emailTemplate.getTagEndDelimiter();
-		this.startDate=emailTemplate.getStartDate();
-		this.endDate=emailTemplate.getEndDate();
-		this.type=emailTemplate.getType();
+		super(emailTemplate);
 		this.subject=emailTemplate.getSubject();
 		this.htmlContent=emailTemplate.getHtmlContent();
 		this.textContent=emailTemplate.getTextContent();
 	}
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	public MediaEnum getMedia() {
-		return media;
-	}
-	public void setMedia(MediaEnum media) {
-		this.media = media;
-	}
-	public String getTagStartDelimiter() {
-		return tagStartDelimiter;
-	}
-	public void setTagStartDelimiter(String tagStartDelimiter) {
-		this.tagStartDelimiter = tagStartDelimiter;
-	}
-	public String getTagEndDelimiter() {
-		return tagEndDelimiter;
-	}
-	public void setTagEndDelimiter(String tagEndDelimiter) {
-		this.tagEndDelimiter = tagEndDelimiter;
-	}
-	public Date getStartDate() {
-		return startDate;
-	}
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-	public Date getEndDate() {
-		return endDate;
-	}
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-	public MessageTemplateTypeEnum getType() {
-		return type;
-	}
-	public void setType(MessageTemplateTypeEnum type) {
-		this.type = type;
-	}
+	
 	public String getSubject() {
 		return subject;
 	}
