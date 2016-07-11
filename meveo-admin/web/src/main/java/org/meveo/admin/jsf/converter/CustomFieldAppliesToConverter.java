@@ -89,8 +89,8 @@ public class CustomFieldAppliesToConverter implements Converter, Serializable {
             if (customizedEntity.isStandardEntity()) {
                 appliesToMap.put(EntityCustomizationUtils.getAppliesTo(customizedEntity.getEntityClass(), null), customizedEntity.getClassnameToDisplayHuman());
             } else {
-                appliesToMap.put(EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomEntityTemplate.getAppliesTo(customizedEntity.getEntityName())),
-                    customizedEntity.getClassnameToDisplayHuman());
+                appliesToMap
+                    .put(EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, customizedEntity.getEntityCode()), customizedEntity.getClassnameToDisplayHuman());
             }
         }
     }

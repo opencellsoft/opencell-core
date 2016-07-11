@@ -18,7 +18,7 @@
         </hftl:searchPanel>
 
         <hftl:dataList label="#{messages['businessServiceModel.title']}" backingBean="#{businessServiceModelListBean}" sortBy="code">
-            <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:column label="#{messages['BusinessEntity.code']}" field="code" useCustomIdParam="true" />
             <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
             <hftl:column label="#{messages['businessServiceModel.serviceTemplate']}" field="serviceTemplate.code" />
 
@@ -34,7 +34,7 @@
                     rendered="#{entity.downloaded}" />
                 <h:outputText value="#{messages[entity.active?'enableEntity.active':'enableEntity.disabled']}" rendered="#{!entity.downloaded}" />
             </p:column>
-            <hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+            <hftl:actionsColumn useCustomIdParam="true" permission="#{identity.hasPermission('catalog','catalogManagement')}" />
         </hftl:dataList>
 
     </ui:define>

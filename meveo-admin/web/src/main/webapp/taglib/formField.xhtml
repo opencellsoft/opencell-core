@@ -117,11 +117,12 @@
 
     <c:if test="${entity == null}">
         <!--         <c:set var="fieldEntityIsNull" value="true"/> -->
-        <c:set var="entity" value="${formLevelEntity!=null?formLevelEntity:backingBean.entity}" />
+        <c:set var="entity" value="${formLevelEntity!=null ? formLevelEntity : backingBean.entity}" />
+        <c:set var="defaultEntityFromBean" value="${formLevelEntity==null}" />
     </c:if>
     <!-- <c:set var="formEntityIsNull" value="#{formLevelEntity==null}"/> -->
 
-    <hftl:getFieldInformation backingBean="${backingBean}" entity="${entity}" fieldName="${field}" childFieldName="${childField}" var="fieldInfo" />
+    <hftl:getFieldInformation backingBean="${backingBean}" entity="${entity}" defaultEntityFromBean="${defaultEntityFromBean}" fieldName="${field}" childFieldName="${childField}" var="fieldInfo" />
 
     <c:if test="${empty(required)}">
         <c:set var="required" value="false" />
@@ -169,7 +170,7 @@
         <c:set var="formLevelEdit" value="${backingBean.edit}" />
     </c:if>
     <c:if test="${empty(edit)}">
-        <c:set var="edit" value="#{formLevelEdit and (entity.id==null or (entity.id!=null and allowEdit))}" />
+        <c:set var="edit" value="#{formLevelEdit and (allowEdit or ( (not allowEdit) and entity.id==null))}" />
     </c:if>
     <c:if test="${empty(rendered)}">
         <c:set var="rendered" value="true" />
@@ -182,22 +183,6 @@
     </c:if>
     <c:set var="fieldIdPrefix" value="${field.concat(childField!=null?'_'.concat(childField):'')}" />
     <c:set var="newEntity" value="${entity.id==null}" />
-
-
-    <!-- <c:if test="#{field eq 'description'}"> -->
-    <!-- uuggggg -->
-    <!--         <h:outputText value=" formLevelEntity is "/> -->
-    <!--         <h:outputText value="#{formLevelEntity}"/> -->
-
-    <!--                 <h:outputText value=" entity is "/> -->
-    <!--         <h:outputText value="#{entity}"/> -->
-
-    <!--                 <h:outputText value=" fieldEntityIsNull is null "/> -->
-    <!--         <h:outputText value="#{fieldEntityIsNull}"/> -->
-
-    <!--                 <h:outputText value=" formEntityIsNull is null "/> -->
-    <!--         <h:outputText value="#{formEntityIsNull}"/> -->
-    <!-- </c:if> -->
 
     <c:if test="#{rendered}">
         <!--  Select and entity or a FK to an entity -->

@@ -81,8 +81,8 @@
 						</p:panel>
 						<p:panel>
 							<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-								<h:outputText value="#{entity.code}"></h:outputText>
-								<h:outputText value="#{entity.offerTemplateCategory.code}"></h:outputText>
+								<h:outputText value="#{entity.descriptionOrCode}"></h:outputText>
+								<h:outputText value="#{entity.offerTemplateCategory.descriptionOrCode}"></h:outputText>
 								<p:separator></p:separator>
 								<h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
 								<h:outputText value="#{messages['commons.validTo']}: "></h:outputText>
@@ -123,7 +123,7 @@
 							<h:outputText
 								value="#{messages['offerServiceTemplate.serviceTemplate']}"
 								styleClass="field-label"></h:outputText>: <h:outputText
-								styleClass="field-value" value="#{ost.serviceTemplate.code}"></h:outputText>
+								styleClass="field-value" value="#{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
 						</p:panel>
 						<p:panel>
 							<p:panel styleClass="Wid30" header="One Time Fee">
@@ -131,21 +131,21 @@
 									paginatorAlwaysVisible="false"
 									rendered="#{ost.serviceTemplate.serviceSubscriptionCharges != null}"
 									value="#{ost.serviceTemplate.serviceSubscriptionCharges}"
-									var="charge" type="ordered">#{charge.chargeTemplate.code}</p:dataList>
+									var="charge" type="ordered">#{charge.chargeTemplate.descriptionOrCode}</p:dataList>
 							</p:panel>
 							<p:panel styleClass="Wid30" header="Recurring Fee">
 								<p:dataList styleClass="dataList" paginatorPosition="bottom"
 									paginatorAlwaysVisible="false"
 									rendered="#{ost.serviceTemplate.serviceRecurringCharges != null}"
 									value="#{ost.serviceTemplate.serviceRecurringCharges}"
-									var="charge" type="ordered">#{charge.chargeTemplate.code}</p:dataList>
+									var="charge" type="ordered">#{charge.chargeTemplate.descriptionOrCode}</p:dataList>
 							</p:panel>
 							<p:panel styleClass="Wid30" header="Usage Fee">
 								<p:dataList styleClass="dataList" paginatorPosition="bottom"
 									paginatorAlwaysVisible="false"
 									rendered="#{ost.serviceTemplate.serviceUsageCharges != null}"
 									value="#{ost.serviceTemplate.serviceUsageCharges}" var="charge"
-									type="ordered">#{charge.chargeTemplate.code}</p:dataList>
+									type="ordered">#{charge.chargeTemplate.descriptionOrCode}</p:dataList>
 							</p:panel>
 						</p:panel>
 					</p:dataGrid>

@@ -3,7 +3,7 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewParam name="objectId" value="#{businessServiceModelBean.objectId}" />
+            <f:viewParam name="businessServiceModelId" value="#{businessServiceModelBean.objectIdFromSet}" />
         </f:metadata>
     </ui:define>
 
@@ -61,7 +61,7 @@
             <ui:param name="buttons" value="true" />
             <ui:define name="buttons">
                 <hf:formButtons backingBean="#{businessServiceModelBean}" edit="true" showEditButton="#{!businessServiceModelBean.entity.downloaded}"
-                    showEnableDisableButton="#{!businessServiceModelBean.entity.downloaded}" showDeleteButton="#{!businessServiceModelBean.entity.downloaded}" formId="moduleId">
+                    showEnableDisableButton="#{!businessServiceModelBean.entity.downloaded}" showDeleteButton="#{!businessServiceModelBean.entity.downloaded}" formId="moduleId" useCustomIdParam="true">
 
                     <p:commandButton value="#{messages['meveoModule.install']}" action="#{businessServiceModelBean.install}" update="@form"
                         rendered="#{businessServiceModelBean.entity.downloaded and !businessServiceModelBean.entity.installed}" />

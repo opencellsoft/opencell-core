@@ -44,6 +44,7 @@ public class GetFieldInformationHandler extends TagHandler {
 
     private String backingBean;
     private String entity;
+    private String defaultEntityFromBean;
     private String fieldName;
     private String childFieldName;
     private String varName;
@@ -53,12 +54,13 @@ public class GetFieldInformationHandler extends TagHandler {
      * <ul>
      * <li>backingBean - BaseBean instance with entity field. Used to access "entity" if entity parameter is not passed</li>
      * <li>entity - Entity object to read field metadata from</li>
+     * <li>defaultEntityFromBean - does entity correspond to backingBean.entity as was set by default in hftl:formField tag</li>
      * <li>fieldName - name of a field. Can contain "." in a name</li>
      * <li>childFieldName - name of a secondary field.</li>
      * <li>var - name of a variable to post information to</li>
      * </ul>
      * 
-     * In terms of field resolution the following is used: entity.fieldName.childFieldName
+     * In terms of field resolution the following is used: entity.fieldName.childFieldName or backingBea.clazz.fieldName.childFieldName
      * 
      * @param config Tag configuration
      */
@@ -69,8 +71,13 @@ public class GetFieldInformationHandler extends TagHandler {
         if (getAttribute("backingBean") != null) {
             backingBean = getAttribute("backingBean").getValue();
         }
+
         if (getAttribute("entity") != null) {
             entity = getAttribute("entity").getValue();
+        }
+
+        if (getAttribute("defaultEntityFromBean") != null) {
+            defaultEntityFromBean = getAttribute("defaultEntityFromBean").getValue();
         }
 
         fieldName = getRequiredAttribute("fieldName").getValue();
@@ -90,6 +97,18 @@ public class GetFieldInformationHandler extends TagHandler {
     public void apply(FaceletContext context, UIComponent parent) throws IOException {
         Class entityClass = null;
         // Either entity or backing bean must be set. Resolve the values
+
+        // // Code is ok, but need to better test before release.
+        // // When entity is set, but it was determined by default from backingBean.entity in hftl:formField tag, use backingBean.getClazz() to determine entity's class. This
+        // solves
+        // // the problem of dynamic dialogs #1816.
+        //
+        // boolean isDefaultEntityFromBean = false;
+        // if (defaultEntityFromBean != null) {
+        // isDefaultEntityFromBean = (boolean) executeExpressionInUIContext(context, defaultEntityFromBean);
+        // }
+        //
+        // if (entity != null && !isDefaultEntityFromBean) {
         if (entity != null) {
             Object entityObj = executeExpressionInUIContext(context, entity);
             if (entityObj != null) {
@@ -130,7 +149,7 @@ public class GetFieldInformationHandler extends TagHandler {
 
             if (field.isAnnotationPresent(Size.class)) {
                 int maxLength = field.getAnnotation(Size.class).max();
-                if (maxLength>0){
+                if (maxLength > 0) {
                     fieldInfo.maxLength = maxLength;
                 }
             }
@@ -204,7 +223,6 @@ public class GetFieldInformationHandler extends TagHandler {
         }
 
         context.setAttribute(varName, fieldInfo);
-
         // context.getVariableMapper().resolveVariable(name));
     }
 

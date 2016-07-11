@@ -7,7 +7,7 @@ public class CustomizedEntity {
 
     private Long id;
 
-    private String entityName;
+    private String entityCode;
 
     @SuppressWarnings("rawtypes")
     private Class entityClass;
@@ -19,14 +19,14 @@ public class CustomizedEntity {
     @SuppressWarnings("rawtypes")
     public CustomizedEntity(Class entityClass) {
         super();
-        this.entityName = ReflectionUtils.getCleanClassName(entityClass.getSimpleName());
+        // this.entityName = ReflectionUtils.getCleanClassName(entityClass.getSimpleName());
         this.entityClass = entityClass;
     }
 
     @SuppressWarnings("rawtypes")
     public CustomizedEntity(String entityCode, Class entityClass, Long customEntityId, String description) {
         super();
-        this.entityName = entityCode;
+        this.entityCode = entityCode;
         this.entityClass = entityClass;
         this.customEntityId = customEntityId;
         this.description = description;
@@ -40,8 +40,8 @@ public class CustomizedEntity {
         this.id = id;
     }
 
-    public String getEntityName() {
-        return entityName;
+    public String getEntityCode() {
+        return entityCode;
     }
 
     @SuppressWarnings("rawtypes")
@@ -68,7 +68,7 @@ public class CustomizedEntity {
     public String getClassnameToDisplay() {
         String classNameToDisplay = ReflectionUtils.getCleanClassName(getEntityClass().getName());
         if (!isStandardEntity()) {
-            classNameToDisplay = classNameToDisplay + CustomFieldTemplate.ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR + getEntityName();
+            classNameToDisplay = classNameToDisplay + CustomFieldTemplate.ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR + getEntityCode();
         }
         return classNameToDisplay;
     }
@@ -76,13 +76,13 @@ public class CustomizedEntity {
     public String getClassnameToDisplayHuman() {
         String classNameToDisplay = ReflectionUtils.getHumanClassName(getEntityClass().getSimpleName());
         if (!isStandardEntity()) {
-            classNameToDisplay = classNameToDisplay + CustomFieldTemplate.ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR + getEntityName();
+            classNameToDisplay = classNameToDisplay + CustomFieldTemplate.ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR + getEntityCode();
         }
         return classNameToDisplay;
     }
 
     @Override
     public String toString() {
-        return String.format("CustomizedEntity [entityName=%s, entityClass=%s, customEntityId=%s]", entityName, entityClass, customEntityId);
+        return String.format("CustomizedEntity [entityClass=%s, entityCode=%s, customEntityId=%s]", entityClass, entityCode, customEntityId);
     }
 }

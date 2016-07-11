@@ -277,4 +277,40 @@ public class UserAccountApi extends AccountApi {
 		return new ArrayList<>(userAccountService.filterCountersByPeriod(userAccount.getCounters(), date).values());
 	}
 
+	public void createOrUpdatePartial(UserAccountDto userAccountDto,User currentUser) throws MeveoApiException, BusinessException{
+		UserAccountDto existedUserAccountDto = null;
+		try {
+			existedUserAccountDto = find(userAccountDto.getCode(), currentUser.getProvider());
+		} catch (Exception e) {
+			existedUserAccountDto = null;
+		}
+		if (existedUserAccountDto == null) {// create
+			create(userAccountDto, currentUser);
+		} else {
+			if (userAccountDto.getTerminationDate() != null) {
+				if (StringUtils.isBlank(userAccountDto.getTerminationReason())) {
+					missingParameters.add("userAccount.terminationReason");
+					handleMissingParameters();
+				}
+				terminate(userAccountDto, currentUser);
+			} else {
+
+				if (userAccountDto.getStatus() != null) {
+					existedUserAccountDto.setStatus(userAccountDto.getStatus());
+				}
+				if (userAccountDto.getStatusDate() != null) {
+					existedUserAccountDto.setStatusDate(userAccountDto.getStatusDate());
+				}
+				if (!StringUtils.isBlank(userAccountDto.getSubscriptionDate())) {
+					existedUserAccountDto.setSubscriptionDate(userAccountDto.getSubscriptionDate());
+				}
+
+				accountHierarchyApi.populateNameAddress(existedUserAccountDto, userAccountDto, currentUser);
+				if(!StringUtils.isBlank(userAccountDto.getCustomFields())){
+					existedUserAccountDto.setCustomFields(userAccountDto.getCustomFields());
+				}
+				update(existedUserAccountDto, currentUser);
+			}
+		}
+	}
 }

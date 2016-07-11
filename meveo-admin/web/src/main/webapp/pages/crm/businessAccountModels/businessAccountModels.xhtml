@@ -18,7 +18,7 @@
         </hftl:searchPanel>
 
         <hftl:dataList label="#{messages['businessAccountModel.title']}" backingBean="#{businessAccountModelListBean}" sortBy="code">
-            <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:column label="#{messages['BusinessEntity.code']}" field="code" useCustomIdParam="true"/>
             <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
             <hftl:column label="#{messages['businessAccountModel.type']}" field="hierarchyType" />
             <p:column headerText="#{messages['commons.status']}">
@@ -26,7 +26,7 @@
                     rendered="#{entity.downloaded}" />
                 <h:outputText value="#{messages[entity.active?'enableEntity.active':'enableEntity.disabled']}" rendered="#{!entity.downloaded}" />
             </p:column>
-            <hftl:actionsColumn permission="#{identity.hasPermission('account','accountManagement')}" />
+            <hftl:actionsColumn useCustomIdParam="true" permission="#{identity.hasPermission('account','accountManagement')}" />
         </hftl:dataList>
 
     </ui:define>

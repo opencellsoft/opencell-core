@@ -1,6 +1,7 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -12,6 +13,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
@@ -43,6 +46,14 @@ public class OfferServiceTemplate extends BaseEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "CAT_OFFER_SERV_INCOMP", joinColumns = @JoinColumn(name = "OFFER_SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"))
     private List<ServiceTemplate> incompatibleServices = new ArrayList<>();
+    
+    @Column(name="VALID_FROM")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date validFrom;
+	
+	@Column(name="VALID_TO")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date validTo;
 
     public OfferTemplate getOfferTemplate() {
         return offerTemplate;
@@ -127,4 +138,20 @@ public class OfferServiceTemplate extends BaseEntity {
         }
         return true;
     }
+
+	public Date getValidFrom() {
+		return validFrom;
+	}
+
+	public void setValidFrom(Date validFrom) {
+		this.validFrom = validFrom;
+	}
+
+	public Date getValidTo() {
+		return validTo;
+	}
+
+	public void setValidTo(Date validTo) {
+		this.validTo = validTo;
+	}
 }

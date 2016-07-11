@@ -52,6 +52,10 @@
 							label="#{messages['offerTemplate.category']}"
 							field="offerTemplateCategory" valueLabelField="code"
 							listElements="#{offerTemplateCategoryBean.listActive}" />
+						<hftl:formField label="#{messages['commons.validFrom']}"
+							field="validFrom" />
+						<hftl:formField label="#{messages['commons.validTo']}"
+							field="validTo" />
 						<hftl:formField label="#{messages['enableEntity.disabled']}"
 							doNotShowOnNew="true" allowEdit="false" field="disabled"
 							isMessage="true" />
@@ -134,6 +138,10 @@
 								valueLabelField="code" required="false"
 								dualListModel="#{offerTemplateBean.incompatibleServices}"
 								newLine="true" />
+							<hftl:formField label="#{messages['commons.validFrom']}"
+								field="validFrom" />
+							<hftl:formField label="#{messages['commons.validTo']}"
+								field="validTo" />
 
 							<ui:param name="buttons" value="true" />
 							<ui:define name="buttons">
