@@ -37,11 +37,14 @@
 					<p:panel>
 						<ul class="ListNoStyle">
 							<li class="Padding5"><span class="fa fa-check-square-o"></span>
-								6 offers are active</li>
-							<li class="Padding5"><span class="fa fa-close"></span> 1
-								offer is deactivated</li>
+								#{offerTemplateBean.countActive()}
+								#{messages['page.catalog.offersAreActive']}</li>
+							<li class="Padding5"><span class="fa fa-close"></span>
+								#{offerTemplateBean.countDisabled()}
+								#{messages['page.catalog.offersAreDeactivated']}</li>
 							<li class="Padding5"><span class="fa fa-exclamation-circle"></span>
-								2 offers will expire soon</li>
+								#{offerTemplateBean.countExpiring()}
+								#{messages['page.catalog.offersWillExpireSoon']}</li>
 						</ul>
 					</p:panel>
 				</p:panelGrid>
@@ -55,9 +58,9 @@
 						<p:panel style="border: 1px solid #000">
 							<ul class="ListNoStyle">
 								<li class="Padding5"><span class="fa fa-share-square-o"></span>
-									2 offers selected for export</li>
+									2 #{messages['page.catalog.offersForExport']}</li>
 								<li class="Padding5"><span class="fa fa-play"></span>
-									export to <p:selectOneMenu>
+									#{messages['page.catalog.exportTo']} <p:selectOneMenu>
 										<f:selectItem itemLabel="Production" itemValue="PROD" />
 									</p:selectOneMenu></li>
 							</ul>

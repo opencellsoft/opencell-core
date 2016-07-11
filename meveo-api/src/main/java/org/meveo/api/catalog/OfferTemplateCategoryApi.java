@@ -278,7 +278,7 @@ public class OfferTemplateCategoryApi extends BaseApi {
     public List<OfferTemplateCategoryDto> list(UriInfo uriInfo) throws MeveoApiException {
         List<OfferTemplateCategoryDto> offerTemplateCategoryDtos = new ArrayList<OfferTemplateCategoryDto>();
 
-        List<OfferTemplateCategory> offerTemplateCategories = offerTemplateCategoryService.list();
+        List<OfferTemplateCategory> offerTemplateCategories = offerTemplateCategoryService.listActive();
         if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
             for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
                 OfferTemplateCategoryDto offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory, uriInfo.getBaseUri().toString());

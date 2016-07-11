@@ -295,4 +295,17 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		}
 	}
+	
+	public long countActive() {
+		return offerTemplateService.countActive();
+	}
+	
+	public long countDisabled() {
+		return offerTemplateService.countDisabled();
+	}
+	
+	public long countExpiring() {
+		return offerTemplateService.countExpiring();
+	}
+	
 }
