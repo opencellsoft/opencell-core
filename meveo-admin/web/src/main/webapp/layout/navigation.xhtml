@@ -183,6 +183,12 @@
 			<p:menuitem id="offerTemplates" outcome="offerTemplates"
 				value="#{messages['menu.offerTemplates']}" />
 				
+			<p:submenu id="marketingManager"
+				label="#{messages['menu.marketingManager']}">
+				<p:menuitem id="mmCatalogView" outcome="mmCatalogView"
+					value="#{messages['menu.marketingManager.catalogView']}" />
+			</p:submenu>
+				
 			<p:separator />
 
 			<p:menuitem id="serviceTemplates" outcome="serviceTemplates"
