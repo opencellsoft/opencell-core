@@ -44,8 +44,17 @@ public class DDRequestLotOpApi extends BaseApi {
 		lot.setFromDueDate(dto.getFromDueDate());
 		lot.setToDueDate(dto.getToDueDate());
 		lot.setFileFormat(dto.getFileFormat());
-		lot.setDdrequestOp(DDRequestOpEnum.CREATE);
-		lot.setStatus(DDRequestOpStatusEnum.WAIT);
+		if(StringUtils.isBlank(dto.getDdrequestOp())){
+			lot.setDdrequestOp(DDRequestOpEnum.CREATE);
+		}else{
+			lot.setDdrequestOp(dto.getDdrequestOp());
+		}
+		if(StringUtils.isBlank(dto.getStatus())){
+			lot.setStatus(DDRequestOpStatusEnum.WAIT);
+		}else{
+			lot.setStatus(dto.getStatus());
+		}
+		lot.setErrorCause(dto.getErrorCause());
 		ddrequestLotOpService.create(lot, currentUser);
 	}
 	
