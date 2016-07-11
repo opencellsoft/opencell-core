@@ -419,6 +419,22 @@
     
     <changeSet id="#1759_20160606" author="anasseh">               
        <sql>update crm_custom_field_tmpl set max_value = 256 where field_type='STRING'</sql>      
-    </changeSet>     
+    </changeSet>    
+    
+    <changeSet id="#1821_20160711" author="EdwardLegaspi">
+		<insert tableName="adm_permission">
+			<column name="id" value="17" />
+			<column name="name" value="Marketing Catalog"></column>
+			<column name="ressource" value="marketing"></column>
+			<column name="permission" value="marketingCatalogManager"></column>
+		</insert>
+		
+		<sql>ALTER SEQUENCE adm_permission_seq RESTART WITH 18</sql>
+		
+		 <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="1" />
+            <column name="permission_id" valueNumeric="17" />
+        </insert>   
+	</changeSet> 
         
 </databaseChangeLog>
