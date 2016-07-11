@@ -49,14 +49,12 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.SecuredBusinessEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentTermEnum;
 
 @Entity
-@SecuredBusinessEntity
 @CustomFieldEntity(cftCodePrefix = "BA")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_BILLING_ACCOUNT")

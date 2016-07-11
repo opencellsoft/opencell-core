@@ -45,10 +45,8 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.SecuredBusinessEntity;
 
 @Entity
-@SecuredBusinessEntity
 @CustomFieldEntity(cftCodePrefix = "UA")
 @ExportIdentifier({ "code", "provider" })
 @DiscriminatorValue(value = "ACCT_UA")

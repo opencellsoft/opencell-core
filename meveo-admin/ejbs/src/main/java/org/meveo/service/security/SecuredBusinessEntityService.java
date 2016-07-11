@@ -1,14 +1,19 @@
 package org.meveo.service.security;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
+import org.meveo.service.base.PersistenceService;
 import org.slf4j.Logger;
 
 /**
@@ -16,18 +21,29 @@ import org.slf4j.Logger;
  *
  * @author Tony Alejandro
  */
-public abstract class SecuredBusinessEntityService {
+@Stateless
+public class SecuredBusinessEntityService extends PersistenceService<BusinessEntity>{
 	@Inject
 	protected Logger log;
 
-	public abstract BusinessEntity getEntityByCode(String code, User user);
+	public BusinessEntity getEntityByCode(Class<? extends BusinessEntity> entityClass, String code, User user) {
+		Provider provider = user.getProvider();
+		QueryBuilder qb = new QueryBuilder(entityClass, "e", null, provider);
+		qb.addCriterion("e.code", "=", code, true);
+		qb.addCriterionEntity("e.provider", provider);
 
-	public abstract List<? extends BusinessEntity> list();
+		try {
+			return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			log.debug("No {} of code {} for provider {} found", getEntityClass().getSimpleName(), code, provider.getId());
+			return null;
+		} catch (NonUniqueResultException e) {
+			log.error("More than one entity of type {} with code {} and provider {} found", entityClass, code, provider);
+			return null;
+		}
+	}
 
-	public abstract Class<? extends BusinessEntity> getEntityClass();
-
-	public static boolean isEntityAllowed(BusinessEntity entity, User user, SecuredBusinessEntityServiceFactory factory, Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap,
-			boolean isParentEntity) {
+	public boolean isEntityAllowed(BusinessEntity entity, User user, boolean isParentEntity) {
 		// Doing this check first allows verification without going to DB.
 		if (entityFoundInSecuredEntities(entity, user.getSecuredEntities())) {
 			// Match was found authorization successful
@@ -38,7 +54,7 @@ public abstract class SecuredBusinessEntityService {
 		if (entity != null) {
 			// Check if entity's type is restricted to a specific group of
 			// entities. i.e. only specific Customers, CA, BA, etc.
-			Set<SecuredEntity> securedEntities = securedEntitiesMap.get(entity.getClass());
+			Set<SecuredEntity> securedEntities = user.getSecuredEntitiesMap().get(entity.getClass());
 			if (securedEntities != null && !securedEntities.isEmpty()) {
 				// This means that the entity type is being restricted. Since
 				// the entity did not match anything above, the authorization
@@ -46,8 +62,7 @@ public abstract class SecuredBusinessEntityService {
 				return false;
 			}
 			// Get entity from DB to get parent entities as well.
-			SecuredBusinessEntityService service = factory.getService(entity.getClass());
-			entity = service.getEntityByCode(entity.getCode(), user);
+			entity = getEntityByCode(entity.getClass(), entity.getCode(), user);
 		}
 		if (entity == null && !isParentEntity) {
 			// If entity does not exist and it is not a parent entity, then
@@ -55,10 +70,10 @@ public abstract class SecuredBusinessEntityService {
 			// anyway.
 			return true;
 		}
-		return entity != null && entity.getParentEntity() != null && isEntityAllowed(entity.getParentEntity(), user, factory, securedEntitiesMap, true);
+		return entity != null && entity.getParentEntity() != null && isEntityAllowed(entity.getParentEntity(), user, true);
 	}
 
-	private static boolean entityFoundInSecuredEntities(BusinessEntity entity, Set<SecuredEntity> securedEntities) {
+	private static boolean entityFoundInSecuredEntities(BusinessEntity entity, List<SecuredEntity> securedEntities) {
 		boolean found = false;
 		for (SecuredEntity securedEntity : securedEntities) {
 			if (securedEntity.equals(entity)) {

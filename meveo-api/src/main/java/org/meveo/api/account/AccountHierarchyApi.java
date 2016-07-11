@@ -410,7 +410,7 @@ public class AccountHierarchyApi extends BaseApi {
 		CustomerDto customerDto = null;
 		String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
 		try {
-			customerDto = customerApi.find(customerCode, provider);
+			customerDto = customerApi.find(customerCode, currentUser);
 		} catch (Exception e) {
 			throw new MeveoApiException("Customer "+customerCode+" isn't found");
 		}
@@ -486,7 +486,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		BillingAccountDto billingAccountDto = null;
 		try {
-			billingAccountDto = billingAccountApi.find(billingAccountCode, provider);
+			billingAccountDto = billingAccountApi.find(billingAccountCode, currentUser);
 		} catch (Exception e) {
 			billingAccountDto = new BillingAccountDto();
 			billingAccountDto.setCode(billingAccountCode);
@@ -514,7 +514,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		UserAccountDto userAccountDto = null;
 		try {
-			userAccountDto = userAccountApi.find(userAccountCode, provider);
+			userAccountDto = userAccountApi.find(userAccountCode, currentUser);
 		} catch (Exception e) {
 			userAccountDto = new UserAccountDto();
 			userAccountDto.setCode(userAccountCode);

@@ -1,11 +1,7 @@
 package org.meveo.api.security.filter;
 
-import java.util.Map;
-import java.util.Set;
-
 import javax.inject.Inject;
 
-import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.slf4j.Logger;
 
@@ -23,6 +19,6 @@ public abstract class SecureMethodResultFilter {
 		return this.getClass();
 	}
 	
-	public abstract Object filterResult(Object result, User user, Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap);
+	public abstract Object filterResult(Object result, User user);
 	
 }

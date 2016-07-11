@@ -32,9 +32,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -42,6 +43,7 @@ import javax.inject.Named;
 import org.apache.commons.io.FilenameUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -49,7 +51,6 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.SecuredBusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -59,9 +60,6 @@ import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.service.security.SecuredBusinessEntityService;
-import org.meveo.service.security.SecuredBusinessEntityServiceFactory;
-import org.meveo.service.security.SecuredEntityService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -72,616 +70,599 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Standard backing bean for {@link User} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
- * view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link User} (extends {@link BaseBean} that
+ * provides almost all common methods to handle entities filtering/sorting in
+ * datatable, their create, edit, view, delete operations). It works with Manaty
+ * custom JSF components.
  */
 @Named
 @ViewScoped
 public class UserBean extends BaseBean<User> {
 
-    private static final long serialVersionUID = 1L;
-
-    /** Injected @{link User} service. Extends {@link PersistenceService}. */
-    @Inject
-    private UserService userService;
-
-    @Inject
-    private RoleService roleService;
-
-    @Inject
-    private ProviderService providerService;
-    
-    @Inject
-    private SecuredEntityService securedEntityService;
-    
-    @Inject
-    private SecuredBusinessEntityServiceFactory securedBusinessEntityServiceFactory;
-
-    @Inject
-    private Messages messages;
-
-    private static final Logger log = LoggerFactory.getLogger(UserBean.class);
-
-    /**
-     * Password set by user which is later encoded and set to user before saving to db.
-     */
-    private String password;
-
-    /**
-     * For showing change password panel
-     */
-    private boolean show = false;
-
-    private DualListModel<Role> rolesDM;
-
-    /**
-     * Repeated password to check if it matches another entered password and user did not make a mistake.
-     */
-    private String repeatedPassword;
-
-    ParamBean param = ParamBean.getInstance();
-    private String providerFilePath = param.getProperty("providers.rootDir", "/tmp/meveo/");
-    private String selectedFolder;
-    private boolean currentDirEmpty;
-    private String selectedFileName;
-    private String newFilename;
-    private String directoryName;
-    private List<File> fileList;
-    private UploadedFile file;
-    private boolean forceUpdate;
-    private String entityClass;
-    private Map<String, String> securedEntityTypes;
-    private DualListModel<BusinessEntity> securedEntities;
-    
-
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public UserBean() {
-        super(User.class);
-    }
-
-    @PostConstruct
-    public void init() {
-        if (conversation.isTransient()) {
-            conversation.begin();
-            createMissingDirectories();
-            setSelectedFolder(null);
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
-    @Override
-    @ActionMethod
-    public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        log.debug("saving new user={}", entity.getUserName());
-        boolean passwordsDoNotMatch = password != null && !password.equals(repeatedPassword);
-
-        if (passwordsDoNotMatch) {
-            messages.error(new BundleKey("messages", "save.passwordsDoNotMatch"));
-            return null;
-        }
-        if (getObjectId() != null) {
-            if (userService.isUsernameExists(entity.getUserName(), entity.getId())) {
-                messages.error(new BundleKey("messages", "exception.UsernameAlreadyExistsException"));
-                return null;
-            }
-        } else {
-            if (userService.isUsernameExists(entity.getUserName())) {
-                messages.error(new BundleKey("messages", "exception.UsernameAlreadyExistsException"));
-                return null;
-            }
-        }
-        if (!StringUtils.isBlank(password)) {
-            entity.setLastPasswordModification(new Date());
-            entity.setNewPassword(password);
-            entity.setPassword(password);
-        }
-
-        getEntity().getRoles().clear();
-        getEntity().getRoles().addAll(roleService.refreshOrRetrieve(rolesDM.getTarget()));
-
-        return super.saveOrUpdate(killConversation);
-    }
-
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<User> getPersistenceService() {
-        return userService;
-    }
-
-    /**
-     * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
-     */
-    protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider", "roles");
-    }
-
-    /**
-     * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
-     */
-    protected List<String> getListFieldsToFetch() {
-        return Arrays.asList("roles", "provider");
-    }
-
-    /**
-     * Standard method for custom component with listType="pickList".
-     */
-    public DualListModel<Role> getDualListModel() {
-        if (rolesDM == null) {
-            List<Role> perksSource = null;
-            if (entity != null && entity.getProvider() != null) {
-                perksSource = roleService.list(entity.getProvider());
-            } else {
-                perksSource = roleService.list();
-            }
-            List<Role> perksTarget = new ArrayList<Role>();
-            if (getEntity().getRoles() != null) {
-                perksTarget.addAll(getEntity().getRoles());
-            }
-            perksSource.removeAll(perksTarget);
-            rolesDM = new DualListModel<Role>(perksSource, perksTarget);
-        }
-        return rolesDM;
-    }
-
-    public void setDualListModel(DualListModel<Role> rolesDM) {
-        this.rolesDM = rolesDM;
-    }
-
-    public List<Provider> getProviders() {
-        return providerService.list();
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRepeatedPassword() {
-        return repeatedPassword;
-    }
-
-    public void setRepeatedPassword(String repeatedPassword) {
-        this.repeatedPassword = repeatedPassword;
-    }
-
-    public boolean isShow() {
-        return show;
-    }
-
-    public void setShow(boolean show) {
-        this.show = show;
-    }
-
-    public void showHidePassword() {
-        this.show = !this.show;
-    }
-
-    @Override
-    protected String getDefaultSort() {
-        return null;// "userName";
-    }
-
-    public String getFilePath() {
-        return providerFilePath + File.separator + getCurrentProvider().getCode();
-    }
-
-    private String getFilePath(String name) {
-        String result = getFilePath() + File.separator + name;
-        if (selectedFolder != null) {
-            result = getFilePath() + File.separator + selectedFolder + File.separator + name;
-        }
-        return result;
-    }
-
-    public void createMissingDirectories() {
-        // log.info("Creating required dirs in "+getFilePath());
-        String importDir = getFilePath() + File.separator + "imports" + File.separator + "customers" + File.separator;
-        String customerDirIN = importDir + "input";
-        String customerDirOUT = importDir + "output";
-        String customerDirERR = importDir + "errors";
-        String customerDirWARN = importDir + "warnings";
-        String customerDirKO = importDir + "reject";
-        importDir = getFilePath() + File.separator + "imports" + File.separator + "accounts" + File.separator;
-        String accountDirIN = importDir + "input";
-        String accountDirOUT = importDir + "output";
-        String accountDirERR = importDir + "errors";
-        String accountDirWARN = importDir + "warnings";
-        String accountDirKO = importDir + "reject";
-        importDir = getFilePath() + File.separator + "imports" + File.separator + "subscriptions" + File.separator;
-        String subDirIN = importDir + "input";
-        String subDirOUT = importDir + "output";
-        String subDirERR = importDir + "errors";
-        String subDirWARN = importDir + "warnings";
-        String subDirKO = importDir + "reject";
-        importDir = getFilePath() + File.separator + "imports" + File.separator + "catalog" + File.separator;
-        String catDirIN = importDir + "input";
-        String catDirOUT = importDir + "output";
-        String catDirKO = importDir + "reject";
-        importDir = getFilePath() + File.separator + "imports" + File.separator + "metering" + File.separator;
-        String meterDirIN = importDir + "input";
-        String meterDirOUT = importDir + "output";
-        String meterDirKO = importDir + "reject";
-        String invoicePdfDir = getFilePath() + File.separator + "invoices" + File.separator + "pdf";
-        String invoiceXmlDir = getFilePath() + File.separator + "invoices" + File.separator + "xml";
-        String jasperDir = getFilePath() + File.separator + "jasper";
-        List<String> filePaths = Arrays.asList("", customerDirIN, customerDirOUT, customerDirERR, customerDirWARN, customerDirKO, accountDirIN, accountDirOUT, accountDirERR,
-            accountDirWARN, accountDirKO, subDirIN, subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir,
-            invoiceXmlDir, jasperDir);
-        for (String custDirs : filePaths) {
-            File subDir = new File(custDirs);
-            if (!subDir.exists()) {
-                subDir.mkdirs();
-            }
-        }
-    }
-
-    public UploadedFile getFile() {
-        return file;
-    }
-
-    public void setFile(UploadedFile file) {
-        this.file = file;
-        log.info("set file to" + file.getFileName());
-    }
-
-    public void deleteSelectedFile() {
-        String folder = getFilePath() + File.separator + (this.selectedFolder == null ? "" : this.selectedFolder);
-        log.info("delete file" + folder + File.separator + selectedFileName);
-        File file = new File(folder + File.separator + selectedFileName);
-        if (file.exists()) {
-            file.delete();
-        }
-        this.selectedFileName = null;
-        buildFileList();
-    }
-
-    public StreamedContent getSelectedFile() {
-        StreamedContent result = null;
-        try {
-            String folder = getFilePath() + File.separator + (this.selectedFolder == null ? "" : this.selectedFolder);
-            result = new DefaultStreamedContent(new FileInputStream(new File(folder + File.separator + selectedFileName)), null, selectedFileName);
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            log.error("error generated while getting seleceted file", e);
-        }
-        return result;
-    }
-
-    public String getSelectedFolder() {
-        return selectedFolder;
-    }
-
-    public boolean hasSelectedFolder() {
-        return !StringUtils.isBlank(selectedFolder);
-    }
-
-    public void setSelectedFolder(String selectedFolder) {
-        setSelectedFileName(null);
-        if (selectedFolder == null) {
-            log.debug("setSelectedFolder to null");
-            this.selectedFolder = null;
-        } else if ("..".equals(selectedFolder)) {
-            if (this.selectedFolder.lastIndexOf(File.separator) > 0) {
-                log.debug("setSelectedFolder to parent " + this.selectedFolder + " -> " + this.selectedFolder.substring(0, this.selectedFolder.lastIndexOf(File.separator)));
-                this.selectedFolder = this.selectedFolder.substring(0, this.selectedFolder.lastIndexOf(File.separator));
-            } else {
-                this.selectedFolder = null;
-            }
-        } else {
-            log.debug("setSelectedFolder " + selectedFolder);
-            if (this.selectedFolder == null) {
-                this.selectedFolder = File.separator + selectedFolder;
-            } else {
-                this.selectedFolder += File.separator + selectedFolder;
-            }
-        }
-        buildFileList();
-    }
-
-    private void buildFileList() {
-        String folder = getFilePath() + File.separator + (this.selectedFolder == null ? "" : this.selectedFolder);
-        File file = new File(folder);
-        log.debug("getFileList " + folder);
-
-        File[] files = file.listFiles();
-
-        fileList = files == null ? new ArrayList<File>() : new ArrayList<File>(Arrays.asList(files));
-        currentDirEmpty = !StringUtils.isBlank(this.selectedFolder) && fileList.size() == 0;
-    }
-
-    public String getFileType(String fileName) {
-        if (fileName != null && fileName.endsWith(".zip")) {
-            return "zip";
-        }
-        return "text";
-    }
-
-    public String getLastModified(File file) {
-        return sdf.format(new Date(file.lastModified()));
-    }
-
-    public String getSelectedFileName() {
-        return selectedFileName;
-    }
-
-    public void setSelectedFileName(String selectedFileName) {
-        log.debug("setSelectedFileName " + selectedFileName);
-        this.selectedFileName = selectedFileName;
-    }
-
-    public String getNewFilename() {
-        return newFilename;
-    }
-
-    public void setNewFilename(String newFilename) {
-        this.newFilename = newFilename;
-    }
-
-    public String getDirectoryName() {
-        return directoryName;
-    }
-
-    public void setDirectoryName(String directoryName) {
-        this.directoryName = directoryName;
-    }
-
-    public boolean isCurrentDirEmpty() {
-        return currentDirEmpty;
-    }
-
-    public List<File> getFileList() {
-        return fileList;
-    }
-
-    public void handleFileUpload(FileUploadEvent event) {
-        log.debug("upload file={}", event.getFile());
-        // FIXME: use resource bundle
-        try {
-            copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
-
-            messages.info(event.getFile().getFileName() + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
-        } catch (IOException e) {
-            log.error("Failed to upload a file {}", event.getFile().getFileName(), e);
-            messages.error("Error while uploading " + event.getFile().getFileName());
-        }
-    }
-
-    public void upload(ActionEvent event) {
-        if (file != null) {
-            log.debug("upload file={}", file);
-            try {
-                copyFile(FilenameUtils.getName(file.getFileName()), file.getInputstream());
-
-                messages.info(file.getFileName() + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
-            } catch (IOException e) {
-                log.error("Failed to upload a file {}", file.getFileName(), e);
-                messages.error("Error while uploading " + file.getFileName());
-            }
-        } else {
-            log.info("upload file is null");
-
-        }
-    }
-
-    public void createDirectory() {
-        if (!StringUtils.isBlank(directoryName)) {
-            String filePath = getFilePath(directoryName);
-            File newDir = new File(filePath);
-            if (!newDir.exists()) {
-                if (newDir.mkdir()) {
-                    buildFileList();
-                    directoryName = "";
-                }
-            }
-        }
-    }
-
-    public void deleteDirectory() {
-        log.debug("deleteDirectory:" + selectedFolder);
-        if (currentDirEmpty) {
-            String filePath = getFilePath("");
-            File currentDir = new File(filePath);
-            if (currentDir.exists() && currentDir.isDirectory()) {
-                if (currentDir.delete()) {
-                    setSelectedFolder("..");
-                    createMissingDirectories();
-                    buildFileList();
-                }
-            }
-        }
-    }
-
-    public void renameFile() {
-        if (!StringUtils.isBlank(selectedFileName) && !StringUtils.isBlank(newFilename)) {
-            String filePath = getFilePath(selectedFileName);
-            String newFilePath = getFilePath(newFilename);
-            File currentFile = new File(filePath);
-            File newFile = new File(newFilePath);
-            if (currentFile.exists() && currentFile.isFile() && !newFile.exists()) {
-                if (currentFile.renameTo(newFile)) {
-                    buildFileList();
-                    selectedFileName = newFilename;
-                    newFilename = "";
-                }
-            }
-        }
-    }
-
-    public void copyFile(String fileName, InputStream in) {
-        try {
-
-            // write the inputStream to a FileOutputStream
-            String filePath = getFilePath(fileName);
-            OutputStream out = new FileOutputStream(new File(filePath));
-
-            int read = 0;
-            byte[] bytes = new byte[1024];
-
-            while ((read = in.read(bytes)) != -1) {
-                out.write(bytes, 0, read);
-            }
-
-            in.close();
-            out.flush();
-            out.close();
-
-            log.debug("New file created!");
-            buildFileList();
-        } catch (IOException e) {
-            log.error("Failed saving file. ", e);
-        }
-    }
-
-    /**
-     * Add additional criteria for searching by provider
-     */
-    @Override
-    protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
-
-        // Do not user a check against user.provider as it contains only one value, while user can be linked to various providers
-        // boolean isSuperAdmin = identity.hasPermission("superAdmin", "superAdminManagement");
-        boolean isSuperAdmin = currentUser.hasPermission("superAdmin", "superAdminManagement");
-        if (isSuperAdmin) {
-            searchCriteria.put(PersistenceService.SEARCH_SKIP_PROVIDER_CONSTRAINT, true);
-        }
-        return searchCriteria;
-    }
-
-    public void onProviderChange() {
-        rolesDM = null;
-    }
-    
-	public String getEntityClass() {
-		return entityClass;
+	private static final long serialVersionUID = 1L;
+
+	/** Injected @{link User} service. Extends {@link PersistenceService}. */
+	@Inject
+	private UserService userService;
+
+	@Inject
+	private RoleService roleService;
+
+	@Inject
+	private ProviderService providerService;
+
+	@Inject
+	@Any
+	private Instance<AccountBean<?>> accountBeans;
+
+	@Inject
+	@Named
+	private SellerBean sellerBean;
+
+	@Inject
+	private Messages messages;
+
+	private static final Logger log = LoggerFactory.getLogger(UserBean.class);
+
+	/**
+	 * Password set by user which is later encoded and set to user before saving
+	 * to db.
+	 */
+	private String password;
+
+	/**
+	 * For showing change password panel
+	 */
+	private boolean show = false;
+
+	private DualListModel<Role> rolesDM;
+
+	/**
+	 * Repeated password to check if it matches another entered password and
+	 * user did not make a mistake.
+	 */
+	private String repeatedPassword;
+
+	ParamBean param = ParamBean.getInstance();
+	private String providerFilePath = param.getProperty("providers.rootDir", "/tmp/meveo/");
+	private String selectedFolder;
+	private boolean currentDirEmpty;
+	private String selectedFileName;
+	private String newFilename;
+	private String directoryName;
+	private List<File> fileList;
+	private UploadedFile file;
+	private String securedEntityType;
+	private Map<String, String> securedEntityTypes;
+	private Map<String, BaseBean<? extends BusinessEntity>> accountBeanMap;
+	private BusinessEntity selectedEntity;
+	private BaseBean<?> selectedAccountBean;
+
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public UserBean() {
+		super(User.class);
 	}
 
-	public void setEntityClass(String entityClass) {
-		this.entityClass = entityClass;
+	@PostConstruct
+	public void init() {
+		if (conversation.isTransient()) {
+			conversation.begin();
+			createMissingDirectories();
+			setSelectedFolder(null);
+		}
+		initSelectionOptions();
 	}
 
-	public void editSecuredEntity(SecuredEntity entity) {
-		this.entityClass = entity.getEntityClass();
-		forceUpdate = true;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+	 */
+	@Override
+	@ActionMethod
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		log.debug("saving new user={}", entity.getUserName());
+		boolean passwordsDoNotMatch = password != null && !password.equals(repeatedPassword);
+
+		if (passwordsDoNotMatch) {
+			messages.error(new BundleKey("messages", "save.passwordsDoNotMatch"));
+			return null;
+		}
+		if (getObjectId() != null) {
+			if (userService.isUsernameExists(entity.getUserName(), entity.getId())) {
+				messages.error(new BundleKey("messages", "exception.UsernameAlreadyExistsException"));
+				return null;
+			}
+		} else {
+			if (userService.isUsernameExists(entity.getUserName())) {
+				messages.error(new BundleKey("messages", "exception.UsernameAlreadyExistsException"));
+				return null;
+			}
+		}
+		if (!StringUtils.isBlank(password)) {
+			entity.setLastPasswordModification(new Date());
+			entity.setNewPassword(password);
+			entity.setPassword(password);
+		}
+
+		getEntity().getRoles().clear();
+		getEntity().getRoles().addAll(roleService.refreshOrRetrieve(rolesDM.getTarget()));
+
+		return super.saveOrUpdate(killConversation);
+	}
+
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<User> getPersistenceService() {
+		return userService;
+	}
+
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
+	 */
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider", "roles");
+	}
+
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
+	 */
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("roles", "provider");
+	}
+
+	/**
+	 * Standard method for custom component with listType="pickList".
+	 */
+	public DualListModel<Role> getDualListModel() {
+		if (rolesDM == null) {
+			List<Role> perksSource = null;
+			if (entity != null && entity.getProvider() != null) {
+				perksSource = roleService.list(entity.getProvider());
+			} else {
+				perksSource = roleService.list();
+			}
+			List<Role> perksTarget = new ArrayList<Role>();
+			if (getEntity().getRoles() != null) {
+				perksTarget.addAll(getEntity().getRoles());
+			}
+			perksSource.removeAll(perksTarget);
+			rolesDM = new DualListModel<Role>(perksSource, perksTarget);
+		}
+		return rolesDM;
+	}
+
+	public void setDualListModel(DualListModel<Role> rolesDM) {
+		this.rolesDM = rolesDM;
+	}
+
+	public List<Provider> getProviders() {
+		return providerService.list();
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getRepeatedPassword() {
+		return repeatedPassword;
+	}
+
+	public void setRepeatedPassword(String repeatedPassword) {
+		this.repeatedPassword = repeatedPassword;
+	}
+
+	public boolean isShow() {
+		return show;
+	}
+
+	public void setShow(boolean show) {
+		this.show = show;
+	}
+
+	public void showHidePassword() {
+		this.show = !this.show;
+	}
+
+	@Override
+	protected String getDefaultSort() {
+		return null;// "userName";
+	}
+
+	public String getFilePath() {
+		return providerFilePath + File.separator + getCurrentProvider().getCode();
+	}
+
+	private String getFilePath(String name) {
+		String result = getFilePath() + File.separator + name;
+		if (selectedFolder != null) {
+			result = getFilePath() + File.separator + selectedFolder + File.separator + name;
+		}
+		return result;
+	}
+
+	public void createMissingDirectories() {
+		// log.info("Creating required dirs in "+getFilePath());
+		String importDir = getFilePath() + File.separator + "imports" + File.separator + "customers" + File.separator;
+		String customerDirIN = importDir + "input";
+		String customerDirOUT = importDir + "output";
+		String customerDirERR = importDir + "errors";
+		String customerDirWARN = importDir + "warnings";
+		String customerDirKO = importDir + "reject";
+		importDir = getFilePath() + File.separator + "imports" + File.separator + "accounts" + File.separator;
+		String accountDirIN = importDir + "input";
+		String accountDirOUT = importDir + "output";
+		String accountDirERR = importDir + "errors";
+		String accountDirWARN = importDir + "warnings";
+		String accountDirKO = importDir + "reject";
+		importDir = getFilePath() + File.separator + "imports" + File.separator + "subscriptions" + File.separator;
+		String subDirIN = importDir + "input";
+		String subDirOUT = importDir + "output";
+		String subDirERR = importDir + "errors";
+		String subDirWARN = importDir + "warnings";
+		String subDirKO = importDir + "reject";
+		importDir = getFilePath() + File.separator + "imports" + File.separator + "catalog" + File.separator;
+		String catDirIN = importDir + "input";
+		String catDirOUT = importDir + "output";
+		String catDirKO = importDir + "reject";
+		importDir = getFilePath() + File.separator + "imports" + File.separator + "metering" + File.separator;
+		String meterDirIN = importDir + "input";
+		String meterDirOUT = importDir + "output";
+		String meterDirKO = importDir + "reject";
+		String invoicePdfDir = getFilePath() + File.separator + "invoices" + File.separator + "pdf";
+		String invoiceXmlDir = getFilePath() + File.separator + "invoices" + File.separator + "xml";
+		String jasperDir = getFilePath() + File.separator + "jasper";
+		List<String> filePaths = Arrays.asList("", customerDirIN, customerDirOUT, customerDirERR, customerDirWARN, customerDirKO, accountDirIN, accountDirOUT, accountDirERR,
+				accountDirWARN, accountDirKO, subDirIN, subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO,
+				invoicePdfDir, invoiceXmlDir, jasperDir);
+		for (String custDirs : filePaths) {
+			File subDir = new File(custDirs);
+			if (!subDir.exists()) {
+				subDir.mkdirs();
+			}
+		}
+	}
+
+	public UploadedFile getFile() {
+		return file;
+	}
+
+	public void setFile(UploadedFile file) {
+		this.file = file;
+		log.info("set file to" + file.getFileName());
+	}
+
+	public void deleteSelectedFile() {
+		String folder = getFilePath() + File.separator + (this.selectedFolder == null ? "" : this.selectedFolder);
+		log.info("delete file" + folder + File.separator + selectedFileName);
+		File file = new File(folder + File.separator + selectedFileName);
+		if (file.exists()) {
+			file.delete();
+		}
+		this.selectedFileName = null;
+		buildFileList();
+	}
+
+	public StreamedContent getSelectedFile() {
+		StreamedContent result = null;
+		try {
+			String folder = getFilePath() + File.separator + (this.selectedFolder == null ? "" : this.selectedFolder);
+			result = new DefaultStreamedContent(new FileInputStream(new File(folder + File.separator + selectedFileName)), null, selectedFileName);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			log.error("error generated while getting seleceted file", e);
+		}
+		return result;
+	}
+
+	public String getSelectedFolder() {
+		return selectedFolder;
+	}
+
+	public boolean hasSelectedFolder() {
+		return !StringUtils.isBlank(selectedFolder);
+	}
+
+	public void setSelectedFolder(String selectedFolder) {
+		setSelectedFileName(null);
+		if (selectedFolder == null) {
+			log.debug("setSelectedFolder to null");
+			this.selectedFolder = null;
+		} else if ("..".equals(selectedFolder)) {
+			if (this.selectedFolder.lastIndexOf(File.separator) > 0) {
+				log.debug("setSelectedFolder to parent " + this.selectedFolder + " -> " + this.selectedFolder.substring(0, this.selectedFolder.lastIndexOf(File.separator)));
+				this.selectedFolder = this.selectedFolder.substring(0, this.selectedFolder.lastIndexOf(File.separator));
+			} else {
+				this.selectedFolder = null;
+			}
+		} else {
+			log.debug("setSelectedFolder " + selectedFolder);
+			if (this.selectedFolder == null) {
+				this.selectedFolder = File.separator + selectedFolder;
+			} else {
+				this.selectedFolder += File.separator + selectedFolder;
+			}
+		}
+		buildFileList();
+	}
+
+	private void buildFileList() {
+		String folder = getFilePath() + File.separator + (this.selectedFolder == null ? "" : this.selectedFolder);
+		File file = new File(folder);
+		log.debug("getFileList " + folder);
+
+		File[] files = file.listFiles();
+
+		fileList = files == null ? new ArrayList<File>() : new ArrayList<File>(Arrays.asList(files));
+		currentDirEmpty = !StringUtils.isBlank(this.selectedFolder) && fileList.size() == 0;
+	}
+
+	public String getFileType(String fileName) {
+		if (fileName != null && fileName.endsWith(".zip")) {
+			return "zip";
+		}
+		return "text";
+	}
+
+	public String getLastModified(File file) {
+		return sdf.format(new Date(file.lastModified()));
+	}
+
+	public String getSelectedFileName() {
+		return selectedFileName;
+	}
+
+	public void setSelectedFileName(String selectedFileName) {
+		log.debug("setSelectedFileName " + selectedFileName);
+		this.selectedFileName = selectedFileName;
+	}
+
+	public String getNewFilename() {
+		return newFilename;
+	}
+
+	public void setNewFilename(String newFilename) {
+		this.newFilename = newFilename;
+	}
+
+	public String getDirectoryName() {
+		return directoryName;
+	}
+
+	public void setDirectoryName(String directoryName) {
+		this.directoryName = directoryName;
+	}
+
+	public boolean isCurrentDirEmpty() {
+		return currentDirEmpty;
+	}
+
+	public List<File> getFileList() {
+		return fileList;
+	}
+
+	public void handleFileUpload(FileUploadEvent event) {
+		log.debug("upload file={}", event.getFile());
+		// FIXME: use resource bundle
+		try {
+			copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
+
+			messages.info(event.getFile().getFileName() + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
+		} catch (IOException e) {
+			log.error("Failed to upload a file {}", event.getFile().getFileName(), e);
+			messages.error("Error while uploading " + event.getFile().getFileName());
+		}
+	}
+
+	public void upload(ActionEvent event) {
+		if (file != null) {
+			log.debug("upload file={}", file);
+			try {
+				copyFile(FilenameUtils.getName(file.getFileName()), file.getInputstream());
+
+				messages.info(file.getFileName() + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
+			} catch (IOException e) {
+				log.error("Failed to upload a file {}", file.getFileName(), e);
+				messages.error("Error while uploading " + file.getFileName());
+			}
+		} else {
+			log.info("upload file is null");
+
+		}
+	}
+
+	public void createDirectory() {
+		if (!StringUtils.isBlank(directoryName)) {
+			String filePath = getFilePath(directoryName);
+			File newDir = new File(filePath);
+			if (!newDir.exists()) {
+				if (newDir.mkdir()) {
+					buildFileList();
+					directoryName = "";
+				}
+			}
+		}
+	}
+
+	public void deleteDirectory() {
+		log.debug("deleteDirectory:" + selectedFolder);
+		if (currentDirEmpty) {
+			String filePath = getFilePath("");
+			File currentDir = new File(filePath);
+			if (currentDir.exists() && currentDir.isDirectory()) {
+				if (currentDir.delete()) {
+					setSelectedFolder("..");
+					createMissingDirectories();
+					buildFileList();
+				}
+			}
+		}
+	}
+
+	public void renameFile() {
+		if (!StringUtils.isBlank(selectedFileName) && !StringUtils.isBlank(newFilename)) {
+			String filePath = getFilePath(selectedFileName);
+			String newFilePath = getFilePath(newFilename);
+			File currentFile = new File(filePath);
+			File newFile = new File(newFilePath);
+			if (currentFile.exists() && currentFile.isFile() && !newFile.exists()) {
+				if (currentFile.renameTo(newFile)) {
+					buildFileList();
+					selectedFileName = newFilename;
+					newFilename = "";
+				}
+			}
+		}
+	}
+
+	public void copyFile(String fileName, InputStream in) {
+		try {
+
+			// write the inputStream to a FileOutputStream
+			String filePath = getFilePath(fileName);
+			OutputStream out = new FileOutputStream(new File(filePath));
+
+			int read = 0;
+			byte[] bytes = new byte[1024];
+
+			while ((read = in.read(bytes)) != -1) {
+				out.write(bytes, 0, read);
+			}
+
+			in.close();
+			out.flush();
+			out.close();
+
+			log.debug("New file created!");
+			buildFileList();
+		} catch (IOException e) {
+			log.error("Failed saving file. ", e);
+		}
+	}
+
+	/**
+	 * Add additional criteria for searching by provider
+	 */
+	@Override
+	protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
+
+		// Do not user a check against user.provider as it contains only one
+		// value, while user can be linked to various providers
+		// boolean isSuperAdmin = identity.hasPermission("superAdmin",
+		// "superAdminManagement");
+		boolean isSuperAdmin = currentUser.hasPermission("superAdmin", "superAdminManagement");
+		if (isSuperAdmin) {
+			searchCriteria.put(PersistenceService.SEARCH_SKIP_PROVIDER_CONSTRAINT, true);
+		}
+		return searchCriteria;
+	}
+
+	public void onProviderChange() {
+		rolesDM = null;
+	}
+
+	public String getSecuredEntityType() {
+		log.debug("getSecuredEntityType: {}", this.securedEntityType);
+		return this.securedEntityType;
+	}
+
+	public void setSecuredEntityType(String securedEntityType) {
+		log.debug("setSecuredEntityType: {}", securedEntityType);
+		this.securedEntityType = securedEntityType;
+		log.debug("this.securedEntityType: {}", this.securedEntityType);
+	}
+
+	public BusinessEntity getSelectedEntity() {
+		log.debug("getSelectedEntity: {}", this.selectedEntity);
+		return selectedEntity;
+	}
+
+	public void setSelectedEntity(BusinessEntity selectedEntity) {
+		log.debug("setSelectedEntity: {}", selectedEntity);
+		this.selectedEntity = selectedEntity;
+		log.debug("this.selectedEntity: {}", this.selectedEntity);
+	}
+
+	public BaseBean<?> getSelectedAccountBean() {
+		log.debug("getSelectedAccountBean: {}", this.selectedAccountBean);
+		return selectedAccountBean;
+	}
+
+	public void setSelectedAccountBean(BaseBean<?> selectedAccountBean) {
+		log.debug("setSelectedAccountBean: {}", selectedAccountBean);
+		this.selectedAccountBean = selectedAccountBean;
+		log.debug("this.selectedAccountBean: {}", this.selectedAccountBean);
+	}
+
+	public Map<String, String> getSecuredEntityTypes() {
+		log.debug("this.securedEntityTypes: {}", this.securedEntityTypes);
+		return this.securedEntityTypes;
+	}
+	
+	public void setSecuredEntityTypes(Map<String, String> securedEntityTypes) {
+		log.debug("setSecuredEntityTypes: {}", this.securedEntityType);
+		this.securedEntityTypes = securedEntityTypes;
+		log.debug("this.securedEntityType: {}", this.securedEntityType);
 	}
 
 	@ActionMethod
 	public void deleteSecuredEntity(SecuredEntity securedEntity) throws BusinessException {
 		removeSecuredEntity(securedEntity);
 		messages.info(new BundleKey("messages", "delete.successful"));
-		forceUpdate = true;
 	}
 
 	@ActionMethod
-	public void updateEntityClass() {
-		forceUpdate = true;
+	public void updateSelectedAccountBean() {
+		log.debug("updateSelectedAccountBean: {}", this.selectedAccountBean);
+		log.debug("this.securedEntityType: {}", this.securedEntityType);
+		if (!StringUtils.isBlank(getSecuredEntityType())) {
+			setSelectedAccountBean(accountBeanMap.get(getSecuredEntityType()));
+		}
+		log.debug("this.selectedAccountBean: {}", this.selectedAccountBean);
 	}
 
-	public Map<String, String> getSecuredEntityTypes() {
-		if (securedEntityTypes == null) {
-			securedEntityTypes = new HashMap<>();
-			Set<Class<?>> securedEntityClasses = ReflectionUtils.getClassesAnnotatedWith(SecuredBusinessEntity.class);
-			String key = null;
-			String value = null;
-			for (Class<?> securedEntityClass : securedEntityClasses) {
-				value = ReflectionUtils.getHumanClassName(securedEntityClass.getSimpleName());
-				key = ReflectionUtils.getCleanClassName(securedEntityClass.getTypeName());
-				securedEntityTypes.put(key, value);
-			}
-		}
-		return securedEntityTypes;
+	public void saveSecuredEntity() {
+
 	}
 
-	@ActionMethod
-	public void saveSecuredEntity() throws BusinessException {
-		
-		List<SecuredEntity> userAccessibleEntities = new ArrayList<>();
-		for(SecuredEntity userAccessibleEntity : getEntity().getSecuredEntities()){
-			userAccessibleEntities.add(userAccessibleEntity);
-		}
-		
-		List<BusinessEntity> selectedEntities = securedEntities.getTarget();
-		List<BusinessEntity> removedEntities = securedEntities.getSource();
-		
-		selectedEntities.removeAll(userAccessibleEntities);
-		removedEntities.retainAll(userAccessibleEntities);
-		
-		boolean hasChanged = !selectedEntities.isEmpty() || !removedEntities.isEmpty();
-		
-		SecuredEntity removedItem = null;
-		for(BusinessEntity removedEntity : removedEntities){
-			removedItem = userAccessibleEntities.get(userAccessibleEntities.indexOf(removedEntity));
-			removeSecuredEntity(removedItem);
-		}
-		
-		List<SecuredEntity> newEntities = new ArrayList<>();
-		SecuredEntity newEntity = null;
-		for(BusinessEntity selectedEntity : selectedEntities){
-			newEntity = new SecuredEntity(selectedEntity);
-			newEntity.setEntityClass(getEntityClass());
-			newEntity.setUser(getEntity());
-			newEntities.add(newEntity);
-		}
-		
-		if(hasChanged){
-			getEntity().getSecuredEntities().addAll(newEntities);
-			super.saveOrUpdate(true);
-			messages.info(new BundleKey("messages", "update.successful"));
-		}
-		forceUpdate = true;
-	}
-	
-	private void removeSecuredEntity(SecuredEntity securedEntity) throws BusinessException{
+	private void removeSecuredEntity(SecuredEntity securedEntity) throws BusinessException {
 		entity.getSecuredEntities().remove(securedEntity);
 		entity = getPersistenceService().update(entity, getCurrentUser());
-		securedEntity = securedEntityService.refreshOrRetrieve(securedEntity);
-		securedEntityService.remove(securedEntity);
 	}
 
-	@ActionMethod
-	public void clearSecuredEntity() {
-		setEntityClass("");
-		forceUpdate = true;
-	}
-
-	public DualListModel<BusinessEntity> getSecuredEntitiesByType() {
-		if (forceUpdate || securedEntities == null) {
-			forceUpdate = false;
-			SecuredBusinessEntityService service = null;
-			List<BusinessEntity> source = new ArrayList<>();
-			List<BusinessEntity> target = new ArrayList<>();
-			if (getEntityClass() != null) {
-				service = securedBusinessEntityServiceFactory.getService(getEntityClass());
-				if (service != null) {
-					source.addAll(service.list());
-					if (getEntity() != null && getEntity().getSecuredEntities() != null && !getEntity().getSecuredEntities().isEmpty()) {
-						for (SecuredEntity securedEntity : getEntity().getSecuredEntities()) {
-							if(securedEntity.getEntityClass().equals(entityClass)){
-								target.add(securedEntity);
-							}
-						}
-					}
-					source.removeAll(target);
-				}
+	private void initSelectionOptions() {
+		log.debug("initSelectionOptions...");
+		log.debug("this.securedEntityTypes: {}", this.securedEntityTypes);
+		log.debug("this.accountBeanMap.", this.accountBeanMap);
+		
+		if (accountBeanMap == null || accountBeanMap.isEmpty()) {
+			accountBeanMap = new HashMap<>();
+			securedEntityTypes = new HashMap<>();
+			String key = ReflectionUtils.getHumanClassName(sellerBean.getClazz().getSimpleName());
+			String value = ReflectionUtils.getCleanClassName(sellerBean.getClazz().getTypeName());
+			securedEntityTypes.put(key, value);
+			accountBeanMap.put(value, sellerBean);
+			for (AccountBean<?> accountBean : accountBeans) {
+				key = ReflectionUtils.getHumanClassName(accountBean.getClazz().getSimpleName());
+				value = ReflectionUtils.getCleanClassName(accountBean.getClazz().getTypeName());
+				securedEntityTypes.put(key, value);
+				accountBeanMap.put(value, accountBean);
 			}
-			securedEntities = new DualListModel<BusinessEntity>(source, target);
 		}
-		return securedEntities;
+		log.debug("this.securedEntityTypes: {}", this.securedEntityTypes);
+		log.debug("this.accountBeanMap: {}", this.accountBeanMap);
+		log.debug("initSelectionOptions done.");
 	}
 
-	public void setSecuredEntitiesByType(DualListModel<BusinessEntity> securedEntities) {
-		this.securedEntities = securedEntities;
-	}
 }

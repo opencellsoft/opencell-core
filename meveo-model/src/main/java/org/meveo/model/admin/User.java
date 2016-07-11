@@ -18,19 +18,25 @@
  */
 package org.meveo.model.admin;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -76,8 +82,12 @@ public class User extends AuditableEntity {
 	@JoinTable(name = "ADM_USER_ROLE", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
 	private Set<Role> roles = new HashSet<Role>();
 	
-	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<SecuredEntity> securedEntities = new HashSet<SecuredEntity>();
+	@ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "ADM_SECURED_ENTITY", joinColumns = { @JoinColumn(name = "USER_ID") })
+    @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "CODE", nullable = false, length = 60)),
+            @AttributeOverride(name = "description", column = @Column(name = "DESCRIPTION", nullable = true, length = 100)),
+            @AttributeOverride(name = "entityClass", column = @Column(name = "ENTITY_CLASS", nullable = false, length = 10)) })
+	private List<SecuredEntity> securedEntities = new ArrayList<>();
 
 //	@ManyToMany(fetch = FetchType.LAZY)
 //	@JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "PROVIDER_ID"))
@@ -302,11 +312,29 @@ public class User extends AuditableEntity {
     	return isAllowed;
     }
     
-    public Set<SecuredEntity> getSecuredEntities() {
+    public List<SecuredEntity> getSecuredEntities() {
 		return securedEntities;
 	}
     
-    public void setSecuredEntities(Set<SecuredEntity> securedEntities) {
+    public void setSecuredEntities(List<SecuredEntity> securedEntities) {
 		this.securedEntities = securedEntities;
+	}
+    
+    public Map<Class<?>, Set<SecuredEntity>> getSecuredEntitiesMap() {
+		Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap = new HashMap<>();
+		Set<SecuredEntity> securedEntitySet = null;
+		try {
+			for (SecuredEntity securedEntity : securedEntities) {
+				Class<?> securedBusinessEntityClass = Class.forName(securedEntity.getEntityClass());
+				if (securedEntitiesMap.get(securedBusinessEntityClass) == null) {
+					securedEntitySet = new HashSet<>();
+					securedEntitiesMap.put(securedBusinessEntityClass, securedEntitySet);
+				}
+				securedEntitiesMap.get(securedBusinessEntityClass).add(securedEntity);
+			}
+		} catch (ClassNotFoundException e) {
+			// do nothing
+		}
+		return securedEntitiesMap;
 	}
 }

@@ -16,18 +16,22 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.meveo.service.security.SecuredBusinessEntityService;
-import org.meveo.service.security.SecuredBusinessEntityServiceFactory;
 
 public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<BusinessEntity> {
 
-	private static final String FAILED_TO_RETRIEVE_SERVICE = "Failed to retrieve SecuredBusinessEntityService.";
+	private static final String RETURNING_BUSINESS_ENTITY_CLASS = "Returning BusinessEntity Class: {}";
+	private static final String RETRIEVING_BUSINESS_ENTITY_CLASS = "Retrieving BusinessEntity Class for AccountHierarchyTypeEnum: {}";
+	private static final String RETURNING_ENTITY = "Returning entity: {}";
+	private static final String CREATING_BUSINESS_ENTITY = "Creating BusinessEntity using [code={}, parentCode={}, accountExist={}, accountType={}]";
+	private static final String RETURNING_ACCOUNT_HIERARCHY_TYPE = "Returning AccountHierarchyTypeEnum: {}";
+	private static final String RETRIEVING_ACCOUNT_HIERARCHY_TYPE = "Retrieving AccountHierarchyTypeEnum of type: {}";
 	private static final String ACCOUNT_TYPE_DOES_NOT_MATCH = "Account type does not match any BAM or AccountHierarchyTypeEnum";
 
 	@Inject
 	private BusinessAccountModelService businessAccountModelService;
 
 	@Inject
-	SecuredBusinessEntityServiceFactory serviceFactory;
+	private SecuredBusinessEntityService securedBusinessEntityService;
 
 	@Override
 	public BusinessEntity getParameterValue(SecureMethodParameter parameter, Object[] values, User user) throws MeveoApiException {
@@ -61,7 +65,7 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 
 		String crmAccountType = dto.getCrmAccountType();
 		
-		log.debug("Retrieving AccountHierarchyTypeEnum of type: {}", crmAccountType);
+		log.debug(RETRIEVING_ACCOUNT_HIERARCHY_TYPE, crmAccountType);
 		
 		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
 		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(crmAccountType, user.getProvider());
@@ -74,21 +78,21 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 				throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, ACCOUNT_TYPE_DOES_NOT_MATCH, e);
 			}
 		}
-		log.debug("Returning AccountHierarchyTypeEnum: {}", accountHierarchyTypeEnum);
+		log.debug(RETURNING_ACCOUNT_HIERARCHY_TYPE, accountHierarchyTypeEnum);
 		return accountHierarchyTypeEnum;
 	}
 
 	private BusinessEntity getEntity(AccountHierarchyTypeEnum accountHierarchyTypeEnum, CRMAccountHierarchyDto dto, User user) throws MeveoApiException {
 
-		SecuredBusinessEntityService service = getService(accountHierarchyTypeEnum);
-		BusinessEntity entity = null;
+		Class<? extends BusinessEntity> entityClass = getEntityClass(accountHierarchyTypeEnum);
 		String code = dto.getCode();
 		String parentCode = dto.getCrmParentCode();
-		boolean accountExist = service.getEntityByCode(code, user) != null;
+		boolean accountExist = securedBusinessEntityService.getEntityByCode(entityClass, code, user) != null;
 		int accountType = accountHierarchyTypeEnum.getHighLevel();
 
-		log.debug("Creating BusinessEntity using [Service={}, code={}, parentCode={}, accountExist={}, accountType={}]", service, code, parentCode, accountExist, accountType);
+		log.debug(CREATING_BUSINESS_ENTITY, code, parentCode, accountExist, accountType);
 
+		BusinessEntity entity = null;
 		// UA=0, BA=1, CA=2, C=3, S=4
 		switch (accountType) {
 		case 0:
@@ -134,37 +138,33 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 		default:
 			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_INSTANTIATE_ENTITY, BusinessEntity.class.getTypeName()));
 		}
-		log.debug("Returning entity: {}", entity);
+		log.debug(RETURNING_ENTITY, entity);
 		return entity;
 	}
 
-	private SecuredBusinessEntityService getService(AccountHierarchyTypeEnum accountHierarchyTypeEnum) throws MeveoApiException {
+	private Class<? extends BusinessEntity> getEntityClass(AccountHierarchyTypeEnum accountHierarchyTypeEnum) throws MeveoApiException {
 
-		log.debug("Retrieving SecuredBusinessEntityService for AccountHierarchyTypeEnum: {}", accountHierarchyTypeEnum);
+		log.debug(RETRIEVING_BUSINESS_ENTITY_CLASS, accountHierarchyTypeEnum);
 
-		SecuredBusinessEntityService service = null;
+		Class<? extends BusinessEntity> entityClass = null;
 
 		if (accountHierarchyTypeEnum.getHighLevel() == 4) {
-			service = serviceFactory.getService(Seller.class);
+			entityClass = Seller.class;
 
 		} else if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
-			service = serviceFactory.getService(Customer.class);
+			entityClass = Customer.class;
 
 		} else if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
-			service = serviceFactory.getService(CustomerAccount.class);
+			entityClass = CustomerAccount.class;
 
 		} else if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
-			service = serviceFactory.getService(BillingAccount.class);
+			entityClass = BillingAccount.class;
 
 		} else {
-			service = serviceFactory.getService(UserAccount.class);
+			entityClass = UserAccount.class;
 		}
-
-		if (service == null) {
-			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, FAILED_TO_RETRIEVE_SERVICE);
-		}
-		log.debug("Returning SecuredBusinessEntityService: {}", service);
-		return service;
+		log.debug(RETURNING_BUSINESS_ENTITY_CLASS, entityClass.getTypeName());
+		return entityClass;
 	}
 
 }

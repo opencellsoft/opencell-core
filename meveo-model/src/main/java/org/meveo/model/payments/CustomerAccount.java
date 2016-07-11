@@ -43,7 +43,6 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.SecuredBusinessEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -54,7 +53,6 @@ import org.meveo.model.shared.ContactInformation;
  * Customer Account entity.
  */
 @Entity
-@SecuredBusinessEntity
 @CustomFieldEntity(cftCodePrefix = "CA")
 @ExportIdentifier({ "code", "provider" })
 @DiscriminatorValue(value = "ACCT_CA")

@@ -22,7 +22,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.filter.BillingAccountDtoFilter;
-import org.meveo.api.security.parameter.CodeParser;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
@@ -468,7 +467,7 @@ public class BillingAccountApi extends AccountApi {
 	public void createOrUpdatePartial(BillingAccountDto billingAccountDto,User currentUser) throws MeveoApiException, BusinessException{
 		BillingAccountDto existedBillingAccountDto = null;
 		try {
-			existedBillingAccountDto = find(billingAccountDto.getCode(), currentUser.getProvider());
+			existedBillingAccountDto = find(billingAccountDto.getCode(), currentUser);
 		} catch (Exception e) {
 			existedBillingAccountDto = null;
 		}

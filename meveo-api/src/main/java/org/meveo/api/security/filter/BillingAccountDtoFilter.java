@@ -14,15 +14,13 @@ import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.service.security.SecuredBusinessEntityService;
-import org.meveo.service.security.SecuredBusinessEntityServiceFactory;
 
 public class BillingAccountDtoFilter extends SecureMethodResultFilter {
 
-	@Inject
-	private SecuredBusinessEntityServiceFactory serviceFactory;
+	@Inject SecuredBusinessEntityService securedBusinessEntityService;
 
 	@Override
-	public Object filterResult(Object result, User user, Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap) {
+	public Object filterResult(Object result, User user) {
 		if (result != null && !BillingAccountDto.class.isAssignableFrom(result.getClass())) {
 			// result is of a different type, log warning and return immediately
 			log.warn("Result is not a BillingAccountDto. Skipping filter...");
@@ -36,7 +34,7 @@ public class BillingAccountDtoFilter extends SecureMethodResultFilter {
 		boolean entityAllowed = false;
 
 		List<UserAccountDto> filteredList = new ArrayList<>();
-		Set<SecuredEntity> allowedBillingAccounts = securedEntitiesMap.get(UserAccount.class);
+		Set<SecuredEntity> allowedBillingAccounts = user.getSecuredEntitiesMap().get(UserAccount.class);
 
 		for (UserAccountDto userAccountDto : userAccountsDto.getUserAccount()) {
 			userAccount = new UserAccount();
@@ -58,7 +56,7 @@ public class BillingAccountDtoFilter extends SecureMethodResultFilter {
 				// accounts allowed, so we check the entity and its parents for
 				// access
 				log.debug("Checking user account access authorization.");
-				entityAllowed = SecuredBusinessEntityService.isEntityAllowed(userAccount, user, serviceFactory, securedEntitiesMap, false);
+				entityAllowed = securedBusinessEntityService.isEntityAllowed(userAccount, user, false);
 			}
 			if (entityAllowed) {
 				log.debug("Adding billing account {} to filtered list.", userAccount);

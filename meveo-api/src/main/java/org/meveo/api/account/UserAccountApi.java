@@ -280,7 +280,7 @@ public class UserAccountApi extends AccountApi {
 	public void createOrUpdatePartial(UserAccountDto userAccountDto,User currentUser) throws MeveoApiException, BusinessException{
 		UserAccountDto existedUserAccountDto = null;
 		try {
-			existedUserAccountDto = find(userAccountDto.getCode(), currentUser.getProvider());
+			existedUserAccountDto = find(userAccountDto.getCode(), currentUser);
 		} catch (Exception e) {
 			existedUserAccountDto = null;
 		}

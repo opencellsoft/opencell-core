@@ -1,10 +1,6 @@
 package org.meveo.api.security.Interceptor;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
@@ -17,10 +13,8 @@ import org.meveo.api.security.filter.SecureMethodResultFilterFactory;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.api.security.parameter.SecureMethodParameterHandler;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.service.security.SecuredBusinessEntityService;
-import org.meveo.service.security.SecuredBusinessEntityServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +33,8 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 	private static final String FILTER_RESULTS_WITH = "Results will be filtered using {} filter.";
 
 	@Inject
-	private SecuredBusinessEntityServiceFactory serviceFactory;
-
+	private SecuredBusinessEntityService securedBusinessEntityService;
+	
 	@Inject
 	private SecureMethodResultFilterFactory filterFactory;
 
@@ -70,13 +64,12 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 			log.debug(USER_DOES_NOT_HAVE_ANY_RESTRICTIONS);
 			return context.proceed();
 		}
-		Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap = getSecuredEntitiesMap(user.getSecuredEntities());
 
 		log.debug(CHECKING_METHOD_FOR_SECURED_BUSINESS_ENTITIES, objectName, methodName);
 		SecureMethodParameter[] parametersForValidation = annotation.validate();
 		for (SecureMethodParameter parameter : parametersForValidation) {
 			BusinessEntity entity = parameterHandler.getParameterValue(parameter, values, BusinessEntity.class, user);
-			if (!SecuredBusinessEntityService.isEntityAllowed(entity, user, serviceFactory, securedEntitiesMap, false)) {
+			if (!securedBusinessEntityService.isEntityAllowed(entity, user, false)) {
 				throwErrorMessage(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION, ACCESS_TO_ENTITY_DENIED);
 			}
 		}
@@ -86,7 +79,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
 		SecureMethodResultFilter filter = filterFactory.getFilter(annotation.resultFilter());
 		log.debug(FILTER_RESULTS_WITH, filter);
-		result = filter.filterResult(result, user, securedEntitiesMap);
+		result = filter.filterResult(result, user);
 		return result;
 
 	}
@@ -104,24 +97,4 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 		}
 		throw new MeveoApiException(errorCode, message);
 	}
-
-	private Map<Class<?>, Set<SecuredEntity>> getSecuredEntitiesMap(Set<SecuredEntity> securedEntities) {
-		Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap = new HashMap<>();
-		Set<SecuredEntity> securedEntitySet = null;
-		try {
-			for (SecuredEntity securedEntity : securedEntities) {
-				Class<?> securedBusinessEntityClass = Class.forName(securedEntity.getEntityClass());
-				if (securedEntitiesMap.get(securedBusinessEntityClass) == null) {
-					securedEntitySet = new HashSet<>();
-					securedEntitiesMap.put(securedBusinessEntityClass, securedEntitySet);
-				}
-				securedEntitiesMap.get(securedBusinessEntityClass).add(securedEntity);
-			}
-		} catch (ClassNotFoundException e) {
-			log.warn(e.getMessage(), e);
-			;
-		}
-		return securedEntitiesMap;
-	}
-
 }

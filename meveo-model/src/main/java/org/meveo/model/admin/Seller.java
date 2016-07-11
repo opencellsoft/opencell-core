@@ -39,7 +39,6 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.SecuredBusinessEntity;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.Sequence;
 import org.meveo.model.billing.TradingCountry;
@@ -48,7 +47,6 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.shared.Address;
 
 @Entity
-@SecuredBusinessEntity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "SELLER")
 @ExportIdentifier({ "code", "provider" })
