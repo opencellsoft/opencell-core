@@ -14,8 +14,12 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.DunningPlan;
+import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.DunningPlanService;
 
 /**
@@ -30,60 +34,91 @@ public class DunningPlanApi extends BaseApi {
 	@Inject
 	private DunningPlanService dunningPlanService;
 	
+	@Inject
+	private CreditCategoryService creditCategoryService;
+	
 	public void create(DunningPlanDto dunningPlanDto, User currentUser) throws MeveoApiException, BusinessException {
-		if(StringUtils.isNotEmpty(dunningPlanDto.getCode())){
-			DunningPlan existedDunningPlan=dunningPlanService.findByCode(dunningPlanDto.getCode(), currentUser.getProvider());
-			if(existedDunningPlan!=null){
-				throw new EntityAlreadyExistsException(DunningPlan.class, dunningPlanDto.getCode());
-			}
-			DunningPlan dunningPlan=new DunningPlan();
-			dunningPlan.setCode(dunningPlanDto.getCode());
-			dunningPlan.setDescription(dunningPlanDto.getDescription());
-			dunningPlan.setPaymentMethod(dunningPlanDto.getPaymentMethod());
-			dunningPlan.setStatus(dunningPlanDto.getStatus());
-			dunningPlanService.create(dunningPlan, currentUser);
-		}else{
+		if (StringUtils.isBlank(dunningPlanDto.getCode())) {
 			missingParameters.add("code");
-			handleMissingParameters();
 		}
+		if (dunningPlanDto.getCreditCategory() == null) {
+			missingParameters.add("creditCategory");
+		}
+		if (dunningPlanDto.getPaymentMethod() == null) {
+			missingParameters.add("paymentMethod");
+		} 
+		if (dunningPlanDto.getStatus() == null) {
+			missingParameters.add("status");
+		} 
+		handleMissingParameters();
+		Provider provider = currentUser.getProvider();
+		DunningPlan existedDunningPlan=dunningPlanService.findByCode(dunningPlanDto.getCode(), provider);
+		if(existedDunningPlan!=null){
+			throw new EntityAlreadyExistsException(DunningPlan.class, dunningPlanDto.getCode());
+		}
+		// check if creditCategory cat exists
+		CreditCategory creditCategory = creditCategoryService.findByCode(dunningPlanDto.getCreditCategory(), provider);
+		if (creditCategory == null) {
+			throw new EntityDoesNotExistsException(InvoiceCategory.class, dunningPlanDto.getCreditCategory());
+		}
+		DunningPlan dunningPlan=new DunningPlan();
+		dunningPlan.setCode(dunningPlanDto.getCode());
+		dunningPlan.setDescription(dunningPlanDto.getDescription());
+		dunningPlan.setPaymentMethod(dunningPlanDto.getPaymentMethod());
+		dunningPlan.setStatus(dunningPlanDto.getStatus()); 
+		dunningPlan.setCreditCategory(creditCategory);
+		dunningPlanService.create(dunningPlan, currentUser);
+
 	}
 	public void update(DunningPlanDto dunningPlanDto,User currentUser) throws MeveoApiException,BusinessException{
-		if(StringUtils.isNotEmpty(dunningPlanDto.getCode())){
-			DunningPlan dunningPlan=dunningPlanService.findByCode(dunningPlanDto.getCode(), currentUser.getProvider());
-			if(dunningPlan==null){
-				throw new EntityDoesNotExistsException(DunningPlan.class, dunningPlanDto.getCode());
-			}
-			dunningPlan.setDescription(dunningPlanDto.getDescription());
-			dunningPlan.setPaymentMethod(dunningPlanDto.getPaymentMethod());
-			dunningPlan.setStatus(dunningPlanDto.getStatus());
-			dunningPlanService.update(dunningPlan, currentUser);
-		}else{
-			missingParameters.add("code");
-			handleMissingParameters();
+		if (dunningPlanDto.getCreditCategory() == null) {
+			missingParameters.add("creditCategory");
 		}
+		if (dunningPlanDto.getPaymentMethod() == null) {
+			missingParameters.add("paymentMethod");
+		} 
+		if (dunningPlanDto.getStatus() == null) {
+			missingParameters.add("status");
+		} 
+		handleMissingParameters();
+		Provider provider=currentUser.getProvider();
+		DunningPlan dunningPlan=dunningPlanService.findByCode(dunningPlanDto.getCode(), provider);
+		if (dunningPlan == null) {
+			throw new EntityDoesNotExistsException(DunningPlan.class, dunningPlanDto.getCode());
+		} 
+		CreditCategory creditCategory = creditCategoryService.findByCode(dunningPlanDto.getCreditCategory(), provider);
+		if (creditCategory == null) {
+			throw new EntityDoesNotExistsException(InvoiceCategory.class, dunningPlanDto.getCreditCategory());
+		}
+		dunningPlan.setDescription(dunningPlanDto.getDescription());
+		dunningPlan.setPaymentMethod(dunningPlanDto.getPaymentMethod());
+		dunningPlan.setStatus(dunningPlanDto.getStatus());
+		dunningPlan.setCreditCategory(creditCategory);
+		dunningPlanService.update(dunningPlan, currentUser); 
 	}
-	public DunningPlanDto find(String code,Provider provider) throws MeveoApiException{
-		if(StringUtils.isEmpty(code)){
-			missingParameters.add("code");
+	public DunningPlanDto find(String dunningPlanCode,Provider provider) throws MeveoApiException{
+		if(StringUtils.isEmpty(dunningPlanCode)){
+			missingParameters.add("dunningPlanCode");
 		}
 		handleMissingParameters();
-		DunningPlan dunningPlan=dunningPlanService.findByCode(code, provider);
+		DunningPlan dunningPlan=dunningPlanService.findByCode(dunningPlanCode, provider);
 		if(dunningPlan==null){
-			throw new EntityDoesNotExistsException(DunningPlan.class, code);
+			throw new EntityDoesNotExistsException(DunningPlan.class, dunningPlanCode);
 		}
 		return new DunningPlanDto(dunningPlan);
 	}
-	public void remove(String code,Provider provider) throws MeveoApiException{
-		if(StringUtils.isNoneEmpty(code)){
-			DunningPlan dunningPlan=dunningPlanService.findByCode(code, provider);
-			if(dunningPlan==null){
-				throw new EntityDoesNotExistsException(DunningPlan.class, code);
-			}
-			dunningPlanService.remove(dunningPlan);
-		}else{
+	public void remove(String dunningPlanCode,Provider provider) throws MeveoApiException{
+		if(StringUtils.isEmpty(dunningPlanCode)){
 			missingParameters.add("code");
-			handleMissingParameters();
 		}
+		handleMissingParameters();
+		DunningPlan dunningPlan=dunningPlanService.findByCode(dunningPlanCode, provider);
+		if(dunningPlan==null){
+			throw new EntityDoesNotExistsException(DunningPlan.class, dunningPlanCode);
+		}
+		dunningPlanService.remove(dunningPlan); 
+		missingParameters.add("code");
+		handleMissingParameters(); 
 	}
 	public DunningPlansDto list(Provider provider) throws MeveoApiException{
 		DunningPlansDto result=new DunningPlansDto();
