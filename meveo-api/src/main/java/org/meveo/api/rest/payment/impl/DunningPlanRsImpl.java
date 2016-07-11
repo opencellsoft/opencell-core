@@ -68,7 +68,7 @@ public class DunningPlanRsImpl extends BaseRs implements DunningPlanRs {
 		DunningPlanResponseDto result = new DunningPlanResponseDto();
 
         try {
-            result.setDunningPlan(dunningPlanApi.find(code, getCurrentUser().getProvider()));
+            result.setDunningPlan(dunningPlanApi.find(code, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -88,7 +88,7 @@ public class DunningPlanRsImpl extends BaseRs implements DunningPlanRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            dunningPlanApi.remove(code, getCurrentUser().getProvider());
+            dunningPlanApi.remove(code, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -108,7 +108,7 @@ public class DunningPlanRsImpl extends BaseRs implements DunningPlanRs {
 		DunningPlansResponseDto result = new DunningPlansResponseDto();
 
         try {
-            result.setDunningPlans(dunningPlanApi.list(getCurrentUser().getProvider()));
+            result.setDunningPlans(dunningPlanApi.list(getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.model.payments.DunningPlan;
 import org.meveo.model.payments.DunningPlanStatusEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -33,7 +32,9 @@ public class DunningPlanDto extends BaseDto {
 	@XmlElement(required=true)
 	private String code;
 	private String description;
+	@XmlElement(required = true)
 	private PaymentMethodEnum paymentMethod;
+	@XmlElement(required = true)
 	private DunningPlanStatusEnum status; 
 	@XmlElement(required = true)
 	private String creditCategory;
@@ -47,7 +48,7 @@ public class DunningPlanDto extends BaseDto {
 		this.description=dunningPlan.getDescription();
 		this.paymentMethod=dunningPlan.getPaymentMethod();
 		this.status=dunningPlan.getStatus(); 
-	    this.setCreditCategory(dunningPlan.getCreditCategory().getCode());
+	    this.creditCategory=dunningPlan.getCreditCategory().getCode();
 	}
 	public String getCode() {
 		return code;
@@ -93,9 +94,6 @@ public class DunningPlanDto extends BaseDto {
 	public void setActionPlanItem(List<ActionPlanItemDto> actionPlanItem) {
 		this.actionPlanItem = actionPlanItem;
 	}
-	
-	
-	
 
 }
 

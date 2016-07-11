@@ -4,14 +4,14 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
-import org.elasticsearch.index.engine.Engine.Get;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.payment.DunningPlanDto;
+import org.meveo.api.dto.response.payment.DunningPlanResponseDto;
+import org.meveo.api.dto.response.payment.DunningPlansResponseDto;
 
 @WebService
 public interface DunningPlanWs extends IBaseWs {
  
-
 	    @WebMethod
 	    ActionStatus create(@WebParam(name = "dunningPlan") DunningPlanDto postData);
 
@@ -22,8 +22,12 @@ public interface DunningPlanWs extends IBaseWs {
 	    ActionStatus createOrUpdate(@WebParam(name = "dunningPlan") DunningPlanDto postData);
 
 	    @WebMethod
-	    Get find(@WebParam(name = "dunningPlanCode") String dunningPlanCode);
+	    DunningPlanResponseDto find(@WebParam(name = "dunningPlanCode") String dunningPlanCode);
 
 	    @WebMethod
 	    ActionStatus remove(@WebParam(name = "dunningPlanCode") String dunningPlanCode);
+	    
+	    @WebMethod
+	    DunningPlansResponseDto list();
+
 }
