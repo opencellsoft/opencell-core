@@ -19,6 +19,8 @@
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="mmCatalogView"
+					value="#{messages['menu.marketingManager.catalogView']}" />
 			</p:breadCrumb>
 
 			<p:panel style="width: 50%">
@@ -71,7 +73,7 @@
 				rowsPerPageTemplate="10,15,20,50" rowKey="#{entity.id}">
 				<p:panel styleClass="Wid40 VAlignTop">
 					<p:panelGrid columns="4" styleClass="panelGrid ui-panelgrid-blank"
-						columnClasses="Wid5 VAlignTop, Wid10 VAlignTop, Wid10 VAlignTop PadLeftRightZero, Wid70 VAlignTop">
+						columnClasses="Wid5 VAlignTop, Wid54 VAlignTop, Wid40 VAlignTop">
 						<p:panel>
 							<p:graphicImage id="offerImage" cache="false"
 								value="#{offerTemplateImageStreamer.image}" height="100"
@@ -82,13 +84,21 @@
 						<p:panel>
 							<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
 								<h:outputText value="#{entity.descriptionOrCode}"></h:outputText>
-								<h:outputText value="#{entity.offerTemplateCategory.descriptionOrCode}"></h:outputText>
+								<h:outputText
+									value="#{entity.offerTemplateCategory.descriptionOrCode}"></h:outputText>
 								<p:separator></p:separator>
 								<h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
+								<h:outputText value="#{entity.validFrom} ">
+									<f:convertDateTime type="date"
+										pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
+								</h:outputText>
 								<h:outputText value="#{messages['commons.validTo']}: "></h:outputText>
+								<h:outputText value="#{entity.validTo} ">
+									<f:convertDateTime type="date"
+										pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
+								</h:outputText>
 							</p:panelGrid>
 						</p:panel>
-						<p:panel>V1</p:panel>
 						<p:panel>
 							<p:panel styleClass="TexAlRight">
 								<div class="FRight">
@@ -123,7 +133,8 @@
 							<h:outputText
 								value="#{messages['offerServiceTemplate.serviceTemplate']}"
 								styleClass="field-label"></h:outputText>: <h:outputText
-								styleClass="field-value" value="#{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
+								styleClass="field-value"
+								value="#{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
 						</p:panel>
 						<p:panel>
 							<p:panel styleClass="Wid30" header="One Time Fee">

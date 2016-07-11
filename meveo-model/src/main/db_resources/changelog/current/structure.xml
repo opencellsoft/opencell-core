@@ -2318,5 +2318,11 @@ $BODY$
 			<column name="valid_to" type="TIMESTAMP WITHOUT TIME ZONE"></column>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="#1821_20160711" author="EdwardLegaspi">
+		<addColumn tableName="cat_offer_template">
+			<column name="image_content_type" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
 	    	
 </databaseChangeLog>

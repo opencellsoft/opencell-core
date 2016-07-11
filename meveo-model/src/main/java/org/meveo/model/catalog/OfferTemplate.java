@@ -82,6 +82,10 @@ public class OfferTemplate extends BusinessCFEntity {
 	@Column(name="VALID_TO")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date validTo;
+	
+	@Column(name = "IMAGE_CONTENT_TYPE", length = 50)
+	@Size(max = 50)
+	private String imageContentType;
 
 	public List<OfferServiceTemplate> getOfferServiceTemplates() {
 		return offerServiceTemplates;
@@ -181,6 +185,14 @@ public class OfferTemplate extends BusinessCFEntity {
 
 	public void setValidTo(Date validTo) {
 		this.validTo = validTo;
+	}
+
+	public String getImageContentType() {
+		return imageContentType;
+	}
+
+	public void setImageContentType(String imageContentType) {
+		this.imageContentType = imageContentType;
 	}
 
 }
