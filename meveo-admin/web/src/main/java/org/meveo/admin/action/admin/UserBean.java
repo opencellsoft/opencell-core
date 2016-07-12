@@ -41,7 +41,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.io.FilenameUtils;
-import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
@@ -62,12 +61,11 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Standard backing bean for {@link User} (extends {@link BaseBean} that
@@ -98,11 +96,6 @@ public class UserBean extends BaseBean<User> {
 	@Inject
 	@Named
 	private SellerBean sellerBean;
-
-	@Inject
-	private Messages messages;
-
-	private static final Logger log = LoggerFactory.getLogger(UserBean.class);
 
 	/**
 	 * Password set by user which is later encoded and set to user before saving
@@ -573,79 +566,94 @@ public class UserBean extends BaseBean<User> {
 	}
 
 	public String getSecuredEntityType() {
-		log.debug("getSecuredEntityType: {}", this.securedEntityType);
 		return this.securedEntityType;
 	}
 
 	public void setSecuredEntityType(String securedEntityType) {
-		log.debug("setSecuredEntityType: {}", securedEntityType);
 		this.securedEntityType = securedEntityType;
-		log.debug("this.securedEntityType: {}", this.securedEntityType);
 	}
 
 	public BusinessEntity getSelectedEntity() {
-		log.debug("getSelectedEntity: {}", this.selectedEntity);
 		return selectedEntity;
 	}
 
 	public void setSelectedEntity(BusinessEntity selectedEntity) {
-		log.debug("setSelectedEntity: {}", selectedEntity);
 		this.selectedEntity = selectedEntity;
-		log.debug("this.selectedEntity: {}", this.selectedEntity);
 	}
 
 	public BaseBean<?> getSelectedAccountBean() {
-		log.debug("getSelectedAccountBean: {}", this.selectedAccountBean);
 		return selectedAccountBean;
 	}
 
 	public void setSelectedAccountBean(BaseBean<?> selectedAccountBean) {
-		log.debug("setSelectedAccountBean: {}", selectedAccountBean);
 		this.selectedAccountBean = selectedAccountBean;
-		log.debug("this.selectedAccountBean: {}", this.selectedAccountBean);
 	}
 
 	public Map<String, String> getSecuredEntityTypes() {
-		log.debug("this.securedEntityTypes: {}", this.securedEntityTypes);
 		return this.securedEntityTypes;
 	}
-	
+
 	public void setSecuredEntityTypes(Map<String, String> securedEntityTypes) {
-		log.debug("setSecuredEntityTypes: {}", this.securedEntityType);
 		this.securedEntityTypes = securedEntityTypes;
-		log.debug("this.securedEntityType: {}", this.securedEntityType);
 	}
 
+	/**
+	 * This will allow the chosen secured entity to be removed from the user's
+	 * securedEntities list.
+	 * 
+	 * @param securedEntity
+	 *            The chosen securedEntity
+	 * @throws BusinessException
+	 */
 	@ActionMethod
 	public void deleteSecuredEntity(SecuredEntity securedEntity) throws BusinessException {
-		removeSecuredEntity(securedEntity);
-		messages.info(new BundleKey("messages", "delete.successful"));
+		entity.getSecuredEntities().remove(securedEntity);
+		super.saveOrUpdate(false);
 	}
 
-	@ActionMethod
+	/**
+	 * This will set the correct account bean based on the selected type(Seller,
+	 * Customer, etc.)
+	 */
 	public void updateSelectedAccountBean() {
-		log.debug("updateSelectedAccountBean: {}", this.selectedAccountBean);
-		log.debug("this.securedEntityType: {}", this.securedEntityType);
 		if (!StringUtils.isBlank(getSecuredEntityType())) {
 			setSelectedAccountBean(accountBeanMap.get(getSecuredEntityType()));
 		}
-		log.debug("this.selectedAccountBean: {}", this.selectedAccountBean);
 	}
 
-	public void saveSecuredEntity() {
-
+	/**
+	 * This will add the selected business entity to the user's securedEntities
+	 * list.
+	 * 
+	 * @param event
+	 * @throws BusinessException
+	 */
+	@ActionMethod
+	public void saveSecuredEntity(SelectEvent event) throws BusinessException {
+		log.debug("saveSecuredEntity: {}", this.selectedEntity);
+		if (this.selectedEntity != null) {
+			List<SecuredEntity> securedEntities = getEntity().getSecuredEntities();
+			for (SecuredEntity securedEntity : securedEntities) {
+				if (securedEntity.equals(this.selectedEntity)) {
+					messages.info(new BundleKey("messages", "commons.uniqueField.code"));
+					return;
+				}
+			}
+			getEntity().getSecuredEntities().add(new SecuredEntity(this.selectedEntity));
+			super.saveOrUpdate(false);
+		}
 	}
 
-	private void removeSecuredEntity(SecuredEntity securedEntity) throws BusinessException {
-		entity.getSecuredEntities().remove(securedEntity);
-		entity = getPersistenceService().update(entity, getCurrentUser());
-	}
-
+	/**
+	 * This will initialize the dropdown values for selecting the entity types
+	 * (Seller, Customer, etc) and the map of managed beans associated to each
+	 * entity type.
+	 */
 	private void initSelectionOptions() {
 		log.debug("initSelectionOptions...");
 		log.debug("this.securedEntityTypes: {}", this.securedEntityTypes);
 		log.debug("this.accountBeanMap.", this.accountBeanMap);
-		
+
 		if (accountBeanMap == null || accountBeanMap.isEmpty()) {
 			accountBeanMap = new HashMap<>();
 			securedEntityTypes = new HashMap<>();

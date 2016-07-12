@@ -9,11 +9,22 @@ import javax.inject.Inject;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.service.security.SecuredBusinessEntityService;
 
+/**
+ * This will parse a {@link CustomerAccountDto} result from a
+ * {@link SecuredBusinessEntityMethod} annotated method. It will check if the
+ * child {@link BillingAccountsDto} element has items that the user does not have
+ * access to. Then it will filter them out and just return the items that are
+ * accessible to the user.
+ * 
+ * @author Tony Alejandro
+ *
+ */
 public class CustomerAccountDtoFilter extends SecureMethodResultFilter {
 
 	@Inject
@@ -30,6 +41,7 @@ public class CustomerAccountDtoFilter extends SecureMethodResultFilter {
 			return result;
 		}
 
+		// retrieve the associated BillingAccountsDto
 		CustomerAccountDto dto = (CustomerAccountDto) result;
 		BillingAccountsDto billingAccountsDto = dto.getBillingAccounts();
 

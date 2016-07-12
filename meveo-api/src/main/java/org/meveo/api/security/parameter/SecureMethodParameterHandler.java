@@ -9,9 +9,19 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.model.admin.User;
 import org.slf4j.Logger;
 
+/**
+ * This is a singleton object that takes an annotation and the method parameters
+ * of a {@link SecuredBusinessEntityMethod} annotated method and retrieves the
+ * value using the given parser defined in the {@link SecureMethodParameter}
+ * annotation.
+ * 
+ * @author Tony Alejandro
+ *
+ */
 @Singleton
 public class SecureMethodParameterHandler {
 
@@ -25,6 +35,18 @@ public class SecureMethodParameterHandler {
 	@SuppressWarnings("rawtypes")
 	private Map<Class<? extends SecureMethodParameterParser>, SecureMethodParameterParser<?>> parserMap = new HashMap<>();
 
+	/**
+	 * Retrieves the parser defined in the {@link SecureMethodParameter}
+	 * parameter, uses the parser to extract the value from the values array,
+	 * then returns it.
+	 * 
+	 * @param parameter the {@link SecureMethodParameter} describing which parameter is going to be evaluated and what parser to use to extract the data.
+	 * @param values The array of parameters that was passed into the method.
+	 * @param resultClass The class of the value that will be extracted from the parameter.
+	 * @param user The current user.
+	 * @return
+	 * @throws MeveoApiException
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getParameterValue(SecureMethodParameter parameter, Object[] values, Class<T> resultClass, User user) throws MeveoApiException {
 		SecureMethodParameterParser<?> parser = getParser(parameter);

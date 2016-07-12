@@ -18,6 +18,14 @@ import org.meveo.service.security.SecuredBusinessEntityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * This will handle the processing of {@link SecuredBusinessEntityMethod}
+ * annotated methods.
+ * 
+ * @author Tony Alejandro
+ *
+ */
 public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
 	private static final long serialVersionUID = 4656634337151866255L;
@@ -27,20 +35,32 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 	private static final String ALLOWING_METHOD_TO_BE_INVOKED = "Allowing method {}.{} to be invoked.";
 	private static final String CHECKING_METHOD_FOR_SECURED_BUSINESS_ENTITIES = "Checking method {}.{} for secured BusinessEntities";
 	private static final String METHOD_IS_NOT_ANNOTATED = "Method {}.{} is not annotated with @SecuredBusinessEntityProperty.  No need to check for authorization.";
-	private static final String LOG_LINE_SEPARATOR = "\r\n\r\n===========================================================";
 	private static final String ACCESS_TO_ENTITY_DENIED = "Access to entity details is not allowed.";
 	private static final String USER_DOES_NOT_HAVE_ANY_RESTRICTIONS = "User does not have any restrictions.";
 	private static final String FILTER_RESULTS_WITH = "Results will be filtered using {} filter.";
 
 	@Inject
 	private SecuredBusinessEntityService securedBusinessEntityService;
-	
+
 	@Inject
 	private SecureMethodResultFilterFactory filterFactory;
 
 	@Inject
 	private SecureMethodParameterHandler parameterHandler;
 
+	/**
+	 * This is called before a method that makes use of the
+	 * {@link SecuredBusinessEntityMethodInterceptor} is called. It contains
+	 * logic on retrieving the attributes of the
+	 * {@link SecuredBusinessEntityMethod} annotation placed on the method and
+	 * then validate the parameters described in the
+	 * {@link SecureMethodParameter} validation attributes and then filters the
+	 * result using the {@link SecureMethodResultFilter} filter attribute.
+	 * 
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@AroundInvoke
 	public Object checkForSecuredEntities(InvocationContext context) throws Exception {
 
@@ -89,7 +109,6 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 	}
 
 	private void throwErrorMessage(MeveoApiErrorCodeEnum errorCode, String message, Throwable e) throws MeveoApiException {
-		log.error(LOG_LINE_SEPARATOR);
 		if (e == null) {
 			log.error(message);
 		} else {

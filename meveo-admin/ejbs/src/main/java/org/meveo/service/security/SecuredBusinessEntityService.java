@@ -9,6 +9,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
@@ -28,17 +29,20 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
 
 	public BusinessEntity getEntityByCode(Class<? extends BusinessEntity> entityClass, String code, User user) {
 		Provider provider = user.getProvider();
-		QueryBuilder qb = new QueryBuilder(entityClass, "e", null, provider);
-		qb.addCriterion("e.code", "=", code, true);
-		qb.addCriterionEntity("e.provider", provider);
-
 		try {
+			Class<?> cleanClass = Class.forName(ReflectionUtils.getCleanClassName(entityClass.getName()));
+			QueryBuilder qb = new QueryBuilder( cleanClass , "e", null, provider);
+			qb.addCriterion("e.code", "=", code, true);
+			qb.addCriterionEntity("e.provider", provider);
 			return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
-			log.debug("No {} of code {} for provider {} found", getEntityClass().getSimpleName(), code, provider.getId());
+			log.debug("No {} of code {} for provider {} found", getEntityClass().getSimpleName(), code, provider.getId(), e);
 			return null;
 		} catch (NonUniqueResultException e) {
-			log.error("More than one entity of type {} with code {} and provider {} found", entityClass, code, provider);
+			log.error("More than one entity of type {} with code {} and provider {} found", entityClass, code, provider, e);
+			return null;
+		} catch (ClassNotFoundException e) {
+			log.error("Unable to create entity class for query", e);
 			return null;
 		}
 	}

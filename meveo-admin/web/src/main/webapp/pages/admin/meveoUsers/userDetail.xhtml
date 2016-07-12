@@ -76,7 +76,7 @@
 
 				<p:tab title="#{messages['user.securedEntitiesTab']}">
 					<h:panelGroup id="selectedEntitiesPanel">
-
+						<p:messages />
 						<p:dataTable id="selectedEntitiesDatatable" var="securedEntity"
 							value="#{userBean.entity.securedEntities}" paginator="true"
 							rows="10" sortBy="#{securedEntity.code}"
@@ -101,7 +101,7 @@
 									<h:outputText value="#{messages['commons.actions']}" />
 								</f:facet>
 								<p:commandButton
-									action="#{userBean.deleteSecuredEntity(entity)}"
+									action="#{userBean.deleteSecuredEntity(securedEntity)}"
 									rendered="#{userBean.canUserUpdateEntity()}"
 									icon="ui-icon-trash" update=":tabView:selectedEntitiesPanel" />
 							</p:column>
@@ -112,65 +112,75 @@
 									oncomplete="PF('securedEntitiesDialog').show()"></p:commandButton>
 							</f:facet>
 						</p:dataTable>
-						
-						<h:panelGroup id="securedEntitiesDialogPanel" layout="block" styleClass="search-panel">
-								<p:messages />
-								<p:selectOneMenu id="securedEntityType" value="#{userBean.securedEntityType}">
-									<f:selectItem itemLabel="" />
-									<f:selectItems
-										value="#{userBean.securedEntityTypes.entrySet()}" var="item"
-										itemLabel="#{item.key}" itemValue="#{item.value}" />
-									<p:ajax listener="#{userBean.updateSelectedAccountBean}" />
-								</p:selectOneMenu>
-								<p:dataTable id="securedEntitiesDialogDatatable" var="e" paginator="true"
-									resizableColumns="true" value="#{userBean.selectedAccountBean}" rows="10"
-									selection="#{userBean.selectedEntity}" selectionMode="single"
-									rowKey="#{e.id}" lazy="#{lazy}" rendered="#{userBean.selectedAccountBean != null}">
-									<p:ajax event="rowSelect"
-										listener="#{userBean.selectedAccountBean.onRowSelect}"
-										oncomplete="PF('securedEntitiesDialog').hide()" update=":tabView:securedEntitiesDialogPanel" />
-									<p:column headerText="#{messages['BusinessEntity.code']}">
-										<h:outputText value="#{e.code}" />
-									</p:column>
-									<p:column headerText="#{messages['BusinessEntity.description']}">
-										<h:outputText value="#{e.description}" />
-									</p:column>
-								</p:dataTable>
-							</h:panelGroup>
-
-<!-- 						<p:dialog id="securedEntitiesDialog" -->
-<!-- 							header="#{messages['user.securedEntities']}" modal="true" -->
-<!-- 							closeOnEscape="false" widgetVar="securedEntitiesDialog" -->
-<!-- 							closable="false"> -->
-
-<!-- 							<h:panelGroup id="securedEntitiesDialogPanel" layout="block" styleClass="search-panel"> -->
-<!-- 								<p:messages /> -->
-<!-- 								<p:selectOneMenu id="securedEntityType" value="#{userBean.securedEntityType}"> -->
-<!-- 									<f:selectItem itemLabel="" /> -->
-<!-- 									<f:selectItems -->
-<!-- 										value="#{userBean.securedEntityTypes.entrySet()}" var="item" -->
-<!-- 										itemLabel="#{item.key}" itemValue="#{item.value}" /> -->
-<!-- 									<p:ajax listener="#{userBean.updateSelectedAccountBean}" /> -->
-<!-- 								</p:selectOneMenu> -->
-<!-- 								<p:dataTable id="securedEntitiesDialogDatatable" var="e" paginator="true" -->
-<!-- 									resizableColumns="true" value="#{userBean.selectedAccountBean}" rows="10" -->
-<!-- 									selection="#{userBean.selectedEntity}" selectionMode="single" -->
-<!-- 									rowKey="#{e.id}" lazy="#{lazy}" rendered="#{userBean.selectedAccountBean != null}"> -->
-<!-- 									<p:ajax event="rowSelect" -->
-<!-- 										listener="#{userBean.selectedAccountBean.onRowSelect}" -->
-<!-- 										oncomplete="PF('securedEntitiesDialog').hide()" update=":tabView:securedEntitiesDialogPanel" /> -->
-<!-- 									<p:column headerText="#{messages['BusinessEntity.code']}"> -->
-<!-- 										<h:outputText value="#{e.code}" /> -->
-<!-- 									</p:column> -->
-<!-- 									<p:column headerText="#{messages['BusinessEntity.description']}"> -->
-<!-- 										<h:outputText value="#{e.description}" /> -->
-<!-- 									</p:column> -->
-<!-- 								</p:dataTable> -->
-<!-- 							</h:panelGroup> -->
-
-
-<!-- 						</p:dialog> -->
 					</h:panelGroup>
+
+					<p:dialog id="securedEntitiesDialog"
+						header="#{messages['user.securedEntities']}"
+						widgetVar="securedEntitiesDialog" dynamic="true" modal="true"
+						styleClass="form-dialog" closeOnEscape="true" width="600"
+						appendTo="@(body)">
+
+						<h:panelGroup id="securedEntitiesDialogPanel" layout="block"
+							styleClass="search-panel">
+							<h:form id="securedEntitiesDialogForm">
+								<h:panelGroup layout="block" styleClass="search-panel">
+									<p:messages />
+									<p:outputPanel styleClass="search-panel-fields">
+										<hftl:decorateFormField fieldId="securedEntityType"
+											label="#{messages['BusinessEntity.type']}">
+											<p:selectOneMenu id="securedEntityType"
+												value="#{userBean.securedEntityType}">
+												<f:selectItem itemLabel="" />
+												<f:selectItems
+													value="#{userBean.securedEntityTypes.entrySet()}"
+													var="item" itemLabel="#{item.key}"
+													itemValue="#{item.value}" />
+												<p:ajax listener="#{userBean.updateSelectedAccountBean}"
+													update=":tabView:securedEntitiesDialogPanel" />
+											</p:selectOneMenu>
+										</hftl:decorateFormField>
+										<hftl:decorateFormField fieldId="codeSearchField"
+											label="#{messages['BusinessEntity.code']}"
+											rendered="#{userBean.selectedAccountBean != null}">
+											<p:inputText id="codeSearchField"
+												value="#{userBean.selectedAccountBean.filters['code']}"
+												size="20" maxlength="40" disabled="false" />
+										</hftl:decorateFormField>
+									</p:outputPanel>
+									<h:panelGroup layout="block" styleClass="search-panel-actions"
+										rendered="#{userBean.selectedAccountBean != null}">
+										<p:commandButton id="buttonSearch"
+											value="#{messages['commons.search']}" update="@form" />
+										<p:commandButton id="buttonClear"
+											action="#{userBean.selectedAccountBean.clean}"
+											value="#{messages['commons.clean']}"
+											update=":tabView:securedEntitiesDialogForm" />
+									</h:panelGroup>
+								</h:panelGroup>
+
+								<p:panel id="securedEntitiesDialogDataPanel"
+									rendered="#{userBean.selectedAccountBean != null}">
+									<p:dataTable id="securedEntitiesDialogDatatable" var="e"
+										paginator="true" resizableColumns="true"
+										value="#{userBean.selectedAccountBean.lazyDataModel}"
+										rows="10" selection="#{userBean.selectedEntity}"
+										selectionMode="single" rowKey="#{e.id}" lazy="true">
+										<p:ajax event="rowSelect"
+											listener="#{userBean.saveSecuredEntity}"
+											oncomplete="PF('securedEntitiesDialog').hide()"
+											update=":tabView:selectedEntitiesPanel" />
+										<p:column headerText="#{messages['BusinessEntity.code']}">
+											<h:outputText value="#{e.code}" />
+										</p:column>
+										<p:column
+											headerText="#{messages['BusinessEntity.description']}">
+											<h:outputText value="#{e.description}" />
+										</p:column>
+									</p:dataTable>
+								</p:panel>
+							</h:form>
+						</h:panelGroup>
+					</p:dialog>
 				</p:tab>
 			</p:tabView>
 		</p:panel>

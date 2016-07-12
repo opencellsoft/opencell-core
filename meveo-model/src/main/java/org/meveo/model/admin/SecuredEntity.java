@@ -1,5 +1,6 @@
 package org.meveo.model.admin;
 
+import java.beans.Transient;
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -7,6 +8,7 @@ import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 
 /**
@@ -23,6 +25,7 @@ public class SecuredEntity implements Serializable {
 	public SecuredEntity(BusinessEntity businessEntity) {
 		this.setCode(businessEntity.getCode());
 		this.setDescription(businessEntity.getDescription());
+		this.setEntityClass(ReflectionUtils.getCleanClassName(businessEntity.getClass().getTypeName()));
 	}
 
 	@Column(name = "CODE", nullable = false, length = 60)
@@ -62,6 +65,14 @@ public class SecuredEntity implements Serializable {
 		this.entityClass = entityClass;
 	}
 	
+	@Transient
+	public String readableEntityClass() {
+		if(entityClass != null){
+			return ReflectionUtils.getHumanClassName(entityClass);
+		}
+		return "";
+	}
+	
 	@Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -72,24 +83,26 @@ public class SecuredEntity implements Serializable {
         } 
         boolean isSecuredEntity = obj instanceof SecuredEntity;
         boolean isBusinessEntity = obj instanceof BusinessEntity;
-        if (!isSecuredEntity || !isBusinessEntity) {
+        if (!isSecuredEntity && !isBusinessEntity) {
             return false;
         }
 
         String otherCode = null;
+        String otherClass = null;
         if(isSecuredEntity){
         	otherCode = ((SecuredEntity) obj).getCode();
+        	otherClass = ((SecuredEntity) obj).getEntityClass();
         }
         if(isBusinessEntity){
         	otherCode = ((BusinessEntity) obj).getCode();
+        	otherClass = ReflectionUtils.getCleanClassName(((BusinessEntity) obj).getClass().getTypeName());
         }
+                
+        otherCode = otherClass + "-_-" + otherCode;
+        String thisCode = entityClass + "-_-" + code;
 
-        if (code == null) {
-            if (otherCode != null) {
-                return false;
-            }
-        } else if (!code.equals(otherCode)) {
-            return false;
+        if(!thisCode.equals(otherCode)){
+        	return false;
         }
         return true;
     }

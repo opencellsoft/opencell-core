@@ -5,24 +5,25 @@ import javax.inject.Inject;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.CRMAccountHierarchyDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.AccountHierarchyTypeEnum;
 import org.meveo.model.crm.BusinessAccountModel;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.meveo.service.security.SecuredBusinessEntityService;
 
+/**
+ * This will process a parameter of type {@link CRMAccountHierarchyDto} passed
+ * to a method annotated with {@link SecuredBusinessEntityMethod}.
+ * 
+ * @author Tony Alejandro
+ *
+ */
 public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<BusinessEntity> {
 
-	private static final String RETURNING_BUSINESS_ENTITY_CLASS = "Returning BusinessEntity Class: {}";
-	private static final String RETRIEVING_BUSINESS_ENTITY_CLASS = "Retrieving BusinessEntity Class for AccountHierarchyTypeEnum: {}";
 	private static final String RETURNING_ENTITY = "Returning entity: {}";
-	private static final String CREATING_BUSINESS_ENTITY = "Creating BusinessEntity using [code={}, parentCode={}, accountExist={}, accountType={}]";
+	private static final String CREATING_BUSINESS_ENTITY = "Creating BusinessEntity using [code={}, parentCode={}, accountExist={}]";
 	private static final String RETURNING_ACCOUNT_HIERARCHY_TYPE = "Returning AccountHierarchyTypeEnum: {}";
 	private static final String RETRIEVING_ACCOUNT_HIERARCHY_TYPE = "Retrieving AccountHierarchyTypeEnum of type: {}";
 	private static final String ACCOUNT_TYPE_DOES_NOT_MATCH = "Account type does not match any BAM or AccountHierarchyTypeEnum";
@@ -39,34 +40,43 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 		if (parameter == null) {
 			return null;
 		}
-		
+		// retrieve the DTO
 		CRMAccountHierarchyDto dto = extractAccountHierarchyDto(parameter, values);
 
+		// retrieve the type of account hierarchy based on the dto that was
+		// received.
 		AccountHierarchyTypeEnum accountHierarchyTypeEnum = extractAccountHierarchyTypeEnum(dto, user);
 
+		// using the account hierarchy type and dto, get the corresponding
+		// entity that will be checked for authorization.
 		BusinessEntity entity = getEntity(accountHierarchyTypeEnum, dto, user);
 
 		return entity;
 	}
 
 	private CRMAccountHierarchyDto extractAccountHierarchyDto(SecureMethodParameter parameter, Object[] values) throws MeveoApiException {
-		
+
+		// get the parameter value based on the index.
 		Object parameterValue = values[parameter.index()];
 
 		if (!(parameterValue instanceof CRMAccountHierarchyDto)) {
 			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(INVALID_PARAMETER_TYPE, CRMAccountHierarchyDto.class.getTypeName()));
 		}
 
+		// since we are sure it is of the correct type, cast it and return the
+		// dto.
 		CRMAccountHierarchyDto dto = (CRMAccountHierarchyDto) parameterValue;
 		return dto;
 	}
 
 	private AccountHierarchyTypeEnum extractAccountHierarchyTypeEnum(CRMAccountHierarchyDto dto, User user) throws MeveoApiException {
 
+		// retrieve the account hierarchy type by using the getCrmAccountType
+		// property of the dto
 		String crmAccountType = dto.getCrmAccountType();
-		
+
 		log.debug(RETRIEVING_ACCOUNT_HIERARCHY_TYPE, crmAccountType);
-		
+
 		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
 		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(crmAccountType, user.getProvider());
 		if (businessAccountModel != null) {
@@ -84,87 +94,47 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 
 	private BusinessEntity getEntity(AccountHierarchyTypeEnum accountHierarchyTypeEnum, CRMAccountHierarchyDto dto, User user) throws MeveoApiException {
 
-		Class<? extends BusinessEntity> entityClass = getEntityClass(accountHierarchyTypeEnum);
+		// immediately throw an error if the account hierarchy type is null.
+		if (accountHierarchyTypeEnum == null) {
+			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, ACCOUNT_TYPE_DOES_NOT_MATCH);
+		}
+
+		// retrieve the class type and the parent type from the account
+		// hierarchy
+		Class<? extends BusinessEntity> entityClass = accountHierarchyTypeEnum.topClass();
+		Class<? extends BusinessEntity> parentClass = accountHierarchyTypeEnum.parentClass();
+
+		// retrieve the codes from the dto
 		String code = dto.getCode();
 		String parentCode = dto.getCrmParentCode();
-		boolean accountExist = securedBusinessEntityService.getEntityByCode(entityClass, code, user) != null;
-		int accountType = accountHierarchyTypeEnum.getHighLevel();
 
-		log.debug(CREATING_BUSINESS_ENTITY, code, parentCode, accountExist, accountType);
+		// check if the account already exists. If it is, we start the
+		// validation from the given entity. Otherwise, if the account does not
+		// exist, we need to start the authorization check starting with the
+		// parent class.
+		boolean accountExist = securedBusinessEntityService.getEntityByCode(entityClass, code, user) != null;
+
+		log.debug(CREATING_BUSINESS_ENTITY, code, parentCode, accountExist);
 
 		BusinessEntity entity = null;
-		// UA=0, BA=1, CA=2, C=3, S=4
-		switch (accountType) {
-		case 0:
-			if (accountExist) {
-				entity = new UserAccount();
-				entity.setCode(code);
-			} else {
-				entity = new BillingAccount();
-				entity.setCode(parentCode);
+
+		if (accountExist) {
+			try {
+				entity = entityClass.newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_INSTANTIATE_ENTITY, entityClass.getTypeName()), e);
 			}
-			break;
-		case 1:
-			if (accountExist) {
-				entity = new BillingAccount();
-				entity.setCode(code);
-			} else {
-				entity = new CustomerAccount();
-				entity.setCode(parentCode);
-			}
-			break;
-		case 2:
-			if (accountExist) {
-				entity = new CustomerAccount();
-				entity.setCode(code);
-			} else {
-				entity = new Customer();
-				entity.setCode(parentCode);
-			}
-			break;
-		case 3:
-			if (accountExist) {
-				entity = new Customer();
-				entity.setCode(code);
-			} else {
-				entity = new Seller();
-				entity.setCode(dto.getCrmParentCode());
-			}
-			break;
-		case 4:
-			entity = new Seller();
 			entity.setCode(code);
-			break;
-		default:
-			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_INSTANTIATE_ENTITY, BusinessEntity.class.getTypeName()));
+		} else {
+			try {
+				entity = parentClass.newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_INSTANTIATE_ENTITY, parentClass.getTypeName()), e);
+			}
+			entity.setCode(parentCode);
 		}
 		log.debug(RETURNING_ENTITY, entity);
 		return entity;
-	}
-
-	private Class<? extends BusinessEntity> getEntityClass(AccountHierarchyTypeEnum accountHierarchyTypeEnum) throws MeveoApiException {
-
-		log.debug(RETRIEVING_BUSINESS_ENTITY_CLASS, accountHierarchyTypeEnum);
-
-		Class<? extends BusinessEntity> entityClass = null;
-
-		if (accountHierarchyTypeEnum.getHighLevel() == 4) {
-			entityClass = Seller.class;
-
-		} else if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
-			entityClass = Customer.class;
-
-		} else if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
-			entityClass = CustomerAccount.class;
-
-		} else if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
-			entityClass = BillingAccount.class;
-
-		} else {
-			entityClass = UserAccount.class;
-		}
-		log.debug(RETURNING_BUSINESS_ENTITY_CLASS, entityClass.getTypeName());
-		return entityClass;
 	}
 
 }
