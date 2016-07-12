@@ -20,9 +20,11 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.catalog.CounterTypeEnum;
 
 @Entity
+@ObservableEntity
 @Table(name = "BILLING_COUNTER_PERIOD", uniqueConstraints = @UniqueConstraint(columnNames = { "COUNTER_INSTANCE_ID",
 		"PERIOD_START_DATE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_COUNTER_PERIOD_SEQ")
