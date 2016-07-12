@@ -34019,8 +34019,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                <owner>owner</owner>
                <md5>md5</md5>
                <status>UNKNOWN</status>
-               <creationDate>2016-07-01T00:00:00${#Project#timezone}:00</creationDate>
-               <updateDate>2016-07-01T00:00:00${#Project#timezone}:00</updateDate>
+               <creationDate>2016-07-01T00:00:00${#Project#timezone2}:00</creationDate>
+               <updateDate>2016-07-01T00:00:00${#Project#timezone2}:00</updateDate>
                <keyEntreprise>keyentreprise</keyEntreprise>
                <macAddress>mac</macAddress>
                <machineVendor>machinevendor</machineVendor>
@@ -34234,8 +34234,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                <owner>owner</owner>
                <md5>md5</md5>
                <status>UNKNOWN</status>
-               <creationDate>2016-07-01T00:00:00${#Project#timezone}:00</creationDate>
-               <updateDate>2016-07-01T00:00:00${#Project#timezone}:00</updateDate>
+               <creationDate>2016-07-01T01:00:00${#Project#timezone2}:00</creationDate>
+               <updateDate>2016-07-01T01:00:00${#Project#timezone2}:00</updateDate>
                <keyEntreprise>keyentreprise</keyEntreprise>
                <macAddress>mac</macAddress>
                <machineVendor>machinevendor</machineVendor>
@@ -34409,8 +34409,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                   <owner>owner</owner>
                   <md5>md5</md5>
                   <status>UNKNOWN</status>
-                  <creationDate>2016-07-01T00:00:00${#Project#timezone}:00</creationDate>
-                  <updateDate>2016-07-01T00:00:00${#Project#timezone}:00</updateDate>
+                  <creationDate>2016-07-01T01:00:00${#Project#timezone2}:00</creationDate>
+                  <updateDate>2016-07-01T01:00:00${#Project#timezone2}:00</updateDate>
                   <keyEntreprise>keyentreprise</keyEntreprise>
                   <macAddress>mac</macAddress>
                   <machineVendor>machinevendor</machineVendor>
@@ -57038,15 +57038,15 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
               <con:configuration><token><![CDATA[<ddrequestLotOps>
                <ddrequestLotOp>
-                  <fromDueDate>2016-07-01T00:00:00${#Project#timezone}:00</fromDueDate>
-                  <toDueDate>2016-07-31T00:00:00${#Project#timezone}:00</toDueDate>
+                  <fromDueDate>2016-07-01T00:00:00${#Project#timezone2}:00</fromDueDate>
+                  <toDueDate>2016-07-31T00:00:00${#Project#timezone2}:00</toDueDate>
                   <ddrequestOp>CREATE</ddrequestOp>
                   <status>WAIT</status>
                   <fileFormat>SEPA</fileFormat>
                </ddrequestLotOp>
                <ddrequestLotOp>
-                  <fromDueDate>2016-08-01T00:00:00${#Project#timezone}:00</fromDueDate>
-                  <toDueDate>2016-08-31T00:00:00${#Project#timezone}:00</toDueDate>
+                  <fromDueDate>2016-08-01T00:00:00${#Project#timezone2}:00</fromDueDate>
+                  <toDueDate>2016-08-31T00:00:00${#Project#timezone2}:00</toDueDate>
                   <ddrequestOp>CREATE</ddrequestOp>
                   <status>WAIT</status>
                   <fileFormat>PAYNUM</fileFormat>
