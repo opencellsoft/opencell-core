@@ -8007,7 +8007,7 @@
         <xs:complexContent>
           <xs:extension base="tns:messageTemplateDto">
             <xs:sequence>
-              <xs:element minOccurs="0" name="subject" type="xs:string"/>
+              <xs:element name="subject" type="xs:string"/>
               <xs:element minOccurs="0" name="htmlContent" type="xs:string"/>
               <xs:element minOccurs="0" name="textContent" type="xs:string"/>
             </xs:sequence>
@@ -33333,6 +33333,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
    <soapenv:Body>      
       <ws:createEmailTemplate>         
          <emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET2">
+         	 <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET2</subject>
          </emailTemplate>
       </ws:createEmailTemplate>
    </soapenv:Body>
@@ -33423,17 +33424,14 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" id="eca3027d-7009-4406-8052-889e2115df90" name="Code Status Success">
-              <con:configuration>
-                <token>SUCCESS</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="3e06a126-246e-487f-9cbc-45c21f297b6b" name="Find: all values">
               <con:configuration><token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET2">
                <media>EMAIL</media>
                <tagStartDelimiter>#{</tagStartDelimiter>
                <tagEndDelimiter>}</tagEndDelimiter>
+               <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET2</subject>
             </emailTemplate>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             
@@ -33508,7 +33506,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
          <!--Optional:-->
          <emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET2">
          	  <media>EMAIL</media>
-            <subject>WS_FULL_16_subject_ET2 updated</subject>
+            <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET2_UPDATED</subject>
          </emailTemplate>
       </ws:updateEmailTemplate>
    </soapenv:Body>
@@ -33609,7 +33607,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                <media>EMAIL</media>
                <tagStartDelimiter>#{</tagStartDelimiter>
                <tagEndDelimiter>}</tagEndDelimiter>
-               <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET2 updated</subject>
+               <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET2_UPDATED</subject>
             </emailTemplate>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
@@ -33695,7 +33693,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                   <media>EMAIL</media>
                   <tagStartDelimiter>#{</tagStartDelimiter>
                   <tagEndDelimiter>}</tagEndDelimiter>
-                  <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET2 updated</subject>
+                  <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET2_UPDATED</subject>
                </emailTemplate>
                <emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET1">
                   <media>EMAIL</media>
@@ -71657,11 +71655,11 @@ and paste that invoice number in the next step.
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>+08</con:value>
+      <con:value>-03</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>+08</con:value>
+      <con:value>-03</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>

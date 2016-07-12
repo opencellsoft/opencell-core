@@ -33,6 +33,9 @@ public class EmailTemplateApi extends BaseApi {
 		if(StringUtils.isBlank(emailTemplateDto.getCode())){
 			missingParameters.add("code");
 		}
+		if(StringUtils.isBlank(emailTemplateDto.getSubject())){
+			missingParameters.add("subject");
+		}
 		handleMissingParameters();
 		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateDto.getCode(), currentUser.getProvider());
 		if(emailTemplate!=null){
@@ -59,6 +62,9 @@ public class EmailTemplateApi extends BaseApi {
 	public void update(EmailTemplateDto emailTemplateDto,User currentUser) throws MeveoApiException,BusinessException{
 		if(StringUtils.isBlank(emailTemplateDto.getCode())){
 			missingParameters.add("code");
+		}
+		if(StringUtils.isBlank(emailTemplateDto.getSubject())){
+			missingParameters.add("subject");
 		}
 		handleMissingParameters();
 		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateDto.getCode(), currentUser.getProvider());
