@@ -112,7 +112,7 @@ public class DunningPlanTransitionApi extends BaseApi {
 		dunningPlanTransitionService.update(fromDto(dunningPlanTransitionDto, dunningPlanTransition, dunningPlan), currentUser);
 	}
 
-	public DunningPlanTransitionDto find(String dunningPlanCode, DunningLevelEnum dunningLevelFrom, DunningLevelEnum dunningLevelTo, User currentUser) throws MeveoApiException{
+	public DunningPlanTransitionDto find(String dunningPlanCode, String dunningLevelFrom, String dunningLevelTo, User currentUser) throws MeveoApiException{
 		if(StringUtils.isEmpty(dunningPlanCode)){
 			missingParameters.add("dunningPlanCode");
 		}
@@ -130,7 +130,8 @@ public class DunningPlanTransitionApi extends BaseApi {
 			throw new EntityDoesNotExistsException(DunningPlan.class, dunningPlanCode);
 		}
 		
-		DunningPlanTransition dunningPlanTransition = dunningPlanTransitionService.getDunningPlanTransition(dunningLevelFrom, dunningLevelTo, dunningPlan);
+		DunningPlanTransition dunningPlanTransition = dunningPlanTransitionService.getDunningPlanTransition(DunningLevelEnum.valueOf(dunningLevelFrom), 
+				DunningLevelEnum.valueOf(dunningLevelTo), dunningPlan);
 		if(dunningPlanTransition == null){
 			throw new EntityDoesNotExistsException(DunningPlanTransition.class.getName() + "with dunningPlan=" + dunningPlanCode +
 					" and dunningLevelFrom =" + dunningLevelFrom + 
@@ -140,7 +141,7 @@ public class DunningPlanTransitionApi extends BaseApi {
 		return new DunningPlanTransitionDto(dunningPlanTransition);
 	}
 
-	public void remove(String dunningPlanCode, DunningLevelEnum dunningLevelFrom, DunningLevelEnum dunningLevelTo, User currentUser) throws MeveoApiException{
+	public void remove(String dunningPlanCode, String dunningLevelFrom, String dunningLevelTo, User currentUser) throws MeveoApiException{
 		if(StringUtils.isEmpty(dunningPlanCode)){
 			missingParameters.add("code");
 			handleMissingParameters();
@@ -151,7 +152,8 @@ public class DunningPlanTransitionApi extends BaseApi {
 			throw new EntityDoesNotExistsException(DunningPlan.class, dunningPlanCode);
 		}
 		
-		DunningPlanTransition dunningPlanTransition = dunningPlanTransitionService.getDunningPlanTransition(dunningLevelFrom, dunningLevelTo, dunningPlan);
+		DunningPlanTransition dunningPlanTransition = dunningPlanTransitionService.getDunningPlanTransition(DunningLevelEnum.valueOf(dunningLevelFrom), 
+				DunningLevelEnum.valueOf(dunningLevelTo), dunningPlan);
 		if(dunningPlanTransition == null){
 			throw new EntityDoesNotExistsException(DunningPlanTransition.class.getName() + "with dunningPlan=" + dunningPlanCode +
 					" and dunningLevelFrom =" + dunningLevelFrom + 

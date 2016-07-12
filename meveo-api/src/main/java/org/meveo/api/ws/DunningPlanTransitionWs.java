@@ -7,7 +7,6 @@ import javax.jws.WebService;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.payment.DunningPlanTransitionDto;
 import org.meveo.api.dto.response.payment.DunningPlanTransitionResponseDto;
-import org.meveo.model.payments.DunningLevelEnum;
 
 @WebService
 public interface DunningPlanTransitionWs extends IBaseWs {
@@ -23,12 +22,12 @@ public interface DunningPlanTransitionWs extends IBaseWs {
 	    
 	    @WebMethod
 	    DunningPlanTransitionResponseDto find(@WebParam(name = "dunningPlanCode") String dunningPlanCode ,
-	    		@WebParam(name = "dunningLevelFrom") DunningLevelEnum dunningLevelFrom, 
-	    		@WebParam(name = "dunningLevelTo") DunningLevelEnum dunningLevelTo);
+	    		@WebParam(name = "dunningLevelFrom") String dunningLevelFrom, 
+	    		@WebParam(name = "dunningLevelTo") String dunningLevelTo);
 	    
 	    @WebMethod
 	    ActionStatus remove(@WebParam(name = "dunningPlanCode") String dunningPlanCode ,
-	    		@WebParam(name = "dunningLevelFrom") DunningLevelEnum dunningLevelFrom, 
-	    		@WebParam(name = "dunningLevelTo") DunningLevelEnum dunningLevelTo);
+	    		@WebParam(name = "dunningLevelFrom") String dunningLevelFrom, 
+	    		@WebParam(name = "dunningLevelTo") String dunningLevelTo);
 	    
 }

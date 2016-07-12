@@ -14,7 +14,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.DunningPlanTransitionApi;
 import org.meveo.api.ws.DunningPlanTransitionWs;
-import org.meveo.model.payments.DunningLevelEnum;
 
 @WebService(serviceName = "DunningPlanTransitionWs", endpointInterface = "org.meveo.api.ws.DunningPlanTransitionWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -83,7 +82,7 @@ public class DunningPlanTransitionWsImpl extends BaseWs implements DunningPlanTr
 		}
 		
 		@Override
-		public DunningPlanTransitionResponseDto find(String dunningPlanCode, DunningLevelEnum dunningLevelFrom, DunningLevelEnum dunningLevelTo) {
+		public DunningPlanTransitionResponseDto find(String dunningPlanCode, String dunningLevelFrom, String dunningLevelTo) {
 			DunningPlanTransitionResponseDto dunningPlanTransitionResponseDto = new DunningPlanTransitionResponseDto();
 			try {
 				dunningPlanTransitionResponseDto.setDunningPlanTransition(dunningPlanTransitionApi.find(dunningPlanCode, dunningLevelFrom, dunningLevelTo, getCurrentUser()));
@@ -102,7 +101,7 @@ public class DunningPlanTransitionWsImpl extends BaseWs implements DunningPlanTr
 		}
 		
 		@Override
-		public ActionStatus remove(String dunningPlanCode, DunningLevelEnum dunningLevelFrom, DunningLevelEnum dunningLevelTo) {
+		public ActionStatus remove(String dunningPlanCode, String dunningLevelFrom, String dunningLevelTo) {
 			ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
 	        	dunningPlanTransitionApi.remove(dunningPlanCode, dunningLevelFrom, dunningLevelTo, getCurrentUser());

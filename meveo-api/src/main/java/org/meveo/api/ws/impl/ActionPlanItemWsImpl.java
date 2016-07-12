@@ -14,7 +14,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.ActionPlanItemApi;
 import org.meveo.api.ws.ActionPlanItemWs;
-import org.meveo.model.payments.DunningLevelEnum;
 
 @WebService(serviceName = "ActionPlanItemWs", endpointInterface = "org.meveo.api.ws.ActionPlanItemWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -83,7 +82,7 @@ public class ActionPlanItemWsImpl extends BaseWs implements ActionPlanItemWs {
 	}
 	
 	@Override
-	public ActionPlanItemResponseDto find(String dunningPlanCode, Integer itemlOrder, DunningLevelEnum dunningLevel) {
+	public ActionPlanItemResponseDto find(String dunningPlanCode, Integer itemlOrder, String dunningLevel) {
 		ActionPlanItemResponseDto actionPlanItemResponseDto = new ActionPlanItemResponseDto();
 		try {
 			actionPlanItemResponseDto.setActionPlanItem(actionPlanItemApi.find(dunningPlanCode, dunningLevel, itemlOrder, getCurrentUser()));
@@ -102,7 +101,7 @@ public class ActionPlanItemWsImpl extends BaseWs implements ActionPlanItemWs {
 	}
 	
 	@Override
-	public ActionStatus remove(String dunningPlanCode, Integer itemOrder, DunningLevelEnum dunningLevel) {
+	public ActionStatus remove(String dunningPlanCode, Integer itemOrder, String dunningLevel) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
         	actionPlanItemApi.remove(dunningPlanCode, itemOrder, dunningLevel, getCurrentUser());

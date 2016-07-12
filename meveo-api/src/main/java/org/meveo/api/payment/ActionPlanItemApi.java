@@ -110,7 +110,7 @@ public class ActionPlanItemApi extends BaseApi {
 		actionPlanItemService.update(fromDto(actionPlanItemDto, existedActionPlanItem, dunningPlan), currentUser);
 	}
 
-	public ActionPlanItemDto find(String dunningPlanCode, DunningLevelEnum dunningLevel, Integer itemOrder, User currentUser) throws MeveoApiException{
+	public ActionPlanItemDto find(String dunningPlanCode, String dunningLevel, Integer itemOrder, User currentUser) throws MeveoApiException{
 		if(StringUtils.isEmpty(dunningPlanCode)){
 			missingParameters.add("dunningPlanCode");
 		}
@@ -128,7 +128,7 @@ public class ActionPlanItemApi extends BaseApi {
 			throw new EntityDoesNotExistsException(DunningPlan.class, dunningPlanCode);
 		}
 		
-		ActionPlanItem actionPlanItem = actionPlanItemService.getActionPlanItem(itemOrder, dunningLevel, dunningPlan);
+		ActionPlanItem actionPlanItem = actionPlanItemService.getActionPlanItem(itemOrder, DunningLevelEnum.valueOf(dunningLevel), dunningPlan);
 		if (actionPlanItem == null) {
 			throw new EntityDoesNotExistsException(ActionPlanItem.class.getName() + "with dunningPlan=" + dunningPlan +
 					" and itemOrder =" + itemOrder + 
@@ -138,7 +138,7 @@ public class ActionPlanItemApi extends BaseApi {
 		return new ActionPlanItemDto(actionPlanItem);
 	}
 
-	public void remove(String dunningPlanCode, Integer itemOrder, DunningLevelEnum dunningLevel, User currentUser) throws MeveoApiException{
+	public void remove(String dunningPlanCode, Integer itemOrder, String dunningLevel, User currentUser) throws MeveoApiException{
 		if(StringUtils.isEmpty(dunningPlanCode)){
 			missingParameters.add("code");
 			handleMissingParameters();
@@ -149,7 +149,7 @@ public class ActionPlanItemApi extends BaseApi {
 			throw new EntityDoesNotExistsException(DunningPlan.class, dunningPlanCode);
 		}
 		
-		ActionPlanItem actionPlanItem = actionPlanItemService.getActionPlanItem(itemOrder, dunningLevel, dunningPlan);
+		ActionPlanItem actionPlanItem = actionPlanItemService.getActionPlanItem(itemOrder, DunningLevelEnum.valueOf(dunningLevel), dunningPlan);
 		if (actionPlanItem == null) {
 			throw new EntityDoesNotExistsException(ActionPlanItem.class.getName() + "with dunningPlan=" + dunningPlan +
 					" and itemOrder =" + itemOrder + 
