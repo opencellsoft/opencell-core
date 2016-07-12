@@ -8,27 +8,26 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.payment.DunningPlanDto;
-import org.meveo.api.dto.response.payment.DunningPlanResponseDto;
-import org.meveo.api.dto.response.payment.DunningPlansResponseDto;
+import org.meveo.api.dto.payment.ActionPlanItemDto;
+import org.meveo.api.dto.response.payment.ActionPlanItemResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.payment.DunningPlanApi;
+import org.meveo.api.payment.ActionPlanItemApi;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.api.rest.payment.DunningPlanRs;
+import org.meveo.api.rest.payment.ActionPlanItemRs;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
-public class DunningPlanRsImpl extends BaseRs implements DunningPlanRs {
+public class ActionPlanItemRsImpl extends BaseRs implements ActionPlanItemRs {
 	@Inject
-	private DunningPlanApi dunningPlanApi;
+	private ActionPlanItemApi actionPlanItemApi;
 
 	@Override
-	public ActionStatus create(DunningPlanDto dunningPlanDto) {
+	public ActionStatus create(ActionPlanItemDto actionPlanItemDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            dunningPlanApi.create(dunningPlanDto, getCurrentUser());
+        	actionPlanItemApi.create(actionPlanItemDto, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -44,11 +43,11 @@ public class DunningPlanRsImpl extends BaseRs implements DunningPlanRs {
 	}
 
 	@Override
-	public ActionStatus update(DunningPlanDto dunningPlanDto) {
+	public ActionStatus update(ActionPlanItemDto actionPlanItemDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            dunningPlanApi.update(dunningPlanDto, getCurrentUser());
+        	actionPlanItemApi.update(actionPlanItemDto, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -64,71 +63,11 @@ public class DunningPlanRsImpl extends BaseRs implements DunningPlanRs {
 	}
 
 	@Override
-	public DunningPlanResponseDto find(String code) {
-		DunningPlanResponseDto result = new DunningPlanResponseDto();
-
-        try {
-            result.setDunningPlan(dunningPlanApi.find(code, getCurrentUser()));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        }
-
-        return result;
-	}
-
-	@Override
-	public ActionStatus remove(String code) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            dunningPlanApi.remove(code, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
-
-        return result;
-	}
-
-	@Override
-	public DunningPlansResponseDto list() {
-		DunningPlansResponseDto result = new DunningPlansResponseDto();
-
-        try {
-            result.setDunningPlans(dunningPlanApi.list(getCurrentUser()));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        }
-
-        return result;
-	}
-
-	@Override
-	public ActionStatus createOrUpdate(DunningPlanDto dunningPlanDto) {
+	public ActionStatus createOrUpdate(ActionPlanItemDto actionPlanItemDto) {
 		 ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 	        try {
-	            dunningPlanApi.createOrUpdate(dunningPlanDto, getCurrentUser());
+	        	actionPlanItemApi.createOrUpdate(actionPlanItemDto, getCurrentUser());
 	        } catch (MeveoApiException e) {
 	            result.setErrorCode(e.getErrorCode());
 	            result.setStatus(ActionStatusEnum.FAIL);
@@ -140,6 +79,46 @@ public class DunningPlanRsImpl extends BaseRs implements DunningPlanRs {
 	            result.setMessage(e.getMessage());
 	        }
 	        return result;
+	}
+	
+	@Override
+	public ActionPlanItemResponseDto find(String dunningPlanCode, Integer itemOrder, String dunningLevel) {
+		ActionPlanItemResponseDto result = new ActionPlanItemResponseDto();
+
+        try {
+            result.setActionPlanItem(actionPlanItemApi.find(dunningPlanCode, dunningLevel, itemOrder, getCurrentUser()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        return result;
+	}
+	
+	@Override
+	public ActionStatus remove(String dunningPlanCode, Integer itemOrder, String dunningLevel) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+        	actionPlanItemApi.remove(dunningPlanCode, itemOrder, dunningLevel, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
 	}
 
 }

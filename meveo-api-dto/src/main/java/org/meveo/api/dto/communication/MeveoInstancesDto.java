@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -22,6 +23,8 @@ public class MeveoInstancesDto implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -3430126501128806303L;
+	
+	@XmlElement(name="meveoInstance")
 	private List<MeveoInstanceDto> meveoInstances;
 
 	public List<MeveoInstanceDto> getMeveoInstances() {

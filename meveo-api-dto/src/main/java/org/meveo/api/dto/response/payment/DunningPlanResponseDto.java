@@ -17,16 +17,19 @@ import org.meveo.api.dto.response.BaseResponse;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DunningPlanResponseDto extends BaseResponse {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2492883573757679482L;
+	private DunningPlanDto dunningPlan;
 	public DunningPlanDto getDunningPlan() {
 		return dunningPlan;
 	}
 	public void setDunningPlan(DunningPlanDto dunningPlan) {
 		this.dunningPlan = dunningPlan;
 	}
-	private DunningPlanDto dunningPlan;
+	
+	
+	@Override
+	public String toString() {
+		return "DunningPlanDto [DunningPlanDto=" + dunningPlan + "]";
+	}
 }
 

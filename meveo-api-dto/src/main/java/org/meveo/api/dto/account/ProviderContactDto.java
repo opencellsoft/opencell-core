@@ -24,7 +24,7 @@ public class ProviderContactDto extends BaseDto {
 
 	@XmlAttribute(required = true)
 	private String code;
-
+	@XmlAttribute
 	private String description;
 	private String firstName;
 	private String lastName;
@@ -125,6 +125,9 @@ public class ProviderContactDto extends BaseDto {
 	}
 
 	public AddressDto getAddressDto() {
+		if(addressDto==null){
+			addressDto=new AddressDto();
+		}
 		return addressDto;
 	}
 

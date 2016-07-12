@@ -22,7 +22,10 @@ import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
 import org.meveo.api.dto.UserDto;
+import org.meveo.api.dto.account.ProviderContactDto;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
+import org.meveo.api.dto.communication.EmailTemplateDto;
+import org.meveo.api.dto.communication.MeveoInstanceDto;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
@@ -52,6 +55,12 @@ import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.PermissionResponseDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
+import org.meveo.api.dto.response.account.ProviderContactResponseDto;
+import org.meveo.api.dto.response.account.ProviderContactsResponseDto;
+import org.meveo.api.dto.response.communication.EmailTemplateResponseDto;
+import org.meveo.api.dto.response.communication.EmailTemplatesResponseDto;
+import org.meveo.api.dto.response.communication.MeveoInstanceResponseDto;
+import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -430,4 +439,59 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     GetInvoiceTypesResponse listInvoiceTypes();
+    
+    //provider contact
+    @WebMethod
+    ActionStatus createProviderContact(@WebParam(name="providerContact")ProviderContactDto providerContactDto);
+
+    @WebMethod
+    ActionStatus updateProviderContact(@WebParam(name="providerContact")ProviderContactDto providerContactDto);
+
+    @WebMethod
+    ProviderContactResponseDto findProviderContact(@WebParam(name="providerContactCode") String providerContactCode);
+
+    @WebMethod
+    ActionStatus removeProviderContact(@WebParam(name="providerContactCode") String providerContactCode);
+
+    @WebMethod
+    ProviderContactsResponseDto listProviderContacts();
+    
+    @WebMethod
+    ActionStatus createOrUpdateProviderContact(@WebParam(name="providerContact")ProviderContactDto providerContactDto);
+    
+    @WebMethod
+    ActionStatus createEmailTemplate(@WebParam(name="emailTemplate")EmailTemplateDto emailTemplateDto);
+
+    @WebMethod
+    ActionStatus updateEmailTemplate(@WebParam(name="emailTemplate")EmailTemplateDto emailTemplateDto);
+
+    @WebMethod
+    EmailTemplateResponseDto findEmailTemplate(@WebParam(name="emailTemplateCode") String emailTemplateCode);
+
+    @WebMethod
+    ActionStatus removeEmailTemplate(@WebParam(name="emailTemplateCode") String emailTemplateCode);
+
+    @WebMethod
+    EmailTemplatesResponseDto listEmailTemplates();
+
+    @WebMethod
+    ActionStatus createOrUpdateEmailTemplate(@WebParam(name="emailTemplate")EmailTemplateDto emailTemplateDto);
+    
+    @WebMethod
+    ActionStatus createMeveoInstance(@WebParam(name="meveoInstance")MeveoInstanceDto meveoInstanceDto);
+
+    @WebMethod
+    ActionStatus updateMeveoInstance(@WebParam(name="meveoInstance")MeveoInstanceDto meveoInstanceDto);
+
+    @WebMethod
+    MeveoInstanceResponseDto findMeveoInstance(@WebParam(name="meveoInstanceCode") String meveoInstanceCode);
+
+    @WebMethod
+    ActionStatus removeMeveoInstance(@WebParam(name="meveoInstanceCode") String meveoInstanceCode);
+
+    @WebMethod
+    MeveoInstancesResponseDto listMeveoInstances();
+    
+    @WebMethod
+    ActionStatus createOrUpdateMeveoInstance(@WebParam(name="meveoInstance")MeveoInstanceDto meveoInstanceDto);
 }

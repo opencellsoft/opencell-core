@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -27,8 +28,9 @@ public class MeveoInstanceDto extends BaseDto {
 	 * 
 	 */
 	private static final long serialVersionUID = -4747242987390520289L;
-	@XmlElement(required=true)
+	@XmlAttribute(required=true)
 	private String code;
+	@XmlAttribute
 	private String description;
 	private String productName;
 	private String productVersion;
@@ -57,6 +59,9 @@ public class MeveoInstanceDto extends BaseDto {
 	private String url;
 	private String authUsername;
 	private String authPassword;
+	
+	private String user;
+	private String customer;
 	public MeveoInstanceDto(){
 		
 	}
@@ -87,6 +92,12 @@ public class MeveoInstanceDto extends BaseDto {
 		this.url=meveoInstance.getUrl();
 		this.authUsername=meveoInstance.getAuthUsername();
 		this.authPassword=meveoInstance.getAuthPassword();
+		if(meveoInstance.getUser()!=null){
+			this.user=meveoInstance.getUser().getUserName();
+		}
+		if(meveoInstance.getCustomer()!=null){
+			this.customer=meveoInstance.getCustomer().getCode();
+		}
 	}
 	public String getCode() {
 		return code;
@@ -256,5 +267,18 @@ public class MeveoInstanceDto extends BaseDto {
 	public void setAuthPassword(String authPassword) {
 		this.authPassword = authPassword;
 	}
+	public String getUser() {
+		return user;
+	}
+	public void setUser(String user) {
+		this.user = user;
+	}
+	public String getCustomer() {
+		return customer;
+	}
+	public void setCustomer(String customer) {
+		this.customer = customer;
+	}
+	
 }
 

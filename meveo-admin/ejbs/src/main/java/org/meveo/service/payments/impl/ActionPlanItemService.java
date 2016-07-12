@@ -24,6 +24,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 
 import org.meveo.model.payments.ActionPlanItem;
+import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.DunningPlan;
 import org.meveo.model.payments.DunningPlanTransition;
 import org.meveo.service.base.PersistenceService;
@@ -48,6 +49,26 @@ public class ActionPlanItemService extends PersistenceService<ActionPlanItem> {
 		} catch (Exception e) {
 		}
 		return actionPlanItems;
+	}
+	
+	public ActionPlanItem getActionPlanItem(
+			Integer itemOrder, DunningLevelEnum dunningLevel,
+			DunningPlan dunningPlan) {
+		ActionPlanItem actionPlanItem = null;
+		try {
+			actionPlanItem = (ActionPlanItem) getEntityManager()
+					.createQuery(
+							"from "
+									+ ActionPlanItem.class
+											.getSimpleName()
+									+ " where dunningLevel=:dunningLevel and itemOrder=:itemOrder and dunningPlan.id=:dunningPlanId")
+					.setParameter("dunningLevel", dunningLevel)
+					.setParameter("itemOrder", itemOrder)
+					.setParameter("dunningPlanId", dunningPlan.getId())
+					.getSingleResult();
+		} catch (Exception e) {
+		}
+		return actionPlanItem;
 	}
 
 }

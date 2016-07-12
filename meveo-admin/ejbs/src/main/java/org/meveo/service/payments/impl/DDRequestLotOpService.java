@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
@@ -48,6 +49,13 @@ public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
 			log.error("failed to get DDRequestOps",e);
 		}
 		return ddrequestOps;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DDRequestLotOp> findByStatus(DDRequestOpStatusEnum status,Provider currentProvider){
+		QueryBuilder query=new QueryBuilder(DDRequestLotOp.class,"o");
+		query.addCriterion("o.status", "=", status, false);
+		return query.getQuery(getEntityManager()).getResultList();
 	}
 
 }
