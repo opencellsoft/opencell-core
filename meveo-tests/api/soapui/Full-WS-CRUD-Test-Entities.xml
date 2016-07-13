@@ -33467,7 +33467,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
       <ws:updateEmailTemplate>
          <emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET1">
             <media>EMAIL</media>
-            <subject>WS_FULL_16_subject_ET1_updated</subject>
+            <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET1_updated</subject>
             <htmlContent>htmlcontent updated</htmlContent>
             <textContent>text content updated</textContent>
          </emailTemplate>
@@ -33642,7 +33642,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
       <ws:createOrUpdateEmailTemplate>
          <emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET1">
             <media>EMAIL</media>
-            <subject>WS_FULL_16_subject_ET1_createOrUpdate</subject>
+            <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET1_createOrUpdate</subject>
             <htmlContent>htmlcontent createOrUpdate</htmlContent>
             <textContent>text content createOrUpdate</textContent>
          </emailTemplate>
@@ -34411,8 +34411,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                   <owner>owner</owner>
                   <md5>md5</md5>
                   <status>UNKNOWN</status>
-                  <creationDate>2016-07-01T00:00:00${#Project#timezone2}:00</creationDate>
-                  <updateDate>2016-07-01T00:00:00${#Project#timezone2}:00</updateDate>
+                  <creationDate>2016-07-01T00:00:00${#Project#timezone}:00</creationDate>
+                  <updateDate>2016-07-01T00:00:00${#Project#timezone}:00</updateDate>
                   <keyEntreprise>keyentreprise</keyEntreprise>
                   <macAddress>mac</macAddress>
                   <machineVendor>machinevendor</machineVendor>
@@ -34610,7 +34610,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
     </con:testCase><con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>16</con:value>
+        <con:value>17</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -71652,11 +71652,11 @@ and paste that invoice number in the next step.
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>-03</con:value>
+      <con:value>+08</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>-03</con:value>
+      <con:value>+08</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>
