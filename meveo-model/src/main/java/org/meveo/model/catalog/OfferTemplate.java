@@ -47,6 +47,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.catalog.product.OfferProductTemplate;
 
 @Entity
 @ObservableEntity
@@ -91,6 +92,9 @@ public class OfferTemplate extends BusinessCFEntity {
 	@Column(name = "IMAGE_CONTENT_TYPE", length = 50)
 	@Size(max = 50)
 	private String imageContentType;
+	
+	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	private List<OfferProductTemplate> offerProductTemplates = new ArrayList<OfferProductTemplate>();
 
 	public List<OfferServiceTemplate> getOfferServiceTemplates() {
 		return offerServiceTemplates;
@@ -198,6 +202,14 @@ public class OfferTemplate extends BusinessCFEntity {
 
 	public void setImageContentType(String imageContentType) {
 		this.imageContentType = imageContentType;
+	}
+
+	public List<OfferProductTemplate> getOfferProductTemplates() {
+		return offerProductTemplates;
+	}
+
+	public void setOfferProductTemplates(List<OfferProductTemplate> offerProductTemplates) {
+		this.offerProductTemplates = offerProductTemplates;
 	}
 
 }
