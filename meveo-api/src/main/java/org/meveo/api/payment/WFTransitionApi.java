@@ -58,6 +58,7 @@ public class WFTransitionApi extends BaseApi {
 		wfTransitionService.create(wfTransition, currentUser);
 		if(wfTransitionDto.getListWFActionDto() != null && !wfTransitionDto.getListWFActionDto().isEmpty()){
 			for(WFActionDto wfActionDto : wfTransitionDto.getListWFActionDto()){
+				wfActionDto.setWfTransitionDto(wfTransitionDto);
 				wfActionApi.create(wfActionDto, currentUser);
 			}			
 		}
@@ -89,6 +90,7 @@ public class WFTransitionApi extends BaseApi {
 		wfTransitionService.update(wfTransition, currentUser);
 		if(wfTransitionDto.getListWFActionDto() != null && !wfTransitionDto.getListWFActionDto().isEmpty()){
 			for(WFActionDto wfActionDto : wfTransitionDto.getListWFActionDto()){
+				wfActionDto.setWfTransitionDto(wfTransitionDto);
 				wfActionApi.update(wfActionDto, currentUser);
 			}			
 		}
