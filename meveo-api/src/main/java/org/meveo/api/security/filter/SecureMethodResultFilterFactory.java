@@ -36,7 +36,7 @@ public class SecureMethodResultFilterFactory implements Serializable {
 		initialize();
 		SecureMethodResultFilter filter = filterMap.get(filterClass);
 		if (filter == null) {
-			log.warn("No SecuredBusinessEntityFilter instance of type {} found.", filterClass.getTypeName());
+			log.warn("No SecuredBusinessEntityFilter instance of type {} found.", filterClass.getName());
 		}
 		return filter;
 	}

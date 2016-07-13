@@ -58,7 +58,7 @@ public class SecureMethodParameterHandler {
 		initialize();
 		SecureMethodParameterParser<?> parser = parserMap.get(parameter.parser());
 		if (parser == null) {
-			log.warn("No SecureMethodParameterParser instance of type {} found.", parameter.parser().getTypeName());
+			log.warn("No SecureMethodParameterParser instance of type {} found.", parameter.parser().getName());
 		}
 		return parser;
 	}

@@ -12,6 +12,7 @@ import org.meveo.api.security.filter.SecureMethodResultFilter;
 import org.meveo.api.security.filter.SecureMethodResultFilterFactory;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.api.security.parameter.SecureMethodParameterHandler;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.service.security.SecuredBusinessEntityService;
@@ -47,6 +48,8 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
 	@Inject
 	private SecureMethodParameterHandler parameterHandler;
+	
+	private ParamBean paramBean=ParamBean.getInstance();
 
 	/**
 	 * This is called before a method that makes use of the
@@ -63,6 +66,15 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 	 */
 	@AroundInvoke
 	public Object checkForSecuredEntities(InvocationContext context) throws Exception {
+		
+		// check if secured entities should be saved.
+		String secureSetting = paramBean.getProperty("secured.entities.enabled", "false");
+		boolean secureEntitesEnabled = Boolean.parseBoolean(secureSetting);
+		
+		// if not, immediately return.
+		if(!secureEntitesEnabled){
+			return context.proceed();
+		}
 
 		Class<?> objectClass = context.getMethod().getDeclaringClass();
 		String objectName = objectClass.getSimpleName();

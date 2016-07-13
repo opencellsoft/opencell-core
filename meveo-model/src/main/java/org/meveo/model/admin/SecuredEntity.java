@@ -25,7 +25,7 @@ public class SecuredEntity implements Serializable {
 	public SecuredEntity(BusinessEntity businessEntity) {
 		this.setCode(businessEntity.getCode());
 		this.setDescription(businessEntity.getDescription());
-		this.setEntityClass(ReflectionUtils.getCleanClassName(businessEntity.getClass().getTypeName()));
+		this.setEntityClass(ReflectionUtils.getCleanClassName(businessEntity.getClass().getName()));
 	}
 
 	@Column(name = "CODE", nullable = false, length = 60)
@@ -95,7 +95,7 @@ public class SecuredEntity implements Serializable {
         }
         if(isBusinessEntity){
         	otherCode = ((BusinessEntity) obj).getCode();
-        	otherClass = ReflectionUtils.getCleanClassName(((BusinessEntity) obj).getClass().getTypeName());
+        	otherClass = ReflectionUtils.getCleanClassName(((BusinessEntity) obj).getClass().getName());
         }
                 
         otherCode = otherClass + "-_-" + otherCode;

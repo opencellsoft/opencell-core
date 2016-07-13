@@ -21,7 +21,7 @@ public class UserParser extends SecureMethodParameterParser<User> {
 
 		Object parameterValue = values[parameter.index()];
 		if (!(parameterValue instanceof User)) {
-			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(INVALID_PARAMETER_TYPE, User.class.getTypeName()));
+			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(INVALID_PARAMETER_TYPE, User.class.getName()));
 		}
 
 		return (User) parameterValue;

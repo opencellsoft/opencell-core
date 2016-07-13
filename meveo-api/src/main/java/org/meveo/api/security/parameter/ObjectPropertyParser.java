@@ -49,7 +49,7 @@ public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEn
 		try {
 			code = (String) getPropertyValue(dto, property);
 		} catch (IllegalAccessException e) {
-			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_RETRIEVE_PROPERTY, dto.getClass().getTypeName(), property), e);
+			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_RETRIEVE_PROPERTY, dto.getClass().getName(), property), e);
 		}
 		if (StringUtils.isBlank(code)) {
 			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, CODE_REQUIRED);
@@ -86,7 +86,7 @@ public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEn
 			entity = entityClass.newInstance();
 			entity.setCode(code);
 		} catch (InstantiationException | IllegalAccessException e) {
-			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_INSTANTIATE_ENTITY, entityClass.getSimpleName()), e);
+			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_INSTANTIATE_ENTITY, entityClass.getName()), e);
 		}
 		return entity;
 	}

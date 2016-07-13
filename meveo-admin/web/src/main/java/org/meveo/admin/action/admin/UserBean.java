@@ -658,12 +658,12 @@ public class UserBean extends BaseBean<User> {
 			accountBeanMap = new HashMap<>();
 			securedEntityTypes = new HashMap<>();
 			String key = ReflectionUtils.getHumanClassName(sellerBean.getClazz().getSimpleName());
-			String value = ReflectionUtils.getCleanClassName(sellerBean.getClazz().getTypeName());
+			String value = ReflectionUtils.getCleanClassName(sellerBean.getClazz().getName());
 			securedEntityTypes.put(key, value);
 			accountBeanMap.put(value, sellerBean);
 			for (AccountBean<?> accountBean : accountBeans) {
 				key = ReflectionUtils.getHumanClassName(accountBean.getClazz().getSimpleName());
-				value = ReflectionUtils.getCleanClassName(accountBean.getClazz().getTypeName());
+				value = ReflectionUtils.getCleanClassName(accountBean.getClazz().getName());
 				securedEntityTypes.put(key, value);
 				accountBeanMap.put(value, accountBean);
 			}

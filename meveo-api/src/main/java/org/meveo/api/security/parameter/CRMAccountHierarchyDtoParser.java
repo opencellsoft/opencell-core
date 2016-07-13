@@ -60,7 +60,7 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 		Object parameterValue = values[parameter.index()];
 
 		if (!(parameterValue instanceof CRMAccountHierarchyDto)) {
-			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(INVALID_PARAMETER_TYPE, CRMAccountHierarchyDto.class.getTypeName()));
+			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(INVALID_PARAMETER_TYPE, CRMAccountHierarchyDto.class.getName()));
 		}
 
 		// since we are sure it is of the correct type, cast it and return the
@@ -122,14 +122,14 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 			try {
 				entity = entityClass.newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
-				throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_INSTANTIATE_ENTITY, entityClass.getTypeName()), e);
+				throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_INSTANTIATE_ENTITY, entityClass.getName()), e);
 			}
 			entity.setCode(code);
 		} else {
 			try {
 				entity = parentClass.newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
-				throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_INSTANTIATE_ENTITY, parentClass.getTypeName()), e);
+				throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_INSTANTIATE_ENTITY, parentClass.getName()), e);
 			}
 			entity.setCode(parentCode);
 		}
