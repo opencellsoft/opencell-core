@@ -30,26 +30,55 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface EmailTemplateRs extends IBaseRs {
 
+	/**
+	 * create an emailTemplate by dto
+	 * @param emailTemplateDto
+	 * @return
+	 */
 	@POST
     @Path("/")
     ActionStatus create(EmailTemplateDto emailTemplateDto);
 
+	/**
+	 * update an emailTemplate by dto
+	 * @param emailTemplateDto
+	 * @return
+	 */
     @PUT
     @Path("/")
     ActionStatus update(EmailTemplateDto emailTemplateDto);
 
+    /**
+     * find an emailTemplate by code
+     * @param code
+     * @return
+     */
     @GET
     @Path("/")
     EmailTemplateResponseDto find(@QueryParam("code") String code);
 
+    /**
+     * remove an emailTemplate by code
+     * @param code
+     * @return
+     */
     @DELETE
     @Path("/{code}")
     ActionStatus remove(@PathParam("code") String code);
 
+    /**
+     * list emailTemplates
+     * @return
+     */
     @GET
     @Path("/list")
     EmailTemplatesResponseDto list();
 
+    /**
+     * createOrUpdate emailTemplate by dto
+     * @param emailTemplateDto
+     * @return
+     */
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(EmailTemplateDto emailTemplateDto);
