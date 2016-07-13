@@ -46,7 +46,7 @@ public class WFActionApi extends BaseApi {
 			throw new EntityAlreadyExistsException(WFAction.class.getName() + "with priority=" + wfActionDto.getPriority() +" and wfTransition =" + wfActionDto.getWfTransitionDto());
 		}
 		
-		wfAction = wfActionDto.fromDto();
+		wfAction = wfActionDto.fromDto(wfAction);
 		wfAction.setWfTransition(wfTransition);
 		wfActionService.create(wfAction, currentUser);
 	}
@@ -70,9 +70,27 @@ public class WFActionApi extends BaseApi {
 			throw new EntityDoesNotExistsException(WFAction.class.getName() + "with priority=" + wfActionDto.getPriority() +" and wfTransition =" + wfActionDto.getWfTransitionDto());
 		}
 		
-		wfAction = wfActionDto.fromDto();
+		wfAction = wfActionDto.fromDto(wfAction);
 		wfAction.setWfTransition(wfTransition);
 		wfActionService.create(wfAction, currentUser);
+	}
+	
+	/**
+	 * 
+	 * @param wfActionDto
+	 * @param currentUser
+	 * @throws MissingParameterException
+	 * @throws EntityDoesNotExistsException
+	 * @throws EntityAlreadyExistsException
+	 * @throws BusinessException
+	 */
+	public void createOrUpdate(WFActionDto wfActionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {		
+		try {
+			find(wfActionDto.getWfTransitionDto(), wfActionDto.getPriority(), currentUser);		
+		} catch (EntityDoesNotExistsException e) {
+			create(wfActionDto, currentUser);
+		}
+		update(wfActionDto, currentUser);
 	}
 
 	/**

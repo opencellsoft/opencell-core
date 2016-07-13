@@ -69,12 +69,15 @@ public class WorkflowDto extends BaseDto {
 	    this.exportLot = workflow.isExportLot();
 	    this.enableHistory = workflow.isEnableHistory();
 	    for(WFTransition wfTransition : workflow.getTransitions()){
-	    	listWFTransitionDto.add(new WFTransitionDto(wfTransition) );
+	    	WFTransitionDto wftdto = new WFTransitionDto(wfTransition);
+	    	wftdto.setWorkflowDto(this);
+	    	listWFTransitionDto.add(wftdto);
 	    }
 	}
 	
-	public Workflow fromDto(){
-		Workflow workflow = new Workflow();
+	public Workflow fromDto(Workflow workflow){
+		if(workflow == null)
+			workflow = new Workflow();
 		workflow.setCode(getCode());
 		workflow.setDescription(getDescription());
 		workflow.setStatus(getStatus());

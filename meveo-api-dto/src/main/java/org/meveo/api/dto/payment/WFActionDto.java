@@ -51,11 +51,11 @@ public class WFActionDto extends BaseDto {
 		this.actionEl = wfAction.getActionEl();
 		this.priority = wfAction.getPriority();
 		this.conditionEl = wfAction.getConditionEl();
-		this.wfTransitionDto = new WFTransitionDto(wfAction.getWfTransition());
 	}
 	
-	public WFAction fromDto() {	
-		WFAction wfAction = new WFAction();
+	public WFAction fromDto(WFAction wfAction) {
+		if(wfAction == null)
+			wfAction = new WFAction();
 		wfAction.setActionEl(getActionEl());
 		wfAction.setPriority(getPriority());
 		wfAction.setConditionEl(getConditionEl());				
@@ -121,7 +121,7 @@ public class WFActionDto extends BaseDto {
 	
 	@Override
 	public String toString() {
-		return "WFActionDto [actionEl=" + actionEl + ", priority=" + priority + ", conditionEl=" + conditionEl + ", wfTransitionDto=" + (wfTransitionDto == null ? null : wfTransitionDto)  + "]";
+		return "WFActionDto [actionEl=" + actionEl + ", priority=" + priority + ", conditionEl=" + conditionEl + "]";
 	}
 
 }

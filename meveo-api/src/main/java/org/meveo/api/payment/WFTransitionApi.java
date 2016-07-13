@@ -53,7 +53,7 @@ public class WFTransitionApi extends BaseApi {
 					" and FromStatus =" +wfTransitionDto.getFromStatus() + 
 					" and ToStatus =" +wfTransitionDto.getToStatus());
 		}		
-		wfTransition = wfTransitionDto.fromDto();
+		wfTransition = wfTransitionDto.fromDto(wfTransition);
 		wfTransition.setWorkflow(workflow);		
 		wfTransitionService.create(wfTransition, currentUser);
 		if(wfTransitionDto.getListWFActionDto() != null && !wfTransitionDto.getListWFActionDto().isEmpty()){
@@ -85,13 +85,13 @@ public class WFTransitionApi extends BaseApi {
 					" and FromStatus =" +wfTransitionDto.getFromStatus() + 
 					" and ToStatus =" +wfTransitionDto.getToStatus());
 		}		
-		wfTransition = wfTransitionDto.fromDto();
+		wfTransition = wfTransitionDto.fromDto(wfTransition);
 		wfTransition.setWorkflow(workflow);		
 		wfTransitionService.update(wfTransition, currentUser);
 		if(wfTransitionDto.getListWFActionDto() != null && !wfTransitionDto.getListWFActionDto().isEmpty()){
 			for(WFActionDto wfActionDto : wfTransitionDto.getListWFActionDto()){
 				wfActionDto.setWfTransitionDto(wfTransitionDto);
-				wfActionApi.update(wfActionDto, currentUser);
+				wfActionApi.createOrUpdate(wfActionDto, currentUser);
 			}			
 		}
 	}

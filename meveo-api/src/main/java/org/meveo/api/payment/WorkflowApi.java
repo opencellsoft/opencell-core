@@ -45,7 +45,7 @@ public class WorkflowApi extends BaseApi {
 		if(workflow != null) {
 			throw new EntityAlreadyExistsException(Workflow.class, workflowDto.getCode());
 		}		
-		workflow = workflowDto.fromDto();
+		workflow = workflowDto.fromDto(workflow);
 		workflowService.create(workflow, currentUser);		
 		if(workflowDto.getListWFTransitionDto() != null &&  !workflowDto.getListWFTransitionDto().isEmpty()){
 		    for(WFTransitionDto wfTransitionDto : workflowDto.getListWFTransitionDto()){
@@ -72,12 +72,12 @@ public class WorkflowApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Workflow.class, workflowDto.getCode());
 		} 
 
-		workflow = workflowDto.fromDto();
+		workflow = workflowDto.fromDto(workflow);
 		workflowService.update(workflow, currentUser);		
 		if(workflowDto.getListWFTransitionDto() != null &&  !workflowDto.getListWFTransitionDto().isEmpty()){
 		    for(WFTransitionDto wfTransitionDto : workflowDto.getListWFTransitionDto()){
 		    	wfTransitionDto.setWorkflowDto(workflowDto);
-		    	wfTransitionApi.update(wfTransitionDto, currentUser);
+		    	wfTransitionApi.createOrUpdate(wfTransitionDto, currentUser);
 		    }
 		}
 	}

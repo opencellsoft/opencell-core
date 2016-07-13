@@ -15,13 +15,11 @@ import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
@@ -111,7 +109,7 @@ public class ElasticClient {
 	 */
 	public void createOrUpdate(BusinessEntity e,User creator){		
 		ElasticDocument esDoc = new ElasticDocument(e);		
-		createOrUpdate(esDoc, e.getClass().getName(), e.getProvider().getCode());		
+		createOrUpdate(esDoc, e.getClass().getName(), creator.getProvider().getCode());		
 	}
 	
 	public String search(String[] classnames,String query,User user){

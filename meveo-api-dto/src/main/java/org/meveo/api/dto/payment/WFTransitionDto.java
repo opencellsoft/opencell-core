@@ -62,14 +62,16 @@ public class WFTransitionDto extends BaseDto {
 		this.fromStatus = wfTransition.getFromStatus();
 		this.toStatus = wfTransition.getToStatus();
 		this.conditionEl = wfTransition.getConditionEl();
-		this.workflowDto = new WorkflowDto(wfTransition.getWorkflow());
 		for(WFAction wfAction : wfTransition.getWfActions() ){
-			listWFActionDto.add(new WFActionDto(wfAction));
+			WFActionDto wfadto = new WFActionDto(wfAction);
+			wfadto.setWfTransitionDto(this);
+			listWFActionDto.add(wfadto);
 		}
 	}
 	
-	public WFTransition fromDto(){
-		WFTransition wfTransition = new WFTransition();
+	public WFTransition fromDto(WFTransition wfTransition){
+		if(wfTransition == null)
+			wfTransition = new WFTransition();
 		wfTransition.setFromStatus(getFromStatus());
 		wfTransition.setToStatus(getToStatus());
 		wfTransition.setConditionEl(getConditionEl());		
@@ -152,7 +154,7 @@ public class WFTransitionDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "WFTransitionDto [fromStatus=" + fromStatus + ", toStatus=" + toStatus + ", conditionEl=" + conditionEl + ", workflowDto=" + (workflowDto == null ? null : workflowDto) + ", listWFActionDto=" + (listWFActionDto == null ? null : listWFActionDto) + "]";
+		return "WFTransitionDto [fromStatus=" + fromStatus + ", toStatus=" + toStatus + ", conditionEl=" + conditionEl + ", listWFActionDto=" + (listWFActionDto == null ? null : listWFActionDto) + "]";
 	}
 
 	
