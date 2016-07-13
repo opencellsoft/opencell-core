@@ -89,7 +89,7 @@ public class ElasticClient {
 	 * @param index
 	 */
 	public void createOrUpdate(ElasticDocument esDoc,String type,String index){
-		if(client!=null){
+		if(client != null){
 			try {
 				log.debug("added elasticSearch doc {} ",esDoc.toJson());
 				IndexResponse response = client.prepareIndex(index.toLowerCase(),type.toLowerCase(),esDoc.getCode()).setSource(esDoc.toJson()).get();
@@ -137,6 +137,7 @@ public class ElasticClient {
 		if(client!=null){
 			try{
 				client.close();
+				client = null;
 			}catch(Error e){
 				log.error("cant close ES client",e);
 			}
