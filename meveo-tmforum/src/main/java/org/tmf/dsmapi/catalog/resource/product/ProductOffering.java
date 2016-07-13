@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -617,24 +615,20 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 		return productOffering;
 	}
 
-	public static ProductOffering parseFromOfferTemplate(OfferTemplate offer, UriInfo uriInfo, Category category,
-			Map<String, Price> servicePrices) {
+	public static ProductOffering parseFromOfferTemplate(OfferTemplate offer, UriInfo uriInfo, Category category, List<ProductOfferingPrice> offerPrices) {
 		ProductOffering productOffering = new ProductOffering();
 		productOffering.setId(offer.getCode());
 		productOffering.setVersion(String.format("%d.0", offer.getVersion() == null ? 0 : offer.getVersion()));
-		productOffering.setHref(String.format("%scatalogManagement/productOffering/%s",
-				uriInfo.getBaseUri().toString(), offer.getCode()));
-		     
+		productOffering.setHref(String.format("%scatalogManagement/productOffering/%s", uriInfo.getBaseUri().toString(), offer.getCode()));
+
 		productOffering.setName(offer.getCode());
 		productOffering.setDescription(offer.getDescription());
 		productOffering.setLastUpdate(offer.getAuditable() != null ? offer.getAuditable().getLastModified() : null);
 		productOffering.setLifecycleStatus(offer.isActive() ? LifecycleStatus.ACTIVE : LifecycleStatus.OBSOLETE);
 		productOffering.setValidFor(new TimeRange());
-		productOffering.getValidFor().setStartDateTime(
-				offer.getAuditable() != null ? offer.getAuditable().getCreated() : null);
+		productOffering.getValidFor().setStartDateTime(offer.getAuditable() != null ? offer.getAuditable().getCreated() : null);
 		if (!offer.isActive()) {
-			productOffering.getValidFor().setEndDateTime(
-					offer.getAuditable() != null ? offer.getAuditable().getUpdated() : null);
+			productOffering.getValidFor().setEndDateTime(offer.getAuditable() != null ? offer.getAuditable().getUpdated() : null);
 		}
 
 		productOffering.setIsBundle(Boolean.FALSE);
@@ -657,53 +651,8 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 		productOffering.setServiceCandidate(null);
 		productOffering.setResourceCandidate(null);
 		productOffering.setProductOfferingTerm(new ArrayList<ProductOfferingTerm>()); // empty
-		productOffering.setProductOfferingPrice(new ArrayList<ProductOfferingPrice>());// empty
-
-		// prices
-		if (servicePrices != null && servicePrices.entrySet() != null) {
-			List<ProductOfferingPrice> productOfferingPrices = new ArrayList<>();
-			for (Entry<String, Price> servicePrice : servicePrices.entrySet()) {
-				Price price = new Price();
-				price.setTaxIncludedAmount(servicePrice.getValue().getTaxIncludedAmount());
-				price.setDutyFreeAmount(servicePrice.getValue().getDutyFreeAmount());
-				price.setTaxRate(servicePrice.getValue().getTaxRate());
-
-				ProductOfferingPrice productOfferingPrice = new ProductOfferingPrice();
-				productOfferingPrice.setPriceName(servicePrice.getKey());
-				productOfferingPrice.setPrice(price);
-
-				if (servicePrice.getKey().endsWith("_SUB")) {
-					productOfferingPrice.setPriceType(ProductOfferingPriceType.ONE_TIME);
-				} else if (servicePrice.getKey().contains("_REC")) {
-					productOfferingPrice.setPriceType(ProductOfferingPriceType.RECURRING);
-				}
-
-				productOfferingPrices.add(productOfferingPrice);
-			}
-			productOffering.setProductOfferingPrice(productOfferingPrices);
-		}
+		productOffering.setProductOfferingPrice(offerPrices);// empty
 
 		return productOffering;
 	}
-
-	public static List<ProductOffering> parseFromOfferTemplates(List<OfferTemplate> offerTemplates, UriInfo uriInfo,
-			Category category, Map<String, Map<String, Price>> offerPrices) {
-		if (offerTemplates != null) {
-			List<ProductOffering> productOfferings = new ArrayList<ProductOffering>();
-			for (OfferTemplate offerTemplate : offerTemplates) {
-				ProductOffering productOffering = parseFromOfferTemplate(
-						offerTemplate,
-						uriInfo,
-						category,
-						offerPrices.get(offerTemplate.getCode()) == null ? null : offerPrices.get(offerTemplate
-								.getCode()));
-				productOfferings.add(productOffering);
-			}
-
-			return productOfferings;
-		}
-
-		return null;
-	}
-
 }
