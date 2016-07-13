@@ -30,24 +30,24 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.payments.ActionPlanItem;
-import org.meveo.model.payments.DunningPlan;
-import org.meveo.model.payments.DunningPlanTransition;
+import org.meveo.model.wf.WFAction;
+import org.meveo.model.wf.WFTransition;
+import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.impl.ActionPlanItemService;
-import org.meveo.service.payments.impl.DunningPlanService;
-import org.meveo.service.payments.impl.DunningPlanTransitionService;
+import org.meveo.service.payments.impl.WFActionService;
+import org.meveo.service.payments.impl.WorkflowService;
+import org.meveo.service.payments.impl.WFTransitionService;
 import org.meveo.util.PersistenceUtils;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
- * Standard backing bean for {@link DunningPlan} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
+ * Standard backing bean for {@link Workflow} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
-public class DunningPlanBean extends BaseBean<DunningPlan> {
+public class DunningPlanBean extends BaseBean<Workflow> {
 
     private static final long serialVersionUID = 1L;
 
@@ -55,58 +55,58 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
      * Injected @{link DunningPlan} service. Extends {@link PersistenceService}.
      */
     @Inject
-    private DunningPlanService dunningPlanService;
+    private WorkflowService dunningPlanService;
 
     @Inject
-    private DunningPlanTransitionService dunningPlanTransitionService;
+    private WFTransitionService dunningPlanTransitionService;
 
     @Inject
-    private ActionPlanItemService actionPlanItemService;
+    private WFActionService actionPlanItemService;
 
     // @Produces
     // @Named
-    private transient DunningPlanTransition dunningPlanTransition = new DunningPlanTransition();
+    private transient WFTransition dunningPlanTransition = new WFTransition();
 
     // @Produces
     // @Named
-    private transient ActionPlanItem actionPlanItem = new ActionPlanItem();
+    private transient WFAction actionPlanItem = new WFAction();
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
     public DunningPlanBean() {
-        super(DunningPlan.class);
+        super(Workflow.class);
     }
 
     @Override
-    public DunningPlan initEntity() {
+    public Workflow initEntity() {
         super.initEntity();
-        PersistenceUtils.initializeAndUnproxy(entity.getActions());
+     //   PersistenceUtils.initializeAndUnproxy(entity.getActions());
         return entity;
     }
 
-    public DunningPlanTransition getDunningPlanTransition() {
+    public WFTransition getDunningPlanTransition() {
         return dunningPlanTransition;
     }
 
-    public void setDunningPlanTransition(DunningPlanTransition dunningPlanTransition) {
+    public void setDunningPlanTransition(WFTransition dunningPlanTransition) {
         this.dunningPlanTransition = dunningPlanTransition;
     }
 
-    public ActionPlanItem getActionPlanItem() {
+    public WFAction getActionPlanItem() {
         return actionPlanItem;
     }
 
-    public void setActionPlanItem(ActionPlanItem actionPlanItem) {
+    public void setActionPlanItem(WFAction actionPlanItem) {
         this.actionPlanItem = actionPlanItem;
     }
 
     public void newDunningPlanTransitionInstance() {
-        this.dunningPlanTransition = new DunningPlanTransition();
+        this.dunningPlanTransition = new WFTransition();
     }
 
     public void newActionPlanItemInstance() {
-        this.actionPlanItem = new ActionPlanItem();
+        this.actionPlanItem = new WFAction();
     }
 
     @Override
@@ -124,16 +124,16 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
 
-                for (DunningPlanTransition transition : entity.getTransitions()) {
+                for (WFTransition transition : entity.getTransitions()) {
 
-                    if ((transition.getDunningLevelFrom().equals(dunningPlanTransition.getDunningLevelFrom()))
-                            && (transition.getDunningLevelTo().equals(dunningPlanTransition.getDunningLevelTo()))) {
-                        throw new BusinessEntityException();
-                    }
+//                    if ((transition.getDunningLevelFrom().equals(dunningPlanTransition.getDunningLevelFrom()))
+//                            && (transition.getDunningLevelTo().equals(dunningPlanTransition.getDunningLevelTo()))) {
+//                        throw new BusinessEntityException();
+//                    }
                 }
-                dunningPlanTransition.setDunningPlan(entity);
+               // dunningPlanTransition.setDunningPlan(entity);
                 dunningPlanTransitionService.create(dunningPlanTransition, getCurrentUser());
-                entity.getTransitions().add(dunningPlanTransition);
+               // entity.getTransitions().add(dunningPlanTransition);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
         } catch (BusinessEntityException e) {
@@ -145,7 +145,7 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
             messages.error(new BundleKey("messages", "dunningPlanTransition.uniqueField"));
         }
 
-        dunningPlanTransition = new DunningPlanTransition();
+        dunningPlanTransition = new WFTransition();
     }
 
     public void saveActionPlanItem() throws BusinessException {
@@ -154,32 +154,32 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
             actionPlanItemService.update(actionPlanItem, getCurrentUser());
             messages.info(new BundleKey("messages", "update.successful"));
         } else {
-            actionPlanItem.setDunningPlan(entity);
+         //   actionPlanItem.setDunningPlan(entity);
             actionPlanItemService.create(actionPlanItem, getCurrentUser());
-            entity.getActions().add(actionPlanItem);
+          //  entity.getActions().add(actionPlanItem);
             messages.info(new BundleKey("messages", "save.successful"));
 
         }
-        actionPlanItem = new ActionPlanItem();
+        actionPlanItem = new WFAction();
     }
 
-    public void deleteDunningPlanTransition(DunningPlanTransition dunningPlanTransition) {
+    public void deleteDunningPlanTransition(WFTransition dunningPlanTransition) {
         dunningPlanTransitionService.remove(dunningPlanTransition);
         entity.getTransitions().remove(dunningPlanTransition);
         messages.info(new BundleKey("messages", "delete.successful"));
     }
 
-    public void deleteActionPlanItem(ActionPlanItem actionPlanItem) {
+    public void deleteActionPlanItem(WFAction actionPlanItem) {
         actionPlanItemService.remove(actionPlanItem);
-        entity.getActions().remove(actionPlanItem);
+       // entity.getActions().remove(actionPlanItem);
         messages.info(new BundleKey("messages", "delete.successful"));
     }
 
-    public void editDunningPlanTransition(DunningPlanTransition dunningPlanTransition) {
+    public void editDunningPlanTransition(WFTransition dunningPlanTransition) {
         this.dunningPlanTransition = dunningPlanTransition;
     }
 
-    public void editActionPlanItem(ActionPlanItem actionPlanItem) {
+    public void editActionPlanItem(WFAction actionPlanItem) {
         this.actionPlanItem = actionPlanItem;
     }
 
@@ -187,12 +187,12 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
-    protected IPersistenceService<DunningPlan> getPersistenceService() {
+    protected IPersistenceService<Workflow> getPersistenceService() {
         return dunningPlanService;
     }
 
     @Produces
-    public DunningPlan getDunningPlan() {
+    public Workflow getDunningPlan() {
         return entity;
     }
 

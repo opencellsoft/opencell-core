@@ -4,7 +4,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.crm.ProviderContact;
@@ -15,7 +14,6 @@ import org.meveo.model.crm.ProviderContact;
  * @date Jun 3, 2016 1:28:29 AM
  *
  */
-@XmlType(name = "ProvierContact")
 @XmlRootElement(name = "ProviderContract")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProviderContactDto extends BaseDto {

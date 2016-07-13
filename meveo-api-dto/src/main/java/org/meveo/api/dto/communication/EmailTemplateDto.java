@@ -4,7 +4,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.communication.email.EmailTemplate;
 
@@ -14,7 +13,6 @@ import org.meveo.model.communication.email.EmailTemplate;
  * @date Jun 3, 2016 4:49:13 AM
  *
  */
-@XmlType(name = "EmailTemplate")
 @XmlRootElement(name = "EmailTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EmailTemplateDto extends MessageTemplateDto{

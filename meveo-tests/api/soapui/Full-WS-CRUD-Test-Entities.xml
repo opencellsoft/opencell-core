@@ -4422,7 +4422,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="851c5e5b-0df9-4e9c-9774-e39fa8f93d3f" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:definitionCache type="TEXT"/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/CatalogWs</con:endpoint>
       <con:endpoint>http://carbuncle:8080/meveo/CatalogWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint>
@@ -4640,7 +4640,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="cae91dcb-66de-4c55-b3c0-611ee17f70af" wsaVersion="NONE" name="FilterWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilterWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/FilterWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:definitionCache type="TEXT"/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/FilterWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/FilterWs</con:endpoint>
     </con:endpoints>
@@ -4653,7 +4653,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="0a39cdb7-1de6-46e4-bbe7-8f6e82a4e738" wsaVersion="NONE" name="FilteredListWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilteredListWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/FilteredListWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:definitionCache type="TEXT"/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/FilteredListWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/FilteredListWs</con:endpoint>
     </con:endpoints>
@@ -4669,7 +4669,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="c76e9651-0016-44a7-a365-2d2b24de2cf0" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:definitionCache type="TEXT"/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/InvoiceWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint>
     </con:endpoints>
@@ -4700,7 +4700,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="964885f6-3c18-4bdd-9190-ba1b37081771" wsaVersion="NONE" name="InvoicingWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoicingWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/InvoicingWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:definitionCache type="TEXT"/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/InvoicingWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/InvoicingWs</con:endpoint>
     </con:endpoints>
@@ -4731,7 +4731,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="fb1e7ec9-17cb-42ea-8169-80915f4380e1" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/JobWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:definitionCache type="TEXT"/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/JobWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint>
     </con:endpoints>
@@ -4777,7 +4777,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="0bbc4cb4-e58a-4fa6-960d-2270c4e24d2e" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/MediationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:definitionCache type="TEXT"/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/MediationWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint>
     </con:endpoints>
@@ -4802,7 +4802,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="88d80ccf-833d-497e-9e09-52ab7f1f29ff" wsaVersion="NONE" name="ModuleWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ModuleWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/ModuleWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:definitionCache type="TEXT"/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/ModuleWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint>
     </con:endpoints>
@@ -4842,7 +4842,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="83b8bdb2-b7b7-4061-aa19-665da2e16394" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/NotificationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:definitionCache type="TEXT"/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/NotificationWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/NotificationWs</con:endpoint>
     </con:endpoints>
@@ -5109,6 +5109,8 @@
       </xs:complexType>
       <xs:complexType name="listDDRequestLotops">
         <xs:sequence>
+          <xs:element minOccurs="0" name="fromDueDate" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="toDueDate" type="xs:dateTime"/>
           <xs:element minOccurs="0" name="status" type="tns:ddRequestOpStatusEnum"/>
         </xs:sequence>
       </xs:complexType>
@@ -5323,7 +5325,7 @@
 </soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/PaymentWs/listDDRequestLotops"/></con:call></con:operation></con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="63f2a050-79b9-4e44-8be3-6bb29b160b4d" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:definitionCache type="TEXT"/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/ScriptInstanceWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint>
     </con:endpoints>
@@ -6501,8 +6503,9 @@
       <xs:element name="CustomerCategory" type="tns:customerCategoryDto"/>
       <xs:element name="DayInYear" type="tns:dayInYearDto"/>
       <xs:element name="DescriptionsResponse" type="tns:descriptionsResponseDto"/>
-      <xs:element name="EmailTemplate" type="tns:EmailTemplate"/>
+      <xs:element name="EmailTemplate" type="tns:emailTemplateDto"/>
       <xs:element name="EmailTemplateResponse" type="tns:emailTemplateResponseDto"/>
+      <xs:element name="EmailTemplates" type="tns:emailTemplatesDto"/>
       <xs:element name="EmailTemplatesResponse" type="tns:emailTemplatesResponseDto"/>
       <xs:element name="EntityReference" type="tns:entityReferenceDto"/>
       <xs:element name="GetBillingCycleResponse" type="tns:getBillingCycleResponse"/>
@@ -6547,7 +6550,7 @@
       <xs:element name="MatchingCode" type="tns:matchingCodeDto"/>
       <xs:element name="MatchingCodes" type="tns:matchingCodesDto"/>
       <xs:element name="MessageTemplate" type="tns:messageTemplateDto"/>
-      <xs:element name="MeveoInstance" type="tns:MeveoInstance"/>
+      <xs:element name="MeveoInstance" type="tns:meveoInstanceDto"/>
       <xs:element name="MeveoInstanceResponse" type="tns:meveoInstanceResponseDto"/>
       <xs:element name="MeveoInstances" type="tns:meveoInstancesDto"/>
       <xs:element name="MeveoInstancesResponse" type="tns:meveoInstancesResponseDto"/>
@@ -6556,8 +6559,9 @@
       <xs:element name="Permission" type="tns:permissionDto"/>
       <xs:element name="Provider" type="tns:providerDto"/>
       <xs:element name="ProviderContactResponse" type="tns:providerContactResponseDto"/>
+      <xs:element name="ProviderContacts" type="tns:providerContactsDto"/>
       <xs:element name="ProviderContactsResponse" type="tns:providerContactsResponseDto"/>
-      <xs:element name="ProviderContract" type="tns:ProvierContact"/>
+      <xs:element name="ProviderContract" type="tns:providerContactDto"/>
       <xs:element name="RatedTransaction" type="tns:ratedTransactionDto"/>
       <xs:element name="Role" type="tns:roleDto"/>
       <xs:element name="Seller" type="tns:Seller"/>
@@ -7005,7 +7009,7 @@
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element minOccurs="0" name="meveoInstance" type="tns:MeveoInstance"/>
+              <xs:element minOccurs="0" name="meveoInstance" type="tns:meveoInstanceDto"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -7015,7 +7019,7 @@
           <xs:element minOccurs="0" name="actionStatus" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="MeveoInstance">
+      <xs:complexType name="meveoInstanceDto">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
@@ -7138,10 +7142,10 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateProviderContact">
         <xs:sequence>
-          <xs:element minOccurs="0" name="providerContact" type="tns:ProvierContact"/>
+          <xs:element minOccurs="0" name="providerContact" type="tns:providerContactDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="ProvierContact">
+      <xs:complexType name="providerContactDto">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
@@ -7371,7 +7375,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateMeveoInstance">
         <xs:sequence>
-          <xs:element minOccurs="0" name="meveoInstance" type="tns:MeveoInstance"/>
+          <xs:element minOccurs="0" name="meveoInstance" type="tns:meveoInstanceDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateMeveoInstanceResponse">
@@ -7993,17 +7997,17 @@
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element minOccurs="0" name="emailTemplates" type="tns:EmailTemplates"/>
+              <xs:element minOccurs="0" name="emailTemplates" type="tns:emailTemplatesDto"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="EmailTemplates">
+      <xs:complexType name="emailTemplatesDto">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="emailTemplate" type="tns:EmailTemplate"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="emailTemplate" type="tns:emailTemplateDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="EmailTemplate">
+      <xs:complexType name="emailTemplateDto">
         <xs:complexContent>
           <xs:extension base="tns:messageTemplateDto">
             <xs:sequence>
@@ -8150,7 +8154,7 @@
       </xs:complexType>
       <xs:complexType name="createEmailTemplate">
         <xs:sequence>
-          <xs:element minOccurs="0" name="emailTemplate" type="tns:EmailTemplate"/>
+          <xs:element minOccurs="0" name="emailTemplate" type="tns:emailTemplateDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createEmailTemplateResponse">
@@ -8215,7 +8219,7 @@
       </xs:complexType>
       <xs:complexType name="meveoInstancesDto">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="meveoInstance" type="tns:MeveoInstance"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="meveoInstance" type="tns:meveoInstanceDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateTerminationReason">
@@ -8276,7 +8280,7 @@
       </xs:complexType>
       <xs:complexType name="updateProviderContact">
         <xs:sequence>
-          <xs:element minOccurs="0" name="providerContact" type="tns:ProvierContact"/>
+          <xs:element minOccurs="0" name="providerContact" type="tns:providerContactDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateProviderContactResponse">
@@ -8439,7 +8443,7 @@
       </xs:complexType>
       <xs:complexType name="updateEmailTemplate">
         <xs:sequence>
-          <xs:element minOccurs="0" name="emailTemplate" type="tns:EmailTemplate"/>
+          <xs:element minOccurs="0" name="emailTemplate" type="tns:emailTemplateDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateEmailTemplateResponse">
@@ -8560,14 +8564,14 @@
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element minOccurs="0" name="providerContacts" type="tns:ProviderContacts"/>
+              <xs:element minOccurs="0" name="providerContacts" type="tns:providerContactsDto"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="ProviderContacts">
+      <xs:complexType name="providerContactsDto">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="providerContact" type="tns:ProvierContact"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="providerContact" type="tns:providerContactDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createBillingCycle">
@@ -8633,7 +8637,7 @@
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element minOccurs="0" name="emailTemplate" type="tns:EmailTemplate"/>
+              <xs:element minOccurs="0" name="emailTemplate" type="tns:emailTemplateDto"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -8958,7 +8962,7 @@
       </xs:complexType>
       <xs:complexType name="updateMeveoInstance">
         <xs:sequence>
-          <xs:element minOccurs="0" name="meveoInstance" type="tns:MeveoInstance"/>
+          <xs:element minOccurs="0" name="meveoInstance" type="tns:meveoInstanceDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateMeveoInstanceResponse">
@@ -9040,7 +9044,7 @@
       </xs:complexType>
       <xs:complexType name="createProviderContact">
         <xs:sequence>
-          <xs:element minOccurs="0" name="providerContact" type="tns:ProvierContact"/>
+          <xs:element minOccurs="0" name="providerContact" type="tns:providerContactDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createProviderContactResponse">
@@ -9178,7 +9182,7 @@
       </xs:complexType>
       <xs:complexType name="createMeveoInstance">
         <xs:sequence>
-          <xs:element minOccurs="0" name="meveoInstance" type="tns:MeveoInstance"/>
+          <xs:element minOccurs="0" name="meveoInstance" type="tns:meveoInstanceDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createMeveoInstanceResponse">
@@ -9276,7 +9280,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateEmailTemplate">
         <xs:sequence>
-          <xs:element minOccurs="0" name="emailTemplate" type="tns:EmailTemplate"/>
+          <xs:element minOccurs="0" name="emailTemplate" type="tns:emailTemplateDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateEmailTemplateResponse">
@@ -9416,7 +9420,7 @@
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element minOccurs="0" name="providerContact" type="tns:ProvierContact"/>
+              <xs:element minOccurs="0" name="providerContact" type="tns:providerContactDto"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -11703,7 +11707,7 @@
 </soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateEmailTemplate"/></con:call></con:operation></con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="8c2affeb-ab12-43ad-adde-ed28dba3be5d" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:definitionCache type="TEXT"/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/SubscriptionWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint>
     </con:endpoints>
@@ -11743,7 +11747,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="46feb4ff-ba6f-4554-a95b-e943a466084d" wsaVersion="NONE" name="WalletWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}WalletWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WalletWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:definitionCache type="TEXT"/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/WalletWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint>
     </con:endpoints>
@@ -11795,7 +11799,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="cb986e97-8b56-4aa7-876e-d5d68f9876fb" wsaVersion="NONE" name="ReportingWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ReportingWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/ReportingWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:definitionCache type="TEXT"/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/ReportingWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint>
     </con:endpoints>
@@ -11856,7 +11860,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="405f4de6-2366-460c-88cd-c0e25de8ef4c" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:definitionCache type="TEXT"/><con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="b924835f-f5bc-4eee-a684-a8b4439b1a87" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -33463,7 +33467,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
       <ws:updateEmailTemplate>
          <emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET1">
             <media>EMAIL</media>
-            <subject>WS_FULL_16_subject_ET1_updated</subject>
+            <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET1_updated</subject>
             <htmlContent>htmlcontent updated</htmlContent>
             <textContent>text content updated</textContent>
          </emailTemplate>
@@ -33638,7 +33642,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
       <ws:createOrUpdateEmailTemplate>
          <emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET1">
             <media>EMAIL</media>
-            <subject>WS_FULL_16_subject_ET1_createOrUpdate</subject>
+            <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET1_createOrUpdate</subject>
             <htmlContent>htmlcontent createOrUpdate</htmlContent>
             <textContent>text content createOrUpdate</textContent>
          </emailTemplate>
@@ -34232,8 +34236,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                <owner>owner</owner>
                <md5>md5</md5>
                <status>UNKNOWN</status>
-               <creationDate>2016-07-01T01:00:00${#Project#timezone2}:00</creationDate>
-               <updateDate>2016-07-01T01:00:00${#Project#timezone2}:00</updateDate>
+               <creationDate>2016-07-01T00:00:00${#Project#timezone2}:00</creationDate>
+               <updateDate>2016-07-01T00:00:00${#Project#timezone2}:00</updateDate>
                <keyEntreprise>keyentreprise</keyEntreprise>
                <macAddress>mac</macAddress>
                <machineVendor>machinevendor</machineVendor>
@@ -34407,8 +34411,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                   <owner>owner</owner>
                   <md5>md5</md5>
                   <status>UNKNOWN</status>
-                  <creationDate>2016-07-01T01:00:00${#Project#timezone2}:00</creationDate>
-                  <updateDate>2016-07-01T01:00:00${#Project#timezone2}:00</updateDate>
+                  <creationDate>2016-07-01T00:00:00${#Project#timezone}:00</creationDate>
+                  <updateDate>2016-07-01T00:00:00${#Project#timezone}:00</updateDate>
                   <keyEntreprise>keyentreprise</keyEntreprise>
                   <macAddress>mac</macAddress>
                   <machineVendor>machinevendor</machineVendor>
@@ -34606,7 +34610,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
     </con:testCase><con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>16</con:value>
+        <con:value>17</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -56936,7 +56940,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
          <ddrequestLotOp>
             <fileFormat>SEPA</fileFormat>
             <fromDueDate>2016-07-01</fromDueDate>
-            <toDueDate>2016-07-31</toDueDate>
+            <toDueDate>2016-07-10</toDueDate>
          </ddrequestLotOp>
       </ws:createDDRequestLotOp>
    </soapenv:Body>
@@ -57022,6 +57026,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:listDDRequestLotops>
+         <fromDueDate>2016-01-01</fromDueDate>
+         <toDueDate>2016-11-01</toDueDate>
          <status>WAIT</status>
       </ws:listDDRequestLotops>
    </soapenv:Body>
@@ -57034,24 +57040,15 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<ddrequestLotOps>
-               <ddrequestLotOp>
+              <con:configuration><token><![CDATA[<ddrequestLotOp>
                   <fromDueDate>2016-07-01T00:00:00${#Project#timezone2}:00</fromDueDate>
                   <toDueDate>2016-07-31T00:00:00${#Project#timezone2}:00</toDueDate>
                   <ddrequestOp>CREATE</ddrequestOp>
                   <status>WAIT</status>
                   <fileFormat>SEPA</fileFormat>
-               </ddrequestLotOp>
-               <ddrequestLotOp>
-                  <fromDueDate>2016-08-01T00:00:00${#Project#timezone2}:00</fromDueDate>
-                  <toDueDate>2016-08-31T00:00:00${#Project#timezone2}:00</toDueDate>
-                  <ddrequestOp>CREATE</ddrequestOp>
-                  <status>WAIT</status>
-                  <fileFormat>PAYNUM</fileFormat>
-               </ddrequestLotOp>
-            </ddrequestLotOps>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               </ddrequestLotOp>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
-            <con:credentials>
+            <con:assertion type="XPath Match" id="517b3b12-a87f-46bf-9db3-d37465ca7a2b" name="XPath Match"><con:configuration><path>exists(//ddrequestLotOps/ddrequestLotOp)</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -71655,11 +71652,11 @@ and paste that invoice number in the next step.
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>-03</con:value>
+      <con:value>+08</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>-03</con:value>
+      <con:value>+08</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>

@@ -383,16 +383,6 @@
             update ADM_NOTIFICATION set EVENT_EXPRESSION_FILTER=replace(EVENT_EXPRESSION_FILTER,'.doubleValue','')  where EVENT_EXPRESSION_FILTER is not null and EVENT_EXPRESSION_FILTER like '%mv:%';
             update ADM_NOTIFICATION set EVENT_EXPRESSION_FILTER=replace(EVENT_EXPRESSION_FILTER,'.dateValue','')  where EVENT_EXPRESSION_FILTER is not null and EVENT_EXPRESSION_FILTER like '%mv:%';
             update ADM_NOTIFICATION set EVENT_EXPRESSION_FILTER=replace(EVENT_EXPRESSION_FILTER,'.entityReferenceValue','')  where EVENT_EXPRESSION_FILTER is not null and EVENT_EXPRESSION_FILTER like '%mv:%';
-            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.stringValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.longValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.doubleValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.dateValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.entityReferenceValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.stringValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.longValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.doubleValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.dateValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.entityReferenceValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
             update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL=replace(CRITERIA_EL,'.stringValue','')  where CRITERIA_EL is not null and CRITERIA_EL like '%mv:%';
             update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL=replace(CRITERIA_EL,'.longValue','')  where CRITERIA_EL is not null and CRITERIA_EL like '%mv:%';
             update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL=replace(CRITERIA_EL,'.doubleValue','')  where CRITERIA_EL is not null and CRITERIA_EL like '%mv:%';

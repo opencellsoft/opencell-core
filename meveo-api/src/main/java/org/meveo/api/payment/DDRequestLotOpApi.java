@@ -1,5 +1,6 @@
 package org.meveo.api.payment;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -58,9 +59,9 @@ public class DDRequestLotOpApi extends BaseApi {
 		ddrequestLotOpService.create(lot, currentUser);
 	}
 	
-	public DDRequestLotOpsDto listDDRequestLotOps(DDRequestOpStatusEnum status,Provider currentProvider){
+	public DDRequestLotOpsDto listDDRequestLotOps(Date fromDueDate,Date toDueDate,DDRequestOpStatusEnum status,Provider currentProvider){
 		DDRequestLotOpsDto result=new DDRequestLotOpsDto();
-		List<DDRequestLotOp> lots=ddrequestLotOpService.findByStatus(status, currentProvider);
+		List<DDRequestLotOp> lots=ddrequestLotOpService.findByDateStatus(fromDueDate,toDueDate,status, currentProvider);
 		if(lots!=null&&!lots.isEmpty()){
 			for(DDRequestLotOp lot:lots){
 				result.getDdrequestLotOps().add(new DDRequestLotOpDto(lot));

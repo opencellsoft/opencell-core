@@ -26,21 +26,21 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.payments.DunningPlan;
-import org.meveo.model.payments.DunningPlanTransition;
+import org.meveo.model.wf.WFTransition;
+import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.impl.DunningPlanService;
-import org.meveo.service.payments.impl.DunningPlanTransitionService;
+import org.meveo.service.payments.impl.WorkflowService;
+import org.meveo.service.payments.impl.WFTransitionService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
- * Standard backing bean for {@link DunningPlanTransition} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable,
+ * Standard backing bean for {@link WFTransition} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable,
  * their create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
-public class DunningPlanTransitionBean extends BaseBean<DunningPlanTransition> {
+public class DunningPlanTransitionBean extends BaseBean<WFTransition> {
 
     private static final long serialVersionUID = 1L;
 
@@ -48,20 +48,20 @@ public class DunningPlanTransitionBean extends BaseBean<DunningPlanTransition> {
      * Injected @{link DunningPlanTransition} service. Extends {@link PersistenceService}.
      */
     @Inject
-    private DunningPlanTransitionService dunningPlanTransitionService;
+    private WFTransitionService dunningPlanTransitionService;
 
     @Inject
-    private DunningPlanService dunningPlanService;
+    private WorkflowService dunningPlanService;
 
     /** Entity to edit. */
     @Inject
-    private DunningPlan dunningPlan;
+    private Workflow dunningPlan;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
     public DunningPlanTransitionBean() {
-        super(DunningPlanTransition.class);
+        super(WFTransition.class);
     }
 
     /**
@@ -70,7 +70,7 @@ public class DunningPlanTransitionBean extends BaseBean<DunningPlanTransition> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    public DunningPlanTransition initEntity() {
+    public WFTransition initEntity() {
         if (dunningPlan != null && dunningPlan.getId() == null) {
             try {
                 dunningPlanService.create(dunningPlan, getCurrentUser());
@@ -78,8 +78,8 @@ public class DunningPlanTransitionBean extends BaseBean<DunningPlanTransition> {
                 messages.info(new BundleKey("messages", "message.exception.business"));
             }
         }
-        DunningPlanTransition dunningPlanTransition = super.initEntity();
-        dunningPlanTransition.setDunningPlan(dunningPlan);
+        WFTransition dunningPlanTransition = super.initEntity();
+      //  dunningPlanTransition.setDunningPlan(dunningPlan);
         return dunningPlanTransition;
     }
 
@@ -102,7 +102,7 @@ public class DunningPlanTransitionBean extends BaseBean<DunningPlanTransition> {
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
-    protected IPersistenceService<DunningPlanTransition> getPersistenceService() {
+    protected IPersistenceService<WFTransition> getPersistenceService() {
         return dunningPlanTransitionService;
     }
 
@@ -111,8 +111,8 @@ public class DunningPlanTransitionBean extends BaseBean<DunningPlanTransition> {
         try {
             entity = getPersistenceService().findById(id);
             log.info(String.format("Deleting entity %s with id = %s", entity.getClass().getName(), id));
-            entity.getDunningPlan().getTransitions().remove(entity);
-            getPersistenceService().remove(id);
+           // entity.getDunningPlan().getTransitions().remove(entity);
+          //  getPersistenceService().remove(id);
             entity = null;
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {

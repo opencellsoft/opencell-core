@@ -30,26 +30,55 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface MeveoInstanceRs extends IBaseRs {
 
+	/**
+	 * create a meveoInstance by dto
+	 * @param meveoInstanceDto
+	 * @return
+	 */
 	@POST
     @Path("/")
     ActionStatus create(MeveoInstanceDto meveoInstanceDto);
 
+	/**
+	 * update a meveoInstance by dto
+	 * @param meveoInstanceDto
+	 * @return
+	 */
     @PUT
     @Path("/")
     ActionStatus update(MeveoInstanceDto meveoInstanceDto);
 
+    /**
+     * find a meveoInstance by code
+     * @param code
+     * @return
+     */
     @GET
     @Path("/")
     MeveoInstanceResponseDto find(@QueryParam("code") String code);
 
+    /**
+     * remove a meveoInstance by code
+     * @param code
+     * @return
+     */
     @DELETE
     @Path("/{code}")
     ActionStatus remove(@PathParam("code") String code);
 
+    /**
+     * list meveoInstances
+     * @return
+     */
     @GET
     @Path("/list")
     MeveoInstancesResponseDto list();
 
+    /**
+     * createOrUpdate a meveoInstance by dto
+     * @param meveoInstanceDto
+     * @return
+     */
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(MeveoInstanceDto meveoInstanceDto);

@@ -38,86 +38,6 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${AddLinkedInvoice}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${AddLinkedInvoice}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>id=invoicePopuppopupForm:searchField1</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>id=invoicePopuppopupForm:searchField1</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>id=invoicePopuppopupForm:searchField1</td>
-	<td>${InvoiceNumberValue}</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=invoicePopuppopupForm:buttonSearch</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>//tbody[@id='invoicePopuppopupForm:invoicePopupdatatable_data']/tr/td[1]</td>
-	<td>${InvoiceNumberValue}</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>//tbody[@id='invoicePopuppopupForm:invoicePopupdatatable_data']/tr/td[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForTextPresent</td>
-	<td>${InvoiceNumberValue}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>${InvoiceNumberValue}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=invoicePopuppopupForm:buttonSearch</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>//tbody[@id='invoicePopuppopupForm:invoicePopupdatatable_data']/tr/td[1]</td>
-	<td>${InvoiceNumberValue}</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//tbody[@id='invoicePopuppopupForm:invoicePopupdatatable_data']/tr/td[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForNotVisible</td>
-	<td>id=invoicePopup</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>//td[2]</td>
-	<td>${InvoiceNumberValue}</td>
-</tr>
-<tr>
-	<td>verifyText</td>
-	<td>//td[2]</td>
-	<td>${InvoiceNumberValue}</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
 	<td>${SelectInvoiceType}</td>
 	<td></td>
 </tr>
@@ -262,6 +182,91 @@
 	<td></td>
 </tr>
 <tr>
+	<td>if</td>
+	<td>${AddLinkedInvoiceBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${AddLinkedInvoice}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${AddLinkedInvoice}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=invoicePopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>id=invoicePopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=invoicePopuppopupForm:searchField1</td>
+	<td>${InvoiceNumberValue}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=invoicePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='invoicePopuppopupForm:invoicePopupdatatable_data']/tr/td[1]</td>
+	<td>${InvoiceNumberValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//tbody[@id='invoicePopuppopupForm:invoicePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>${InvoiceNumberValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${InvoiceNumberValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=invoicePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='invoicePopuppopupForm:invoicePopupdatatable_data']/tr/td[1]</td>
+	<td>${InvoiceNumberValue}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='invoicePopuppopupForm:invoicePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=invoicePopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//td[2]</td>
+	<td>${InvoiceNumberValue}</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//td[2]</td>
+	<td>${InvoiceNumberValue}</td>
+</tr>
+<tr>
 	<td>assertElementPresent</td>
 	<td>${ImportFromLinkedInvoices}</td>
 	<td></td>
@@ -285,6 +290,11 @@
 	<td>verifyText</td>
 	<td>//*[contains(@id, 'subCategories_data')]/tr/td</td>
 	<td>${SubcategoryValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -339,7 +349,7 @@
 <tr>
 	<td>type</td>
 	<td>${AmtWithoutTaxes}</td>
-	<td>${AmountWithoutTaxesValue}</td>
+	<td>${AmountWithoutTaxes1Value}</td>
 </tr>
 <tr>
 	<td>endIf</td>
