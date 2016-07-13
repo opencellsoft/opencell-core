@@ -2324,5 +2324,224 @@ $BODY$
 			<column name="image_content_type" type="VARCHAR(50)" />
 		</addColumn>
 	</changeSet>
+
+	<changeSet id="#1839_20160713_channel" author="EdwardLegaspi">
+		<createTable tableName="cat_channel">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="provider_id" type="BIGINT" />
+			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+		</createTable>
+		
+		<createSequence sequenceName="cat_channel_seq" />
+		<addPrimaryKey columnNames="id" constraintName="cat_channel_pkey"
+			tableName="cat_channel" />
+		<addUniqueConstraint columnNames="code, provider_id" constraintName="uk_cat_channel" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="cat_channel" />
+		<addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="cat_channel" constraintName="fk_cat_channel_crm_provider"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="cat_channel" constraintName="fk_cat_channel_adm_user_creator"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="cat_channel" constraintName="fk_cat_channel_adm_user_updater"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+
+	<changeSet id="#1839_20160713_cat_business_product_model"
+		author="EdwardLegaspi">
+		<createTable tableName="cat_business_product_model">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addPrimaryKey columnNames="id"
+			constraintName="pk_cat_business_product_model" tableName="cat_business_product_model" />
+	</changeSet>
+
+	<changeSet id="#1839_20160713_cat_product_offering" author="EdwardLegaspi">
+		<createTable tableName="cat_product_offering">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="provider_id" type="BIGINT" />
+			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="type" type="VARCHAR(20)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="name" type="VARCHAR(100)" />
+			<column name="image" type="oid" />
+			<column name="model_code" type="VARCHAR(60)" />
+			<column name="valid_from" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+			<column name="valid_to" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+			<column name="life_cycle_status" type="VARCHAR(60)" />			
+		</createTable>
+
+		<createSequence sequenceName="cat_product_offering_seq" />
+		<addPrimaryKey columnNames="id" constraintName="cat_product_offering_pkey"
+			tableName="cat_product_offering" />
+		<addUniqueConstraint columnNames="code, provider_id"
+			constraintName="uk_cat_product_offering" deferrable="false" disabled="false"
+			initiallyDeferred="false" tableName="cat_product_offering" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="cat_product_offering" constraintName="fk_cat_product_offering_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="creator_id"
+			baseTableName="cat_product_offering" constraintName="fk_cat_product_offering_adm_user_creator"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<addForeignKeyConstraint baseColumnNames="updater_id"
+			baseTableName="cat_product_offering" constraintName="fk_cat_product_offering_adm_user_updater"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+	
+	<changeSet id="#1839_20160713_digital_resource" author="EdwardLegaspi">
+		<createTable tableName="cat_digital_resource">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="provider_id" type="BIGINT" />
+			<column name="version" type="INT4" />
+			<column name="uri" type="VARCHAR(255)" />
+			<column name="mime_type" type="VARCHAR(50)" />
+			<column name="product_offering_id" type="BIGINT" />
+		</createTable>
+
+		<createSequence sequenceName="cat_digital_resource_seq" />
+		<addPrimaryKey columnNames="id" constraintName="cat_digital_resource_pkey"
+			tableName="cat_digital_resource" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="cat_digital_resource" constraintName="fk_cat_digital_resource_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="product_offering_id"
+			baseTableName="cat_digital_resource" constraintName="fk_cat_digital_resource_product_offering"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
+	</changeSet>
+
+	<changeSet id="#1839_20160713_cat_product_template" author="EdwardLegaspi">
+		<addColumn tableName="cat_product_offering">
+			<column name="one_shot_charge_tmpl_id" type="BIGINT"></column>
+			<column name="business_product_model_id" type="BIGINT"></column>
+		</addColumn>
+		
+		<addForeignKeyConstraint baseColumnNames="one_shot_charge_tmpl_id" baseTableName="cat_product_offering" constraintName="fk_cat_product_offering_one_shot_charge_templ"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_one_shot_charge_templ" />
+        <addForeignKeyConstraint baseColumnNames="business_product_model_id" baseTableName="cat_product_offering" constraintName="fk_cat_product_offering_business_product_model"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_business_product_model" />
+		
+		<createTable tableName="cat_product_wallet_template">
+            <column name="product_template_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="wallet_template_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="indx" type="INT4">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+	</changeSet>
+
+	<changeSet id="#1839_20160713_cat_offer_product_template"
+		author="EdwardLegaspi">
+		<createTable tableName="cat_offer_product_template">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="provider_id" type="BIGINT" />
+			<column name="version" type="INT4" />
+			<column name="offer_template_id" type="BIGINT" />
+			<column name="product_template_id" type="BIGINT" />
+			<column name="mandatory" type="BOOL" />
+		</createTable>
+
+		<createSequence sequenceName="cat_offer_product_template_seq" />
+		<addPrimaryKey columnNames="id"
+			constraintName="cat_offer_product_template_pkey" tableName="cat_offer_product_template" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="cat_offer_product_template" constraintName="fk_cat_offer_product_template_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="offer_template_id"
+			baseTableName="cat_offer_product_template" constraintName="fk_cat_offer_product_template_offer_template"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+		<addForeignKeyConstraint baseColumnNames="product_template_id"
+			baseTableName="cat_offer_product_template" constraintName="fk_cat_offer_product_template_product_offering"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
+	</changeSet>
+
+	<changeSet id="#1839_20160713_cat_bundle_product_template"
+		author="EdwardLegaspi">
+		<createTable tableName="cat_bundle_product_template">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="provider_id" type="BIGINT" />
+			<column name="version" type="INT4" />
+			<column name="product_template_id" type="BIGINT" />
+			<column name="bundle_template_id" type="BIGINT" />
+			<column name="quantity" type="INT4" />
+		</createTable>
+
+		<createSequence sequenceName="cat_bundle_product_template_seq" />
+		<addPrimaryKey columnNames="id" constraintName="cat_bundle_product_template_pkey"
+			tableName="cat_bundle_product_template" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="cat_bundle_product_template" constraintName="fk_cat_bundle_product_template_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="product_template_id"
+			baseTableName="cat_bundle_product_template" constraintName="fk_cat_bundle_product_template_product_offering_prod"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
+		<addForeignKeyConstraint baseColumnNames="bundle_template_id"
+			baseTableName="cat_bundle_product_template" constraintName="fk_cat_bundle_product_template_cat_product_offering_bundle"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
+	</changeSet>
+	
+	<changeSet id="#1839_20160713_cat_offer_template_category"
+		author="EdwardLegaspi">
+		<addColumn tableName="cat_offer_template_category">
+			<column name="product_offering_id" type="BIGINT"></column>
+		</addColumn>
+		
+		<addForeignKeyConstraint baseColumnNames="product_offering_id"
+			baseTableName="cat_offer_template_category" constraintName="fk_cat_offer_template_category_product_offering"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
+	</changeSet>
 	    	
 </databaseChangeLog>

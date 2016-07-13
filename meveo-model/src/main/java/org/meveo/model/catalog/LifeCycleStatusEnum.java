@@ -1,4 +1,4 @@
-package org.meveo.model.catalog.product;
+package org.meveo.model.catalog;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -7,14 +7,9 @@ import java.util.Set;
  * @author Edward P. Legaspi
  */
 public enum LifeCycleStatusEnum {
-	IN_STUDY("IN_STUDY", "enum.LifeCycleStatusEnum.IN_STUDY"), 
-	IN_DESIGN("IN_DESIGN", "enum.LifeCycleStatusEnum.IN_DESIGN"), 
-	IN_TEST("IN_TEST", "enum.LifeCycleStatusEnum.IN_TEST"), 
-	ACTIVE("ACTIVE", "enum.LifeCycleStatusEnum.ACTIVE"), 
-	LAUNCHED("LAUNCHED", "enum.LifeCycleStatusEnum.LAUNCHED"), 
-	RETIRED("RETIRED", "enum.LifeCycleStatusEnum.RETIRED"), 
-	OBSOLETE("OBSOLETE", "enum.LifeCycleStatusEnum.OBSOLETE"), 
-	REJECTED("REJECTED", "enum.LifeCycleStatusEnum.REJECTED");
+	IN_STUDY("IN_STUDY", "enum.LifeCycleStatusEnum.IN_STUDY"), IN_DESIGN("IN_DESIGN", "enum.LifeCycleStatusEnum.IN_DESIGN"), IN_TEST("IN_TEST", "enum.LifeCycleStatusEnum.IN_TEST"), ACTIVE(
+			"ACTIVE", "enum.LifeCycleStatusEnum.ACTIVE"), LAUNCHED("LAUNCHED", "enum.LifeCycleStatusEnum.LAUNCHED"), RETIRED("RETIRED", "enum.LifeCycleStatusEnum.RETIRED"), OBSOLETE(
+			"OBSOLETE", "enum.LifeCycleStatusEnum.OBSOLETE"), REJECTED("REJECTED", "enum.LifeCycleStatusEnum.REJECTED");
 
 	private String value;
 	private String label;
@@ -164,9 +159,9 @@ public enum LifeCycleStatusEnum {
 
 		return null;
 	}
-	
+
 	public String getLabel() {
 		return label;
 	}
-	
+
 }

@@ -1,4 +1,4 @@
-package org.meveo.model.catalog.product;
+package org.meveo.model.catalog;
 
 import java.sql.Blob;
 import java.util.Date;
@@ -6,15 +6,16 @@ import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -23,7 +24,6 @@ import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.catalog.OfferTemplateCategory;
 
 /**
  * @author Edward P. Legaspi
@@ -33,6 +33,7 @@ import org.meveo.model.catalog.OfferTemplateCategory;
 @Table(name = "CAT_PRODUCT_OFFERING", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_PRODUCT_OFFERING_SEQ")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
 public abstract class ProductOffering extends BusinessEntity {
 
 	private static final long serialVersionUID = 6877386866687396135L;
@@ -40,8 +41,7 @@ public abstract class ProductOffering extends BusinessEntity {
 	@Column(name = "NAME", length = 100)
 	private String name;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "OFFER_TEMPLATE_CATEGORY_ID")
+	@OneToMany(mappedBy = "productOffering")
 	private List<OfferTemplateCategory> offerTemplateCategories;
 
 	@Column(name = "MODEL_CODE", length = 60)
@@ -60,8 +60,7 @@ public abstract class ProductOffering extends BusinessEntity {
 	@Basic(fetch = FetchType.LAZY)
 	private Blob image;
 
-	@ManyToOne
-	@JoinColumn(name = "DIGITAL_RESOURCE_ID")
+	@OneToMany(mappedBy = "productOffering")
 	private List<DigitalResource> attachments;
 
 	@Enumerated(EnumType.STRING)

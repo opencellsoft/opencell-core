@@ -32,8 +32,7 @@ import org.meveo.model.ObservableEntity;
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "OFFER_CATEGORY")
 @ExportIdentifier({ "code", "provider" })
-@Table(name = "CAT_OFFER_TEMPLATE_CATEGORY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE",
-		"PROVIDER_ID" }))
+@Table(name = "CAT_OFFER_TEMPLATE_CATEGORY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_CATEGORY_SEQ")
 public class OfferTemplateCategory extends BusinessCFEntity {
 
@@ -59,6 +58,10 @@ public class OfferTemplateCategory extends BusinessCFEntity {
 
 	@OneToMany(mappedBy = "offerTemplateCategory")
 	private List<OfferTemplateCategory> children;
+
+	@ManyToOne
+	@JoinColumn(name = "PRODUCT_OFFERING_ID")
+	private ProductOffering productOffering;
 
 	@Column(name = "LEVEL")
 	private int level = 1;
@@ -141,6 +144,14 @@ public class OfferTemplateCategory extends BusinessCFEntity {
 
 	public void setChildren(List<OfferTemplateCategory> children) {
 		this.children = children;
+	}
+
+	public ProductOffering getProductOffering() {
+		return productOffering;
+	}
+
+	public void setProductOffering(ProductOffering productOffering) {
+		this.productOffering = productOffering;
 	}
 
 }

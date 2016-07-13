@@ -1,4 +1,4 @@
-package org.meveo.model.catalog.product;
+package org.meveo.model.catalog;
 
 import java.util.List;
 
@@ -10,9 +10,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OrderColumn;
-
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.WalletTemplate;
 
 /**
  * @author Edward P. Legaspi

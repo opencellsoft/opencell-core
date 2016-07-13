@@ -1,4 +1,4 @@
-package org.meveo.model.catalog.product;
+package org.meveo.model.catalog;
 
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;

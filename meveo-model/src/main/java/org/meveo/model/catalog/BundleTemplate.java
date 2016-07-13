@@ -1,4 +1,4 @@
-package org.meveo.model.catalog.product;
+package org.meveo.model.catalog;
 
 import java.util.List;
 
