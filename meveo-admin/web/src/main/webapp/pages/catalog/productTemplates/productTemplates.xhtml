@@ -1,0 +1,62 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{productTemplateListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
+
+    <ui:define name="body">
+    	<p:panelGrid columns="3" layout="grid">
+    		<p:panelGrid columns="1">
+    			<p:panel>
+	    			<span class="fa fa-plus-circle"> </span>
+		    		<p:commandLink id="newProduct"  value="#{messages['productTemplate.newProduct']}"/>
+	    		</p:panel>
+	    		<p:panel>
+		    		<span class="fa fa-plus-circle"> </span>
+		    		<p:commandLink id="createBundle" value="#{messages['productTemplate.createBundle']}" />
+	    		</p:panel>
+    		</p:panelGrid>
+    		<p:panelGrid columns="2">
+    			<span class="fa fa-check-square-o"></span>
+    			<h:outputText value="#{messages['productTemplate.activeProductsNum']}"/>
+    			<span class="fa fa-close"></span>
+	    		<h:outputText value="#{messages['productTemplate.deactivatedProductsNum']}"/>
+	    		<span class="fa fa-exclamation-circle"></span>
+	    		<h:outputText value="#{messages['productTemplate.expiringProductsNum']}"/>
+    		</p:panelGrid>
+    		<p:panelGrid columns="1">
+    			<p:panelGrid columns="2">
+    				<span class="fa fa-share-square-o"></span>
+    				<h:outputText value="#{messages['productTemplate.selectedProductsfoExportNum']}"/>
+    			</p:panelGrid>
+    			<p:panelGrid columns="1">
+    				<p:panelGrid columns="2">
+    				<h:outputText value="#{messages['productTemplate.exportTo']}"/>
+    				<p:selectOneMenu id="exportToList" value="#{productTemplateListBean.meveoInstanceToExport}">
+			            <f:selectItem itemLabel="" />
+			            <f:selectItems value="#{productTemplateListBean.meveoInstances}" var="mi" itemValue="#{mi}" itemLabel="#{mi.productName}" />
+			        </p:selectOneMenu>
+			        </p:panelGrid>
+    			</p:panelGrid>
+    		</p:panelGrid>
+    	</p:panelGrid>
+    	<p:dataGrid var="prod" value="#{productTemplateListBean.productTemplates}" columns="3" layout="grid" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                rowsPerPageTemplate="#{rowsPerPage}">
+    		<p:panelGrid columns="3">
+    		</p:panelGrid>
+    	</p:dataGrid>
+	</ui:define>
+
+</ui:composition>
