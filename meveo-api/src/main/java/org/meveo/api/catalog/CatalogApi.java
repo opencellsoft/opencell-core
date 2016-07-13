@@ -17,6 +17,7 @@ import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -208,16 +209,16 @@ public class CatalogApi extends BaseApi {
 			
 			// load the prices form the product template
 			ProductTemplate productTemplate = offerProductTemplate.getProductTemplate();
-			OneShotChargeTemplate oneShotChargeTemplate = productTemplate.getOneShotChargeTemplate();
-			String chargeCode = oneShotChargeTemplate.getCode();
+			ProductChargeTemplate productChargeTemplate = productTemplate.getProductChargeTemplate();
+			String chargeCode = productChargeTemplate.getCode();
 
 			Price price = new Price();
 			price.setDutyFreeAmount(new BigDecimal(0));
 			price.setTaxIncludedAmount(new BigDecimal(0));
 
-			if (oneShotChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
-					&& oneShotChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
-				price.setTaxRate(oneShotChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
+			if (productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
+					&& productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
+				price.setTaxRate(productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
 			}
 			
 			List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(), chargeCode, currentUser.getProvider());
@@ -228,7 +229,7 @@ public class CatalogApi extends BaseApi {
 					price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(offerPricePlans.get(0).getAmountWithTax()));
 				}
 			} else {
-				List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, oneShotChargeTemplate.getCode(), currentUser.getProvider());
+				List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, productChargeTemplate.getCode(), currentUser.getProvider());
 				if (pricePlans != null && pricePlans.size() > 0) {
 					price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
 					if (!currentUser.getProvider().isEntreprise()) {

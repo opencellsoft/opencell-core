@@ -367,7 +367,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		TradingCountry country = chargeInstance.getCountry();
 		if (country == null) {
-			throw new IncorrectChargeTemplateException("No country exists for billingAccount id=" + chargeInstance.getSubscription().getUserAccount().getBillingAccount().getId());
+			throw new IncorrectChargeTemplateException("No country exists for billingAccount id=" + chargeInstance.getUserAccount().getBillingAccount().getId());
 		}
 
 		Long countryId = country.getId();
@@ -384,7 +384,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
 		}
 
-		WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeTemplate.getCode(), subscription, chargeInstance,
+		WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeTemplate.getCode(), chargeInstance,
 				ApplicationTypeEnum.PUNCTUAL, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency,
 				countryId, tax.getPercent(), null, null, invoiceSubCategory, chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), null,
 				null, null, false);
@@ -505,12 +505,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		TradingCurrency currency = chargeInstance.getCurrency();
 		if (currency == null) {
 			throw new IncorrectChargeTemplateException("no currency exists for customerAccount id="
-					+ chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getId());
+					+ chargeInstance.getUserAccount().getBillingAccount().getCustomerAccount().getId());
 		}
 
 		TradingCountry country = chargeInstance.getCountry();
 		if (country == null) {
-			throw new IncorrectChargeTemplateException("no country exists for billingAccount id=" + chargeInstance.getSubscription().getUserAccount().getBillingAccount().getId());
+			throw new IncorrectChargeTemplateException("no country exists for billingAccount id=" + chargeInstance.getUserAccount().getBillingAccount().getId());
 		}
 
 		Long countryId = country.getId();
@@ -530,7 +530,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			applicationDate = nextapplicationDate;
 		}
 		if (!preRateOnly) {
-			result = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(), chargeInstance.getServiceInstance().getSubscription(), chargeInstance,
+			result = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(), chargeInstance,
 					ApplicationTypeEnum.PRORATA_SUBSCRIPTION, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency,
 					countryId, tax.getPercent(), null, nextapplicationDate, recurringChargeTemplate.getInvoiceSubCategory(), chargeInstance.getCriteria1(),
 					chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), applicationDate, DateUtils.addDaysToDate(nextapplicationDate, -1), null, false);
@@ -630,13 +630,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			TradingCurrency currency = chargeInstance.getCurrency();
 			if (currency == null) {
 				throw new IncorrectChargeTemplateException("no currency exists for customerAccount id="
-						+ chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getId());
+						+ chargeInstance.getUserAccount().getBillingAccount().getCustomerAccount().getId());
 			}
 
 			TradingCountry country = chargeInstance.getCountry();
 			if (country == null) {
 				throw new IncorrectChargeTemplateException("no country exists for billingAccount id="
-						+ chargeInstance.getSubscription().getUserAccount().getBillingAccount().getId());
+						+ chargeInstance.getUserAccount().getBillingAccount().getId());
 			}
 			Long countryId = country.getId();
 
@@ -652,8 +652,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
 			}
 
-			WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(), chargeInstance.getServiceInstance()
-					.getSubscription(), chargeInstance, ApplicationTypeEnum.PRORATA_TERMINATION, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance
+			WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(),
+					 chargeInstance, ApplicationTypeEnum.PRORATA_TERMINATION, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance
 					.getAmountWithTax(), inputQuantity, quantity, currency, countryId, tax.getPercent(), null, nextapplicationDate, invoiceSubCategory, chargeInstance
 					.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), periodStart, DateUtils.addDaysToDate(nextapplicationDate, -1),
 					ChargeApplicationModeEnum.REIMBURSMENT, false);
@@ -718,12 +718,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		TradingCurrency currency = chargeInstance.getCurrency();
 		if (currency == null) {
 			throw new IncorrectChargeTemplateException("No currency exists for customerAccount id="
-					+ chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getId());
+					+ chargeInstance.getUserAccount().getBillingAccount().getCustomerAccount().getId());
 		}
 
 		TradingCountry country = chargeInstance.getCountry();
 		if (country == null) {
-			throw new IncorrectChargeTemplateException("No country exists for billingAccount id=" + chargeInstance.getSubscription().getUserAccount().getBillingAccount().getId());
+			throw new IncorrectChargeTemplateException("No country exists for billingAccount id=" + chargeInstance.getUserAccount().getBillingAccount().getId());
 		}
 		Long countryId = country.getId();
 
@@ -757,8 +757,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			
 			log.debug("applyReccuringCharge : nextapplicationDate={}, param2={} -> quantity={}", nextapplicationDate, param2, quantity);
 
-			WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(), chargeInstance.getServiceInstance()
-					.getSubscription(), chargeInstance, reimbursement ? ApplicationTypeEnum.PRORATA_TERMINATION : ApplicationTypeEnum.RECURRENT, applicationDate, chargeInstance
+			WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(), chargeInstance,
+					reimbursement ? ApplicationTypeEnum.PRORATA_TERMINATION : ApplicationTypeEnum.RECURRENT, applicationDate, chargeInstance
 					.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency, countryId, tax.getPercent(), null, nextapplicationDate,
 					invoiceSubCategory, chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), applicationDate, DateUtils.addDaysToDate(
 							nextapplicationDate, -1), reimbursement ? ChargeApplicationModeEnum.REIMBURSMENT : ChargeApplicationModeEnum.SUBSCRIPTION, forSchedule);
@@ -804,12 +804,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		TradingCurrency currency = chargeInstance.getCurrency();
 		if (currency == null) {
 			throw new IncorrectChargeTemplateException("No currency exists for customerAccount id="
-					+ chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getId());
+					+ chargeInstance.getUserAccount().getBillingAccount().getCustomerAccount().getId());
 		}
 
 		TradingCountry country = chargeInstance.getCountry();
 		if (country == null) {
-			throw new IncorrectChargeTemplateException("No country exists for billingAccount id=" + chargeInstance.getSubscription().getUserAccount().getBillingAccount().getId());
+			throw new IncorrectChargeTemplateException("No country exists for billingAccount id=" + chargeInstance.getUserAccount().getBillingAccount().getId());
 		}
 		Long countryId = country.getId();
 
@@ -871,7 +871,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				quantity = quantity.negate();
 			}
 
-			WalletOperation walletOperation = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(), chargeInstance.getServiceInstance().getSubscription(),
+			WalletOperation walletOperation = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(), 
 					chargeInstance, reimbursement ? ApplicationTypeEnum.PRORATA_TERMINATION : applicationTypeEnum, nextapplicationDate, chargeInstance.getAmountWithoutTax(),
 					chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency, countryId, tax.getPercent(), null, nextapplicationDate, invoiceSubCategory,
 					chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), applicationDate, DateUtils.addDaysToDate(nextapplicationDate, -1),
@@ -924,12 +924,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		TradingCurrency currency = chargeInstance.getCurrency();
 		if (currency == null) {
 			throw new IncorrectChargeTemplateException("no currency exists for customerAccount id="
-					+ chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getId());
+					+ chargeInstance.getUserAccount().getBillingAccount().getCustomerAccount().getId());
 		}
 
 		TradingCountry country = chargeInstance.getCountry();
 		if (country == null) {
-			throw new IncorrectChargeTemplateException("no country exists for billingAccount id=" + chargeInstance.getSubscription().getUserAccount().getBillingAccount().getId());
+			throw new IncorrectChargeTemplateException("no country exists for billingAccount id=" + chargeInstance.getUserAccount().getBillingAccount().getId());
 		}
 		Long countryId = country.getId();
 
@@ -977,8 +977,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			String param2 = sdf.format(applicationDate) + " - " + sdf.format(endDate);
 			log.debug("applyReccuringCharge : nextapplicationDate={}, param2={}", nextapplicationDate, param2);
 
-			WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(), chargeInstance.getServiceInstance()
-					.getSubscription(), chargeInstance, type, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity,
+			WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(), 
+					 chargeInstance, type, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity,
 					currency, countryId, tax.getPercent(), null, nextapplicationDate, invoiceSubCategory, chargeInstance.getCriteria1(), chargeInstance.getCriteria2(),
 					chargeInstance.getCriteria3(), applicationDate, endDate, ChargeApplicationModeEnum.AGREEMENT, false);
 
@@ -1161,7 +1161,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		log.debug("chargeWalletOperation on chargeInstanceId:{}", op.getChargeInstance().getId());
 		//case of scheduled operation (for revenue recognition)
 		if(op.getChargeInstance().getId()==null){
-			op.setWallet(op.getChargeInstance().getSubscription().getUserAccount().getWallet());
+			op.setWallet(op.getChargeInstance().getUserAccount().getWallet());
 			log.debug("chargeWalletOperation is create schedule on wallet {}", op.getWallet());
 			result.add(op);
 			create(op, creator);
@@ -1179,7 +1179,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			result = chargeOnWalletIds(walletIds, op, creator, provider);
 
 		} else if (!op.getChargeInstance().getPrepaid()) {
-			op.setWallet(op.getChargeInstance().getSubscription().getUserAccount().getWallet());
+			op.setWallet(op.getChargeInstance().getUserAccount().getWallet());
 			log.debug("chargeWalletOperation is postpaid, set wallet to {}", op.getWallet());
 			result.add(op);
 			create(op, creator);

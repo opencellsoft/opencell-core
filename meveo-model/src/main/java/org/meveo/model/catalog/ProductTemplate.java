@@ -21,24 +21,25 @@ public class ProductTemplate extends ProductOffering {
 	private static final long serialVersionUID = 6380565206599659432L;
 
 	@ManyToOne
-	@JoinColumn(name = "ONE_SHOT_CHARGE_TMPL_ID")
-	private OneShotChargeTemplate oneShotChargeTemplate;
+	@JoinColumn(name = "PRODUCT_CHARGE_TMPL_ID")
+	private ProductChargeTemplate productChargeTemplate;
 
 	@ManyToOne
 	@JoinColumn(name = "BUSINESS_PRODUCT_MODEL_ID")
 	private BusinessProductModel businessProductModel;
 
+	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAT_PRODUCT_WALLET_TEMPLATE", joinColumns = @JoinColumn(name = "PRODUCT_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_TEMPLATE_ID"))
 	@OrderColumn(name = "INDX")
 	private List<WalletTemplate> walletTemplates;
 
-	public OneShotChargeTemplate getOneShotChargeTemplate() {
-		return oneShotChargeTemplate;
+	public ProductChargeTemplate getProductChargeTemplate() {
+		return productChargeTemplate;
 	}
 
-	public void setOneShotChargeTemplate(OneShotChargeTemplate oneShotChargeTemplate) {
-		this.oneShotChargeTemplate = oneShotChargeTemplate;
+	public void setProductChargeTemplate(ProductChargeTemplate oneShotChargeTemplate) {
+		this.productChargeTemplate = oneShotChargeTemplate;
 	}
 
 	public BusinessProductModel getBusinessProductModel() {

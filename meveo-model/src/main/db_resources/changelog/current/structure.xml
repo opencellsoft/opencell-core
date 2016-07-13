@@ -2450,12 +2450,12 @@ $BODY$
 
 	<changeSet id="#1839_20160713_cat_product_template" author="EdwardLegaspi">
 		<addColumn tableName="cat_product_offering">
-			<column name="one_shot_charge_tmpl_id" type="BIGINT"></column>
+			<column name="product_charge_tmpl_id" type="BIGINT"></column>
 			<column name="business_product_model_id" type="BIGINT"></column>
 		</addColumn>
 		
-		<addForeignKeyConstraint baseColumnNames="one_shot_charge_tmpl_id" baseTableName="cat_product_offering" constraintName="fk_cat_product_offering_one_shot_charge_templ"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_one_shot_charge_templ" />
+		<addForeignKeyConstraint baseColumnNames="product_charge_tmpl_id" baseTableName="cat_product_offering" constraintName="fk_cat_product_offering_product_charge_templ"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_charge_templ" />
         <addForeignKeyConstraint baseColumnNames="business_product_model_id" baseTableName="cat_product_offering" constraintName="fk_cat_product_offering_business_product_model"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_business_product_model" />
 		
@@ -2543,5 +2543,46 @@ $BODY$
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
 	</changeSet>
-	    	
+	
+	<changeSet id="#1839_20160713_billing_charge_instance"
+		author="SebastienMichea">
+		<addColumn tableName="billing_charge_instance">
+			<column name="user_account_id" type="BIGINT"></column>
+			<column name="offer_template_id" type="BIGINT"></column>
+		</addColumn>
+		
+		<addForeignKeyConstraint baseColumnNames="user_account_id"
+			baseTableName="billing_charge_instance" constraintName="fk_chrg_instance_ua"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+		<addForeignKeyConstraint baseColumnNames="offer_template_id"
+			baseTableName="billing_charge_instance" constraintName="fk_chrg_instance_offer"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+	</changeSet>    	
+	
+	<changeSet id="#1839_20160713_cat_product_charge_templ"
+		author="SebastienMichea">
+		<createTable tableName="cat_product_charge_templ">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+       <addPrimaryKey columnNames="id" constraintName="cat_product_charge_templ_pkey" tableName="cat_product_charge_templ" />
+ 	</changeSet>
+ 	
+ 	<changeSet id="#1839_20160713_billing_product_charge_inst"
+		author="SebastienMichea">
+        <createTable tableName="billing_product_charge_inst">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="product_template_id" type="BIGINT" />
+        </createTable>
+ 	        <addForeignKeyConstraint baseColumnNames="product_template_id" baseTableName="cat_product_offering" constraintName="fk_productci_prodtempl"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
+    </changeSet>
+ 
+ 	
+ 	
 </databaseChangeLog>

@@ -55,6 +55,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,6 +118,16 @@ public class ChargeInstance extends BusinessEntity {
 	@JoinColumn(name = "SELLER_ID")
 	private Seller seller;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "USER_ACCOUNT_ID")
+	protected UserAccount userAccount;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "OFFER_TEMPLATE_ID")
+	protected OfferTemplate offerTemplate;
+
+	
+	///Might be null, for productCharges for instance
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SUBSCRIPTION_ID")
 	protected Subscription subscription;
@@ -280,12 +291,34 @@ public class ChargeInstance extends BusinessEntity {
 		this.seller = seller;
 	}
 
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
+
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
+	}
+
+	public OfferTemplate getOfferTemplate() {
+		return offerTemplate;
+	}
+
+	public void setOfferTemplate(OfferTemplate offerTemplate) {
+		this.offerTemplate = offerTemplate;
+	}
+
 	public Subscription getSubscription() {
 		return subscription;
 	}
 
 	public void setSubscription(Subscription subscription) {
 		this.subscription = subscription;
+		if(subscription.getUserAccount()!=null){
+			this.setUserAccount(subscription.getUserAccount());
+		}
+		if(subscription.getOffer()!=null){
+			this.setOfferTemplate(subscription.getOffer());
+		}
 	}
 
 	public TradingCurrency getCurrency() {
@@ -319,11 +352,5 @@ public class ChargeInstance extends BusinessEntity {
 	public void setPrepaid(Boolean prepaid) {
 		this.prepaid = prepaid;
 	}
-
-
-
-
-
-	
 
 }
