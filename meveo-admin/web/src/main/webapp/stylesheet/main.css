@@ -617,3 +617,39 @@ vertical-align:top !important;
 form.formNoBottomBorder {
 	border-bottom: none;
 }
+
+.ListNoStyle { list-style-type: none; }
+/* Paddings */
+.NoPadding{padding:0px !important;}
+.PaddingTopPercent10{ padding-top: 10%;}
+.Padding1{ padding:1x; box-sizing:border-box;}
+.Padding3{ padding:3px; box-sizing:border-box;}
+.Padding5{ padding:10.2px; box-sizing:border-box;}
+.Padding10{ padding:10px; box-sizing:border-box;}
+.Padding15{ padding:15px; box-sizing:border-box;}
+.Padding20{ padding:20px; box-sizing:border-box;}
+.PadLeftRightZero{padding-left:0px; padding-right:0px;}                     /* NEW */
+.PadTopBottomZero{padding-top:0px; padding-bottom:0px;}  
+.Wid100, table.Wid100 tbody, table.Wid100 tr { width: 100%; }
+.Wid70 { width: 70%; }
+.Wid60 { width: 60%; }
+.Wid55 { width: 55%; }
+.Wid45 { width: 45%; }
+.Wid40 { width: 40%; }
+.Wid30 { width: 30%; }
+.Wid20 { width: 20%; }
+.Wid10 { width: 10%; }
+.Wid5 { width: 5%; }
+.dataGrid .ui-paginator { text-align: right !important; }
+.dataGrid .ui-paginator span { text-align: left !important; }
+.ui-datagrid-blank .ui-datagrid-content { border: none !important; }
+.dataList .ui-datalist-content { border: none; background: transparent; background-image: none; }
+.panelGrid td { padding: 2px 0px !important; }
+.FRight { float: right; }
+.FLeft { float: left; }
+.VAlignTop { vertical-align: top; }
+
+/* Text Aligns */
+.TexAlCenter{ text-align:center;}
+.TexAlLeft{ text-align:left;}
+.TexAlRight{ text-align:right !important;}
