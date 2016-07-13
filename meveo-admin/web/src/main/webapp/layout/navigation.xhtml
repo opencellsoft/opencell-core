@@ -183,12 +183,14 @@
 			<p:menuitem id="offerTemplates" outcome="offerTemplates"
 				value="#{messages['menu.offerTemplates']}" />
 
-			<p:submenu id="marketingManager"
-				rendered="#{identity.hasPermission('marketing','marketingCatalogManager')}"
-				label="#{messages['menu.marketingManager']}">
-				<p:menuitem id="mmCatalogView" outcome="mmCatalogView"
-					value="#{messages['menu.marketingManager.catalogView']}" />
-			</p:submenu>
+<!-- 			<p:submenu id="marketingManager" -->
+<!-- 				rendered="#{identity.hasPermission('marketing','marketingCatalogManager')}" -->
+<!-- 				label="#{messages['menu.marketingManager']}"> -->
+				
+<!-- 			</p:submenu> -->
+
+			<p:menuitem id="mmCatalogView" outcome="mmCatalogView"
+				value="#{messages['menu.marketingManager.catalogView']}" />
 
 			<p:separator />
 
