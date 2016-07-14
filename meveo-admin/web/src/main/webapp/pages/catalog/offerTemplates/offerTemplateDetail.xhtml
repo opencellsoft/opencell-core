@@ -46,6 +46,8 @@
 						updateConfirmationMessage="#{offerTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
 						<hftl:formField label="#{messages['offerTemplate.code']}"
 							field="code" required="true" validateUnique="true" />
+						<hftl:formField label="#{messages['offerTemplate.name']}"
+							field="name" />
 						<hftl:formField label="#{messages['offerTemplate.description']}"
 							field="description" useConverter="false" id="description"/>
 						<hftl:formField id="offerTemplateCategoryId"

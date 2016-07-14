@@ -8,7 +8,10 @@
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
-
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{offerTemplateListBean.preRenderView}" />
+		</f:metadata>
 	</ui:define>
 
 	<ui:define name="navigation">
@@ -22,28 +25,28 @@
 				<p:menuitem outcome="mmCatalogView"
 					value="#{messages['menu.marketingManager.catalogView']}" />
 			</p:breadCrumb>
+		</h:form>
 
+		<h:form id="mainForm">
 			<p:panel style="width: 50%">
 				<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
 					<p:panel>
 						<ul class="ListNoStyle">
-							<li class="Padding5"><p:commandLink
-									styleClass="fa fa-plus-circle" value=" Create a new offer"></p:commandLink></li>
-							<li class="Padding5"><p:commandLink
-									styleClass="fa fa-plus-circle" value=" Create a bundle"></p:commandLink></li>
+							<li class="Padding5"><i class="fa fa-plus-circle" /> <p:commandLink
+									value=" #{messages['action.offer.create']}"></p:commandLink></li>
 						</ul>
 					</p:panel>
 
 					<p:panel>
 						<ul class="ListNoStyle">
 							<li class="Padding5"><span class="fa fa-check-square-o"></span>
-								#{offerTemplateBean.countActive()}
+								#{offerTemplateListBean.countActive()}
 								#{messages['page.catalog.offersAreActive']}</li>
 							<li class="Padding5"><span class="fa fa-close"></span>
-								#{offerTemplateBean.countDisabled()}
+								#{offerTemplateListBean.countDisabled()}
 								#{messages['page.catalog.offersAreDeactivated']}</li>
 							<li class="Padding5"><span class="fa fa-exclamation-circle"></span>
-								#{offerTemplateBean.countExpiring()}
+								#{offerTemplateListBean.countExpiring()}
 								#{messages['page.catalog.offersWillExpireSoon']}</li>
 						</ul>
 					</p:panel>
@@ -52,13 +55,16 @@
 			<p:panel style="width: 50%">
 				<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
 					<p:panel>
-						<p:inputText placeholder="Search"></p:inputText>
+						<p:inputText placeholder="#{messages['action.search']}"></p:inputText>
+						<i class="fa fa-search"></i>
 					</p:panel>
 					<p:panelGrid columns="1">
-						<p:panel style="border: 1px solid #000">
+						<p:panel style="border: 1px solid #000" id="offerForExportPanel">
 							<ul class="ListNoStyle">
 								<li class="Padding5"><span class="fa fa-share-square-o"></span>
-									2 #{messages['page.catalog.offersForExport']}</li>
+									<p:commandLink onclick="PF('exportableOffers').show();"
+										value="#{offerTemplateListBean.selectedOfferTemplates.size()} #{messages['page.catalog.offersForExport']}">
+									</p:commandLink></li>
 								<li class="Padding5"><span class="fa fa-play"></span>
 									#{messages['page.catalog.exportTo']} <p:selectOneMenu>
 										<f:selectItem itemLabel="Production" itemValue="PROD" />
@@ -86,9 +92,12 @@
 						</p:panel>
 						<p:panel>
 							<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-								<h:outputText value="#{entity.descriptionOrCode}"></h:outputText>
+								<h:outputText value="#{entity.nameOrCode}"></h:outputText>
 								<h:outputText
-									value="#{entity.offerTemplateCategory.descriptionOrCode}"></h:outputText>
+									value="#{messages['commons.category']}: #{entity.offerTemplateCategory.descriptionOrCode}"></h:outputText>
+								<h:outputText
+									value="#{messages['offerTemplate.bom']}: #{entity.businessOfferModel.code}"
+									rendered="#{entity.businessOfferModel != null}"></h:outputText>
 								<p:separator></p:separator>
 								<h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
 								<h:outputText value="#{entity.validFrom} ">
@@ -113,13 +122,18 @@
 							<p:panel>
 								<ul class="ListNoStyle" style="margin: 0px; padding: 0px;">
 									<li class="Padding5 FRight"><p:commandLink
-											styleClass="fa fa-share-square-o"></p:commandLink></li>
+											styleClass="fa fa-share-square-o"
+											update=":mainForm:offerForExportPanel :dlgOfferExport"
+											action="#{offerTemplateListBean.addForExport(entity)}">
+										</p:commandLink></li>
 									<li class="Padding5 FRight"><p:commandLink
 											styleClass="fa fa-copy"></p:commandLink></li>
 									<li class="Padding5 FRight"><p:commandLink
 											styleClass="fa fa-edit"></p:commandLink></li>
 									<li class="Padding5 FRight"><p:commandLink
-											styleClass="fa fa-search-plus"></p:commandLink></li>
+											action="mmOfferDetail" styleClass="fa fa-search-plus">
+											<f:param name="objectId" value="#{entity.id}"></f:param>
+										</p:commandLink></li>
 								</ul>
 							</p:panel>
 						</p:panel>
@@ -166,6 +180,26 @@
 				</p:panel>
 			</p:dataGrid>
 		</h:form>
+
+		<p:dialog header="#{messages['offerTemplates']}"
+			widgetVar="exportableOffers" minHeight="40" width="800"
+			dynamic="true" modal="true" appendTo="@(body)">
+			<h:form id="dlgOfferExport">
+				<p:dataTable id="offers"
+					value="#{offerTemplateListBean.selectedOfferTemplates}" var="e">
+					<p:column headerText="#{messages['offerTemplate.name']}">#{e.name}</p:column>
+					<p:column headerText="#{messages['BusinessEntity.code']}">#{e.code}</p:column>
+					<p:column headerText="#{messages['BusinessEntity.description']}">#{e.description}</p:column>
+					<p:column>
+						<p:commandButton icon="fa fa-close"
+							title="#{messages['button.closeButton']}"
+							update="dlgOfferExport :mainForm:offerForExportPanel"
+							action="#{offerTemplateListBean.deleteForExport(e)}">
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
 
 	</ui:define>
 </ui:composition>

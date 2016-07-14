@@ -1,6 +1,7 @@
 package org.meveo.model.catalog;
 
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -105,6 +106,22 @@ public abstract class ProductOffering extends BusinessEntity {
 
 	public void setImage(Blob image) {
 		this.image = image;
+	}
+	
+	public byte[] getImageAsByteArr() {
+		if (image != null) {
+			int blobLength;
+			try {
+				blobLength = (int) image.length();
+				byte[] blobAsBytes = image.getBytes(1, blobLength);
+
+				return blobAsBytes;
+			} catch (SQLException e) {
+				return null;
+			}
+		}
+
+		return null;
 	}
 
 	public LifeCycleStatusEnum getLifeCycleStatus() {

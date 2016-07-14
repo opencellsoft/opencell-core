@@ -18,21 +18,70 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.service.base.PersistenceService;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 
 @Named
 @ConversationScoped
 public class OfferTemplateListBean extends OfferTemplateBean {
 
-    private static final long serialVersionUID = -3037867704912788024L;
+	private static final long serialVersionUID = -3037867704912788024L;
 
-    public LazyDataModel<OfferTemplate> getLazyDataModelNoBSM() {
-        filters.put("businessOfferModel", PersistenceService.SEARCH_IS_NULL);
-        return getLazyDataModel(filters, listFiltered);
-    }
+	private List<OfferTemplate> selectedOfferTemplates = new ArrayList<OfferTemplate>();
+
+	public LazyDataModel<OfferTemplate> getLazyDataModelNoBSM() {
+		filters.put("businessOfferModel", PersistenceService.SEARCH_IS_NULL);
+		return getLazyDataModel(filters, listFiltered);
+	}
+
+	public void addForExport(OfferTemplate offerTemplate) {
+		if (!selectedOfferTemplates.contains(offerTemplate)) {
+			selectedOfferTemplates.add(offerTemplate);
+		}
+	}
+	
+	public void deleteForExport(OfferTemplate offerTemplate) {
+		if (selectedOfferTemplates.contains(offerTemplate)) {
+			selectedOfferTemplates.remove(offerTemplate);
+		}
+	}
+
+	public void showSelectedOffersForExport() {
+		Map<String, Object> options = new HashMap<String, Object>();
+		options.put("resizable", false);
+		options.put("draggable", false);
+		options.put("modal", true);
+		RequestContext.getCurrentInstance().openDialog("selectedOffersForExport", options, null);
+	}
+
+	public long countActive() {
+		return offerTemplateService.countActive();
+	}
+
+	public long countDisabled() {
+		return offerTemplateService.countDisabled();
+	}
+
+	public long countExpiring() {
+		return offerTemplateService.countExpiring();
+	}
+
+	public List<OfferTemplate> getSelectedOfferTemplates() {
+		return selectedOfferTemplates;
+	}
+
+	public void setSelectedOfferTemplates(List<OfferTemplate> selectedOfferTemplates) {
+		this.selectedOfferTemplates = selectedOfferTemplates;
+	}
+
 }

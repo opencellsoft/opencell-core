@@ -72,7 +72,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private OfferTemplateService offerTemplateService;
+	protected OfferTemplateService offerTemplateService;
 
 	@Inject
 	private ServiceTemplateService serviceTemplateService;
@@ -294,18 +294,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		}
-	}
-	
-	public long countActive() {
-		return offerTemplateService.countActive();
-	}
-	
-	public long countDisabled() {
-		return offerTemplateService.countDisabled();
-	}
-	
-	public long countExpiring() {
-		return offerTemplateService.countExpiring();
 	}
 	
 }

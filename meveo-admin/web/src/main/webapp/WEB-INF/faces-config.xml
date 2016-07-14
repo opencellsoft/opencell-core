@@ -1921,14 +1921,80 @@
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>mmOfferDetail</from-outcome>
+			<to-view-id>/pages/catalog/marketingManager/offerTemplateDetail.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mmProductTemplates</from-outcome>
+			<to-view-id>/pages/catalog/marketingManager/productTemplates.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mmProductTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/marketingManager/productTemplateDetail.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+			<navigation-case>
 			<from-outcome>productTemplates</from-outcome>
-			<to-view-id>/pages/catalog/productTemplates/productTemplates.xhtml
+			<to-view-id>/pages/catalog/marketingManager/productTemplates.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>productTemplateDetail</from-outcome>
-			<to-view-id>/pages/catalog/productTemplates/productTemplateDetail.xhtml
+			<to-view-id>/pages/catalog/marketingManager/productTemplateDetail.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bundleTemplates</from-outcome>
+			<to-view-id>/pages/catalog/bundleTemplates/bundleTemplates.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bundleTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/bundleTemplates/bundleTemplateDetail.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>channels</from-outcome>
+			<to-view-id>/pages/catalog/channels/channels.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>channelDetail</from-outcome>
+			<to-view-id>/pages/catalog/channels/channelDetail.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>digitalResources</from-outcome>
+			<to-view-id>/pages/catalog/digitalResources/digitalResources.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>digitalResourceDetail</from-outcome>
+			<to-view-id>/pages/catalog/digitalResources/digitalResourceDetail.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>businessProductModels</from-outcome>
+			<to-view-id>/pages/catalog/businessProductModels/businessProductModels.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>businessProductModelDetail</from-outcome>
+			<to-view-id>/pages/catalog/businessProductModels/businessProductModelDetail.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>

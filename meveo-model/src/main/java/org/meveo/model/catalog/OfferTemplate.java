@@ -42,6 +42,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -209,6 +210,14 @@ public class OfferTemplate extends BusinessCFEntity {
 
 	public void setOfferProductTemplates(List<OfferProductTemplate> offerProductTemplates) {
 		this.offerProductTemplates = offerProductTemplates;
+	}
+
+	public String getNameOrCode() {
+		if (!StringUtils.isBlank(name)) {
+			return name;
+		} else {
+			return code;
+		}
 	}
 
 }

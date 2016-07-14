@@ -38,6 +38,10 @@ public class OfferTemplateDto implements Serializable {
     @XmlElementWrapper(name = "offerServiceTemplates")
     @XmlElement(name = "offerServiceTemplate")
     private List<OfferServiceTemplateDto> offerServiceTemplates;
+    
+    @XmlElementWrapper(name = "offerProductTemplates")
+    @XmlElement(name = "offerProductTemplate")
+    private List<OfferProductTemplateDto> offerProductTemplates;
 
     private CustomFieldsDto customFields = new CustomFieldsDto();
 
@@ -128,6 +132,14 @@ public class OfferTemplateDto implements Serializable {
     public void setOfferServiceTemplates(List<OfferServiceTemplateDto> offerServiceTemplates) {
         this.offerServiceTemplates = offerServiceTemplates;
     }
+    
+    public List<OfferProductTemplateDto> getOfferProductTemplates() {
+		return offerProductTemplates;
+	}
+    
+    public void setOfferProductTemplates(List<OfferProductTemplateDto> offerProductTemplates) {
+		this.offerProductTemplates = offerProductTemplates;
+	}
 
     public boolean isCodeOnly() {
         return StringUtils.isBlank(description) && StringUtils.isBlank(bomCode) && StringUtils.isBlank(offerTemplateCategoryCode)
