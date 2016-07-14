@@ -70,7 +70,7 @@ public class WorkflowDto extends BaseDto {
 	    this.enableHistory = workflow.isEnableHistory();
 	    for(WFTransition wfTransition : workflow.getTransitions()){
 	    	WFTransitionDto wftdto = new WFTransitionDto(wfTransition);
-	    	wftdto.setWorkflowDto(this);
+	    	wftdto.setWorkflowCode(getCode());
 	    	listWFTransitionDto.add(wftdto);
 	    }
 	}

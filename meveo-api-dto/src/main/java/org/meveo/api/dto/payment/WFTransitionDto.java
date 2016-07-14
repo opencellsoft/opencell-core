@@ -48,7 +48,7 @@ public class WFTransitionDto extends BaseDto {
 	private String conditionEl ;
 	
 	@XmlElement(required = true)
-	private WorkflowDto workflowDto;
+	private String workflowCode;
 	
 	@XmlElementWrapper
     @XmlElement(name="wfActionDto")
@@ -62,6 +62,7 @@ public class WFTransitionDto extends BaseDto {
 		this.fromStatus = wfTransition.getFromStatus();
 		this.toStatus = wfTransition.getToStatus();
 		this.conditionEl = wfTransition.getConditionEl();
+		this.workflowCode = wfTransition.getWorkflow().getCode();
 		for(WFAction wfAction : wfTransition.getWfActions() ){
 			WFActionDto wfadto = new WFActionDto(wfAction);
 			wfadto.setWfTransitionDto(this);
@@ -126,15 +127,15 @@ public class WFTransitionDto extends BaseDto {
 	/**
 	 * @return the workflowDto
 	 */
-	public WorkflowDto getWorkflowDto() {
-		return workflowDto;
+	public String getWorkflowCode() {
+		return workflowCode;
 	}
 
 	/**
 	 * @param workflowDto the workflowDto to set
 	 */
-	public void setWorkflowDto(WorkflowDto workflowDto) {
-		this.workflowDto = workflowDto;
+	public void setWorkflowCode(String workflowCode) {
+		this.workflowCode = workflowCode;
 	}
 
 	/**

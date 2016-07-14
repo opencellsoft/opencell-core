@@ -49,7 +49,7 @@ public class WorkflowApi extends BaseApi {
 		workflowService.create(workflow, currentUser);		
 		if(workflowDto.getListWFTransitionDto() != null &&  !workflowDto.getListWFTransitionDto().isEmpty()){
 		    for(WFTransitionDto wfTransitionDto : workflowDto.getListWFTransitionDto()){
-		    	wfTransitionDto.setWorkflowDto(workflowDto);
+		    	wfTransitionDto.setWorkflowCode(workflowDto.getCode());
 		    	wfTransitionApi.create(wfTransitionDto, currentUser);
 		    }
 		}		
@@ -76,7 +76,7 @@ public class WorkflowApi extends BaseApi {
 		workflowService.update(workflow, currentUser);		
 		if(workflowDto.getListWFTransitionDto() != null &&  !workflowDto.getListWFTransitionDto().isEmpty()){
 		    for(WFTransitionDto wfTransitionDto : workflowDto.getListWFTransitionDto()){
-		    	wfTransitionDto.setWorkflowDto(workflowDto);
+		    	wfTransitionDto.setWorkflowCode(workflowDto.getCode());
 		    	wfTransitionApi.createOrUpdate(wfTransitionDto, currentUser);
 		    }
 		}

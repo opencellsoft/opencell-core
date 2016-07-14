@@ -43,9 +43,9 @@ public class WFTransitionApi extends BaseApi {
 	 */
 	public void create(WFTransitionDto wfTransitionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException  {
         validateDto(wfTransitionDto);		
-		Workflow workflow = workflowService.findByCode(wfTransitionDto.getWorkflowDto().getCode(), currentUser.getProvider());
+		Workflow workflow = workflowService.findByCode(wfTransitionDto.getWorkflowCode(), currentUser.getProvider());
 		if(workflow == null) {
-			throw new EntityDoesNotExistsException(Workflow.class, wfTransitionDto.getWorkflowDto().getCode());
+			throw new EntityDoesNotExistsException(Workflow.class, wfTransitionDto.getWorkflowCode());
 		}		
 		WFTransition wfTransition = wfTransitionService.findWFTransition(wfTransitionDto.getFromStatus(), wfTransitionDto.getToStatus(), workflow.getCode(),currentUser.getProvider());	
 		if(wfTransition != null){
@@ -75,9 +75,9 @@ public class WFTransitionApi extends BaseApi {
      */
 	public void update(WFTransitionDto wfTransitionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException  {
         validateDto(wfTransitionDto);		
-		Workflow workflow = workflowService.findByCode(wfTransitionDto.getWorkflowDto().getCode(), currentUser.getProvider());
+		Workflow workflow = workflowService.findByCode(wfTransitionDto.getWorkflowCode(), currentUser.getProvider());
 		if(workflow == null) {
-			throw new EntityDoesNotExistsException(Workflow.class, wfTransitionDto.getWorkflowDto().getCode());
+			throw new EntityDoesNotExistsException(Workflow.class, wfTransitionDto.getWorkflowCode());
 		}		
 		WFTransition wfTransition = wfTransitionService.findWFTransition(wfTransitionDto.getFromStatus(), wfTransitionDto.getToStatus(), workflow.getCode(),currentUser.getProvider());	
 		if(wfTransition == null){
@@ -133,12 +133,12 @@ public class WFTransitionApi extends BaseApi {
 	 * @throws BusinessException
 	 */
 	public void createOrUpdate(WFTransitionDto wfTransitionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {		
-		try {
-			find(wfTransitionDto.getWorkflowDto().getCode(), wfTransitionDto.getFromStatus(), wfTransitionDto.getToStatus(), currentUser.getProvider());		
-		} catch (EntityDoesNotExistsException e) {
+		WFTransition wfTransition  = wfTransitionService.findWFTransition(wfTransitionDto.getFromStatus(), wfTransitionDto.getToStatus(), wfTransitionDto.getWorkflowCode(),currentUser.getProvider());
+		if(wfTransition == null) {
 			create(wfTransitionDto, currentUser);
+		} else {
+			update(wfTransitionDto, currentUser);
 		}
-		update(wfTransitionDto, currentUser);
 	}
 	
 	/**
@@ -157,7 +157,7 @@ public class WFTransitionApi extends BaseApi {
 		if (StringUtils.isBlank(wfTransitionDto.getToStatus())) {
 			missingParameters.add("ToStatus");
 		}			
-		if (wfTransitionDto.getWorkflowDto() == null || StringUtils.isBlank(wfTransitionDto.getWorkflowDto().getCode())) {
+		if (StringUtils.isBlank(wfTransitionDto.getWorkflowCode())) {
 			missingParameters.add("WorkflowCode");
 		}			
 		handleMissingParameters();

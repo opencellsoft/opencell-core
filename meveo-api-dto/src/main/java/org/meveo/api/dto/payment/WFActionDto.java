@@ -21,6 +21,7 @@ package org.meveo.api.dto.payment;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
@@ -41,9 +42,9 @@ public class WFActionDto extends BaseDto {
 	@XmlElement(required = true)
 	private String conditionEl;
 	
-	@XmlElement(required = true)
+	@XmlTransient
 	private WFTransitionDto wfTransitionDto;
-		
+	
 	public WFActionDto(){
 	}
 	
@@ -51,6 +52,11 @@ public class WFActionDto extends BaseDto {
 		this.actionEl = wfAction.getActionEl();
 		this.priority = wfAction.getPriority();
 		this.conditionEl = wfAction.getConditionEl();
+		this.wfTransitionDto = new WFTransitionDto();
+		this.wfTransitionDto.setConditionEl(wfAction.getWfTransition().getConditionEl());
+		this.wfTransitionDto.setFromStatus(wfAction.getWfTransition().getFromStatus());
+		this.wfTransitionDto.setToStatus(wfAction.getWfTransition().getToStatus());
+		this.wfTransitionDto.setWorkflowCode(wfAction.getWfTransition().getWorkflow().getCode());
 	}
 	
 	public WFAction fromDto(WFAction wfAction) {
@@ -103,26 +109,20 @@ public class WFActionDto extends BaseDto {
 	public void setConditionEl(String conditionEl) {
 		this.conditionEl = conditionEl;
 	}
-
-	/**
-	 * @return the wfTransitionDto
-	 */
+	
 	public WFTransitionDto getWfTransitionDto() {
 		return wfTransitionDto;
 	}
-
-	/**
-	 * @param wfTransitionDto the wfTransitionDto to set
-	 */
+	
 	public void setWfTransitionDto(WFTransitionDto wfTransitionDto) {
 		this.wfTransitionDto = wfTransitionDto;
 	}
-
 	
 	@Override
 	public String toString() {
 		return "WFActionDto [actionEl=" + actionEl + ", priority=" + priority + ", conditionEl=" + conditionEl + "]";
 	}
+
 
 }
 
