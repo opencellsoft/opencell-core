@@ -2447,6 +2447,16 @@ $BODY$
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
 	</changeSet>
+	
+	<changeSet id="#1839_20160713_cat_product_charge_templ"
+		author="SebastienMichea">
+		<createTable tableName="cat_product_charge_templ">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+       <addPrimaryKey columnNames="id" constraintName="cat_product_charge_templ_pkey" tableName="cat_product_charge_templ" />
+ 	</changeSet>
 
 	<changeSet id="#1839_20160713_cat_product_template" author="EdwardLegaspi">
 		<addColumn tableName="cat_product_offering">
@@ -2561,16 +2571,6 @@ $BODY$
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
 	</changeSet>    	
 	
-	<changeSet id="#1839_20160713_cat_product_charge_templ"
-		author="SebastienMichea">
-		<createTable tableName="cat_product_charge_templ">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-       <addPrimaryKey columnNames="id" constraintName="cat_product_charge_templ_pkey" tableName="cat_product_charge_templ" />
- 	</changeSet>
- 	
  	<changeSet id="#1839_20160713_billing_product_charge_inst"
 		author="SebastienMichea">
         <createTable tableName="billing_product_charge_inst">
@@ -2579,7 +2579,7 @@ $BODY$
             </column>
             <column name="product_template_id" type="BIGINT" />
         </createTable>
- 	        <addForeignKeyConstraint baseColumnNames="product_template_id" baseTableName="cat_product_offering" constraintName="fk_productci_prodtempl"
+ 	        <addForeignKeyConstraint baseColumnNames="product_charge_tmpl_id" baseTableName="cat_product_offering" constraintName="fk_productci_prodtempl"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
     </changeSet>
  
