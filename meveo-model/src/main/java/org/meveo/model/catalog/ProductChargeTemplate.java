@@ -19,6 +19,8 @@
 package org.meveo.model.catalog;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -39,5 +41,19 @@ import org.meveo.model.MultilanguageEntity;
 public class ProductChargeTemplate extends ChargeTemplate {
 
     private static final long serialVersionUID = 1L;    
+    
+    @ManyToOne
+	@JoinColumn(name = "PRODUCT_TEMPLATE_ID", nullable = false)
+    ProductTemplate productTemplate;
+
+	public ProductTemplate getProductTemplate() {
+		return productTemplate;
+	}
+
+	public void setProductTemplate(ProductTemplate productTemplate) {
+		this.productTemplate = productTemplate;
+	}
+    
+    
 
 }

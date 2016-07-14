@@ -9,6 +9,7 @@ import javax.jws.WebService;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
+import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BusinessAccountModelDto;
 import org.meveo.api.dto.account.CRMAccountHierarchyDto;
@@ -166,6 +167,9 @@ public interface AccountWs extends IBaseWs {
 
     @WebMethod
     ActionStatus updateUserAccount(@WebParam(name = "userAccount") UserAccountDto postData);
+
+    @WebMethod
+	ActionStatus applyProduct(@WebParam(name = "applyProduct") ApplyProductRequestDto postData);
 
     @WebMethod
     GetUserAccountResponseDto findUserAccount(@WebParam(name = "userAccountCode") String userAccountCode);

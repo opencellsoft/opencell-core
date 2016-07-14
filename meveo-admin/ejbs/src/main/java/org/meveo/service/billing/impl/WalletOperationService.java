@@ -53,6 +53,7 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
@@ -436,6 +437,51 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		return walletOperation;
 	}
 
+	public WalletOperation rateProductApplication(ProductChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantity,
+			User creator) throws BusinessException {
+
+		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
+		if (chargeTemplate == null) {
+			throw new IncorrectChargeTemplateException("ChargeTemplate is null for chargeInstance id=" + chargeInstance.getId() + ", code=" + chargeInstance.getCode());
+		}
+
+		InvoiceSubCategory invoiceSubCategory = chargeTemplate.getInvoiceSubCategory();
+		if (invoiceSubCategory == null) {
+			throw new IncorrectChargeTemplateException("InvoiceSubCategory is null for chargeTemplate code=" + chargeTemplate.getCode());
+		}
+
+		TradingCurrency currency = chargeInstance.getCurrency();
+		if (currency == null) {
+			throw new IncorrectChargeTemplateException("No currency exists for customerAccount id="
+					+ chargeInstance.getUserAccount().getBillingAccount().getCustomerAccount().getId());
+		}
+
+		TradingCountry country = chargeInstance.getCountry();
+		if (country == null) {
+			throw new IncorrectChargeTemplateException("No country exists for billingAccount id=" + chargeInstance.getUserAccount().getBillingAccount().getId());
+		}
+
+		Long countryId = country.getId();
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId,
+				creator.getProvider());
+
+		if (invoiceSubcategoryCountry == null) {
+			throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
+					+ country.getCountryCode() + ".");
+		}
+
+		Tax tax = invoiceSubcategoryCountry.getTax();
+		if (tax == null) {
+			throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+		}
+
+		WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeTemplate.getCode(), chargeInstance,
+				ApplicationTypeEnum.PUNCTUAL, chargeInstance.getChargeDate(), chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency,
+				countryId, tax.getPercent(), null, null, invoiceSubCategory, chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), null,
+				null, null, false);
+
+		return chargeApplication;
+	}
 
 	public Date getNextApplicationDate(RecurringChargeInstance chargeInstance) {
 		Date applicationDate = chargeInstance.getSubscriptionDate();

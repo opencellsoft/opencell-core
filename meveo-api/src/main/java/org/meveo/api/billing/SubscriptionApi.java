@@ -466,7 +466,7 @@ public class SubscriptionApi extends BaseApi {
         if (StringUtils.isBlank(postData.getOneShotCharge())) {
             missingParameters.add("oneShotCharge");
         }
-        if (StringUtils.isBlank(StringUtils.isBlank(postData.getSubscription()))) {
+        if (StringUtils.isBlank(postData.getSubscription())) {
             missingParameters.add("subscription");
         }
         if (postData.getOperationDate() == null) {

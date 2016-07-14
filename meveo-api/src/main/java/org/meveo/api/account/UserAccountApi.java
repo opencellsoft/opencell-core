@@ -12,6 +12,7 @@ import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.account.UserAccountsDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
@@ -20,13 +21,19 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.ProductChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 
 /**
@@ -46,6 +53,16 @@ public class UserAccountApi extends AccountApi {
 
 	@EJB
 	private AccountHierarchyApi accountHierarchyApi;
+
+	@Inject
+	private ProductTemplateService productTemplateService;
+	
+	@Inject
+	private OfferTemplateService offerTemplateService;
+	
+	@Inject
+	private ProductChargeInstanceService productChargeInstanceService;
+	
 
 	public void create(UserAccountDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		create(postData, currentUser, true);
@@ -303,5 +320,53 @@ public class UserAccountApi extends AccountApi {
 				update(existedUserAccountDto, currentUser);
 			}
 		}
+	}
+
+	public void applyProduct(ApplyProductRequestDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	       if (StringUtils.isBlank(postData.getProduct())) {
+	            missingParameters.add("product");
+	        }
+	        if (StringUtils.isBlank(postData.getUserAccount())) {
+	            missingParameters.add("userAccount");
+	        }
+	        if (postData.getOperationDate() == null) {
+	            missingParameters.add("operationDate");
+	        }
+
+	        handleMissingParameters();
+
+	        Provider provider = currentUser.getProvider();
+
+	        ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct(), provider);
+	        if (productTemplate == null) {
+	            throw new EntityDoesNotExistsException(ProductTemplate.class, postData.getProduct());
+	        }
+	        
+	        OfferTemplate offerTemplate=null;
+	        if(!StringUtils.isBlank(postData.getOffer())){
+	        	offerTemplate=offerTemplateService.findByCode(postData.getOffer(), provider);
+		        if (offerTemplate == null) {
+		            throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOffer());
+		        }	        	
+	        }
+
+	        UserAccount userAccount = userAccountService.findByCode(postData.getUserAccount(), provider);
+	        if (userAccount == null) {
+	            throw new EntityDoesNotExistsException(UserAccount.class, postData.getUserAccount());
+	        }
+
+	        if (userAccount.getStatus() != AccountStatusEnum.ACTIVE) {
+	            throw new MeveoApiException("User account is not ACTIVE.");
+	        }
+
+	        try {
+	            productChargeInstanceService.productChargeApplication(userAccount,
+	            		productTemplate.getProductChargeTemplate(), offerTemplate, postData.getOperationDate(),
+	                postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(),
+	                postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),
+	                postData.getDescription(), currentUser, true);
+	        } catch (BusinessException e) {
+	            throw new MeveoApiException(e.getMessage());
+	        }
 	}
 }
