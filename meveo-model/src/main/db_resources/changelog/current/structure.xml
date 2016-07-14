@@ -2452,7 +2452,7 @@ $BODY$
 		<addForeignKeyConstraint baseColumnNames="product_offering_id"
 			baseTableName="cat_digital_resource" constraintName="fk_cat_dig_res_prod_offering"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_prod_offering" />
 	</changeSet>
 
 	<changeSet id="#1839_20160713_cat_product_charge_templ"
