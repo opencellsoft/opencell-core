@@ -123,8 +123,8 @@ public class DunningLotBuilder {
             csv.appendValue(DateUtils.formatDateWithPattern(actionDunning.getCreationDate(), "dd/MM/yyyy"));
             csv.appendValue("" + actionDunning.getFromLevel());
             csv.appendValue("" + actionDunning.getToLevel());
-            csv.appendValue(actionDunning.getActionPlanItem().getLetterTemplate() == null ? "" : getNotNull(actionDunning.getActionPlanItem().getLetterTemplate()
-                    .toUpperCase()));
+          //  csv.appendValue(actionDunning.getActionPlanItem().getLetterTemplate() == null ? "" : getNotNull(actionDunning.getActionPlanItem().getLetterTemplate()
+            //        .toUpperCase()));
             csv.appendValue(actionDunning.getCustomerAccount().getPrimaryContact()==null? "" : getNotNull(actionDunning.getCustomerAccount().getPrimaryContact().getEmail()));
             csv.appendValue(actionDunning.getCustomerAccount().getExternalRef1());
             csv.appendValue(actionDunning.getCustomerAccount().getAddress() == null ? "" : getNotNull(actionDunning.getCustomerAccount().getAddress().getAddress1()));

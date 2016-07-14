@@ -34,26 +34,55 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface ProviderContactRs extends IBaseRs {
 
+	/**
+	 * create a providerContact
+	 * @param providerContactDto
+	 * @return
+	 */
     @POST
     @Path("/")
     ActionStatus create(ProviderContactDto providerContactDto);
 
+    /**
+     * update a providerContact
+     * @param providerContactDto
+     * @return
+     */
     @PUT
     @Path("/")
     ActionStatus update(ProviderContactDto providerContactDto);
 
+    /**
+     * find a providerContact by code
+     * @param code
+     * @return
+     */
     @GET
     @Path("/")
     ProviderContactResponseDto find(@QueryParam("code") String code);
 
+    /**
+     * remove a providerContact by code
+     * @param code
+     * @return
+     */
     @DELETE
     @Path("/{code}")
     ActionStatus remove(@PathParam("code") String code);
 
+    /**
+     * list providerContacts
+     * @return
+     */
     @GET
     @Path("/list")
     ProviderContactsResponseDto list();
     
+    /**
+     * createOrUpdate a providerContact
+     * @param providerContactDto
+     * @return
+     */
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(ProviderContactDto providerContactDto);

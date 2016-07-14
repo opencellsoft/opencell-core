@@ -142,6 +142,51 @@
 	<td>${BillingAccountCode}</td>
 </tr>
 <tr>
+	<td>if</td>
+	<td>${InvoiceDateBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${InvoiceDate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${InvoiceDate}</td>
+	<td>${InvoiceDateValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DueDateBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${DueDate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${DueDate}</td>
+	<td>${DueDateValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${AddLinkedInvoiceBool}==true</td>
+	<td></td>
+</tr>
+<tr>
 	<td>assertElementPresent</td>
 	<td>${AddLinkedInvoice}</td>
 	<td></td>
@@ -222,46 +267,6 @@
 	<td>${InvoiceNumberValue}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${InvoiceDateBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${InvoiceDate}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${InvoiceDate}</td>
-	<td>${InvoiceDateValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${DueDateBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${DueDate}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${DueDate}</td>
-	<td>${DueDateValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${ImportFromLinkedInvoices}</td>
 	<td></td>
@@ -285,6 +290,11 @@
 	<td>verifyText</td>
 	<td>//*[contains(@id, 'subCategories_data')]/tr/td</td>
 	<td>${SubcategoryValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -339,7 +349,7 @@
 <tr>
 	<td>type</td>
 	<td>${AmtWithoutTaxes}</td>
-	<td>${AmountWithoutTaxesValue}</td>
+	<td>${AmountWithoutTaxes1Value}</td>
 </tr>
 <tr>
 	<td>endIf</td>

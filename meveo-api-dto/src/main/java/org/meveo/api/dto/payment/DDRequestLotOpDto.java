@@ -37,7 +37,10 @@ public class DDRequestLotOpDto extends BaseDto {
 	@XmlElement(required=true)
 	private DDRequestFileFormatEnum fileFormat;
 	
-	public DDRequestLotOpDto(){}
+	
+	public DDRequestLotOpDto(){
+		
+	}
 	public DDRequestLotOpDto(DDRequestLotOp ddrequestLotOp){
 		this.fromDueDate=ddrequestLotOp.getFromDueDate();
 		this.toDueDate=ddrequestLotOp.getToDueDate();
@@ -81,6 +84,11 @@ public class DDRequestLotOpDto extends BaseDto {
 	}
 	public void setFileFormat(DDRequestFileFormatEnum fileFormat) {
 		this.fileFormat = fileFormat;
+	}
+	@Override
+	public String toString() {
+		return "DDRequestLotOpDto [fromDueDate=" + fromDueDate + ", toDueDate=" + toDueDate + ", ddrequestOp=" + ddrequestOp + ", status=" + status + ", errorCause=" + errorCause
+				+ ", fileFormat=" + fileFormat + "]";
 	}
 	
 	

@@ -1,5 +1,7 @@
 package org.meveo.api.ws;
 
+import java.util.Date;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -20,10 +22,21 @@ public interface PaymentWs extends IBaseWs {
 	@WebMethod
 	public CustomerPaymentsResponse list(@WebParam(name = "customerAccountCode")String customerAccountCode);
 	
+	/**
+	 * create a ddrequestLotOp by dto
+	 * @param ddrequestLotOp
+	 * @return
+	 */
 	@WebMethod
 	ActionStatus createDDRequestLotOp(@WebParam(name="ddrequestLotOp")DDRequestLotOpDto ddrequestLotOp);
-	
+	/**
+	 * list ddrequestLotOps by fromDueDate,toDueDate,status
+	 * @param fromDueDate
+	 * @param toDueDate
+	 * @param status
+	 * @return
+	 */
 	@WebMethod
-	DDRequestLotOpsResponseDto listDDRequestLotops(@WebParam(name="status")DDRequestOpStatusEnum status);
+	DDRequestLotOpsResponseDto listDDRequestLotops(@WebParam(name="fromDueDate")Date fromDueDate,@WebParam(name="toDueDate")Date toDueDate,@WebParam(name="status")DDRequestOpStatusEnum status);
 
 }

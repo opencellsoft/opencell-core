@@ -34,6 +34,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.wf.WFAction;
 
 @Entity
 @Table(name = "AR_ACTION_DUNNING")
@@ -80,7 +81,7 @@ public class ActionDunning extends AuditableEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ACTION_PLAN_ITEM_ID")
-	private ActionPlanItem actionPlanItem;
+	private WFAction actionPlanItem;
 
 	@Column(name = "AMOUNT_DUE")
 	private BigDecimal amountDue;
@@ -160,11 +161,11 @@ public class ActionDunning extends AuditableEntity {
 		return toLevel;
 	}
 
-	public void setActionPlanItem(ActionPlanItem actionPlanItem) {
+	public void setActionPlanItem(WFAction actionPlanItem) {
 		this.actionPlanItem = actionPlanItem;
 	}
 
-	public ActionPlanItem getActionPlanItem() {
+	public WFAction getActionPlanItem() {
 		return actionPlanItem;
 	}
 
