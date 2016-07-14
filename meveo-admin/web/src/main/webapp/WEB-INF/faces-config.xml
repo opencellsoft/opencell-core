@@ -1981,8 +1981,20 @@
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>channelDetail</from-outcome>
+			<from-outcome>digitalResourceDetail</from-outcome>
 			<to-view-id>/pages/catalog/digitalResources/digitalResourceDetail.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>businessProductModels</from-outcome>
+			<to-view-id>/pages/catalog/businessProductModels/businessProductModels.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>businessProductModelDetail</from-outcome>
+			<to-view-id>/pages/catalog/businessProductModels/businessProductModelDetail.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>

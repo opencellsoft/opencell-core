@@ -38,10 +38,6 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 	@Override
 	public void preRenderView() {
 		productTemplates = productTemplateService.list();
-		for (int i = 0; i < 10; i++) {
-			productTemplates.add(new ProductTemplate());
-		}
-
 		meveoInstances = meveoInstanceService.list();
 		activeProductCount = productTemplateService.productTemplateActiveCount(false);
 		inactiveProductCount = productTemplateService.productTemplateActiveCount(true);

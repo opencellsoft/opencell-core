@@ -24,8 +24,8 @@ public class ProductTemplateService extends BusinessService<ProductTemplate> {
 		long result = 0;
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.DATE, 7);
-		String sqlQuery = "SELECT COUNT(p.id) FROM " + ProductTemplate.class.getName() + " p WHERE p.validTo <= "
-				+ c.toString();
+		String sqlQuery = "SELECT COUNT(p.id) FROM " + ProductTemplate.class.getName() + " p WHERE p.validTo <= '"
+				+ c.getTime().toString()+"'";
 		Query query = getEntityManager().createQuery(sqlQuery);
 		result = query.getFirstResult();
 		return result;
