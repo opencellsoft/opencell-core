@@ -1921,6 +1921,12 @@
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>mmOfferDetail</from-outcome>
+			<to-view-id>/pages/catalog/marketingManager/offerTemplateDetail.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>productTemplates</from-outcome>
 			<to-view-id>/pages/catalog/productTemplates/productTemplates.xhtml
 			</to-view-id>

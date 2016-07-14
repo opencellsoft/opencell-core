@@ -2437,6 +2437,19 @@ $BODY$
 			</column>
 			<column name="provider_id" type="BIGINT" />
 			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
 			<column name="uri" type="VARCHAR(255)" />
 			<column name="mime_type" type="VARCHAR(50)" />
 			<column name="product_offering_id" type="BIGINT" />
@@ -2445,6 +2458,9 @@ $BODY$
 		<createSequence sequenceName="cat_digital_resource_seq" />
 		<addPrimaryKey columnNames="id" constraintName="cat_digital_resource_pkey"
 			tableName="cat_digital_resource" />
+		<addUniqueConstraint columnNames="code, provider_id"
+			constraintName="uk_digital_resource" deferrable="false" disabled="false"
+			initiallyDeferred="false" tableName="cat_digital_resource" />
 		<addForeignKeyConstraint baseColumnNames="provider_id"
 			baseTableName="cat_digital_resource" constraintName="fk_cat_dig_res_crm_provider"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -2453,6 +2469,14 @@ $BODY$
 			baseTableName="cat_digital_resource" constraintName="fk_cat_dig_res_prod_offering"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
+		<addForeignKeyConstraint baseColumnNames="creator_id"
+			baseTableName="cat_digital_resource" constraintName="fk_cat_dig_res_adm_user_c"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<addForeignKeyConstraint baseColumnNames="updater_id"
+			baseTableName="cat_digital_resource" constraintName="fk_cat_dig_res_adm_user_u"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
 	</changeSet>
 
 	<changeSet id="#1839_20160713_cat_product_charge_templ"

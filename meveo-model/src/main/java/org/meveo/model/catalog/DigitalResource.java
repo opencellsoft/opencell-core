@@ -6,17 +6,20 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 
 /**
  * @author Edward P. Legaspi
  */
 @Entity
-@Table(name = "CAT_DIGITAL_RESOURCE")
+@ExportIdentifier({ "code", "provider" })
+@Table(name = "CAT_DIGITAL_RESOURCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_DIGITAL_RESOURCE_SEQ")
-public class DigitalResource extends BaseEntity {
+public class DigitalResource extends BusinessEntity {
 
 	private static final long serialVersionUID = -7528761006943581984L;
 
