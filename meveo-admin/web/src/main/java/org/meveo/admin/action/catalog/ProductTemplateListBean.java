@@ -7,21 +7,16 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 
 @Named
 @ConversationScoped
-public class ProductTemplateListBean extends BaseBean<ProductTemplate> {
+public class ProductTemplateListBean extends ProductTemplateBean {
 
 	private static final long serialVersionUID = -7109673492144846741L;
-
-	@Inject
-	private ProductTemplateService productTemplateService;
 
 	@Inject
 	private MeveoInstanceService meveoInstanceService;
@@ -32,8 +27,26 @@ public class ProductTemplateListBean extends BaseBean<ProductTemplate> {
 
 	private List<ProductTemplate> productTemplates = new ArrayList<ProductTemplate>();
 
-	public ProductTemplateListBean() {
-		super(ProductTemplate.class);
+	private List<String> bundledProducts = new ArrayList<String>();
+
+	private long activeProductCount = 0;
+
+	private long inactiveProductCount = 0;
+
+	private long almostExpiredCount = 0;
+
+	@Override
+	public void preRenderView() {
+		productTemplates = productTemplateService.list();
+		for (int i = 0; i < 10; i++) {
+			productTemplates.add(new ProductTemplate());
+		}
+
+		meveoInstances = meveoInstanceService.list();
+		activeProductCount = productTemplateService.productTemplateActiveCount(false);
+		inactiveProductCount = productTemplateService.productTemplateActiveCount(true);
+		almostExpiredCount = productTemplateService.productTemplateAlmostExpiredCount();
+		super.preRenderView();
 	}
 
 	@Override
@@ -42,7 +55,6 @@ public class ProductTemplateListBean extends BaseBean<ProductTemplate> {
 	}
 
 	public List<MeveoInstance> getMeveoInstances() {
-		meveoInstances = meveoInstanceService.list();
 		return meveoInstances;
 	}
 
@@ -59,12 +71,43 @@ public class ProductTemplateListBean extends BaseBean<ProductTemplate> {
 	}
 
 	public List<ProductTemplate> getProductTemplates() {
-		productTemplates = productTemplateService.list();
 		return productTemplates;
 	}
 
 	public void setProductTemplates(List<ProductTemplate> productTemplates) {
 		this.productTemplates = productTemplates;
+	}
+
+	public List<String> getBundledProducts() {
+		return bundledProducts;
+	}
+
+	public void setBundledProducts(List<String> bundledProducts) {
+		this.bundledProducts = bundledProducts;
+	}
+
+	public long getActiveProductCount() {
+		return activeProductCount;
+	}
+
+	public void setActiveProductCount(long activeProductCount) {
+		this.activeProductCount = activeProductCount;
+	}
+
+	public long getInactiveProductCount() {
+		return inactiveProductCount;
+	}
+
+	public void setInactiveProductCount(long inactiveProductCount) {
+		this.inactiveProductCount = inactiveProductCount;
+	}
+
+	public long getAlmostExpiredCount() {
+		return almostExpiredCount;
+	}
+
+	public void setAlmostExpiredCount(long almostExpiredCount) {
+		this.almostExpiredCount = almostExpiredCount;
 	}
 
 }
