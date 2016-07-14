@@ -8,7 +8,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.payment.WFActionDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.payment.WFActionApi;
+import org.meveo.api.wf.WFActionApi;
 import org.meveo.api.ws.impl.BaseWs;
 import org.meveo.api.ws.wf.WFActionWs;
 

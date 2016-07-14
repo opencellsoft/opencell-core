@@ -27,7 +27,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -39,6 +42,8 @@ import org.meveo.model.AuditableEntity;
 @Table(name = "WF_TRANSITION", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"FROM_STATUS", "TO_STATUS", "WORKFLOW_ID" , "PROVIDER_ID"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_TRANSITION_SEQ")
+@NamedQueries({
+	@NamedQuery(name = "WFTransition.listByFromStatus", query = "SELECT wft FROM WFTransition wft where wft.fromStatus=:fromStatusValue and workflow=:workflowValue")})
 public class WFTransition extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -54,6 +59,7 @@ public class WFTransition extends AuditableEntity {
 	private Workflow workflow;
 	
 	@OneToMany(mappedBy = "wfTransition", fetch = FetchType.LAZY,cascade=CascadeType.REMOVE)
+	@OrderBy("priority ASC")
 	private List<WFAction> wfActions = new ArrayList<WFAction>();
 	
 	@Column(name = "CONDITION_EL", length = 2000)

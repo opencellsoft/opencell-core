@@ -1,4 +1,4 @@
-package org.meveo.api.payment;
+package org.meveo.api.wf;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -14,8 +14,9 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFTransition;
-import org.meveo.service.payments.impl.WFActionService;
-import org.meveo.service.payments.impl.WFTransitionService;
+import org.meveo.service.wf.WFActionService;
+import org.meveo.service.wf.WFTransitionService;
+
 
 @Stateless
 public class WFActionApi extends BaseApi {

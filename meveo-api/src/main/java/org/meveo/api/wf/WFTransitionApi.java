@@ -1,4 +1,4 @@
-package org.meveo.api.payment;
+package org.meveo.api.wf;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -16,8 +16,9 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
-import org.meveo.service.payments.impl.WFTransitionService;
-import org.meveo.service.payments.impl.WorkflowService;
+import org.meveo.service.wf.WFTransitionService;
+import org.meveo.service.wf.WorkflowService;
+
 
 
 @Stateless

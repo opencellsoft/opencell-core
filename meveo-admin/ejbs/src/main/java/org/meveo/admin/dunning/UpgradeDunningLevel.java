@@ -47,12 +47,12 @@ import org.meveo.model.wf.Workflow;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.payments.impl.ActionDunningService;
-import org.meveo.service.payments.impl.WFActionService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.payments.impl.WFTransitionService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.OtherCreditAndChargeService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
+import org.meveo.service.wf.WFActionService;
+import org.meveo.service.wf.WFTransitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

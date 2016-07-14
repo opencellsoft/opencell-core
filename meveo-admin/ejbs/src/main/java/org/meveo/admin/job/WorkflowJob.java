@@ -74,24 +74,24 @@ public class WorkflowJob extends Job {
 //        result.put("wfJob_workflowType", workflowType);
 		
 		CustomFieldTemplate filterCF = new CustomFieldTemplate();
-		filterCF.setCode("wfJob_workflow");
+		filterCF.setCode("wfJob_filter");
 		filterCF.setAppliesTo("JOB_WorkflowJob");
 		filterCF.setActive(true);
 		filterCF.setDescription("Filter");
 		filterCF.setFieldType(CustomFieldTypeEnum.ENTITY);
-		filterCF.setEntityClazz(Workflow.class.getName());
+		filterCF.setEntityClazz(Filter.class.getName());
 		filterCF.setValueRequired(true);
 		result.put("wfJob_filter", filterCF);
 		
 		CustomFieldTemplate worklowCF = new CustomFieldTemplate();
-		worklowCF.setCode("wfJob_filter");
+		worklowCF.setCode("wfJob_workflow");
 		worklowCF.setAppliesTo("JOB_WorkflowJob");
 		worklowCF.setActive(true);
-		worklowCF.setDescription("Filter");
+		worklowCF.setDescription("Workflow");
 		worklowCF.setFieldType(CustomFieldTypeEnum.ENTITY);
-		worklowCF.setEntityClazz(Filter.class.getName());
+		worklowCF.setEntityClazz(Workflow.class.getName());
 		worklowCF.setValueRequired(true);
-		result.put("wfJob_filter", filterCF);		
+		result.put("wfJob_workflow", worklowCF);		
 		
 		
 
