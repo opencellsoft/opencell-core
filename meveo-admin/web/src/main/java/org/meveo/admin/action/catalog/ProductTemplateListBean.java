@@ -32,8 +32,30 @@ public class ProductTemplateListBean extends BaseBean<ProductTemplate> {
 
 	private List<ProductTemplate> productTemplates = new ArrayList<ProductTemplate>();
 
+	private List<String> bundledProducts = new ArrayList<String>();
+
+	private long activeProductCount = 0;
+
+	private long inactiveProductCount = 0;
+
+	private long almostExpiredCount = 0;
+
 	public ProductTemplateListBean() {
 		super(ProductTemplate.class);
+	}
+
+	@Override
+	public void preRenderView() {
+		productTemplates = productTemplateService.list();
+		for (int i = 0; i < 10; i++) {
+			productTemplates.add(new ProductTemplate());
+		}
+
+		meveoInstances = meveoInstanceService.list();
+		activeProductCount = productTemplateService.productTemplateActiveCount(false);
+		inactiveProductCount = productTemplateService.productTemplateActiveCount(true);
+		almostExpiredCount = productTemplateService.productTemplateAlmostExpiredCount();
+		super.preRenderView();
 	}
 
 	@Override
@@ -42,7 +64,6 @@ public class ProductTemplateListBean extends BaseBean<ProductTemplate> {
 	}
 
 	public List<MeveoInstance> getMeveoInstances() {
-		meveoInstances = meveoInstanceService.list();
 		return meveoInstances;
 	}
 
@@ -59,12 +80,43 @@ public class ProductTemplateListBean extends BaseBean<ProductTemplate> {
 	}
 
 	public List<ProductTemplate> getProductTemplates() {
-		productTemplates = productTemplateService.list();
 		return productTemplates;
 	}
 
 	public void setProductTemplates(List<ProductTemplate> productTemplates) {
 		this.productTemplates = productTemplates;
+	}
+
+	public List<String> getBundledProducts() {
+		return bundledProducts;
+	}
+
+	public void setBundledProducts(List<String> bundledProducts) {
+		this.bundledProducts = bundledProducts;
+	}
+
+	public long getActiveProductCount() {
+		return activeProductCount;
+	}
+
+	public void setActiveProductCount(long activeProductCount) {
+		this.activeProductCount = activeProductCount;
+	}
+
+	public long getInactiveProductCount() {
+		return inactiveProductCount;
+	}
+
+	public void setInactiveProductCount(long inactiveProductCount) {
+		this.inactiveProductCount = inactiveProductCount;
+	}
+
+	public long getAlmostExpiredCount() {
+		return almostExpiredCount;
+	}
+
+	public void setAlmostExpiredCount(long almostExpiredCount) {
+		this.almostExpiredCount = almostExpiredCount;
 	}
 
 }
