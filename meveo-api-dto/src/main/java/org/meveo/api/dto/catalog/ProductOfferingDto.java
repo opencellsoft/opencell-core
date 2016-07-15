@@ -52,12 +52,12 @@ public class ProductOfferingDto implements Serializable {
 	public ProductOfferingDto() {
 	}
 	public ProductOfferingDto(ProductOffering product) {
-		this.setCode(code);
-		this.setDescription(description);
-		this.setName(name);
-		this.setModelCode(modelCode);
-		this.setValidFrom(validFrom);
-		this.setValidTo(validTo);
+		this.setCode(product.getCode());
+		this.setDescription(product.getDescription());
+		this.setName(product.getName());
+		this.setModelCode(product.getModelCode());
+		this.setValidFrom(product.getValidFrom());
+		this.setValidTo(product.getValidTo());
 		this.setLifeCycleStatus(product.getLifeCycleStatus());
 		if (product.getImage() != null) {
 			this.setImageValue(new String(product.getImageAsByteArr()));

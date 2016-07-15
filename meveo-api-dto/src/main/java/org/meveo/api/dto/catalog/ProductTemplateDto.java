@@ -22,9 +22,9 @@ public class ProductTemplateDto extends ProductOfferingDto implements Serializab
 
 	private static final long serialVersionUID = 1866373944715745993L;
 	
-	private ProductChargeTemplateDto productChargeTemplateDto;
+	private ProductChargeTemplateDto productChargeTemplate;
 	
-	private BusinessProductModelDto businessProductModelDto;
+	private BusinessProductModelDto businessProductModel;
 	
 	@XmlElementWrapper(name = "walletTemplates")
 	@XmlElement(name = "walletTemplate")
@@ -37,11 +37,17 @@ public class ProductTemplateDto extends ProductOfferingDto implements Serializab
 		super(productTemplate);
 		
 		ProductChargeTemplate productChargeTemplate = productTemplate.getProductChargeTemplate();
-		ProductChargeTemplateDto productChargeTemplateDto = new ProductChargeTemplateDto(productChargeTemplate);
-		this.setProductChargeTemplateDto(productChargeTemplateDto);
+		ProductChargeTemplateDto productChargeTemplateDto = null;
+		if(productChargeTemplate != null){
+			productChargeTemplateDto = new ProductChargeTemplateDto(productChargeTemplate);
+		}
+		this.setProductChargeTemplate(productChargeTemplateDto);
 		BusinessProductModel businessProductModel = productTemplate.getBusinessProductModel();
-		BusinessProductModelDto businessProductModelDto = new BusinessProductModelDto(businessProductModel);
-		this.setBusinessProductModelDto(businessProductModelDto);
+		BusinessProductModelDto businessProductModelDto = null;
+		if(businessProductModel != null){
+			businessProductModelDto = new BusinessProductModelDto(businessProductModel);
+		}
+		this.setBusinessProductModel(businessProductModelDto);
 		List<WalletTemplate> walletTemplates = productTemplate.getWalletTemplates();
 		if(walletTemplates != null && !walletTemplates.isEmpty()){
 			WalletTemplateDto walletDto = null;
@@ -51,24 +57,22 @@ public class ProductTemplateDto extends ProductOfferingDto implements Serializab
 				this.getWalletTemplates().add(walletDto);
 			}
 		}
-		
-		
 	}
 
-	public ProductChargeTemplateDto getProductChargeTemplateDto() {
-		return productChargeTemplateDto;
-	}
-	
-	public void setProductChargeTemplateDto(ProductChargeTemplateDto productChargeTemplateDto) {
-		this.productChargeTemplateDto = productChargeTemplateDto;
+	public ProductChargeTemplateDto getProductChargeTemplate() {
+		return productChargeTemplate;
 	}
 
-	public BusinessProductModelDto getBusinessProductModelDto() {
-		return businessProductModelDto;
+	public void setProductChargeTemplate(ProductChargeTemplateDto productChargeTemplate) {
+		this.productChargeTemplate = productChargeTemplate;
 	}
-	
-	public void setBusinessProductModelDto(BusinessProductModelDto businessProductModelDto) {
-		this.businessProductModelDto = businessProductModelDto;
+
+	public BusinessProductModelDto getBusinessProductModel() {
+		return businessProductModel;
+	}
+
+	public void setBusinessProductModel(BusinessProductModelDto businessProductModel) {
+		this.businessProductModel = businessProductModel;
 	}
 
 	public List<WalletTemplateDto> getWalletTemplates() {

@@ -15,6 +15,7 @@ import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
 import org.meveo.api.dto.catalog.PricePlanDto;
+import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
@@ -29,6 +30,7 @@ import org.meveo.api.dto.response.catalog.GetOfferTemplateCategoryResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
+import org.meveo.api.dto.response.catalog.GetProductTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetTriggeredEdrResponseDto;
@@ -268,5 +270,20 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     GetOfferTemplateCategoryResponseDto findOfferTemplateCategory(@WebParam(name = "offerTemplateCategoryCode") String code);
+    
+    @WebMethod
+    ActionStatus createProductTemplate(@WebParam(name = "productTemplate") ProductTemplateDto postData);
+
+    @WebMethod
+    ActionStatus updateProductTemplate(@WebParam(name = "productTemplate") ProductTemplateDto postData);
+
+    @WebMethod
+    ActionStatus createOrUpdateProductTemplate(@WebParam(name = "productTemplate") ProductTemplateDto postData);
+
+    @WebMethod
+    ActionStatus removeProductTemplate(@WebParam(name = "productTemplateCode") String code);
+
+    @WebMethod
+    GetProductTemplateResponseDto findProductTemplate(@WebParam(name = "productTemplateCode") String code);
 
 }
