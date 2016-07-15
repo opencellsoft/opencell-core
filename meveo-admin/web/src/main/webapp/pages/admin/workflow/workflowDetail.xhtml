@@ -33,14 +33,11 @@
 						<hftl:formField label="#{messages['businessEntity.description']}"
 							field="description" useConverter="false" size="50" maxlength="50" />
 						
-						<hftl:formField label="#{messages['workflow.type']}"
-							field="wfType" required="true" />
-							
-<!-- 						<hftl:formField -->
-<!-- 							label="#{messages['workflow.type']}" -->
-<!-- 							field="wfType" required="true" size="60" maxlength="255"  -->
-<!-- 			                autocompleteBean="#{workflowBean}" autocompleteMethod="autocompleteClassNames"  -->
-<!-- 			                isAutocomplete="true"/> -->
+						<hftl:formField
+							label="#{messages['workflow.type']}"
+							field="wfType" required="true" size="60" maxlength="255" 
+			                autocompleteBean="#{workflowBean}" autocompleteMethod="autocompleteClassNames" 
+			                isAutocomplete="true"/>
                 
 						<hftl:formField label="#{messages['workflow.exportLot']}"
 							field="exportLot" required="true" />

@@ -22,8 +22,11 @@
 				field="code" />
 			<hftl:searchField label="#{messages['subscription.description']}"
 				field="description" />
-			<hftl:searchField label="#{messages['workflow.type']}"
-				field="wfType" />	
+<!-- 			<hftl:searchField label="#{messages['workflow.type']}" -->
+<!-- 				field="wfType" /> -->
+			<hftl:searchField label="#{messages['workflow.type']}" field="wfType" 
+				size="50" autocompleteBean="#{workflowBean}"
+                autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
 			<hftl:searchField label="#{messages['commons.status']}"
 				field="status" />
 		</hftl:searchPanel>
