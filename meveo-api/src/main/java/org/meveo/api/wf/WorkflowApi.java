@@ -1,4 +1,4 @@
-package org.meveo.api.payment;
+package org.meveo.api.wf;
 
 import java.util.List;
 
@@ -18,7 +18,8 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.Workflow;
-import org.meveo.service.payments.impl.WorkflowService;
+import org.meveo.service.wf.WorkflowService;
+
 
 
 @Stateless

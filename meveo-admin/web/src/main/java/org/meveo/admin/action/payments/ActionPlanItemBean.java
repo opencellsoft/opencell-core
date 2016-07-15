@@ -30,8 +30,8 @@ import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.impl.WFActionService;
-import org.meveo.service.payments.impl.WorkflowService;
+import org.meveo.service.wf.WFActionService;
+import org.meveo.service.wf.WorkflowService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**

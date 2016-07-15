@@ -10,9 +10,9 @@ import org.meveo.api.dto.payment.WorkflowDto;
 import org.meveo.api.dto.wf.WorkflowResponseDto;
 import org.meveo.api.dto.wf.WorkflowsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.payment.WorkflowApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.wf.WorkflowRs;
+import org.meveo.api.wf.WorkflowApi;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
