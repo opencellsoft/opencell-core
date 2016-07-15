@@ -139,4 +139,17 @@ public class CurrencyApi extends BaseApi {
             update(postData, currentUser);
         }
     }
+    public void findOrCreate(String currencyCode, User currentUser) throws EntityDoesNotExistsException, BusinessException {
+		TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(currencyCode, currentUser.getProvider());
+		if (StringUtils.isBlank(tradingCurrency)) {
+			Currency currency = currencyService.findByCode(currencyCode);
+			if (StringUtils.isBlank(currency)) {
+				throw new EntityDoesNotExistsException(Currency.class, currencyCode);
+			}
+			tradingCurrency = new TradingCurrency();
+			tradingCurrency.setCurrency(currency);
+			tradingCurrency.setPrDescription(currency.getDescriptionEn());
+			tradingCurrencyService.create(tradingCurrency, currentUser);
+		}
+    }
 }

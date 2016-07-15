@@ -153,4 +153,17 @@ public class LanguageApi extends BaseApi {
             update(postData, currentUser);
         }
     }
+    public void findOrCreate(String languageCode, User currentUser) throws EntityDoesNotExistsException, BusinessException {
+		TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(languageCode, currentUser.getProvider());
+		if (StringUtils.isBlank(tradingLanguage)) {
+			Language language = languageService.findByCode(languageCode);
+			if (StringUtils.isBlank(language)) {
+				throw new EntityDoesNotExistsException(Language.class, languageCode);
+			}
+			tradingLanguage = new TradingLanguage();
+			tradingLanguage.setLanguage(language);
+			tradingLanguage.setPrDescription(language.getDescriptionEn());
+			tradingLanguageService.create(tradingLanguage, currentUser);
+		}
+	}
 }

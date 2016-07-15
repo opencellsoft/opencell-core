@@ -10,11 +10,9 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.Country;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
-import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.catalog.impl.TitleService;
 
 /**
@@ -23,8 +21,6 @@ import org.meveo.service.catalog.impl.TitleService;
 @Stateless
 public class AccountApi extends BaseApi {
 
-    @Inject
-    private CountryService countryService;
 
     @Inject
     private TitleService titleService;
@@ -32,16 +28,6 @@ public class AccountApi extends BaseApi {
     public void populate(AccountDto postData, AccountEntity accountEntity, User currentUser) throws MeveoApiException {
         Address address = new Address();
         if (postData.getAddress() != null) {
-            // check country
-            if (!StringUtils.isBlank(postData.getAddress().getCountry()) && countryService.findByCode(postData.getAddress().getCountry()) == null) {
-            	Country country=countryService.findByDescription(postData.getAddress().getCountry());
-            	if(country!=null){
-            		postData.getAddress().setCountry(country.getCountryCode());
-            	}else{
-            		throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
-            	}
-            }
-
             address.setAddress1(postData.getAddress().getAddress1());
             address.setAddress2(postData.getAddress().getAddress2());
             address.setAddress3(postData.getAddress().getAddress3());
@@ -81,15 +67,6 @@ public class AccountApi extends BaseApi {
     public void updateAccount(AccountEntity accountEntity, AccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException {
         Address address = accountEntity.getAddress() == null ? new Address() : accountEntity.getAddress();
         if (postData.getAddress() != null) {
-            // check country
-            if (!StringUtils.isBlank(postData.getAddress().getCountry()) && countryService.findByCode(postData.getAddress().getCountry()) == null) {
-            	Country country=countryService.findByDescription(postData.getAddress().getCountry());
-            	if(country!=null){
-            		postData.getAddress().setCountry(country.getCountryCode());
-            	}else{
-            		throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
-            	}
-            }
 
             if (!StringUtils.isBlank(postData.getAddress().getAddress1())) {
                 address.setAddress1(postData.getAddress().getAddress1());

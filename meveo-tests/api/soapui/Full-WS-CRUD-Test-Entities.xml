@@ -3346,7 +3346,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <address3>adress3</address3>
                <zipCode>21000</zipCode>
                <city>Dijon</city>
-               <country>FR</country>
+               <country>France</country>
             </address>
             <customerCategory>CLIENT</customerCategory>
             <customerBrand>DEFAULT</customerBrand>
@@ -3408,7 +3408,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <address3>adress3</address3>
                <zipCode>21000</zipCode>
                <city>Dijon</city>
-               <country>FR</country>
+               <country>France</country>
             </address>
             
             <contactInformation>
@@ -3474,7 +3474,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <address3>adress3</address3>
                <zipCode>21000</zipCode>
                <city>Dijon</city>
-               <country>FR</country>
+               <country>France</country>
             </address>
             <customerAccount>${#Project#baseEntityPrefix}_CA</customerAccount>
             <billingCycle>CYC_INV_MT_1</billingCycle>
@@ -3538,7 +3538,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <address3>adress3</address3>
                <zipCode>21000</zipCode>
                <city>Dijon</city>
-               <country>FR</country>
+               <country>France</country>
             </address>
             <subscriptionDate>2016-03-10</subscriptionDate>
          </userAccount>
@@ -36330,7 +36330,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address3>adress3</address3>
                <zipCode>21000</zipCode>
                <city>Dijon</city>
-               <country>FR</country>
+               <country>France</country>
             </address>
             <customerCategory>CLIENT</customerCategory>
             <customerBrand>DEFAULT</customerBrand>
@@ -36429,15 +36429,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="2ef48a03-ba20-4912-a714-42a3781b7d32"/>
             <con:assertion type="Simple Contains" name="Contains" id="87c9a245-a6cc-476c-b3c6-a99a31cc9018">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ad2db34a-39b8-45dd-8579-0414bac12852" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
+              <con:configuration><token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
                <externalRef1>EXTREF1</externalRef1>
                <externalRef2>EXTREF2</externalRef2>
                <name>
@@ -36451,7 +36446,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <address3>adress3</address3>
                   <zipCode>21000</zipCode>
                   <city>Dijon</city>
-                  <country>FR</country>
+                  <country>France</country>
                </address>
                <customerCategory>CLIENT</customerCategory>
                <customerBrand>DEFAULT</customerBrand>
@@ -36463,14 +36458,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <mobile>+33666666666</mobile>
                </contactInformation>
                <customerAccounts/>
-            </customer>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+            </customer>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="0ae8d12d-12f7-4fa4-b75f-25a505faa00c" name="Contains 2">
-              <con:configuration>
-                <token><![CDATA[<externalRef1>EXTREF1</externalRef1>
+              <con:configuration><token><![CDATA[<externalRef1>EXTREF1</externalRef1>
                <externalRef2>EXTREF2</externalRef2>
                <name>
                   <title>M</title>
@@ -36483,7 +36474,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <address3>adress3</address3>
                   <zipCode>21000</zipCode>
                   <city>Dijon</city>
-                  <country>FR</country>
+                  <country>France</country>
                </address>
                <customerCategory>CLIENT</customerCategory>
                <customerBrand>DEFAULT</customerBrand>
@@ -36493,10 +36484,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <email>WS_FULL@manaty.net</email>
                   <phone>+33100000000</phone>
                   <mobile>+33666666666</mobile>
-               </contactInformation>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -36593,7 +36581,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address3>Address3</address3>
                <zipCode>21050</zipCode>
                <city>Dijon</city>
-               <country>FR</country>
+               <country>France</country>
             </address>
             <customerCategory>PROSPECT</customerCategory>
             <customerBrand>DEFAULT</customerBrand>
@@ -36699,8 +36687,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ac912c45-1da6-44fd-adec-f084dedf9e82" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST_DESCP">
+              <con:configuration><token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST_DESCP">
                <externalRef1>EXT1</externalRef1>
                <externalRef2>EXT2</externalRef2>
                <name>
@@ -36714,7 +36701,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <address3>Address3</address3>
                   <zipCode>21050</zipCode>
                   <city>Dijon</city>
-                  <country>FR</country>
+                  <country>France</country>
                </address>
                <customerCategory>PROSPECT</customerCategory>
                <customerBrand>DEFAULT</customerBrand>
@@ -36726,10 +36713,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <mobile>+33666666666</mobile>
                </contactInformation>
                <customerAccounts/>
-            </customer>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+            </customer>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -37004,7 +36988,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address3>adress3</address3>
                <zipCode>21000</zipCode>
                <city>Dijon</city>
-               <country>FR</country>
+               <country>France</country>
             </address>
             
             <contactInformation>
@@ -37112,8 +37096,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="e2cdc851-184f-47ce-af48-0fdcefa0cf5e" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA" description="${#Project#entityPrefix}_${#TestSuite#index}_CA">
+              <con:configuration><token><![CDATA[<customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA" description="${#Project#entityPrefix}_${#TestSuite#index}_CA">
                <externalRef1>EXTREF1</externalRef1>
                <externalRef2>EXTREF2</externalRef2>
                <name>
@@ -37127,17 +37110,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <address3>adress3</address3>
                   <zipCode>21000</zipCode>
                   <city>Dijon</city>
-                  <country>FR</country>
+                  <country>France</country>
                </address>
                <customer>${#Project#baseEntityPrefix}_CUST</customer>
                <currency>EUR</currency>
                <language>FRA</language>
                <status>ACTIVE</status>
                <paymentMethod>CHECK</paymentMethod>
-               <creditCategory>PRO</creditCategory>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               <creditCategory>PRO</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="086febf8-2a22-499b-a0fd-2a471d995abc" name="Contains 2">
               <con:configuration>
@@ -37275,7 +37255,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address3>Adress3</address3>
                <zipCode>21005</zipCode>
                <city>Dijon</city>
-               <country>FR</country>
+               <country>France</country>
             </address>
             
             <contactInformation>
@@ -37375,15 +37355,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" name="SOAP Response" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="4e6f57cf-d5bc-4d32-9d9a-5b9242b0c40a" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA" description="${#Project#entityPrefix}_${#TestSuite#index}_CA-Description">
+              <con:configuration><token><![CDATA[<customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA" description="${#Project#entityPrefix}_${#TestSuite#index}_CA-Description">
                <externalRef1>EXT1</externalRef1>
                <externalRef2>EXT2</externalRef2>
                <name>
@@ -37397,17 +37372,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <address3>Adress3</address3>
                   <zipCode>21005</zipCode>
                   <city>Dijon</city>
-                  <country>FR</country>
+                  <country>France</country>
                </address>
                <customer>${#Project#baseEntityPrefix}_CUST</customer>
                <currency>EUR</currency>
                <language>FRA</language>
                <status>ACTIVE</status>
                <paymentMethod>CHECK</paymentMethod>
-               <creditCategory>VIP</creditCategory>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               <creditCategory>VIP</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ce8fc67f-68dc-4ea8-a5c7-0860a5964cb1" name="Contains 2">
               <con:configuration>
@@ -37545,7 +37517,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address3>Adress3</address3>
                <zipCode>21005</zipCode>
                <city>Dijon</city>
-               <country>FR</country>
+               <country>France</country>
             </address>
             
             <contactInformation>
@@ -37652,8 +37624,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="4e6f57cf-d5bc-4d32-9d9a-5b9242b0c40a" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA" description="${#Project#entityPrefix}_${#TestSuite#index}_CA-Description">
+              <con:configuration><token><![CDATA[<customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA" description="${#Project#entityPrefix}_${#TestSuite#index}_CA-Description">
                <externalRef1>EXT1</externalRef1>
                <externalRef2>EXT2</externalRef2>
                <name>
@@ -37667,17 +37638,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <address3>Adress3</address3>
                   <zipCode>21005</zipCode>
                   <city>Dijon</city>
-                  <country>FR</country>
+                  <country>France</country>
                </address>
                <customer>${#Project#baseEntityPrefix}_CUST</customer>
                <currency>EUR</currency>
                <language>FRA</language>
                <status>ACTIVE</status>
                <paymentMethod>CHECK</paymentMethod>
-               <creditCategory>VIP</creditCategory>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               <creditCategory>VIP</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ce8fc67f-68dc-4ea8-a5c7-0860a5964cb1" name="Contains 2">
               <con:configuration>
@@ -37990,7 +37958,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address3>adress3</address3>
                <zipCode>21000</zipCode>
                <city>Dijon</city>
-               <country>FR</country>
+               <country>France</country>
             </address>
             <customerAccount>${#Project#baseEntityPrefix}_CA</customerAccount>
             <billingCycle>CYC_INV_MT_1</billingCycle>
@@ -38102,8 +38070,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="bcccd71b-5d9e-4d38-85c3-6e148ecf1778" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_BA" description="${#Project#entityPrefix}_${#TestSuite#index}_BA">
+              <con:configuration><token><![CDATA[<billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_BA" description="${#Project#entityPrefix}_${#TestSuite#index}_BA">
                <externalRef1>EXTREF1</externalRef1>
                <externalRef2>EXTREF2</externalRef2>
                <name>
@@ -38117,7 +38084,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <address3>adress3</address3>
                   <zipCode>21000</zipCode>
                   <city>Dijon</city>
-                  <country>FR</country>
+                  <country>France</country>
                </address>
                <customerAccount>WS_BASE_CA</customerAccount>
                <billingCycle>CYC_INV_MT_1</billingCycle>
@@ -38128,10 +38095,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <subscriptionDate>2016-01-01T00:00:00${#Project#timezone}:00</subscriptionDate>
                <paymentTerms>CASH</paymentTerms>
                <electronicBilling>true</electronicBilling>
-               <status>ACTIVE</status>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               <status>ACTIVE</status>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="007328cf-960a-41ca-bee6-d323816eaec7" name="Contains 2">
               <con:configuration>
@@ -38267,7 +38231,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address3>Address3</address3>
                <zipCode>21012</zipCode>
                <city>Dijon</city>
-               <country>FR</country>
+               <country>France</country>
             </address>
             <customerAccount>${#Project#baseEntityPrefix}_CA</customerAccount>
             <billingCycle>CYC_INV_MT_2</billingCycle>
@@ -38376,8 +38340,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="209abc85-5084-41fa-b0e3-25c8085f809c" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_BA" description="${#Project#entityPrefix}_${#TestSuite#index}_BA-DESCP">
+              <con:configuration><token><![CDATA[<billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_BA" description="${#Project#entityPrefix}_${#TestSuite#index}_BA-DESCP">
                <externalRef1>EXT1</externalRef1>
                <externalRef2>EXT2</externalRef2>
                <name>
@@ -38391,7 +38354,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <address3>Address3</address3>
                   <zipCode>21012</zipCode>
                   <city>Dijon</city>
-                  <country>FR</country>
+                  <country>France</country>
                </address>
                <customerAccount>WS_BASE_CA</customerAccount>
                <billingCycle>CYC_INV_MT_2</billingCycle>
@@ -38402,10 +38365,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <subscriptionDate>2016-01-01T00:00:00${#Project#timezone}:00</subscriptionDate>
                <paymentTerms>CASH</paymentTerms>
                <electronicBilling>true</electronicBilling>
-               <status>ACTIVE</status>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               <status>ACTIVE</status>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="871e0695-22d5-43ff-85cd-41b116b2c651" name="Contains 2">
               <con:configuration>
@@ -38539,7 +38499,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address3>Address3</address3>
                <zipCode>21012</zipCode>
                <city>Dijon</city>
-               <country>FR</country>
+               <country>France</country>
             </address>
             <customerAccount>${#Project#baseEntityPrefix}_CA</customerAccount>
             <billingCycle>CYC_INV_MT_2</billingCycle>
@@ -38648,8 +38608,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="209abc85-5084-41fa-b0e3-25c8085f809c" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_BA" description="${#Project#entityPrefix}_${#TestSuite#index}_BA-DESCP">
+              <con:configuration><token><![CDATA[<billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_BA" description="${#Project#entityPrefix}_${#TestSuite#index}_BA-DESCP">
                <externalRef1>EXT1</externalRef1>
                <externalRef2>EXT2</externalRef2>
                <name>
@@ -38663,7 +38622,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <address3>Address3</address3>
                   <zipCode>21012</zipCode>
                   <city>Dijon</city>
-                  <country>FR</country>
+                  <country>France</country>
                </address>
                <customerAccount>WS_BASE_CA</customerAccount>
                <billingCycle>CYC_INV_MT_2</billingCycle>
@@ -38674,10 +38633,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <subscriptionDate>2016-01-01T00:00:00${#Project#timezone}:00</subscriptionDate>
                <paymentTerms>CASH</paymentTerms>
                <electronicBilling>true</electronicBilling>
-               <status>ACTIVE</status>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               <status>ACTIVE</status>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="871e0695-22d5-43ff-85cd-41b116b2c651" name="Contains 2">
               <con:configuration>
@@ -38987,7 +38943,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address3>address3</address3>
                <zipCode>21000</zipCode>
                <city>Dijon</city>
-               <country>FR</country>
+               <country>France</country>
             </address>
             <subscriptionDate>2016-03-10</subscriptionDate>
             <status>ACTIVE</status>
@@ -39080,8 +39036,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88b2bf35-dac0-4231-ac00-84c531fda21b" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
+              <con:configuration><token><![CDATA[<userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
                <externalRef1>EXTREF1</externalRef1>
                <externalRef2>EXTREF2</externalRef2>
                <name>
@@ -39095,12 +39050,9 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <address3>address3</address3>
                   <zipCode>21000</zipCode>
                   <city>Dijon</city>
-                  <country>FR</country>
+                  <country>France</country>
                </address>
-               <billingAccount>WS_BASE_BA</billingAccount>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               <billingAccount>WS_BASE_BA</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="d337536a-58c8-4036-91b2-3f03f9dc380b" name="Contains 2">
               <con:configuration>
@@ -39241,7 +39193,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address3>address3</address3>
                <zipCode>21000</zipCode>
                <city>Dijon</city>
-               <country>FR</country>
+               <country>France</country>
             </address>
             <subscriptionDate>2016-03-10</subscriptionDate>
             <status>ACTIVE</status>
@@ -39336,8 +39288,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="41f84038-76a1-4255-ae6c-56aff7286ded" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
+              <con:configuration><token><![CDATA[<userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
                <externalRef1>EXT1</externalRef1>
                <externalRef2>EXT2</externalRef2>
                <name>
@@ -39351,12 +39302,9 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <address3>address3</address3>
                   <zipCode>21000</zipCode>
                   <city>Dijon</city>
-                  <country>FR</country>
+                  <country>France</country>
                </address>
-               <billingAccount>${#Project#baseEntityPrefix}_BA</billingAccount>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               <billingAccount>${#Project#baseEntityPrefix}_BA</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="6fba02d2-4c5c-4920-91d9-55b2e090db4a" name="Contains 2">
               <con:configuration>
@@ -39495,7 +39443,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address3>address3</address3>
                <zipCode>21000</zipCode>
                <city>Dijon</city>
-               <country>FR</country>
+               <country>France</country>
             </address>
             <subscriptionDate>2016-03-10</subscriptionDate>
             <status>ACTIVE</status>
@@ -39590,8 +39538,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="41f84038-76a1-4255-ae6c-56aff7286ded" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
+              <con:configuration><token><![CDATA[<userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
                <externalRef1>EXT1</externalRef1>
                <externalRef2>EXT2</externalRef2>
                <name>
@@ -39605,12 +39552,9 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <address3>address3</address3>
                   <zipCode>21000</zipCode>
                   <city>Dijon</city>
-                  <country>FR</country>
+                  <country>France</country>
                </address>
-               <billingAccount>${#Project#baseEntityPrefix}_BA</billingAccount>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               <billingAccount>${#Project#baseEntityPrefix}_BA</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="6fba02d2-4c5c-4920-91d9-55b2e090db4a" name="Contains 2">
               <con:configuration>
@@ -41342,7 +41286,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                            <address3>address3</address3>
                            <zipCode>75001</zipCode>
                            <city>Tunis</city>
-                           <country>Tunisie</country>
+                           <country>Tunisia</country>
                            <state></state>
                         </address>
                         <customerCategory>CLIENT</customerCategory>
@@ -41370,7 +41314,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
 	                           <address3>address3</address3>
 	                           <zipCode>75001</zipCode>
 	                           <city>Tunis</city>
-	                           <country>Tunisie</country>
+	                           <country>Tunisia</country>
 	                           <state></state>
 	                        </address>
                               <currency>USD</currency>
@@ -41554,7 +41498,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <address3>address3</address3>
                   <zipCode>75001</zipCode>
                   <city>Tunis</city>
-                  <country>TN</country>
+                  <country>Tunisia</country>
+                  <state/>
                </address>
                <customerCategory>CLIENT</customerCategory>
                <customerBrand>DEFAULT</customerBrand>
@@ -41583,7 +41528,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                         <address3>address3</address3>
                         <zipCode>75001</zipCode>
                         <city>Tunis</city>
-                        <country>TN</country>
+                        <country>Tunisia</country>
                         <state/>
                      </address>
                      <customer>${#Project#entityPrefix}_${#TestSuite#index}_CUST</customer>
@@ -41621,7 +41566,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                               <address3>address3</address3>
                               <zipCode>75001</zipCode>
                               <city>Tunis</city>
-                              <country>TN</country>
+                              <country>Tunisia</country>
                               <state/>
                            </address>
                            <customerAccount>${#Project#entityPrefix}_${#TestSuite#index}_CA</customerAccount>
@@ -41665,7 +41610,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                     <address3>address3</address3>
                                     <zipCode>75001</zipCode>
                                     <city>Tunis</city>
-                                    <country>TN</country>
+                                    <country>Tunisia</country>
                                     <state/>
                                  </address>
                                  <billingAccount>${#Project#entityPrefix}_${#TestSuite#index}_BA</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
@@ -41756,7 +41701,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address1>Address1</address1>
                <address2>Address2</address2>
                <zipCode>75001</zipCode>
-               <city>Tunisia</city>
+               <city>Tunis</city>
+               <country>Tunisia</country>
          	</accountHierarchy>
       </ws:createAccountHierarchy>\r
    </soapenv:Body>\r
@@ -41813,7 +41759,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address1>Address1</address1>
                <address2>Address2</address2>
                <zipCode>75001</zipCode>
-               <city>Tunisia</city>
+               <city>Tunis</city>
+               <country>Tunisia</country>
          	</accountHierarchy>
       </ws:findAccountHierarchy>\r
    </soapenv:Body>\r
@@ -41837,8 +41784,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                      <address1>Address1</address1>
                      <address2>Address2</address2>
                      <zipCode>75001</zipCode>
-                     <city>Tunisia</city>
-                     <country>US</country>
+                     <city>Tunis</city>
+                     <country>Tunisia</country>
                   </address>
                   <customerCategory>CLIENT</customerCategory>
                   <customerBrand>DEFAULT</customerBrand>
@@ -41850,8 +41797,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="8555fb0e-3ca6-4e57-ba5d-7743ab6d00a1" name="find CA Part2">
-              <con:configuration>
-                <token><![CDATA[<customerAccounts>
+              <con:configuration><token><![CDATA[<customerAccounts>
                      <customerAccount code="CA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                         <name>
                            <title>M</title>
@@ -41862,22 +41808,18 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                            <address1>Address1</address1>
                            <address2>Address2</address2>
                            <zipCode>75001</zipCode>
-                           <city>Tunisia</city>
-                           <country>US</country>
+                           <city>Tunis</city>
+                           <country>Tunisia</country>
                         </address>
                         <customer>CUST_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</customer>
                         <currency>USD</currency>
                         <language>ENG</language>
                         <status>ACTIVE</status>
                         <paymentMethod>CHECK</paymentMethod>
-                        <creditCategory>NEWCUSTOMER</creditCategory>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                        <creditCategory>NEWCUSTOMER</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="3b879291-96e5-4111-a3f4-414e18641154" name="find BA Part3">
-              <con:configuration>
-                <token><![CDATA[<billingAccounts>
+              <con:configuration><token><![CDATA[<billingAccounts>
                            <billingAccount code="BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                               <name>
                                  <title>M</title>
@@ -41888,21 +41830,17 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                  <address1>Address1</address1>
                                  <address2>Address2</address2>
                                  <zipCode>75001</zipCode>
-                                 <city>Tunisia</city>
-                                 <country>US</country>
+                                 <city>Tunis</city>
+                                 <country>Tunisia</country>
                               </address>
                               <customerAccount>CA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</customerAccount>
                               <billingCycle>CYC_INV_MT_1</billingCycle>
                               <country>US</country>
                               <language>ENG</language>
-                              <paymentMethod>CHECK</paymentMethod>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                              <paymentMethod>CHECK</paymentMethod>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="8917d615-9e61-464a-9c32-920f6351c420" name="find UA Part4">
-              <con:configuration>
-                <token><![CDATA[<userAccounts>
+              <con:configuration><token><![CDATA[<userAccounts>
                                  <userAccount code="UA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                                     <name>
                                        <title>M</title>
@@ -41913,13 +41851,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                        <address1>Address1</address1>
                                        <address2>Address2</address2>
                                        <zipCode>75001</zipCode>
-                                       <city>Tunisia</city>
-                                       <country>US</country>
+                                       <city>Tunis</city>
+                                       <country>Tunisia</country>
                                     </address>
-                                    <billingAccount>BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</billingAccount>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                                    <billingAccount>BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -41966,6 +41901,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address2>Address2</address2>
                <zipCode>75055</zipCode>
                <city>Dijon</city>
+               <country>France</country>
          	</accountHierarchy>
       </ws:updateAccountHierarchy>\r
    </soapenv:Body>\r
@@ -42028,8 +41964,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="d99c08a5-3da6-48d2-a31b-5707b09e731b" name="find Customer Part1">
-              <con:configuration>
-                <token><![CDATA[<customer code="CUST_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
+              <con:configuration><token><![CDATA[<customer code="CUST_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                   <name>
                      <title>M</title>
                      <firstName>Saidani</firstName>
@@ -42040,7 +41975,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                      <address2>Address2</address2>
                      <zipCode>75055</zipCode>
                      <city>Dijon</city>
-                     <country>FR</country>
+                     <country>France</country>
                   </address>
                   <customerCategory>PROSPECT</customerCategory>
                   <customerBrand>DEFAULT</customerBrand>
@@ -42049,14 +41984,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <contactInformation>
                      <email>${#Project#entityPrefix}_${#TestSuite#index}@manaty.net</email>
                      <phone>+10558474441</phone>
-                  </contactInformation>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                  </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="b8728cf9-72ad-42dc-a52b-d5958879e815" name="find CA part2">
-              <con:configuration>
-                <token><![CDATA[<customerAccounts>
+              <con:configuration><token><![CDATA[<customerAccounts>
                      <customerAccount code="CA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                         <name>
                            <title>M</title>
@@ -42068,21 +41999,17 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                            <address2>Address2</address2>
                            <zipCode>75055</zipCode>
                            <city>Dijon</city>
-                           <country>FR</country>
+                           <country>France</country>
                         </address>
                         <customer>CUST_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</customer>
                         <currency>EUR</currency>
                         <language>FRA</language>
                         <status>ACTIVE</status>
                         <paymentMethod>CHECK</paymentMethod>
-                        <creditCategory>NEWCUSTOMER</creditCategory>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                        <creditCategory>NEWCUSTOMER</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ecaaa369-be17-4293-8a40-d4778ad72112" name="find BA Part3">
-              <con:configuration>
-                <token><![CDATA[<billingAccounts>
+              <con:configuration><token><![CDATA[<billingAccounts>
                            <billingAccount code="BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                               <name>
                                  <title>M</title>
@@ -42094,20 +42021,16 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                  <address2>Address2</address2>
                                  <zipCode>75055</zipCode>
                                  <city>Dijon</city>
-                                 <country>FR</country>
+                                 <country>France</country>
                               </address>
                               <customerAccount>CA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</customerAccount>
                               <billingCycle>CYC_INV_MT_2</billingCycle>
                               <country>FR</country>
                               <language>FRA</language>
-                              <paymentMethod>CHECK</paymentMethod>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                              <paymentMethod>CHECK</paymentMethod>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="bcfed88d-ccc9-46c4-b2ed-a448efb78fd6" name="find UA Part4">
-              <con:configuration>
-                <token><![CDATA[<userAccounts>
+              <con:configuration><token><![CDATA[<userAccounts>
                                  <userAccount code="UA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                                     <name>
                                        <title>M</title>
@@ -42119,12 +42042,9 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                        <address2>Address2</address2>
                                        <zipCode>75055</zipCode>
                                        <city>Dijon</city>
-                                       <country>FR</country>
+                                       <country>France</country>
                                     </address>
-                                    <billingAccount>BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</billingAccount>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                                    <billingAccount>BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -42171,6 +42091,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address2>Address2</address2>
                <zipCode>75055</zipCode>
                <city>Dijon</city>
+               <country>France</country>
          	</accountHierarchy>
       </ws:updateAccountHierarchy>\r
    </soapenv:Body>\r
@@ -42233,8 +42154,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="d99c08a5-3da6-48d2-a31b-5707b09e731b" name="find Customer Part1">
-              <con:configuration>
-                <token><![CDATA[<customer code="CUST_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
+              <con:configuration><token><![CDATA[<customer code="CUST_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                   <name>
                      <title>M</title>
                      <firstName>Saidani</firstName>
@@ -42245,7 +42165,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                      <address2>Address2</address2>
                      <zipCode>75055</zipCode>
                      <city>Dijon</city>
-                     <country>FR</country>
+                     <country>France</country>
                   </address>
                   <customerCategory>NewCategory</customerCategory>
                   <customerBrand>NewBrand</customerBrand>
@@ -42254,14 +42174,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <contactInformation>
                      <email>${#Project#entityPrefix}_${#TestSuite#index}@manaty.net</email>
                      <phone>+10558474441</phone>
-                  </contactInformation>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                  </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="b8728cf9-72ad-42dc-a52b-d5958879e815" name="find CA part2">
-              <con:configuration>
-                <token><![CDATA[<customerAccounts>
+              <con:configuration><token><![CDATA[<customerAccounts>
                      <customerAccount code="CA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                         <name>
                            <title>M</title>
@@ -42273,21 +42189,17 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                            <address2>Address2</address2>
                            <zipCode>75055</zipCode>
                            <city>Dijon</city>
-                           <country>FR</country>
+                           <country>France</country>
                         </address>
                         <customer>CUST_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</customer>
                         <currency>EUR</currency>
                         <language>FRA</language>
                         <status>ACTIVE</status>
                         <paymentMethod>CHECK</paymentMethod>
-                        <creditCategory>NEWCUSTOMER</creditCategory>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                        <creditCategory>NEWCUSTOMER</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ecaaa369-be17-4293-8a40-d4778ad72112" name="find BA Part3">
-              <con:configuration>
-                <token><![CDATA[<billingAccounts>
+              <con:configuration><token><![CDATA[<billingAccounts>
                            <billingAccount code="BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                               <name>
                                  <title>M</title>
@@ -42299,20 +42211,16 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                  <address2>Address2</address2>
                                  <zipCode>75055</zipCode>
                                  <city>Dijon</city>
-                                 <country>FR</country>
+                                 <country>France</country>
                               </address>
                               <customerAccount>CA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</customerAccount>
                               <billingCycle>CYC_INV_MT_2</billingCycle>
                               <country>FR</country>
                               <language>FRA</language>
-                              <paymentMethod>CHECK</paymentMethod>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                              <paymentMethod>CHECK</paymentMethod>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="bcfed88d-ccc9-46c4-b2ed-a448efb78fd6" name="find UA Part4">
-              <con:configuration>
-                <token><![CDATA[<userAccounts>
+              <con:configuration><token><![CDATA[<userAccounts>
                                  <userAccount code="UA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                                     <name>
                                        <title>M</title>
@@ -42324,12 +42232,9 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                        <address2>Address2</address2>
                                        <zipCode>75055</zipCode>
                                        <city>Dijon</city>
-                                       <country>FR</country>
+                                       <country>France</country>
                                     </address>
-                                    <billingAccount>BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</billingAccount>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                                    <billingAccount>BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -42374,7 +42279,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address2>Address2</address2>\r
                <zipCode>20250</zipCode>\r
                <city>Dijon</city>\r
-               <country>FR</country>\r
+               <country>France</country>\r
                <state>Paris</state>\r
             </address>\r
             <contactInformation>\r
@@ -42469,7 +42374,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <address2>Address2</address2>
                   <zipCode>20250</zipCode>
                   <city>Dijon</city>
-                  <country>FR</country>
+                  <country>France</country>
                   <state>Paris</state>
                </address>
                <customerCategory>CLIENT</customerCategory>
@@ -42483,8 +42388,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="0ae8d12d-12f7-4fa4-b75f-25a505faa00c" name="Assert CA Part1">
-              <con:configuration>
-                <token><![CDATA[<customerAccounts>
+              <con:configuration><token><![CDATA[<customerAccounts>
                   <customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy">
                      <externalRef1>Ref1</externalRef1>
                      <externalRef2>Ref2</externalRef2>
@@ -42498,7 +42402,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                         <address2>Address2</address2>
                         <zipCode>20250</zipCode>
                         <city>Dijon</city>
-                        <country>FR</country>
+                        <country>France</country>
                         <state>Paris</state>
                      </address>
                      <customer>${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST</customer>
@@ -42506,10 +42410,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                      <language>FRA</language>
                      <status>ACTIVE</status>
                      <paymentMethod>CHECK</paymentMethod>
-                     <creditCategory>VIP</creditCategory>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                     <creditCategory>VIP</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="c42e4712-90dc-4eb2-bbe7-c264da6dd922" name="Contains">
               <con:configuration>
@@ -42527,8 +42428,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="6c0013b9-dfbe-472e-a58a-75c30f750f05" name="Assert BA Part">
-              <con:configuration>
-                <token><![CDATA[<billingAccounts>
+              <con:configuration><token><![CDATA[<billingAccounts>
                         <billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy">
                            <externalRef1>Ref1</externalRef1>
                            <externalRef2>Ref2</externalRef2>
@@ -42542,7 +42442,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                               <address2>Address2</address2>
                               <zipCode>20250</zipCode>
                               <city>Dijon</city>
-                              <country>FR</country>
+                              <country>France</country>
                               <state>Paris</state>
                            </address>
                            <customerAccount>${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST</customerAccount>
@@ -42554,14 +42454,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                            <subscriptionDate>2016-02-01T00:00:00${#Project#timezone}:00</subscriptionDate>
                            <paymentTerms>CASH</paymentTerms>
                            <electronicBilling>true</electronicBilling>
-                           <status>ACTIVE</status>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                           <status>ACTIVE</status>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="35e09099-b212-4f8e-a6b7-da1285f876b1" name="Assert UA Part">
-              <con:configuration>
-                <token><![CDATA[<userAccounts>
+              <con:configuration><token><![CDATA[<userAccounts>
                               <userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy">
                                  <externalRef1>Ref1</externalRef1>
                                  <externalRef2>Ref2</externalRef2>
@@ -42575,13 +42471,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                     <address2>Address2</address2>
                                     <zipCode>20250</zipCode>
                                     <city>Dijon</city>
-                                    <country>FR</country>
+                                    <country>France</country>
                                     <state>Paris</state>
                                  </address>
-                                 <billingAccount>${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST</billingAccount>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                                 <billingAccount>${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="fe1ba00d-5b74-45d0-ade1-cc563765a3a6" name="Contains BA End">
               <con:configuration>
@@ -42661,8 +42554,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address2>Address2</address2>\r
                <zipCode>01020</zipCode>\r
                <city>Charguia2</city>\r
-               <country>TN</country>\r
-               <state>Tunisie</state>\r
+               <country>Tunisia</country>\r
+               <state>Tunisie</state>
             </address>\r
             <contactInformation>\r
                <email>${#Project#entityPrefix}_${#TestSuite#index}@manaty.com</email>\r
@@ -42743,8 +42636,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ac912c45-1da6-44fd-adec-f084dedf9e82" name="Assert Customer Part">
-              <con:configuration>
-                <token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy-Updated">
+              <con:configuration><token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy-Updated">
                <externalRef1>EXTRef1</externalRef1>
                <externalRef2>EXTRef2</externalRef2>
                <name>
@@ -42757,7 +42649,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <address2>Address2</address2>
                   <zipCode>01020</zipCode>
                   <city>Charguia2</city>
-                  <country>TN</country>
+                  <country>Tunisia</country>
                   <state>Tunisie</state>
                </address>
                <customerCategory>PROSPECT</customerCategory>
@@ -42768,14 +42660,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <email>${#Project#entityPrefix}_${#TestSuite#index}@manaty.com</email>
                   <phone>+0135215579</phone>
                   <mobile>+0141487410</mobile>
-               </contactInformation>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="7a156667-ac11-401c-a021-9b206dcbe8c6" name="Assert CA Part1">
-              <con:configuration>
-                <token><![CDATA[<customerAccounts>
+              <con:configuration><token><![CDATA[<customerAccounts>
                   <customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy-Updated">
                      <externalRef1>EXTRef1</externalRef1>
                      <externalRef2>EXTRef2</externalRef2>
@@ -42789,7 +42677,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                         <address2>Address2</address2>
                         <zipCode>01020</zipCode>
                         <city>Charguia2</city>
-                        <country>TN</country>
+                        <country>Tunisia</country>
                         <state>Tunisie</state>
                      </address>
                      <customer>${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST</customer>
@@ -42797,10 +42685,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                      <language>ENG</language>
                      <status>ACTIVE</status>
                      <paymentMethod>CHECK</paymentMethod>
-                     <creditCategory>PART_C</creditCategory>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                     <creditCategory>PART_C</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="4866dff1-00f7-47da-a8d7-48ecf01a719e" name="Assert CA Part2">
               <con:configuration>
@@ -42818,8 +42703,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="40884b22-b34b-4f3a-b59c-810a0d54a898" name="Assert BA Part">
-              <con:configuration>
-                <token><![CDATA[<billingAccounts>
+              <con:configuration><token><![CDATA[<billingAccounts>
                         <billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy-Updated">
                            <externalRef1>EXTRef1</externalRef1>
                            <externalRef2>EXTRef2</externalRef2>
@@ -42833,7 +42717,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                               <address2>Address2</address2>
                               <zipCode>01020</zipCode>
                               <city>Charguia2</city>
-                              <country>TN</country>
+                              <country>Tunisia</country>
                               <state>Tunisie</state>
                            </address>
                            <customerAccount>${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST</customerAccount>
@@ -42845,14 +42729,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                            <subscriptionDate>2016-03-16T00:00:00${#Project#timezone}:00</subscriptionDate>
                            <paymentTerms>CASH</paymentTerms>
                            <electronicBilling>true</electronicBilling>
-                           <status>ACTIVE</status>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                           <status>ACTIVE</status>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="9c7418dd-e153-4a5c-b281-a5db7fef8e98" name="Assert UA Part">
-              <con:configuration>
-                <token><![CDATA[<userAccounts>
+              <con:configuration><token><![CDATA[<userAccounts>
                               <userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy-Updated">
                                  <externalRef1>EXTRef1</externalRef1>
                                  <externalRef2>EXTRef2</externalRef2>
@@ -42866,13 +42746,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                     <address2>Address2</address2>
                                     <zipCode>01020</zipCode>
                                     <city>Charguia2</city>
-                                    <country>TN</country>
+                                    <country>Tunisia</country>
                                     <state>Tunisie</state>
                                  </address>
-                                 <billingAccount>${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST</billingAccount>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                                 <billingAccount>${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="393f16fe-2e49-4529-90c9-d7b8a66ab848" name="Contains BA end">
               <con:configuration>
@@ -47219,7 +47096,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>71</con:value>
+        <con:value>72</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -47248,9 +47125,11 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Body>
       <ws:createDDRequestLotOp>
          <ddrequestLotOp>
+            <fromDueDate>2016-07-01T00:00:00${#Project#timezone}:00</fromDueDate>
+            <toDueDate>2016-07-10T00:00:00${#Project#timezone}:00</toDueDate>
+            <ddrequestOp>CREATE</ddrequestOp>
+            <status>WAIT</status>
             <fileFormat>SEPA</fileFormat>
-            <fromDueDate>2016-07-01</fromDueDate>
-            <toDueDate>2016-07-10</toDueDate>
          </ddrequestLotOp>
       </ws:createDDRequestLotOp>
    </soapenv:Body>
@@ -47343,16 +47222,12 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" id="eca3027d-7009-4406-8052-889e2115df90" name="Code Status Success">
-              <con:configuration>
-                <token>SUCCESS</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
               <con:configuration><token><![CDATA[<ddrequestLotOp>
                   <fromDueDate>2016-07-01T00:00:00${#Project#timezone2}:00</fromDueDate>
-                  <toDueDate>2016-07-31T00:00:00${#Project#timezone2}:00</toDueDate>
+                  <toDueDate>2016-07-10T00:00:00${#Project#timezone2}:00</toDueDate>
                   <ddrequestOp>CREATE</ddrequestOp>
                   <status>WAIT</status>
                   <fileFormat>SEPA</fileFormat>
@@ -47375,7 +47250,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     </con:testCase><con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>71</con:value>
+        <con:value>72</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -49567,7 +49442,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>73</con:value>
+        <con:value>74</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -57168,7 +57043,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>91</con:value>
+        <con:value>92</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -57647,7 +57522,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>79</con:value>
+        <con:value>80</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -58272,7 +58147,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>79</con:value>
+        <con:value>80</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -58788,7 +58663,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>69</con:value>
+        <con:value>70</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
