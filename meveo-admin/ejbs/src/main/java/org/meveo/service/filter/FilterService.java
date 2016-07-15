@@ -208,6 +208,7 @@ public class FilterService extends BusinessService<Filter> {
 
     @SuppressWarnings("unchecked")
     public List<? extends IEntity> filteredListAsObjects(Filter filter, Provider provider) throws BusinessException {
+    	filter = refreshOrRetrieve(filter);
         FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter);
 
         try {

@@ -1,9 +1,10 @@
-package org.meveo.admin.wf;
+package org.meveo.admin.wf.types;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.meveo.admin.wf.WorkflowType;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DunningLevelEnum;
 
@@ -27,6 +28,7 @@ public class DunningWF extends WorkflowType<CustomerAccount> {
 	public void changeStatus(String newStatus) {
 		entity.setDunningLevel(DunningLevelEnum.valueOf(newStatus));
 		entity.setDateDunningLevel(new Date());
+		
 
 	}
 

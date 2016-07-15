@@ -9,7 +9,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.payment.WFTransitionDto;
 import org.meveo.api.dto.wf.WFTransitionResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.payment.WFTransitionApi;
+import org.meveo.api.wf.WFTransitionApi;
 import org.meveo.api.ws.impl.BaseWs;
 import org.meveo.api.ws.wf.WFTransitionWs;
 

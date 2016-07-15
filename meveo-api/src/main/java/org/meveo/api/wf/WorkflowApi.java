@@ -1,4 +1,4 @@
-package org.meveo.api.payment;
+package org.meveo.api.wf;
 
 import java.util.List;
 
@@ -18,7 +18,8 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.Workflow;
-import org.meveo.service.payments.impl.WorkflowService;
+import org.meveo.service.wf.WorkflowService;
+
 
 
 @Stateless
@@ -49,7 +50,7 @@ public class WorkflowApi extends BaseApi {
 		workflowService.create(workflow, currentUser);		
 		if(workflowDto.getListWFTransitionDto() != null &&  !workflowDto.getListWFTransitionDto().isEmpty()){
 		    for(WFTransitionDto wfTransitionDto : workflowDto.getListWFTransitionDto()){
-		    	wfTransitionDto.setWorkflowDto(workflowDto);
+		    	wfTransitionDto.setWorkflowCode(workflowDto.getCode());
 		    	wfTransitionApi.create(wfTransitionDto, currentUser);
 		    }
 		}		
@@ -76,7 +77,7 @@ public class WorkflowApi extends BaseApi {
 		workflowService.update(workflow, currentUser);		
 		if(workflowDto.getListWFTransitionDto() != null &&  !workflowDto.getListWFTransitionDto().isEmpty()){
 		    for(WFTransitionDto wfTransitionDto : workflowDto.getListWFTransitionDto()){
-		    	wfTransitionDto.setWorkflowDto(workflowDto);
+		    	wfTransitionDto.setWorkflowCode(workflowDto.getCode());
 		    	wfTransitionApi.createOrUpdate(wfTransitionDto, currentUser);
 		    }
 		}

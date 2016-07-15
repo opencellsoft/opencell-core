@@ -35,9 +35,9 @@ import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.impl.WFActionService;
-import org.meveo.service.payments.impl.WorkflowService;
-import org.meveo.service.payments.impl.WFTransitionService;
+import org.meveo.service.wf.WFActionService;
+import org.meveo.service.wf.WFTransitionService;
+import org.meveo.service.wf.WorkflowService;
 import org.meveo.util.PersistenceUtils;
 import org.omnifaces.cdi.ViewScoped;
 

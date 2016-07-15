@@ -17,12 +17,16 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.wf.Workflow;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.filter.FilterService;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.wf.WorkflowService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -33,10 +37,12 @@ public class WorkflowJobBean {
 
 	@Inject
 	private FilterService filterService;
+	
+	@Inject
+	private WorkflowService workflowService;
 
 	@Inject
 	private WorkflowAsync workflowAsync;
-
 	
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
@@ -50,24 +56,28 @@ public class WorkflowJobBean {
 		try {			
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
-			Filter filter= null;
-			Workflow workflow = null;
+			String filterCode = null;
+			String workflowCode = null;
 			try{
 				nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "wfJob_nbRuns", currentUser);  			
 				waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "wfJob_waitingMillis$", currentUser);
 				if(nbRuns == -1){
 					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
 				}
-				filter = (Filter) customFieldInstanceService.getCFValue(jobInstance, "wfJob_filter", currentUser);
-				workflow = (Workflow) customFieldInstanceService.getCFValue(jobInstance, "wfJob_workflow", currentUser);
+				filterCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "wfJob_filter", currentUser)).getCode();
+				workflowCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "wfJob_workflow", currentUser)).getCode();
 			}catch(Exception e){
-				nbRuns = new Long(1);
-				waitingMillis = new Long(0);
 				log.warn("Cant get customFields for "+jobInstance.getJobTemplate(),e.getMessage());
+				log.error("error:",e);
+				nbRuns = new Long(1);
+				waitingMillis = new Long(0);				
 			}
-
 			
-			List<? extends IEntity> entities =filterService.filteredListAsObjects(filter, currentUser.getProvider());
+			Filter filter = filterService.findByCode(filterCode, currentUser.getProvider());
+			Workflow workflow = workflowService.findByCode(workflowCode, currentUser.getProvider());
+
+			log.debug("filter:{}",filter == null ? null : filter.getCode());
+			List<? extends IEntity> entities = filterService.filteredListAsObjects(filter, currentUser.getProvider());
 			log.debug("entities:" + entities.size());
 			result.setNbItemsToProcess(entities.size());
 			
@@ -101,7 +111,7 @@ public class WorkflowJobBean {
                 }
             }
         } catch (Exception e) {
-            log.error("Failed to run usage rating job",e);
+            log.error("Failed to run workflow job",e);
             result.registerError(e.getMessage());
         }
 	}

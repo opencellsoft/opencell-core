@@ -13,7 +13,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.admin.job.UnitUsageRatingJobBean;
 import org.meveo.admin.job.UnitWorkflowJobBean;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
@@ -34,7 +33,7 @@ public class WorkflowAsync {
     @Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<? extends IEntity> entities,Workflow workflow, JobExecutionResultImpl result, User currentUser) {
-        for (Object entity  : entities) {
+        for (IEntity entity  : entities) {
         	unitWorkflowJobBean.execute(result, currentUser, entity,workflow);
         }
         return new AsyncResult<String>("OK");

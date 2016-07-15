@@ -16,29 +16,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.service.payments.impl;
-
-import java.util.List;
+package org.meveo.service.wf;
 
 import javax.ejb.Stateless;
 
-import org.meveo.model.crm.Provider;
-import org.meveo.model.wf.Workflow;
-import org.meveo.model.wf.WorkflowStatusEnum;
-import org.meveo.service.base.BusinessService;
+import org.meveo.model.IEntity;
+import org.meveo.service.base.PersistenceService;
 
 @Stateless
-public class WorkflowService extends BusinessService<Workflow> {
+public class BaseEntityService extends PersistenceService<IEntity>{
 
-	@SuppressWarnings("unchecked")
-	public List<Workflow> getWorkflows(Provider provider) {
-		return (List<Workflow>) getEntityManager()
-				.createQuery(
-						"from " + Workflow.class.getSimpleName()
-								+ " where status=:status and provider=:provider")
-				.setParameter("status", WorkflowStatusEnum.ACTIVE)
-				.setParameter("provider", provider)
-				.getResultList();
-	}
+	
 
 }

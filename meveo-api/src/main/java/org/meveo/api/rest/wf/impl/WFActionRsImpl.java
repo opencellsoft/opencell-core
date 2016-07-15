@@ -10,9 +10,9 @@ import org.meveo.api.dto.payment.WFActionDto;
 import org.meveo.api.dto.payment.WFTransitionDto;
 import org.meveo.api.dto.response.payment.ActionPlanItemResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.payment.WFActionApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.wf.WFActionRs;
+import org.meveo.api.wf.WFActionApi;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })

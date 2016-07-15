@@ -10,7 +10,7 @@ import org.meveo.api.dto.payment.WorkflowDto;
 import org.meveo.api.dto.wf.WorkflowResponseDto;
 import org.meveo.api.dto.wf.WorkflowsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.payment.WorkflowApi;
+import org.meveo.api.wf.WorkflowApi;
 import org.meveo.api.ws.impl.BaseWs;
 import org.meveo.api.ws.wf.WorkflowWs;
 

@@ -11,9 +11,9 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.payment.WFTransitionDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.payment.WFTransitionApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.wf.WFTransitionRs;
+import org.meveo.api.wf.WFTransitionApi;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })

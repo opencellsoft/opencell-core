@@ -16,50 +16,49 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.service.payments.impl;
+package org.meveo.service.wf;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFTransition;
+import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-public class WFActionService extends PersistenceService<WFAction> {
+public class WFTransitionService extends PersistenceService<WFTransition> {
 
-	@SuppressWarnings("unchecked")
-	public List<WFAction> findByTransition(WFTransition wfTransition,Provider provider) {
-		List<WFAction> wfActions = new ArrayList<WFAction>();
+	public WFTransition findWFTransition(String fromStatus,String toStatus,String workflowCode,Provider provider) {
+		WFTransition wfTransition = null;
 		try {
-			wfActions = (List<WFAction>) getEntityManager()
+			wfTransition = (WFTransition) getEntityManager()
 					.createQuery(
-							"from "+ WFAction.class.getSimpleName() + " where wfTransition=:wfTransition  and provider=:provider order by priority")
-					.setParameter("wfTransition", wfTransition)		
+							"from "
+									+ WFTransition.class
+											.getSimpleName()
+									+ " where fromStatus=:fromStatus and  toStatus=:toStatus and workflow.code=:workflowCode and provider=:provider")
+					.setParameter("fromStatus", fromStatus)		
+					.setParameter("toStatus", toStatus)		
+					.setParameter("workflowCode", workflowCode)
 					.setParameter("provider", provider)
-					.getResultList();
+					.getSingleResult();
 		} catch (Exception e) {
 		}
-		return wfActions;
+		return wfTransition;
 	}
 	
-	public WFAction findByPriorityAndTransition(WFTransition wfTransition,Integer priority,Provider provider) {
-		WFAction wfAction = null;
-		try {			
-			QueryBuilder qb = new QueryBuilder(WFAction.class, "a", null, provider);
-			qb.addCriterion("a.priority", "=", priority, true);
-			qb.addCriterionEntity("a.wfTransition", wfTransition);
-			
-			wfAction = (WFAction) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (Exception e) {
+	public List<WFTransition> listByFromStatus(String fromStatus ,Workflow workflow){
+		if("*".equals(fromStatus)){
+			return workflow.getTransitions();
 		}
-		return wfAction;
+		 List<WFTransition> wfTransitions =  (List<WFTransition>) getEntityManager()
+ 				.createNamedQuery("WFTransition.listByFromStatus", WFTransition.class)
+ 				.setParameter("fromStatusValue", fromStatus)
+ 				.setParameter("workflowValue", workflow)
+ 				.getResultList();
+		 return wfTransitions;
 	}
-	
-	
 
 }
