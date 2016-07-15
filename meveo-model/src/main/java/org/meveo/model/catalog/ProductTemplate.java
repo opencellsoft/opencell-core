@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 
 /**
@@ -20,7 +21,7 @@ public class ProductTemplate extends ProductOffering {
 
 	private static final long serialVersionUID = 6380565206599659432L;
 
-	@ManyToOne
+	@OneToOne
 	@JoinColumn(name = "PRODUCT_CHARGE_TMPL_ID")
 	private ProductChargeTemplate productChargeTemplate;
 
@@ -28,7 +29,6 @@ public class ProductTemplate extends ProductOffering {
 	@JoinColumn(name = "BUSINESS_PRODUCT_MODEL_ID")
 	private BusinessProductModel businessProductModel;
 
-	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAT_PRODUCT_WALLET_TEMPLATE", joinColumns = @JoinColumn(name = "PRODUCT_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_TEMPLATE_ID"))
 	@OrderColumn(name = "INDX")

@@ -20,6 +20,10 @@ public class DigitalResourceBean extends BaseBean<DigitalResource> {
 
 	@Inject
 	private DigitalResourceService digitalResourceService;
+	
+	public DigitalResourceBean() {
+		super(DigitalResource.class);
+	}
 
 	@Override
 	protected IPersistenceService<DigitalResource> getPersistenceService() {

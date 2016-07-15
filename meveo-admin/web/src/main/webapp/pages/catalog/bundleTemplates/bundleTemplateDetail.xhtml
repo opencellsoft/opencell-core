@@ -17,5 +17,24 @@
 
 	<ui:define name="body">
 
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+					<p:menuitem outcome="bundleTemplates"
+						value="#{messages['menu.bundleTemplates']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+
+		<hftl:formPanel label="#{messages['menu.bundleTemplates']}"
+			backingBean="#{bundleTemplateBean}" showEnableDisableButton="true">
+
+			<ui:include src="../productTemplates/productTemplateDetailCommon.xhtml">
+				<ui:param name="backingBean" value="#{bundleTemplateBean}" />
+			</ui:include>
+			
+		</hftl:formPanel>
+
 	</ui:define>
 </ui:composition>

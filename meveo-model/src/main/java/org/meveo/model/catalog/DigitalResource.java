@@ -1,9 +1,10 @@
 package org.meveo.model.catalog;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -30,9 +31,8 @@ public class DigitalResource extends BusinessEntity {
 	@Size(max = 50)
 	private String mimeType;
 
-	@ManyToOne
-	@JoinColumn(name = "PRODUCT_OFFERING_ID")
-	private ProductOffering productOffering;
+	@ManyToMany(mappedBy = "attachments")
+	private List<ProductOffering> productOfferings;
 
 	public String getUri() {
 		return uri;
@@ -50,12 +50,12 @@ public class DigitalResource extends BusinessEntity {
 		this.mimeType = mimeType;
 	}
 
-	public ProductOffering getProductOffering() {
-		return productOffering;
+	public List<ProductOffering> getProductOfferings() {
+		return productOfferings;
 	}
 
-	public void setProductOffering(ProductOffering productOffering) {
-		this.productOffering = productOffering;
+	public void setProductOfferings(List<ProductOffering> productOfferings) {
+		this.productOfferings = productOfferings;
 	}
 
 }

@@ -55,7 +55,6 @@ public class ProductOfferingDto implements Serializable {
 		this.setCode(product.getCode());
 		this.setDescription(product.getDescription());
 		this.setName(product.getName());
-		this.setModelCode(product.getModelCode());
 		this.setValidFrom(product.getValidFrom());
 		this.setValidTo(product.getValidTo());
 		this.setLifeCycleStatus(product.getLifeCycleStatus());

@@ -37,6 +37,7 @@ import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.ProductChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
@@ -75,6 +76,9 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 	
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
+    
+    @Inject
+    private ProductChargeTemplateService productChargeTemplateService;
 
 	private DualListModel<TriggeredEDRTemplate> edrTemplates;
 
@@ -137,10 +141,10 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 	@Override
     @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-
 		// check for unicity
 		if (recurringChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null
-				|| usageChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null) {
+				|| usageChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null
+				|| productChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null) {
 			messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
 			return null;
 		}

@@ -81,7 +81,6 @@ public class ProductTemplateApi extends BaseApi {
 		productTemplate.setCode(postData.getCode());
 		productTemplate.setDescription(postData.getDescription());
 		productTemplate.setName(postData.getName());
-		productTemplate.setModelCode(postData.getModelCode());
 		productTemplate.setValidFrom(postData.getValidFrom());
 		productTemplate.setValidTo(postData.getValidTo());
 		productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
@@ -144,7 +143,6 @@ public class ProductTemplateApi extends BaseApi {
 
 		productTemplate.setDescription(keepOldValueIfNull(postData.getDescription(), productTemplate.getDescription()));
 		productTemplate.setName(keepOldValueIfNull(postData.getName(), productTemplate.getName()));
-		productTemplate.setModelCode(keepOldValueIfNull(postData.getModelCode(), productTemplate.getModelCode()));
 		productTemplate.setValidFrom(keepOldValueIfNull(postData.getValidFrom(), productTemplate.getValidFrom()));
 		productTemplate.setValidTo(keepOldValueIfNull(postData.getValidTo(), productTemplate.getValidTo()));
 		productTemplate.setLifeCycleStatus(keepOldValueIfNull(postData.getLifeCycleStatus(), productTemplate.getLifeCycleStatus()));

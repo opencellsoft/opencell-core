@@ -19,10 +19,9 @@
 package org.meveo.model.catalog;
 
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.meveo.model.MultilanguageEntity;
@@ -30,21 +29,15 @@ import org.meveo.model.MultilanguageEntity;
 @Entity
 @MultilanguageEntity(key = "menu.charges", group = "ChargeTemplate")
 @Table(name = "CAT_PRODUCT_CHARGE_TEMPL")
-@NamedQueries({			
-@NamedQuery(name = "productChargeTemplate.getNbrProductWithNotPricePlan", 
-	           query = "select count (*) from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and o.provider=:provider"),
-	           
-@NamedQuery(name = "productChargeTemplate.getProductWithNotPricePlan", 
-	           query = "from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and o.provider=:provider"),
-	           	              
-})
+@NamedQueries({
+		@NamedQuery(name = "productChargeTemplate.getNbrProductWithNotPricePlan", query = "select count (*) from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and o.provider=:provider"),
+		@NamedQuery(name = "productChargeTemplate.getProductWithNotPricePlan", query = "from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and o.provider=:provider"), })
 public class ProductChargeTemplate extends ChargeTemplate {
 
-    private static final long serialVersionUID = 1L;    
-    
-    @ManyToOne
-	@JoinColumn(name = "PRODUCT_TEMPLATE_ID", nullable = false)
-    ProductTemplate productTemplate;
+	private static final long serialVersionUID = 1L;
+
+	@OneToOne(optional = false, mappedBy = "productChargeTemplate")
+	private ProductTemplate productTemplate;
 
 	public ProductTemplate getProductTemplate() {
 		return productTemplate;
@@ -53,7 +46,5 @@ public class ProductChargeTemplate extends ChargeTemplate {
 	public void setProductTemplate(ProductTemplate productTemplate) {
 		this.productTemplate = productTemplate;
 	}
-    
-    
 
 }

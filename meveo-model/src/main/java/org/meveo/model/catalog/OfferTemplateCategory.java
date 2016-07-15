@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -59,9 +60,8 @@ public class OfferTemplateCategory extends BusinessCFEntity {
 	@OneToMany(mappedBy = "offerTemplateCategory")
 	private List<OfferTemplateCategory> children;
 
-	@ManyToOne
-	@JoinColumn(name = "PRODUCT_OFFERING_ID")
-	private ProductOffering productOffering;
+	@ManyToMany(mappedBy = "offerTemplateCategories")
+	private List<ProductOffering> productOffering;
 
 	@Column(name = "LEVEL")
 	private int level = 1;
@@ -146,11 +146,11 @@ public class OfferTemplateCategory extends BusinessCFEntity {
 		this.children = children;
 	}
 
-	public ProductOffering getProductOffering() {
+	public List<ProductOffering> getProductOffering() {
 		return productOffering;
 	}
 
-	public void setProductOffering(ProductOffering productOffering) {
+	public void setProductOffering(List<ProductOffering> productOffering) {
 		this.productOffering = productOffering;
 	}
 

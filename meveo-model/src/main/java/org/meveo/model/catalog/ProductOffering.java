@@ -15,13 +15,17 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -42,11 +46,10 @@ public abstract class ProductOffering extends BusinessEntity {
 	@Column(name = "NAME", length = 100)
 	private String name;
 
-	@OneToMany(mappedBy = "productOffering")
+	@ManyToMany
+	@JoinTable(name = "CAT_PRODUCT_OFFER_TMPL_CAT", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_TEMPLATE_CAT_ID"))
+	@OrderColumn(name = "INDX")
 	private List<OfferTemplateCategory> offerTemplateCategories;
-
-	@Column(name = "MODEL_CODE", length = 60)
-	private String modelCode;
 
 	@Column(name = "VALID_FROM")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -61,7 +64,13 @@ public abstract class ProductOffering extends BusinessEntity {
 	@Basic(fetch = FetchType.LAZY)
 	private Blob image;
 
-	@OneToMany(mappedBy = "productOffering")
+	@Column(name = "IMAGE_CONTENT_TYPE", length = 50)
+	@Size(max = 50)
+	private String imageContentType;
+
+	@ManyToMany
+	@JoinTable(name = "CAT_PRODUCT_OFFER_DIGITAL_RES", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "DIGITAL_RESOURCE_ID"))
+	@OrderColumn(name = "INDX")
 	private List<DigitalResource> attachments;
 
 	@Enumerated(EnumType.STRING)
@@ -74,14 +83,6 @@ public abstract class ProductOffering extends BusinessEntity {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getModelCode() {
-		return modelCode;
-	}
-
-	public void setModelCode(String modelCode) {
-		this.modelCode = modelCode;
 	}
 
 	public Date getValidFrom() {
@@ -107,7 +108,7 @@ public abstract class ProductOffering extends BusinessEntity {
 	public void setImage(Blob image) {
 		this.image = image;
 	}
-	
+
 	public byte[] getImageAsByteArr() {
 		if (image != null) {
 			int blobLength;
@@ -146,6 +147,14 @@ public abstract class ProductOffering extends BusinessEntity {
 
 	public void setOfferTemplateCategories(List<OfferTemplateCategory> offerTemplateCategories) {
 		this.offerTemplateCategories = offerTemplateCategories;
+	}
+
+	public String getImageContentType() {
+		return imageContentType;
+	}
+
+	public void setImageContentType(String imageContentType) {
+		this.imageContentType = imageContentType;
 	}
 
 }

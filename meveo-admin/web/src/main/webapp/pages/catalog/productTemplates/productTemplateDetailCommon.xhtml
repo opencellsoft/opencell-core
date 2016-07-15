@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions" xmlns:hftl="http://hftl.org"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition>
+
+ 	<c:set var="mainBackingBean" value="#{backingBean}" />
+
+	<hftl:formField label="#{messages['businessEntity.code']}" field="code"
+		required="true" validateUnique="true" />
+	<hftl:formField label="#{messages['businessEntity.description']}"
+		field="description" id="description" />
+	<hftl:formField label="#{messages['commons.name']}" field="name"
+		id="name" />
+	<hftl:formField label="#{messages['commons.validFrom']}"
+		field="validFrom" id="validFrom" />
+	<hftl:formField label="#{messages['commons.validTo']}" field="validTo"
+		id="validTo" />
+	<hftl:formField label="#{messages['productOffering.lifeCycleStatus']}"
+		field="lifeCycleStatus" id="lifeCycleStatus" />
+	<hftl:formField label="#{messages['businessProductModel.title']}"
+		field="businessProductModel" valueLabelField="code"
+		listElements="#{businessProductModelBean.listAll()}" />
+	<hftl:formField label="#{messages['productChargeTemplate.title']}"
+		field="productChargeTemplate" valueLabelField="code"
+		listElements="#{productChargeTemplateBean.listAll()}" />
+	<hftl:decorateFormField fieldId="productImageUpload"
+		rendered="#{productTemplateBean.entity.transient}"
+		label="#{messages['commons.image']}">
+		<p:fileUpload id="productImageUpload" auto="false" skinSimple="true"
+			mode="simple" value="#{productTemplateBean.uploadedFile}" />
+	</hftl:decorateFormField>
+	<hftl:decorateFormField fieldId="productImage"
+		rendered="#{not productTemplateBean.entity.transient}"
+		label="#{messages['commons.image']}">
+		<p:outputPanel autoUpdate="true">
+			<p:graphicImage id="productImage" cache="false"
+				value="#{productTemplateImageStreamer.image}" height="150"
+				width="150">
+				<f:param name="id" value="#{productTemplateBean.entity.id}"></f:param>
+			</p:graphicImage>
+			<p:fileUpload
+				fileUploadListener="#{productTemplateBean.handleFileUpload}"
+				mode="advanced" update=":formId:messages" auto="true"
+				sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
+		</p:outputPanel>
+	</hftl:decorateFormField>
+	<hftl:formField id="offerTemplateCategories"
+		label="#{messages['productOffering.offerTemplateCategories']}"
+		field="offerTemplateCategories" listType="pickUpList"
+		valueLabelField="code"
+		dualListModel="#{productTemplateBean.offerTemplateCategoriesDM}" />
+	<hftl:formField id="attachments"
+		label="#{messages['productOffering.attachments']}" field="attachments"
+		listType="pickUpList" valueLabelField="code"
+		dualListModel="#{productTemplateBean.attachmentsDM}" />
+	<hftl:formField id="walletTemplates"
+		label="#{messages['productTemplates.walletTemplates']}"
+		field="walletTemplates" listType="pickUpList" valueLabelField="code"
+		dualListModel="#{productTemplateBean.walletTemplatesDM}" />
+
+	<hftl:formField label="#{messages['enableEntity.disabled']}"
+		doNotShowOnNew="true" allowEdit="false" field="disabled"
+		isMessage="true" />
+
+</ui:composition>
+</html>

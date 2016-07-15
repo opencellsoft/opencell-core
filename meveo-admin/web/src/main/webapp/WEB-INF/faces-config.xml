@@ -1940,13 +1940,13 @@
 		</navigation-case>
 			<navigation-case>
 			<from-outcome>productTemplates</from-outcome>
-			<to-view-id>/pages/catalog/marketingManager/productTemplates.xhtml
+			<to-view-id>/pages/catalog/productTemplates/productTemplates.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>productTemplateDetail</from-outcome>
-			<to-view-id>/pages/catalog/marketingManager/productTemplateDetail.xhtml
+			<to-view-id>/pages/catalog/productTemplates/productTemplateDetail.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
@@ -1995,6 +1995,18 @@
 		<navigation-case>
 			<from-outcome>businessProductModelDetail</from-outcome>
 			<to-view-id>/pages/catalog/businessProductModels/businessProductModelDetail.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>productChargeTemplates</from-outcome>
+			<to-view-id>/pages/catalog/productChargeTemplates/productChargeTemplates.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>productChargeTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/productChargeTemplates/productChargeTemplateDetail.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>

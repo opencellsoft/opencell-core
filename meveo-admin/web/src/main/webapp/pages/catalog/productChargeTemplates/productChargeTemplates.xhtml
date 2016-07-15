@@ -8,7 +8,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{digitalResourceListBean.preRenderView}" />
+				listener="#{productChargeTemplateListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -18,28 +18,39 @@
 
 	<ui:define name="body">
 
-		<hftl:searchPanel label="#{messages['digitalResource.search']}"
-			backingBean="#{digitalResourceListBean}">
+		<hftl:searchPanel label="#{messages['productChargeTemplate.search']}"
+			backingBean="#{productChargeTemplateListBean}">
 			<hftl:searchField label="#{messages['BusinessEntity.code']}"
 				field="code" />
 			<hftl:searchField label="#{messages['BusinessEntity.description']}"
 				id="description" field="description" />
-			<hftl:searchField label="#{messages['digitalResource.mimeType']}"
-				id="mimeType" field="mimeType" />
 			<hftl:searchField label="#{messages['enableEntity.disabled']}"
 				field="disabled" />
 		</hftl:searchPanel>
 
-		<hftl:dataList label="#{messages['digitalResource.title']}"
-			backingBean="#{digitalResourceListBean}" sortBy="code">
+		<hftl:dataList label="#{messages['bundleTemplates.title']}"
+			backingBean="#{productChargeTemplateListBean}" sortBy="code">
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['BusinessEntity.description']}"
 				field="description" />
-			<hftl:column label="#{messages['digitalResource.mimeType']}"
-				field="mimeType" />
-			<hftl:column label="#{messages['digitalResource.uri']}" field="uri" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
+
+			<hftl:column label="#{messages['chargeTemplate.amountEditable']}"
+				field="amountEditable" isMessage="true" />
+			<hftl:column label="#{messages['charge.subCategory']}"
+				field="invoiceSubCategory.code" valueIdField="invoiceSubCategory.id"
+				entityView="invoiceSubCategoryDetail" propagateConversation="false"
+				backView="invoiceCategories" />
+			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}"
+				field="edrTemplates" valueLabelField="code" valueIdField="id"
+				isList="true" entityView="triggeredEdrTemplateDetail" />
+			<hftl:column label="#{messages['enableEntity.active']}"
+				field="active" isMessage="true" />			
+
+			<hftl:actionsColumn renderEnableLink="true"
+				permission="#{identity.hasPermission('catalog','catalogManagement')}"
+				renderDuplicateLink="true" />
 		</hftl:dataList>
 
 	</ui:define>

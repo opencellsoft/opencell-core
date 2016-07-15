@@ -178,13 +178,13 @@
 
 			<p:menuitem id="offerTemplateCategories"
 				outcome="offerTemplateCategories"
-				value="#{messages['menu.offerTemplateCategories']}" />
-
-			<p:menuitem id="offerTemplates" outcome="offerTemplates"
-				value="#{messages['menu.offerTemplates']}" />
+				value="#{messages['menu.offerTemplateCategories']}" />			
 
 			<p:submenu id="offerAndServices"
 				label="#{messages['menu.offerAndServices']}">
+				<p:menuitem id="offerTemplates" outcome="offerTemplates"
+					value="#{messages['menu.offerTemplates']}" />
+				
 				<p:menuitem id="mmCatalogView" outcome="mmCatalogView"
 					value="#{messages['menu.marketingManager.catalogView']}" />
 
@@ -233,16 +233,18 @@
 			</p:submenu>
 
 			<p:submenu label="#{messages['productTemplate.product']}">
-				<p:menuitem id="productTemplates" outcome="productTemplates"
-					value="#{messages['menu.productTemplates']}" />
-				<p:menuitem id="bundleTemplates" outcome="bundleTemplates"
-					value="#{messages['menu.bundleTemplates']}" />
+				<p:menuitem id="businessProductModels" outcome="businessProductModels"
+					value="#{messages['menu.businessProductModels']}" />
 				<p:menuitem id="digitalResources" outcome="digitalResources"
 					value="#{messages['menu.digitalResources']}" />
 				<p:menuitem id="channels" outcome="channels"
 					value="#{messages['menu.channels']}" />
-				<p:menuitem id="businessProductModels" outcome="businessProductModels"
-					value="#{messages['menu.businessProductModels']}" />
+				<p:menuitem id="productChargeTemplates" outcome="productChargeTemplates"
+					value="#{messages['menu.productChargeTemplates']}" />
+				<p:menuitem id="productTemplates" outcome="productTemplates"
+					value="#{messages['menu.productTemplates']}" />
+				<p:menuitem id="bundleTemplates" outcome="bundleTemplates"
+					value="#{messages['menu.bundleTemplates']}" />
 			</p:submenu>
 
 		</p:submenu>

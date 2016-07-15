@@ -2404,10 +2404,10 @@ $BODY$
 			</column>
 			<column name="name" type="VARCHAR(100)" />
 			<column name="image" type="oid" />
-			<column name="model_code" type="VARCHAR(60)" />
 			<column name="valid_from" type="TIMESTAMP WITHOUT TIME ZONE"></column>
 			<column name="valid_to" type="TIMESTAMP WITHOUT TIME ZONE"></column>
 			<column name="life_cycle_status" type="VARCHAR(60)" />
+			<column name="image_content_type" type="VARCHAR(50)" />
 		</createTable>
 
 		<createSequence sequenceName="cat_product_offering_seq" />
@@ -2428,6 +2428,25 @@ $BODY$
 			baseTableName="cat_product_offering" constraintName="fk_cat_prod_offering_adm_user_updater"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+		<createTable tableName="cat_product_offer_tmpl_cat">
+			<column name="product_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="offer_template_cat_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="indx" type="INT4">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addPrimaryKey columnNames="product_id, offer_template_cat_id"
+			constraintName="cat_product_offer_tmpl_cat_pkey" tableName="cat_product_offer_tmpl_cat" />
+		<addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cat_product_offer_tmpl_cat" constraintName="fk_cat_product_offer_tmpl_cat_l" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
+        <addForeignKeyConstraint baseColumnNames="offer_template_cat_id" baseTableName="cat_product_offer_tmpl_cat" constraintName="fk_cat_product_offer_tmpl_cat_r" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template_category" />
 	</changeSet>
 
 	<changeSet id="#1839_20160713_digital_resource" author="EdwardLegaspi">
@@ -2451,8 +2470,7 @@ $BODY$
 			<column name="creator_id" type="BIGINT" />
 			<column name="updater_id" type="BIGINT" />
 			<column name="uri" type="VARCHAR(255)" />
-			<column name="mime_type" type="VARCHAR(50)" />
-			<column name="product_offering_id" type="BIGINT" />
+			<column name="mime_type" type="VARCHAR(50)" />			
 		</createTable>
 
 		<createSequence sequenceName="cat_digital_resource_seq" />
@@ -2465,10 +2483,6 @@ $BODY$
 			baseTableName="cat_digital_resource" constraintName="fk_cat_dig_res_crm_provider"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
-		<addForeignKeyConstraint baseColumnNames="product_offering_id"
-			baseTableName="cat_digital_resource" constraintName="fk_cat_dig_res_prod_offering"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
 		<addForeignKeyConstraint baseColumnNames="creator_id"
 			baseTableName="cat_digital_resource" constraintName="fk_cat_dig_res_adm_user_c"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -2477,6 +2491,25 @@ $BODY$
 			baseTableName="cat_digital_resource" constraintName="fk_cat_dig_res_adm_user_u"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+			
+		<createTable tableName="cat_product_offer_digital_res">
+			<column name="product_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="digital_resource_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="indx" type="INT4">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		
+		<addPrimaryKey columnNames="product_id, digital_resource_id"
+			constraintName="cat_product_offer_digital_res_pkey" tableName="cat_product_offer_digital_res" />
+		<addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cat_product_offer_digital_res" constraintName="fk_cat_product_offer_digital_res_l" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
+        <addForeignKeyConstraint baseColumnNames="digital_resource_id" baseTableName="cat_product_offer_digital_res" constraintName="fk_cat_product_offer_digital_res_r" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_digital_resource" />		
 	</changeSet>
 
 	<changeSet id="#1839_20160713_cat_product_charge_templ"
@@ -2485,16 +2518,9 @@ $BODY$
 			<column name="id" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
-			<column name="product_template_id" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
 		</createTable>
 		<addPrimaryKey columnNames="id" constraintName="cat_prod_charge_templ_pkey"
 			tableName="cat_product_charge_templ" />
-		<addForeignKeyConstraint baseColumnNames="product_template_id"
-			baseTableName="cat_product_charge_templ" constraintName="fk_productCargeTemp_prodTemp"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
 	</changeSet>
 
 	<changeSet id="#1839_20160713_cat_product_template" author="EdwardLegaspi">
@@ -2586,18 +2612,6 @@ $BODY$
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
 	</changeSet>
 
-	<changeSet id="#1839_20160713_cat_offer_template_category"
-		author="EdwardLegaspi">
-		<addColumn tableName="cat_offer_template_category">
-			<column name="product_offering_id" type="BIGINT"></column>
-		</addColumn>
-
-		<addForeignKeyConstraint baseColumnNames="product_offering_id"
-			baseTableName="cat_offer_template_category" constraintName="fk_cat_off_tpl_cat_prod_off"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
-	</changeSet>
-
 	<changeSet id="#1839_20160713_billing_charge_instance"
 		author="SebastienMichea">
 		<addColumn tableName="billing_charge_instance">
@@ -2622,9 +2636,10 @@ $BODY$
 				<constraints nullable="false" />
 			</column>
 			<column name="product_template_id" type="BIGINT" />
+			<column name="quantity" type="numeric(23, 12)" />
 		</createTable>
-		<addForeignKeyConstraint baseColumnNames="product_charge_tmpl_id"
-			baseTableName="cat_product_offering" constraintName="fk_productci_prodtempl"
+		<addForeignKeyConstraint baseColumnNames="product_template_id"
+			baseTableName="billing_product_charge_inst" constraintName="fk_productci_prodtempl"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_offering" />
 	</changeSet>
