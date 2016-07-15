@@ -6,7 +6,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{dunningPlanListBean.preRenderView}" />
+				listener="#{workflowListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 	<ui:define name="navigation">
@@ -17,7 +17,7 @@
 
 		<hftl:searchPanel
 			label="#{messages['workflow.panel']}"
-			backingBean="#{dunningPlanListBean}">
+			backingBean="#{workflowListBean}">
 			<hftl:searchField label="#{messages['businessEntity.code']}"
 				field="code" />
 			<hftl:searchField label="#{messages['subscription.description']}"
@@ -29,7 +29,7 @@
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['dunningPlan.title']}"
-			backingBean="#{dunningPlanListBean}" sortBy="code">
+			backingBean="#{workflowListBean}" sortBy="code">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code"
 				useCustomIdParam="true" objectIdParamName="workflowId" />
 			<hftl:column label="#{messages['businessEntity.description']}"

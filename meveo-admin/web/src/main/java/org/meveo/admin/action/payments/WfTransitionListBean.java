@@ -23,7 +23,7 @@ import javax.inject.Named;
 
 @Named
 @ConversationScoped
-public class DunningPlanTransitionListBean extends DunningPlanTransitionBean {
+public class WfTransitionListBean extends WfTransitionBean {
 
     private static final long serialVersionUID = -3037867704912788053L;
 }

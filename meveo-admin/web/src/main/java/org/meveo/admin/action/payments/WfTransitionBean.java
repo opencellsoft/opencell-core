@@ -26,10 +26,12 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.wf.WFActionService;
 import org.meveo.service.wf.WFTransitionService;
 import org.meveo.service.wf.WorkflowService;
 import org.omnifaces.cdi.ViewScoped;
@@ -40,7 +42,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
-public class DunningPlanTransitionBean extends BaseBean<WFTransition> {
+public class WfTransitionBean extends BaseBean<WFTransition> {
 
     private static final long serialVersionUID = 1L;
 
@@ -48,19 +50,24 @@ public class DunningPlanTransitionBean extends BaseBean<WFTransition> {
      * Injected @{link DunningPlanTransition} service. Extends {@link PersistenceService}.
      */
     @Inject
-    private WFTransitionService dunningPlanTransitionService;
+    private WFTransitionService wfTransitionService;
 
     @Inject
-    private WorkflowService dunningPlanService;
+    private WorkflowService wfService;
+    
+    @Inject
+    private WFActionService wfActionService;
 
     /** Entity to edit. */
     @Inject
-    private Workflow dunningPlan;
+    private Workflow workflow;
+    
+    private transient WFAction wfAction = new WFAction();
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
-    public DunningPlanTransitionBean() {
+    public WfTransitionBean() {
         super(WFTransition.class);
     }
 
@@ -71,9 +78,9 @@ public class DunningPlanTransitionBean extends BaseBean<WFTransition> {
      * @throws InstantiationException
      */
     public WFTransition initEntity() {
-        if (dunningPlan != null && dunningPlan.getId() == null) {
+        if (workflow != null && workflow.getId() == null) {
             try {
-                dunningPlanService.create(dunningPlan, getCurrentUser());
+            	wfService.create(workflow, getCurrentUser());
             } catch (BusinessException e) {
                 messages.info(new BundleKey("messages", "message.exception.business"));
             }
@@ -91,10 +98,10 @@ public class DunningPlanTransitionBean extends BaseBean<WFTransition> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        dunningPlan.getTransitions().add(entity);
+    	workflow.getTransitions().add(entity);
         super.saveOrUpdate(killConversation);
 
-        return "/pages/payments/dunning/dunningPlanDetail.xhtml?objectId=" + dunningPlan.getId() + "&edit=true";
+        return "/pages/payments/dunning/dunningPlanDetail.xhtml?objectId=" + wfAction.getId() + "&edit=true";
 
     }
 
@@ -103,7 +110,7 @@ public class DunningPlanTransitionBean extends BaseBean<WFTransition> {
      */
     @Override
     protected IPersistenceService<WFTransition> getPersistenceService() {
-        return dunningPlanTransitionService;
+        return wfTransitionService;
     }
 
     @Override
@@ -125,5 +132,43 @@ public class DunningPlanTransitionBean extends BaseBean<WFTransition> {
             }
         }
     }
+    
+    public void saveWfAction() throws BusinessException {
+
+        if (wfAction.getId() != null) {
+        	wfActionService.update(wfAction, getCurrentUser());
+            messages.info(new BundleKey("messages", "update.successful"));
+        } else {
+        	wfAction.setWfTransition(entity);
+        	wfActionService.create(wfAction, getCurrentUser());
+            entity.getWfActions().add(wfAction);
+            messages.info(new BundleKey("messages", "save.successful"));
+
+        }
+        wfAction = new WFAction();
+    }
+    
+    public void deleteWfAction(WFAction wfAction) {
+    	WFAction action = wfActionService.findById(wfAction.getId()); 
+    	wfActionService.remove(action);
+        entity.getWfActions().remove(wfAction);
+        messages.info(new BundleKey("messages", "delete.successful"));
+    }
+    
+    public void newWfActionInstance() {
+        this.wfAction = new WFAction();
+    }
+    
+    public void editWfAction(WFAction wfAction) {
+        this.wfAction = wfAction;
+    }
+    
+    public WFAction getWfAction() {
+		return wfAction;
+	}
+    
+    public void setWfAction(WFAction wfAction) {
+		this.wfAction = wfAction;
+	}
 
 }

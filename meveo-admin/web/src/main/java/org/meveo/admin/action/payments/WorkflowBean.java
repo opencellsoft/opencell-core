@@ -18,27 +18,29 @@
  */
 package org.meveo.admin.action.payments;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.Entity;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.wf.WFAction;
+import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.wf.WFActionService;
 import org.meveo.service.wf.WFTransitionService;
 import org.meveo.service.wf.WorkflowService;
-import org.meveo.util.PersistenceUtils;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -47,34 +49,28 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
-public class DunningPlanBean extends BaseBean<Workflow> {
+public class WorkflowBean extends BaseBean<Workflow> {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * Injected @{link DunningPlan} service. Extends {@link PersistenceService}.
+     * Injected @{link Workflow} service. Extends {@link PersistenceService}.
      */
     @Inject
-    private WorkflowService dunningPlanService;
+    private WorkflowService workflowService;
 
     @Inject
-    private WFTransitionService dunningPlanTransitionService;
+    private WFTransitionService wFTransitionService;
 
-    @Inject
-    private WFActionService actionPlanItemService;
 
     // @Produces
     // @Named
-    private transient WFTransition dunningPlanTransition = new WFTransition();
-
-    // @Produces
-    // @Named
-    private transient WFAction actionPlanItem = new WFAction();
+    private transient WFTransition wfTransition = new WFTransition();
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
-    public DunningPlanBean() {
+    public WorkflowBean() {
         super(Workflow.class);
     }
 
@@ -85,29 +81,18 @@ public class DunningPlanBean extends BaseBean<Workflow> {
         return entity;
     }
 
-    public WFTransition getDunningPlanTransition() {
-        return dunningPlanTransition;
+    public WFTransition getWfTransition() {
+        return wfTransition;
     }
 
-    public void setDunningPlanTransition(WFTransition dunningPlanTransition) {
-        this.dunningPlanTransition = dunningPlanTransition;
+    public void setWfTransition(WFTransition wfTransition) {
+        this.wfTransition = wfTransition;
     }
 
-    public WFAction getActionPlanItem() {
-        return actionPlanItem;
+    public void newWfTransitionInstance() {
+        this.wfTransition = new WFTransition();
     }
 
-    public void setActionPlanItem(WFAction actionPlanItem) {
-        this.actionPlanItem = actionPlanItem;
-    }
-
-    public void newDunningPlanTransitionInstance() {
-        this.dunningPlanTransition = new WFTransition();
-    }
-
-    public void newActionPlanItemInstance() {
-        this.actionPlanItem = new WFAction();
-    }
 
     @Override
     @ActionMethod
@@ -116,24 +101,24 @@ public class DunningPlanBean extends BaseBean<Workflow> {
         return "/pages/payments/dunning/dunningPlanDetail?dunningPlanId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
     }
 
-    public void saveDunningPlanTransition() {
+    public void saveWfTransition() {
 
         try {
-            if (dunningPlanTransition.getId() != null) {
-                dunningPlanTransitionService.update(dunningPlanTransition, getCurrentUser());
+            if (wfTransition.getId() != null) {
+            	wFTransitionService.update(wfTransition, getCurrentUser());
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
 
                 for (WFTransition transition : entity.getTransitions()) {
 
-                    if ((transition.getFromStatus().equals(dunningPlanTransition.getFromStatus()))
-                            && (transition.getToStatus().equals(dunningPlanTransition.getToStatus()))) {
+                    if ((transition.getFromStatus().equals(wfTransition.getFromStatus()))
+                            && (transition.getToStatus().equals(wfTransition.getToStatus()))) {
                         throw new BusinessEntityException();
                     }
                 }
-                dunningPlanTransition.setWorkflow(entity);
-                dunningPlanTransitionService.create(dunningPlanTransition, getCurrentUser());
-                entity.getTransitions().add(dunningPlanTransition);
+                wfTransition.setWorkflow(entity);
+                wFTransitionService.create(wfTransition, getCurrentUser());
+                entity.getTransitions().add(wfTransition);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
         } catch (BusinessEntityException e) {
@@ -145,50 +130,55 @@ public class DunningPlanBean extends BaseBean<Workflow> {
             messages.error(new BundleKey("messages", "dunningPlanTransition.uniqueField"));
         }
 
-        dunningPlanTransition = new WFTransition();
+        wfTransition = new WFTransition();
     }
 
-    public void saveActionPlanItem() throws BusinessException {
-
-        if (actionPlanItem.getId() != null) {
-            actionPlanItemService.update(actionPlanItem, getCurrentUser());
-            messages.info(new BundleKey("messages", "update.successful"));
-        } else {
-         //   actionPlanItem.setDunningPlan(entity);
-            actionPlanItemService.create(actionPlanItem, getCurrentUser());
-          //  entity.getActions().add(actionPlanItem);
-            messages.info(new BundleKey("messages", "save.successful"));
-
-        }
-        actionPlanItem = new WFAction();
-    }
-
-    public void deleteDunningPlanTransition(WFTransition dunningPlanTransition) {
-        dunningPlanTransitionService.remove(dunningPlanTransition);
+    public void deleteWfTransition(WFTransition dunningPlanTransition) {
+    	WFTransition transition = wFTransitionService.findById(dunningPlanTransition.getId()); 
+    	wFTransitionService.remove(transition);
         entity.getTransitions().remove(dunningPlanTransition);
         messages.info(new BundleKey("messages", "delete.successful"));
     }
 
-    public void deleteActionPlanItem(WFAction actionPlanItem) {
-        actionPlanItemService.remove(actionPlanItem);
-       // entity.getActions().remove(actionPlanItem);
-        messages.info(new BundleKey("messages", "delete.successful"));
+    public void editWfTransition(WFTransition dunningPlanTransition) {
+        this.wfTransition = dunningPlanTransition;
     }
-
-    public void editDunningPlanTransition(WFTransition dunningPlanTransition) {
-        this.dunningPlanTransition = dunningPlanTransition;
-    }
-
-    public void editActionPlanItem(WFAction actionPlanItem) {
-        this.actionPlanItem = actionPlanItem;
-    }
+    
+    /**
+     * Autocomplete method for class filter field - search entity type classes with @ObservableEntity annotation
+     * 
+     * @param query A partial class name (including a package)
+     * @return A list of classnames
+     */
+//    @SuppressWarnings({ "rawtypes", "unchecked" })
+//    public List<String> autocompleteClassNames(String query) {
+//
+//        List<Class> classes = null;
+//        try {
+//            classes = ReflectionUtils.getClasses("org.meveo.model");
+//        } catch (Exception e) {
+//            log.error("Failed to get a list of classes for a model package", e);
+//            return null;
+//        }
+//
+//        String queryLc = query.toLowerCase();
+//        List<String> classNames = new ArrayList<String>();
+//        for (Class clazz : classes) {
+//            if (clazz.isAnnotationPresent(Entity.class) && clazz.isAnnotationPresent(WorkflowTypeClass.class) && clazz.getName().toLowerCase().contains(queryLc)) {
+//                classNames.add(clazz.getName());
+//            }
+//        }
+//
+//        Collections.sort(classNames);
+//        return classNames;
+//    }
 
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
     protected IPersistenceService<Workflow> getPersistenceService() {
-        return dunningPlanService;
+        return workflowService;
     }
 
     @Produces

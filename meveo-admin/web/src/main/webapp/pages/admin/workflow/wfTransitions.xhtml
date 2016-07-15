@@ -7,7 +7,7 @@
     
 	<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{dunningPlanTransitionListBean.preRenderView}" />
+				listener="#{wfTransitionListBean.preRenderView}" />
 		</f:metadata>
 	
     <ui:define name="navigation">
@@ -16,12 +16,12 @@
     
     <ui:define name="body">
 		    <hftl:searchPanel
-			label="#{messages['dunningPlanTransition.search']}" backingBean="#{dunningPlanTransitionListBean}">
+			label="#{messages['dunningPlanTransition.search']}" backingBean="#{wfTransitionListBean}">
 				<hftl:searchField  label="#{messages['dunningPlanTransition.dunningLevelFrom']}" field="dunningLevelFrom" />
     			<hftl:searchField  label="#{messages['dunningPlanTransition.dunningLevelTo']}" field="dunningLevelTo" />
 		    </hftl:searchPanel>
 		 
-	    	<hftl:dataList label="#{messages['dunningPlanTransition.title']}" backingBean="#{dunningPlanTransitionListBean}"   dataModel="#{dunningPlanTransitions}">
+	    	<hftl:dataList label="#{messages['dunningPlanTransition.title']}" backingBean="#{wfTransitionListBean}"   dataModel="#{wfTransitions}">
 	    		<hftl:column label="#{messages['dunningPlanTransition.dunningLevelFrom']}" field="dunningLevelFrom" />
 				<hftl:column label="#{messages['dunningPlanTransition.dunningLevelTo']}" field="dunningLevelTo" />
 				 <hftl:actionsColumn permission="#{identity.hasPermission('billing','billingManagement')}" />   	
