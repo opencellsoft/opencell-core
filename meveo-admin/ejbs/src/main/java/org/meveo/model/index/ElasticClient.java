@@ -137,6 +137,7 @@ public class ElasticClient {
 		if(client!=null){
 			try{
 				client.close();
+				client=null;
 			}catch(Error e){
 				log.error("cant close ES client",e);
 			}
