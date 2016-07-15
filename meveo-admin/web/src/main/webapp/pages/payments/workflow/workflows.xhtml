@@ -16,21 +16,33 @@
 	<ui:define name="body">
 
 		<hftl:searchPanel
-			label="#{messages['dunningPlan.panel']}"
+			label="#{messages['workflow.panel']}"
 			backingBean="#{dunningPlanListBean}">
 			<hftl:searchField label="#{messages['businessEntity.code']}"
 				field="code" />
 			<hftl:searchField label="#{messages['subscription.description']}"
 				field="description" />
+			<hftl:searchField label="#{messages['workflow.type']}"
+				field="wfType" />	
+			<hftl:searchField label="#{messages['commons.status']}"
+				field="status" />
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['dunningPlan.title']}"
 			backingBean="#{dunningPlanListBean}" sortBy="code">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code"
-				useCustomIdParam="true" objectIdParamName="dunningPlanId" />
+				useCustomIdParam="true" objectIdParamName="workflowId" />
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
-
+			<hftl:column label="#{messages['workflow.type']}"
+				field="wfType" />	
+			<hftl:column label="#{messages['commons.status']}"
+				field="status" />
+			<hftl:column label="#{messages['workflow.exportLot']}"
+				field="exportLot" />
+			<hftl:column label="#{messages['workflow.enableHistory']}"
+				field="enableHistory" />
+				
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
