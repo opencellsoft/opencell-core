@@ -36,9 +36,8 @@ import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.WFActionService;
-import org.meveo.service.payments.impl.WorkflowService;
 import org.meveo.service.payments.impl.WFTransitionService;
-import org.meveo.util.PersistenceUtils;
+import org.meveo.service.payments.impl.WorkflowService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -126,14 +125,14 @@ public class DunningPlanBean extends BaseBean<Workflow> {
 
                 for (WFTransition transition : entity.getTransitions()) {
 
-//                    if ((transition.getDunningLevelFrom().equals(dunningPlanTransition.getDunningLevelFrom()))
-//                            && (transition.getDunningLevelTo().equals(dunningPlanTransition.getDunningLevelTo()))) {
-//                        throw new BusinessEntityException();
-//                    }
+                    if ((transition.getFromStatus().equals(dunningPlanTransition.getFromStatus()))
+                            && (transition.getToStatus().equals(dunningPlanTransition.getToStatus()))) {
+                        throw new BusinessEntityException();
+                    }
                 }
-               // dunningPlanTransition.setDunningPlan(entity);
+                dunningPlanTransition.setWorkflow(entity);
                 dunningPlanTransitionService.create(dunningPlanTransition, getCurrentUser());
-               // entity.getTransitions().add(dunningPlanTransition);
+                entity.getTransitions().add(dunningPlanTransition);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
         } catch (BusinessEntityException e) {

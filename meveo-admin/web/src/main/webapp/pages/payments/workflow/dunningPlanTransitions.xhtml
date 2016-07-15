@@ -24,9 +24,6 @@
 	    	<hftl:dataList label="#{messages['dunningPlanTransition.title']}" backingBean="#{dunningPlanTransitionListBean}"   dataModel="#{dunningPlanTransitions}">
 	    		<hftl:column label="#{messages['dunningPlanTransition.dunningLevelFrom']}" field="dunningLevelFrom" />
 				<hftl:column label="#{messages['dunningPlanTransition.dunningLevelTo']}" field="dunningLevelTo" />
-				<hftl:column label="#{messages['dunningPlanTransition.delayBeforeProcess']}" field="delayBeforeProcess" />
-				<hftl:column label="#{messages['dunningPlanTransition.thresholdAmount']}" field="thresholdAmount" />
-				<hftl:column label="#{messages['dunningPlanTransition.waitDuration']}" field="waitDuration" />
 				 <hftl:actionsColumn permission="#{identity.hasPermission('billing','billingManagement')}" />   	
 		    </hftl:dataList >
 		
