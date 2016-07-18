@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 
+import org.meveo.model.ICustomFieldEntity;
+
 /**
  * @author Edward P. Legaspi
  */
@@ -56,6 +58,11 @@ public class ProductTemplate extends ProductOffering {
 
 	public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
 		this.walletTemplates = walletTemplates;
+	}
+
+	@Override
+	public ICustomFieldEntity[] getParentCFEntities() {
+		return null;
 	}
 
 }

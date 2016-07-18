@@ -2408,6 +2408,9 @@ $BODY$
 			<column name="valid_to" type="TIMESTAMP WITHOUT TIME ZONE"></column>
 			<column name="life_cycle_status" type="VARCHAR(60)" />
 			<column name="image_content_type" type="VARCHAR(50)" />
+			<column name="UUID" type="VARCHAR(60)" >
+                <constraints nullable="false"/>
+            </column>
 		</createTable>
 
 		<createSequence sequenceName="cat_product_offering_seq" />

@@ -27,7 +27,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
@@ -39,7 +39,7 @@ import org.meveo.model.ExportIdentifier;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_PRODUCT_OFFERING_SEQ")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
-public abstract class ProductOffering extends BusinessEntity {
+public abstract class ProductOffering extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 6877386866687396135L;
 

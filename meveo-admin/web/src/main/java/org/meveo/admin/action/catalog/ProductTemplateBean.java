@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.rowset.serial.SerialBlob;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.DigitalResource;
@@ -32,7 +32,7 @@ import org.primefaces.model.UploadedFile;
  */
 @Named
 @ViewScoped
-public class ProductTemplateBean extends BaseBean<ProductTemplate> {
+public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
 	private static final long serialVersionUID = -7002455215420815747L;
 
