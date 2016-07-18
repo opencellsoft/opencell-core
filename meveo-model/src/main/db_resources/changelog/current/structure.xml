@@ -2669,6 +2669,7 @@ $BODY$
 			</column>
 			<column name="product_instance_id" type="BIGINT" />
 			<column name="product_chrg_tmpl_id" type="BIGINT" />
+			<column name="quantity" type="numeric(23, 12)" />
 		</createTable>
 		<createSequence sequenceName="billing_product_charge_inst_seq" />
 		<addPrimaryKey columnNames="id" constraintName="billing_prod_chg_inst_pkey"
