@@ -12,54 +12,164 @@
 <tr><td rowspan="1" colspan="3">FillTabUserAccountsTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>click</td>
-	<td>${Actions}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectDunningLevel}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;R0&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectType}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;Charge&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${Order}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${ThresholdAmount}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${LetterTemplate}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${ConditionEL}</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
+	<td>${Workflows}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${WFCode}')]</td>
+	<td>${WFCode}</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//a[contains(text(),'${WFCode}')]</td>
+	<td>${WFCode}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[contains(text(),'${WFCode}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>${Transitions}</td>
+	<td>Transitions</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${Transitions}</td>
+	<td>Transitions</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Transitions}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${Transitions}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>id=tabView:code</td>
+	<td>${WFCode}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=tabView:code</td>
+	<td>${WFCode}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${TFStatusValue}')]</td>
+	<td>${TFStatusValue}</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//a[contains(text(),'${TFStatusValue}')]</td>
+	<td>${TFStatusValue}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[contains(text(),'${TFStatusValue}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>${FromStatus}</td>
+	<td>${TFStatusValue}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${FromStatus}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ActionELBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ActionEL}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${ActionEL}</td>
+	<td>${ActionELValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${AcPriorityBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${AcPriority}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${AcPriority}</td>
+	<td>${AcPriorityValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${AcConditionELBool}==false</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${AcConditionEL}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${AcConditionEL}</td>
+	<td>${AcConditionELValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
 	<td>${AddThisActions}</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//tbody[@id='actionItems_form:datatable_dunningPlanActions_results_data']/tr/td[2]</td>
+	<td>Action EL${ActionELValue}</td>
 </tr>
 </tbody></table>
 </body>

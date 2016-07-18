@@ -47,9 +47,19 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>${SearchWithType}</td>
-	<td>${WFType}</td>
+	<td>sendKeys</td>
+	<td>${SelectWFType}</td>
+	<td>${WFTypeValue}</td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>//*[contains(@id, 'wfType_txt_panel')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${WFType}&quot;)</td>
+	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -57,9 +67,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>click</td>
 	<td>${SearchWithStatus}</td>
-	<td>${WFStatus}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${WFStatus}&quot;)</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
