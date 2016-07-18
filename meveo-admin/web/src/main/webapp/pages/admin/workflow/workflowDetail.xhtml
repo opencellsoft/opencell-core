@@ -40,9 +40,9 @@
 			                isAutocomplete="true"/>
                 
 						<hftl:formField label="#{messages['workflow.exportLot']}"
-							field="exportLot" required="true" />
+							field="exportLot" />
 						<hftl:formField label="#{messages['workflow.enableHistory']}"
-							field="enableHistory" required="true" />	
+							field="enableHistory" />	
 						<hftl:formField label="#{messages['commons.status']}" field="status"
 							required="true" />
 					</hftl:formPanel>
@@ -73,52 +73,6 @@
 							<h:inputHidden rendered="#{workflowBean.edit}" />
 						</hftl:decorateFormField>
 
-
-						<p:outputPanel id="dunningPlanTransition_panel">
-							<hftl:dataList backingBean="#{wfTransitionBean}"
-								dataModel="#{workflowBean.entity.transitions}"
-								sortBy="fromStatus"
-								resultsId="dunningPlanTransitions_results">
-								<p:column headerText="#{messages['dunningPlanTransition.fromStatus']}">
-									<h:link outcome="wfTransitionDetail" value="#{entity.fromStatus}">
-                                       <f:param name="wfTransitionId" value="#{entity.id}"/>
-                                       <f:param name="edit" value="true"/>
-                                    </h:link>
-								</p:column>
-<!-- 								<hftl:column -->
-<!-- 									label="#{messages['dunningPlanTransition.fromStatus']}" -->
-<!-- 									field="fromStatus" />	 -->
-								<hftl:column
-									label="#{messages['dunningPlanTransition.toStatus']}"
-									field="toStatus" />
-								<hftl:column label="#{messages['dunningPlan.conditionEl']}"
-									field="conditionEl" />
-
-								<p:column styleClass="actions-column"
-									rendered="#{workflowBean.edit}">
-									<f:facet name="header">
-										<h:outputText value="#{messages['commons.actions']}" />
-									</f:facet>
-
-									<p:tooltip for="editDunningPlanTransitionLink"
-										value="#{messages['commons.edit']}" showEffect="slide"
-										hideEffect="slide" />
-									<p:commandButton id="editDunningPlanTransitionLink"
-										update=":tabView:formDunningPlanTransition"
-										action="#{workflowBean.editWfTransition(entity)}"
-										icon="ui-icon-document" />
-									<p:tooltip for="editDunningPlanTransitionDeleteLink"
-										value="#{messages['commons.delete']}" showEffect="slide"
-										hideEffect="slide" />
-									<p:commandButton id="editDunningPlanTransitionDeleteLink"
-										action="#{workflowBean.deleteWfTransition(entity)}"
-										icon="ui-icon-trash"
-										update=":tabView:dunningPlanTransition_panel,:tabView:formDunningPlanTransition" />
-								</p:column>
-
-							</hftl:dataList>
-														
-						</p:outputPanel>
 
 						<p:panel id="dunningPlanTransitiondiv"
 							rendered="#{workflowBean.edit}">
@@ -168,6 +122,50 @@
 
 							</hftl:formPanel>
 						</p:panel>
+						
+						<p:outputPanel id="dunningPlanTransition_panel">
+							<hftl:dataList backingBean="#{wfTransitionBean}"
+								dataModel="#{workflowBean.entity.transitions}"
+								sortBy="fromStatus"
+								resultsId="dunningPlanTransitions_results">
+								<p:column headerText="#{messages['dunningPlanTransition.fromStatus']}">
+									<h:link outcome="wfTransitionDetail" value="#{entity.fromStatus}">
+                                       <f:param name="wfTransitionId" value="#{entity.id}"/>
+                                       <f:param name="edit" value="true"/>
+                                    </h:link>
+								</p:column>
+								<hftl:column
+									label="#{messages['dunningPlanTransition.toStatus']}"
+									field="toStatus" />
+								<hftl:column label="#{messages['dunningPlan.conditionEl']}"
+									field="conditionEl" />
+
+								<p:column styleClass="actions-column"
+									rendered="#{workflowBean.edit}">
+									<f:facet name="header">
+										<h:outputText value="#{messages['commons.actions']}" />
+									</f:facet>
+
+									<p:tooltip for="editDunningPlanTransitionLink"
+										value="#{messages['commons.edit']}" showEffect="slide"
+										hideEffect="slide" />
+									<p:commandButton id="editDunningPlanTransitionLink"
+										update=":tabView:formDunningPlanTransition"
+										action="#{workflowBean.editWfTransition(entity)}"
+										icon="ui-icon-document" />
+									<p:tooltip for="editDunningPlanTransitionDeleteLink"
+										value="#{messages['commons.delete']}" showEffect="slide"
+										hideEffect="slide" />
+									<p:commandButton id="editDunningPlanTransitionDeleteLink"
+										action="#{workflowBean.deleteWfTransition(entity)}"
+										icon="ui-icon-trash"
+										update=":tabView:dunningPlanTransition_panel,:tabView:formDunningPlanTransition" />
+								</p:column>
+
+							</hftl:dataList>
+														
+						</p:outputPanel>
+						
 					</p:tab>
 				</c:if>
 

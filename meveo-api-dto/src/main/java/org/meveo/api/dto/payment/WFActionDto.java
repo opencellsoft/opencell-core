@@ -33,7 +33,7 @@ import org.meveo.model.wf.WFAction;
 public class WFActionDto extends BaseDto {
 	private static final long serialVersionUID = 8309866046667741458L;  
 	
-	@XmlElement(required = true)
+	@XmlElement(required = false)
 	private String actionEl;
 	
 	@XmlElement(required = true)

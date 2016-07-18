@@ -98,7 +98,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         super.saveOrUpdate(killConversation);
-        return "/pages/payments/dunning/dunningPlanDetail?dunningPlanId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
+        return "/pages/admin/workflow/workflowDetail?workflowId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
     }
 
     public void saveWfTransition() {
