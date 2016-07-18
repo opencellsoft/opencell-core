@@ -27,6 +27,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -35,8 +36,8 @@ import org.meveo.model.ExportIdentifier;
  */
 @Entity
 @ExportIdentifier({ "code", "provider" })
-@Table(name = "CAT_PRODUCT_OFFERING", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_PRODUCT_OFFERING_SEQ")
+@Table(name = "CAT_OFFER_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_SEQ")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
 public abstract class ProductOffering extends BusinessCFEntity {
@@ -44,6 +45,7 @@ public abstract class ProductOffering extends BusinessCFEntity {
 	private static final long serialVersionUID = 6877386866687396135L;
 
 	@Column(name = "NAME", length = 100)
+	@Size(max = 100)
 	private String name;
 
 	@ManyToMany
@@ -155,6 +157,16 @@ public abstract class ProductOffering extends BusinessCFEntity {
 
 	public void setImageContentType(String imageContentType) {
 		this.imageContentType = imageContentType;
+	}
+	
+
+
+	public String getNameOrCode() {
+		if (!StringUtils.isBlank(name)) {
+			return name;
+		} else {
+			return code;
+		}
 	}
 
 }

@@ -63,6 +63,10 @@ public class ProductInstance extends BusinessCFEntity {
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<ProductChargeInstance> productChargeInstances = new ArrayList<ProductChargeInstance>();
+    
+	@ManyToOne
+	@JoinColumn(name = "USER_ACCOUNT_ID")
+	private UserAccount userAccount;
 
     @Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal quantity = BigDecimal.ONE;
@@ -141,5 +145,17 @@ public class ProductInstance extends BusinessCFEntity {
 		// FIXME
         //return new ICustomFieldEntity[]{productTemplate};
 		return null;
+	}
+
+
+
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
+
+
+
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
 	}
 }

@@ -310,5 +310,13 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		}
 	}
+
+	public OfferProductTemplate getOfferProductTemplate() {
+		return offerProductTemplate;
+	}
+
+	public void setOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
+		this.offerProductTemplate = offerProductTemplate;
+	}
 	
 }

@@ -12,12 +12,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.ObservableEntity;
 
 /**
  * @author Edward P. Legaspi
  */
 @Entity
+@ObservableEntity
+@CustomFieldEntity(cftCodePrefix = "PRODUCT")
 @DiscriminatorValue("PRODUCT")
 public class ProductTemplate extends ProductOffering {
 

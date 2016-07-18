@@ -18,56 +18,37 @@
  */
 package org.meveo.model.catalog;
 
-import java.sql.Blob;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Size;
 
-import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "OFFER")
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "CAT_OFFER_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_SEQ")
+// @ExportIdentifier({ "code", "provider" })
+// @Table(name = "CAT_OFFER_TEMPLATE", uniqueConstraints =
+// @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@DiscriminatorValue("OFFER")
+// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
+// "CAT_OFFER_TEMPLATE_SEQ")
 @NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false"),
 		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true"),
 		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validTo and validTo > NOW()") })
 public class OfferTemplate extends ProductOffering {
 	private static final long serialVersionUID = 1L;
-
-	@Column(name = "NAME", length = 100)
-	@Size(max = 100)
-	private String name;
-
-	@Column(name = "image")
-	@Lob
-	@Basic(fetch = FetchType.LAZY)
-	private Blob image;
 
 	@ManyToOne
 	@JoinColumn(name = "CAT_OFFER_TEMPLATE_CAT_ID")
@@ -79,18 +60,6 @@ public class OfferTemplate extends ProductOffering {
 
 	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
-
-	@Column(name = "VALID_FROM")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date validFrom;
-
-	@Column(name = "VALID_TO")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date validTo;
-
-	@Column(name = "IMAGE_CONTENT_TYPE", length = 50)
-	@Size(max = 50)
-	private String imageContentType;
 
 	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<OfferProductTemplate> offerProductTemplates = new ArrayList<OfferProductTemplate>();
@@ -123,22 +92,6 @@ public class OfferTemplate extends ProductOffering {
 		this.offerTemplateCategory = offerTemplateCategory;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Blob getImage() {
-		return image;
-	}
-
-	public void setImage(Blob image) {
-		this.image = image;
-	}
-
 	public BusinessOfferModel getBusinessOfferModel() {
 		return businessOfferModel;
 	}
@@ -164,60 +117,12 @@ public class OfferTemplate extends ProductOffering {
 		return false;
 	}
 
-	public byte[] getImageAsByteArr() {
-		if (image != null) {
-			int blobLength;
-			try {
-				blobLength = (int) image.length();
-				byte[] blobAsBytes = image.getBytes(1, blobLength);
-
-				return blobAsBytes;
-			} catch (SQLException e) {
-				return null;
-			}
-		}
-
-		return null;
-	}
-
-	public Date getValidFrom() {
-		return validFrom;
-	}
-
-	public void setValidFrom(Date validFrom) {
-		this.validFrom = validFrom;
-	}
-
-	public Date getValidTo() {
-		return validTo;
-	}
-
-	public void setValidTo(Date validTo) {
-		this.validTo = validTo;
-	}
-
-	public String getImageContentType() {
-		return imageContentType;
-	}
-
-	public void setImageContentType(String imageContentType) {
-		this.imageContentType = imageContentType;
-	}
-
 	public List<OfferProductTemplate> getOfferProductTemplates() {
 		return offerProductTemplates;
 	}
 
 	public void setOfferProductTemplates(List<OfferProductTemplate> offerProductTemplates) {
 		this.offerProductTemplates = offerProductTemplates;
-	}
-
-	public String getNameOrCode() {
-		if (!StringUtils.isBlank(name)) {
-			return name;
-		} else {
-			return code;
-		}
 	}
 
 }
