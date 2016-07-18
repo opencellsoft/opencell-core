@@ -44,13 +44,13 @@ import org.meveo.service.base.BusinessService;
 
 @Stateless
 public class ProductChargeInstanceService extends BusinessService<ProductChargeInstance> {
-
+/*
 	@Inject
 	private WalletService walletService;
 
 	@Inject
 	private WalletOperationService walletOperationService;
-	
+	*/
 
 	public ProductChargeInstance findByCodeAndSubsription(String code, Long userAccountId) {
 		ProductChargeInstance productChargeInstance = null;
@@ -77,7 +77,7 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 			BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2, BigDecimal quantity,
 			 String criteria1, String criteria2, String criteria3, String description,
 			 User creator,boolean applyCharge) throws BusinessException {
-
+		/* FIXME
 		if (quantity == null) {
 			quantity = BigDecimal.ONE;
 		}
@@ -128,6 +128,8 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 		}
 
 		return productChargeInstance;
+		*/
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.billing.ProductDto;
 
 @XmlRootElement(name = "ApplyProductRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -36,6 +37,24 @@ public class ApplyProductRequestDto extends BaseDto {
 	private String criteria1;
 	private String criteria2;
 	private String criteria3;
+	
+	public ApplyProductRequestDto(){
+		
+	}
+	
+	public ApplyProductRequestDto(ProductDto productDto) {
+		this.amountWithoutTax=productDto.getAmountWithoutTax();
+		this.amountWithTax=productDto.getAmountWithTax();
+		this.criteria1=productDto.getCriteria1();
+		this.criteria2=productDto.getCriteria2();
+		this.criteria3=productDto.getCriteria3();
+		this.description=productDto.getDescription();
+		this.operationDate=productDto.getChargeDate();
+		this.product=productDto.getCode();
+		this.quantity=productDto.getQuantity();
+		//FIXME
+		//this.userAccount=productDto.get;
+	}
 
 	public String getProduct() {
 		return product;

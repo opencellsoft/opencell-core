@@ -30,7 +30,6 @@ import javax.persistence.Table;
 
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductChargeTemplate;
-import org.meveo.model.catalog.ProductTemplate;
 
 @Entity
 @Table(name = "BILLING_PRODUCT_CHARGE_INST")
@@ -40,13 +39,18 @@ public class ProductChargeInstance extends ChargeInstance {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "PRODUCT_TEMPLATE_ID")
-	private ProductTemplate productTemplate;
+	@JoinColumn(name = "PRODUCT_CHRG_TMPL_ID")
+	private ProductChargeTemplate productChargeTemplate;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PRODUCT_INSTANCE_ID")
+	private ProductInstance productInstance;
+
 
 	public ProductChargeInstance(String code, String description, Date chargeDate,
 			UserAccount userAccount,OfferTemplate offerTemplate, 
 			BigDecimal amountWithoutTax, BigDecimal amount2,
-			ProductChargeTemplate productChargeTemplate) {
+			ProductInstance productInstance,ProductChargeTemplate productChargeTemplate) {
 		this.code = code;
 		this.description = description;
 		setChargeDate(chargeDate);
@@ -57,12 +61,12 @@ public class ProductChargeInstance extends ChargeInstance {
 		this.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
 		this.setCountry(userAccount.getBillingAccount().getTradingCountry());
 		this.setCurrency(userAccount.getBillingAccount().getCustomerAccount().getTradingCurrency());
-		this.chargeTemplate = productChargeTemplate;
+		this.productInstance = productInstance;
+		this.productChargeTemplate=productChargeTemplate;
 		this.status = InstanceStatusEnum.ACTIVE;
 	}
 
 	public ProductChargeInstance() {
 
 	}
-
 }

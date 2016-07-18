@@ -29,6 +29,7 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
+import org.meveo.api.dto.billing.ProductDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
@@ -47,6 +48,9 @@ public class UserAccountService extends AccountService<UserAccount> {
 
 	@Inject
 	private WalletService walletService;
+
+	@Inject
+	private ProductChargeInstanceService productChargeInstanceService;
 	
 	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount, User creator)
 			throws BusinessException {
@@ -158,6 +162,11 @@ public class UserAccountService extends AccountService<UserAccount> {
 			log.warn("error while getting user account list by billing account",e);
 			return null;
 		}
+	}
+
+	public void applyProduct(ProductDto productDto) throws BusinessException  {
+		//FIXME
+		//productInstanceService.productChargeApplication(userAccount, chargeTemplate, offerTemplate, effetDate, amoutWithoutTax, amoutWithoutTx2, quantity, criteria1, criteria2, criteria3, description, creator, applyCharge)
 	}
 	
 }

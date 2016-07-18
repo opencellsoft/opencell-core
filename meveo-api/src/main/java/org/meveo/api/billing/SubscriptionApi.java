@@ -11,11 +11,14 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
+import org.meveo.api.account.UserAccountApi;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
+import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.ChargeInstanceOverrideDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
+import org.meveo.api.dto.billing.ProductDto;
 import org.meveo.api.dto.billing.ServiceInstanceDto;
 import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.ServiceToInstantiateDto;
@@ -89,6 +92,9 @@ public class SubscriptionApi extends BaseApi {
     @SuppressWarnings("rawtypes")
     @Inject
     private ChargeInstanceService chargeInstanceService;
+    
+    @Inject
+    private UserAccountApi userAccountApi;
 
     public void create(SubscriptionDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -684,6 +690,7 @@ public class SubscriptionApi extends BaseApi {
                 dto.getServices().getServiceInstance().add(new ServiceInstanceDto(serviceInstance, entityToDtoConverter.getCustomFieldsDTO(serviceInstance)));
             }
         }
+
         return dto;
     }
     public void createOrUpdatePartial(SubscriptionDto subscriptionDto,User currentUser) throws MeveoApiException, BusinessException{
@@ -801,5 +808,18 @@ public class SubscriptionApi extends BaseApi {
 				}
 			}
 		}
+		
+		
+		if (subscriptionDto.getProducts() != null) {
+			for (ProductDto productDto : subscriptionDto.getProducts().getProducts()) {
+				if (StringUtils.isBlank(productDto.getCode())) {
+					log.warn("code is null={}", productDto);
+					continue;
+				}
+				ApplyProductRequestDto dto = new ApplyProductRequestDto(productDto);
+				userAccountApi.applyProduct(dto , currentUser);
+			}
+		}
+		
     }
 }
