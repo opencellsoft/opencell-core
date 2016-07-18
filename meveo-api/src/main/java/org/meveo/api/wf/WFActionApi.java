@@ -150,9 +150,6 @@ public class WFActionApi extends BaseApi {
      * @throws MissingParameterException
      */
 	public void validateDto(WFActionDto wfActionDto) throws MissingParameterException{
-		if (StringUtils.isBlank(wfActionDto.getActionEl())) {
-			missingParameters.add("actionEl");
-		}
 		if (StringUtils.isBlank(wfActionDto.getPriority())) {
 			missingParameters.add("priority");
 		}

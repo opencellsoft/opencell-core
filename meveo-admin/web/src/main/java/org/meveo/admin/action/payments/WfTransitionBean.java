@@ -134,21 +134,35 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
     }
     
     public void saveWfAction() throws BusinessException {
+    	boolean isPriorityUnique = checkUnicityOfPriority();
+    	if(isPriorityUnique) {
+    		if (wfAction.getId() != null) {
+            	wfActionService.update(wfAction, getCurrentUser());
+                messages.info(new BundleKey("messages", "update.successful"));
+            } else {
+            	wfAction.setWfTransition(entity);
+            	wfActionService.create(wfAction, getCurrentUser());
+                entity.getWfActions().add(wfAction);
+                messages.info(new BundleKey("messages", "save.successful"));
 
-        if (wfAction.getId() != null) {
-        	wfActionService.update(wfAction, getCurrentUser());
-            messages.info(new BundleKey("messages", "update.successful"));
-        } else {
-        	wfAction.setWfTransition(entity);
-        	wfActionService.create(wfAction, getCurrentUser());
-            entity.getWfActions().add(wfAction);
-            messages.info(new BundleKey("messages", "save.successful"));
-
-        }
-        wfAction = new WFAction();
+            }
+            wfAction = new WFAction();
+    	} else {
+    		messages.error(new BundleKey("messages", "crmAccount.wfAction.uniquePriority"), new Object[]{wfAction.getPriority()});
+    	}
+        
     }
     
-    public void deleteWfAction(WFAction wfAction) {
+    private boolean checkUnicityOfPriority() {
+		for(WFAction action : entity.getWfActions()) {
+			if(wfAction.getPriority() == action.getPriority()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public void deleteWfAction(WFAction wfAction) {
     	WFAction action = wfActionService.findById(wfAction.getId()); 
     	wfActionService.remove(action);
         entity.getWfActions().remove(wfAction);
