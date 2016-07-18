@@ -61936,7 +61936,7 @@ and paste that invoice number in the next step.
             <code>${#Project#entityPrefix}_${#TestSuite#index}_WF1</code>\r
             <!--Optional:-->\r
             <description>desc of ${#Project#entityPrefix}_${#TestSuite#index}_WF1</description>\r
-            <wfType>WF_TYPE_1</wfType>\r
+            <wfType>org.meveo.admin.wf.types.DunningWF</wfType>\r
             <status>ACTIVE</status>\r
             <!--Optional:-->\r
             <exportLot>false</exportLot>\r
@@ -61949,7 +61949,6 @@ and paste that invoice number in the next step.
                   <fromStatus>FRM_STATUS_1</fromStatus>\r
                   <toStatus>TO_STATUS_1</toStatus>\r
                   <conditionEl>CND_EL_T</conditionEl>\r
-                  <workflowDto/>\r
                   <!--Optional:-->\r
                   <listWFActionDto>\r
                      <!--Zero or more repetitions:-->\r
@@ -61957,7 +61956,6 @@ and paste that invoice number in the next step.
                         <actionEl>ACT_EL</actionEl>\r
                         <priority>1</priority>\r
                         <conditionEl>CND_EL_A</conditionEl>\r
-                        <wfTransitionDto/>\r
                      </wfActionDto>\r
                   </listWFActionDto>\r
                </wfTransitionDto>\r
@@ -61971,7 +61969,7 @@ and paste that invoice number in the next step.
       <wf:create>
          <workflow>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_WF2</code>
-            <wfType>WF_TYPE_1</wfType>
+            <wfType>org.meveo.admin.wf.types.DunningWF</wfType>
             <status>ACTIVE</status>
          </workflow>
       </wf:create>
@@ -61985,7 +61983,7 @@ and paste that invoice number in the next step.
             <code>${#Project#entityPrefix}_${#TestSuite#index}_WF1</code>\r
             <!--Optional:-->\r
             <description>updated desc of ${#Project#entityPrefix}_${#TestSuite#index}_WF1</description>\r
-            <wfType>WF_TYPE_1_UP</wfType>\r
+            <wfType>org.meveo.admin.wf.types.DunningWF</wfType>\r
             <status>ACTIVE</status>\r
             <!--Optional:-->\r
             <exportLot>true</exportLot>\r
@@ -61998,7 +61996,6 @@ and paste that invoice number in the next step.
                   <fromStatus>FRM_STATUS_2</fromStatus>
                   <toStatus>TO_STATUS_2</toStatus>
                   <conditionEl>CND_EL_T2</conditionEl>
-                  <workflowDto/>\r
                   <!--Optional:-->\r
                   <listWFActionDto>\r
                      <!--Zero or more repetitions:-->\r
@@ -62006,13 +62003,11 @@ and paste that invoice number in the next step.
                        <actionEl>ACT_EL</actionEl>
                         <priority>2</priority>
                         <conditionEl>CND_EL_A2</conditionEl>
-                        <wfTransitionDto/>\r
                      </wfActionDto>\r
                      <wfActionDto>
                        <actionEl>ACT_EL</actionEl>
                         <priority>3</priority>
                         <conditionEl>CND_EL_A3</conditionEl>
-                        <wfTransitionDto/>
                      </wfActionDto>
                   </listWFActionDto>\r
                </wfTransitionDto>\r
@@ -62027,7 +62022,7 @@ and paste that invoice number in the next step.
          <!--Optional:-->\r
          <workflow>\r
             <code>${#Project#entityPrefix}_${#TestSuite#index}_WF1</code>\r
-            <wfType>WF_TYPE_1_UP2</wfType>\r
+            <wfType>org.meveo.admin.wf.types.DunningWF</wfType>\r
             <status>ACTIVE</status>\r
          </workflow>\r
       </wf:update>\r
