@@ -2,8 +2,10 @@ package org.meveo.api.security.parameter;
 
 import javax.inject.Inject;
 
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.CRMAccountHierarchyDto;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidEnumValueException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.model.BusinessEntity;
@@ -21,12 +23,6 @@ import org.meveo.service.security.SecuredBusinessEntityService;
  *
  */
 public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<BusinessEntity> {
-
-	private static final String RETURNING_ENTITY = "Returning entity: {}";
-	private static final String CREATING_BUSINESS_ENTITY = "Creating BusinessEntity using [code={}, parentCode={}, accountExist={}]";
-	private static final String RETURNING_ACCOUNT_HIERARCHY_TYPE = "Returning AccountHierarchyTypeEnum: {}";
-	private static final String RETRIEVING_ACCOUNT_HIERARCHY_TYPE = "Retrieving AccountHierarchyTypeEnum of type: {}";
-	private static final String ACCOUNT_TYPE_DOES_NOT_MATCH = "Account type does not match any BAM or AccountHierarchyTypeEnum";
 
 	@Inject
 	private BusinessAccountModelService businessAccountModelService;
@@ -60,7 +56,7 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 		Object parameterValue = values[parameter.index()];
 
 		if (!(parameterValue instanceof CRMAccountHierarchyDto)) {
-			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(INVALID_PARAMETER_TYPE, CRMAccountHierarchyDto.class.getName()));
+			throw new InvalidParameterException("Parameter received at index: " + parameter.index() + " is not an instance of CRMAccountHierarchyDto.");
 		}
 
 		// since we are sure it is of the correct type, cast it and return the
@@ -75,7 +71,7 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 		// property of the dto
 		String crmAccountType = dto.getCrmAccountType();
 
-		log.debug(RETRIEVING_ACCOUNT_HIERARCHY_TYPE, crmAccountType);
+		log.debug("Retrieving AccountHierarchyTypeEnum of type: {}", crmAccountType);
 
 		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
 		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(crmAccountType, user.getProvider());
@@ -85,10 +81,11 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 			try {
 				accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(crmAccountType);
 			} catch (Exception e) {
-				throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, ACCOUNT_TYPE_DOES_NOT_MATCH, e);
+				log.error("Account type does not match any BAM or AccountHierarchyTypeEnum", e);
+				throw new InvalidEnumValueException(AccountHierarchyTypeEnum.class.getSimpleName(), crmAccountType);
 			}
 		}
-		log.debug(RETURNING_ACCOUNT_HIERARCHY_TYPE, accountHierarchyTypeEnum);
+		log.debug("Returning AccountHierarchyTypeEnum: {}", accountHierarchyTypeEnum);
 		return accountHierarchyTypeEnum;
 	}
 
@@ -96,7 +93,7 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 
 		// immediately throw an error if the account hierarchy type is null.
 		if (accountHierarchyTypeEnum == null) {
-			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, ACCOUNT_TYPE_DOES_NOT_MATCH);
+			throw new EntityDoesNotExistsException("Account type does not match any BAM or AccountHierarchyTypeEnum");
 		}
 
 		// retrieve the class type and the parent type from the account
@@ -114,7 +111,7 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 		// parent class.
 		boolean accountExist = securedBusinessEntityService.getEntityByCode(entityClass, code, user) != null;
 
-		log.debug(CREATING_BUSINESS_ENTITY, code, parentCode, accountExist);
+		log.debug("Creating BusinessEntity using [code={}, parentCode={}, accountExist={}]", code, parentCode, accountExist);
 
 		BusinessEntity entity = null;
 
@@ -122,18 +119,22 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 			try {
 				entity = entityClass.newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
-				throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_INSTANTIATE_ENTITY, entityClass.getName()), e);
+				String message = String.format("Failed to create new %s instance.", entityClass.getName());
+				log.error(message, e);
+				throw new InvalidParameterException(message);
 			}
 			entity.setCode(code);
 		} else {
 			try {
 				entity = parentClass.newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
-				throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_INSTANTIATE_ENTITY, parentClass.getName()), e);
+				String message = String.format("Failed to create new %s instance.", parentClass.getName());
+				log.error(message, e);
+				throw new InvalidParameterException(message);
 			}
 			entity.setCode(parentCode);
 		}
-		log.debug(RETURNING_ENTITY, entity);
+		log.debug("Returning entity: {}", entity);
 		return entity;
 	}
 

@@ -6,8 +6,7 @@ import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
-import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.AccessDeniedException;
 import org.meveo.api.security.filter.SecureMethodResultFilter;
 import org.meveo.api.security.filter.SecureMethodResultFilterFactory;
 import org.meveo.api.security.parameter.SecureMethodParameter;
@@ -33,13 +32,6 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
 	private static final Logger log = LoggerFactory.getLogger(SecuredBusinessEntityMethodInterceptor.class);
 
-	private static final String ALLOWING_METHOD_TO_BE_INVOKED = "Allowing method {}.{} to be invoked.";
-	private static final String CHECKING_METHOD_FOR_SECURED_BUSINESS_ENTITIES = "Checking method {}.{} for secured BusinessEntities";
-	private static final String METHOD_IS_NOT_ANNOTATED = "Method {}.{} is not annotated with @SecuredBusinessEntityProperty.  No need to check for authorization.";
-	private static final String ACCESS_TO_ENTITY_DENIED = "Access to entity details is not allowed.";
-	private static final String USER_DOES_NOT_HAVE_ANY_RESTRICTIONS = "User does not have any restrictions.";
-	private static final String FILTER_RESULTS_WITH = "Results will be filtered using {} filter.";
-
 	@Inject
 	private SecuredBusinessEntityService securedBusinessEntityService;
 
@@ -48,8 +40,8 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
 	@Inject
 	private SecureMethodParameterHandler parameterHandler;
-	
-	private ParamBean paramBean=ParamBean.getInstance();
+
+	private ParamBean paramBean = ParamBean.getInstance();
 
 	/**
 	 * This is called before a method that makes use of the
@@ -66,13 +58,13 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 	 */
 	@AroundInvoke
 	public Object checkForSecuredEntities(InvocationContext context) throws Exception {
-		
+
 		// check if secured entities should be saved.
 		String secureSetting = paramBean.getProperty("secured.entities.enabled", "false");
 		boolean secureEntitesEnabled = Boolean.parseBoolean(secureSetting);
-		
+
 		// if not, immediately return.
-		if(!secureEntitesEnabled){
+		if (!secureEntitesEnabled) {
 			return context.proceed();
 		}
 
@@ -82,7 +74,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
 		SecuredBusinessEntityMethod annotation = context.getMethod().getAnnotation(SecuredBusinessEntityMethod.class);
 		if (annotation == null) {
-			log.debug(METHOD_IS_NOT_ANNOTATED, objectName, methodName);
+			log.debug("Method {}.{} is not annotated with @SecuredBusinessEntityProperty.  No need to check for authorization.", objectName, methodName);
 			return context.proceed();
 		}
 
@@ -93,39 +85,26 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 		boolean hasRestrictions = user != null && user.getSecuredEntities() != null && !user.getSecuredEntities().isEmpty();
 
 		if (!hasRestrictions) {
-			log.debug(USER_DOES_NOT_HAVE_ANY_RESTRICTIONS);
+			log.debug("User does not have any restrictions.");
 			return context.proceed();
 		}
 
-		log.debug(CHECKING_METHOD_FOR_SECURED_BUSINESS_ENTITIES, objectName, methodName);
+		log.debug("Checking method {}.{} for secured BusinessEntities", objectName, methodName);
 		SecureMethodParameter[] parametersForValidation = annotation.validate();
 		for (SecureMethodParameter parameter : parametersForValidation) {
 			BusinessEntity entity = parameterHandler.getParameterValue(parameter, values, BusinessEntity.class, user);
 			if (!securedBusinessEntityService.isEntityAllowed(entity, user, false)) {
-				throwErrorMessage(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION, ACCESS_TO_ENTITY_DENIED);
+				throw new AccessDeniedException("Access to entity details is not allowed.");
 			}
 		}
 
-		log.debug(ALLOWING_METHOD_TO_BE_INVOKED, objectName, methodName);
+		log.debug("Allowing method {}.{} to be invoked.", objectName, methodName);
 		Object result = context.proceed();
 
 		SecureMethodResultFilter filter = filterFactory.getFilter(annotation.resultFilter());
-		log.debug(FILTER_RESULTS_WITH, filter);
+		log.debug("Results will be filtered using {} filter.", filter);
 		result = filter.filterResult(result, user);
 		return result;
 
-	}
-
-	private void throwErrorMessage(MeveoApiErrorCodeEnum errorCode, String message) throws MeveoApiException {
-		throwErrorMessage(errorCode, message, null);
-	}
-
-	private void throwErrorMessage(MeveoApiErrorCodeEnum errorCode, String message, Throwable e) throws MeveoApiException {
-		if (e == null) {
-			log.error(message);
-		} else {
-			log.error(message, e);
-		}
-		throw new MeveoApiException(errorCode, message);
 	}
 }

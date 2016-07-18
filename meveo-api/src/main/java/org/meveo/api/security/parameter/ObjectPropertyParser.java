@@ -1,7 +1,8 @@
 package org.meveo.api.security.parameter;
 
+import java.security.InvalidParameterException;
+
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.commons.utils.StringUtils;
@@ -18,8 +19,6 @@ import org.meveo.model.admin.User;
  */
 public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEntity> {
 
-	private static final String FAILED_TO_RETRIEVE_PROPERTY = "Failed to retrieve property %s.%s.";
-
 	@Override
 	public BusinessEntity getParameterValue(SecureMethodParameter parameter, Object[] values, User user) throws MeveoApiException {
 		if (parameter == null) {
@@ -33,15 +32,19 @@ public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEn
 	}
 
 	/**
-	 * The code is determined by getting the parameter object and returning the value of the property.
+	 * The code is determined by getting the parameter object and returning the
+	 * value of the property.
 	 * 
-	 * @param parameter {@link SecureMethodParameter} instance that has the entity, index, and property attributes set.
-	 * @param values The method parameters.
+	 * @param parameter
+	 *            {@link SecureMethodParameter} instance that has the entity,
+	 *            index, and property attributes set.
+	 * @param values
+	 *            The method parameters.
 	 * @return The code retrieved from the object.
 	 * @throws MeveoApiException
 	 */
 	private String extractCode(SecureMethodParameter parameter, Object[] values) throws MeveoApiException {
-		
+
 		// retrieve the dto and property based on the parameter annotation
 		Object dto = values[parameter.index()];
 		String property = parameter.property();
@@ -49,22 +52,28 @@ public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEn
 		try {
 			code = (String) getPropertyValue(dto, property);
 		} catch (IllegalAccessException e) {
-			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_RETRIEVE_PROPERTY, dto.getClass().getName(), property), e);
+			String message = String.format("Failed to retrieve property %s.%s.", dto.getClass().getName(), property);
+			log.error(message, e);
+			throw new InvalidParameterException(message);
 		}
+
 		if (StringUtils.isBlank(code)) {
-			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, CODE_REQUIRED);
+			throw new InvalidParameterException(String.format("%s.%s returned an empty code.", dto.getClass().getName(), property));
 		}
 		return code;
 	}
 
 	/**
-	 * This is a recursive function that aims to walk through the properties of an object until it gets the final value.
+	 * This is a recursive function that aims to walk through the properties of
+	 * an object until it gets the final value.
 	 * 
-	 * e.g.
-	 * If we received an Object named obj and given a string property of code.name, then the value of obj1.code.name will be returned.
+	 * e.g. If we received an Object named obj and given a string property of
+	 * code.name, then the value of obj1.code.name will be returned.
 	 * 
-	 * @param obj The object that contains the property value.
-	 * @param property The property of the object that contains the data.
+	 * @param obj
+	 *            The object that contains the property value.
+	 * @param property
+	 *            The property of the object that contains the data.
 	 * @return The value of the data contained in obj.property
 	 * @throws IllegalAccessException
 	 */
@@ -86,7 +95,9 @@ public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEn
 			entity = entityClass.newInstance();
 			entity.setCode(code);
 		} catch (InstantiationException | IllegalAccessException e) {
-			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_INSTANTIATE_ENTITY, entityClass.getName()), e);
+			String message = String.format("Failed to create new %s instance.", entityClass.getName());
+			log.error(message, e);
+			throw new InvalidParameterException(message);
 		}
 		return entity;
 	}

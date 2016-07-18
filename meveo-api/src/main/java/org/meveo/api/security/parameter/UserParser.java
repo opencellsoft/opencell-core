@@ -1,6 +1,6 @@
 package org.meveo.api.security.parameter;
 
-import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.admin.User;
 
@@ -21,7 +21,7 @@ public class UserParser extends SecureMethodParameterParser<User> {
 
 		Object parameterValue = values[parameter.index()];
 		if (!(parameterValue instanceof User)) {
-			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(INVALID_PARAMETER_TYPE, User.class.getName()));
+			throw new InvalidParameterException("Parameter received at index: " + parameter.index() + " is not a User instance.");
 		}
 
 		return (User) parameterValue;

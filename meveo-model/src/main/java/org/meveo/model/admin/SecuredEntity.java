@@ -1,10 +1,10 @@
 package org.meveo.model.admin;
 
-import java.beans.Transient;
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -33,13 +33,13 @@ public class SecuredEntity implements Serializable {
 	@NotNull
 	protected String code;
 
-	@Column(name = "DESCRIPTION", nullable = true, length = 100)
-	@Size(max = 100)
-	protected String description;
-
 	@Column(name = "ENTITY_CLASS", length = 255)
 	@Size(max = 255)
 	private String entityClass;
+
+	@Transient
+	protected String description;
+
 	
 	public String getCode() {
 		return code;
@@ -65,7 +65,6 @@ public class SecuredEntity implements Serializable {
 		this.entityClass = entityClass;
 	}
 	
-	@Transient
 	public String readableEntityClass() {
 		if(entityClass != null){
 			return ReflectionUtils.getHumanClassName(entityClass);

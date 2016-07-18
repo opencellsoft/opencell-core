@@ -1,6 +1,6 @@
 package org.meveo.api.security.parameter;
 
-import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.commons.utils.StringUtils;
@@ -27,7 +27,7 @@ public class CodeParser extends SecureMethodParameterParser<BusinessEntity> {
 		// retrieve the code from the parameter
 		String code = (String) values[parameter.index()];
 		if (StringUtils.isBlank(code)) {
-			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, CODE_REQUIRED);
+			throw new InvalidParameterException("code", code);
 		}
 		
 		// instantiate a new entity.
@@ -38,7 +38,9 @@ public class CodeParser extends SecureMethodParameterParser<BusinessEntity> {
 			entity = entityClass.newInstance();
 			entity.setCode(code);
 		} catch (InstantiationException | IllegalAccessException e) {
-			throwErrorMessage(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, String.format(FAILED_TO_INSTANTIATE_ENTITY, entityClass.getSimpleName()), e);
+			String message = String.format("Failed to create new %s instance.", entityClass.getSimpleName());
+			log.error(message, e);
+			throw new InvalidParameterException(message);
 		}
 
 		return entity;

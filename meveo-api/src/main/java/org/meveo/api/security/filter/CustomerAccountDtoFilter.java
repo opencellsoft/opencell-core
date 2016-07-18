@@ -72,7 +72,7 @@ public class CustomerAccountDtoFilter extends SecureMethodResultFilter {
 				// accounts allowed, so we check the entity and its parents for
 				// access
 				log.debug("Checking billing account access authorization.");
-				entityAllowed = securedBusinessEntityService.isEntityAllowed(billingAccount, user, false);
+				entityAllowed = billingAccount == null || securedBusinessEntityService.isEntityAllowed(billingAccount, user, false);
 			}
 			if (entityAllowed) {
 				log.debug("Adding billing account {} to filtered list.", billingAccount);

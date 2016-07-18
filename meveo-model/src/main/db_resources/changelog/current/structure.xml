@@ -2316,7 +2316,6 @@ $BODY$
 			<column name="code" type="VARCHAR(60)">
 				<constraints nullable="false" />
 			</column>
-			<column name="description" type="VARCHAR(100)" />
 			<column name="entity_class" type="VARCHAR(255)" />
         </createTable>
 

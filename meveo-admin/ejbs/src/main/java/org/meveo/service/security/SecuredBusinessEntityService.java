@@ -23,7 +23,7 @@ import org.slf4j.Logger;
  * @author Tony Alejandro
  */
 @Stateless
-public class SecuredBusinessEntityService extends PersistenceService<BusinessEntity>{
+public class SecuredBusinessEntityService extends PersistenceService<BusinessEntity> {
 	@Inject
 	protected Logger log;
 
@@ -31,9 +31,8 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
 		Provider provider = user.getProvider();
 		try {
 			Class<?> cleanClass = Class.forName(ReflectionUtils.getCleanClassName(entityClass.getName()));
-			QueryBuilder qb = new QueryBuilder( cleanClass , "e", null, provider);
+			QueryBuilder qb = new QueryBuilder(cleanClass, "e", null, provider);
 			qb.addCriterion("e.code", "=", code, true);
-			qb.addCriterionEntity("e.provider", provider);
 			return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
 			log.debug("No {} of code {} for provider {} found", getEntityClass().getSimpleName(), code, provider.getId(), e);
@@ -78,6 +77,9 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
 	}
 
 	private static boolean entityFoundInSecuredEntities(BusinessEntity entity, List<SecuredEntity> securedEntities) {
+		if (entity == null) {
+			return false;
+		}
 		boolean found = false;
 		for (SecuredEntity securedEntity : securedEntities) {
 			if (securedEntity.equals(entity)) {

@@ -74,7 +74,7 @@
 				</p:tab>
 
 
-				<p:tab title="#{messages['user.securedEntitiesTab']}">
+				<p:tab title="#{messages['user.securedEntitiesTab']}" rendered="#{!(userBean.entity.id==null) and userBean.edit and userBean.canUserUpdateEntity()}">
 					<h:panelGroup id="selectedEntitiesPanel">
 						<p:messages />
 						<p:dataTable id="selectedEntitiesDatatable" var="securedEntity"

@@ -102,6 +102,9 @@ public class User extends AuditableEntity {
 
 	@Transient
 	private String newPasswordConfirmation;
+	
+	@Transient
+	private Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap;
 
 	public User() {
 	}
@@ -318,10 +321,18 @@ public class User extends AuditableEntity {
     
     public void setSecuredEntities(List<SecuredEntity> securedEntities) {
 		this.securedEntities = securedEntities;
+		initializeSecuredEntitiesMap();
 	}
     
     public Map<Class<?>, Set<SecuredEntity>> getSecuredEntitiesMap() {
-		Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap = new HashMap<>();
+		if(securedEntitiesMap == null || securedEntitiesMap.isEmpty()){
+			initializeSecuredEntitiesMap();
+		}
+		return securedEntitiesMap;
+	}
+
+	private void initializeSecuredEntitiesMap() {
+		securedEntitiesMap = new HashMap<>();
 		Set<SecuredEntity> securedEntitySet = null;
 		try {
 			for (SecuredEntity securedEntity : securedEntities) {
@@ -335,6 +346,5 @@ public class User extends AuditableEntity {
 		} catch (ClassNotFoundException e) {
 			// do nothing
 		}
-		return securedEntitiesMap;
 	}
 }
