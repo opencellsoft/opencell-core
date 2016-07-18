@@ -44,7 +44,7 @@ public class Auditable implements Serializable {
 	@Column(name = "UPDATED")
 	private Date updated;
 
-	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@ManyToOne(optional = true, fetch = FetchType.EAGER)
 	@JoinColumn(name = "CREATOR_ID", updatable = false)
 	private User creator;
 

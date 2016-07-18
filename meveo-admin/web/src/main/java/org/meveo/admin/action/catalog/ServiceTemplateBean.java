@@ -36,7 +36,6 @@ import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
@@ -60,6 +59,26 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
+    
+    @Inject
+	private ServiceTemplateService serviceTemplateService;
+
+	@Inject
+	private WalletTemplateService walletTemplateService;
+	
+	@Inject
+	private ServiceChargeTemplateSubscriptionService serviceChargeTemplateSubscriptionService;
+	@Inject
+	private ServiceChargeTemplateTerminationService serviceChargeTemplateTerminationService;
+	@Inject
+	private ServiceChargeTemplateRecurringService serviceChargeTemplateRecurringService;
+	@Inject
+	private ServiceChargeTemplateUsageService serviceChargeTemplateUsageService;
+
+	private DualListModel<WalletTemplate> usageWallets;
+	private DualListModel<WalletTemplate> recurringWallets;
+	private DualListModel<WalletTemplate> subscriptionWallets;
+	private DualListModel<WalletTemplate> terminationWallets;
 
 	private ServiceChargeTemplateRecurring serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
 
@@ -115,31 +134,6 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 		this.serviceChargeTemplateUsage.setProvider(getCurrentProvider());
 		this.usageWallets = null;
 	}
-
-	@Inject
-	private ServiceChargeTemplateSubscriptionService serviceChargeTemplateSubscriptionService;
-	@Inject
-	private ServiceChargeTemplateTerminationService serviceChargeTemplateTerminationService;
-	@Inject
-	private ServiceChargeTemplateRecurringService serviceChargeTemplateRecurringService;
-	@Inject
-	private ServiceChargeTemplateUsageService serviceChargeTemplateUsageService;
-
-	/**
-	 * Injected
-	 * 
-	 * @{link ServiceTemplate} service. Extends {@link PersistenceService}.
-	 */
-	@Inject
-	private ServiceTemplateService serviceTemplateService;
-
-	@Inject
-	private WalletTemplateService walletTemplateService;
-
-	private DualListModel<WalletTemplate> usageWallets;
-	private DualListModel<WalletTemplate> recurringWallets;
-	private DualListModel<WalletTemplate> subscriptionWallets;
-	private DualListModel<WalletTemplate> terminationWallets;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -485,68 +479,14 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 	public void duplicate() {
 	    
         if (entity != null && entity.getId() != null) {
-            
-            entity = serviceTemplateService.refreshOrRetrieve(entity);
-            
-            // Lazy load related values first 
-			entity.getServiceRecurringCharges().size();
-			entity.getServiceSubscriptionCharges().size();
-			entity.getServiceTerminationCharges().size();
-			entity.getServiceUsageCharges().size();
-            
-            // Detach and clear ids of entity and related entities
-			serviceTemplateService.detach(entity);
-			entity.setId(null);
-            String sourceAppliesToEntity = entity.clearUuid();
-            
-			List<ServiceChargeTemplateRecurring> recurrings=entity.getServiceRecurringCharges();
-			entity.setServiceRecurringCharges(new ArrayList<ServiceChargeTemplateRecurring>());
-			for(ServiceChargeTemplateRecurring recurring:recurrings){
-				recurring.getWalletTemplates().size();
-				serviceChargeTemplateRecurringService.detach(recurring);
-				recurring.setId(null);
-				recurring.setServiceTemplate(entity);
-				entity.getServiceRecurringCharges().add(recurring);
-			}
-			List<ServiceChargeTemplateSubscription> subscriptions=entity.getServiceSubscriptionCharges();
-			entity.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
-			for(ServiceChargeTemplateSubscription subscription:subscriptions){
-				subscription.getWalletTemplates().size();
-				serviceChargeTemplateSubscriptionService.detach(subscription);
-				subscription.setId(null);
-				subscription.setServiceTemplate(entity);
-				entity.getServiceSubscriptionCharges().add(subscription);
-			}
-			List<ServiceChargeTemplateTermination> terminations=entity.getServiceTerminationCharges();
-			entity.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
-			for(ServiceChargeTemplateTermination termination:terminations){
-				termination.getWalletTemplates().size();
-				serviceChargeTemplateTerminationService.detach(termination);
-				termination.setId(null);
-				termination.setServiceTemplate(entity);
-				entity.getServiceTerminationCharges().add(termination);
-			}
-			List<ServiceChargeTemplateUsage> usages=entity.getServiceUsageCharges();
-			entity.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
-			for(ServiceChargeTemplateUsage usage:usages){
-				usage.getWalletTemplates().size();
-				serviceChargeTemplateUsageService.detach(usage);
-				usage.setId(null);
-				usage.setServiceTemplate(entity);
-				entity.getServiceUsageCharges().add(usage);
-			}
-			entity.setCode(entity.getCode()+"_copy");
-			
-			try {
-				serviceTemplateService.create(entity, getCurrentUser());
-                customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
-                messages.info(new BundleKey("messages", "save.successful"));
+           try{
+        	   serviceTemplateService.duplicate(entity, getCurrentUser());
+               messages.info(new BundleKey("messages", "save.successful"));
             } catch (BusinessException e) {
                 log.error("Error encountered persisting service template entity: #{0}:#{1}", entity.getCode(), e);
                 messages.error(new BundleKey("messages", "save.unsuccessful"));
             }
 		}
-		log.debug("Entity ID###" + (entity != null ? entity.getId() : "null"));
 	}
 	
 	public boolean isUsedInSubscription() {

@@ -110,14 +110,8 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 		if (entity == null || entity.getId() == null) {
 			return;
 		}
-		entity = triggeredEdrService.refreshOrRetrieve(entity);
-
-		// Detach and clear ids of entity and related entities
-		triggeredEdrService.detach(entity);
-		entity.setId(null);
-		entity.setCode(entity.getCode() + "_copy");
 		try {
-			triggeredEdrService.create(entity, getCurrentUser());
+			triggeredEdrService.duplicate(entity, getCurrentUser());
 			messages.info(new BundleKey("messages", "save.successful"));
 		} catch (BusinessException e) {
 			log.error("Error encountered persisting triggered EDR template entity: {}: {}", entity.getCode(), e);

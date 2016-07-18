@@ -20,6 +20,8 @@ package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.BusinessService;
 
@@ -31,4 +33,19 @@ import org.meveo.service.base.BusinessService;
 public class TriggeredEDRTemplateService extends
 		BusinessService<TriggeredEDRTemplate> {
 
+	public void duplicate(TriggeredEDRTemplate entity,User currentUser) throws BusinessException{
+		entity = refreshOrRetrieve(entity);
+		
+		Long sequence=entity.getSequence();
+		entity.setSequence(++sequence);
+		update(entity,currentUser);
+		commit();
+
+		// Detach and clear ids of entity and related entities
+		detach(entity);
+		entity.setId(null);
+		entity.setSequence(0L);
+		entity.setCode(entity.getCode() + " - Copy"+(sequence==1L?"":" "+sequence));
+		create(entity, getCurrentUser());
+	}
 }
