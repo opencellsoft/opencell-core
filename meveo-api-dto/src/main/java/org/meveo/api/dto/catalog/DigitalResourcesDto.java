@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.DigitalResource;
@@ -14,8 +15,10 @@ public class DigitalResourcesDto implements Serializable {
 
 	private static final long serialVersionUID = 5517448250177253851L;
 
+	@XmlAttribute(required = true)
 	private String code;
 
+	@XmlAttribute()
 	private String description;
 
 	private String uri;
@@ -32,6 +35,7 @@ public class DigitalResourcesDto implements Serializable {
 		this.setDescription(resource.getDescription());
 		this.setUri(resource.getUri());
 		this.setMimeType(resource.getMimeType());
+		this.setDisabled(resource.isDisabled());
 	}
 
 	public String getCode() {

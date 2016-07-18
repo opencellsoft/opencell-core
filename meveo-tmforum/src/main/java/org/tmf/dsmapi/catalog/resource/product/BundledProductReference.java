@@ -1,9 +1,11 @@
 package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
+
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonUnwrapped;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -160,7 +162,8 @@ public class BundledProductReference extends AbstractEntityReference implements 
         return "BundledProductReference{" + "referencedId=" + referencedId + ", referencedHref=" + referencedHref + ", referencedName=" + referencedName + ", referencedLifecycleStatus=" + referencedLifecycleStatus + ", entity=" + entity + '}';
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public void fetchEntity(Class theClass, int depth) {
 //        entity = (AbstractEntity) CatalogClient.getObject(referencedHref, theClass, depth);
     }

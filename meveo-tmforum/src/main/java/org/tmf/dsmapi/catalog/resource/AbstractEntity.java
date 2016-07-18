@@ -33,7 +33,9 @@ import org.tmf.dsmapi.serialize.CustomDateSerializer;
 @MappedSuperclass
 public abstract class AbstractEntity implements Serializable {
 
-    @Id
+	private static final long serialVersionUID = 1821894884787055051L;
+
+	@Id
     @Column(name = "ID", nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;

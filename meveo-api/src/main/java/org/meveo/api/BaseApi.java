@@ -448,4 +448,11 @@ public abstract class BaseApi {
         }
         return null;
     }
+    
+    protected <T> T keepOldValueIfNull(T newValue, T oldValue) {
+		if (newValue == null) {
+			return oldValue;
+		}
+		return newValue;
+	}
 }

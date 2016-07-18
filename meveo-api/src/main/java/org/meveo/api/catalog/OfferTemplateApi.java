@@ -27,6 +27,7 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
+import org.meveo.service.catalog.impl.OfferProductTemplateService;
 import org.meveo.service.catalog.impl.OfferServiceTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -47,6 +48,9 @@ public class OfferTemplateApi extends BaseApi {
 
 	@Inject
 	private OfferServiceTemplateService offerServiceTemplateService;
+	
+	@Inject
+	private OfferProductTemplateService offerProductTemplateService;
 
 	@Inject
 	private BusinessOfferModelService businessOfferModelService;
@@ -56,7 +60,7 @@ public class OfferTemplateApi extends BaseApi {
 
 	@Inject
 	private ProductTemplateService productTemplateService;
-
+	
 	public void create(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
@@ -139,17 +143,8 @@ public class OfferTemplateApi extends BaseApi {
 		}
 
 		// check offer product templates
-		List<OfferProductTemplateDto> offerProductTemplateDtos = postData.getOfferProductTemplates();
-		if (offerProductTemplateDtos != null && !offerProductTemplateDtos.isEmpty()) {
-			List<OfferProductTemplate> offerProductTemplates = new ArrayList<>();
-			OfferProductTemplate offerProductTemplate = null;
-			for (OfferProductTemplateDto offerProductTemplateDto : offerProductTemplateDtos) {
-				offerProductTemplate = getOfferProductTemplatesFromDto(offerProductTemplateDto, currentUser);
-				offerProductTemplates.add(offerProductTemplate);
-			}
-			offerTemplate.setOfferProductTemplates(offerProductTemplates);
-			offerTemplateService.update(offerTemplate, currentUser);
-		}
+		processOfferProductTemplates(postData, offerTemplate, currentUser);
+		offerTemplateService.update(offerTemplate, currentUser);
 
 		// populate customFields
 		try {
@@ -158,39 +153,6 @@ public class OfferTemplateApi extends BaseApi {
 			log.error("Failed to associate custom field instance to an entity", e);
 			throw new MeveoApiException("Failed to associate custom field instance to an entity");
 		}
-	}
-
-	private OfferProductTemplate getOfferProductTemplatesFromDto(OfferProductTemplateDto offerProductTemplateDto, User currentUser) throws MeveoApiException, BusinessException {
-
-		OfferTemplateDto offerTemplateDto = offerProductTemplateDto.getOfferTemplate();
-
-		OfferTemplate childOffer = null;
-		if(offerTemplateDto != null){
-			childOffer = offerTemplateService.findByCode(offerTemplateDto.getCode(), currentUser.getProvider());
-			if (childOffer == null) {
-				throw new MeveoApiException("The OfferProductTemplate's OfferTemplate does not exist.");
-			}
-		}
-
-		ProductTemplateDto productTemplateDto = offerProductTemplateDto.getProductTemplate();
-		ProductTemplate productTemplate = null;
-		if(productTemplateDto != null){
-			productTemplate = productTemplateService.findByCode(productTemplateDto.getCode(), currentUser.getProvider());
-			if (productTemplate == null) {
-				throw new MeveoApiException("The OfferProductTemplate's ProductTemplate does not exist.");
-			}
-		}
-
-		OfferProductTemplate offerProductTemplate = new OfferProductTemplate();
-		Boolean mandatory = offerProductTemplateDto.getMandatory();
-		mandatory = mandatory == null ? false : mandatory;
-
-		offerProductTemplate.setOfferTemplate(childOffer);
-		offerProductTemplate.setProductTemplate(productTemplate);
-		offerProductTemplate.setMandatory(mandatory);
-		offerProductTemplate.setProvider(currentUser.getProvider());
-
-		return offerProductTemplate;
 	}
 
 	public void update(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
@@ -377,18 +339,8 @@ public class OfferTemplateApi extends BaseApi {
 		offerTemplate = offerTemplateService.update(offerTemplate, currentUser);
 
 		// check offer product templates
-		List<OfferProductTemplateDto> offerProductTemplateDtos = postData.getOfferProductTemplates();
-		if (offerProductTemplateDtos != null && !offerProductTemplateDtos.isEmpty()) {
-			List<OfferProductTemplate> offerProductTemplates = new ArrayList<>();
-			OfferProductTemplate offerProductTemplate = null;
-			for (OfferProductTemplateDto offerProductTemplateDto : offerProductTemplateDtos) {
-				offerProductTemplate = getOfferProductTemplatesFromDto(offerProductTemplateDto, currentUser);
-				offerProductTemplates.add(offerProductTemplate);
-			}
-
-			offerTemplate.setOfferProductTemplates(offerProductTemplates);
-			offerTemplateService.update(offerTemplate, currentUser);
-		}
+		processOfferProductTemplates(postData, offerTemplate, currentUser);
+		offerTemplateService.update(offerTemplate, currentUser);
 
 		// populate customFields
 		try {
@@ -397,6 +349,58 @@ public class OfferTemplateApi extends BaseApi {
 			log.error("Failed to associate custom field instance to an entity", e);
 			throw new MeveoApiException("Failed to associate custom field instance to an entity");
 		}
+	}
+
+	private void processOfferProductTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate, User currentUser) throws MeveoApiException, BusinessException {
+		List<OfferProductTemplateDto> offerProductTemplateDtos = postData.getOfferProductTemplates();
+		boolean hasOfferProductTemplateDtos = offerProductTemplateDtos != null && !offerProductTemplateDtos.isEmpty();
+		List<OfferProductTemplate> existingProductTemplates = offerTemplate.getOfferProductTemplates();
+		boolean hasExistingProductTemplates = existingProductTemplates != null && !existingProductTemplates.isEmpty();
+		if (hasOfferProductTemplateDtos) {
+			List<OfferProductTemplate> newOfferProductTemplates = new ArrayList<>();
+			OfferProductTemplate offerProductTemplate = null;
+			for (OfferProductTemplateDto offerProductTemplateDto : offerProductTemplateDtos) {
+				offerProductTemplate = getOfferProductTemplatesFromDto(offerProductTemplateDto, currentUser);
+				offerProductTemplate.setOfferTemplate(offerTemplate);
+				newOfferProductTemplates.add(offerProductTemplate);
+			}
+			List<OfferProductTemplate> offerProductTemplatesForRemoval = new ArrayList<>(existingProductTemplates);
+			offerProductTemplatesForRemoval.removeAll(newOfferProductTemplates);
+			newOfferProductTemplates.removeAll(existingProductTemplates);
+			for (OfferProductTemplate offerProductTemplateForRemoval : offerProductTemplatesForRemoval) {
+				offerProductTemplateService.remove(offerProductTemplateForRemoval);
+			}
+			for (OfferProductTemplate newOfferProductTemplate : newOfferProductTemplates) {
+				newOfferProductTemplate.setOfferTemplate(offerTemplate);
+				offerProductTemplateService.create(newOfferProductTemplate, currentUser);
+			}
+		} else if (hasExistingProductTemplates) {
+			for (OfferProductTemplate offerProductTemplateForRemoval : existingProductTemplates) {
+				offerProductTemplateService.remove(offerProductTemplateForRemoval);
+			}
+		}
+	}
+	
+	private OfferProductTemplate getOfferProductTemplatesFromDto(OfferProductTemplateDto offerProductTemplateDto, User currentUser) throws MeveoApiException, BusinessException {
+
+		ProductTemplateDto productTemplateDto = offerProductTemplateDto.getProductTemplate();
+		ProductTemplate productTemplate = null;
+		if(productTemplateDto != null){
+			productTemplate = productTemplateService.findByCode(productTemplateDto.getCode(), currentUser.getProvider());
+			if (productTemplate == null) {
+				throw new MeveoApiException("The OfferProductTemplate's ProductTemplate does not exist.");
+			}
+		}
+
+		OfferProductTemplate offerProductTemplate = new OfferProductTemplate();
+		Boolean mandatory = offerProductTemplateDto.getMandatory();
+		mandatory = mandatory == null ? false : mandatory;
+
+		offerProductTemplate.setProductTemplate(productTemplate);
+		offerProductTemplate.setMandatory(mandatory);
+		offerProductTemplate.setProvider(currentUser.getProvider());
+		
+		return offerProductTemplate;
 	}
 
 	public OfferTemplateDto find(String code, Provider provider) throws MeveoApiException {

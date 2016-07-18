@@ -15,7 +15,6 @@ import org.meveo.model.admin.User;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
@@ -46,7 +45,7 @@ public class CatalogApi extends BaseApi {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, code);
 		}
 		List<ProductOfferingPrice> offerPrices = getOfferPrices(offerTemplate, currentUser);
-		return ProductOffering.parseFromOfferTemplate(offerTemplate, uriInfo, category, offerPrices);
+		return new ProductOffering(offerTemplate, uriInfo, category, offerPrices);
 	}
 
 	public List<ProductOffering> findProductOfferings(UriInfo uriInfo, Category category, User currentUser) {
@@ -55,7 +54,7 @@ public class CatalogApi extends BaseApi {
 
 		for (OfferTemplate offerTemplate : offerTemplates) {
 			List<ProductOfferingPrice> offerPrices = getOfferPrices(offerTemplate, currentUser);
-			ProductOffering productOffering = ProductOffering.parseFromOfferTemplate(offerTemplate, uriInfo, category, offerPrices);
+			ProductOffering productOffering = new ProductOffering(offerTemplate, uriInfo, category, offerPrices);
 			productOffering.setProductOfferingPrice(getOfferPrices(offerTemplate, currentUser));
 			productOfferings.add(productOffering);
 		}
