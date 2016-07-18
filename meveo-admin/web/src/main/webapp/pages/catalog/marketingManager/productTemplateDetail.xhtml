@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{productTemplateBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+					<p:menuitem outcome="mmProductTemplates"
+						value="#{messages['productTemplates.search']}" />
+				</p:breadCrumb>
+
+				<p:panelGrid columns="4">
+					<p:graphicImage id="productImage" cache="false"
+						value="#{prod.image}" height="100" width="100" rowspan="5" />
+					<p:panelGrid columns="1">
+						<h:outputText value="#{entity.name}" />
+						<h:outputText value="#{entity.businessProductModel.description}" />
+						<h:outputText value="#{entity.code}" />
+						<p:outputLabel value="#{messages['commons.lastEditor']} : }"/>
+						<h:outputText value="#{entity.auditable.updater.name.firstName} #{entity.auditable.updater.name.lastName}" />
+					</p:panelGrid>
+				</p:panelGrid>
+			</h:form>
+		</p:panel>
+
+
+
+	</ui:define>
+</ui:composition>

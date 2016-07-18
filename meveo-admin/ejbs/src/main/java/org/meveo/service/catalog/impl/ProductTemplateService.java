@@ -13,21 +13,28 @@ public class ProductTemplateService extends BusinessService<ProductTemplate> {
 
 	public long productTemplateActiveCount(boolean status) {
 		long result = 0;
-		String sqlQuery = "SELECT COUNT(p.id) FROM " + ProductTemplate.class.getName() + " p WHERE p.disabled = "
+		String sqlQuery = "SELECT COUNT(*) FROM " + ProductTemplate.class.getName() + " p WHERE p.disabled = "
 				+ status;
 		Query query = getEntityManager().createQuery(sqlQuery);
-		result = query.getFirstResult();
+		result = (long) query.getSingleResult();
+		return result;
+	}
+
+	public long productTemplateCount() {
+		long result = 0;
+		String sqlQuery = "SELECT COUNT(*) FROM " + ProductTemplate.class.getName() + " p ";
+		Query query = getEntityManager().createQuery(sqlQuery);
+		result = (long) query.getSingleResult();
 		return result;
 	}
 
 	public long productTemplateAlmostExpiredCount() {
 		long result = 0;
 		Calendar c = Calendar.getInstance();
-		c.add(Calendar.DATE, 7);
-		String sqlQuery = "SELECT COUNT(p.id) FROM " + ProductTemplate.class.getName() + " p WHERE p.validTo <= '"
-				+ c.getTime().toString()+"'";
+		String sqlQuery = "SELECT COUNT(*) FROM " + ProductTemplate.class.getName()
+				+ " p WHERE DATE_PART('day',p.validTo - '" + c.getTime().toString() + "') <= 7";
 		Query query = getEntityManager().createQuery(sqlQuery);
-		result = query.getFirstResult();
+		result = (long) query.getSingleResult();
 		return result;
 	}
 }

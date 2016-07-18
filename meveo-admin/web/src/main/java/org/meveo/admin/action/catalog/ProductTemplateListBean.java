@@ -29,6 +29,8 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 
 	private List<String> bundledProducts = new ArrayList<String>();
 
+	private List<ProductTemplate> ptToExport = new ArrayList<ProductTemplate>();
+
 	private long activeProductCount = 0;
 
 	private long inactiveProductCount = 0;
@@ -39,7 +41,7 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 	public void preRenderView() {
 		productTemplates = productTemplateService.list();
 		meveoInstances = meveoInstanceService.list();
-		activeProductCount = productTemplateService.productTemplateActiveCount(false);
+		activeProductCount = productTemplateService.productTemplateCount();//productTemplateService.productTemplateActiveCount(false);
 		inactiveProductCount = productTemplateService.productTemplateActiveCount(true);
 		almostExpiredCount = productTemplateService.productTemplateAlmostExpiredCount();
 		super.preRenderView();
@@ -48,6 +50,16 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 	@Override
 	protected IPersistenceService<ProductTemplate> getPersistenceService() {
 		return productTemplateService;
+	}
+
+	public String newProductTemplate() {
+		return "mmProductTemplateDetail";
+	}
+	
+	public void addProductTemplateToExport(ProductTemplate pt){
+		if(!ptToExport.contains(pt)){
+			ptToExport.add(pt);
+		}
 	}
 
 	public List<MeveoInstance> getMeveoInstances() {
@@ -104,6 +116,14 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 
 	public void setAlmostExpiredCount(long almostExpiredCount) {
 		this.almostExpiredCount = almostExpiredCount;
+	}
+
+	public List<ProductTemplate> getPtToExport() {
+		return ptToExport;
+	}
+
+	public void setPtToExport(List<ProductTemplate> ptToExport) {
+		this.ptToExport = ptToExport;
 	}
 
 }
