@@ -20,6 +20,7 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.AttributeOverride;
@@ -33,12 +34,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+import org.meveo.model.Auditable;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.catalog.Calendar;
+import org.meveo.model.admin.User;
 import org.meveo.model.catalog.ProductTemplate;
 
 @Entity
@@ -50,14 +54,21 @@ import org.meveo.model.catalog.ProductTemplate;
 public class ProductInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
-	
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ACCOUNT_ID")
+    private UserAccount userAccount;
+
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCT_TEMPLATE_ID")
     private ProductTemplate productTemplate;
+    
 
-    @ManyToOne
-    @JoinColumn(name = "INVOICING_CALENDAR_ID")
-    private Calendar invoicingCalendar;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "APPLICATION_DATE")
+    private Date applicationDate;
+
 
     @OneToMany(mappedBy = "productInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     // TODO : Add orphanRemoval annotation.
@@ -68,6 +79,22 @@ public class ProductInstance extends BusinessCFEntity {
     protected BigDecimal quantity = BigDecimal.ONE;
 
 
+	public ProductInstance(UserAccount userAccount, ProductTemplate productTemplate, BigDecimal quantity, Date applicationDate,String description, User user) {
+		this.applicationDate=applicationDate;
+		this.code = productTemplate.getCode();
+		this.description = description;
+		this.productChargeInstances=new ArrayList<>();
+		this.productTemplate=productTemplate;
+		this.quantity=quantity;
+		this.userAccount=userAccount;
+        Auditable auditable = new Auditable();
+        auditable.setCreated(new Date());
+        auditable.setCreator(user);
+		this.setAuditable(auditable);
+	}
+
+
+
 	public ProductTemplate getProductTemplate() {
 		return productTemplate;
 	}
@@ -76,18 +103,6 @@ public class ProductInstance extends BusinessCFEntity {
 
 	public void setProductTemplate(ProductTemplate productTemplate) {
 		this.productTemplate = productTemplate;
-	}
-
-
-
-	public Calendar getInvoicingCalendar() {
-		return invoicingCalendar;
-	}
-
-
-
-	public void setInvoicingCalendar(Calendar invoicingCalendar) {
-		this.invoicingCalendar = invoicingCalendar;
 	}
 
 
@@ -103,15 +118,36 @@ public class ProductInstance extends BusinessCFEntity {
 	}
 
 
-
 	public BigDecimal getQuantity() {
 		return quantity;
 	}
 
 
-
 	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
+	}
+
+
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
+
+
+
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
+	}
+
+
+
+	public Date getApplicationDate() {
+		return applicationDate;
+	}
+
+
+
+	public void setApplicationDate(Date applicationDate) {
+		this.applicationDate = applicationDate;
 	}
 
 

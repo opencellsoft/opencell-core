@@ -30,6 +30,10 @@ public class ProductTemplate extends ProductOffering {
 	@ManyToOne
 	@JoinColumn(name = "BUSINESS_PRODUCT_MODEL_ID")
 	private BusinessProductModel businessProductModel;
+	
+    @ManyToOne
+    @JoinColumn(name = "INVOICING_CALENDAR_ID")
+    private Calendar invoicingCalendar;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAT_PRODUCT_WALLET_TEMPLATE", joinColumns = @JoinColumn(name = "PRODUCT_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_TEMPLATE_ID"))
@@ -52,6 +56,13 @@ public class ProductTemplate extends ProductOffering {
 		this.businessProductModel = businessProductModel;
 	}
 
+	public Calendar getInvoicingCalendar() {
+		return invoicingCalendar;
+	}
+
+	public void setInvoicingCalendar(Calendar invoicingCalendar) {
+		this.invoicingCalendar = invoicingCalendar;
+	}
 	public List<WalletTemplate> getWalletTemplates() {
 		return walletTemplates;
 	}
