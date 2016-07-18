@@ -15,6 +15,7 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.account.UserAccountsDto;
+import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -26,19 +27,17 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.ProductChargeInstanceService;
+import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 
-/**
- * @author Edward P. Legaspi
- **/
 @Stateless
 public class UserAccountApi extends AccountApi {
 
@@ -61,7 +60,7 @@ public class UserAccountApi extends AccountApi {
 	private OfferTemplateService offerTemplateService;
 	
 	@Inject
-	private ProductChargeInstanceService productChargeInstanceService;
+	private ProductInstanceService productInstanceService;
 	
 
 	public void create(UserAccountDto postData, User currentUser) throws MeveoApiException, BusinessException {
@@ -322,8 +321,9 @@ public class UserAccountApi extends AccountApi {
 		}
 	}
 
-	public void applyProduct(ApplyProductRequestDto postData, User currentUser) throws MeveoApiException, BusinessException {
-	       if (StringUtils.isBlank(postData.getProduct())) {
+	public WalletOperationDto applyProduct(ApplyProductRequestDto postData, User currentUser) throws MeveoApiException, BusinessException {
+		WalletOperationDto result = null;  
+		if (StringUtils.isBlank(postData.getProduct())) {
 	            missingParameters.add("product");
 	        }
 	        if (StringUtils.isBlank(postData.getUserAccount())) {
@@ -360,13 +360,13 @@ public class UserAccountApi extends AccountApi {
 	        }
 
 	        try {
-	            productChargeInstanceService.productChargeApplication(userAccount,
-	            		productTemplate.getProductChargeTemplate(), offerTemplate, postData.getOperationDate(),
-	                postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(),
-	                postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),
-	                postData.getDescription(), currentUser, true);
+	        	WalletOperation walletOperation =  productInstanceService.applyProduct(userAccount, productTemplate, postData.getQuantity(),
+	        			postData.getOperationDate(), postData.getDescription(), postData.getAmountWithoutTax(), postData.getAmountWithTax(), offerTemplate,
+	        			postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),currentUser, true);
+	        	result = new WalletOperationDto(walletOperation);
 	        } catch (BusinessException e) {
 	            throw new MeveoApiException(e.getMessage());
 	        }
+	        return result;
 	}
 }

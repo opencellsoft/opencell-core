@@ -148,7 +148,17 @@ public class SubscriptionApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
-
+        
+        if (postData.getProducts() != null) {
+			for (ProductDto productDto : postData.getProducts().getProducts()) {
+				if (StringUtils.isBlank(productDto.getCode())) {
+					log.warn("code is null={}", productDto);
+					continue;
+				}
+				ApplyProductRequestDto dto = new ApplyProductRequestDto(productDto);
+				userAccountApi.applyProduct(dto , currentUser);
+			}
+		}
     }
 
     public void update(SubscriptionDto postData, User currentUser) throws MeveoApiException, BusinessException {
@@ -205,6 +215,17 @@ public class SubscriptionApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
+        
+        if (postData.getProducts() != null) {
+			for (ProductDto productDto : postData.getProducts().getProducts()) {
+				if (StringUtils.isBlank(productDto.getCode())) {
+					log.warn("code is null={}", productDto);
+					continue;
+				}
+				ApplyProductRequestDto dto = new ApplyProductRequestDto(productDto);
+				userAccountApi.applyProduct(dto , currentUser);
+			}
+		}
 
     }
 

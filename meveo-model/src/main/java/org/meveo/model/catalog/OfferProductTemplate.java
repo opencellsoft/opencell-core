@@ -53,5 +53,39 @@ public class OfferProductTemplate extends BaseEntity {
 	public void setMandatory(boolean mandatory) {
 		this.mandatory = mandatory;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        } else if (!(obj instanceof OfferProductTemplate)) {
+            return false;
+        }
+
+        OfferProductTemplate that = (OfferProductTemplate) obj;
+
+        ProductTemplate thatProductTemplate = that.getProductTemplate();
+        if (productTemplate == null) {
+            if (thatProductTemplate != null) {
+                return false;
+            }
+        } else if (!productTemplate.equals(thatProductTemplate)) {
+            return false;
+        }
+        
+        OfferTemplate thatOfferTemplate = that.getOfferTemplate();
+        if (offerTemplate == null) {
+            if (thatOfferTemplate != null) {
+                return false;
+            }
+        } else if (!offerTemplate.equals(thatOfferTemplate)) {
+            return false;
+        }
+        
+        return true;
+	}
 
 }

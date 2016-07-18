@@ -39,6 +39,9 @@ public class ProductTemplateApi extends BaseApi {
 	@Inject
 	private DigitalResourceService digitalResourceService;
 
+	@Inject
+	DigitalResourceApi digitalResourceApi;
+
 	public ProductTemplateDto find(String code, User currentUser) throws MeveoApiException {
 
 		if (StringUtils.isBlank(code)) {
@@ -85,44 +88,17 @@ public class ProductTemplateApi extends BaseApi {
 		productTemplate.setValidTo(postData.getValidTo());
 		productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
 
-		// set OfferTemplateCategories
-		List<OfferTemplateCategoryDto> offerTemplateCategories = postData.getOfferTemplateCategories();
-		if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
-			productTemplate.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
-			for (OfferTemplateCategoryDto offerTemplateCategoryDto : offerTemplateCategories) {
-				OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(offerTemplateCategoryDto.getCode(), provider);
-				if (offerTemplateCategory == null) {
-					throw new EntityDoesNotExistsException(OfferTemplateCategory.class, offerTemplateCategoryDto.getCode());
-				}
-				productTemplate.getOfferTemplateCategories().add(offerTemplateCategory);
-			}
-		}
+		processImage(postData, productTemplate);
 
-		// set DigitalResources
-		List<DigitalResourcesDto> attachments = postData.getAttachments();
-		if (attachments != null && !attachments.isEmpty()) {
-			productTemplate.setAttachments(new ArrayList<DigitalResource>());
-			DigitalResource attachment = null;
-			for (DigitalResourcesDto digitalResourcesDto : attachments) {
-				attachment = toDigitalResourceEntity(digitalResourcesDto, currentUser);
-				productTemplate.getAttachments().add(attachment);
-			}
-		}
-
-		// set image
-		if (postData.getImageValue() != null) {
-			byte[] byteContent = postData.getImageValue().getBytes();
-			try {
-				Blob blobImg = new SerialBlob(byteContent);
-				productTemplate.setImage(blobImg);
-			} catch (SerialException e) {
-				throw new MeveoApiException("Invalid base64 encoded image string.");
-			} catch (SQLException e) {
-				throw new MeveoApiException("System error.");
-			}
-		}
-
+		// save product template now so that they can be referenced by the
+		// related entities below.
 		productTemplateService.create(productTemplate, currentUser);
+
+		processDigitalResources(postData, productTemplate, currentUser);
+
+		processOfferTemplateCategories(postData, productTemplate, provider);
+
+		productTemplateService.update(productTemplate, currentUser);
 
 	}
 
@@ -141,13 +117,23 @@ public class ProductTemplateApi extends BaseApi {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode());
 		}
 
-		productTemplate.setDescription(keepOldValueIfNull(postData.getDescription(), productTemplate.getDescription()));
-		productTemplate.setName(keepOldValueIfNull(postData.getName(), productTemplate.getName()));
-		productTemplate.setValidFrom(keepOldValueIfNull(postData.getValidFrom(), productTemplate.getValidFrom()));
-		productTemplate.setValidTo(keepOldValueIfNull(postData.getValidTo(), productTemplate.getValidTo()));
-		productTemplate.setLifeCycleStatus(keepOldValueIfNull(postData.getLifeCycleStatus(), productTemplate.getLifeCycleStatus()));
+		productTemplate.setDescription(postData.getDescription());
+		productTemplate.setName(postData.getName());
+		productTemplate.setValidFrom(postData.getValidFrom());
+		productTemplate.setValidTo(postData.getValidTo());
+		productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
 
-		// set OfferTemplateCategories
+		processImage(postData, productTemplate);
+
+		processOfferTemplateCategories(postData, productTemplate, provider);
+
+		processDigitalResources(postData, productTemplate, currentUser);
+
+		productTemplateService.update(productTemplate, currentUser);
+
+	}
+
+	private void processOfferTemplateCategories(ProductTemplateDto postData, ProductTemplate productTemplate, Provider provider) throws EntityDoesNotExistsException {
 		List<OfferTemplateCategoryDto> offerTemplateCategories = postData.getOfferTemplateCategories();
 		if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
 			productTemplate.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
@@ -159,19 +145,9 @@ public class ProductTemplateApi extends BaseApi {
 				productTemplate.getOfferTemplateCategories().add(offerTemplateCategory);
 			}
 		}
+	}
 
-		// set DigitalResources
-		List<DigitalResourcesDto> attachments = postData.getAttachments();
-		if (attachments != null && !attachments.isEmpty()) {
-			productTemplate.setAttachments(new ArrayList<DigitalResource>());
-			DigitalResource attachment = null;
-			for (DigitalResourcesDto digitalResourcesDto : attachments) {
-				attachment = toDigitalResourceEntity(digitalResourcesDto, currentUser);
-				productTemplate.getAttachments().add(attachment);
-			}
-		}
-
-		// set image
+	private void processImage(ProductTemplateDto postData, ProductTemplate productTemplate) throws MeveoApiException {
 		if (postData.getImageValue() != null) {
 			byte[] byteContent = postData.getImageValue().getBytes();
 			try {
@@ -183,11 +159,30 @@ public class ProductTemplateApi extends BaseApi {
 				throw new MeveoApiException("System error.");
 			}
 		}
-
-		productTemplateService.update(productTemplate, currentUser);
-
 	}
-	
+
+	private void processDigitalResources(ProductTemplateDto postData, ProductTemplate productTemplate, User currentUser) throws BusinessException, MeveoApiException {
+		List<DigitalResourcesDto> attachmentDtos = postData.getAttachments();
+		boolean hasAttachmentDtos = attachmentDtos != null && !attachmentDtos.isEmpty();
+		List<DigitalResource> existingAttachments = productTemplate.getAttachments();
+		boolean hasExistingAttachments = existingAttachments != null && !existingAttachments.isEmpty();
+		if (hasAttachmentDtos) {
+			DigitalResource attachment = null;
+			List<DigitalResource> newAttachments = new ArrayList<>();
+			for (DigitalResourcesDto attachmentDto : attachmentDtos) {
+				attachment = digitalResourceService.findByCode(attachmentDto.getCode(), currentUser.getProvider());
+				if (attachment == null) {
+					throw new EntityDoesNotExistsException(DigitalResource.class, attachmentDto.getCode());
+				}
+				attachment = digitalResourceApi.populateDigitalResourceEntity(attachment, attachmentDto, currentUser);
+				newAttachments.add(attachment);
+			}
+			productTemplate.setAttachments(newAttachments);
+		} else if (hasExistingAttachments) {
+			productTemplate.setAttachments(null);
+		}
+	}
+
 	public void remove(String code, User currentUser) throws MeveoApiException {
 
 		if (StringUtils.isBlank(code)) {
@@ -201,30 +196,6 @@ public class ProductTemplateApi extends BaseApi {
 		}
 
 		productTemplateService.remove(productTemplate);
-	}
-	
-	private DigitalResource toDigitalResourceEntity(DigitalResourcesDto digitalResourcesDto, User user) throws MeveoApiException{
-		String code = digitalResourcesDto.getCode();
-		if(StringUtils.isBlank(code)){
-			throw new EntityDoesNotExistsException(DigitalResource.class, code);
-		}
-		DigitalResource attachment = digitalResourceService.findByCode(digitalResourcesDto.getCode(), user.getProvider());
-		if(attachment == null){
-			attachment = new DigitalResource();
-			attachment.setCode(digitalResourcesDto.getCode());
-		}
-		attachment.setDescription(digitalResourcesDto.getDescription());
-		attachment.setUri(digitalResourcesDto.getUri());
-		attachment.setMimeType(digitalResourcesDto.getMimeType());
-		attachment.setDisabled(digitalResourcesDto.isDisabled());
-		return attachment;
-	}
-
-	private <T> T keepOldValueIfNull(T newValue, T oldValue) {
-		if (newValue == null) {
-			return oldValue;
-		}
-		return newValue;
 	}
 
 }

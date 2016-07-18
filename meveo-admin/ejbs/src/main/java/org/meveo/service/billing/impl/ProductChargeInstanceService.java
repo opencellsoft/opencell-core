@@ -23,9 +23,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -35,22 +34,22 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ProductChargeInstance;
-import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
 public class ProductChargeInstanceService extends BusinessService<ProductChargeInstance> {
-/*
-	@Inject
+
+	@EJB
 	private WalletService walletService;
 
-	@Inject
+	@EJB
 	private WalletOperationService walletOperationService;
-	*/
+	
 
 	public ProductChargeInstance findByCodeAndSubsription(String code, Long userAccountId) {
 		ProductChargeInstance productChargeInstance = null;
@@ -71,37 +70,28 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 		return productChargeInstance;
 	}
 
-	
-	public ProductChargeInstance productChargeApplication(UserAccount userAccount,
-			 ProductChargeTemplate chargeTemplate, OfferTemplate offerTemplate,Date effetDate,
-			BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2, BigDecimal quantity,
-			 String criteria1, String criteria2, String criteria3, String description,
-			 User creator,boolean applyCharge) throws BusinessException {
-		/* FIXME
-		if (quantity == null) {
-			quantity = BigDecimal.ONE;
-		}
-		BigDecimal inputQuantity = quantity;
-		quantity = NumberUtil.getInChargeUnit(quantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(),
-				chargeTemplate.getRoundingMode());
+	@SuppressWarnings("unchecked")
+	public List<ProductChargeInstance> findProductChargeInstancesByUserAccountId(Long userAccountId) {
+		QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"), null);
+		qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
+		return qb.getQuery(getEntityManager()).getResultList();
+	}
 
 
-		if(!chargeTemplate.getAmountEditable()){
-			amoutWithoutTax=null;
-			amoutWithoutTx2=null;
-			description=null;
-		}
-		
-		log.debug("instanciate a product charge for code {} on userAccount {}",chargeTemplate.getCode(),userAccount.getCode());
-		ProductChargeInstance productChargeInstance = new ProductChargeInstance(chargeTemplate.getCode(),
-				description!=null?description:chargeTemplate.getDescription(), effetDate,
-						userAccount, offerTemplate, amoutWithoutTax, amoutWithoutTx2, chargeTemplate);
+	public WalletOperation apply(ProductChargeInstance productChargeInstance,
+			String description,OfferTemplate offerTemplate,Date effetDate,
+			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
+			String criteria1, String criteria2, String criteria3,User user,boolean persist) throws BusinessException {
+		ChargeTemplate chargeTemplate=productChargeInstance.getProductChargeTemplate();
+		productChargeInstance.setOfferTemplate(offerTemplate);
+		productChargeInstance.setAmountWithoutTax(amountWithoutTax);
+		productChargeInstance.setAmountWithTax(amountWithTax);
+		productChargeInstance.setChargeDate(effetDate);
 		productChargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
 		productChargeInstance.setCriteria1(criteria1);
 		productChargeInstance.setCriteria2(criteria2);
 		productChargeInstance.setCriteria3(criteria3);
-		
-		List<WalletTemplate> walletTemplates = chargeTemplate.getProductTemplate().getWalletTemplates();
+		List<WalletTemplate> walletTemplates = productChargeInstance.getProductChargeTemplate().getProductTemplate().getWalletTemplates();
 		productChargeInstance.setPrepaid(false);
 		if (walletTemplates != null && walletTemplates.size() > 0) {
 			log.debug("found {} wallets",walletTemplates.size());
@@ -112,30 +102,20 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 					productChargeInstance.setPrepaid(true);
 
 				}
-				WalletInstance walletInstance=walletService.getWalletInstance(userAccount,
-						walletTemplate, creator);
+				WalletInstance walletInstance=walletService.getWalletInstance(productChargeInstance.getUserAccount(),
+						walletTemplate, user);
 				log.debug("add the wallet instance {} to the chargeInstance {}",walletInstance.getId(),productChargeInstance.getId());
 				productChargeInstance.getWalletInstances().add(walletInstance);
 			}
 		} else {
 			log.debug("as the charge is postpaid, we add the principal wallet");
 			productChargeInstance.getWalletInstances().add(
-					userAccount.getWallet());
+					productChargeInstance.getUserAccount().getWallet());
 		}
-		if(applyCharge){
-			create(productChargeInstance, creator);
-			walletOperationService.rateProductApplication(productChargeInstance, inputQuantity, quantity, creator);
-		}
+		BigDecimal inputQuantity = productChargeInstance.getQuantity();
+		BigDecimal quantity = NumberUtil.getInChargeUnit(productChargeInstance.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(),
+				chargeTemplate.getRoundingMode());
 
-		return productChargeInstance;
-		*/
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<ProductChargeInstance> findProductChargeInstancesByUserAccountId(Long userAccountId) {
-		QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"), null);
-		qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
-		return qb.getQuery(getEntityManager()).getResultList();
+		return walletOperationService.rateProductApplication(productChargeInstance, inputQuantity, quantity, user);	
 	}
 }

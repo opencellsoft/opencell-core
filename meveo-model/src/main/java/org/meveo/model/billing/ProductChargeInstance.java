@@ -21,6 +21,7 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -28,7 +29,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.Auditable;
+import org.meveo.model.admin.User;
 import org.meveo.model.catalog.ProductChargeTemplate;
 
 @Entity
@@ -46,27 +48,54 @@ public class ProductChargeInstance extends ChargeInstance {
 	@JoinColumn(name = "PRODUCT_INSTANCE_ID")
 	private ProductInstance productInstance;
 
+    @Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
+    protected BigDecimal quantity = BigDecimal.ONE;
 
-	public ProductChargeInstance(String code, String description, Date chargeDate,
-			UserAccount userAccount,OfferTemplate offerTemplate, 
-			BigDecimal amountWithoutTax, BigDecimal amount2,
-			ProductInstance productInstance,ProductChargeTemplate productChargeTemplate) {
-		this.code = code;
-		this.description = description;
-		setChargeDate(chargeDate);
-		setAmountWithoutTax(amountWithoutTax);
-		setAmountWithTax(amount2);
-		this.userAccount=userAccount;
-		this.offerTemplate = offerTemplate;
+	public ProductChargeInstance(ProductInstance productInstance, User user, boolean persist){
+		this.code = productInstance.getCode();
+		this.description = productInstance.getDescription();
+		this.chargeDate = productInstance.getApplicationDate();
+		this.userAccount=productInstance.getUserAccount();
 		this.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
 		this.setCountry(userAccount.getBillingAccount().getTradingCountry());
 		this.setCurrency(userAccount.getBillingAccount().getCustomerAccount().getTradingCurrency());
 		this.productInstance = productInstance;
-		this.productChargeTemplate=productChargeTemplate;
+		this.productChargeTemplate=productInstance.getProductTemplate().getProductChargeTemplate();
 		this.status = InstanceStatusEnum.ACTIVE;
+		this.setQuantity(productInstance.getQuantity()==null?BigDecimal.ONE:productInstance.getQuantity());
+        Auditable auditable = new Auditable();
+        auditable.setCreated(new Date());
+        auditable.setCreator(user);
+		this.setAuditable(auditable);
 	}
 
 	public ProductChargeInstance() {
 
 	}
+
+	public ProductChargeTemplate getProductChargeTemplate() {
+		return productChargeTemplate;
+	}
+
+	public void setProductChargeTemplate(ProductChargeTemplate productChargeTemplate) {
+		this.productChargeTemplate = productChargeTemplate;
+	}
+
+	public ProductInstance getProductInstance() {
+		return productInstance;
+	}
+
+	public void setProductInstance(ProductInstance productInstance) {
+		this.productInstance = productInstance;
+	}
+
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+	
+	
 }

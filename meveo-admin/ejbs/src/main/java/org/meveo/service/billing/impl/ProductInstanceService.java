@@ -18,6 +18,8 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -25,11 +27,16 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
@@ -40,6 +47,9 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
 
     @Inject
     ProductTemplateService productTemplateService;
+
+    @Inject
+	private ProductChargeInstanceService productChargeInstanceService;
 
 
     @SuppressWarnings("unchecked")
@@ -82,6 +92,24 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
         } catch (NoResultException e) {
             return null;
         }
+    }
+    
+    public WalletOperation applyProduct(UserAccount userAccount,ProductTemplate productTemplate, BigDecimal quantity,
+    		Date chargeDate,String description,BigDecimal amountWithoutTax, BigDecimal amountWithTax, 
+    		OfferTemplate offerTemplate,String criteria1, String criteria2, String criteria3,
+    		User user,boolean persist) throws BusinessException{
+    	WalletOperation result = null;
+    	ProductInstance productInstance = new ProductInstance(userAccount, productTemplate, quantity, chargeDate, description, user);
+    	if(persist){
+    		create(productInstance,user);
+    	}
+    	ProductChargeInstance pcInstance = new ProductChargeInstance(productInstance,user,persist);
+    	if(persist){
+    		productChargeInstanceService.create(pcInstance,user);
+    	}
+    	result = productChargeInstanceService.apply(pcInstance, description, offerTemplate, chargeDate, amountWithoutTax, amountWithTax, 
+    			criteria1, criteria2, criteria3,user,persist);
+    	return result;
     }
 
 }

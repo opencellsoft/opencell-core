@@ -2497,6 +2497,7 @@ $BODY$
 		<addColumn tableName="cat_offer_template">
 			<column name="product_charge_tmpl_id" type="BIGINT"></column>
 			<column name="business_product_model_id" type="BIGINT"></column>
+            <column name="invoicing_calendar_id" type="BIGINT" />
 		</addColumn>
 
 		<addForeignKeyConstraint baseColumnNames="product_charge_tmpl_id"
@@ -2508,6 +2509,10 @@ $BODY$
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id"
 			referencedTableName="cat_business_product_model" />
+		<addForeignKeyConstraint baseColumnNames="invoicing_calendar_id"
+		   baseTableName="cat_offer_template" constraintName="fk_off_tpl_prodcal"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" 
+            referencedColumnNames="id" referencedTableName="cat_calendar" />
 
 		<createTable tableName="cat_product_wallet_template">
 			<column name="product_template_id" type="BIGINT">
@@ -2622,9 +2627,9 @@ $BODY$
 			</column>
 			<column name="description" type="VARCHAR(100)" />
 			<column name="product_template_id" type="BIGINT" />
-            <column name="invoicing_calendar_id" type="BIGINT" />
 			<column name="quantity" type="numeric(23, 12)" />
 			<column name="user_account_id" type="BIGINT"></column>
+			<column name="application_date" type="TIMESTAMP WITHOUT TIME ZONE" />
 		</createTable>
 		<createSequence sequenceName="billing_product_instance_seq" />
 		<addPrimaryKey columnNames="id" constraintName="billing_product_instance_pkey"
@@ -2633,10 +2638,6 @@ $BODY$
 		<addUniqueConstraint columnNames="code, provider_id"
 			constraintName="uk_product_instance" deferrable="false" disabled="false"
 			initiallyDeferred="false" tableName="billing_product_instance" />
-		<addForeignKeyConstraint baseColumnNames="invoicing_calendar_id"
-		   baseTableName="billing_product_instance" constraintName="fk_prod_inst_cal"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" 
-            referencedColumnNames="id" referencedTableName="cat_calendar" />
 		
 		<addForeignKeyConstraint baseColumnNames="provider_id"
 			baseTableName="billing_product_instance" constraintName="fk_prod_inst_crm_provider"

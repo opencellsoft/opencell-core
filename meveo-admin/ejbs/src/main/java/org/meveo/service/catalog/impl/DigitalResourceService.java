@@ -10,7 +10,5 @@ import org.meveo.service.base.BusinessService;
  */
 @Stateless
 public class DigitalResourceService extends BusinessService<DigitalResource> {
-	
-	
 
 }

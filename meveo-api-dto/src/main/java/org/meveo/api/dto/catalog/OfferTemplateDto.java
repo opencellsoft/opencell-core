@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 
@@ -49,25 +50,32 @@ public class OfferTemplateDto implements Serializable {
 
     }
 
-    public OfferTemplateDto(OfferTemplate e, CustomFieldsDto customFieldInstances) {
-        code = e.getCode();
-        description = e.getDescription();
-        disabled = e.isDisabled();
-        if (e.getBusinessOfferModel() != null) {
-            bomCode = e.getBusinessOfferModel().getCode();
+    public OfferTemplateDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldInstances) {
+        code = offerTemplate.getCode();
+        description = offerTemplate.getDescription();
+        disabled = offerTemplate.isDisabled();
+        if (offerTemplate.getBusinessOfferModel() != null) {
+            bomCode = offerTemplate.getBusinessOfferModel().getCode();
         }
 
-        if (e.getOfferTemplateCategory() != null) {
-            offerTemplateCategoryCode = e.getOfferTemplateCategory().getCode();
+        if (offerTemplate.getOfferTemplateCategory() != null) {
+            offerTemplateCategoryCode = offerTemplate.getOfferTemplateCategory().getCode();
         }
 
-        if (e.getOfferServiceTemplates() != null && e.getOfferServiceTemplates().size() > 0) {
+        if (offerTemplate.getOfferServiceTemplates() != null && offerTemplate.getOfferServiceTemplates().size() > 0) {
             offerServiceTemplates = new ArrayList<>();
-            for (OfferServiceTemplate st : e.getOfferServiceTemplates()) {
+            for (OfferServiceTemplate st : offerTemplate.getOfferServiceTemplates()) {
                 offerServiceTemplates.add(new OfferServiceTemplateDto(st));
             }
         }
-
+        
+        List<OfferProductTemplate> childOfferProductTemplates = offerTemplate.getOfferProductTemplates();
+        if(childOfferProductTemplates != null && !childOfferProductTemplates.isEmpty()){
+        	offerProductTemplates = new ArrayList<>();
+        	for (OfferProductTemplate offerProductTemplate : childOfferProductTemplates) {
+				offerProductTemplates.add(new OfferProductTemplateDto(offerProductTemplate));
+			}
+        }
         customFields = customFieldInstances;
     }
 

@@ -21,7 +21,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductTemplate;
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.CatalogReference;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
@@ -34,151 +36,64 @@ import org.tmf.dsmapi.commons.Utilities;
 import org.tmf.dsmapi.commons.annotation.EntityReferenceProperty;
 
 /**
-*
-* @author pierregauthier
-*
-* {
-*     "id": "42",
-*     "version": "3.43",
-*     "href": "http://serverlocation:port/catalogManagement/productOffering/42",
-*     "name": "Virtual Storage Medium",
-*     "description": "Virtual Storage Medium",
-*     "lastUpdate": "2013-04-19T16:42:23-04:00",
-*     "lifecycleStatus": "Active",
-*     "validFor": {
-*         "startDateTime": "2013-04-19T16:42:23-04:00",
-*         "endDateTime": "2013-06-19T00:00:00-04:00"
-*     },
-*     "isBundle": "true",
-*     "category": [
-*         {
-*             "id": "12",
-*             "version": "2.0",
-*             "href": "http://serverlocation:port/catalogManagement/category/12",
-*             "name": "Cloud offerings"
-*         }
-*     ],
-*     "channel": [
-*         {
-*             "id": "13",
-*             "href": "http://serverlocation:port/marketSales/channel/13",
-*             "name": "Online Channel"
-*         }
-*     ],
-*     "place": [
-*         {
-*             "id": "12",
-*             "href": "http://serverlocation:port/marketSales/place/12",
-*             "name": "France"
-*         }
-*     ],
-*     "bundledProductOffering": [
-*         {
-*             "id": "15",
-*             "href": "http://serverlocation:port/catalogManagement/productOffering/15",
-*             "lifecycleStatus": "Active",
-*             "name": "Offering 15"
-*         },
-*         {
-*             "id": "64",
-*             "href": "http://serverlocation:port/catalogManagement/productOffering/64",
-*             "lifecycleStatus": "Active",
-*             "name": "Offering 64"
-*         }
-*     ],
-*     "serviceLevelAgreement": {
-*         "id": "28",
-*         "href": "http://serverlocation:port/slaManagement/serviceLevelAgreement/28",
-*         "name": "Standard SLA"
-*     },
-*     "productSpecification": {
-*         "id": "13",
-*         "href": "http://serverlocation:port/catalogManagement/productSpecification/13",
-*         "version": "2.0",
-*         "name": "specification product 1"
-*     },
-*     "serviceCandidate": [
-*         {
-*             "id": "13",
-*             "href": "http://serverlocation:port/catalogManagement/serviceCandidate/13",
-*             "version": "2.0",
-*             "name": "specification service 1"
-*         }
-*     ],
-*     "resourceCandidate": [
-*         {
-*             "id": "13",
-*             "href": "http://serverlocation:port/catalogManagement/resourceCandidate/13",
-*             "version": "2.0",
-*             "name": "specification resource 1"
-*         }
-*     ],
-*     "productOfferingTerm": [
-*         {
-*             "name": "12 Month",
-*             "description": "12 month contract",
-*             "duration": "12",
-*             "validFor": {
-*                 "startDateTime": "2013-04-19T16:42:23-04:00",
-*                 "endDateTime": "2013-06-19T00:00:00-04:00"
-*             }
-*         }
-*     ],
-*     "productOfferingPrice": [
-*         {
-*             "name": "Monthly Price",
-*             "description": "monthlyprice",
-*             "validFor": {
-*                 "startDateTime": "2013-04-19T16:42:23-04:00",
-*                 "endDateTime": "2013-06-19T00:00:00-04:00"
-*             },
-*             "priceType": "recurring",
-*             "unitOfMeasure": "",
-*             "price": {
-*                 "taxIncludedAmount": "12.00",
-*                 "dutyFreeAmount": "10.00",
-*                 "taxRate": "20.00",
-*                 "currencyCode": "EUR",
-*                 "percentage": 0
-*             },
-*             "recurringChargePeriod": "monthly"
-*         },
-*         {
-*             "name": "Usage Price",
-*             "description": "usageprice",
-*             "validFor": {
-*                 "startDateTime": "2013-04-19T16:42:23-04:00",
-*                 "endDateTime": "2013-06-19T00:00:00-04:00"
-*             },
-*             "priceType": "usage",
-*             "unitOfMeasure": "second",
-*             "price": {
-*                 "taxIncludedAmount": "12.00",
-*                 "dutyFreeAmount": "10.00",
-*                 "taxRate": "20.00",
-*                 "currencyCode": "EUR",
-*                 "percentage": 0
-*             },
-*             "recurringChargePeriod": "",
-*             "productOfferPriceAlteration": {
-*                 "name": "Shipping Discount",
-*                 "description": "One time shipping discount",
-*                 "validFor": {
-*                     "startDateTime": "2013-04-19T16:42:23.0Z"
-*                 },
-*                 "priceType": "One Time discount",
-*                 "unitOfMeasure": "",
-*                 "price": {
-*                     "percentage": 100
-*                 },
-*                 "recurringChargePeriod": "",
-*                 "priceCondition": "apply if total amount of the  order is greater than 300.00"
-*             }
-*         }
-*     ]
-* }
-*
-*/
+ *
+ * @author pierregauthier
+ *
+ *         { "id": "42", "version": "3.43", "href":
+ *         "http://serverlocation:port/catalogManagement/productOffering/42",
+ *         "name": "Virtual Storage Medium", "description":
+ *         "Virtual Storage Medium", "lastUpdate": "2013-04-19T16:42:23-04:00",
+ *         "lifecycleStatus": "Active", "validFor": { "startDateTime":
+ *         "2013-04-19T16:42:23-04:00", "endDateTime":
+ *         "2013-06-19T00:00:00-04:00" }, "isBundle": "true", "category": [ {
+ *         "id": "12", "version": "2.0", "href":
+ *         "http://serverlocation:port/catalogManagement/category/12", "name":
+ *         "Cloud offerings" } ], "channel": [ { "id": "13", "href":
+ *         "http://serverlocation:port/marketSales/channel/13", "name":
+ *         "Online Channel" } ], "place": [ { "id": "12", "href":
+ *         "http://serverlocation:port/marketSales/place/12", "name": "France" }
+ *         ], "bundledProductOffering": [ { "id": "15", "href":
+ *         "http://serverlocation:port/catalogManagement/productOffering/15",
+ *         "lifecycleStatus": "Active", "name": "Offering 15" }, { "id": "64",
+ *         "href":
+ *         "http://serverlocation:port/catalogManagement/productOffering/64",
+ *         "lifecycleStatus": "Active", "name": "Offering 64" } ],
+ *         "serviceLevelAgreement": { "id": "28", "href":
+ *         "http://serverlocation:port/slaManagement/serviceLevelAgreement/28",
+ *         "name": "Standard SLA" }, "productSpecification": { "id": "13",
+ *         "href":
+ *         "http://serverlocation:port/catalogManagement/productSpecification/13",
+ *         "version": "2.0", "name": "specification product 1" },
+ *         "serviceCandidate": [ { "id": "13", "href":
+ *         "http://serverlocation:port/catalogManagement/serviceCandidate/13",
+ *         "version": "2.0", "name": "specification service 1" } ],
+ *         "resourceCandidate": [ { "id": "13", "href":
+ *         "http://serverlocation:port/catalogManagement/resourceCandidate/13",
+ *         "version": "2.0", "name": "specification resource 1" } ],
+ *         "productOfferingTerm": [ { "name": "12 Month", "description":
+ *         "12 month contract", "duration": "12", "validFor": { "startDateTime":
+ *         "2013-04-19T16:42:23-04:00", "endDateTime":
+ *         "2013-06-19T00:00:00-04:00" } } ], "productOfferingPrice": [ {
+ *         "name": "Monthly Price", "description": "monthlyprice", "validFor": {
+ *         "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime":
+ *         "2013-06-19T00:00:00-04:00" }, "priceType": "recurring",
+ *         "unitOfMeasure": "", "price": { "taxIncludedAmount": "12.00",
+ *         "dutyFreeAmount": "10.00", "taxRate": "20.00", "currencyCode": "EUR",
+ *         "percentage": 0 }, "recurringChargePeriod": "monthly" }, { "name":
+ *         "Usage Price", "description": "usageprice", "validFor": {
+ *         "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime":
+ *         "2013-06-19T00:00:00-04:00" }, "priceType": "usage", "unitOfMeasure":
+ *         "second", "price": { "taxIncludedAmount": "12.00", "dutyFreeAmount":
+ *         "10.00", "taxRate": "20.00", "currencyCode": "EUR", "percentage": 0
+ *         }, "recurringChargePeriod": "", "productOfferPriceAlteration": {
+ *         "name": "Shipping Discount", "description":
+ *         "One time shipping discount", "validFor": { "startDateTime":
+ *         "2013-04-19T16:42:23.0Z" }, "priceType": "One Time discount",
+ *         "unitOfMeasure": "", "price": { "percentage": 100 },
+ *         "recurringChargePeriod": "", "priceCondition":
+ *         "apply if total amount of the  order is greater than 300.00" } } ] }
+ *
+ */
 @MappedSuperclass
 @XmlRootElement
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -192,38 +107,30 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 
 	@Embedded
 	@ElementCollection
-	@CollectionTable(name = "CRI_PRODUCT_OFFER_R_CATEGORY", joinColumns = {
-			@JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-			@JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-			@JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
+	@CollectionTable(name = "CRI_PRODUCT_OFFER_R_CATEGORY", joinColumns = { @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
+			@JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"), @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
 			@JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION") })
 	@EntityReferenceProperty(classId = Category.class)
 	private List<CatalogReference> category;
 
 	@Embedded
 	@ElementCollection
-	@CollectionTable(name = "CRI_PRODUCT_OFFER_R_CHANNEL", joinColumns = {
-			@JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-			@JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-			@JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
+	@CollectionTable(name = "CRI_PRODUCT_OFFER_R_CHANNEL", joinColumns = { @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
+			@JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"), @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
 			@JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION") })
 	private List<Channel> channel;
 
 	@Embedded
 	@ElementCollection
-	@CollectionTable(name = "CRI_PRODUCT_OFFER_R_PLACE", joinColumns = {
-			@JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-			@JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-			@JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
+	@CollectionTable(name = "CRI_PRODUCT_OFFER_R_PLACE", joinColumns = { @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
+			@JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"), @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
 			@JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION") })
 	private List<Place> place;
 
 	@Embedded
 	@ElementCollection
-	@CollectionTable(name = "CRI_PRODUCT_OFFER_R_PRODUCT_OFFER", joinColumns = {
-			@JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-			@JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-			@JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
+	@CollectionTable(name = "CRI_PRODUCT_OFFER_R_PRODUCT_OFFER", joinColumns = { @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
+			@JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"), @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
 			@JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION") })
 	@EntityReferenceProperty(classId = ProductOffering.class)
 	private List<BundledProductReference> bundledProductOffering;
@@ -241,8 +148,7 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 	private CatalogReference productSpecification;
 
 	@Embedded
-	@AttributeOverrides({
-			@AttributeOverride(name = "referencedId", column = @Column(name = "SERVICE_CANDIDATE_ID")),
+	@AttributeOverrides({ @AttributeOverride(name = "referencedId", column = @Column(name = "SERVICE_CANDIDATE_ID")),
 			@AttributeOverride(name = "referencedVersion", column = @Column(name = "SERVICE_CANDIDATE_VERSION")),
 			@AttributeOverride(name = "referencedHref", column = @Column(name = "SERVICE_CANDIDATE_HREF")),
 			@AttributeOverride(name = "referencedName", column = @Column(name = "SERVICE_CANDIDATE_NAME")),
@@ -251,8 +157,7 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 	private CatalogReference serviceCandidate;
 
 	@Embedded
-	@AttributeOverrides({
-			@AttributeOverride(name = "referencedId", column = @Column(name = "RESOURCE_CANDIDATE_ID")),
+	@AttributeOverrides({ @AttributeOverride(name = "referencedId", column = @Column(name = "RESOURCE_CANDIDATE_ID")),
 			@AttributeOverride(name = "referencedVersion", column = @Column(name = "RESOURCE_CANDIDATE_VERSION")),
 			@AttributeOverride(name = "referencedHref", column = @Column(name = "RESOURCE_CANDIDATE_HREF")),
 			@AttributeOverride(name = "referencedName", column = @Column(name = "RESOURCE_CANDIDATE_NAME")),
@@ -261,23 +166,78 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 	private CatalogReference resourceCandidate;
 
 	@ElementCollection
-	@CollectionTable(name = "CRI_PRODUCT_OFFER_R_OFFERING_TERM", joinColumns = {
-			@JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-			@JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-			@JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
+	@CollectionTable(name = "CRI_PRODUCT_OFFER_R_OFFERING_TERM", joinColumns = { @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
+			@JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"), @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
 			@JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION") })
 	private List<ProductOfferingTerm> productOfferingTerm;
 
 	@Embedded
 	@ElementCollection
-	@CollectionTable(name = "CRI_PRODUCT_OFFER_R_PRICE", joinColumns = {
-			@JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-			@JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-			@JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
+	@CollectionTable(name = "CRI_PRODUCT_OFFER_R_PRICE", joinColumns = { @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
+			@JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"), @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
 			@JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION") })
 	private List<ProductOfferingPrice> productOfferingPrice;
 
 	public ProductOffering() {
+	}
+
+	public ProductOffering(OfferTemplate offer, UriInfo uriInfo, Category category, List<ProductOfferingPrice> offerPrices) {
+		this.setId(offer.getCode());
+		this.setVersion(String.format("%d.0", offer.getVersion() == null ? 0 : offer.getVersion()));
+		this.setHref(String.format("%scatalogManagement/productOffering/%s", uriInfo.getBaseUri().toString(), offer.getCode()));
+
+		this.setName(offer.getCode());
+		this.setDescription(offer.getDescription());
+		this.setLastUpdate(offer.getAuditable() != null ? offer.getAuditable().getLastModified() : null);
+		this.setLifecycleStatus(offer.isActive() ? LifecycleStatus.ACTIVE : LifecycleStatus.OBSOLETE);
+		this.setValidFor(new TimeRange());
+		this.getValidFor().setStartDateTime(offer.getAuditable() != null ? offer.getAuditable().getCreated() : null);
+		if (!offer.isActive()) {
+			this.getValidFor().setEndDateTime(offer.getAuditable() != null ? offer.getAuditable().getUpdated() : null);
+		}
+
+		this.setCategory(new ArrayList<CatalogReference>());
+		this.getCategory().add(category.getCatalogReference());
+
+		this.setChannel(new ArrayList<Channel>()); // leave empty
+
+		this.setPlace(new ArrayList<Place>()); // leave empty
+
+		List<OfferProductTemplate> offerProductTemplates = offer.getOfferProductTemplates();
+		this.setBundledProductOffering(new ArrayList<BundledProductReference>());
+		if (offerProductTemplates != null && !offerProductTemplates.isEmpty()) {
+			this.setIsBundle(Boolean.TRUE);
+			populateBundledProductOfferings(this, uriInfo, offerProductTemplates);
+		} else {
+			this.setIsBundle(Boolean.FALSE);
+		}
+
+		this.setServiceLevelAgreement(null);
+		this.setProductSpecification(null);// Product
+											// Specification
+											// created from the
+											// offer (see below)
+		this.setServiceCandidate(null);
+		this.setResourceCandidate(null);
+		this.setProductOfferingTerm(new ArrayList<ProductOfferingTerm>()); // empty
+		this.setProductOfferingPrice(offerPrices);// empty
+	}
+
+	private void populateBundledProductOfferings(ProductOffering productOffering, UriInfo uriInfo, List<OfferProductTemplate> offerProductTemplates) {
+		BundledProductReference bundledProductReference = null;
+		ProductTemplate productTemplate = null;
+		for (OfferProductTemplate offerProductTemplate : offerProductTemplates) {
+			productTemplate = offerProductTemplate.getProductTemplate();
+			bundledProductReference = new BundledProductReference();
+
+			bundledProductReference.setReferencedId(productTemplate.getCode());
+			bundledProductReference.setReferencedHref(String.format("%scatalogManagement/productOffering/%s", uriInfo.getBaseUri().toString(), productTemplate.getCode()));
+			bundledProductReference.setReferencedName(productTemplate.getCode());
+			bundledProductReference.setReferencedLifecycleStatus(productTemplate.isActive() ? LifecycleStatus.ACTIVE : LifecycleStatus.OBSOLETE);
+
+			productOffering.getBundledProductOffering().add(bundledProductReference);
+
+		}
 	}
 
 	public Boolean getIsBundle() {
@@ -475,12 +435,10 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 
 	@Override
 	public String toString() {
-		return "ProductOffering{<" + super.toString() + ">, isBundle=" + isBundle + ", category=" + category
-				+ ", channel=" + channel + ", place=" + place + ", bundledProductOffering=" + bundledProductOffering
-				+ ", serviceLevelAgreement=" + serviceLevelAgreement + ", productSpecification=" + productSpecification
-				+ ", serviceCandidate=" + serviceCandidate + ", resourceCandidate=" + resourceCandidate
-				+ ", productOfferingTerm=" + productOfferingTerm + ", productOfferingPrice=" + productOfferingPrice
-				+ '}';
+		return "ProductOffering{<" + super.toString() + ">, isBundle=" + isBundle + ", category=" + category + ", channel=" + channel + ", place=" + place
+				+ ", bundledProductOffering=" + bundledProductOffering + ", serviceLevelAgreement=" + serviceLevelAgreement + ", productSpecification=" + productSpecification
+				+ ", serviceCandidate=" + serviceCandidate + ", resourceCandidate=" + resourceCandidate + ", productOfferingTerm=" + productOfferingTerm + ", productOfferingPrice="
+				+ productOfferingPrice + '}';
 	}
 
 	@Override
@@ -611,47 +569,6 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 
 		productOffering.productOfferingPrice = new ArrayList<ProductOfferingPrice>();
 		productOffering.productOfferingPrice.add(ProductOfferingPrice.createProto());
-
-		return productOffering;
-	}
-
-	public static ProductOffering parseFromOfferTemplate(OfferTemplate offer, UriInfo uriInfo, Category category, List<ProductOfferingPrice> offerPrices) {
-		ProductOffering productOffering = new ProductOffering();
-		productOffering.setId(offer.getCode());
-		productOffering.setVersion(String.format("%d.0", offer.getVersion() == null ? 0 : offer.getVersion()));
-		productOffering.setHref(String.format("%scatalogManagement/productOffering/%s", uriInfo.getBaseUri().toString(), offer.getCode()));
-
-		productOffering.setName(offer.getCode());
-		productOffering.setDescription(offer.getDescription());
-		productOffering.setLastUpdate(offer.getAuditable() != null ? offer.getAuditable().getLastModified() : null);
-		productOffering.setLifecycleStatus(offer.isActive() ? LifecycleStatus.ACTIVE : LifecycleStatus.OBSOLETE);
-		productOffering.setValidFor(new TimeRange());
-		productOffering.getValidFor().setStartDateTime(offer.getAuditable() != null ? offer.getAuditable().getCreated() : null);
-		if (!offer.isActive()) {
-			productOffering.getValidFor().setEndDateTime(offer.getAuditable() != null ? offer.getAuditable().getUpdated() : null);
-		}
-
-		productOffering.setIsBundle(Boolean.FALSE);
-
-		productOffering.setCategory(new ArrayList<CatalogReference>());
-		productOffering.getCategory().add(category.getCatalogReference());
-
-		productOffering.setChannel(new ArrayList<Channel>()); // leave empty
-
-		productOffering.setPlace(new ArrayList<Place>()); // leave empty
-
-		productOffering.setBundledProductOffering(new ArrayList<BundledProductReference>());// leave
-																							// empty
-
-		productOffering.setServiceLevelAgreement(null);
-		productOffering.setProductSpecification(null);// Product
-														// Specification
-														// created from the
-														// offer (see below)
-		productOffering.setServiceCandidate(null);
-		productOffering.setResourceCandidate(null);
-		productOffering.setProductOfferingTerm(new ArrayList<ProductOfferingTerm>()); // empty
-		productOffering.setProductOfferingPrice(offerPrices);// empty
 
 		return productOffering;
 	}

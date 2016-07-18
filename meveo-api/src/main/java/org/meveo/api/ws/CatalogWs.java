@@ -9,6 +9,7 @@ import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
+import org.meveo.api.dto.catalog.DigitalResourcesDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
@@ -24,6 +25,7 @@ import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetDigitalResourceResponseDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlanResponseDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlansResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateCategoryResponseDto;
@@ -285,5 +287,20 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     GetProductTemplateResponseDto findProductTemplate(@WebParam(name = "productTemplateCode") String code);
+    
+    @WebMethod
+    ActionStatus createDigitalResource(@WebParam(name = "digitalResource") DigitalResourcesDto postData);
+
+    @WebMethod
+    ActionStatus updateDigitalResource(@WebParam(name = "digitalResource") DigitalResourcesDto postData);
+
+    @WebMethod
+    ActionStatus createOrUpdateDigitalResource(@WebParam(name = "digitalResource") DigitalResourcesDto postData);
+
+    @WebMethod
+    ActionStatus removeDigitalResource(@WebParam(name = "digitalResourceCode") String code);
+
+    @WebMethod
+    GetDigitalResourceResponseDto findDigitalResource(@WebParam(name = "digitalResourceCode") String code);
 
 }

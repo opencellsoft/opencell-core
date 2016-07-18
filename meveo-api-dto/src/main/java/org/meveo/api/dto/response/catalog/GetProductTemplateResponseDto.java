@@ -11,7 +11,7 @@ import org.meveo.api.dto.response.BaseResponse;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetProductTemplateResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -2801794466203329264L;
 
 	private ProductTemplateDto productTemplateDto;
 
