@@ -194,6 +194,11 @@
 						</hftl:formPanel>
 					</p:panel>
 				</p:tab>
+				<p:tab title="#{messages['menu.productTemplates']}">
+					<ui:include src="productTemplateTab.xhtml">
+						<ui:param name="backingBean" value="#{offerTemplateBean}" />
+					</ui:include>
+				</p:tab>
 			</p:tabView>
 		</p:panel>
 

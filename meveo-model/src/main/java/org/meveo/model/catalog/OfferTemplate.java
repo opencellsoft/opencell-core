@@ -43,7 +43,6 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
@@ -58,7 +57,7 @@ import org.meveo.model.ObservableEntity;
 @NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false"),
 		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true"),
 		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validTo and validTo > NOW()") })
-public class OfferTemplate extends BusinessCFEntity {
+public class OfferTemplate extends ProductOffering {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "NAME", length = 100)
@@ -80,19 +79,19 @@ public class OfferTemplate extends BusinessCFEntity {
 
 	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
-	
-	@Column(name="VALID_FROM")
+
+	@Column(name = "VALID_FROM")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date validFrom;
-	
-	@Column(name="VALID_TO")
+
+	@Column(name = "VALID_TO")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date validTo;
-	
+
 	@Column(name = "IMAGE_CONTENT_TYPE", length = 50)
 	@Size(max = 50)
 	private String imageContentType;
-	
+
 	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<OfferProductTemplate> offerProductTemplates = new ArrayList<OfferProductTemplate>();
 
@@ -148,23 +147,24 @@ public class OfferTemplate extends BusinessCFEntity {
 		this.businessOfferModel = businessOfferModel;
 	}
 
-    /**
-     * Check if offer contains a given service template
-     * 
-     * @param serviceTemplate Service template to match
-     * @return True if offer contains a given service template
-     */
-    public boolean containsServiceTemplate(ServiceTemplate serviceTemplate) {
+	/**
+	 * Check if offer contains a given service template
+	 * 
+	 * @param serviceTemplate
+	 *            Service template to match
+	 * @return True if offer contains a given service template
+	 */
+	public boolean containsServiceTemplate(ServiceTemplate serviceTemplate) {
 
-        for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
-            if (offerServiceTemplate.getServiceTemplate().equals(serviceTemplate)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public byte[] getImageAsByteArr() {
+		for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
+			if (offerServiceTemplate.getServiceTemplate().equals(serviceTemplate)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public byte[] getImageAsByteArr() {
 		if (image != null) {
 			int blobLength;
 			try {

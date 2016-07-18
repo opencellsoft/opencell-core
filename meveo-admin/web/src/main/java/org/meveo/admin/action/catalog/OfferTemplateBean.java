@@ -36,12 +36,14 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.catalog.impl.OfferProductTemplateService;
 import org.meveo.service.catalog.impl.OfferServiceTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
@@ -82,11 +84,13 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	@Inject
 	private OfferServiceTemplateService offerServiceTemplateService;
+	
+	@Inject
+	private OfferProductTemplateService offerProductTemplateService;
 
 	private DualListModel<ServiceTemplate> incompatibleServices;
-
 	private OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
-	
+	private OfferProductTemplate offerProductTemplate = new OfferProductTemplate();
 	private UploadedFile uploadedFile;
 
 	/**
@@ -221,10 +225,21 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		offerServiceTemplateService.remove(offerServiceTemplate.getId());
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
+	
+	public void deleteOfferProductTemplate(OfferProductTemplate offerProductTemplate) throws BusinessException {
+		entity.getOfferProductTemplates().remove(offerProductTemplate);
+		entity = getPersistenceService().update(entity, getCurrentUser());
+		offerProductTemplateService.remove(offerProductTemplate.getId());
+		messages.info(new BundleKey("messages", "delete.successful"));
+	}
 
 	public void editOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) {
 		this.offerServiceTemplate = offerServiceTemplate;
 		setIncompatibleServices(null);
+	}
+	
+	public void editOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
+		this.offerProductTemplate = offerProductTemplate;
 	}
 
 	public void newOfferServiceTemplate() {
