@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="63d882e4-12ba-48cb-9cf8-b557b7f5787f" activeEnvironment="Default" name="Full WS Test Entities" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="63d882e4-12ba-48cb-9cf8-b557b7f5787f" activeEnvironment="Default" name="Full WS Test Entities" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -23596,8 +23596,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="bdb2efe4-388d-4077-9c6f-f6e7b1d0b039" name="Find: all values">
-              <con:configuration>
-                <token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1">
+              <con:configuration><token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1">
                <productName>productname</productName>
                <productVersion>productversion</productVersion>
                <owner>owner</owner>
@@ -23624,10 +23623,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                <authPassword>meveo.admin</authPassword>
                <user>MEVEO.ADMIN</user>
                <customer>WS_BASE_CUST</customer>
-            </meveoInstance>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+            </meveoInstance>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -23817,15 +23813,14 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration>
-                <token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1 upated">
+              <con:configuration><token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1 upated">
                <productName>productname</productName>
                <productVersion>productversion</productVersion>
                <owner>owner</owner>
                <md5>md5</md5>
                <status>UNKNOWN</status>
-               <creationDate>2016-07-01T01:00:00${#Project#timezone2}:00</creationDate>
-               <updateDate>2016-07-01T01:00:00${#Project#timezone2}:00</updateDate>
+               <creationDate>2016-07-01T00:00:00${#Project#timezone2}:00</creationDate>
+               <updateDate>2016-07-01T00:00:00${#Project#timezone2}:00</updateDate>
                <keyEntreprise>keyentreprise</keyEntreprise>
                <macAddress>mac</macAddress>
                <machineVendor>machinevendor</machineVendor>
@@ -23845,10 +23840,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                <authPassword>meveo.admin</authPassword>
                <user>MEVEO.ADMIN</user>
                <customer>WS_BASE_CUST</customer>
-            </meveoInstance>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+            </meveoInstance>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -23996,8 +23988,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration>
-                <token><![CDATA[<meveoInstances>
+              <con:configuration><token><![CDATA[<meveoInstances>
                <meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI2" description="${#Project#entityPrefix}_${#TestSuite#index}_MI2 update">
                   <url>http://localhost:8080/meveo</url>
                </meveoInstance>
@@ -24007,8 +23998,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                   <owner>owner</owner>
                   <md5>md5</md5>
                   <status>UNKNOWN</status>
-                  <creationDate>2016-07-01T01:00:00${#Project#timezone2}:00</creationDate>
-                  <updateDate>2016-07-01T01:00:00${#Project#timezone2}:00</updateDate>
+                  <creationDate>2016-07-01T00:00:00${#Project#timezone2}:00</creationDate>
+                  <updateDate>2016-07-01T00:00:00${#Project#timezone2}:00</updateDate>
                   <keyEntreprise>keyentreprise</keyEntreprise>
                   <macAddress>mac</macAddress>
                   <machineVendor>machinevendor</machineVendor>
@@ -24029,10 +24020,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                   <user>MEVEO.ADMIN</user>
                   <customer>WS_BASE_CUST</customer>
                </meveoInstance>
-            </meveoInstances>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+            </meveoInstances>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -24212,7 +24200,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>20</con:value>
+        <con:value>23</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -35582,7 +35570,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>114</con:value>
+        <con:value>117</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -40840,8 +40828,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="f13fc821-8fc1-4cdf-a59c-4bba21c85808" name="Assert Customer Part">
-              <con:configuration>
-                <token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
+              <con:configuration><token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
                <externalRef1>1</externalRef1>
                <externalRef2>1</externalRef2>
                <name>
@@ -40856,6 +40843,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <zipCode>75001</zipCode>
                   <city>Tunis</city>
                   <country>TN</country>
+                  <state/>
                </address>
                <customerCategory>CLIENT</customerCategory>
                <customerBrand>DEFAULT</customerBrand>
@@ -40866,10 +40854,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <phone>1234</phone>
                   <mobile>092152154716</mobile>
                   <fax>1234</fax>
-               </contactInformation>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="4fe4bad5-9bff-4034-b661-77af9d9d2c2a" name="Assert CA Part1">
               <con:configuration>
@@ -44837,7 +44822,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>33</con:value>
+        <con:value>36</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -46530,7 +46515,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>73</con:value>
+        <con:value>76</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -46698,7 +46683,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>74</con:value>
+        <con:value>77</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -48890,7 +48875,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>75</con:value>
+        <con:value>78</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -57190,7 +57175,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>94</con:value>
+        <con:value>97</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -57669,7 +57654,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>81</con:value>
+        <con:value>84</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -58294,7 +58279,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>81</con:value>
+        <con:value>84</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -58810,7 +58795,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>71</con:value>
+        <con:value>74</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
