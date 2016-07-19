@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="63d882e4-12ba-48cb-9cf8-b557b7f5787f" activeEnvironment="Default" name="Full WS Test Entities" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="63d882e4-12ba-48cb-9cf8-b557b7f5787f" activeEnvironment="Default" name="Full WS Test Entities" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -763,36 +763,13 @@
     <con:operation id="18456690-4f1b-4fe8-8a9f-dd08850ef038" isOneWay="false" action="" name="list" bindingOperationName="list" type="Request-Response" outputName="listResponse" inputName="list" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-  <con:operation id="0a7dd5bd-ad70-4526-8351-ea6798cf4414" isOneWay="false" action="" name="createDDRequestLotOp" bindingOperationName="createDDRequestLotOp" type="Request-Response" outputName="createDDRequestLotOpResponse" inputName="createDDRequestLotOp" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="798976c8-fa95-47ad-843f-22368268ba74" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/PaymentWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createDDRequestLotOp>
-         <!--Optional:-->
-         <ddrequestLotOp>
-            <!--Optional:-->
-            <ddrequestOp>?</ddrequestOp>
-            <!--Optional:-->
-            <errorCause>?</errorCause>
-            <!--Optional:-->
-            <fileFormat>?</fileFormat>
-            <!--Optional:-->
-            <fromDueDate>?</fromDueDate>
-            <!--Optional:-->
-            <status>?</status>
-            <!--Optional:-->
-            <toDueDate>?</toDueDate>
-         </ddrequestLotOp>
-      </ws:createDDRequestLotOp>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/PaymentWs/createDDRequestLotOp"/></con:call></con:operation><con:operation id="e25a4aa0-dac9-4975-8274-e76058928c56" isOneWay="false" action="" name="listDDRequestLotops" bindingOperationName="listDDRequestLotops" type="Request-Response" outputName="listDDRequestLotopsResponse" inputName="listDDRequestLotops" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="32389ddf-ff17-4af2-ba05-d48d1c7707c5" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/PaymentWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:listDDRequestLotops>
-         <!--Optional:-->
-         <status>?</status>
-      </ws:listDDRequestLotops>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/PaymentWs/listDDRequestLotops"/></con:call></con:operation></con:interface>
+    <con:operation id="0a7dd5bd-ad70-4526-8351-ea6798cf4414" isOneWay="false" action="" name="createDDRequestLotOp" bindingOperationName="createDDRequestLotOp" type="Request-Response" outputName="createDDRequestLotOpResponse" inputName="createDDRequestLotOp" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="e25a4aa0-dac9-4975-8274-e76058928c56" isOneWay="false" action="" name="listDDRequestLotops" bindingOperationName="listDDRequestLotops" type="Request-Response" outputName="listDDRequestLotopsResponse" inputName="listDDRequestLotops" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+  </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="63f2a050-79b9-4e44-8be3-6bb29b160b4d" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
@@ -1131,488 +1108,70 @@
     <con:operation id="e3465730-b4ec-4fe9-acb8-76c8bd1e50e4" isOneWay="false" action="" name="updateInvoiceType" bindingOperationName="updateInvoiceType" type="Request-Response" outputName="updateInvoiceTypeResponse" inputName="updateInvoiceType" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-    
     <con:operation id="a9b30b5c-54f3-4152-bec1-e760813bb93e" isOneWay="false" action="" name="findProviderCF" bindingOperationName="findProviderCF" type="Request-Response" outputName="findProviderCFResponse" inputName="findProviderCF" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-    
-    
-    
     <con:operation id="9fd150a7-36e6-4815-ac16-d13503824b36" isOneWay="false" action="" name="updateProviderCF" bindingOperationName="updateProviderCF" type="Request-Response" outputName="updateProviderCFResponse" inputName="updateProviderCF" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
     <con:operation id="89e778c5-d24b-493c-8834-fee0250e8933" isOneWay="false" action="" name="findRole4_2" bindingOperationName="findRole4_2" type="Request-Response" outputName="findRole4_2Response" inputName="findRole4_2" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-  <con:operation id="9a91c18b-8242-4576-91a2-3fc9419c19f8" isOneWay="false" action="" name="createOrUpdateProviderContact" bindingOperationName="createOrUpdateProviderContact" type="Request-Response" outputName="createOrUpdateProviderContactResponse" inputName="createOrUpdateProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c851f81b-8908-430a-8d6e-944427d51657" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateProviderContact>
-         <!--Optional:-->
-         <providerContact code="?">
-            <!--Optional:-->
-            <description>?</description>
-            <!--Optional:-->
-            <firstName>?</firstName>
-            <!--Optional:-->
-            <lastName>?</lastName>
-            <!--Optional:-->
-            <email>?</email>
-            <!--Optional:-->
-            <phone>?</phone>
-            <!--Optional:-->
-            <mobile>?</mobile>
-            <!--Optional:-->
-            <fax>?</fax>
-            <!--Optional:-->
-            <genericMail>?</genericMail>
-            <!--Optional:-->
-            <addressDto>
-               <!--Optional:-->
-               <address1>?</address1>
-               <!--Optional:-->
-               <address2>?</address2>
-               <!--Optional:-->
-               <address3>?</address3>
-               <!--Optional:-->
-               <zipCode>?</zipCode>
-               <!--Optional:-->
-               <city>?</city>
-               <!--Optional:-->
-               <country>?</country>
-               <!--Optional:-->
-               <state>?</state>
-            </addressDto>
-         </providerContact>
-      </ws:createOrUpdateProviderContact>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateProviderContact"/></con:call></con:operation><con:operation id="06457d15-d6be-4d59-9325-db523cc0f0a0" isOneWay="false" action="" name="updateProviderContact" bindingOperationName="updateProviderContact" type="Request-Response" outputName="updateProviderContactResponse" inputName="updateProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b5beb8f0-a955-4b92-8e7f-6a86003dd2cb" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:updateProviderContact>
-         <!--Optional:-->
-         <providerContact code="?">
-            <!--Optional:-->
-            <description>?</description>
-            <!--Optional:-->
-            <firstName>?</firstName>
-            <!--Optional:-->
-            <lastName>?</lastName>
-            <!--Optional:-->
-            <email>?</email>
-            <!--Optional:-->
-            <phone>?</phone>
-            <!--Optional:-->
-            <mobile>?</mobile>
-            <!--Optional:-->
-            <fax>?</fax>
-            <!--Optional:-->
-            <genericMail>?</genericMail>
-            <!--Optional:-->
-            <addressDto>
-               <!--Optional:-->
-               <address1>?</address1>
-               <!--Optional:-->
-               <address2>?</address2>
-               <!--Optional:-->
-               <address3>?</address3>
-               <!--Optional:-->
-               <zipCode>?</zipCode>
-               <!--Optional:-->
-               <city>?</city>
-               <!--Optional:-->
-               <country>?</country>
-               <!--Optional:-->
-               <state>?</state>
-            </addressDto>
-         </providerContact>
-      </ws:updateProviderContact>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateProviderContact"/></con:call></con:operation><con:operation id="a9aa7249-5b45-4a19-821d-535b3509b4a9" isOneWay="false" action="" name="listProviderContacts" bindingOperationName="listProviderContacts" type="Request-Response" outputName="listProviderContactsResponse" inputName="listProviderContacts" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d1731045-9b5c-469c-adcf-97b0095c8dba" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:listProviderContacts/>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listProviderContacts"/></con:call></con:operation><con:operation id="ed567fb9-9e59-4027-9588-8d6b8c1dfee9" isOneWay="false" action="" name="createProviderContact" bindingOperationName="createProviderContact" type="Request-Response" outputName="createProviderContactResponse" inputName="createProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="2e0c382d-75a1-42c3-a32c-e8f47cdb2d36" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createProviderContact>
-         <!--Optional:-->
-         <providerContact code="?">
-            <!--Optional:-->
-            <description>?</description>
-            <!--Optional:-->
-            <firstName>?</firstName>
-            <!--Optional:-->
-            <lastName>?</lastName>
-            <!--Optional:-->
-            <email>?</email>
-            <!--Optional:-->
-            <phone>?</phone>
-            <!--Optional:-->
-            <mobile>?</mobile>
-            <!--Optional:-->
-            <fax>?</fax>
-            <!--Optional:-->
-            <genericMail>?</genericMail>
-            <!--Optional:-->
-            <addressDto>
-               <!--Optional:-->
-               <address1>?</address1>
-               <!--Optional:-->
-               <address2>?</address2>
-               <!--Optional:-->
-               <address3>?</address3>
-               <!--Optional:-->
-               <zipCode>?</zipCode>
-               <!--Optional:-->
-               <city>?</city>
-               <!--Optional:-->
-               <country>?</country>
-               <!--Optional:-->
-               <state>?</state>
-            </addressDto>
-         </providerContact>
-      </ws:createProviderContact>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createProviderContact"/></con:call></con:operation><con:operation id="00ffab12-9d6c-40c0-9bb1-e57108bd772d" isOneWay="false" action="" name="removeProviderContact" bindingOperationName="removeProviderContact" type="Request-Response" outputName="removeProviderContactResponse" inputName="removeProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="284b6aa6-5730-461e-ae6a-55e68facc7ee" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:removeProviderContact>
-         <!--Optional:-->
-         <providerContactCode>?</providerContactCode>
-      </ws:removeProviderContact>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeProviderContact"/></con:call></con:operation><con:operation id="58185a13-8e5d-4e35-8c4c-d970f21b4969" isOneWay="false" action="" name="findProviderContact" bindingOperationName="findProviderContact" type="Request-Response" outputName="findProviderContactResponse" inputName="findProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="3f500ff2-37d4-4cfc-9ef7-314b6c1e80ba" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:findProviderContact>
-         <!--Optional:-->
-         <providerContactCode>?</providerContactCode>
-      </ws:findProviderContact>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findProviderContact"/></con:call></con:operation><con:operation id="c122d9c5-40fa-4521-8fb0-0abf7c2aadf8" isOneWay="false" action="" name="findMeveoInstance" bindingOperationName="findMeveoInstance" type="Request-Response" outputName="findMeveoInstanceResponse" inputName="findMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="6e73f147-8482-4f67-b7b0-49c0195f8142" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:findMeveoInstance>
-         <!--Optional:-->
-         <meveoInstanceCode>?</meveoInstanceCode>
-      </ws:findMeveoInstance>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findMeveoInstance"/></con:call></con:operation><con:operation id="f8c630ef-f013-431f-b64b-bbc8d5f8c242" isOneWay="false" action="" name="removeEmailTemplate" bindingOperationName="removeEmailTemplate" type="Request-Response" outputName="removeEmailTemplateResponse" inputName="removeEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="cc2f602a-5d68-4447-b137-68e96b3c5077" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:removeEmailTemplate>
-         <!--Optional:-->
-         <emailTemplateCode>?</emailTemplateCode>
-      </ws:removeEmailTemplate>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeEmailTemplate"/></con:call></con:operation><con:operation id="56736202-8ecc-407e-8442-3eae822c4716" isOneWay="false" action="" name="createOrUpdateMeveoInstance" bindingOperationName="createOrUpdateMeveoInstance" type="Request-Response" outputName="createOrUpdateMeveoInstanceResponse" inputName="createOrUpdateMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="8bd399f5-9020-4967-983b-3afad7b3099c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateMeveoInstance>
-         <!--Optional:-->
-         <meveoInstance>
-            <code>?</code>
-            <!--Optional:-->
-            <description>?</description>
-            <!--Optional:-->
-            <productName>?</productName>
-            <!--Optional:-->
-            <productVersion>?</productVersion>
-            <!--Optional:-->
-            <owner>?</owner>
-            <!--Optional:-->
-            <md5>?</md5>
-            <!--Optional:-->
-            <status>?</status>
-            <!--Optional:-->
-            <creationDate>?</creationDate>
-            <!--Optional:-->
-            <updateDate>?</updateDate>
-            <!--Optional:-->
-            <keyEntreprise>?</keyEntreprise>
-            <!--Optional:-->
-            <macAddress>?</macAddress>
-            <!--Optional:-->
-            <machineVendor>?</machineVendor>
-            <!--Optional:-->
-            <installationMode>?</installationMode>
-            <!--Optional:-->
-            <nbCores>?</nbCores>
-            <!--Optional:-->
-            <memory>?</memory>
-            <!--Optional:-->
-            <hdSize>?</hdSize>
-            <!--Optional:-->
-            <osName>?</osName>
-            <!--Optional:-->
-            <osVersion>?</osVersion>
-            <!--Optional:-->
-            <osArch>?</osArch>
-            <!--Optional:-->
-            <javaVmVersion>?</javaVmVersion>
-            <!--Optional:-->
-            <javaVmName>?</javaVmName>
-            <!--Optional:-->
-            <javaVendor>?</javaVendor>
-            <!--Optional:-->
-            <javaVersion>?</javaVersion>
-            <!--Optional:-->
-            <asVendor>?</asVendor>
-            <!--Optional:-->
-            <asVersion>?</asVersion>
-            <url>?</url>
-            <!--Optional:-->
-            <authUsername>?</authUsername>
-            <!--Optional:-->
-            <authPassword>?</authPassword>
-         </meveoInstance>
-      </ws:createOrUpdateMeveoInstance>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateMeveoInstance"/></con:call></con:operation><con:operation id="64d1fbd5-f53d-4250-bd12-b0d057d58308" isOneWay="false" action="" name="listEmailTemplates" bindingOperationName="listEmailTemplates" type="Request-Response" outputName="listEmailTemplatesResponse" inputName="listEmailTemplates" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5ab1f940-828f-4e84-a5a2-9b832f996064" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:listEmailTemplates/>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listEmailTemplates"/></con:call></con:operation><con:operation id="0afeec39-2e2e-4915-b67c-a68aff7b4099" isOneWay="false" action="" name="createEmailTemplate" bindingOperationName="createEmailTemplate" type="Request-Response" outputName="createEmailTemplateResponse" inputName="createEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c831949e-c333-48ff-8ebf-e65df5127ce9" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createEmailTemplate>
-         <!--Optional:-->
-         <emailTemplate>
-            <code>?</code>
-            <!--Optional:-->
-            <description>?</description>
-            <!--Optional:-->
-            <media>?</media>
-            <!--Optional:-->
-            <tagStartDelimiter>?</tagStartDelimiter>
-            <!--Optional:-->
-            <tagEndDelimiter>?</tagEndDelimiter>
-            <!--Optional:-->
-            <startDate>?</startDate>
-            <!--Optional:-->
-            <endDate>?</endDate>
-            <!--Optional:-->
-            <type>?</type>
-            <!--Optional:-->
-            <subject>?</subject>
-            <!--Optional:-->
-            <htmlContent>?</htmlContent>
-            <!--Optional:-->
-            <textContent>?</textContent>
-         </emailTemplate>
-      </ws:createEmailTemplate>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createEmailTemplate"/></con:call></con:operation><con:operation id="d282dd2e-c113-4d5c-bfb2-b9ae707adb17" isOneWay="false" action="" name="listMeveoInstances" bindingOperationName="listMeveoInstances" type="Request-Response" outputName="listMeveoInstancesResponse" inputName="listMeveoInstances" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="dd2e13b0-b268-4246-808b-028bf08c644b" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:listMeveoInstances/>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listMeveoInstances"/></con:call></con:operation><con:operation id="73e3a96c-f212-4219-af39-f7b9c493fc01" isOneWay="false" action="" name="updateEmailTemplate" bindingOperationName="updateEmailTemplate" type="Request-Response" outputName="updateEmailTemplateResponse" inputName="updateEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="645c69c4-b0ac-47e0-8bc0-d61b4d9d87f1" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:updateEmailTemplate>
-         <!--Optional:-->
-         <emailTemplate>
-            <code>?</code>
-            <!--Optional:-->
-            <description>?</description>
-            <!--Optional:-->
-            <media>?</media>
-            <!--Optional:-->
-            <tagStartDelimiter>?</tagStartDelimiter>
-            <!--Optional:-->
-            <tagEndDelimiter>?</tagEndDelimiter>
-            <!--Optional:-->
-            <startDate>?</startDate>
-            <!--Optional:-->
-            <endDate>?</endDate>
-            <!--Optional:-->
-            <type>?</type>
-            <!--Optional:-->
-            <subject>?</subject>
-            <!--Optional:-->
-            <htmlContent>?</htmlContent>
-            <!--Optional:-->
-            <textContent>?</textContent>
-         </emailTemplate>
-      </ws:updateEmailTemplate>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateEmailTemplate"/></con:call></con:operation><con:operation id="d0f0b0e5-e8ab-4988-aefd-b139d67d9aa1" isOneWay="false" action="" name="findEmailTemplate" bindingOperationName="findEmailTemplate" type="Request-Response" outputName="findEmailTemplateResponse" inputName="findEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b67af727-8180-456a-ae7b-7cc0a1068f4d" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:findEmailTemplate>
-         <!--Optional:-->
-         <emailTemplateCode>?</emailTemplateCode>
-      </ws:findEmailTemplate>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findEmailTemplate"/></con:call></con:operation><con:operation id="b22e1da3-f00b-4387-b9cc-1ecc158deb6d" isOneWay="false" action="" name="updateMeveoInstance" bindingOperationName="updateMeveoInstance" type="Request-Response" outputName="updateMeveoInstanceResponse" inputName="updateMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="f1c18b8b-67dc-4a13-8be8-f182940452d2" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:updateMeveoInstance>
-         <!--Optional:-->
-         <meveoInstance>
-            <code>?</code>
-            <!--Optional:-->
-            <description>?</description>
-            <!--Optional:-->
-            <productName>?</productName>
-            <!--Optional:-->
-            <productVersion>?</productVersion>
-            <!--Optional:-->
-            <owner>?</owner>
-            <!--Optional:-->
-            <md5>?</md5>
-            <!--Optional:-->
-            <status>?</status>
-            <!--Optional:-->
-            <creationDate>?</creationDate>
-            <!--Optional:-->
-            <updateDate>?</updateDate>
-            <!--Optional:-->
-            <keyEntreprise>?</keyEntreprise>
-            <!--Optional:-->
-            <macAddress>?</macAddress>
-            <!--Optional:-->
-            <machineVendor>?</machineVendor>
-            <!--Optional:-->
-            <installationMode>?</installationMode>
-            <!--Optional:-->
-            <nbCores>?</nbCores>
-            <!--Optional:-->
-            <memory>?</memory>
-            <!--Optional:-->
-            <hdSize>?</hdSize>
-            <!--Optional:-->
-            <osName>?</osName>
-            <!--Optional:-->
-            <osVersion>?</osVersion>
-            <!--Optional:-->
-            <osArch>?</osArch>
-            <!--Optional:-->
-            <javaVmVersion>?</javaVmVersion>
-            <!--Optional:-->
-            <javaVmName>?</javaVmName>
-            <!--Optional:-->
-            <javaVendor>?</javaVendor>
-            <!--Optional:-->
-            <javaVersion>?</javaVersion>
-            <!--Optional:-->
-            <asVendor>?</asVendor>
-            <!--Optional:-->
-            <asVersion>?</asVersion>
-            <url>?</url>
-            <!--Optional:-->
-            <authUsername>?</authUsername>
-            <!--Optional:-->
-            <authPassword>?</authPassword>
-         </meveoInstance>
-      </ws:updateMeveoInstance>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateMeveoInstance"/></con:call></con:operation><con:operation id="ff1b7496-eed0-4097-9214-3c64e6432fdb" isOneWay="false" action="" name="createMeveoInstance" bindingOperationName="createMeveoInstance" type="Request-Response" outputName="createMeveoInstanceResponse" inputName="createMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="bc4296bc-f1af-409f-9f84-9b4c52c5331f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createMeveoInstance>
-         <!--Optional:-->
-         <meveoInstance>
-            <code>?</code>
-            <!--Optional:-->
-            <description>?</description>
-            <!--Optional:-->
-            <productName>?</productName>
-            <!--Optional:-->
-            <productVersion>?</productVersion>
-            <!--Optional:-->
-            <owner>?</owner>
-            <!--Optional:-->
-            <md5>?</md5>
-            <!--Optional:-->
-            <status>?</status>
-            <!--Optional:-->
-            <creationDate>?</creationDate>
-            <!--Optional:-->
-            <updateDate>?</updateDate>
-            <!--Optional:-->
-            <keyEntreprise>?</keyEntreprise>
-            <!--Optional:-->
-            <macAddress>?</macAddress>
-            <!--Optional:-->
-            <machineVendor>?</machineVendor>
-            <!--Optional:-->
-            <installationMode>?</installationMode>
-            <!--Optional:-->
-            <nbCores>?</nbCores>
-            <!--Optional:-->
-            <memory>?</memory>
-            <!--Optional:-->
-            <hdSize>?</hdSize>
-            <!--Optional:-->
-            <osName>?</osName>
-            <!--Optional:-->
-            <osVersion>?</osVersion>
-            <!--Optional:-->
-            <osArch>?</osArch>
-            <!--Optional:-->
-            <javaVmVersion>?</javaVmVersion>
-            <!--Optional:-->
-            <javaVmName>?</javaVmName>
-            <!--Optional:-->
-            <javaVendor>?</javaVendor>
-            <!--Optional:-->
-            <javaVersion>?</javaVersion>
-            <!--Optional:-->
-            <asVendor>?</asVendor>
-            <!--Optional:-->
-            <asVersion>?</asVersion>
-            <url>?</url>
-            <!--Optional:-->
-            <authUsername>?</authUsername>
-            <!--Optional:-->
-            <authPassword>?</authPassword>
-         </meveoInstance>
-      </ws:createMeveoInstance>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createMeveoInstance"/></con:call></con:operation><con:operation id="8d527590-c721-4ed9-8a99-c134a0608e19" isOneWay="false" action="" name="removeMeveoInstance" bindingOperationName="removeMeveoInstance" type="Request-Response" outputName="removeMeveoInstanceResponse" inputName="removeMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="eed05a4f-2182-49f5-80ef-b073f92ac5cf" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:removeMeveoInstance>
-         <!--Optional:-->
-         <meveoInstanceCode>?</meveoInstanceCode>
-      </ws:removeMeveoInstance>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeMeveoInstance"/></con:call></con:operation><con:operation id="de43b680-5fcb-4879-8eea-b86d4b4c78ea" isOneWay="false" action="" name="createOrUpdateEmailTemplate" bindingOperationName="createOrUpdateEmailTemplate" type="Request-Response" outputName="createOrUpdateEmailTemplateResponse" inputName="createOrUpdateEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5b989226-345d-4e81-974c-f8f2c2e948c9" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateEmailTemplate>
-         <!--Optional:-->
-         <emailTemplate>
-            <code>?</code>
-            <!--Optional:-->
-            <description>?</description>
-            <!--Optional:-->
-            <media>?</media>
-            <!--Optional:-->
-            <tagStartDelimiter>?</tagStartDelimiter>
-            <!--Optional:-->
-            <tagEndDelimiter>?</tagEndDelimiter>
-            <!--Optional:-->
-            <startDate>?</startDate>
-            <!--Optional:-->
-            <endDate>?</endDate>
-            <!--Optional:-->
-            <type>?</type>
-            <!--Optional:-->
-            <subject>?</subject>
-            <!--Optional:-->
-            <htmlContent>?</htmlContent>
-            <!--Optional:-->
-            <textContent>?</textContent>
-         </emailTemplate>
-      </ws:createOrUpdateEmailTemplate>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateEmailTemplate"/></con:call></con:operation></con:interface>
+    <con:operation id="9a91c18b-8242-4576-91a2-3fc9419c19f8" isOneWay="false" action="" name="createOrUpdateProviderContact" bindingOperationName="createOrUpdateProviderContact" type="Request-Response" outputName="createOrUpdateProviderContactResponse" inputName="createOrUpdateProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="06457d15-d6be-4d59-9325-db523cc0f0a0" isOneWay="false" action="" name="updateProviderContact" bindingOperationName="updateProviderContact" type="Request-Response" outputName="updateProviderContactResponse" inputName="updateProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="a9aa7249-5b45-4a19-821d-535b3509b4a9" isOneWay="false" action="" name="listProviderContacts" bindingOperationName="listProviderContacts" type="Request-Response" outputName="listProviderContactsResponse" inputName="listProviderContacts" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ed567fb9-9e59-4027-9588-8d6b8c1dfee9" isOneWay="false" action="" name="createProviderContact" bindingOperationName="createProviderContact" type="Request-Response" outputName="createProviderContactResponse" inputName="createProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="00ffab12-9d6c-40c0-9bb1-e57108bd772d" isOneWay="false" action="" name="removeProviderContact" bindingOperationName="removeProviderContact" type="Request-Response" outputName="removeProviderContactResponse" inputName="removeProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="58185a13-8e5d-4e35-8c4c-d970f21b4969" isOneWay="false" action="" name="findProviderContact" bindingOperationName="findProviderContact" type="Request-Response" outputName="findProviderContactResponse" inputName="findProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="c122d9c5-40fa-4521-8fb0-0abf7c2aadf8" isOneWay="false" action="" name="findMeveoInstance" bindingOperationName="findMeveoInstance" type="Request-Response" outputName="findMeveoInstanceResponse" inputName="findMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="f8c630ef-f013-431f-b64b-bbc8d5f8c242" isOneWay="false" action="" name="removeEmailTemplate" bindingOperationName="removeEmailTemplate" type="Request-Response" outputName="removeEmailTemplateResponse" inputName="removeEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="56736202-8ecc-407e-8442-3eae822c4716" isOneWay="false" action="" name="createOrUpdateMeveoInstance" bindingOperationName="createOrUpdateMeveoInstance" type="Request-Response" outputName="createOrUpdateMeveoInstanceResponse" inputName="createOrUpdateMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="64d1fbd5-f53d-4250-bd12-b0d057d58308" isOneWay="false" action="" name="listEmailTemplates" bindingOperationName="listEmailTemplates" type="Request-Response" outputName="listEmailTemplatesResponse" inputName="listEmailTemplates" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="0afeec39-2e2e-4915-b67c-a68aff7b4099" isOneWay="false" action="" name="createEmailTemplate" bindingOperationName="createEmailTemplate" type="Request-Response" outputName="createEmailTemplateResponse" inputName="createEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="d282dd2e-c113-4d5c-bfb2-b9ae707adb17" isOneWay="false" action="" name="listMeveoInstances" bindingOperationName="listMeveoInstances" type="Request-Response" outputName="listMeveoInstancesResponse" inputName="listMeveoInstances" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="73e3a96c-f212-4219-af39-f7b9c493fc01" isOneWay="false" action="" name="updateEmailTemplate" bindingOperationName="updateEmailTemplate" type="Request-Response" outputName="updateEmailTemplateResponse" inputName="updateEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="d0f0b0e5-e8ab-4988-aefd-b139d67d9aa1" isOneWay="false" action="" name="findEmailTemplate" bindingOperationName="findEmailTemplate" type="Request-Response" outputName="findEmailTemplateResponse" inputName="findEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="b22e1da3-f00b-4387-b9cc-1ecc158deb6d" isOneWay="false" action="" name="updateMeveoInstance" bindingOperationName="updateMeveoInstance" type="Request-Response" outputName="updateMeveoInstanceResponse" inputName="updateMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ff1b7496-eed0-4097-9214-3c64e6432fdb" isOneWay="false" action="" name="createMeveoInstance" bindingOperationName="createMeveoInstance" type="Request-Response" outputName="createMeveoInstanceResponse" inputName="createMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="8d527590-c721-4ed9-8a99-c134a0608e19" isOneWay="false" action="" name="removeMeveoInstance" bindingOperationName="removeMeveoInstance" type="Request-Response" outputName="removeMeveoInstanceResponse" inputName="removeMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="de43b680-5fcb-4879-8eea-b86d4b4c78ea" isOneWay="false" action="" name="createOrUpdateEmailTemplate" bindingOperationName="createOrUpdateEmailTemplate" type="Request-Response" outputName="createOrUpdateEmailTemplateResponse" inputName="createOrUpdateEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+  </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="8c2affeb-ab12-43ad-adde-ed28dba3be5d" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
@@ -1841,409 +1400,76 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" id="c43cbf05-c104-49b2-9b98-52dc0ce80a23" wsaVersion="NONE" name="WorkflowWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WorkflowWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WorkflowWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:endpoints><con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint></con:endpoints><con:operation id="613cae81-2eba-4a5c-9844-f478ddec3b7c" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="9af94cf3-9f3b-4f4b-8468-30ee1d591bc0" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:create>\r
-         <!--Optional:-->\r
-         <workflow>\r
-            <code>?</code>\r
-            <!--Optional:-->\r
-            <description>?</description>\r
-            <wfType>?</wfType>\r
-            <status>?</status>\r
-            <!--Optional:-->\r
-            <exportLot>?</exportLot>\r
-            <!--Optional:-->\r
-            <enableHistory>?</enableHistory>\r
-            <!--Optional:-->\r
-            <listWFTransitionDto>\r
-               <!--Zero or more repetitions:-->\r
-               <wfTransitionDto>\r
-                  <fromStatus>?</fromStatus>\r
-                  <toStatus>?</toStatus>\r
-                  <conditionEl>?</conditionEl>\r
-                  <workflowDto/>\r
-                  <!--Optional:-->\r
-                  <listWFActionDto>\r
-                     <!--Zero or more repetitions:-->\r
-                     <wfActionDto>\r
-                        <actionEl>?</actionEl>\r
-                        <priority>?</priority>\r
-                        <conditionEl>?</conditionEl>\r
-                        <wfTransitionDto/>\r
-                     </wfActionDto>\r
-                  </listWFActionDto>\r
-               </wfTransitionDto>\r
-            </listWFTransitionDto>\r
-         </workflow>\r
-      </wf:create>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/create"/></con:call></con:operation><con:operation id="640fd460-1c12-4911-9c68-58cea779d2cb" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c14372fa-c0fd-4684-bc7c-33ef2d878bc0" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:createOrUpdate>\r
-         <!--Optional:-->\r
-         <workflow>\r
-            <code>?</code>\r
-            <!--Optional:-->\r
-            <description>?</description>\r
-            <wfType>?</wfType>\r
-            <status>?</status>\r
-            <!--Optional:-->\r
-            <exportLot>?</exportLot>\r
-            <!--Optional:-->\r
-            <enableHistory>?</enableHistory>\r
-            <!--Optional:-->\r
-            <listWFTransitionDto>\r
-               <!--Zero or more repetitions:-->\r
-               <wfTransitionDto>\r
-                  <fromStatus>?</fromStatus>\r
-                  <toStatus>?</toStatus>\r
-                  <conditionEl>?</conditionEl>\r
-                  <workflowDto/>\r
-                  <!--Optional:-->\r
-                  <listWFActionDto>\r
-                     <!--Zero or more repetitions:-->\r
-                     <wfActionDto>\r
-                        <actionEl>?</actionEl>\r
-                        <priority>?</priority>\r
-                        <conditionEl>?</conditionEl>\r
-                        <wfTransitionDto/>\r
-                     </wfActionDto>\r
-                  </listWFActionDto>\r
-               </wfTransitionDto>\r
-            </listWFTransitionDto>\r
-         </workflow>\r
-      </wf:createOrUpdate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/createOrUpdate"/></con:call></con:operation><con:operation id="3dbc04b5-25ba-4109-a079-a469f72c403c" isOneWay="false" action="" name="find" bindingOperationName="find" type="Request-Response" outputName="findResponse" inputName="find" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="00906a95-ae47-418c-9615-c723344d2529" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:find>\r
-         <!--Optional:-->\r
-         <workflowCode>?</workflowCode>\r
-      </wf:find>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/find"/></con:call></con:operation><con:operation id="5461d0a7-3f34-436f-b117-df27d8104c4a" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a64cd2b7-9f84-4d01-97e7-76b35dd77c2f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:index/>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/index"/></con:call></con:operation><con:operation id="9a526256-9976-4587-8f45-a5de155b15dc" isOneWay="false" action="" name="list" bindingOperationName="list" type="Request-Response" outputName="listResponse" inputName="list" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="dba65e04-3285-46f3-8fbe-e8281938473c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:list/>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/list"/></con:call></con:operation><con:operation id="b568a274-7b77-4126-b1e3-292d016e4fc2" isOneWay="false" action="" name="remove" bindingOperationName="remove" type="Request-Response" outputName="removeResponse" inputName="remove" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="abc40482-0dcb-48d1-bb73-0c30fb814309" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:remove>\r
-         <!--Optional:-->\r
-         <workflowCode>?</workflowCode>\r
-      </wf:remove>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/remove"/></con:call></con:operation><con:operation id="aa34ac8e-20ea-460e-ac6c-4ef93758ba1b" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="1230c8c5-7820-498e-914b-0b1b55000bd3" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:update>\r
-         <!--Optional:-->\r
-         <workflow>\r
-            <code>?</code>\r
-            <!--Optional:-->\r
-            <description>?</description>\r
-            <wfType>?</wfType>\r
-            <status>?</status>\r
-            <!--Optional:-->\r
-            <exportLot>?</exportLot>\r
-            <!--Optional:-->\r
-            <enableHistory>?</enableHistory>\r
-            <!--Optional:-->\r
-            <listWFTransitionDto>\r
-               <!--Zero or more repetitions:-->\r
-               <wfTransitionDto>\r
-                  <fromStatus>?</fromStatus>\r
-                  <toStatus>?</toStatus>\r
-                  <conditionEl>?</conditionEl>\r
-                  <workflowDto/>\r
-                  <!--Optional:-->\r
-                  <listWFActionDto>\r
-                     <!--Zero or more repetitions:-->\r
-                     <wfActionDto>\r
-                        <actionEl>?</actionEl>\r
-                        <priority>?</priority>\r
-                        <conditionEl>?</conditionEl>\r
-                        <wfTransitionDto/>\r
-                     </wfActionDto>\r
-                  </listWFActionDto>\r
-               </wfTransitionDto>\r
-            </listWFTransitionDto>\r
-         </workflow>\r
-      </wf:update>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/update"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="bcb319d0-44d8-42dd-9b97-5d2273c333bb" wsaVersion="NONE" name="WFTransitionWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WFTransitionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WFTransitionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:endpoints><con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint></con:endpoints><con:operation id="7ff4ed6b-b726-4ef0-9bf5-231324f5666f" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="78cefb27-8939-4cb0-926b-52bcf33dfd43" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:create>\r
-         <!--Optional:-->\r
-         <wfTransitionDto>\r
-            <fromStatus>?</fromStatus>\r
-            <toStatus>?</toStatus>\r
-            <conditionEl>?</conditionEl>\r
-            <workflowDto>\r
-               <code>?</code>\r
-               <!--Optional:-->\r
-               <description>?</description>\r
-               <wfType>?</wfType>\r
-               <status>?</status>\r
-               <!--Optional:-->\r
-               <exportLot>?</exportLot>\r
-               <!--Optional:-->\r
-               <enableHistory>?</enableHistory>\r
-               <!--Optional:-->\r
-               <listWFTransitionDto>\r
-                  <!--Zero or more repetitions:-->\r
-                  <wfTransitionDto/>\r
-               </listWFTransitionDto>\r
-            </workflowDto>\r
-            <!--Optional:-->\r
-            <listWFActionDto>\r
-               <!--Zero or more repetitions:-->\r
-               <wfActionDto>\r
-                  <actionEl>?</actionEl>\r
-                  <priority>?</priority>\r
-                  <conditionEl>?</conditionEl>\r
-                  <wfTransitionDto/>\r
-               </wfActionDto>\r
-            </listWFActionDto>\r
-         </wfTransitionDto>\r
-      </wf:create>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/create"/></con:call></con:operation><con:operation id="fd9d8488-b136-49ed-8212-427ddb05e919" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="4daa416f-d911-4578-958e-e3950e8897bf" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:createOrUpdate>\r
-         <!--Optional:-->\r
-         <wfTransitionDto>\r
-            <fromStatus>?</fromStatus>\r
-            <toStatus>?</toStatus>\r
-            <conditionEl>?</conditionEl>\r
-            <workflowDto>\r
-               <code>?</code>\r
-               <!--Optional:-->\r
-               <description>?</description>\r
-               <wfType>?</wfType>\r
-               <status>?</status>\r
-               <!--Optional:-->\r
-               <exportLot>?</exportLot>\r
-               <!--Optional:-->\r
-               <enableHistory>?</enableHistory>\r
-               <!--Optional:-->\r
-               <listWFTransitionDto>\r
-                  <!--Zero or more repetitions:-->\r
-                  <wfTransitionDto/>\r
-               </listWFTransitionDto>\r
-            </workflowDto>\r
-            <!--Optional:-->\r
-            <listWFActionDto>\r
-               <!--Zero or more repetitions:-->\r
-               <wfActionDto>\r
-                  <actionEl>?</actionEl>\r
-                  <priority>?</priority>\r
-                  <conditionEl>?</conditionEl>\r
-                  <wfTransitionDto/>\r
-               </wfActionDto>\r
-            </listWFActionDto>\r
-         </wfTransitionDto>\r
-      </wf:createOrUpdate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/createOrUpdate"/></con:call></con:operation><con:operation id="b7d1ee0d-2a98-4cc4-911e-3ce88c4e6972" isOneWay="false" action="" name="find" bindingOperationName="find" type="Request-Response" outputName="findResponse" inputName="find" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d1685c68-a28f-4710-bfec-2a307b31262f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:find>\r
-         <!--Optional:-->\r
-         <dunningPlanCode>?</dunningPlanCode>\r
-         <!--Optional:-->\r
-         <dunningLevelFrom>?</dunningLevelFrom>\r
-         <!--Optional:-->\r
-         <dunningLevelTo>?</dunningLevelTo>\r
-      </wf:find>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/find"/></con:call></con:operation><con:operation id="b1a5bfc3-ca5c-4b2b-875a-c1caa395d145" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5daa0a51-b2b6-4129-b61d-20dc1c2a9945" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:index/>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/index"/></con:call></con:operation><con:operation id="9bbcbd25-04d6-4123-9533-301b868b2d20" isOneWay="false" action="" name="remove" bindingOperationName="remove" type="Request-Response" outputName="removeResponse" inputName="remove" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="cb78d239-2295-4727-8ae9-8a8271a5e652" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:remove>\r
-         <!--Optional:-->\r
-         <dunningPlanCode>?</dunningPlanCode>\r
-         <!--Optional:-->\r
-         <dunningLevelFrom>?</dunningLevelFrom>\r
-         <!--Optional:-->\r
-         <dunningLevelTo>?</dunningLevelTo>\r
-      </wf:remove>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/remove"/></con:call></con:operation><con:operation id="ef9db7b7-1105-41c9-8e7c-50bc1bdf37da" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="0c8f1341-0b70-4118-88a7-7bfc5c6af829" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:update>\r
-         <!--Optional:-->\r
-         <wfTransitionDto>\r
-            <fromStatus>?</fromStatus>\r
-            <toStatus>?</toStatus>\r
-            <conditionEl>?</conditionEl>\r
-            <workflowDto>\r
-               <code>?</code>\r
-               <!--Optional:-->\r
-               <description>?</description>\r
-               <wfType>?</wfType>\r
-               <status>?</status>\r
-               <!--Optional:-->\r
-               <exportLot>?</exportLot>\r
-               <!--Optional:-->\r
-               <enableHistory>?</enableHistory>\r
-               <!--Optional:-->\r
-               <listWFTransitionDto>\r
-                  <!--Zero or more repetitions:-->\r
-                  <wfTransitionDto/>\r
-               </listWFTransitionDto>\r
-            </workflowDto>\r
-            <!--Optional:-->\r
-            <listWFActionDto>\r
-               <!--Zero or more repetitions:-->\r
-               <wfActionDto>\r
-                  <actionEl>?</actionEl>\r
-                  <priority>?</priority>\r
-                  <conditionEl>?</conditionEl>\r
-                  <wfTransitionDto/>\r
-               </wfActionDto>\r
-            </listWFActionDto>\r
-         </wfTransitionDto>\r
-      </wf:update>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/update"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="25dcc010-70bf-4e72-ac70-d0f07236e00e" wsaVersion="NONE" name="WFActionWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WFActionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WFActionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:endpoints><con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint></con:endpoints><con:operation id="c2f21ce0-04b3-456e-beb9-5982b44e9251" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d8ce386e-a114-48d3-b955-91aebf4e6cf2" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:create>\r
-         <!--Optional:-->\r
-         <wfAction>\r
-            <actionEl>?</actionEl>\r
-            <priority>?</priority>\r
-            <conditionEl>?</conditionEl>\r
-            <wfTransitionDto>\r
-               <fromStatus>?</fromStatus>\r
-               <toStatus>?</toStatus>\r
-               <conditionEl>?</conditionEl>\r
-               <workflowDto>\r
-                  <code>?</code>\r
-                  <!--Optional:-->\r
-                  <description>?</description>\r
-                  <wfType>?</wfType>\r
-                  <status>?</status>\r
-                  <!--Optional:-->\r
-                  <exportLot>?</exportLot>\r
-                  <!--Optional:-->\r
-                  <enableHistory>?</enableHistory>\r
-                  <!--Optional:-->\r
-                  <listWFTransitionDto>\r
-                     <!--Zero or more repetitions:-->\r
-                     <wfTransitionDto/>\r
-                  </listWFTransitionDto>\r
-               </workflowDto>\r
-               <!--Optional:-->\r
-               <listWFActionDto>\r
-                  <!--Zero or more repetitions:-->\r
-                  <wfActionDto/>\r
-               </listWFActionDto>\r
-            </wfTransitionDto>\r
-         </wfAction>\r
-      </wf:create>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFActionWs/create"/></con:call></con:operation><con:operation id="4ff660f0-8c08-424c-a6f9-a81541117f09" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a90471f5-c588-42a8-8bc8-83cc7f17dae6" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:createOrUpdate>\r
-         <!--Optional:-->\r
-         <wfAction>\r
-            <actionEl>?</actionEl>\r
-            <priority>?</priority>\r
-            <conditionEl>?</conditionEl>\r
-            <wfTransitionDto>\r
-               <fromStatus>?</fromStatus>\r
-               <toStatus>?</toStatus>\r
-               <conditionEl>?</conditionEl>\r
-               <workflowDto>\r
-                  <code>?</code>\r
-                  <!--Optional:-->\r
-                  <description>?</description>\r
-                  <wfType>?</wfType>\r
-                  <status>?</status>\r
-                  <!--Optional:-->\r
-                  <exportLot>?</exportLot>\r
-                  <!--Optional:-->\r
-                  <enableHistory>?</enableHistory>\r
-                  <!--Optional:-->\r
-                  <listWFTransitionDto>\r
-                     <!--Zero or more repetitions:-->\r
-                     <wfTransitionDto/>\r
-                  </listWFTransitionDto>\r
-               </workflowDto>\r
-               <!--Optional:-->\r
-               <listWFActionDto>\r
-                  <!--Zero or more repetitions:-->\r
-                  <wfActionDto/>\r
-               </listWFActionDto>\r
-            </wfTransitionDto>\r
-         </wfAction>\r
-      </wf:createOrUpdate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFActionWs/createOrUpdate"/></con:call></con:operation><con:operation id="24ec437d-425a-4276-98fe-e7bd79b0be3f" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="66da4891-c5cb-47b9-a360-cc1f1c52cfeb" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:index/>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFActionWs/index"/></con:call></con:operation><con:operation id="403a4b16-196f-4a31-9d13-8c2144659b99" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="4c9e6630-4bf5-4232-920f-d1ad5cb5749b" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <wf:update>\r
-         <!--Optional:-->\r
-         <wfAction>\r
-            <actionEl>?</actionEl>\r
-            <priority>?</priority>\r
-            <conditionEl>?</conditionEl>\r
-            <wfTransitionDto>\r
-               <fromStatus>?</fromStatus>\r
-               <toStatus>?</toStatus>\r
-               <conditionEl>?</conditionEl>\r
-               <workflowDto>\r
-                  <code>?</code>\r
-                  <!--Optional:-->\r
-                  <description>?</description>\r
-                  <wfType>?</wfType>\r
-                  <status>?</status>\r
-                  <!--Optional:-->\r
-                  <exportLot>?</exportLot>\r
-                  <!--Optional:-->\r
-                  <enableHistory>?</enableHistory>\r
-                  <!--Optional:-->\r
-                  <listWFTransitionDto>\r
-                     <!--Zero or more repetitions:-->\r
-                     <wfTransitionDto/>\r
-                  </listWFTransitionDto>\r
-               </workflowDto>\r
-               <!--Optional:-->\r
-               <listWFActionDto>\r
-                  <!--Zero or more repetitions:-->\r
-                  <wfActionDto/>\r
-               </listWFActionDto>\r
-            </wfTransitionDto>\r
-         </wfAction>\r
-      </wf:update>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFActionWs/update"/></con:call></con:operation></con:interface><con:testSuite id="7ac4d3d1-236f-4d01-a647-b086f07ebe6a" name="Setup Authorization">
+  <con:interface xsi:type="con:WsdlInterface" id="c43cbf05-c104-49b2-9b98-52dc0ce80a23" wsaVersion="NONE" name="WorkflowWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WorkflowWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WorkflowWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
+    </con:endpoints>
+    <con:operation id="613cae81-2eba-4a5c-9844-f478ddec3b7c" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="640fd460-1c12-4911-9c68-58cea779d2cb" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="3dbc04b5-25ba-4109-a079-a469f72c403c" isOneWay="false" action="" name="find" bindingOperationName="find" type="Request-Response" outputName="findResponse" inputName="find" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="5461d0a7-3f34-436f-b117-df27d8104c4a" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="9a526256-9976-4587-8f45-a5de155b15dc" isOneWay="false" action="" name="list" bindingOperationName="list" type="Request-Response" outputName="listResponse" inputName="list" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="b568a274-7b77-4126-b1e3-292d016e4fc2" isOneWay="false" action="" name="remove" bindingOperationName="remove" type="Request-Response" outputName="removeResponse" inputName="remove" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="aa34ac8e-20ea-460e-ac6c-4ef93758ba1b" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+  </con:interface>
+  <con:interface xsi:type="con:WsdlInterface" id="bcb319d0-44d8-42dd-9b97-5d2273c333bb" wsaVersion="NONE" name="WFTransitionWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WFTransitionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WFTransitionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint>
+    </con:endpoints>
+    <con:operation id="7ff4ed6b-b726-4ef0-9bf5-231324f5666f" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="fd9d8488-b136-49ed-8212-427ddb05e919" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="b7d1ee0d-2a98-4cc4-911e-3ce88c4e6972" isOneWay="false" action="" name="find" bindingOperationName="find" type="Request-Response" outputName="findResponse" inputName="find" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="b1a5bfc3-ca5c-4b2b-875a-c1caa395d145" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="9bbcbd25-04d6-4123-9533-301b868b2d20" isOneWay="false" action="" name="remove" bindingOperationName="remove" type="Request-Response" outputName="removeResponse" inputName="remove" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ef9db7b7-1105-41c9-8e7c-50bc1bdf37da" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+  </con:interface>
+  <con:interface xsi:type="con:WsdlInterface" id="25dcc010-70bf-4e72-ac70-d0f07236e00e" wsaVersion="NONE" name="WFActionWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WFActionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WFActionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint>
+    </con:endpoints>
+    <con:operation id="c2f21ce0-04b3-456e-beb9-5982b44e9251" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="4ff660f0-8c08-424c-a6f9-a81541117f09" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="24ec437d-425a-4276-98fe-e7bd79b0be3f" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="403a4b16-196f-4a31-9d13-8c2144659b99" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+  </con:interface>
+  <con:testSuite id="7ac4d3d1-236f-4d01-a647-b086f07ebe6a" name="Setup Authorization">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="30a58b44-a165-4a27-a889-fe1585a451c8" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="setAllHeaders" searchProperties="true">
@@ -23055,7 +22281,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="bdb2efe4-388d-4077-9c6f-f6e7b1d0b039" name="Find: all values">
-              <con:configuration><token><![CDATA[<providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC1" description="${#Project#entityPrefix}_${#TestSuite#index}_PC1">
+              <con:configuration>
+                <token><![CDATA[<providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC1" description="${#Project#entityPrefix}_${#TestSuite#index}_PC1">
                <firstName>Admin1</firstName>
                <lastName>Admin1</lastName>
                <email>${#Project#entityPrefix}_${#TestSuite#index}@manaty.net</email>
@@ -23071,9 +22298,11 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                   <city>DIJON</city>
                   <country>FR</country>
                </addressDto>
-            </providerContact>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </providerContact>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -23112,11 +22341,14 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="3e06a126-246e-487f-9cbc-45c21f297b6b" name="Find: all values">
-              <con:configuration><token>&lt;providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC2">
+              <con:configuration>
+                <token>&lt;providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC2">
                &lt;addressDto/>
-            &lt;/providerContact></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            &lt;/providerContact></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -23247,7 +22479,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC1" description="${#Project#entityPrefix}_${#TestSuite#index}_PC11">
+              <con:configuration>
+                <token><![CDATA[<providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC1" description="${#Project#entityPrefix}_${#TestSuite#index}_PC11">
                <firstName>Admin11</firstName>
                <lastName>Admin11</lastName>
                <email>${#Project#entityPrefix}_${#TestSuite#index}1@manaty.net</email>
@@ -23263,7 +22496,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                   <city>DIJON1</city>
                   <country>FR</country>
                </addressDto>
-            </providerContact>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </providerContact>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -23303,10 +22539,14 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="927d62ba-50e3-4908-92a3-63087deb4d40" name="Find all values">
-              <con:configuration><token>&lt;providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC2" description="${#Project#entityPrefix}_${#TestSuite#index}_PC222">
+              <con:configuration>
+                <token>&lt;providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC2" description="${#Project#entityPrefix}_${#TestSuite#index}_PC222">
                &lt;addressDto/>
             &lt;/providerContact>
-         &lt;/return></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+         &lt;/return></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -23382,7 +22622,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[            <providerContacts>
+              <con:configuration>
+                <token><![CDATA[<providerContacts>
                <providerContact code="DEMO_ADMIN" description="Demo Administrator">
                   <firstName>Admin</firstName>
                   <lastName>Admin</lastName>
@@ -23413,8 +22654,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                <providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC2" description="${#Project#entityPrefix}_${#TestSuite#index}_createOrUpdate">
                   <addressDto/>
                </providerContact>
-            </providerContacts>
-]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </providerContacts>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -23544,7 +22787,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:testStep type="request" name="find removed ProviderContact2" id="6d904c3b-2a30-4553-9af7-0def37d68cec">
+      </con:testStep>
+      <con:testStep type="request" name="find removed ProviderContact2" id="6d904c3b-2a30-4553-9af7-0def37d68cec">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -23587,8 +22831,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:properties/>
-    </con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD EmailTemplate" searchProperties="true" id="01b28f42-8d0a-47bf-85ba-577ebfc9a8ab">
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD EmailTemplate" searchProperties="true" id="01b28f42-8d0a-47bf-85ba-577ebfc9a8ab">
       <con:settings/>
       <con:testStep type="request" name="create EmailTemplate with All Vals" id="f56a3365-3955-4bb7-aaad-0c8a3245f3d6">
         <con:settings/>
@@ -23697,16 +22943,19 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="bdb2efe4-388d-4077-9c6f-f6e7b1d0b039" name="Find: all values">
-              <con:configuration><token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET1">
+              <con:configuration>
+                <token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET1">
                <media>EMAIL</media>
                <tagStartDelimiter>#{</tagStartDelimiter>
                <tagEndDelimiter>}</tagEndDelimiter>
                <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET1</subject>
                <htmlContent>htmlcontent</htmlContent>
                <textContent>text content</textContent>
-            </emailTemplate>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </emailTemplate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -23738,17 +22987,24 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" id="eca3027d-7009-4406-8052-889e2115df90" name="Code Status Success">
-              <con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="3e06a126-246e-487f-9cbc-45c21f297b6b" name="Find: all values">
-              <con:configuration><token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET2">
+              <con:configuration>
+                <token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET2">
                <media>EMAIL</media>
                <tagStartDelimiter>#{</tagStartDelimiter>
                <tagEndDelimiter>}</tagEndDelimiter>
                <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET2</subject>
-            </emailTemplate>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </emailTemplate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -23870,14 +23126,18 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET1">
+              <con:configuration>
+                <token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET1">
                <media>EMAIL</media>
                <tagStartDelimiter>#{</tagStartDelimiter>
                <tagEndDelimiter>}</tagEndDelimiter>
                <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET1_updated</subject>
                <htmlContent>htmlcontent updated</htmlContent>
                <textContent>text content updated</textContent>
-            </emailTemplate>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </emailTemplate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -23917,12 +23177,16 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="927d62ba-50e3-4908-92a3-63087deb4d40" name="Find all values">
-              <con:configuration><token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET2">
+              <con:configuration>
+                <token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET2">
                <media>EMAIL</media>
                <tagStartDelimiter>#{</tagStartDelimiter>
                <tagEndDelimiter>}</tagEndDelimiter>
                <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET2_UPDATED</subject>
-            </emailTemplate>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </emailTemplate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -24002,7 +23266,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<emailTemplates>
+              <con:configuration>
+                <token><![CDATA[<emailTemplates>
                <emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET2">
                   <media>EMAIL</media>
                   <tagStartDelimiter>#{</tagStartDelimiter>
@@ -24017,7 +23282,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                   <htmlContent>htmlcontent createOrUpdate</htmlContent>
                   <textContent>text content createOrUpdate</textContent>
                </emailTemplate>
-            </emailTemplates>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </emailTemplates>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -24147,7 +23415,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:testStep type="request" name="find removed EmailTemplate2" id="d1d4a6b4-e868-43c9-b2b3-9f8078c38002">
+      </con:testStep>
+      <con:testStep type="request" name="find removed EmailTemplate2" id="d1d4a6b4-e868-43c9-b2b3-9f8078c38002">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -24190,8 +23459,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:properties/>
-    </con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD MeveoInstance" searchProperties="true" id="aba62a64-11ea-4de0-8dbe-ec3b5925c1b8">
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD MeveoInstance" searchProperties="true" id="aba62a64-11ea-4de0-8dbe-ec3b5925c1b8">
       <con:settings/>
       <con:testStep type="request" name="create MeveoInstance with All Vals" id="5fd1a6a0-6be2-41a6-ab96-88b15c0790f7">
         <con:settings/>
@@ -24325,7 +23596,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="bdb2efe4-388d-4077-9c6f-f6e7b1d0b039" name="Find: all values">
-              <con:configuration><token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1">
+              <con:configuration>
+                <token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1">
                <productName>productname</productName>
                <productVersion>productversion</productVersion>
                <owner>owner</owner>
@@ -24352,9 +23624,11 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                <authPassword>meveo.admin</authPassword>
                <user>MEVEO.ADMIN</user>
                <customer>WS_BASE_CUST</customer>
-            </meveoInstance>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </meveoInstance>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -24393,11 +23667,14 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="3e06a126-246e-487f-9cbc-45c21f297b6b" name="Find: all values">
-              <con:configuration><token>&lt;meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI2" description="${#Project#entityPrefix}_${#TestSuite#index}_MI2">
+              <con:configuration>
+                <token>&lt;meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI2" description="${#Project#entityPrefix}_${#TestSuite#index}_MI2">
                &lt;url>http://localhost:8080/meveo&lt;/url>
-            &lt;/meveoInstance></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            &lt;/meveoInstance></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -24540,7 +23817,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1 upated">
+              <con:configuration>
+                <token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1 upated">
                <productName>productname</productName>
                <productVersion>productversion</productVersion>
                <owner>owner</owner>
@@ -24567,7 +23845,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                <authPassword>meveo.admin</authPassword>
                <user>MEVEO.ADMIN</user>
                <customer>WS_BASE_CUST</customer>
-            </meveoInstance>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </meveoInstance>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -24607,9 +23888,13 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="927d62ba-50e3-4908-92a3-63087deb4d40" name="Find all values">
-              <con:configuration><token>&lt;meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI2" description="${#Project#entityPrefix}_${#TestSuite#index}_MI2 update">
+              <con:configuration>
+                <token>&lt;meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI2" description="${#Project#entityPrefix}_${#TestSuite#index}_MI2 update">
                &lt;url>http://localhost:8080/meveo&lt;/url>
-            &lt;/meveoInstance></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            &lt;/meveoInstance></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -24711,7 +23996,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<meveoInstances>
+              <con:configuration>
+                <token><![CDATA[<meveoInstances>
                <meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI2" description="${#Project#entityPrefix}_${#TestSuite#index}_MI2 update">
                   <url>http://localhost:8080/meveo</url>
                </meveoInstance>
@@ -24743,7 +24029,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                   <user>MEVEO.ADMIN</user>
                   <customer>WS_BASE_CUST</customer>
                </meveoInstance>
-            </meveoInstances>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </meveoInstances>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -24873,7 +24162,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:testStep type="request" name="find removed MeveoInstance2" id="ff6024e3-609c-48bf-bd70-4a61a3f4813a">
+      </con:testStep>
+      <con:testStep type="request" name="find removed MeveoInstance2" id="ff6024e3-609c-48bf-bd70-4a61a3f4813a">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -24916,8 +24206,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:properties/>
-    </con:testCase><con:properties>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties>
       <con:property>
         <con:name>index</con:name>
         <con:value>20</con:value>
@@ -40397,7 +39689,11 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ddfa860a-13a0-40df-b74a-156adfd4ab5b" name="Contains 1">
-              <con:configuration><token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1" description="${#Project#entityPrefix}_${#TestSuite#index}_SUB-Description"></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1" description="${#Project#entityPrefix}_${#TestSuite#index}_SUB-Description"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="81808fc2-7642-48f9-bb56-8cef90dd23c6" name="XPath Match">
               <con:configuration>
@@ -41537,10 +40833,15 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" id="4f7ba4f3-7793-4258-9dee-0ef93d47d4f7" name="Contains">
-              <con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="f13fc821-8fc1-4cdf-a59c-4bba21c85808" name="Assert Customer Part">
-              <con:configuration><token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
+              <con:configuration>
+                <token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
                <externalRef1>1</externalRef1>
                <externalRef2>1</externalRef2>
                <name>
@@ -41565,10 +40866,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <phone>1234</phone>
                   <mobile>092152154716</mobile>
                   <fax>1234</fax>
-               </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               </contactInformation>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="4fe4bad5-9bff-4034-b661-77af9d9d2c2a" name="Assert CA Part1">
-              <con:configuration><token><![CDATA[<customerAccounts>
+              <con:configuration>
+                <token><![CDATA[<customerAccounts>
                   <customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA" description="${#Project#entityPrefix}_${#TestSuite#index}_CA">
                      <externalRef1>1</externalRef1>
                      <externalRef2>1</externalRef2>
@@ -41591,10 +40896,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                      <language>ENG</language>
                      <status>ACTIVE</status>
                      <paymentMethod>CHECK</paymentMethod>
-                     <creditCategory>NEWCUSTOMER</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                     <creditCategory>NEWCUSTOMER</creditCategory>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="50aaaca6-159e-4acb-ab75-78ecf0fdbc01" name="Assert CA Part2">
-              <con:configuration><token><![CDATA[<contactInformation>
+              <con:configuration>
+                <token><![CDATA[<contactInformation>
                         <email>${#Project#entityPrefix}@manaty.net</email>
                         <phone>1234</phone>
                         <mobile>092152154716</mobile>
@@ -41603,10 +40912,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                      <dunningLevel>R0</dunningLevel>
                      <mandateIdentification>1234</mandateIdentification>
                      <mandateDate>2016-02-28T00:00:00${#Project#timezone}:00</mandateDate>
-                     <balance>0</balance>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                     <balance>0</balance>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="cbacb62c-0374-49db-870a-0d2ce07319b2" name="Assert BA Part">
-              <con:configuration><token><![CDATA[                     <billingAccounts>
+              <con:configuration>
+                <token><![CDATA[<billingAccounts>
                         <billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_BA" description="${#Project#entityPrefix}_${#TestSuite#index}_BA">
                            <externalRef1>1</externalRef1>
                            <externalRef2>1</externalRef2>
@@ -41633,10 +40946,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                            <subscriptionDate>2016-02-28T00:00:00${#Project#timezone}:00</subscriptionDate>
                            <paymentTerms>CASH</paymentTerms>
                            <electronicBilling>true</electronicBilling>
-                           <status>ACTIVE</status>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                           <status>ACTIVE</status>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="6bb74c9c-2530-4e61-9941-1d0d8f61a060" name="Assert UA Part">
-              <con:configuration><token><![CDATA[<bankCoordinates>
+              <con:configuration>
+                <token><![CDATA[<bankCoordinates>
                               <bankCode>BPI</bankCode>
                               <branchCode>LB</branchCode>
                               <accountNumber>1234</accountNumber>
@@ -41668,9 +40985,11 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                     <country>TN</country>
                                     <state/>
                                  </address>
-                                 <billingAccount>${#Project#entityPrefix}_${#TestSuite#index}_BA</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                                 <billingAccount>${#Project#entityPrefix}_${#TestSuite#index}_BA</billingAccount>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            
             <con:assertion type="Simple Contains" id="d80b3130-088d-494e-8644-27bf65d54132" name="Contains End">
               <con:configuration>
                 <token><![CDATA[<subscriptions/>
@@ -41826,7 +41145,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="d99c08a5-3da6-48d2-a31b-5707b09e731b" name="find Customer Part1">
-              <con:configuration><token><![CDATA[<customers>
+              <con:configuration>
+                <token><![CDATA[<customers>
                <customer code="CUST_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                   <name>
                      <title>M</title>
@@ -41847,7 +41167,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <contactInformation>
                      <email>${#Project#entityPrefix}_${#TestSuite#index}@manaty.net</email>
                      <phone>+102354749</phone>
-                  </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                  </contactInformation>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="8555fb0e-3ca6-4e57-ba5d-7743ab6d00a1" name="find CA Part2">
               <con:configuration>
@@ -42456,7 +41779,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ad2db34a-39b8-45dd-8579-0414bac12852" name="Assert CustomerPart">
-              <con:configuration><token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy">
+              <con:configuration>
+                <token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy">
                <externalRef1>Ref1</externalRef1>
                <externalRef2>Ref2</externalRef2>
                <name>
@@ -42480,7 +41804,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <email>${#Project#entityPrefix}_${#TestSuite#index}@yahoo.fr</email>
                   <phone>+0122674100</phone>
                   <mobile>+0139154716</mobile>
-               </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               </contactInformation>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="0ae8d12d-12f7-4fa4-b75f-25a505faa00c" name="Assert CA Part1">
               <con:configuration>
@@ -42929,22 +42256,6 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
           </con:request>
         </con:config>
       </con:testStep>
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
       <con:properties>
         <con:property>
           <con:name>index</con:name>
@@ -47227,9 +46538,6 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
   <con:testSuite id="cd6180bb-20fb-4221-8122-3f14e0e3b214" name="CRUD Payment">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
-    
-    
-    
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CR DDRequestLotOp" searchProperties="true" id="b2fe510e-624e-482e-ad4a-59f9379d5975">
       <con:settings/>
       <con:testStep type="request" name="create DDRequestLotOp 1" id="f29a8936-825b-4eb8-8314-3da18381099f">
@@ -47314,13 +46622,6 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
           </con:request>
         </con:config>
       </con:testStep>
-      
-      
-      
-      
-      
-      
-      
       <con:testStep type="request" name="list all DDRequestLotOps" id="bda11271-e3d3-42af-9083-b6f94f3ea8e3">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -47329,7 +46630,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
           <con:request name="list all DDRequestLotOps" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="9253f456-1202-46bb-95cd-01258e250cb6">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            <con:setting id="com.eviware.soapui.impl.support.AbstractHttpRequest@follow-redirects">true</con:setting></con:settings>
+              <con:setting id="com.eviware.soapui.impl.support.AbstractHttpRequest@follow-redirects">true</con:setting>
+            </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoUrl}/PaymentWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
@@ -47350,7 +46652,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<ddrequestLotOps>
+              <con:configuration>
+                <token><![CDATA[<ddrequestLotOps>
                <ddrequestLotOp>
                   <fromDueDate>2016-07-01T00:00:00${#Project#timezone2}:00</fromDueDate>
                   <toDueDate>2016-07-10T00:00:00${#Project#timezone2}:00</toDueDate>
@@ -47365,9 +46668,21 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
                   <status>WAIT</status>
                   <fileFormat>PAYNUM</fileFormat>
                </ddrequestLotOp>
-            </ddrequestLotOps>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </ddrequestLotOps>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="517b3b12-a87f-46bf-9db3-d37465ca7a2b" name="XPath Match"><con:configuration><path>exists(//ddrequestLotOps/ddrequestLotOp)</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="XPath Match" id="517b3b12-a87f-46bf-9db3-d37465ca7a2b" name="XPath Match">
+              <con:configuration>
+                <path>exists(//ddrequestLotOps/ddrequestLotOp)</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -47378,10 +46693,9 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
           </con:request>
         </con:config>
       </con:testStep>
-      
-      
       <con:properties/>
-    </con:testCase><con:properties>
+    </con:testCase>
+    <con:properties>
       <con:property>
         <con:name>index</con:name>
         <con:value>74</con:value>
@@ -54099,7 +53413,11 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" id="c021f0b5-85d0-4ae7-813b-9b9933fbc833" name="SOAP Response">
-              <con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -54133,10 +53451,18 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" id="644003f0-859e-4a3e-a05e-19a69124a792" name="SOAP Response">
-              <con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>FAIL</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="71b3bf1f-1285-478f-b508-1db8b4760765" name="ERROR Code">
-              <con:configuration><token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -54561,7 +53887,20 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
       </con:testStep>
       <con:properties/>
     </con:testCase>
-    <con:testCase id="d5403af1-f058-4869-9082-58adaa013013" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD Workflow" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Workflow with All Vals" id="07cce3e7-a1c6-44f1-a147-ff4529cedc5a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create Workflow with All Vals" id="294a8303-372b-4122-b564-9de63598ef55"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+    <con:testCase id="d5403af1-f058-4869-9082-58adaa013013" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD Workflow" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Create Workflow with All Vals" id="07cce3e7-a1c6-44f1-a147-ff4529cedc5a">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>create</con:operation>
+          <con:request name="Create Workflow with All Vals" id="294a8303-372b-4122-b564-9de63598ef55">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:create>\r
@@ -54597,7 +53936,38 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
          </workflow>\r
       </wf:create>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a558da42-55c2-4cc1-8f49-60d4899b3aae"/><con:assertion type="Simple Contains" id="15ff5d1e-2495-417c-b4a1-daee457b0ac9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Workflow with min req Vals" id="bc5cda72-ee7b-4087-9a09-8ac14308800c"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create Workflow with min req Vals" id="daedc3d4-ce4c-4d7b-b603-1e2445b12f88"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="a558da42-55c2-4cc1-8f49-60d4899b3aae"/>
+            <con:assertion type="Simple Contains" id="15ff5d1e-2495-417c-b4a1-daee457b0ac9" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create Workflow with min req Vals" id="bc5cda72-ee7b-4087-9a09-8ac14308800c">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>create</con:operation>
+          <con:request name="Create Workflow with min req Vals" id="daedc3d4-ce4c-4d7b-b603-1e2445b12f88">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <wf:create>
@@ -54608,7 +53978,38 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
          </workflow>
       </wf:create>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="3035a853-2f04-4f4e-aa3c-2155df365807"/><con:assertion type="Simple Contains" id="b8011d1a-fc52-451b-b89e-81e922fc04fd" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find create Workflow with All Vals" id="806cac11-4d73-4194-a83c-bbf86bce11d1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>find</con:operation><con:request name="find create Workflow with All Vals" id="49699f52-32cd-4a03-8026-005557879056"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="3035a853-2f04-4f4e-aa3c-2155df365807"/>
+            <con:assertion type="Simple Contains" id="b8011d1a-fc52-451b-b89e-81e922fc04fd" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find create Workflow with All Vals" id="806cac11-4d73-4194-a83c-bbf86bce11d1">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>find</con:operation>
+          <con:request name="find create Workflow with All Vals" id="49699f52-32cd-4a03-8026-005557879056">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:find>\r
@@ -54616,7 +54017,18 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
          <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF1</workflowCode>\r
       </wf:find>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8058b25e-80be-42e1-8fe3-70bbbc70a7cb"/><con:assertion type="Simple Contains" id="a75f933e-cbbb-40cb-a46d-559acdeac4be" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="51f1274d-1ec2-45d3-9cbf-5fc411ff4430" name="Validation Content"><con:configuration><token><![CDATA[<workflowDto>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="8058b25e-80be-42e1-8fe3-70bbbc70a7cb"/>
+            <con:assertion type="Simple Contains" id="a75f933e-cbbb-40cb-a46d-559acdeac4be" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="51f1274d-1ec2-45d3-9cbf-5fc411ff4430" name="Validation Content">
+              <con:configuration>
+                <token><![CDATA[<workflowDto>
                <code>${#Project#entityPrefix}_${#TestSuite#index}_WF1</code>
                <description>desc of ${#Project#entityPrefix}_${#TestSuite#index}_WF1</description>
                <wfType>org.meveo.admin.wf.types.DunningWF</wfType>
@@ -54638,7 +54050,34 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                      </listWFActionDto>
                   </wfTransitionDto>
                </listWFTransitionDto>
-            </workflowDto>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find create Workflow with min req Vals" id="45a667ff-f19b-4e7e-9aff-d292dbfe7dd2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>find</con:operation><con:request name="find create Workflow with min req Vals" id="49699f52-32cd-4a03-8026-005557879056"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+            </workflowDto>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find create Workflow with min req Vals" id="45a667ff-f19b-4e7e-9aff-d292dbfe7dd2">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>find</con:operation>
+          <con:request name="find create Workflow with min req Vals" id="49699f52-32cd-4a03-8026-005557879056">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:find>\r
@@ -54646,14 +54085,52 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
          <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF2</workflowCode>\r
       </wf:find>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8058b25e-80be-42e1-8fe3-70bbbc70a7cb"/><con:assertion type="Simple Contains" id="a75f933e-cbbb-40cb-a46d-559acdeac4be" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="b90a9b4d-20ef-4e7b-95bc-a938d9c9d4d9" name="Validation Content"><con:configuration><token><![CDATA[ <workflowDto>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="8058b25e-80be-42e1-8fe3-70bbbc70a7cb"/>
+            <con:assertion type="Simple Contains" id="a75f933e-cbbb-40cb-a46d-559acdeac4be" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="b90a9b4d-20ef-4e7b-95bc-a938d9c9d4d9" name="Validation Content">
+              <con:configuration>
+                <token><![CDATA[<workflowDto>
                <code>${#Project#entityPrefix}_${#TestSuite#index}_WF2</code>
                <wfType>org.meveo.admin.wf.types.DunningWF</wfType>
                <status>ACTIVE</status>
                <exportLot>false</exportLot>
                <enableHistory>false</enableHistory>
                <listWFTransitionDto/>
-            </workflowDto>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update Workflow with All Vals" id="ae12578a-7a67-40b6-8b08-4f33fbbb2e32"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="Update Workflow with All Vals" id="8f92c46f-bf12-4255-8a7a-0d37de29dad5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+            </workflowDto>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update Workflow with All Vals" id="ae12578a-7a67-40b6-8b08-4f33fbbb2e32">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>update</con:operation>
+          <con:request name="Update Workflow with All Vals" id="8f92c46f-bf12-4255-8a7a-0d37de29dad5">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:update>\r
@@ -54694,7 +54171,38 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
          </workflow>\r
       </wf:update>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="781d0c56-cc79-431f-8bc3-23251753e528"/><con:assertion type="Simple Contains" id="50cee383-5014-4881-bfa0-e0fc9a1f60d7" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update Workflow with min req Vals" id="217599ef-1c44-4e90-891e-1837abf9bde2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="Update Workflow with min req Vals" id="8f92c46f-bf12-4255-8a7a-0d37de29dad5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="781d0c56-cc79-431f-8bc3-23251753e528"/>
+            <con:assertion type="Simple Contains" id="50cee383-5014-4881-bfa0-e0fc9a1f60d7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update Workflow with min req Vals" id="217599ef-1c44-4e90-891e-1837abf9bde2">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>update</con:operation>
+          <con:request name="Update Workflow with min req Vals" id="8f92c46f-bf12-4255-8a7a-0d37de29dad5">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:update>\r
@@ -54706,7 +54214,38 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
          </workflow>\r
       </wf:update>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="781d0c56-cc79-431f-8bc3-23251753e528"/><con:assertion type="Simple Contains" id="50cee383-5014-4881-bfa0-e0fc9a1f60d7" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find updated Workflow with All Vals" id="4f489416-9acd-428e-bd32-1a81545075d0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>find</con:operation><con:request name="find updated Workflow with All Vals" id="49699f52-32cd-4a03-8026-005557879056"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="781d0c56-cc79-431f-8bc3-23251753e528"/>
+            <con:assertion type="Simple Contains" id="50cee383-5014-4881-bfa0-e0fc9a1f60d7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find updated Workflow with All Vals" id="4f489416-9acd-428e-bd32-1a81545075d0">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>find</con:operation>
+          <con:request name="find updated Workflow with All Vals" id="49699f52-32cd-4a03-8026-005557879056">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:find>\r
@@ -54714,7 +54253,18 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
          <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF1</workflowCode>\r
       </wf:find>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8058b25e-80be-42e1-8fe3-70bbbc70a7cb"/><con:assertion type="Simple Contains" id="a75f933e-cbbb-40cb-a46d-559acdeac4be" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="51f1274d-1ec2-45d3-9cbf-5fc411ff4430" name="Validation Content"><con:configuration><token><![CDATA[<workflowDto>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="8058b25e-80be-42e1-8fe3-70bbbc70a7cb"/>
+            <con:assertion type="Simple Contains" id="a75f933e-cbbb-40cb-a46d-559acdeac4be" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="51f1274d-1ec2-45d3-9cbf-5fc411ff4430" name="Validation Content">
+              <con:configuration>
+                <token><![CDATA[<workflowDto>
                <code>${#Project#entityPrefix}_${#TestSuite#index}_WF1</code>
                <description>updated desc of ${#Project#entityPrefix}_${#TestSuite#index}_WF1</description>
                <wfType>org.meveo.admin.wf.types.DunningWF</wfType>
@@ -54754,7 +54304,34 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                      </listWFActionDto>
                   </wfTransitionDto>
                </listWFTransitionDto>
-            </workflowDto>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find updated Workflow with min req Vals" id="f8390e37-3084-4f4f-af74-7d7f6e3f9316"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>find</con:operation><con:request name="find updated Workflow with min req Vals" id="49699f52-32cd-4a03-8026-005557879056"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+            </workflowDto>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find updated Workflow with min req Vals" id="f8390e37-3084-4f4f-af74-7d7f6e3f9316">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>find</con:operation>
+          <con:request name="find updated Workflow with min req Vals" id="49699f52-32cd-4a03-8026-005557879056">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:find>\r
@@ -54762,20 +54339,88 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
          <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF2</workflowCode>\r
       </wf:find>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8058b25e-80be-42e1-8fe3-70bbbc70a7cb"/><con:assertion type="Simple Contains" id="a75f933e-cbbb-40cb-a46d-559acdeac4be" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="b90a9b4d-20ef-4e7b-95bc-a938d9c9d4d9" name="Validation Content"><con:configuration><token><![CDATA[<workflowDto>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="8058b25e-80be-42e1-8fe3-70bbbc70a7cb"/>
+            <con:assertion type="Simple Contains" id="a75f933e-cbbb-40cb-a46d-559acdeac4be" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="b90a9b4d-20ef-4e7b-95bc-a938d9c9d4d9" name="Validation Content">
+              <con:configuration>
+                <token><![CDATA[<workflowDto>
                <code>${#Project#entityPrefix}_${#TestSuite#index}_WF2</code>
                <wfType>org.meveo.admin.wf.types.DunningWF</wfType>
                <status>SUSPENDED</status>
                <exportLot>false</exportLot>
                <enableHistory>false</enableHistory>
                <listWFTransitionDto/>
-            </workflowDto>
-]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="list All" id="7265e6a9-eb9f-406d-bb07-a41ddc47b1ac"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>list</con:operation><con:request name="list All" id="cb150d95-b5d0-49fc-bab8-67b766d1dea2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+            </workflowDto>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="list All" id="7265e6a9-eb9f-406d-bb07-a41ddc47b1ac">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>list</con:operation>
+          <con:request name="list All" id="cb150d95-b5d0-49fc-bab8-67b766d1dea2">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:list/>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="9e2fc370-f797-40b4-a9e3-2a83bf8b0fb6"/><con:assertion type="Simple Contains" id="0fcda775-a0a6-4cbd-9cc5-ced88f173764" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="remove Workflow1" id="ce22a407-8782-430c-8209-a698fd9f9884"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>remove</con:operation><con:request name="remove Workflow1" id="47f374be-b7c3-4284-a913-cb92dcfb6a31"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="9e2fc370-f797-40b4-a9e3-2a83bf8b0fb6"/>
+            <con:assertion type="Simple Contains" id="0fcda775-a0a6-4cbd-9cc5-ced88f173764" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="remove Workflow1" id="ce22a407-8782-430c-8209-a698fd9f9884">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>remove</con:operation>
+          <con:request name="remove Workflow1" id="47f374be-b7c3-4284-a913-cb92dcfb6a31">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:remove>\r
@@ -54783,7 +54428,38 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
          <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF1</workflowCode>\r
       </wf:remove>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b56ef087-7cd4-4283-aa2f-90c5895bbd29"/><con:assertion type="Simple Contains" id="3341c2d3-4a20-42ac-9b6f-96e5d70ff36b" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find Removed Workflow1" id="e85f3b3a-93e6-4711-8a48-d980dd2f04b9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>find</con:operation><con:request name="find Removed Workflow1" id="49699f52-32cd-4a03-8026-005557879056"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="b56ef087-7cd4-4283-aa2f-90c5895bbd29"/>
+            <con:assertion type="Simple Contains" id="3341c2d3-4a20-42ac-9b6f-96e5d70ff36b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find Removed Workflow1" id="e85f3b3a-93e6-4711-8a48-d980dd2f04b9">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>find</con:operation>
+          <con:request name="find Removed Workflow1" id="49699f52-32cd-4a03-8026-005557879056">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:find>\r
@@ -54791,7 +54467,45 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
          <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF1</workflowCode>\r
       </wf:find>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8058b25e-80be-42e1-8fe3-70bbbc70a7cb"/><con:assertion type="Simple Contains" id="a75f933e-cbbb-40cb-a46d-559acdeac4be" name="Contains"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="51f1274d-1ec2-45d3-9cbf-5fc411ff4430" name="ERROR Code"><con:configuration><token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="remove Workflow2" id="d57e6f0c-d626-4594-a0f3-fa01eb59190a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>remove</con:operation><con:request name="remove Workflow2" id="47f374be-b7c3-4284-a913-cb92dcfb6a31"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="8058b25e-80be-42e1-8fe3-70bbbc70a7cb"/>
+            <con:assertion type="Simple Contains" id="a75f933e-cbbb-40cb-a46d-559acdeac4be" name="Contains">
+              <con:configuration>
+                <token>&lt;status>FAIL&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="51f1274d-1ec2-45d3-9cbf-5fc411ff4430" name="ERROR Code">
+              <con:configuration>
+                <token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="remove Workflow2" id="d57e6f0c-d626-4594-a0f3-fa01eb59190a">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>remove</con:operation>
+          <con:request name="remove Workflow2" id="47f374be-b7c3-4284-a913-cb92dcfb6a31">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:remove>\r
@@ -54799,7 +54513,38 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
          <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF2</workflowCode>\r
       </wf:remove>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b56ef087-7cd4-4283-aa2f-90c5895bbd29"/><con:assertion type="Simple Contains" id="3341c2d3-4a20-42ac-9b6f-96e5d70ff36b" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find Removed Workflow2" id="c797312b-99bb-4d6d-ae6c-43cb45048518"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>find</con:operation><con:request name="find Removed Workflow2" id="49699f52-32cd-4a03-8026-005557879056"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="b56ef087-7cd4-4283-aa2f-90c5895bbd29"/>
+            <con:assertion type="Simple Contains" id="3341c2d3-4a20-42ac-9b6f-96e5d70ff36b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find Removed Workflow2" id="c797312b-99bb-4d6d-ae6c-43cb45048518">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>find</con:operation>
+          <con:request name="find Removed Workflow2" id="49699f52-32cd-4a03-8026-005557879056">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:find>\r
@@ -54807,7 +54552,40 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
          <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF2</workflowCode>\r
       </wf:find>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8058b25e-80be-42e1-8fe3-70bbbc70a7cb"/><con:assertion type="Simple Contains" id="a75f933e-cbbb-40cb-a46d-559acdeac4be" name="Contains"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="51f1274d-1ec2-45d3-9cbf-5fc411ff4430" name="ERROR Code"><con:configuration><token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>931</con:value></con:property></con:properties></con:testCase>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="8058b25e-80be-42e1-8fe3-70bbbc70a7cb"/>
+            <con:assertion type="Simple Contains" id="a75f933e-cbbb-40cb-a46d-559acdeac4be" name="Contains">
+              <con:configuration>
+                <token>&lt;status>FAIL&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="51f1274d-1ec2-45d3-9cbf-5fc411ff4430" name="ERROR Code">
+              <con:configuration>
+                <token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties>
+        <con:property>
+          <con:name>index</con:name>
+          <con:value>931</con:value>
+        </con:property>
+      </con:properties>
+    </con:testCase>
     <con:testCase id="eb6555f3-c2db-4f9f-a4f8-787bbaf8a7b3" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD ScriptInstance" searchProperties="true">
       <con:settings/>
       <con:testStep type="request" name="create ScriptInstance with All Vals" id="08fe4dcf-ac0b-409e-8fb8-f236156273f9">
@@ -57408,7 +57186,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
         </con:config>
       </con:testStep>
       <con:properties/>
-    </con:testCase><con:properties>
+    </con:testCase>
+    <con:properties>
       <con:property>
         <con:name>index</con:name>
         <con:value>94</con:value>
@@ -62170,7 +61949,8 @@ and paste that invoice number in the next step.
     </con:testCase>
     <con:properties/>
     <con:setupScript/>
-  </con:testSuite><con:properties>
+  </con:testSuite>
+  <con:properties>
     <con:property>
       <con:name>authorization</con:name>
       <con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value>
