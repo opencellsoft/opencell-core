@@ -39,6 +39,18 @@ public abstract class ImageStreamer<T extends BaseEntity> {
 		}
 	}
 
+	public StreamedContent getImage(T obj) throws IOException {
+
+		// So, browser is requesting the image. Return a real
+		// StreamedContent with the image bytes.
+		if (getImageArr(obj) != null) {
+			return new DefaultStreamedContent(new ByteArrayInputStream(getImageArr(obj)));
+		} else {
+			return new DefaultStreamedContent();
+		}
+
+	}
+
 	protected byte[] downloadUrl(URL toDownload) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

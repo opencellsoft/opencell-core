@@ -1,5 +1,10 @@
 package org.meveo.admin.action.catalog;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +16,8 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 @Named
 @ConversationScoped
@@ -41,7 +48,7 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 	public void preRenderView() {
 		productTemplates = productTemplateService.list();
 		meveoInstances = meveoInstanceService.list();
-		activeProductCount = productTemplateService.productTemplateCount();//productTemplateService.productTemplateActiveCount(false);
+		activeProductCount = productTemplateService.productTemplateCount();// productTemplateService.productTemplateActiveCount(false);
 		inactiveProductCount = productTemplateService.productTemplateActiveCount(true);
 		almostExpiredCount = productTemplateService.productTemplateAlmostExpiredCount();
 		super.preRenderView();
@@ -55,11 +62,44 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 	public String newProductTemplate() {
 		return "mmProductTemplateDetail";
 	}
-	
-	public void addProductTemplateToExport(ProductTemplate pt){
-		if(!ptToExport.contains(pt)){
+
+	public void addProductTemplateToExport(ProductTemplate pt) {
+		if (!ptToExport.contains(pt)) {
 			ptToExport.add(pt);
 		}
+	}
+
+	public StreamedContent getImage(ProductTemplate obj) throws IOException {
+
+		return new DefaultStreamedContent(new ByteArrayInputStream(getImageArr(obj)));
+
+	}
+
+	public byte[] getImageArr(ProductTemplate obj) {
+		if (obj.getImageAsByteArr() == null) {
+			return downloadUrl(getClass().getClassLoader().getResource("img/no_picture.png"));
+		}
+		return obj.getImageAsByteArr();
+	}
+
+	protected byte[] downloadUrl(URL toDownload) {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+		try {
+			byte[] chunk = new byte[4096];
+			int bytesRead;
+			InputStream stream = toDownload.openStream();
+
+			while ((bytesRead = stream.read(chunk)) > 0) {
+				outputStream.write(chunk, 0, bytesRead);
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		return outputStream.toByteArray();
 	}
 
 	public List<MeveoInstance> getMeveoInstances() {

@@ -12,6 +12,7 @@
 		<f:metadata>
 			<f:event type="preRenderView"
 				listener="#{productTemplateBean.preRenderView}" />
+			<f:viewParam name="objectId" value="#{productTemplateBean.objectId}" />
 		</f:metadata>
 	</ui:define>
 
@@ -20,7 +21,6 @@
 	</ui:define>
 
 	<ui:define name="body">
-
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -28,22 +28,43 @@
 					<p:menuitem outcome="mmProductTemplates"
 						value="#{messages['productTemplates.search']}" />
 				</p:breadCrumb>
-
-				<p:panelGrid columns="4">
+				<p:panelGrid columns="4" styleClass="ui-panelgrid-blank">
 					<p:graphicImage id="productImage" cache="false"
-						value="#{prod.image}" height="100" width="100" rowspan="5" />
-					<p:panelGrid columns="1">
-						<h:outputText value="#{entity.name}" />
-						<h:outputText value="#{entity.businessProductModel.description}" />
-						<h:outputText value="#{entity.code}" />
-						<p:outputLabel value="#{messages['commons.lastEditor']} : }"/>
-						<h:outputText value="#{entity.auditable.updater.name.firstName} #{entity.auditable.updater.name.lastName}" />
+						value="#{productTemplateImageStreamer.image}" height="100"
+						width="100" rowspan="5" />
+					<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+						<h:outputText value="#{productTemplateBean.entity.name}" />
+						<h:outputText
+							value="#{productTemplateBean.entity.businessProductModel.description}" />
+						<h:outputText value="#{productTemplateBean.entity.code}" />
+						<p:outputLabel value="#{messages['commons.lastEditor']} : }" />
+						<h:outputText
+							value="#{productTemplateBean.entity.auditable.updater.name.firstName} #{productTemplateBean.entity.auditable.updater.name.lastName}" />
 					</p:panelGrid>
+					<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
+						<h:outputText value="#{messages['commons.validFrom']} : " />
+						<h:outputText value="#{productTemplateBean.entity.validFrom}">
+							<f:convertDateTime
+								pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+						</h:outputText>
+						<h:outputText value="#{messages['commons.validTo']} : " />
+						<h:outputText value="#{productTemplateBean.entity.validTo}">
+							<f:convertDateTime
+								pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+						</h:outputText>
+						<p:outputLabel value="#{messages['commons.status']} :"
+							style="padding-top: 5px; margin-right: 10px;"></p:outputLabel>
+						<p:inputSwitch value="#{productTemplateBean.entity.active}"
+							onLabel="#{messages['accountStatusEnum.active']}"
+							offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
+					</p:panelGrid>
+					<p:panel header="#{messages['commons.description']}">
+						<h:outputText
+							value="#{productTemplateBean.entity.businessProductModel.description}"></h:outputText>
+					</p:panel>
 				</p:panelGrid>
+
 			</h:form>
 		</p:panel>
-
-
-
 	</ui:define>
 </ui:composition>
