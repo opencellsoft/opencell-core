@@ -17,11 +17,13 @@ import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.DigitalResourceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
+import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DualListModel;
@@ -48,9 +50,13 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	@Inject
 	private WalletTemplateService walletTemplateService;
 
+	@Inject
+	private BusinessAccountModelService businessAccountModelService;
+
 	private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
 	private DualListModel<DigitalResource> attachmentsDM;
 	private DualListModel<WalletTemplate> walletTemplatesDM;
+	private DualListModel<BusinessAccountModel> bamDM;
 	private UploadedFile uploadedFile;
 
 	public ProductTemplateBean() {
@@ -78,6 +84,11 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 		if (entity.getWalletTemplates() != null) {
 			entity.getWalletTemplates().clear();
 			entity.getWalletTemplates().addAll(walletTemplateService.refreshOrRetrieve(walletTemplatesDM.getTarget()));
+		}
+
+		if (entity.getBusinessAccountModels() != null) {
+			entity.getBusinessAccountModels().clear();
+			entity.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(bamDM.getTarget()));
 		}
 
 		String outcome = super.saveOrUpdate(killConversation);
@@ -187,6 +198,31 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
 	public void setWalletTemplatesDM(DualListModel<WalletTemplate> walletTemplatesDM) {
 		this.walletTemplatesDM = walletTemplatesDM;
+	}
+
+	public DualListModel<BusinessAccountModel> getBamDM() {
+		if (bamDM == null) {
+			List<BusinessAccountModel> perksSource = null;
+			if (entity != null && entity.getProvider() != null) {
+				perksSource = businessAccountModelService.list(entity.getProvider(), true);
+			} else {
+				perksSource = businessAccountModelService.listActive();
+			}
+
+			List<BusinessAccountModel> perksTarget = new ArrayList<BusinessAccountModel>();
+			if (getEntity().getBusinessAccountModels() != null) {
+				perksTarget.addAll(getEntity().getBusinessAccountModels());
+			}
+			perksSource.removeAll(perksTarget);
+
+			bamDM = new DualListModel<BusinessAccountModel>(perksSource, perksTarget);
+		}
+
+		return bamDM;
+	}
+
+	public void setBamDM(DualListModel<BusinessAccountModel> bamDM) {
+		this.bamDM = bamDM;
 	}
 
 }

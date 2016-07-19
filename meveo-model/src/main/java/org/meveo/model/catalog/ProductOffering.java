@@ -30,6 +30,7 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.crm.BusinessAccountModel;
 
 /**
  * @author Edward P. Legaspi
@@ -78,6 +79,11 @@ public abstract class ProductOffering extends BusinessCFEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "LIFE_CYCLE_STATUS")
 	private LifeCycleStatusEnum lifeCycleStatus;
+
+	@ManyToMany
+	@JoinTable(name = "CAT_PRODUCT_OFFER_BAM", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "BAM_ID"))
+	@OrderColumn(name = "INDX")
+	private List<BusinessAccountModel> businessAccountModels;
 
 	public String getName() {
 		return name;
@@ -158,8 +164,6 @@ public abstract class ProductOffering extends BusinessCFEntity {
 	public void setImageContentType(String imageContentType) {
 		this.imageContentType = imageContentType;
 	}
-	
-
 
 	public String getNameOrCode() {
 		if (!StringUtils.isBlank(name)) {
@@ -167,6 +171,14 @@ public abstract class ProductOffering extends BusinessCFEntity {
 		} else {
 			return code;
 		}
+	}
+
+	public List<BusinessAccountModel> getBusinessAccountModels() {
+		return businessAccountModels;
+	}
+
+	public void setBusinessAccountModels(List<BusinessAccountModel> businessAccountModels) {
+		this.businessAccountModels = businessAccountModels;
 	}
 
 }

@@ -14,14 +14,14 @@
 
 <ui:composition>
 
- 	<c:set var="mainBackingBean" value="#{backingBean}" />
+	<c:set var="mainBackingBean" value="#{backingBean}" />
 
 	<hftl:formField label="#{messages['businessEntity.code']}" field="code"
 		required="true" validateUnique="true" />
 	<hftl:formField label="#{messages['businessEntity.description']}"
 		field="description" id="description" />
 	<hftl:formField label="#{messages['commons.name']}" field="name"
-		id="name" />
+		required="true" id="name" />
 	<hftl:formField label="#{messages['commons.validFrom']}"
 		field="validFrom" id="validFrom" />
 	<hftl:formField label="#{messages['commons.validTo']}" field="validTo"
@@ -34,6 +34,9 @@
 	<hftl:formField label="#{messages['productChargeTemplate.title']}"
 		field="productChargeTemplate" valueLabelField="code"
 		listElements="#{productChargeTemplateBean.listAll()}" />
+	<hftl:formField label="#{messages['billingCycle.calendar']}"
+		field="invoicingCalendar" valueLabelField="code" popup="false"
+		listBean="#{calendarBean}" />
 	<hftl:decorateFormField fieldId="productImageUpload"
 		rendered="#{productTemplateBean.entity.transient}"
 		label="#{messages['commons.image']}">
@@ -68,6 +71,10 @@
 		label="#{messages['productTemplates.walletTemplates']}"
 		field="walletTemplates" listType="pickUpList" valueLabelField="code"
 		dualListModel="#{productTemplateBean.walletTemplatesDM}" />
+	<hftl:formField id="businessAccountModels"
+		label="#{messages['businessAccountModels.title']}"
+		field="businessAccountModels" listType="pickUpList"
+		valueLabelField="code" dualListModel="#{productTemplateBean.bamDM}" />
 
 	<hftl:formField label="#{messages['enableEntity.disabled']}"
 		doNotShowOnNew="true" allowEdit="false" field="disabled"

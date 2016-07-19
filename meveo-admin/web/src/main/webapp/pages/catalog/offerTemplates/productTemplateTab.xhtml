@@ -56,7 +56,7 @@
 				<f:facet name="header">
 					<h:outputText value="#{messages['commons.actions']}" />
 				</f:facet>
-				<p:commandButton update=":tabView:serviceForm"
+				<p:commandButton update=":tabView:productForm"
 					action="#{mainBackingBean.editOfferProductTemplate(entity)}"
 					icon="ui-icon-document" />
 				<p:commandButton
@@ -81,6 +81,29 @@
 				disabled="#{!mainBackingBean.offerProductTemplate.transient}" />
 			<hftl:formField label="#{messages['offerServiceTemplate.mandatory']}"
 				id="mandatory" field="mandatory" />
+			<ui:param name="buttons" value="true" />
+			<ui:define name="buttons">
+				<p:commandButton
+					rendered="#{mainBackingBean.offerProductTemplate.id==null and mainBackingBean.canUserUpdateEntity()}"
+					action="#{mainBackingBean.saveOfferProductTemplate()}"
+					value="#{messages['action.addSave']}"
+					update=":tabView:productPanel :tabView:productForm">
+					<f:param name="objectId" value="#{offerTemplateBean.entity.id}"></f:param>
+				</p:commandButton>
+				<p:commandButton
+					rendered="#{offerTemplateBean.offerProductTemplate.id!=null}"
+					action="#{offerTemplateBean.saveOfferProductTemplate()}"
+					value="#{messages['action.update']}"
+					update=":tabView:productPanel :tabView:productForm" />
+				<p:commandButton value="#{messages['action.cancel']}"
+					action="#{offerTemplateBean.newOfferProductTemplate}"
+					update=":tabView:productForm" />
+				<p:button id="buttonBack" value="#{messages['action.back']}"
+					outcome="#{offerTemplateBean.back()}" includeViewParams="true">
+					<f:param name="cid"
+						value="#{javax.enterprise.context.conversation.id}" />
+				</p:button>
+			</ui:define>
 		</hftl:formPanel>
 	</p:panel>
 
