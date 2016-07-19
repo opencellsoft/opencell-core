@@ -50,6 +50,7 @@ import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.EntityCustomActionService;
 import org.meveo.service.script.CustomScriptService;
@@ -118,7 +119,7 @@ public class CustomFieldDataEntryBean implements Serializable {
    
     @Inject
     private ElasticClient elasticClient;
-
+    
     /** Logger. */
     private Logger log = LoggerFactory.getLogger(this.getClass());    
 
@@ -639,7 +640,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     public void saveCustomFieldsToEntity(ICustomFieldEntity entity, boolean isNewEntity) throws BusinessException {
 
         String uuid = entity.getUuid();
-        CustomFieldValueHolder entityFieldsValues = getFieldsValuesByUUID(uuid);
+        CustomFieldValueHolder entityFieldsValues = getFieldsValuesByUUID(uuid); 
         GroupedCustomField groupedCustomFields = groupedFieldTemplates.get(uuid);
         if(groupedCustomFields != null) {
         	for (CustomFieldTemplate cft : groupedCustomFields.getFields()) {
@@ -673,9 +674,9 @@ public class CustomFieldDataEntryBean implements Serializable {
         		}
         	}
         	if(BusinessEntity.class.isAssignableFrom(entity.getClass())){
-        	ElasticDocument esDoc = new ElasticDocument((BusinessEntity)entity);
-        	esDoc.setCustomFieldsDto(entityToDtoConverter.getCustomFieldsDTO(entity));    
-        	elasticClient.createOrUpdate(esDoc, entity.getClass().getName(), currentUser.getProvider().getCode());
+        		ElasticDocument esDoc = new ElasticDocument((BusinessEntity)entity);
+        		esDoc.setCustomFieldsDto(entityToDtoConverter.getCustomFieldsDTO(entity)); 
+        		elasticClient.createOrUpdate(esDoc, entity.getClass().getName(), currentProvider.getCode());
         	}
         }
     }

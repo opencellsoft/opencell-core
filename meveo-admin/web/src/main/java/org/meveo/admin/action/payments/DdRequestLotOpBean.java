@@ -27,16 +27,16 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
+import org.meveo.model.wf.WFAction;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.DDRequestLotOpService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
- * Standard backing bean for {@link ActionPlanItem} (extends {@link BaseBean}
+ * Standard backing bean for {@link WFAction} (extends {@link BaseBean}
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.

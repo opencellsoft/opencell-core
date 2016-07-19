@@ -335,9 +335,6 @@
 
 		<p:submenu id="payment" label="#{messages['menu.payments']}"
 			rendered="#{identity.hasPermission('billing','billingManagement')}">
-
-			<p:menuitem id="dunningPlan" outcome="dunningPlans"
-				value="#{messages['menu.dunningPlan']}" />
 			<p:menuitem id="ddrequestLotOps" outcome="ddrequestLotOps"
 				value="#{messages['menu.ddrequestLotOp']}" />
 			<p:menuitem id="ddrequestLots" outcome="ddrequestLots"
@@ -408,6 +405,8 @@
 			<p:menuitem id="scriptInstances" outcome="scriptInstances" value="#{messages['menu.scriptInstances']}" />
 
 			<p:menuitem id="filters" outcome="filters"	value="#{messages['menu.filters']}" />
+			
+			<p:menuitem id="dunningPlan" outcome="workflows" value="#{messages['menu.workflow']}" />
 			
 			<p:submenu id="notifications"
 				label="#{messages['menu.notifications']}" outcome="notifications">

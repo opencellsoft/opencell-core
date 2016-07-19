@@ -1020,7 +1020,7 @@
 
 		<navigation-case>
 			<from-outcome>addNewTransition</from-outcome>
-			<to-view-id>/pages/payments/dunning/dunningPlanTransitionDetail.xhtml
+			<to-view-id>/pages/payments/dunning/wfTransitionDetail.xhtml
 			</to-view-id>
 			<redirect include-view-params="true">
 				<view-param>
@@ -1048,37 +1048,37 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>dunningPlans</from-outcome>
-			<to-view-id>/pages/payments/dunning/dunningPlans.xhtml</to-view-id>
+			<from-outcome>workflows</from-outcome>
+			<to-view-id>/pages/admin/workflow/workflows.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>dunningPlanDetail</from-outcome>
-			<to-view-id>/pages/payments/dunning/dunningPlanDetail.xhtml
+			<from-outcome>workflowDetail</from-outcome>
+			<to-view-id>/pages/admin/workflow/workflowDetail.xhtml
 			</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>dunningPlanTransitions</from-outcome>
-			<to-view-id>/pages/payments/dunning/dunningPlanTransitions.xhtml
+			<from-outcome>wfTransitions</from-outcome>
+			<to-view-id>/pages/admin/workflow/wfTransitions.xhtml
 			</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>dunningPlanTransitionDetail</from-outcome>
-			<to-view-id>/pages/payments/dunning/dunningPlanTransitionDetail.xhtml
+			<from-outcome>wfTransitionDetail</from-outcome>
+			<to-view-id>/pages/admin/workflow/wfTransitionDetail.xhtml
 			</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>actionPlanItems</from-outcome>
-			<to-view-id>/pages/payments/dunning/actionPlanItems.xhtml
+			<to-view-id>/pages/admin/workflow/actionPlanItems.xhtml
 			</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>actionPlanItemDetail</from-outcome>
-			<to-view-id>/pages/payments/dunning/actionPlanItemDetail.xhtml
+			<to-view-id>/pages/admin/workflow/actionPlanItemDetail.xhtml
 			</to-view-id>
 			<redirect />
 		</navigation-case>

@@ -1,0 +1,126 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui" 
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+	<ui:define name="navigation">
+		<f:metadata>
+			<f:viewParam name="wfTransitionId" value="#{wfTransitionBean.objectId}" />
+		</f:metadata>
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+	
+		<hftl:formPanel label="#{messages['dunningPlanTransition.panel']}" backingBean="#{wfTransitionBean}" showBackButton="false">
+			<hftl:formField label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus" required="true" isMessage="true"/>
+			<hftl:formField label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" required="true" isMessage="true"/>
+			<hftl:formField label="#{messages['dunningPlanTransition.conditionEl']}" field="conditionEl" required="true" isMessage="true"/>
+		</hftl:formPanel>
+		
+						<p:panel id="actionPlanItemsdiv"
+							rendered="#{workflowBean.edit}">
+							<hftl:formPanel
+								formId="formActionPlanItems" edit="#{workflowBean.edit}"
+								label="#{messages['dunningPlan.actions']}"
+								backingBean="#{actionPlanItemBean}"
+								entity="#{wfTransitionBean.wfAction}"
+								showFormButtons="false" ajaxSubmit="true">
+
+								<hftl:formField label="#{messages['actionPlanItem.dunningLevel']}"
+									field="dunningLevel" style="width: 100px"
+									panelStyle="width: 100px" required="true" isMessage="true"
+									edit="#{workflowBean.edit}" />
+								<hftl:formField label="#{messages['actionPlanItem.actionType']}"
+									field="actionType" style="width: 100px"
+									panelStyle="width: 100px" required="true" event="onchange"
+									render="amountOrTemplate" edit="#{workflowBean.edit}" />
+								<hftl:formField label="#{messages['actionPlanItem.order']}"
+									field="itemOrder" required="true"
+									edit="#{workflowBean.edit}" />
+								<hftl:formField
+									label="#{messages['actionPlanItem.thresholdAmount']}"
+									field="thresholdAmount" required="true"
+									edit="#{workflowBean.edit}" />
+								<hftl:formField label="#{messages['dunningPlan.actionEl']}"
+									field="actionEl" textArea="true" rows="1" maxlength="2000" isMessage="true"
+									edit="#{workflowBean.edit}" />
+								<hftl:formField label="#{messages['dunningPlan.priority']}"
+									field="priority" required="true"/>
+								<hftl:formField label="#{messages['dunningPlan.conditionEl']}"
+									field="conditionEl" textArea="true" rows="1" maxlength="2000" isMessage="true"
+									edit="#{workflowBean.edit}" />
+									
+								<ui:param name="buttons" value="true" />
+			                    <ui:define name="buttons">
+									<p:commandButton rendered="#{wfAction.id==null}"
+										action="#{wfTransitionBean.saveWfAction}"
+										value="#{messages['actionPlanItem.saveNewActionPlanItem']}"
+										update=":actionPlanItems_panel,:formActionPlanItems,:actionPlanItemsdiv" />
+									<p:commandButton rendered="#{actionPlanItem.id!=null}"
+										action="#{wfTransitionBean.saveWfAction}"
+										value="#{messages['actionPlanItem.modifyActionPlanItem']}"
+										update=":actionPlanItems_panel,:formActionPlanItems,:actionPlanItemsdiv" />
+
+									<p:commandButton value="#{messages['action.cancel']}"
+										action="#{wfTransitionBean.newWfActionInstance}"
+										update=":actionPlanItemsdiv" />
+
+									<p:button id="back" value="#{messages['action.back']}"
+										outcome="#{workflowBean.back()}" includeViewParams="true">
+										<f:param name="cid"
+											value="#{javax.enterprise.context.conversation.id}" />
+									</p:button>
+								</ui:define>
+
+							</hftl:formPanel>
+
+						</p:panel>
+						
+						<p:panel id="actionPlanItems_panel">
+							<h:form id="actionItems_form">
+								<hftl:dataList backingBean="#{actionPlanItemBean}"
+									dataModel="#{wfTransitionBean.entity.wfActions}"
+									resultsId="dunningPlanActions_results">
+									<hftl:column label="#{messages['dunningPlan.actionEl']}"
+										field="actionEl" />
+									<hftl:column label="#{messages['dunningPlan.priority']}"
+										field="priority" />
+									<hftl:column label="#{messages['dunningPlan.conditionEl']}"
+										field="conditionEl" />
+
+									<p:column styleClass="actions-column"
+										rendered="#{workflowBean.edit}">
+										<f:facet name="header">
+											<h:outputText value="#{messages['commons.actions']}" />
+										</f:facet>
+
+										<p:tooltip for="editActionPlanItemsLink"
+											value="#{messages['commons.edit']}" showEffect="slide"
+											hideEffect="slide" />
+										<p:commandButton id="editActionPlanItemsLink"
+											update=":formActionPlanItems"
+											action="#{wfTransitionBean.editWfAction(entity)}"
+											icon="ui-icon-document" />
+										<p:tooltip for="editActionPlanItemDeleteLink"
+											value="#{messages['commons.delete']}" showEffect="slide"
+											hideEffect="slide" />
+										<p:commandButton id="editActionPlanItemDeleteLink"
+											action="#{wfTransitionBean.deleteWfAction(entity)}"
+											icon="ui-icon-trash"
+											update=":actionPlanItems_panel,:formActionPlanItems" />
+									</p:column>
+
+								</hftl:dataList>
+							</h:form>
+						</p:panel>
+						
+	</ui:define>
+
+</ui:composition>

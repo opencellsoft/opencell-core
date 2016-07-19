@@ -2325,6 +2325,205 @@ $BODY$
 		</addColumn>
 	</changeSet>
 
+    <changeSet author="anasseh (generated)" id="#1841_13072016-1">
+        <createSequence sequenceName="wf_action_seq"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-2">
+        <createSequence sequenceName="wf_transition_seq"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-3">
+        <createSequence sequenceName="wf_workflow_seq"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-4">
+        <createTable tableName="wf_action">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT4"/>
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="action_el" type="VARCHAR(2000)"/>
+            <column name="condition_el" type="VARCHAR(2000)"/>
+            <column name="priority" type="INT4"/>
+            <column name="provider_id" type="BIGINT"/>
+            <column name="creator_id" type="BIGINT"/>
+            <column name="updater_id" type="BIGINT"/>
+            <column name="wf_transition_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-5">
+        <createTable tableName="wf_transition">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT4"/>
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="condition_el" type="VARCHAR(2000)"/>
+            <column name="from_status" type="VARCHAR(255)"/>
+            <column name="to_status" type="VARCHAR(255)"/>
+            <column name="provider_id" type="BIGINT"/>
+            <column name="creator_id" type="BIGINT"/>
+            <column name="updater_id" type="BIGINT"/>
+            <column name="workflow_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-6">
+        <createTable tableName="wf_workflow">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT4"/>
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="code" type="VARCHAR(60)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(100)"/>
+            <column name="enable_hostory" type="BOOL"/>
+            <column name="export_lot" type="BOOL"/>
+            <column name="status" type="VARCHAR(255)"/>
+            <column name="wf_type" type="VARCHAR(255)"/>
+            <column name="provider_id" type="BIGINT"/>
+            <column name="creator_id" type="BIGINT"/>
+            <column name="updater_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+   <changeSet author="anasseh (generated)" id="#1841_13072016-165">
+        <dropForeignKeyConstraint  baseTableName="ar_action_dunning" constraintName="fk_r8q3phft4xgm8lbfu6i7lo3kx" />
+    </changeSet>   
+    
+    <changeSet author="anasseh (generated)" id="#1841_13072016-18">
+        <addPrimaryKey columnNames="id" constraintName="wf_action_pkey" tableName="wf_action"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-19">
+        <addPrimaryKey columnNames="id" constraintName="wf_transition_pkey" tableName="wf_transition"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-20">
+        <addPrimaryKey columnNames="id" constraintName="wf_workflow_pkey" tableName="wf_workflow"/>
+    </changeSet>
+ 
+    <changeSet author="anasseh (generated)" id="#1841_13072016-23">
+        <addUniqueConstraint columnNames="from_status, to_status, workflow_id, provider_id" constraintName="uk_7xdivt2yngk5mmjfdy2x73cad" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_transition"/>
+    </changeSet>
+
+    <changeSet author="anasseh (generated)" id="#1841_13072016-25">
+        <addUniqueConstraint columnNames="priority, wf_transition_id, provider_id" constraintName="uk_cr97e5dxkl6ps0coltjw6i28y" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_action"/>
+    </changeSet>
+
+    <changeSet author="anasseh (generated)" id="#1841_13072016-27">
+        <addUniqueConstraint columnNames="provider_id, code" constraintName="uk_j8v4x5olh5um1g7y5vnsayrka" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_workflow"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-31">
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="wf_workflow" constraintName="fk_30dgqb4bqjvftqov1dmjetr56" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-32">
+        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="wf_workflow" constraintName="fk_59d2mctermakats2qqmqnt0p" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-35">
+        <addForeignKeyConstraint baseColumnNames="workflow_id" baseTableName="wf_transition" constraintName="fk_6wxr8klsgmr7ko8lpg0ftvtpy" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_workflow"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-36">
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="wf_transition" constraintName="fk_79r4px1y8ue4cphslp2j35y65" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-40">
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="wf_transition" constraintName="fk_83p4dgib7kijghh3w89ero3ep" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-45">
+        <addForeignKeyConstraint baseColumnNames="wf_transition_id" baseTableName="wf_action" constraintName="fk_bh5loyx0bx3tm8yu3ul2ycco0" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_transition"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-48">
+        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="wf_action" constraintName="fk_do5fekc1wyiqn59lbedxeppyr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-55">
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="wf_action" constraintName="fk_il9g2ryuq1wxbct7bler61t02" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-56">
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="wf_workflow" constraintName="fk_jjfi7wwmfajc14c0ji4pp9tmc" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-57">
+        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="wf_transition" constraintName="fk_lk8axoo3cfhip52gnv02mn9eu" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-61">
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="wf_action" constraintName="fk_q7dvcjiuap29yhvq884lt0die" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-63">
+        <dropForeignKeyConstraint baseTableName="ar_dunning_plan" constraintName="fk_24c5wf8u9a35yf8uutjf5qwwf"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-64">
+        <dropForeignKeyConstraint baseTableName="ar_dunning_plan" constraintName="fk_3nhld7nla1pv1t8eejdl4dn6p"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-69">
+        <dropForeignKeyConstraint baseTableName="ar_action_plan_item" constraintName="fk_78p10vstesm3xr605s46qn3gq"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-70">
+        <dropForeignKeyConstraint baseTableName="ar_action_plan_item" constraintName="fk_8q1jrqq9e8xru7m27nbwrxp3k"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-72">
+        <dropForeignKeyConstraint baseTableName="ar_dunning_plan" constraintName="fk_ar_credit_category_ar_dunning_plan"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-80">
+        <dropForeignKeyConstraint baseTableName="ar_dunning_plan_transition" constraintName="fk_ecur7dwit9crb6cbhlubxs3jn"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-81">
+        <dropForeignKeyConstraint baseTableName="ar_dunning_plan_transition" constraintName="fk_eu7ekseo196cq1qgyg7xm7vs5"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-82">
+        <dropForeignKeyConstraint baseTableName="ar_dunning_plan_transition" constraintName="fk_gc1m3d2m0dsqcaek8rxrk0u87"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-84">
+        <dropForeignKeyConstraint baseTableName="ar_dunning_plan" constraintName="fk_j0vlitgsqwnnkry67xwuead15"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-86">
+        <dropForeignKeyConstraint baseTableName="ar_dunning_plan_transition" constraintName="fk_jpipfg980fcv7pq4s9tnb35ik"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-87">
+        <dropForeignKeyConstraint baseTableName="ar_action_plan_item" constraintName="fk_k9j7i31wmyhrw11lyxkdnpymr"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-95">
+        <dropForeignKeyConstraint baseTableName="ar_action_plan_item" constraintName="fk_n5ax6w0qt9pum3oc3n2b3hgxw"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-101">
+        <dropUniqueConstraint constraintName="uk_ewwxy8ieo179rif5ud8hduqkt" tableName="ar_dunning_plan_transition"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-103">
+        <dropUniqueConstraint constraintName="uk_qn6vfgeg5g2y4pb9y6qb8ogjo" tableName="ar_dunning_plan"/>
+    </changeSet>   
+    <changeSet author="anasseh (generated)" id="#1841_13072016-104">
+        <dropTable tableName="ar_action_plan_item"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-105">
+        <dropTable tableName="ar_dunning_plan"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-106">
+        <dropTable tableName="ar_dunning_plan_transition"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-144">
+        <dropSequence sequenceName="ar_dunning_plan_seq"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-145">
+        <dropSequence sequenceName="ar_dunning_plan_transition_seq"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-164">       
+        <addForeignKeyConstraint baseColumnNames="action_plan_item_id" baseTableName="ar_action_dunning" constraintName="fk_r8q3phft4xgm8lbfu6i7lo3kx" referencedColumnNames="id" referencedTableName="wf_action"/>
+    </changeSet>	  
+    	
 	<changeSet id="#1839_20160713_channel" author="EdwardLegaspi">
 		<createTable tableName="cat_channel">
 			<column name="id" type="BIGINT">

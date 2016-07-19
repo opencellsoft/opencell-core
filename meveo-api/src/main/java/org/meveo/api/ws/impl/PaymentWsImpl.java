@@ -1,5 +1,7 @@
 package org.meveo.api.ws.impl;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
@@ -94,11 +96,11 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         }
 
 	@Override
-	public DDRequestLotOpsResponseDto listDDRequestLotops(DDRequestOpStatusEnum status) {
+	public DDRequestLotOpsResponseDto listDDRequestLotops(Date fromDueDate,Date toDueDate,DDRequestOpStatusEnum status) {
 		DDRequestLotOpsResponseDto result = new DDRequestLotOpsResponseDto();
 
         try {
-            result.setDdrequestLotOps(ddrequestLotOpApi.listDDRequestLotOps(status,getCurrentUser().getProvider()));
+            result.setDdrequestLotOps(ddrequestLotOpApi.listDDRequestLotOps(fromDueDate,toDueDate,status,getCurrentUser().getProvider()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

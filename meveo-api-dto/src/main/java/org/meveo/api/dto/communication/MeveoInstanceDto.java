@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.communication.MeveoInstance;
@@ -19,7 +18,6 @@ import org.meveo.model.communication.MeveoInstanceStatusEnum;
  * @date Jun 3, 2016 6:50:08 AM
  *
  */
-@XmlType(name = "MeveoInstance")
 @XmlRootElement(name = "MeveoInstance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MeveoInstanceDto extends BaseDto {
