@@ -224,6 +224,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		entity = getPersistenceService().update(entity, getCurrentUser());
 		offerServiceTemplateService.remove(offerServiceTemplate.getId());
 		messages.info(new BundleKey("messages", "delete.successful"));
+		
+		newOfferServiceTemplate();
 	}
 	
 	public void deleteOfferProductTemplate(OfferProductTemplate offerProductTemplate) throws BusinessException {
@@ -231,6 +233,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		entity = getPersistenceService().update(entity, getCurrentUser());
 		offerProductTemplateService.remove(offerProductTemplate.getId());
 		messages.info(new BundleKey("messages", "delete.successful"));
+		
+		newOfferProductTemplate();
 	}
 
 	public void editOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) {
@@ -238,8 +242,41 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		setIncompatibleServices(null);
 	}
 	
+	public void newOfferProductTemplate() {
+		this.offerProductTemplate = new OfferProductTemplate();
+	}
+	
 	public void editOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
 		this.offerProductTemplate = offerProductTemplate;
+	}
+	
+	public void saveOfferProductTemplate() {
+		log.info("saveOfferProductTemplate getObjectId={}", getObjectId());
+
+		try {
+			if (offerProductTemplate != null && offerProductTemplate.getProductTemplate() == null) {
+				messages.error(new BundleKey("messages", "save.unsuccessful"));
+			}
+			
+			if (offerProductTemplate.getId() != null) {
+				offerProductTemplate = offerProductTemplateService.update(offerProductTemplate, getCurrentUser());
+				entity = getPersistenceService().refreshOrRetrieve(entity);
+				messages.info(new BundleKey("messages", "update.successful"));
+
+			} else {
+				offerProductTemplate.setOfferTemplate(entity);
+				offerProductTemplateService.create(offerProductTemplate, getCurrentUser());
+				entity.addOfferProductTemplate(offerProductTemplate);
+				entity = getPersistenceService().update(entity, getCurrentUser());
+				messages.info(new BundleKey("messages", "save.successful"));
+			}
+
+		} catch (Exception e) {
+			log.error("exception when saving offer product template !", e.getMessage());
+			messages.error(new BundleKey("messages", "save.unsuccessful"));
+		}
+
+		newOfferProductTemplate();
 	}
 
 	public void newOfferServiceTemplate() {

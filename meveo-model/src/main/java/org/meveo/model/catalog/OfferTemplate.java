@@ -124,5 +124,12 @@ public class OfferTemplate extends ProductOffering {
 	public void setOfferProductTemplates(List<OfferProductTemplate> offerProductTemplates) {
 		this.offerProductTemplates = offerProductTemplates;
 	}
+	
+	public void addOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
+		if (getOfferProductTemplates() == null) {
+			offerProductTemplates = new ArrayList<OfferProductTemplate>();
+		}
+		offerProductTemplates.add(offerProductTemplate);
+	}
 
 }
