@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.ejb.TimerConfig;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,7 +23,11 @@ import org.meveo.admin.parse.csv.CDR;
 import org.meveo.admin.util.NumberUtil;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.communication.CommunicationRequestDto;
 import org.meveo.cache.RatingCacheContainerProvider;
+import org.meveo.event.CounterPeriodEvent;
+import org.meveo.event.communication.InboundCommunicationEvent;
+import org.meveo.event.qualifier.Created;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CounterInstance;
@@ -94,6 +100,13 @@ public class UsageRatingService {
     
     @Inject
 	private MeveoInstanceService meveoInstanceService;
+    
+    @Inject
+  	private CounterPeriodService counterPeriodService;
+    
+    @Inject 
+	private Event<CounterPeriodEvent> counterPeriodEvent;
+    
 	
 
 	// @PreDestroy
@@ -283,6 +296,7 @@ public class UsageRatingService {
 					// set the cache element to dirty so it is saved to DB when
 					// shutdown the server
 					// periodCache.setDbDirty(true);
+					
 					counterInstanceService.updatePeriodValue(periodCache.getCounterPeriodId(), periodCache.getValue(),currentUser);
 				}
 
@@ -291,10 +305,23 @@ public class UsageRatingService {
 				log.debug("in original EDR units, we deduced {}", deducedQuantityInEDRUnit);
 			}
 		}
+		if(periodCache!=null && (periodCache.getValue().compareTo(BigDecimal.ZERO) == 0 || periodCache.getValue()==null)){
+			CounterPeriod counterPeriod=counterPeriodService.findById(periodCache.getCounterPeriodId());
+			triggerCounterPeriodEvent(counterPeriod);
+		}
 		return deducedQuantityInEDRUnit;
 	}
 
-
+ 
+	private void triggerCounterPeriodEvent(CounterPeriod counterPeriod) {
+		try {
+			CounterPeriodEvent event = new CounterPeriodEvent();
+			event.setCounterPeriod(counterPeriod);
+			counterPeriodEvent.fire(event); 
+		} catch (Exception e) {
+			log.error("Failed to executing trigger counterPeriodEvent", e);
+		}
+	} 
 
 	/**
 	 * this method evaluate the EDR against the charge and its counter it

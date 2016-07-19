@@ -383,16 +383,6 @@
             update ADM_NOTIFICATION set EVENT_EXPRESSION_FILTER=replace(EVENT_EXPRESSION_FILTER,'.doubleValue','')  where EVENT_EXPRESSION_FILTER is not null and EVENT_EXPRESSION_FILTER like '%mv:%';
             update ADM_NOTIFICATION set EVENT_EXPRESSION_FILTER=replace(EVENT_EXPRESSION_FILTER,'.dateValue','')  where EVENT_EXPRESSION_FILTER is not null and EVENT_EXPRESSION_FILTER like '%mv:%';
             update ADM_NOTIFICATION set EVENT_EXPRESSION_FILTER=replace(EVENT_EXPRESSION_FILTER,'.entityReferenceValue','')  where EVENT_EXPRESSION_FILTER is not null and EVENT_EXPRESSION_FILTER like '%mv:%';
-            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.stringValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.longValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.doubleValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.dateValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_ACTION_PLAN_ITEM set CONDITION_EL=replace(CONDITION_EL,'.entityReferenceValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.stringValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.longValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.doubleValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.dateValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
-            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL=replace(CONDITION_EL,'.entityReferenceValue','')  where CONDITION_EL is not null and CONDITION_EL like '%mv:%';
             update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL=replace(CRITERIA_EL,'.stringValue','')  where CRITERIA_EL is not null and CRITERIA_EL like '%mv:%';
             update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL=replace(CRITERIA_EL,'.longValue','')  where CRITERIA_EL is not null and CRITERIA_EL like '%mv:%';
             update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL=replace(CRITERIA_EL,'.doubleValue','')  where CRITERIA_EL is not null and CRITERIA_EL like '%mv:%';
@@ -419,6 +409,22 @@
     
     <changeSet id="#1759_20160606" author="anasseh">               
        <sql>update crm_custom_field_tmpl set max_value = 256 where field_type='STRING'</sql>      
-    </changeSet>     
+    </changeSet>    
+    
+    <changeSet id="#1821_20160711" author="EdwardLegaspi">
+		<insert tableName="adm_permission">
+			<column name="id" value="17" />
+			<column name="name" value="Marketing Catalog"></column>
+			<column name="ressource" value="marketing"></column>
+			<column name="permission" value="marketingCatalogManager"></column>
+		</insert>
+		
+		<sql>ALTER SEQUENCE adm_permission_seq RESTART WITH 18</sql>
+		
+		 <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="1" />
+            <column name="permission_id" valueNumeric="17" />
+        </insert>   
+	</changeSet> 
         
 </databaseChangeLog>

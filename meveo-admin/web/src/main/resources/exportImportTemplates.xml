@@ -446,10 +446,10 @@
             </entry>
         </parameters>
     </template>
-    <template name="DunningPlan" entityToExport="org.meveo.model.payments.DunningPlan">
+    <template name="Workflow" entityToExport="org.meveo.model.wf.Workflow">
         <classesToExportAsFull>
-            <java-class>org.meveo.model.payments.DunningPlanTransition</java-class>
-            <java-class>org.meveo.model.payments.ActionPlanItem</java-class>
+            <java-class>org.meveo.model.wf.WFTransition</java-class>
+            <java-class>org.meveo.model.wf.WFAction</java-class>
         </classesToExportAsFull>
     </template>
     <template name="JobInstance" entityToExport="org.meveo.model.jobs.JobInstance">

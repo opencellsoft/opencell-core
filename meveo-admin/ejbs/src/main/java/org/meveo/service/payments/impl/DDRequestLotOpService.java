@@ -19,14 +19,17 @@
 package org.meveo.service.payments.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
 
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.DDRequestFileFormatEnum;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
-import org.meveo.model.payments.DDRequestFileFormatEnum;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
@@ -48,6 +51,23 @@ public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
 			log.error("failed to get DDRequestOps",e);
 		}
 		return ddrequestOps;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DDRequestLotOp> findByDateStatus(Date fromDueDate,Date toDueDate,DDRequestOpStatusEnum status,Provider currentProvider){
+		QueryBuilder query=new QueryBuilder(DDRequestLotOp.class,"o",null,currentProvider);
+		
+		if(!StringUtils.isBlank(status)){
+			query.addCriterionEnum("o.status", status);
+		}
+		if(!StringUtils.isBlank(fromDueDate)){
+			query.addCriterionDateRangeFromTruncatedToDay("o.fromDueDate",fromDueDate);
+		}
+		if(!StringUtils.isBlank(toDueDate)){
+			query.addCriterionDateRangeToTruncatedToDay("o.toDueDate", toDueDate);
+		}
+		
+		return query.getQuery(getEntityManager()).getResultList();
 	}
 
 }

@@ -1,7 +1,5 @@
 package org.meveo.service.notification;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,9 +17,9 @@ import org.meveo.admin.ftp.event.FileDownload;
 import org.meveo.admin.ftp.event.FileRename;
 import org.meveo.admin.ftp.event.FileUpload;
 import org.meveo.cache.NotificationCacheContainerProvider;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.CFEndPeriodEvent;
+import org.meveo.event.CounterPeriodEvent;
 import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.event.logging.LoggedEvent;
 import org.meveo.event.monitoring.BusinessExceptionEvent;
@@ -352,5 +350,9 @@ public class DefaultObserver {
         log.debug("observe a file rename event ");
         checkEvent(NotificationEventTypeEnum.FILE_RENAME, importedFile);
     }
-
+    
+    public void counterUpdated(@Observes CounterPeriodEvent event) {
+        log.debug("DefaultObserver.counterUpdated " +event);
+        checkEvent(NotificationEventTypeEnum.COUNTER_UPDATED, event.getCounterPeriod());
+    }
 }

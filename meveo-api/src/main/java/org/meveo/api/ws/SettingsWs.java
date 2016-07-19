@@ -22,7 +22,10 @@ import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
 import org.meveo.api.dto.UserDto;
+import org.meveo.api.dto.account.ProviderContactDto;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
+import org.meveo.api.dto.communication.EmailTemplateDto;
+import org.meveo.api.dto.communication.MeveoInstanceDto;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
@@ -52,6 +55,12 @@ import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.PermissionResponseDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
+import org.meveo.api.dto.response.account.ProviderContactResponseDto;
+import org.meveo.api.dto.response.account.ProviderContactsResponseDto;
+import org.meveo.api.dto.response.communication.EmailTemplateResponseDto;
+import org.meveo.api.dto.response.communication.EmailTemplatesResponseDto;
+import org.meveo.api.dto.response.communication.MeveoInstanceResponseDto;
+import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -430,4 +439,145 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     GetInvoiceTypesResponse listInvoiceTypes();
+    
+    /**
+     * create a providerContact by dto
+     * @param providerContactDto
+     * @return
+     */
+    @WebMethod
+    ActionStatus createProviderContact(@WebParam(name="providerContact")ProviderContactDto providerContactDto);
+
+    /**
+     * update a providerContact by dto
+     * @param providerContactDto
+     * @return
+     */
+    @WebMethod
+    ActionStatus updateProviderContact(@WebParam(name="providerContact")ProviderContactDto providerContactDto);
+
+    /**
+     * find a providerContact by code
+     * @param providerContactCode
+     * @return
+     */
+    @WebMethod
+    ProviderContactResponseDto findProviderContact(@WebParam(name="providerContactCode") String providerContactCode);
+
+    /**
+     * remove a providerContact by code
+     * @param providerContactCode
+     * @return
+     */
+    @WebMethod
+    ActionStatus removeProviderContact(@WebParam(name="providerContactCode") String providerContactCode);
+
+    /**
+     * list all providerContacts
+     * @return
+     */
+    @WebMethod
+    ProviderContactsResponseDto listProviderContacts();
+    
+    /**
+     * createOrUpdate a providerContact by dto
+     * @param providerContactDto
+     * @return
+     */
+    @WebMethod
+    ActionStatus createOrUpdateProviderContact(@WebParam(name="providerContact")ProviderContactDto providerContactDto);
+    
+    /**
+     * create an emailTemplate by dto
+     * @param emailTemplateDto
+     * @return
+     */
+    @WebMethod
+    ActionStatus createEmailTemplate(@WebParam(name="emailTemplate")EmailTemplateDto emailTemplateDto);
+
+    /**
+     * update an emailTemplate by dto
+     * @param emailTemplateDto
+     * @return
+     */
+    @WebMethod
+    ActionStatus updateEmailTemplate(@WebParam(name="emailTemplate")EmailTemplateDto emailTemplateDto);
+
+    /**
+     * find an emailTemplate by code
+     * @param emailTemplateCode
+     * @return
+     */
+    @WebMethod
+    EmailTemplateResponseDto findEmailTemplate(@WebParam(name="emailTemplateCode") String emailTemplateCode);
+
+    /**
+     * remove an emailTemplate by code
+     * @param emailTemplateCode
+     * @return
+     */
+    @WebMethod
+    ActionStatus removeEmailTemplate(@WebParam(name="emailTemplateCode") String emailTemplateCode);
+
+    /**
+     * list emailTemplates
+     * @return
+     */
+    @WebMethod
+    EmailTemplatesResponseDto listEmailTemplates();
+
+    /**
+     * createOrUpdate an emailTemplate by dto
+     * @param emailTemplateDto
+     * @return
+     */
+    @WebMethod
+    ActionStatus createOrUpdateEmailTemplate(@WebParam(name="emailTemplate")EmailTemplateDto emailTemplateDto);
+    
+    /**
+     * create a meveoInstance by dto
+     * @param meveoInstanceDto
+     * @return
+     */
+    @WebMethod
+    ActionStatus createMeveoInstance(@WebParam(name="meveoInstance")MeveoInstanceDto meveoInstanceDto);
+
+    /**
+     * update a mveoInstance by dto
+     * @param meveoInstanceDto
+     * @return
+     */
+    @WebMethod
+    ActionStatus updateMeveoInstance(@WebParam(name="meveoInstance")MeveoInstanceDto meveoInstanceDto);
+
+    /**
+     * find a meveoInstance by code
+     * @param meveoInstanceCode
+     * @return
+     */
+    @WebMethod
+    MeveoInstanceResponseDto findMeveoInstance(@WebParam(name="meveoInstanceCode") String meveoInstanceCode);
+
+    /**
+     * remove a meveoInstance by code
+     * @param meveoInstanceCode
+     * @return
+     */
+    @WebMethod
+    ActionStatus removeMeveoInstance(@WebParam(name="meveoInstanceCode") String meveoInstanceCode);
+
+    /**
+     * list meveoInstances
+     * @return
+     */
+    @WebMethod
+    MeveoInstancesResponseDto listMeveoInstances();
+    
+    /**
+     * createOrUpdate meveoInstance by dto
+     * @param meveoInstanceDto
+     * @return
+     */
+    @WebMethod
+    ActionStatus createOrUpdateMeveoInstance(@WebParam(name="meveoInstance")MeveoInstanceDto meveoInstanceDto);
 }

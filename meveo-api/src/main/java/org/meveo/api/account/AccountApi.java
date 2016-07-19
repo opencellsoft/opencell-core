@@ -34,7 +34,12 @@ public class AccountApi extends BaseApi {
         if (postData.getAddress() != null) {
             // check country
             if (!StringUtils.isBlank(postData.getAddress().getCountry()) && countryService.findByCode(postData.getAddress().getCountry()) == null) {
-                throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
+            	Country country=countryService.findByDescription(postData.getAddress().getCountry());
+            	if(country!=null){
+            		postData.getAddress().setCountry(country.getCountryCode());
+            	}else{
+            		throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
+            	}
             }
 
             address.setAddress1(postData.getAddress().getAddress1());
@@ -78,7 +83,12 @@ public class AccountApi extends BaseApi {
         if (postData.getAddress() != null) {
             // check country
             if (!StringUtils.isBlank(postData.getAddress().getCountry()) && countryService.findByCode(postData.getAddress().getCountry()) == null) {
-                throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
+            	Country country=countryService.findByDescription(postData.getAddress().getCountry());
+            	if(country!=null){
+            		postData.getAddress().setCountry(country.getCountryCode());
+            	}else{
+            		throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
+            	}
             }
 
             if (!StringUtils.isBlank(postData.getAddress().getAddress1())) {

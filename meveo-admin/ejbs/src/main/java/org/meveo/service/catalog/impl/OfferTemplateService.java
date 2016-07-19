@@ -18,6 +18,7 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -76,4 +77,42 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 			return null;
 		}
 	}
+	
+	public long countActive() {
+		Long result = 0L;
+		Query query = getEntityManager().createNamedQuery("OfferTemplate.countActive");
+		try {
+			result = (long) query.getSingleResult();
+		} catch (NoResultException e) {
+
+		}
+		return result;
+	}
+
+	public long countDisabled() {
+		Long result = 0L;
+		Query query = getEntityManager().createNamedQuery("OfferTemplate.countDisabled");
+		try {
+			result = (long) query.getSingleResult();
+		} catch (NoResultException e) {
+
+		}
+		return result;
+	}
+
+	public long countExpiring() {
+		Long result = 0L;
+		Query query = getEntityManager().createNamedQuery("OfferTemplate.countExpiring");
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.DATE, -1);
+		query.setParameter("nowMinus1Day", c.getTime());
+
+		try {
+			result = (long) query.getSingleResult();
+		} catch (NoResultException e) {
+
+		}
+		return result;
+	}
+
 }

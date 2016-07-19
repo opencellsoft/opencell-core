@@ -32,6 +32,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -52,6 +54,9 @@ import org.meveo.model.ObservableEntity;
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "CAT_OFFER_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_SEQ")
+@NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false"),
+		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true"),
+		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validTo and validTo > NOW()") })
 public class OfferTemplate extends BusinessCFEntity {
 	private static final long serialVersionUID = 1L;
 
@@ -82,6 +87,10 @@ public class OfferTemplate extends BusinessCFEntity {
 	@Column(name="VALID_TO")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date validTo;
+	
+	@Column(name = "IMAGE_CONTENT_TYPE", length = 50)
+	@Size(max = 50)
+	private String imageContentType;
 
 	public List<OfferServiceTemplate> getOfferServiceTemplates() {
 		return offerServiceTemplates;
@@ -181,6 +190,14 @@ public class OfferTemplate extends BusinessCFEntity {
 
 	public void setValidTo(Date validTo) {
 		this.validTo = validTo;
+	}
+
+	public String getImageContentType() {
+		return imageContentType;
+	}
+
+	public void setImageContentType(String imageContentType) {
+		this.imageContentType = imageContentType;
 	}
 
 }

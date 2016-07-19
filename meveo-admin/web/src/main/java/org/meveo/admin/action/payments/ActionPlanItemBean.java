@@ -26,23 +26,23 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.payments.ActionPlanItem;
-import org.meveo.model.payments.DunningPlan;
+import org.meveo.model.wf.WFAction;
+import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.impl.ActionPlanItemService;
-import org.meveo.service.payments.impl.DunningPlanService;
+import org.meveo.service.wf.WFActionService;
+import org.meveo.service.wf.WorkflowService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
- * Standard backing bean for {@link ActionPlanItem} (extends {@link BaseBean}
+ * Standard backing bean for {@link WFAction} (extends {@link BaseBean}
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
  */
 @Named
 @ViewScoped
-public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
+public class ActionPlanItemBean extends BaseBean<WFAction> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -51,20 +51,20 @@ public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private ActionPlanItemService actionPlanItemService;
+	private WFActionService actionPlanItemService;
 
 	@Inject
-	private DunningPlanService dunningPlanService;
+	private WorkflowService dunningPlanService;
 
 	@Inject
-	private DunningPlan dunningPlan;
+	private Workflow dunningPlan;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
 	 */
 	public ActionPlanItemBean() {
-		super(ActionPlanItem.class);
+		super(WFAction.class);
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	public ActionPlanItem initEntity() {
+	public WFAction initEntity() {
 		if (dunningPlan != null && dunningPlan.getId() == null) {
 			try {
 				dunningPlanService.create(dunningPlan, getCurrentUser());
@@ -86,7 +86,7 @@ public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
 			}
 		}
 		super.initEntity();
-		entity.setDunningPlan(dunningPlan);
+		//entity.setDunningPlan(dunningPlan);
 		return entity;
 	}
 
@@ -98,8 +98,8 @@ public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
 	@Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		dunningPlan.getActions().add(entity);
-		super.saveOrUpdate(killConversation);
+		//dunningPlan.getActions().add(entity);
+		//super.saveOrUpdate(killConversation);
 		return "/pages/payments/dunning/dunningPlanDetail.xhtml?objectId="
 				+ dunningPlan.getId() + "&edit=true";
 	}
@@ -108,7 +108,7 @@ public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
 	@Override
-	protected IPersistenceService<ActionPlanItem> getPersistenceService() {
+	protected IPersistenceService<WFAction> getPersistenceService() {
 		return actionPlanItemService;
 	}
 
@@ -118,7 +118,7 @@ public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
 			entity = getPersistenceService().findById(id);
 			log.info(String.format("Deleting entity %s with id = %s", entity
 					.getClass().getName(), id));
-			entity.getDunningPlan().getActions().remove(entity);
+			//entity.getDunningPlan().getActions().remove(entity);
 			getPersistenceService().remove(id);
 			entity = null;
 			messages.info(new BundleKey("messages", "delete.successful"));

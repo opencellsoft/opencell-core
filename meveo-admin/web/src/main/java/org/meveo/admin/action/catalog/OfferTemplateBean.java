@@ -18,13 +18,17 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.sql.rowset.serial.SerialBlob;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -43,7 +47,9 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.UploadedFile;
 
 /**
  * Standard backing bean for {@link OfferTemplate} (extends {@link BaseBean}
@@ -80,6 +86,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	private DualListModel<ServiceTemplate> incompatibleServices;
 
 	private OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
+	
+	private UploadedFile uploadedFile;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -258,4 +266,46 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	public void setIncompatibleServices(DualListModel<ServiceTemplate> incompatibleServices) {
 		this.incompatibleServices = incompatibleServices;
 	}
+
+	public UploadedFile getUploadedFile() {
+		return uploadedFile;
+	}
+
+	public void setUploadedFile(UploadedFile uploadedFile) {
+		this.uploadedFile = uploadedFile;
+	}
+	
+	public void handleFileUpload(FileUploadEvent event) throws BusinessException {
+		uploadedFile = event.getFile();
+
+		if (uploadedFile != null) {
+			byte[] contents = uploadedFile.getContents();
+			try {
+				entity.setImage(new SerialBlob(contents));
+			} catch (SQLException e) {
+				entity.setImage(null);
+			}
+			entity.setImageContentType(uploadedFile.getContentType());
+
+			saveOrUpdate(entity);
+
+			initEntity();
+
+			FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
+			FacesContext.getCurrentInstance().addMessage(null, message);
+		}
+	}
+	
+	public long countActive() {
+		return offerTemplateService.countActive();
+	}
+	
+	public long countDisabled() {
+		return offerTemplateService.countDisabled();
+	}
+	
+	public long countExpiring() {
+		return offerTemplateService.countExpiring();
+	}
+	
 }
