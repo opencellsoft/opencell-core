@@ -125,16 +125,28 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 		return result;
 	}
 	
+	private String findDuplicateCode(OfferTemplate offer,User currentUser){
+		String code=offer.getCode()+" - Copy";
+		int id=1;
+		String criteria=code;
+		OfferTemplate entity=null;
+		while(true){
+			entity=findByCode(criteria, currentUser.getProvider());
+			if(entity==null){
+				break;
+			}
+			id++;
+			criteria=code+" "+id;
+		}
+		return criteria;
+	}
+	
 	public void duplicate(OfferTemplate entity,User currentUser) throws BusinessException{
 		
 		entity = refreshOrRetrieve(entity);
 		// Lazy load related values first
 		entity.getOfferServiceTemplates().size();
-		
-		Long sequence=entity.getSequence();
-		entity.setSequence(++sequence);
-		update(entity,currentUser);
-		commit();
+		String code=findDuplicateCode(entity,currentUser);
 		
 		// Detach and clear ids of entity and related entities
 		detach(entity);
@@ -143,8 +155,7 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 
 		List<OfferServiceTemplate> serviceTemplates = entity.getOfferServiceTemplates();
 		entity.setOfferServiceTemplates(new ArrayList<OfferServiceTemplate>());
-		entity.setSequence(0L);
-		entity.setCode(entity.getCode() +"  - Copy"+(sequence==1L?"":" "+sequence));
+		entity.setCode(code);
 		create(entity, currentUser);
 		if(serviceTemplates!=null){
 			for (OfferServiceTemplate serviceTemplate : serviceTemplates) {
@@ -158,11 +169,12 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 						serviceTemplate.addIncompatibleServiceTemplate(incompatibleService);
 					}
 				}
+				serviceTemplate.setOfferTemplate(entity);
 				offerServiceTemplateService.create(serviceTemplate, currentUser);
 				entity.addOfferServiceTemplate(serviceTemplate);
 			}
-			update(entity,currentUser);
 		}
+		update(entity,currentUser);
 		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
 	}
 

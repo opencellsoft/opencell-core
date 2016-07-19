@@ -2324,20 +2324,6 @@ $BODY$
 			<column name="image_content_type" type="VARCHAR(50)" />
 		</addColumn>
 	</changeSet>
-	<changeSet id="#1728_20160718" author="TyshanShi">
-		<addColumn tableName="cat_charge_template">
-			<column name="sequence" type="BIGINT" defaultValue="0"/>
-		</addColumn>
-		<addColumn tableName="cat_offer_template">
-			<column name="sequence" type="BIGINT" defaultValue="0"/>
-		</addColumn>
-		<addColumn tableName="cat_service_template">
-			<column name="sequence" type="BIGINT" defaultValue="0"/>
-		</addColumn>
-		<addColumn tableName="cat_triggered_edr">
-			<column name="sequence" type="BIGINT" defaultValue="0"/>
-		</addColumn>
-	</changeSet>
 	    	
     <changeSet author="anasseh (generated)" id="#1841_13072016-1">
         <createSequence sequenceName="wf_action_seq"/>

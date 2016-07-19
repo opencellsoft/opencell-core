@@ -32,20 +32,31 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class TriggeredEDRTemplateService extends
 		BusinessService<TriggeredEDRTemplate> {
+	
+	private String findDuplicateCode(TriggeredEDRTemplate edr,User currentUser){
+		String code=edr.getCode()+" - Copy";
+		int id=1;
+		String criteria=code;
+		TriggeredEDRTemplate entity=null;
+		while(true){
+			entity=findByCode(criteria, currentUser.getProvider());
+			if(entity==null){
+				break;
+			}
+			id++;
+			criteria=code+" "+id;
+		}
+		return criteria;
+	}
 
 	public void duplicate(TriggeredEDRTemplate entity,User currentUser) throws BusinessException{
 		entity = refreshOrRetrieve(entity);
+		String code=findDuplicateCode(entity,currentUser);
 		
-		Long sequence=entity.getSequence();
-		entity.setSequence(++sequence);
-		update(entity,currentUser);
-		commit();
-
 		// Detach and clear ids of entity and related entities
 		detach(entity);
 		entity.setId(null);
-		entity.setSequence(0L);
-		entity.setCode(entity.getCode() + " - Copy"+(sequence==1L?"":" "+sequence));
+		entity.setCode(code);
 		create(entity, getCurrentUser());
 	}
 }

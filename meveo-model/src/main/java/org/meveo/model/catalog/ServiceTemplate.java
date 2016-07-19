@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -84,10 +83,6 @@ public class ServiceTemplate extends BusinessCFEntity {
 	@ManyToOne
 	@JoinColumn(name = "BUSINESS_SERVICE_MODEL_ID")
 	private BusinessServiceModel businessServiceModel;
-	
-	@Column(name = "SEQUENCE")
-	private Long sequence=0L;
-	
 
 	
 	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
@@ -200,14 +195,6 @@ public class ServiceTemplate extends BusinessCFEntity {
 
 	public void setBusinessServiceModel(BusinessServiceModel businessServiceModel) {
 		this.businessServiceModel = businessServiceModel;
-	}
-
-	public Long getSequence() {
-		return sequence;
-	}
-
-	public void setSequence(Long sequence) {
-		this.sequence = sequence;
 	}
 
     

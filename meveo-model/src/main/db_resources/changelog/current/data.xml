@@ -426,13 +426,5 @@
             <column name="permission_id" valueNumeric="17" />
         </insert>   
 	</changeSet> 
-	
-	<changeSet id="#1742_20160718" author="TyshanShi">               
-       <sql>update CAT_SERVICE_TEMPLATE set SEQUENCE=0 where SEQUENCE is null</sql>
-       <sql>update CAT_PRICE_PLAN_MATRIX set SEQUENCE=0 where SEQUENCE is null</sql>
-       <sql>update CAT_CHARGE_TEMPLATE set SEQUENCE=0 where SEQUENCE is null</sql>
-       <sql>update CAT_TRIGGERED_EDR set SEQUENCE=0 where SEQUENCE is null</sql>
-       <sql>update CAT_OFFER_TEMPLATE set SEQUENCE=0 where SEQUENCE is null</sql>
-    </changeSet>
         
 </databaseChangeLog>

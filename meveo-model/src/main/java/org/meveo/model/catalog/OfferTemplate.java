@@ -91,9 +91,6 @@ public class OfferTemplate extends BusinessCFEntity {
 	@Column(name = "IMAGE_CONTENT_TYPE", length = 50)
 	@Size(max = 50)
 	private String imageContentType;
-	
-	@Column(name="SEQUENCE")
-	private Long sequence=0L;
 
 	public List<OfferServiceTemplate> getOfferServiceTemplates() {
 		return offerServiceTemplates;
@@ -201,14 +198,6 @@ public class OfferTemplate extends BusinessCFEntity {
 
 	public void setImageContentType(String imageContentType) {
 		this.imageContentType = imageContentType;
-	}
-
-	public Long getSequence() {
-		return sequence;
-	}
-
-	public void setSequence(Long sequence) {
-		this.sequence = sequence;
 	}
 
 }

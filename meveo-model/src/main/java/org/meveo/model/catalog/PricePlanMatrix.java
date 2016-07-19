@@ -149,7 +149,7 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     private Calendar validityCalendar;
     
     @Column(name = "SEQUENCE")
-	private Long sequence=0L;
+	private Long sequence;
 
 	public String getEventCode() {
 		return eventCode;

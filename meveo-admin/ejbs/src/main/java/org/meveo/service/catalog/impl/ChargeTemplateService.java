@@ -43,18 +43,30 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends Multilangua
 	
 	@Inject
     private CustomFieldInstanceService customFieldInstanceService;
+	
+	private String findDuplicateCode(ChargeTemplate chargeTemplate,User currentUser){
+		String code=chargeTemplate.getCode()+" - Copy";
+		int id=1;
+		String criteria=code;
+		ChargeTemplate entity=null;
+		while(true){
+			entity=findByCode(criteria, currentUser.getProvider());
+			if(entity==null){
+				break;
+			}
+			id++;
+			criteria=code+" "+id;
+		}
+		return criteria;
+	}
 
 	public void duplicate(P entity,User currentUser) throws BusinessException{
 		
 		entity = refreshOrRetrieve(entity);
         // Lazy load related values first 
 		entity.getEdrTemplates().size();
+		String code=findDuplicateCode(entity,currentUser);
 		
-		Long sequence=entity.getSequence();
-		entity.setSequence(++sequence);
-		update(entity,currentUser);
-		commit();
-
         // Detach and clear ids of entity and related entities
 		detach(entity);
 		entity.setId(null);
@@ -69,8 +81,7 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends Multilangua
 			}
 		}
 		entity.setChargeInstances(null);
-		entity.setSequence(0L);
-		entity.setCode(entity.getCode()+" - Copy"+(sequence==1L?"":" "+sequence));
+		entity.setCode(code);
 		create(entity, getCurrentUser());
         customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
 	}

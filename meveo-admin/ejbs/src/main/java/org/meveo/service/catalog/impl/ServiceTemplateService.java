@@ -101,6 +101,22 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 			return null;
 		}
 	}
+	
+	private String findDuplicateCode(ServiceTemplate service,User currentUser){
+		String code=service.getCode()+" - Copy";
+		int id=1;
+		String criteria=code;
+		ServiceTemplate entity=null;
+		while(true){
+			entity=findByCode(criteria, currentUser.getProvider());
+			if(entity==null){
+				break;
+			}
+			id++;
+			criteria=code+" "+id;
+		}
+		return criteria;
+	}
 	public void duplicate(ServiceTemplate entity,User currentUser) throws BusinessException{
 		entity = refreshOrRetrieve(entity);
         
@@ -109,13 +125,9 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 		entity.getServiceSubscriptionCharges().size();
 		entity.getServiceTerminationCharges().size();
 		entity.getServiceUsageCharges().size();
-        
-		Long sequence=entity.getSequence();
-		entity.setSequence(++sequence);
-		update(entity,currentUser);
-		commit();
-		
-        // Detach and clear ids of entity and related entities
+		String code=findDuplicateCode(entity,currentUser);
+
+		// Detach and clear ids of entity and related entities
 		detach(entity);
 		entity.setId(null);
         String sourceAppliesToEntity = entity.clearUuid();
@@ -156,8 +168,7 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 			usage.setServiceTemplate(entity);
 			entity.getServiceUsageCharges().add(usage);
 		}
-		entity.setSequence(0L);
-		entity.setCode(entity.getCode()+" - Copy"+(sequence==1L?"":" "+sequence));
+		entity.setCode(code);
 		
 		create(entity, getCurrentUser());
 		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());

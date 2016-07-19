@@ -720,7 +720,7 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 	}
 	
 	public void duplicate(PricePlanMatrix entity,User currentUser) throws BusinessException{
-		refreshOrRetrieve(entity);
+		entity=refreshOrRetrieve(entity);
 		Long sequence= getLastPricePlanByCharge(entity.getEventCode(), currentUser.getProvider()) + 1;
 		
 		detach(entity);

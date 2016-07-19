@@ -101,9 +101,6 @@ public class ChargeTemplate extends BusinessCFEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "REVENUE_RECOG_RULE_ID")
 	private RevenueRecognitionRule revenueRecognitionRule;
-	
-	@Column(name="SEQUENCE")
-	private Long sequence=0L;
 
 	public OperationTypeEnum getType() {
 		return type;
@@ -202,14 +199,6 @@ public class ChargeTemplate extends BusinessCFEntity {
 
 	public void setRevenueRecognitionRule(RevenueRecognitionRule revenueRecognitionRule) {
 		this.revenueRecognitionRule = revenueRecognitionRule;
-	}
-
-	public Long getSequence() {
-		return sequence;
-	}
-
-	public void setSequence(Long sequence) {
-		this.sequence = sequence;
 	}
 
     

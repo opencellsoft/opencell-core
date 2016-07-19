@@ -53,9 +53,6 @@ public class TriggeredEDRTemplate extends BusinessEntity {
 	@Column(name = "PARAM_4_EL", length = 2000)
 	@Size(max = 2000)
 	private String param4El;
-	
-	@Column(name = "SEQUENCE")
-	private Long sequence=0L;
 
 	public String getSubscriptionEl() {
 		return subscriptionEl;
@@ -119,14 +116,6 @@ public class TriggeredEDRTemplate extends BusinessEntity {
 
 	public void setParam4El(String param4El) {
 		this.param4El = param4El;
-	}
-
-	public Long getSequence() {
-		return sequence;
-	}
-
-	public void setSequence(Long sequence) {
-		this.sequence = sequence;
 	}
 
 }
