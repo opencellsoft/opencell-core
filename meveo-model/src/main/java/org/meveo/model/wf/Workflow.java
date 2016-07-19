@@ -31,9 +31,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.validation.constraint.ClassName;
 
 @Entity
 @ExportIdentifier({ "code", "provider", "wfType" })
@@ -44,6 +47,9 @@ public class Workflow extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "WF_TYPE")
+	@NotNull
+    @Size(max = 255)
+    @ClassName
 	String wfType = null;
 	
 	@OneToMany(mappedBy = "workflow", fetch = FetchType.LAZY,cascade=CascadeType.REMOVE)
