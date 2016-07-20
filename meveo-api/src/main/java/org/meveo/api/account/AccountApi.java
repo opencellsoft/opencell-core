@@ -10,11 +10,11 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.Country;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
-import org.meveo.service.billing.impl.TradingCountryService;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.catalog.impl.TitleService;
 
 /**
@@ -28,7 +28,7 @@ public class AccountApi extends BaseApi {
     private TitleService titleService;
     
     @Inject
-    private TradingCountryService tradingCountryService;
+    private CountryService countryService;
 
     public void populate(AccountDto postData, AccountEntity accountEntity, User currentUser) throws MeveoApiException {
         Address address = new Address();
@@ -39,8 +39,8 @@ public class AccountApi extends BaseApi {
             address.setZipCode(postData.getAddress().getZipCode());
             address.setCity(postData.getAddress().getCity());
             if(!StringUtils.isBlank(postData.getAddress().getCountry())){
-            	TradingCountry country=tradingCountryService.findByTradingCountryCode(postData.getAddress().getCountry(), currentUser.getProvider());
-                address.setCountry(country!=null?country.getPrDescription():postData.getAddress().getCountry());
+            	Country country=countryService.findByCode(postData.getAddress().getCountry());
+                address.setCountry(country!=null?country.getDescriptionEn():postData.getAddress().getCountry());
                 
             }
             address.setState(postData.getAddress().getState());
@@ -93,8 +93,8 @@ public class AccountApi extends BaseApi {
                 address.setCity(postData.getAddress().getCity());
             }
             if (!StringUtils.isBlank(postData.getAddress().getCountry())) {
-            	TradingCountry country=tradingCountryService.findByTradingCountryCode(postData.getAddress().getCountry(), currentUser.getProvider());
-                address.setCountry(country!=null?country.getPrDescription():postData.getAddress().getCountry());
+            	Country country=countryService.findByCode(postData.getAddress().getCountry());
+                address.setCountry(country!=null?country.getDescriptionEn():postData.getAddress().getCountry());
             }
             if (!StringUtils.isBlank(postData.getAddress().getState())) {
                 address.setState(postData.getAddress().getState());
