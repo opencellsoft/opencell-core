@@ -28,22 +28,27 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
 	protected Logger log;
 
 	public BusinessEntity getEntityByCode(Class<? extends BusinessEntity> entityClass, String code, User user) {
+		if (entityClass == null) {
+			return null;
+		}
+		return getEntityByCode(entityClass.getName(), code, user);
+	}
+
+	public BusinessEntity getEntityByCode(String entityClassName, String code, User user) {
 		Provider provider = user.getProvider();
 		try {
-			Class<?> cleanClass = Class.forName(ReflectionUtils.getCleanClassName(entityClass.getName()));
-			QueryBuilder qb = new QueryBuilder(cleanClass, "e", null, provider);
+			Class<?> businessEntityClass = Class.forName(ReflectionUtils.getCleanClassName(entityClassName));
+			QueryBuilder qb = new QueryBuilder(businessEntityClass, "e", null, provider);
 			qb.addCriterion("e.code", "=", code, true);
 			return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
 			log.debug("No {} of code {} for provider {} found", getEntityClass().getSimpleName(), code, provider.getId(), e);
-			return null;
 		} catch (NonUniqueResultException e) {
 			log.error("More than one entity of type {} with code {} and provider {} found", entityClass, code, provider, e);
-			return null;
 		} catch (ClassNotFoundException e) {
 			log.error("Unable to create entity class for query", e);
-			return null;
 		}
+		return null;
 	}
 
 	public boolean isEntityAllowed(BusinessEntity entity, User user, boolean isParentEntity) {
@@ -58,7 +63,8 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
 			// Check if entity's type is restricted to a specific group of
 			// entities. i.e. only specific Customers, CA, BA, etc.
 			Set<SecuredEntity> securedEntities = user.getSecuredEntitiesMap().get(entity.getClass());
-			if (securedEntities != null && !securedEntities.isEmpty()) {
+			boolean isSameTypeAsParent = entity.getClass() == entity.getParentEntityType();
+			if (!isSameTypeAsParent && securedEntities != null && !securedEntities.isEmpty()) {
 				// This means that the entity type is being restricted. Since
 				// the entity did not match anything above, the authorization
 				// automatically fails.

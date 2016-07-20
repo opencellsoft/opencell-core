@@ -406,4 +406,9 @@ public class BillingAccount extends AccountEntity {
 	public BusinessEntity getParentEntity() {
 		return customerAccount;
 	}
+	
+	@Override
+	public Class<? extends BusinessEntity> getParentEntityType() {
+		return CustomerAccount.class;
+	}
 }

@@ -78,7 +78,7 @@
 					<h:panelGroup id="selectedEntitiesPanel">
 						<p:messages />
 						<p:dataTable id="selectedEntitiesDatatable" var="securedEntity"
-							value="#{userBean.entity.securedEntities}" paginator="true"
+							value="#{userBean.selectedSecuredEntities}" paginator="true"
 							rows="10" sortBy="#{securedEntity.code}"
 							paginatorAlwaysVisible="false"
 							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"

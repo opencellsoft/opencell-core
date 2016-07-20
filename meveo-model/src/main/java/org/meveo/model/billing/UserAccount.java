@@ -221,4 +221,9 @@ public class UserAccount extends AccountEntity {
 	public BusinessEntity getParentEntity() {
 		return billingAccount;
 	}
+	
+	@Override
+	public Class<? extends BusinessEntity> getParentEntityType() {
+		return BillingAccount.class;
+	}
 }

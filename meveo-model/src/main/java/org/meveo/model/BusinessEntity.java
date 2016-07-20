@@ -91,6 +91,19 @@ public class BusinessEntity extends AuditableEntity {
 	public BusinessEntity getParentEntity() {
 		return null;
 	}
+	
+	/**
+	 * This method can be overridden to allow child entities to identify their
+	 * parent entity's type.
+	 * 
+	 * @return The parent entity's type.
+	 */
+	public Class<? extends BusinessEntity> getParentEntityType() {
+		if(getParentEntity() != null){
+			return getParentEntity().getClass();
+		}
+		return null;
+	}
 
     @Override
     public int hashCode() {

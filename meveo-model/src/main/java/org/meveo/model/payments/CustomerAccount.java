@@ -276,4 +276,9 @@ public class CustomerAccount extends AccountEntity {
 	public BusinessEntity getParentEntity() {
 		return customer;
 	}
+	
+	@Override
+	public Class<? extends BusinessEntity> getParentEntityType() {
+		return Customer.class;
+	}
 }

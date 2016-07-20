@@ -36,8 +36,8 @@ public @interface SecuredBusinessEntityMethod {
 	SecureMethodParameter user();
 
 	/**
-	 * The result filter classn that will be used to filter the results for
-	 * entities that should not be accessible to the user.
+	 * The result filter class that will be used to filter the results for
+	 * entities that should be accessible to the user.
 	 * 
 	 * @return
 	 */

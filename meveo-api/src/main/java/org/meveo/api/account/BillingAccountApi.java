@@ -21,7 +21,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
-import org.meveo.api.security.filter.BillingAccountDtoFilter;
+import org.meveo.api.security.filter.AccountDtoFilter;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
@@ -334,7 +334,7 @@ public class BillingAccountApi extends AccountApi {
 		return billingAccount;
 	}
 
-	@SecuredBusinessEntityMethod(resultFilter = BillingAccountDtoFilter.class, validate = @SecureMethodParameter(entity = BillingAccount.class), user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+	@SecuredBusinessEntityMethod(resultFilter = AccountDtoFilter.class, validate = @SecureMethodParameter(entity = BillingAccount.class), user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public BillingAccountDto find(String billingAccountCode, User user) throws MeveoApiException {
 		if (StringUtils.isBlank(billingAccountCode)) {
 			missingParameters.add("billingAccountCode");
@@ -464,7 +464,8 @@ public class BillingAccountApi extends AccountApi {
 
 		return new ArrayList<>(billingAccountService.filterCountersByPeriod(billingAccount.getCounters(), date).values());
 	}
-	public void createOrUpdatePartial(BillingAccountDto billingAccountDto,User currentUser) throws MeveoApiException, BusinessException{
+
+	public void createOrUpdatePartial(BillingAccountDto billingAccountDto, User currentUser) throws MeveoApiException, BusinessException {
 		BillingAccountDto existedBillingAccountDto = null;
 		try {
 			existedBillingAccountDto = find(billingAccountDto.getCode(), currentUser);
@@ -517,7 +518,7 @@ public class BillingAccountApi extends AccountApi {
 				}
 				//
 				accountHierarchyApi.populateNameAddress(existedBillingAccountDto, billingAccountDto, currentUser);
-				if(!StringUtils.isBlank(billingAccountDto.getCustomFields())){
+				if (!StringUtils.isBlank(billingAccountDto.getCustomFields())) {
 					existedBillingAccountDto.setCustomFields(billingAccountDto.getCustomFields());
 				}
 				update(existedBillingAccountDto, currentUser);

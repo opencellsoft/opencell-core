@@ -154,5 +154,10 @@ public class Seller extends BusinessCFEntity {
 	public BusinessEntity getParentEntity() {
 		return seller;
 	}
+	
+	@Override
+	public Class<? extends BusinessEntity> getParentEntityType() {
+		return Seller.class;
+	}
 
 }

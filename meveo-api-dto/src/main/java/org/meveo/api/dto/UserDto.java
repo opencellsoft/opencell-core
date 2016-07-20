@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 
@@ -56,10 +57,14 @@ public class UserDto extends BaseDto {
 	private String lastName;
 
 	@XmlElementWrapper
-    @XmlElement(name="role")
+	@XmlElement(name = "role")
 	private List<String> roles;
-	
-	@Deprecated//use roles field
+
+	@XmlElementWrapper(name = "accessibleEntities")
+	@XmlElement(name = "accessibleEntity")
+	private List<SecuredEntityDto> securedEntities;
+
+	@Deprecated // use roles field
 	private String role;
 
 	public String getEmail() {
@@ -70,24 +75,32 @@ public class UserDto extends BaseDto {
 		this.email = email;
 	}
 
-	public UserDto() {}
-	
-
+	public UserDto() {
+	}
 
 	public UserDto(User user) {
-		if(user.getName()!=null){
-		firstName = user.getName().getFirstName();
-		lastName = user.getName().getLastName();	
+		if (user.getName() != null) {
+			firstName = user.getName().getFirstName();
+			lastName = user.getName().getLastName();
 		}
 		username = user.getUserName();
 		provider = user.getProvider().getCode();
-		email=user.getEmail();
+		email = user.getEmail();
 
 		if (user.getRoles() != null) {
 			roles = new ArrayList<String>();
 			for (Role r : user.getRoles()) {
 				roles.add(r.getName());
-				role=r.getName();
+				role = r.getName();
+			}
+		}
+
+		if (user.getSecuredEntities() != null) {
+			this.securedEntities = new ArrayList<>();
+			SecuredEntityDto securedEntityDto = null;
+			for (SecuredEntity securedEntity : user.getSecuredEntities()) {
+				securedEntityDto = new SecuredEntityDto(securedEntity);
+				this.securedEntities.add(securedEntityDto);
 			}
 		}
 	}
@@ -139,8 +152,14 @@ public class UserDto extends BaseDto {
 	public void setRoles(List<String> roles) {
 		this.roles = roles;
 	}
-	
-	
+
+	public List<SecuredEntityDto> getSecuredEntities() {
+		return securedEntities;
+	}
+
+	public void setSecuredEntities(List<SecuredEntityDto> securedEntities) {
+		this.securedEntities = securedEntities;
+	}
 
 	/**
 	 * @return the role
@@ -150,7 +169,8 @@ public class UserDto extends BaseDto {
 	}
 
 	/**
-	 * @param role the role to set
+	 * @param role
+	 *            the role to set
 	 */
 	public void setRole(String role) {
 		this.role = role;
@@ -158,9 +178,8 @@ public class UserDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "UserDto [username=" + username + ", password=" + password + ", email=" + email + ", provider=" + provider + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + "]";
+		return "UserDto [username=" + username + ", password=" + password + ", email=" + email + ", provider=" + provider + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", roles=" + roles + ", role=" + role + ", securedEntities=" + securedEntities + "]";
 	}
-
-
 
 }

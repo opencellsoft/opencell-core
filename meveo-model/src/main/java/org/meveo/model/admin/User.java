@@ -81,17 +81,17 @@ public class User extends AuditableEntity {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "ADM_USER_ROLE", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
 	private Set<Role> roles = new HashSet<Role>();
-	
-	@ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "ADM_SECURED_ENTITY", joinColumns = { @JoinColumn(name = "USER_ID") })
-    @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "CODE", nullable = false, length = 60)),
-            @AttributeOverride(name = "description", column = @Column(name = "DESCRIPTION", nullable = true, length = 100)),
-            @AttributeOverride(name = "entityClass", column = @Column(name = "ENTITY_CLASS", nullable = false, length = 10)) })
+
+	@ElementCollection(fetch = FetchType.LAZY)
+	@CollectionTable(name = "ADM_SECURED_ENTITY", joinColumns = { @JoinColumn(name = "USER_ID") })
+	@AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "CODE", nullable = false, length = 60)),
+			@AttributeOverride(name = "entityClass", column = @Column(name = "ENTITY_CLASS", nullable = false, length = 255)) })
 	private List<SecuredEntity> securedEntities = new ArrayList<>();
 
-//	@ManyToMany(fetch = FetchType.LAZY)
-//	@JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "PROVIDER_ID"))
-//	private Set<Provider> providers = new HashSet<Provider>();
+	// @ManyToMany(fetch = FetchType.LAZY)
+	// @JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name =
+	// "USER_ID"), inverseJoinColumns = @JoinColumn(name = "PROVIDER_ID"))
+	// private Set<Provider> providers = new HashSet<Provider>();
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "LAST_PASSWORD_MODIFICATION")
@@ -102,20 +102,20 @@ public class User extends AuditableEntity {
 
 	@Transient
 	private String newPasswordConfirmation;
-	
+
 	@Transient
 	private Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap;
 
 	public User() {
 	}
 
-//	public Set<Provider> getProviders() {
-//		return providers;
-//	}
-//
-//	public void setProviders(Set<Provider> providers) {
-//		this.providers = providers;
-//	}
+	// public Set<Provider> getProviders() {
+	// return providers;
+	// }
+	//
+	// public void setProviders(Set<Provider> providers) {
+	// this.providers = providers;
+	// }
 
 	public Set<Role> getRoles() {
 		return roles;
@@ -153,8 +153,7 @@ public class User extends AuditableEntity {
 		boolean result = true;
 
 		if (lastPasswordModification != null) {
-			long diffMilliseconds = System.currentTimeMillis()
-					- lastPasswordModification.getTime();
+			long diffMilliseconds = System.currentTimeMillis() - lastPasswordModification.getTime();
 			result = (expiracyInDays - diffMilliseconds / (24 * 3600 * 1000L)) < 0;
 		}
 
@@ -217,32 +216,34 @@ public class User extends AuditableEntity {
 		return result;
 	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        } else if (!(obj instanceof User)) { // Fails with proxed objects: getClass() != obj.getClass()){
-            return false;
-        }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		} else if (!(obj instanceof User)) { // Fails with proxed objects:
+												// getClass() !=
+												// obj.getClass()){
+			return false;
+		}
 
-        User other = (User) obj;
+		User other = (User) obj;
 
-        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-            // return true;
-        }
+		if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
+			// return true;
+		}
 
-        if (userName == null) {
-            if (other.getUserName() != null) {
-                return false;
-            }
-        } else if (!userName.equals(other.getUserName())) {
-            return false;
-        }
-        return true;
-    }
+		if (userName == null) {
+			if (other.getUserName() != null) {
+				return false;
+			}
+		} else if (!userName.equals(other.getUserName())) {
+			return false;
+		}
+		return true;
+	}
 
 	public String toString() {
 		return userName;
@@ -254,11 +255,11 @@ public class User extends AuditableEntity {
 	 * @return True if user is bound to a single provider
 	 */
 	public boolean isOnlyOneProvider() {
-//		if (getProviders().size() == 1) {
-//			return true;
-//		} else {
-//			return false;
-//		}
+		// if (getProviders().size() == 1) {
+		// return true;
+		// } else {
+		// return false;
+		// }
 		return true;
 	}
 
@@ -271,39 +272,39 @@ public class User extends AuditableEntity {
 	}
 
 	/**
-	 * Check if [current] provider match the provider user is attached to 
+	 * Check if [current] provider match the provider user is attached to
 	 */
-    @Override
-    public boolean doesProviderMatch(Provider providerToMatch) {
+	@Override
+	public boolean doesProviderMatch(Provider providerToMatch) {
 
-//        for (Provider providerItem : providers) {
-    	Provider p=getProvider();
+		// for (Provider providerItem : providers) {
+		Provider p = getProvider();
 
-            if (p!=null&&p.getId().longValue() == providerToMatch.getId().longValue()) {
-                return true;
-            }
-//        }
-        return false;
-    }
-    
-    /**
-     * Check if [current] provider match the provider user is attached to 
-     */
-    @Override
-    public boolean doesProviderMatch(Long providerToMatch) {
-//        for (Provider providerItem : providers) {
-    	Provider p=getProvider();
-            if (p!=null&&p.getId().equals(providerToMatch)) {
-                return true;
-            }
-//        }
-        return false;
-    }
-    
-    public boolean hasPermission(String resource, String permission) {
-    	boolean isAllowed = false;
-    	
-    	if (getRoles() != null && getRoles().size() > 0) {
+		if (p != null && p.getId().longValue() == providerToMatch.getId().longValue()) {
+			return true;
+		}
+		// }
+		return false;
+	}
+
+	/**
+	 * Check if [current] provider match the provider user is attached to
+	 */
+	@Override
+	public boolean doesProviderMatch(Long providerToMatch) {
+		// for (Provider providerItem : providers) {
+		Provider p = getProvider();
+		if (p != null && p.getId().equals(providerToMatch)) {
+			return true;
+		}
+		// }
+		return false;
+	}
+
+	public boolean hasPermission(String resource, String permission) {
+		boolean isAllowed = false;
+
+		if (getRoles() != null && getRoles().size() > 0) {
 			for (Role role : getRoles()) {
 				if (role.hasPermission(resource, permission)) {
 					isAllowed = true;
@@ -311,21 +312,21 @@ public class User extends AuditableEntity {
 				}
 			}
 		}
-    	
-    	return isAllowed;
-    }
-    
-    public List<SecuredEntity> getSecuredEntities() {
+
+		return isAllowed;
+	}
+
+	public List<SecuredEntity> getSecuredEntities() {
 		return securedEntities;
 	}
-    
-    public void setSecuredEntities(List<SecuredEntity> securedEntities) {
+
+	public void setSecuredEntities(List<SecuredEntity> securedEntities) {
 		this.securedEntities = securedEntities;
 		initializeSecuredEntitiesMap();
 	}
-    
-    public Map<Class<?>, Set<SecuredEntity>> getSecuredEntitiesMap() {
-		if(securedEntitiesMap == null || securedEntitiesMap.isEmpty()){
+
+	public Map<Class<?>, Set<SecuredEntity>> getSecuredEntitiesMap() {
+		if (securedEntitiesMap == null || securedEntitiesMap.isEmpty()) {
 			initializeSecuredEntitiesMap();
 		}
 		return securedEntitiesMap;

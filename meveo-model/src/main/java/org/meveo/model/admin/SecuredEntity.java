@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -24,37 +23,29 @@ public class SecuredEntity implements Serializable {
 
 	public SecuredEntity(BusinessEntity businessEntity) {
 		this.setCode(businessEntity.getCode());
-		this.setDescription(businessEntity.getDescription());
 		this.setEntityClass(ReflectionUtils.getCleanClassName(businessEntity.getClass().getName()));
+	}
+
+	public SecuredEntity(SecuredEntity securedEntity) {
+		this.setCode(securedEntity.getCode());
+		this.setEntityClass(securedEntity.getEntityClass());
 	}
 
 	@Column(name = "CODE", nullable = false, length = 60)
 	@Size(max = 60, min = 1)
 	@NotNull
-	protected String code;
+	private String code;
 
 	@Column(name = "ENTITY_CLASS", length = 255)
 	@Size(max = 255)
 	private String entityClass;
 
-	@Transient
-	protected String description;
-
-	
 	public String getCode() {
 		return code;
 	}
 
 	public void setCode(String code) {
 		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public String getEntityClass() {
@@ -64,45 +55,45 @@ public class SecuredEntity implements Serializable {
 	public void setEntityClass(String entityClass) {
 		this.entityClass = entityClass;
 	}
-	
+
 	public String readableEntityClass() {
-		if(entityClass != null){
+		if (entityClass != null) {
 			return ReflectionUtils.getHumanClassName(entityClass);
 		}
 		return "";
 	}
-	
+
 	@Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        } 
-        boolean isSecuredEntity = obj instanceof SecuredEntity;
-        boolean isBusinessEntity = obj instanceof BusinessEntity;
-        if (!isSecuredEntity && !isBusinessEntity) {
-            return false;
-        }
+	public boolean equals(Object that) {
+		if (this == that) {
+			return true;
+		}
+		if (that == null) {
+			return false;
+		}
+		boolean isSecuredEntity = that instanceof SecuredEntity;
+		boolean isBusinessEntity = that instanceof BusinessEntity;
+		if (!isSecuredEntity && !isBusinessEntity) {
+			return false;
+		}
 
-        String otherCode = null;
-        String otherClass = null;
-        if(isSecuredEntity){
-        	otherCode = ((SecuredEntity) obj).getCode();
-        	otherClass = ((SecuredEntity) obj).getEntityClass();
-        }
-        if(isBusinessEntity){
-        	otherCode = ((BusinessEntity) obj).getCode();
-        	otherClass = ReflectionUtils.getCleanClassName(((BusinessEntity) obj).getClass().getName());
-        }
-                
-        otherCode = otherClass + "-_-" + otherCode;
-        String thisCode = entityClass + "-_-" + code;
+		String thatCode = null;
+		String thatClass = null;
+		if (isSecuredEntity) {
+			thatCode = ((SecuredEntity) that).getCode();
+			thatClass = ((SecuredEntity) that).getEntityClass();
+		}
+		if (isBusinessEntity) {
+			thatCode = ((BusinessEntity) that).getCode();
+			thatClass = ReflectionUtils.getCleanClassName(((BusinessEntity) that).getClass().getName());
+		}
 
-        if(!thisCode.equals(otherCode)){
-        	return false;
-        }
-        return true;
-    }
+		thatCode = thatClass + "-_-" + thatCode;
+		String thisCode = entityClass + "-_-" + code;
+
+		if (!thisCode.equals(thatCode)) {
+			return false;
+		}
+		return true;
+	}
 }

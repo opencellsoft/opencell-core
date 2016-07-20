@@ -50,6 +50,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.DetailedSecuredEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -59,6 +60,7 @@ import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.security.SecuredBusinessEntityService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -88,6 +90,9 @@ public class UserBean extends BaseBean<User> {
 
 	@Inject
 	private ProviderService providerService;
+
+	@Inject
+	private SecuredBusinessEntityService securedBusinessEntityService;
 
 	@Inject
 	@Any
@@ -597,17 +602,37 @@ public class UserBean extends BaseBean<User> {
 		this.securedEntityTypes = securedEntityTypes;
 	}
 
+	public List<DetailedSecuredEntity> getSelectedSecuredEntities() {
+		List<DetailedSecuredEntity> detailedSecuredEntities = new ArrayList<>();
+		DetailedSecuredEntity detailedSecuredEntity = null;
+		BusinessEntity businessEntity = null;
+		if (entity != null && entity.getSecuredEntities() != null) {
+			for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
+				detailedSecuredEntity = new DetailedSecuredEntity(securedEntity);
+				businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getCode(), getCurrentUser());
+				detailedSecuredEntity.setDescription(businessEntity.getDescription());
+				detailedSecuredEntities.add(detailedSecuredEntity);
+			}
+		}
+		return detailedSecuredEntities;
+	}
+
 	/**
 	 * This will allow the chosen secured entity to be removed from the user's
 	 * securedEntities list.
 	 * 
-	 * @param securedEntity
+	 * @param selectedSecuredEntity
 	 *            The chosen securedEntity
 	 * @throws BusinessException
 	 */
 	@ActionMethod
-	public void deleteSecuredEntity(SecuredEntity securedEntity) throws BusinessException {
-		entity.getSecuredEntities().remove(securedEntity);
+	public void deleteSecuredEntity(SecuredEntity selectedSecuredEntity) throws BusinessException {
+		for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
+			if (securedEntity.equals(selectedSecuredEntity)) {
+				entity.getSecuredEntities().remove(selectedSecuredEntity);
+				break;
+			}
+		}
 		super.saveOrUpdate(false);
 	}
 

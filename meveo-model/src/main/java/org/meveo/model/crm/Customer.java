@@ -154,4 +154,9 @@ public class Customer extends AccountEntity{
 	public BusinessEntity getParentEntity() {
 		return seller;
 	}
+	
+	@Override
+	public Class<? extends BusinessEntity> getParentEntityType() {
+		return Seller.class;
+	}
 }

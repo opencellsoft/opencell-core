@@ -24,7 +24,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
-import org.meveo.api.security.filter.CustomerAccountDtoFilter;
+import org.meveo.api.security.filter.AccountDtoFilter;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
@@ -156,8 +156,7 @@ public class CustomerAccountApi extends AccountApi {
 		update(postData, currentUser, true);
 	}
 
-	public CustomerAccount update(CustomerAccountDto postData, User currentUser, boolean checkCustomFields)
-			throws MeveoApiException, DuplicateDefaultAccountException {
+	public CustomerAccount update(CustomerAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, DuplicateDefaultAccountException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -262,7 +261,7 @@ public class CustomerAccountApi extends AccountApi {
 		return customerAccount;
 	}
 
-	@SecuredBusinessEntityMethod(resultFilter = CustomerAccountDtoFilter.class, validate = @SecureMethodParameter(entity = CustomerAccount.class), user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+	@SecuredBusinessEntityMethod(resultFilter = AccountDtoFilter.class, validate = @SecureMethodParameter(entity = CustomerAccount.class), user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public CustomerAccountDto find(String customerAccountCode, User currentUser) throws Exception {
 
 		if (StringUtils.isBlank(customerAccountCode)) {
@@ -467,16 +466,17 @@ public class CustomerAccountApi extends AccountApi {
 
 		return customerAccount;
 	}
-	public void createOrUpdatePartial(CustomerAccountDto customerAccountDto,User currentUser) throws MeveoApiException, BusinessException{
+
+	public void createOrUpdatePartial(CustomerAccountDto customerAccountDto, User currentUser) throws MeveoApiException, BusinessException {
 		CustomerAccountDto existedCustomerAccountDto = null;
 		try {
 			existedCustomerAccountDto = find(customerAccountDto.getCode(), currentUser);
 		} catch (Exception e) {
 			existedCustomerAccountDto = null;
 		}
-		log.debug("createOrUpdate customerAccount {}",customerAccountDto);
+		log.debug("createOrUpdate customerAccount {}", customerAccountDto);
 		if (existedCustomerAccountDto == null) {// create
-			create(customerAccountDto,currentUser);
+			create(customerAccountDto, currentUser);
 		} else {// update
 
 			if (!StringUtils.isBlank(customerAccountDto.getCurrency())) {
@@ -526,10 +526,10 @@ public class CustomerAccountApi extends AccountApi {
 				}
 			}
 			accountHierarchyApi.populateNameAddress(existedCustomerAccountDto, customerAccountDto, currentUser);
-			if(StringUtils.isBlank(customerAccountDto.getCustomFields())){
+			if (StringUtils.isBlank(customerAccountDto.getCustomFields())) {
 				existedCustomerAccountDto.setCustomFields(customerAccountDto.getCustomFields());
 			}
-			update(existedCustomerAccountDto,currentUser);
+			update(existedCustomerAccountDto, currentUser);
 		}
 	}
 }
