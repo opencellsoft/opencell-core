@@ -11,6 +11,10 @@ import org.meveo.model.payments.DunningLevelEnum;
 
 @WorkflowTypeClass
 public class DunningWF extends WorkflowType<CustomerAccount> {
+	
+	public DunningWF() {
+		super();
+	}
 
 	public DunningWF(CustomerAccount e) {
 		super(e);
