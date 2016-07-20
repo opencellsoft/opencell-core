@@ -419,12 +419,46 @@
 			<column name="permission" value="marketingCatalogManager"></column>
 		</insert>
 		
-		<sql>ALTER SEQUENCE adm_permission_seq RESTART WITH 18</sql>
+		<sql>ALTER SEQUENCE adm_permission_seq RESTART WITH 18</sql>   
+	</changeSet>
+
+	<changeSet id="#1839_20160720_add_marketing_manager_role"
+		author="EdwardPLegaspi">
+		<insert tableName="adm_role">
+			<column name="id" value="5"></column>
+			<column name="version" value="0"></column>
+			<column name="role_description" value="Marketing "></column>
+			<column name="role_name" value="MARKETING_MANAGER"></column>
+			<column name="provider_id" value="1"></column>
+		</insert>
+		
+		<sql>ALTER SEQUENCE adm_role_seq RESTART WITH 6;</sql>
 		
 		 <insert tableName="adm_role_permission">
-            <column name="role_id" valueNumeric="1" />
+            <column name="role_id" valueNumeric="5" />
             <column name="permission_id" valueNumeric="17" />
-        </insert>   
-	</changeSet> 
+        </insert>
+        
+        <insert tableName="adm_user">
+            <column name="id" valueNumeric="3" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueBoolean="false" />
+            <column name="created" valueDate="2015-03-19 00:04:09.787" />
+            <column name="email" />
+            <column name="last_password_modification" valueDate="current_date" />
+            <column name="firstname" />
+            <column name="lastname" />
+            <column name="password" value="c9b9580d19c8cc4f3a83d222a72444a5fc8f0084" />
+            <column name="username" value="MEVEO.MARKETINGMANAGER" />
+            <column name="provider_id" valueNumeric="1" />
+            <column name="title_id" />
+        </insert>
+        <insert tableName="adm_user_role">
+            <column name="user_id" valueNumeric="3" />
+            <column name="role_id" valueNumeric="5" />
+        </insert>        
+        
+        <sql>ALTER SEQUENCE adm_user_seq RESTART WITH 4;</sql>
+	</changeSet>
         
 </databaseChangeLog>

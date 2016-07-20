@@ -46,10 +46,16 @@
 			<to-view-id>/errors/404.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		
+		<navigation-case>
+			<from-action>#{identity.login}</from-action>
+			<if>#{identity.loggedIn and identity.hasPermission("marketing", "marketingCatalogManager")}</if>
+			<to-view-id>/marketingManager/index.xhtml</to-view-id>
+		</navigation-case>
 	
 		<navigation-case>
 			<from-action>#{identity.login}</from-action>
-			<if>#{identity.loggedIn}</if>
+			<if>#{identity.loggedIn and not identity.hasPermission("marketing", "marketingCatalogManager")}</if>
 			<to-view-id>/home.xhtml</to-view-id>
 <!-- 			<redirect> -->
 <!-- 				<view-param> -->
@@ -1916,25 +1922,25 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>mmCatalogView</from-outcome>
-			<to-view-id>/pages/catalog/marketingManager/catalogView.xhtml
+			<to-view-id>/marketingManager/catalogView.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mmOfferDetail</from-outcome>
-			<to-view-id>/pages/catalog/marketingManager/offerTemplateDetail.xhtml
+			<to-view-id>/marketingManager/offerTemplateDetail.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mmProductTemplates</from-outcome>
-			<to-view-id>/pages/catalog/marketingManager/productTemplates.xhtml
+			<to-view-id>/marketingManager/productTemplates.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mmProductTemplateDetail</from-outcome>
-			<to-view-id>/pages/catalog/marketingManager/productTemplateDetail.xhtml
+			<to-view-id>/marketingManager/productTemplateDetail.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
