@@ -24408,7 +24408,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
     </con:testCase><con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>17</con:value>
+        <con:value>18</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -35778,7 +35778,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>112</con:value>
+        <con:value>113</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -41190,7 +41190,6 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address2>Address2</address2>
                <zipCode>75001</zipCode>
                <city>Tunis</city>
-               <country>Tunisia</country>
          	</accountHierarchy>
       </ws:createAccountHierarchy>\r
    </soapenv:Body>\r
@@ -41248,7 +41247,6 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address2>Address2</address2>
                <zipCode>75001</zipCode>
                <city>Tunis</city>
-               <country>Tunisia</country>
          	</accountHierarchy>
       </ws:findAccountHierarchy>\r
    </soapenv:Body>\r
@@ -41273,7 +41271,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                      <address2>Address2</address2>
                      <zipCode>75001</zipCode>
                      <city>Tunis</city>
-                     <country>Tunisia</country>
+                     <country>United States</country>
                   </address>
                   <customerCategory>CLIENT</customerCategory>
                   <customerBrand>DEFAULT</customerBrand>
@@ -41297,7 +41295,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                            <address2>Address2</address2>
                            <zipCode>75001</zipCode>
                            <city>Tunis</city>
-                           <country>Tunisia</country>
+                           <country>United States</country>
                         </address>
                         <customer>CUST_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</customer>
                         <currency>USD</currency>
@@ -41319,7 +41317,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                  <address2>Address2</address2>
                                  <zipCode>75001</zipCode>
                                  <city>Tunis</city>
-                                 <country>Tunisia</country>
+                                 <country>United States</country>
                               </address>
                               <customerAccount>CA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</customerAccount>
                               <billingCycle>CYC_INV_MT_1</billingCycle>
@@ -41340,7 +41338,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                        <address2>Address2</address2>
                                        <zipCode>75001</zipCode>
                                        <city>Tunis</city>
-                                       <country>Tunisia</country>
+                                       <country>United States</country>
                                     </address>
                                     <billingAccount>BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
@@ -41389,7 +41387,6 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address2>Address2</address2>
                <zipCode>75055</zipCode>
                <city>Dijon</city>
-               <country>France</country>
          	</accountHierarchy>
       </ws:updateAccountHierarchy>\r
    </soapenv:Body>\r
@@ -41579,7 +41576,6 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <address2>Address2</address2>
                <zipCode>75055</zipCode>
                <city>Dijon</city>
-               <country>France</country>
          	</accountHierarchy>
       </ws:updateAccountHierarchy>\r
    </soapenv:Body>\r
@@ -44891,7 +44887,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>30</con:value>
+        <con:value>31</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -46584,7 +46580,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>72</con:value>
+        <con:value>73</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -46738,7 +46734,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     </con:testCase><con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>72</con:value>
+        <con:value>73</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -48930,7 +48926,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>74</con:value>
+        <con:value>75</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -56531,7 +56527,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>92</con:value>
+        <con:value>93</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -57010,7 +57006,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>80</con:value>
+        <con:value>81</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -57635,7 +57631,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>80</con:value>
+        <con:value>81</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -58151,7 +58147,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>70</con:value>
+        <con:value>71</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -61290,7 +61286,7 @@ and paste that invoice number in the next step.
     </con:testCase>
     <con:properties/>
     <con:setupScript/>
-  </con:testSuite><con:testSuite id="5f0dd374-595d-4b5f-80b1-b15cb99bb0fe" name="CRUD Workflow"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="9f763cc3-8f8f-448a-88a7-2076536bd7f3" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD Workflow" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Workflow with All Vals" id="ceb72068-512a-4378-bff6-2d9f6906e495"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create Workflow with All Vals" id="294a8303-372b-4122-b564-9de63598ef55"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+  </con:testSuite><con:testSuite id="5f0dd374-595d-4b5f-80b1-b15cb99bb0fe" name="CRUD Workflow"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="9f763cc3-8f8f-448a-88a7-2076536bd7f3" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD Workflow" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Workflow with All Vals" id="ceb72068-512a-4378-bff6-2d9f6906e495"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create Workflow with All Vals" id="294a8303-372b-4122-b564-9de63598ef55"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:create>\r
@@ -61328,7 +61324,7 @@ and paste that invoice number in the next step.
          </workflow>\r
       </wf:create>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a558da42-55c2-4cc1-8f49-60d4899b3aae"/><con:assertion type="Simple Contains" id="15ff5d1e-2495-417c-b4a1-daee457b0ac9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Workflow with min req Vals" id="df91e393-6946-4147-a637-48d2a9a946c9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create Workflow with min req Vals" id="daedc3d4-ce4c-4d7b-b603-1e2445b12f88"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a558da42-55c2-4cc1-8f49-60d4899b3aae"/><con:assertion type="Simple Contains" id="15ff5d1e-2495-417c-b4a1-daee457b0ac9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Workflow with min req Vals" id="df91e393-6946-4147-a637-48d2a9a946c9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create Workflow with min req Vals" id="daedc3d4-ce4c-4d7b-b603-1e2445b12f88"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <wf:create>
@@ -61339,7 +61335,7 @@ and paste that invoice number in the next step.
          </workflow>
       </wf:create>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="3035a853-2f04-4f4e-aa3c-2155df365807"/><con:assertion type="Simple Contains" id="b8011d1a-fc52-451b-b89e-81e922fc04fd" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update Workflow with All Vals" id="bfab605e-dc9c-4bf1-9e55-87675ae4d9d0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="Update Workflow with All Vals" id="8f92c46f-bf12-4255-8a7a-0d37de29dad5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="3035a853-2f04-4f4e-aa3c-2155df365807"/><con:assertion type="Simple Contains" id="b8011d1a-fc52-451b-b89e-81e922fc04fd" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update Workflow with All Vals" id="bfab605e-dc9c-4bf1-9e55-87675ae4d9d0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="Update Workflow with All Vals" id="8f92c46f-bf12-4255-8a7a-0d37de29dad5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:update>\r
@@ -61383,7 +61379,7 @@ and paste that invoice number in the next step.
          </workflow>\r
       </wf:update>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="781d0c56-cc79-431f-8bc3-23251753e528"/><con:assertion type="Simple Contains" id="50cee383-5014-4881-bfa0-e0fc9a1f60d7" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update Workflow with min req Vals" id="ae4c5c36-7083-4351-b727-551bab0b6e60"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="Update Workflow with min req Vals" id="8f92c46f-bf12-4255-8a7a-0d37de29dad5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="781d0c56-cc79-431f-8bc3-23251753e528"/><con:assertion type="Simple Contains" id="50cee383-5014-4881-bfa0-e0fc9a1f60d7" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update Workflow with min req Vals" id="ae4c5c36-7083-4351-b727-551bab0b6e60"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="Update Workflow with min req Vals" id="8f92c46f-bf12-4255-8a7a-0d37de29dad5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:update>\r
@@ -61395,7 +61391,7 @@ and paste that invoice number in the next step.
          </workflow>\r
       </wf:update>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="781d0c56-cc79-431f-8bc3-23251753e528"/><con:assertion type="Simple Contains" id="50cee383-5014-4881-bfa0-e0fc9a1f60d7" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="2723eeb8-2e64-48bc-9727-ec838566eebd"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>find</con:operation><con:request name="find" id="49699f52-32cd-4a03-8026-005557879056"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="781d0c56-cc79-431f-8bc3-23251753e528"/><con:assertion type="Simple Contains" id="50cee383-5014-4881-bfa0-e0fc9a1f60d7" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="2723eeb8-2e64-48bc-9727-ec838566eebd"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>find</con:operation><con:request name="find" id="49699f52-32cd-4a03-8026-005557879056"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:find>\r
@@ -61403,12 +61399,12 @@ and paste that invoice number in the next step.
          <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF1</workflowCode>\r
       </wf:find>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8058b25e-80be-42e1-8fe3-70bbbc70a7cb"/><con:assertion type="Simple Contains" id="a75f933e-cbbb-40cb-a46d-559acdeac4be" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="list" id="2ef85666-ccdf-48df-b6ea-985f3d78bc3b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>list</con:operation><con:request name="list" id="cb150d95-b5d0-49fc-bab8-67b766d1dea2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8058b25e-80be-42e1-8fe3-70bbbc70a7cb"/><con:assertion type="Simple Contains" id="a75f933e-cbbb-40cb-a46d-559acdeac4be" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="list" id="2ef85666-ccdf-48df-b6ea-985f3d78bc3b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>list</con:operation><con:request name="list" id="cb150d95-b5d0-49fc-bab8-67b766d1dea2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:list/>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="9e2fc370-f797-40b4-a9e3-2a83bf8b0fb6"/><con:assertion type="Simple Contains" id="0fcda775-a0a6-4cbd-9cc5-ced88f173764" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="remove" id="968370b7-1754-4039-958a-d2249b832fb0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>remove</con:operation><con:request name="remove" id="47f374be-b7c3-4284-a913-cb92dcfb6a31"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="9e2fc370-f797-40b4-a9e3-2a83bf8b0fb6"/><con:assertion type="Simple Contains" id="0fcda775-a0a6-4cbd-9cc5-ced88f173764" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="remove" id="968370b7-1754-4039-958a-d2249b832fb0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>remove</con:operation><con:request name="remove" id="47f374be-b7c3-4284-a913-cb92dcfb6a31"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:remove>\r
@@ -61416,7 +61412,7 @@ and paste that invoice number in the next step.
          <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF1</workflowCode>\r
       </wf:remove>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b56ef087-7cd4-4283-aa2f-90c5895bbd29"/><con:assertion type="Simple Contains" id="3341c2d3-4a20-42ac-9b6f-96e5d70ff36b" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>931</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>93</con:value></con:property></con:properties></con:testSuite><con:properties>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b56ef087-7cd4-4283-aa2f-90c5895bbd29"/><con:assertion type="Simple Contains" id="3341c2d3-4a20-42ac-9b6f-96e5d70ff36b" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>931</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>93</con:value></con:property></con:properties></con:testSuite><con:properties>
     <con:property>
       <con:name>authorization</con:name>
       <con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value>

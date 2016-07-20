@@ -223,9 +223,9 @@ public class CountryApi extends BaseApi {
     }
     public void findOrCreate(String countryCode, User currentUser) throws EntityDoesNotExistsException, BusinessException {
 		TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode, currentUser.getProvider());
-		if (StringUtils.isBlank(tradingCountry)) {
+		if (tradingCountry==null) {
 			Country country = countryService.findByCode(countryCode);
-			if (StringUtils.isBlank(country)) {
+			if (country==null) {
 				throw new EntityDoesNotExistsException(Country.class, countryCode);
 			}
 			tradingCountry = new TradingCountry();

@@ -265,7 +265,7 @@ public class AccountHierarchyApi extends BaseApi {
 		address.setAddress2(postData.getAddress2());
 		address.setZipCode(postData.getZipCode());
 		address.setCity(postData.getCity());
-		address.setCountry(postData.getCountry());
+		address.setCountry(postData.getCountryCode());
 
 		ContactInformationDto contactInformation = customerDto.getContactInformation();
 		contactInformation.setEmail(postData.getEmail());
@@ -422,7 +422,7 @@ public class AccountHierarchyApi extends BaseApi {
 		address.setAddress3(postData.getAddress3());
 		address.setZipCode(postData.getZipCode());
 		address.setCity(postData.getCity());
-		address.setCountry(postData.getCountry());
+		address.setCountry(postData.getCountryCode());
 
 		ContactInformationDto contactInformation = customerDto.getContactInformation();
 		contactInformation.setEmail(postData.getEmail());
@@ -584,9 +584,6 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 		if (!StringUtils.isBlank(postData.getState())) {
 			qb.addCriterion("c.address.state", "=", postData.getState(), true);
-		}
-		if (!StringUtils.isBlank(postData.getCountry())) {
-			qb.addCriterion("c.address.country", "=", postData.getCountry(), true);
 		}
 		if (!StringUtils.isBlank(postData.getZipCode())) {
 			qb.addCriterion("c.address.zipCode", "=", postData.getZipCode(), true);

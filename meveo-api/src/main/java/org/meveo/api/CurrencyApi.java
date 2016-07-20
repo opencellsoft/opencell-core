@@ -141,9 +141,9 @@ public class CurrencyApi extends BaseApi {
     }
     public void findOrCreate(String currencyCode, User currentUser) throws EntityDoesNotExistsException, BusinessException {
 		TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(currencyCode, currentUser.getProvider());
-		if (StringUtils.isBlank(tradingCurrency)) {
+		if (tradingCurrency==null) {
 			Currency currency = currencyService.findByCode(currencyCode);
-			if (StringUtils.isBlank(currency)) {
+			if (currency==null) {
 				throw new EntityDoesNotExistsException(Currency.class, currencyCode);
 			}
 			tradingCurrency = new TradingCurrency();

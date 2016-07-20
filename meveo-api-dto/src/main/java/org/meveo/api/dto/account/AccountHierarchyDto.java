@@ -52,7 +52,6 @@ public class AccountHierarchyDto implements Serializable {
 	private String zipCode;
 	private String state;
 	private String city;
-	private String country;
 
 	private CustomFieldsDto customFields;
 
@@ -85,7 +84,6 @@ public class AccountHierarchyDto implements Serializable {
 			this.setZipCode(customer.getAddress().getZipCode());
 			this.setCountryCode(customer.getAddress().getCountry());
 			this.setCity(customer.getAddress().getCity());
-			this.setCountry(customer.getAddress().getCountry());
 		}
 
 		if (customer.getName() != null) {
@@ -249,7 +247,7 @@ public class AccountHierarchyDto implements Serializable {
 				+ sellerCode + ", customerBrandCode=" + customerBrandCode + ", customerCategoryCode=" + customerCategoryCode + ", currencyCode=" + currencyCode + ", countryCode="
 				+ countryCode + ", languageCode=" + languageCode + ", titleCode=" + titleCode + ", firstName=" + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate
 				+ ", phoneNumber=" + phoneNumber + ", billingCycleCode=" + billingCycleCode + ", address1=" + address1 + ", address2=" + address2 + ", address3=" + address3
-				+ ", city=" + city + ", state=" + state +", cuntry="+country+", zipCode=" + zipCode +  ", customFields=" + customFields + ", limit=" + limit + ", sortField=" + sortField + ", index="
+				+ ", zipCode=" + zipCode + ", state=" + state + ", city=" + city + ", customFields=" + customFields + ", limit=" + limit + ", sortField=" + sortField + ", index="
 				+ index + "]";
 	}
 
@@ -307,14 +305,6 @@ public class AccountHierarchyDto implements Serializable {
 
 	public void setState(String state) {
 		this.state = state;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
 	}
 
 	public String getCustomerCode() {
