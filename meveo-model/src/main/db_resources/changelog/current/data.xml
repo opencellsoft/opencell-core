@@ -425,6 +425,15 @@
             <column name="role_id" valueNumeric="1" />
             <column name="permission_id" valueNumeric="17" />
         </insert>   
-	</changeSet> 
+	</changeSet>
+	
+	<changeSet id="#1842_20160720" author="TyshanShi">
+		<sql>update crm_provider_contact set address_country = (case address_country when 'FR' then 'French' 
+			when 'GB' then 'United Kingdom' when 'US' then 'United States' when 'DE' then 'German' else address_country end);
+		</sql>
+		<sql>update account_entity set address_country = (case address_country when 'FR' then 'French' when 'GB' 
+			then 'United Kingdom' when 'US' then 'United States' when 'DE' then 'German' else address_country end);
+		</sql>
+	</changeSet>
         
 </databaseChangeLog>
