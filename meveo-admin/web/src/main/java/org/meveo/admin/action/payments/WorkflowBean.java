@@ -105,7 +105,11 @@ public class WorkflowBean extends BaseBean<Workflow> {
 
         try {
             if (wfTransition.getId() != null) {
-            	wFTransitionService.update(wfTransition, getCurrentUser());
+                WFTransition wfTrs = wFTransitionService.findById(wfTransition.getId());
+                wfTrs.setFromStatus(wfTransition.getFromStatus());
+                wfTrs.setToStatus(wfTransition.getToStatus());
+                wfTrs.setConditionEl(wfTransition.getConditionEl());
+                wFTransitionService.update(wfTrs, getCurrentUser());
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
 
@@ -134,8 +138,8 @@ public class WorkflowBean extends BaseBean<Workflow> {
     }
 
     public void deleteWfTransition(WFTransition dunningPlanTransition) {
-    	WFTransition transition = wFTransitionService.findById(dunningPlanTransition.getId()); 
-    	wFTransitionService.remove(transition);
+        WFTransition transition = wFTransitionService.findById(dunningPlanTransition.getId()); 
+        wFTransitionService.remove(transition);
         entity.getTransitions().remove(dunningPlanTransition);
         messages.info(new BundleKey("messages", "delete.successful"));
     }

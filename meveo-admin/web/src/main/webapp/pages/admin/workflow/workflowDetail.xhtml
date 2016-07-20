@@ -132,6 +132,7 @@
 									<h:link outcome="wfTransitionDetail" value="#{entity.fromStatus}">
                                        <f:param name="wfTransitionId" value="#{entity.id}"/>
                                        <f:param name="edit" value="true"/>
+                                       <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                                     </h:link>
 								</p:column>
 								<hftl:column

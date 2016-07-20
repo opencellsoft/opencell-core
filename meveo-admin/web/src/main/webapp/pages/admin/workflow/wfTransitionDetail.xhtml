@@ -21,7 +21,7 @@
 		<hftl:formPanel label="#{messages['dunningPlanTransition.panel']}" backingBean="#{wfTransitionBean}" showBackButton="false">
 			<hftl:formField label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus" required="true" isMessage="true"/>
 			<hftl:formField label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" required="true" isMessage="true"/>
-			<hftl:formField label="#{messages['dunningPlanTransition.conditionEl']}" field="conditionEl" required="true" isMessage="true"/>
+			<hftl:formField label="#{messages['dunningPlanTransition.conditionEl']}" field="conditionEl" isMessage="true"/>
 		</hftl:formPanel>
 		
 						<p:panel id="actionPlanItemsdiv"
@@ -33,21 +33,6 @@
 								entity="#{wfTransitionBean.wfAction}"
 								showFormButtons="false" ajaxSubmit="true">
 
-								<hftl:formField label="#{messages['actionPlanItem.dunningLevel']}"
-									field="dunningLevel" style="width: 100px"
-									panelStyle="width: 100px" required="true" isMessage="true"
-									edit="#{workflowBean.edit}" />
-								<hftl:formField label="#{messages['actionPlanItem.actionType']}"
-									field="actionType" style="width: 100px"
-									panelStyle="width: 100px" required="true" event="onchange"
-									render="amountOrTemplate" edit="#{workflowBean.edit}" />
-								<hftl:formField label="#{messages['actionPlanItem.order']}"
-									field="itemOrder" required="true"
-									edit="#{workflowBean.edit}" />
-								<hftl:formField
-									label="#{messages['actionPlanItem.thresholdAmount']}"
-									field="thresholdAmount" required="true"
-									edit="#{workflowBean.edit}" />
 								<hftl:formField label="#{messages['dunningPlan.actionEl']}"
 									field="actionEl" textArea="true" rows="1" maxlength="2000" isMessage="true"
 									edit="#{workflowBean.edit}" />
