@@ -2906,6 +2906,136 @@ $BODY$
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_charge_templ" />
 	</changeSet>
-	
+
+    <changeSet id="#1839_20160719_orders" author="AndriusKarpavicius">
+
+        <createSequence sequenceName="ord_order_seq" />
+
+        <createTable tableName="ord_order">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="creator_id" type="BIGINT" />
+            <column name="updater_id" type="BIGINT" />
+            <column name="code" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="VARCHAR(100)" />
+            <column name="external_id" type="VARCHAR(100)" />
+            <column name="delivery_instructions" type="TEXT" />
+            <column name="order_date" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false" />
+            </column>
+            <column name="REQ_START_DATE" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="REQ_COMPLETION_DATE" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="EXP_COMPLETION_DATE" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="COMPLETION_DATE" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="priority" type="int" defaultValueNumeric="2" />
+            <column name="category" type="VARCHAR(200)" />
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="id" constraintName="ord_order_pkey" tableName="ord_order" />
+
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ord_order" constraintName="fk_ord_order_crm_provider" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="ord_order" constraintName="fk_creator_ord_order_adm_user" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="ord_order" constraintName="fk_updater_ord_order_adm_user" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+        <addUniqueConstraint columnNames="code,provider_id" constraintName="uk_ord_order" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="ord_order" />
+            
+        <createSequence sequenceName="ord_order_item_seq" />
+
+        <createTable tableName="ord_order_item">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="order_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="item_id" type="VARCHAR(10)">
+                <constraints nullable="false" />
+            </column>
+            <column name="action" type="VARCHAR(10)">
+                <constraints nullable="false" />
+            </column>
+            <column name="user_account_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="source" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="subscription_id" type="BIGINT" />
+        </createTable>
+
+        <addPrimaryKey columnNames="id" constraintName="ord_order_item_pkey" tableName="ord_order_item" />
+
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ord_order_item" constraintName="fk_ord_order_item_crm_provider" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="ord_order_item" constraintName="fk_ord_order_item_ord_order" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_order" />
+
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="ord_order_item" constraintName="fk_ord_order_item_user_account"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_USER_ACCOUNT" />
+
+        <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="ord_order_item" constraintName="fk_ord_order_item_subscription"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_SUBSCRIPTION" />
+
+
+        <createTable tableName="ORD_ITEM_OFFERINGS">
+            <column name="ORDER_ITEM_ID" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="PRD_OFFERING_ID" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="ORDER_ITEM_ID" baseTableName="ORD_ITEM_OFFERINGS" constraintName="fk_ord_item_offerings_order" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_order_item" />
+
+        <addForeignKeyConstraint baseColumnNames="PRD_OFFERING_ID" baseTableName="ORD_ITEM_OFFERINGS" constraintName="fk_ord_item_offerings_prd_offering"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_OFFER_TEMPLATE" />
+
+
+        <createTable tableName="ORD_ITEM_PRD_INSTANCE">
+            <column name="ORDER_ITEM_ID" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="PRD_INSTANCE_ID" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="ORDER_ITEM_ID" baseTableName="ORD_ITEM_PRD_INSTANCE" constraintName="fk_ord_item_prd_instance_order"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_order_item" />
+
+        <addForeignKeyConstraint baseColumnNames="PRD_INSTANCE_ID" baseTableName="ORD_ITEM_PRD_INSTANCE" constraintName="fk_ord_item_prd_instance_prd_instance"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_PRODUCT_INSTANCE" />
+
+
+    </changeSet>
  	
 </databaseChangeLog>

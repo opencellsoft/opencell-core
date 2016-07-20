@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="99e5aa84-c6f0-481f-ac30-865327111e19" activeEnvironment="Default" name="Meveo TMForum - API" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="99e5aa84-c6f0-481f-ac30-865327111e19" activeEnvironment="Default" name="Meveo TMForum - API" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings/>
   <con:interface xsi:type="con:WsdlInterface" id="862741d9-1cba-4f44-8645-23cbf90521aa" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint>
     </con:endpoints>
     <con:operation id="9ba233dc-83dc-4922-bccb-c4730c741e6a" isOneWay="false" action="" name="createBusinessOfferModel" bindingOperationName="createBusinessOfferModel" type="Request-Response" outputName="createBusinessOfferModelResponse" inputName="createBusinessOfferModel" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -234,7 +234,7 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="b93ebf67-a568-4bed-9036-80561b1b1cce" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO JAX-WS API Documentation" type="rest" basePath="/api/rest" definitionUrl="C:\andrius\projektai\seb\meveo\meveo-api\target\docs\application.wadl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
     </con:endpoints>
     <con:resource name="/notification/jobTrigger" path="/notification/jobTrigger" id="76d053cc-cd47-4775-ac93-d2a021485b19">
@@ -13892,7 +13892,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="aa208489-a0b2-404c-8a77-c1350b4c83b3" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint>
     </con:endpoints>
     <con:operation id="4a0fc5f7-43d0-4617-8c84-40c762d59f2d" isOneWay="false" action="" name="addLitigation" bindingOperationName="addLitigation" type="Request-Response" outputName="addLitigationResponse" inputName="addLitigation" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -14093,7 +14093,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="6ccc8a8a-997f-4960-82f3-20becb05f389" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="3d36e78c-f4a2-4b54-8863-98f524934ea6" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -14168,7 +14168,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="3eeb0138-8c90-4a2b-acda-3f4f301cbb22" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint>
     </con:endpoints>
     <con:operation id="b1e4b0c4-088e-4ba2-bf3d-ebc7b9466bac" isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false">
@@ -14225,7 +14225,7 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateRecurringChargeTemplate>
-         <recurringChargeTemplate code="${#TestSuite#ticket}_REC1" description="Recurring charge">
+         <recurringChargeTemplate code="${#Project#baseEntityPrefix}_REC1" description="Recurring charge">
             <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
             <disabled>false</disabled>
             <amountEditable>false</amountEditable>
@@ -14285,7 +14285,7 @@
    <soapenv:Body>
       <ws:createOrUpdateOneShotChargeTemplate>
          <!--Optional:-->
-         <oneShotChargeTemplate code="${#TestSuite#ticket}_OS1" description="One shot charge">
+         <oneShotChargeTemplate code="${#Project#baseEntityPrefix}_OS1" description="One shot charge">
             <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
             <disabled>false</disabled>
             <amountEditable>false</amountEditable>
@@ -14342,7 +14342,7 @@
    <soapenv:Body>
       <ws:createOrUpdateOneShotChargeTemplate>
          <!--Optional:-->
-         <oneShotChargeTemplate code="${#TestSuite#ticket}_OS2" description="One shot charge">
+         <oneShotChargeTemplate code="${#Project#baseEntityPrefix}_OS2" description="One shot charge">
             <invoiceSubCategory>CMP_DATA</invoiceSubCategory>
             <disabled>false</disabled>
             <amountEditable>false</amountEditable>
@@ -14399,7 +14399,7 @@
    <soapenv:Body>
       <ws:createOrUpdateUsageChargeTemplate>
          <!--Optional:-->
-         <usageChargeTemplate code="${#TestSuite#ticket}_USAGE1" description="Usage charge">
+         <usageChargeTemplate code="${#Project#baseEntityPrefix}_USAGE1" description="Usage charge">
             <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
             <disabled>false</disabled>
             <amountEditable>false</amountEditable>
@@ -14459,21 +14459,21 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateServiceTemplate>
-         <serviceTemplate code="${#TestSuite#ticket}_SERVICE1" description="Service 1">
+         <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
             <invoicingCalendar>MONTHLY</invoicingCalendar>
             <serviceChargeTemplateRecurrings>
                <serviceChargeTemplateRecurring>
-                  <code>${#TestSuite#ticket}_REC1</code>
+                  <code>${#Project#baseEntityPrefix}_REC1</code>
                </serviceChargeTemplateRecurring>
             </serviceChargeTemplateRecurrings>
             <serviceChargeTemplateSubscriptions>
                <serviceChargeTemplateSubscription>
-                  <code>${#TestSuite#ticket}_OS1</code>
+                  <code>${#Project#baseEntityPrefix}_OS1</code>
                </serviceChargeTemplateSubscription>
             </serviceChargeTemplateSubscriptions>
             <serviceChargeTemplateUsages>
                <serviceChargeTemplateUsage>
-                  <code>${#TestSuite#ticket}_USAGE1</code>
+                  <code>${#Project#baseEntityPrefix}_USAGE1</code>
                   <counterTemplate></counterTemplate>
                </serviceChargeTemplateUsage>
             </serviceChargeTemplateUsages>
@@ -14519,21 +14519,21 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateServiceTemplate>
-         <serviceTemplate code="${#TestSuite#ticket}_SERVICE2" description="Service 2">
+         <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE2" description="Service 2">
             <invoicingCalendar>MONTHLY</invoicingCalendar>
             <serviceChargeTemplateRecurrings>
                <serviceChargeTemplateRecurring>
-                  <code>${#TestSuite#ticket}_REC1</code>
+                  <code>${#Project#baseEntityPrefix}_REC1</code>
                </serviceChargeTemplateRecurring>
             </serviceChargeTemplateRecurrings>
             <serviceChargeTemplateSubscriptions>
                <serviceChargeTemplateSubscription>
-                  <code>${#TestSuite#ticket}_OS1</code>
+                  <code>${#Project#baseEntityPrefix}_OS1</code>
                </serviceChargeTemplateSubscription>
             </serviceChargeTemplateSubscriptions>
             <serviceChargeTemplateUsages>
                <serviceChargeTemplateUsage>
-                  <code>${#TestSuite#ticket}_USAGE1</code>
+                  <code>${#Project#baseEntityPrefix}_USAGE1</code>
                   <counterTemplate></counterTemplate>
                </serviceChargeTemplateUsage>
             </serviceChargeTemplateUsages>
@@ -14579,14 +14579,14 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateServiceTemplate>
-         <serviceTemplate code="${#TestSuite#ticket}_SERVICE3" description="Service 3">
+         <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE3" description="Service 3">
             <invoicingCalendar>MONTHLY</invoicingCalendar>
             <serviceChargeTemplateSubscriptions>
                <serviceChargeTemplateSubscription>
-                  <code>${#TestSuite#ticket}_OS1</code>
+                  <code>${#Project#baseEntityPrefix}_OS1</code>
                </serviceChargeTemplateSubscription>
                <serviceChargeTemplateSubscription>
-                  <code>${#TestSuite#ticket}_OS2</code>
+                  <code>${#Project#baseEntityPrefix}_OS2</code>
                </serviceChargeTemplateSubscription>
             </serviceChargeTemplateSubscriptions>
          </serviceTemplate>
@@ -14631,15 +14631,19 @@
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateOfferTemplate>\r
-         <offerTemplate code="${#TestSuite#ticket}_OFFER1" description="Offer 1">\r
+         <offerTemplate code="${#Project#baseEntityPrefix}_OFFER1" description="Offer 1">\r
             <disabled>false</disabled>\r
             <offerServiceTemplates>\r
                <offerServiceTemplate>\r
-                  <serviceTemplate code="${#TestSuite#ticket}_SERVICE1"/>\r
+                  <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE1"/>\r
                </offerServiceTemplate>\r
                <offerServiceTemplate>\r
-                  <serviceTemplate code="${#TestSuite#ticket}_SERVICE2"/>\r
+                  <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE2"/>\r
                </offerServiceTemplate>\r
+               <offerServiceTemplate>
+                  <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE3"/>
+               </offerServiceTemplate>
+
             </offerServiceTemplates>\r
          </offerTemplate>\r
       </ws:createOrUpdateOfferTemplate>\r
@@ -14683,11 +14687,11 @@
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateOfferTemplate>\r
-         <offerTemplate code="${#TestSuite#ticket}_OFFER2" description="Offer 2">\r
+         <offerTemplate code="${#Project#baseEntityPrefix}_OFFER2" description="Offer 2">\r
             <disabled>false</disabled>\r
             <offerServiceTemplates>\r
                <offerServiceTemplate>\r
-                  <serviceTemplate code="${#TestSuite#ticket}_SERVICE3"/>\r
+                  <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE3"/>\r
                </offerServiceTemplate>\r
             </offerServiceTemplates>\r
          </offerTemplate>\r
@@ -14732,7 +14736,7 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateProductTemplate>
-         <productTemplate code="${#TestSuite#ticket}_PRODUCT1" description="${#TestSuite#ticket}_PRODUCT1_DESCRIPTION">
+         <productTemplate code="${#Project#baseEntityPrefix}_PRODUCT1" description="${#Project#baseEntityPrefix}_PRODUCT1_DESCRIPTION">
             <name>PRODUCT 1</name>
             <modelCode>NEW SKU</modelCode>
             <validFrom>2016-06-01</validFrom>
@@ -14780,7 +14784,7 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateProductTemplate>
-         <productTemplate code="${#TestSuite#ticket}_PRODUCT2" description="${#TestSuite#ticket}_PRODUCT2_DESCRIPTION">
+         <productTemplate code="${#Project#baseEntityPrefix}_PRODUCT2" description="${#Project#baseEntityPrefix}_PRODUCT2_DESCRIPTION">
             <name>PRODUCT 2</name>
             <modelCode>SKU ABC</modelCode>
             <validFrom>2016-07-01</validFrom>
@@ -14828,24 +14832,22 @@
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateOfferTemplate>\r
-         <offerTemplate code="${#TestSuite#ticket}_OFFER3" description="Offer 3">\r
+         <offerTemplate code="${#Project#baseEntityPrefix}_OFFER3" description="Offer 3">\r
             <disabled>false</disabled>\r
             <offerServiceTemplates>\r
                <offerServiceTemplate>\r
-                  <serviceTemplate code="${#TestSuite#ticket}_SERVICE1"/>\r
+                  <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE1"/>\r
                </offerServiceTemplate>\r
                <offerServiceTemplate>\r
-                  <serviceTemplate code="${#TestSuite#ticket}_SERVICE2"/>\r
+                  <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE2"/>\r
                </offerServiceTemplate>\r
             </offerServiceTemplates>\r
             <offerProductTemplates>
             	<offerProductTemplate>
-            		<offerTemplate code="${#TestSuite#ticket}_OFFER1" />
-            		<productTemplate code="${#TestSuite#ticket}_PRODUCT1" />
+            		<productTemplate code="${#Project#baseEntityPrefix}_PRODUCT1" />
             	</offerProductTemplate>
             	<offerProductTemplate>
-            		<offerTemplate code="${#TestSuite#ticket}_OFFER2" />
-            		<productTemplate code="${#TestSuite#ticket}_PRODUCT2" />
+            		<productTemplate code="${#Project#baseEntityPrefix}_PRODUCT2" />
             	</offerProductTemplate>
             </offerProductTemplates>
          </offerTemplate>\r
@@ -14890,8 +14892,8 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdatePricePlan>
-         <pricePlan code="${#TestSuite#ticket}_REC1" description="PP for REC1">
-            <eventCode>${#TestSuite#ticket}_REC1</eventCode>
+         <pricePlan code="${#Project#baseEntityPrefix}_REC1" description="PP for REC1">
+            <eventCode>${#Project#baseEntityPrefix}_REC1</eventCode>
             <amountWithoutTax>10</amountWithoutTax>
             <amountWithTax>12</amountWithTax>
             <priority>1</priority>
@@ -14935,8 +14937,8 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdatePricePlan>
-         <pricePlan code="${#TestSuite#ticket}_OS1" description="PP for OS1">
-            <eventCode>${#TestSuite#ticket}_OS1</eventCode>
+         <pricePlan code="${#Project#baseEntityPrefix}_OS1" description="PP for OS1">
+            <eventCode>${#Project#baseEntityPrefix}_OS1</eventCode>
             <amountWithoutTax>10</amountWithoutTax>
             <amountWithTax>12</amountWithTax>
             <priority>1</priority>
@@ -14980,8 +14982,8 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdatePricePlan>
-         <pricePlan code="${#TestSuite#ticket}_OS2" description="PP for OS2">
-            <eventCode>${#TestSuite#ticket}_OS2</eventCode>
+         <pricePlan code="${#Project#baseEntityPrefix}_OS2" description="PP for OS2">
+            <eventCode>${#Project#baseEntityPrefix}_OS2</eventCode>
             <amountWithoutTax>20</amountWithoutTax>
             <amountWithTax>22</amountWithTax>
             <priority>1</priority>
@@ -15025,8 +15027,8 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdatePricePlan>
-         <pricePlan code="${#TestSuite#ticket}_USAGE1" description="PP for USAGE1">
-            <eventCode>${#TestSuite#ticket}_USAGE1</eventCode>
+         <pricePlan code="${#Project#baseEntityPrefix}_USAGE1" description="PP for USAGE1">
+            <eventCode>${#Project#baseEntityPrefix}_USAGE1</eventCode>
             <amountWithoutTax>10</amountWithoutTax>
             <amountWithTax>12</amountWithTax>
             <priority>1</priority>
@@ -15070,7 +15072,7 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateField>
-         <customField code="${#TestSuite#ticket}_SUB_CF_STRING" description="String value">
+         <customField code="${#Project#baseEntityPrefix}_SUB_CF_STRING" description="String value">
             <fieldType>STRING</fieldType>
             <appliesTo>SUB</appliesTo>
             <storageType>SINGLE</storageType>
@@ -15107,7 +15109,7 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateField>
-         <customField code="${#TestSuite#ticket}_SUB_CF_LONG_MAP" description="Long map value">
+         <customField code="${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP" description="Long map value">
             <fieldType>STRING</fieldType>
             <appliesTo>SUB</appliesTo>
             <storageType>MAP</storageType>
@@ -15145,7 +15147,7 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateField>
-         <customField code="${#TestSuite#ticket}_SERVICE_CF_STRING" description="String value">
+         <customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" description="String value">
             <fieldType>STRING</fieldType>
             <appliesTo>SERVICE</appliesTo>
             <storageType>SINGLE</storageType>
@@ -15182,7 +15184,7 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateField>
-         <customField code="${#TestSuite#ticket}_SERVICE_CF_LONG_MATRIX" description="Long matrix value">
+         <customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value">
             <fieldType>STRING</fieldType>
             <appliesTo>SERVICE</appliesTo>
             <storageType>MATRIX</storageType>
@@ -15227,7 +15229,7 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCustomer>
-         <customer code="${#TestSuite#ticket}_CUST" description="Customer">
+         <customer code="${#Project#baseEntityPrefix}_CUST" description="Customer">
             <name>
                <title>M</title>
                <firstName>Edward</firstName>
@@ -15286,7 +15288,7 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCustomerAccount>
-         <customerAccount code="${#TestSuite#ticket}_CA" description="Customer account">
+         <customerAccount code="${#Project#baseEntityPrefix}_CA" description="Customer account">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -15302,7 +15304,7 @@
                <city>Dijon</city>
                <country>FR</country>
             </address>
-            <customer>${#TestSuite#ticket}_CUST</customer>
+            <customer>${#Project#baseEntityPrefix}_CUST</customer>
             <currency>EUR</currency>
             <paymentMethod>CHECK</paymentMethod>
             <creditCategory>Pro</creditCategory>
@@ -15344,7 +15346,7 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateBillingAccount>
-         <billingAccount code="${#TestSuite#ticket}_BA" description="Billing account">
+         <billingAccount code="${#Project#baseEntityPrefix}_BA" description="Billing account">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -15360,7 +15362,7 @@
                <city>Dijon</city>
                <country>FR</country>
             </address>
-            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <customerAccount>${#Project#baseEntityPrefix}_CA</customerAccount>
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <country>FR</country>
             <language>FRA</language>
@@ -15408,8 +15410,8 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateUserAccount>
-         <userAccount code="${#TestSuite#ticket}_UA" description="User account">
-            <billingAccount>${#TestSuite#ticket}_BA</billingAccount>
+         <userAccount code="${#Project#baseEntityPrefix}_UA" description="User account">
+            <billingAccount>${#Project#baseEntityPrefix}_BA</billingAccount>
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -15494,7 +15496,7 @@
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="id" value="${#TestSuite#ticket}_OFFER1" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="id" value="${#Project#baseEntityPrefix}_OFFER1" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -15536,7 +15538,7 @@
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="id" value="${#TestSuite#ticket}_OFFER1" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="id" value="${#Project#baseEntityPrefix}_OFFER1" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -15554,75 +15556,85 @@
             </con:settings>
             <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
             <con:request>{
-   "description":"${#TestSuite#ticket}_${#TestSuite#index}_Product_Order",
+   "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Order",
    "orderDate":"2015-10-25T15:50:48+08",
    "orderItem":[
-      {
-         "id":"${#TestSuite#ticket}_${#TestSuite#index}_SUB1",
+      {      	
+         "id":"01",
+         "action":"add",
          "billingAccount":[
             {
-               "id":"${#TestSuite#ticket}_UA"
+               "id":"${#Project#baseEntityPrefix}_UA"
             }
-         ],
+         ],         
          "productOffering":{
-            "id":"${#TestSuite#ticket}_OFFER1"
+            "id":"${#Project#baseEntityPrefix}_OFFER1"
          },
          "product":{
-            "id":"${#TestSuite#ticket}_OFFER1",
             "productCharacteristic":[
+               {
+                  "name":"subscriptionCode",
+                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_SUB1"
+               },
                {
                   "name":"subscriptionDate",
                   "value":"2016-02-27"
                },
                {
-                  "name":"${#TestSuite#ticket}_SUB_CF_STRING",
+                  "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
                   "value":"Subscription CF value"
                },
                {
-                  "name":"${#TestSuite#ticket}_SUB_CF_LONG_MAP",
+                  "name":"${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP",
                   "value":"{'mm':81,'ll':80}"
                }
             ],
             "productRelationship":[
-               {
+               {       	
                   "type":"bundled",
-                  "product":{
-                     "id":"${#TestSuite#ticket}_SERVICE1",
+                  "product":{           
                      "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE1"
+                        },
                         {
                            "name":"quantity",
                            "value":"2"
                         },
                         {
-                  		  "name":"subscriptionDate",
-                  		  "value":"2016-01-27"
-               	    },
+                           "name":"subscriptionDate",
+                           "value":"2016-01-27"
+                        },
                         {
-                           "name":"${#TestSuite#ticket}_SERVICE_CF_STRING",
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
                            "value":"Service CF value"
                         },
                         {
-                           "name":"${#TestSuite#ticket}_SERVICE_CF_LONG_MATRIX",
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
                            "value":"{'Fifth|Fourth':150,'Fifth|Second':100}"
                         }
                      ]
                   }
                },
-               {
+               {        	
                   "type":"bundled",
-                  "product":{
-                     "id":"${#TestSuite#ticket}_SERVICE2",
+                  "product":{          
                      "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE2"
+                        },
                         {
                            "name":"quantity",
                            "value":"1"
                         },
                         {
-                           "name":"${#TestSuite#ticket}_SERVICE_CF_STRING",
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
                            "value":"Service CF value"
                         },
                         {
-                           "name":"${#TestSuite#ticket}_SERVICE_CF_LONG_MATRIX",
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
                            "value":"{'Third|Fourth':15,'First|Second':10}"
                         }
                      ]
@@ -15632,20 +15644,103 @@
          }
       },
       {
-         "id":"${#TestSuite#ticket}_${#TestSuite#index}_SUB2",
+         "id":"02",
+         "action":"add",
          "billingAccount":[
             {
-               "id":"${#TestSuite#ticket}_UA"
+               "id":"${#Project#baseEntityPrefix}_UA"
             }
-         ],
-         "productOffering":{
-            "id":"${#TestSuite#ticket}_OFFER1"
+         ],         
+         "productOffering":{         	
+            "id":"${#Project#baseEntityPrefix}_OFFER3",
+            "bundledProductOffering":[
+               {
+                  "id":"${#Project#baseEntityPrefix}_PRODUCT1"
+               },
+               {
+                  "id":"${#Project#baseEntityPrefix}_PRODUCT2"
+               }
+            ]
          },
          "product":{
             "productCharacteristic":[
                {
-                  "name":"service",
-                  "value":"${#TestSuite#ticket}_SERVICE1"
+                  "name":"subscriptionCode",
+                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_SUB2"
+               }
+            ],
+            "productRelationship":[
+               {               	
+                  "type":"bundled",
+                  "product":{
+                     "productCharacteristic":[
+                        {
+                           "name":"quantity",
+                           "value":"2"
+                        }
+                     ]
+                  }
+               },
+               {               	
+                  "type":"bundled",
+                  "product":{
+                     "productCharacteristic":[
+                        {
+                           "name":"quantity",
+                           "value":"5"
+                        }
+                     ]
+                  }
+               },
+               {               	
+                  "type":"bundled",
+                  "product":{
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE1"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"2"
+                        },
+                        {
+                           "name":"subscriptionDate",
+                           "value":"2016-01-27"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Fifth|Fourth':150,'Fifth|Second':100}"
+                        }
+                     ]
+                  }
+               },
+               {
+                  "type":"bundled",
+                  "product":{
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE2"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"3"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Third|Fourth':15,'First|Second':10}"
+                        }
+                     ]
+                  }
                }
             ]
          }
@@ -15687,7 +15782,7 @@
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findSubscription>\r
-         <subscriptionCode>${#TestSuite#ticket}_${#TestSuite#index}_SUB1</subscriptionCode>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB1</subscriptionCode>\r
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -15701,9 +15796,9 @@
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#TestSuite#ticket}_${#TestSuite#index}_SUB1">
-               <userAccount>${#TestSuite#ticket}_UA</userAccount>
-               <offerTemplate>${#TestSuite#ticket}_OFFER1</offerTemplate>
+                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
+               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-02-27T00:00:00${#Project#timezone}:00</subscriptionDate>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -15711,7 +15806,7 @@
             </con:assertion>
             <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
               <con:configuration>
-                <token>&lt;serviceInstance code="${#TestSuite#ticket}_SERVICE1" description="Service 1">
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
                      &lt;status>ACTIVE&lt;/status></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -15719,7 +15814,7 @@
             </con:assertion>
             <con:assertion type="Simple Contains" id="86555bc2-6c09-4631-b066-d4ce53e4a577" name="Contains 3">
               <con:configuration>
-                <token>&lt;serviceInstance code="${#TestSuite#ticket}_SERVICE2" description="Service 2">
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE2" description="Service 2">
                      &lt;status>ACTIVE&lt;/status></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -15727,7 +15822,7 @@
             </con:assertion>
             <con:assertion type="XPath Match" id="b01c8735-4081-471b-8dd9-731ee1bbfc78" name="XPath Match">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE2"]/quantity</path>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/quantity</path>
                 <content>1.000000000000</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -15736,7 +15831,7 @@
             </con:assertion>
             <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE1"]/customFields/customField[@code="${#TestSuite#ticket}_SERVICE_CF_STRING"]/stringValue</path>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
                 <content>Service CF value</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -15745,8 +15840,8 @@
             </con:assertion>
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE1"]/customFields/customField[@code="${#TestSuite#ticket}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="TM_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -15775,8 +15870,8 @@
             </con:assertion>
             <con:assertion type="XPath Match" id="203ad7bd-1f91-4c11-a35d-8812a702bd87" name="XPath Match 3">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE2"]/customFields/customField[@code="${#TestSuite#ticket}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="TM_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <mapValue>
     <entry>
       <key>Third|Fourth</key>
@@ -15805,8 +15900,8 @@
             </con:assertion>
             <con:assertion type="XPath Match" id="03c33c85-73e9-4288-85fb-339bb9a55d76" name="XPath Match 4">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE2"]/customFields/customField[@code="${#TestSuite#ticket}_SERVICE_CF_STRING"]</path>
-                <content>&lt;customField code="TM_SERVICE_CF_STRING" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]</path>
+                <content>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   &lt;stringValue>Service CF value&lt;/stringValue>
 &lt;/customField></content>
                 <allowWildcards>false</allowWildcards>
@@ -15816,7 +15911,7 @@
             </con:assertion>
             <con:assertion type="XPath Match" id="703fdac6-6e44-4163-8caa-71c4066a55d1" name="XPath Match 5">
               <con:configuration>
-                <path>//services/serviceInstance[@code='${#TestSuite#ticket}_SERVICE1']/subscriptionDate</path>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
                 <content>2016-01-27T00:00:00${#Project#timezone}:00</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -15825,7 +15920,7 @@
             </con:assertion>
             <con:assertion type="XPath Match" id="537c0b5d-5e54-47eb-88d5-f3d3d00abd64" name="XPath Match 6">
               <con:configuration>
-                <path>//services/serviceInstance[@code='${#TestSuite#ticket}_SERVICE1']/quantity</path>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/quantity</path>
                 <content>2.000000000000</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -15857,7 +15952,7 @@
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findSubscription>\r
-         <subscriptionCode>${#TestSuite#ticket}_${#TestSuite#index}_SUB2</subscriptionCode>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB2</subscriptionCode>\r
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -15871,9 +15966,9 @@
             </con:assertion>
             <con:assertion type="Simple Contains" id="edaed287-eb7a-4d06-bc02-d86f5ba350da" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#TestSuite#ticket}_${#TestSuite#index}_SUB2">
-               <userAccount>${#TestSuite#ticket}_UA</userAccount>
-               <offerTemplate>${#TestSuite#ticket}_OFFER1</offerTemplate>
+                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB2">
+               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER3</offerTemplate>
                <subscriptionDate>2015-10-25T00:00:00${#Project#timezone}:00</subscriptionDate>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -15881,7 +15976,7 @@
             </con:assertion>
             <con:assertion type="Simple Contains" id="ddfa8078-607f-41c5-b6f2-a067f4500477" name="Contains 2">
               <con:configuration>
-                <token>&lt;serviceInstance code="${#TestSuite#ticket}_SERVICE1" description="Service 1">
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
                      &lt;status>ACTIVE&lt;/status></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -15889,8 +15984,17 @@
             </con:assertion>
             <con:assertion type="XPath Match" id="09ea0bd8-3013-44d4-8311-35d75a5874fa" name="XPath Match">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE1"]/quantity</path>
-                <content>1.000000000000</content>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/quantity</path>
+                <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="09ea0bd8-3013-44d4-8311-35d75a5874fa" name="XPath Match2">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/quantity</path>
+                <content>3.000000000000</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -15906,7 +16010,7 @@
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="restrequest" name="Repeat Create Product order" id="b3fa90aa-6bd9-42e6-a391-bdf0f3b08512">
+      <con:testStep type="restrequest" name="Modify ordered product (subscription)" id="b3fa90aa-6bd9-42e6-a391-bdf0f3b08512">
         <con:settings/>
         <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/orderManagement/productOrder" methodName="POST - createProductOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Repeat Create Product order" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
@@ -15915,98 +16019,60 @@
             </con:settings>
             <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
             <con:request>{
-   "description":"${#TestSuite#ticket}_${#TestSuite#index}_Product_Order",
-   "orderDate":"2015-10-25T15:50:48+08:00",
+   "description":"${#Project#entityPrefix}_${#TestSuite#index} subscription modification",
+   "orderDate":"2016-07-20T15:50:48+08",
    "orderItem":[
-      {
-         "id":"${#TestSuite#ticket}_${#TestSuite#index}_SUB1",
+      {      	
+         "id":"01",
+         "action":"modify",
          "billingAccount":[
             {
-               "id":"${#TestSuite#ticket}_UA"
+               "id":"${#Project#baseEntityPrefix}_UA"
             }
-         ],
+         ],                 
          "productOffering":{
-            "id":"${#TestSuite#ticket}_OFFER1"
+            "id":"${#Project#baseEntityPrefix}_OFFER1"
          },
          "product":{
-            "id":"${#TestSuite#ticket}_OFFER1",
+         	  "id": "${#Project#entityPrefix}_${#TestSuite#index}_SUB1",
             "productCharacteristic":[
+
                {
-                  "name":"subscriptionDate",
-                  "value":"2016-02-27"
+                  "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
+                  "value":"Subscription CF value modified"
                },
                {
-                  "name":"${#TestSuite#ticket}_SUB_CF_STRING",
-                  "value":"Subscription CF value"
-               },
-               {
-                  "name":"${#TestSuite#ticket}_SUB_CF_LONG_MAP",
-                  "value":"{'mm':81,'ll':80}"
+                  "name":"${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP",
+                  "value":"{'mm':82,'ll':83}"
                }
             ],
             "productRelationship":[
-               {
+               {       	
                   "type":"bundled",
-                  "product":{
-                     "id":"${#TestSuite#ticket}_SERVICE1",
+                  "product":{           
                      "productCharacteristic":[
                         {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE3"
+                        },
+                        {
                            "name":"quantity",
-                           "value":"2"
+                           "value":"5"
                         },
                         {
-                  		  "name":"subscriptionDate",
-                  		  "value":"2016-01-27"
-               	    },
-                        {
-                           "name":"${#TestSuite#ticket}_SERVICE_CF_STRING",
-                           "value":"Service CF value"
+                           "name":"subscriptionDate",
+                           "value":"2016-07-02"
                         },
                         {
-                           "name":"${#TestSuite#ticket}_SERVICE_CF_LONG_MATRIX",
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service 3 CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
                            "value":"{'Fifth|Fourth':150,'Fifth|Second':100}"
                         }
                      ]
                   }
-               },
-               {
-                  "type":"bundled",
-                  "product":{
-                     "id":"${#TestSuite#ticket}_SERVICE2",
-                     "productCharacteristic":[
-                        {
-                           "name":"quantity",
-                           "value":"1"
-                        },
-                        {
-                           "name":"${#TestSuite#ticket}_SERVICE_CF_STRING",
-                           "value":"Service CF value"
-                        },
-                        {
-                           "name":"${#TestSuite#ticket}_SERVICE_CF_LONG_MATRIX",
-                           "value":"{'Third|Fourth':15,'First|Second':10}"
-                        }
-                     ]
-                  }
-               }
-            ]
-         }
-      },
-      {
-         "id":"${#TestSuite#ticket}_${#TestSuite#index}_SUB2",
-         "billingAccount":[
-            {
-               "id":"${#TestSuite#ticket}_UA"
-            }
-         ],
-         "productOffering":{
-            "id":"${#TestSuite#ticket}_OFFER1"
-         },
-         "product":{
-            "productCharacteristic":[
-               {
-                  "name":"service",
-                  "value":"${#TestSuite#ticket}_SERVICE1"
                }
             ]
          }
@@ -16033,12 +16099,12 @@
           </con:restRequest>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Find Subscription 1 after repeat" id="0fab5a5d-d831-4f01-89b6-3d5b2c315966">
+      <con:testStep type="request" name="Find Subscription 1 after modify" id="0fab5a5d-d831-4f01-89b6-3d5b2c315966">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SubscriptionWsSoapBinding</con:interface>
           <con:operation>findSubscription</con:operation>
-          <con:request name="Find Subscription 1 after repeat" id="03614745-d791-4187-a28a-da9833308ae7">
+          <con:request name="Find Subscription 1 after modify" id="03614745-d791-4187-a28a-da9833308ae7">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -16048,7 +16114,7 @@
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findSubscription>\r
-         <subscriptionCode>${#TestSuite#ticket}_${#TestSuite#index}_SUB1</subscriptionCode>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB1</subscriptionCode>\r
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -16062,9 +16128,9 @@
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#TestSuite#ticket}_${#TestSuite#index}_SUB1">
-               <userAccount>${#TestSuite#ticket}_UA</userAccount>
-               <offerTemplate>${#TestSuite#ticket}_OFFER1</offerTemplate>
+                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
+               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-02-27T00:00:00${#Project#timezone}:00</subscriptionDate>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -16072,7 +16138,7 @@
             </con:assertion>
             <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
               <con:configuration>
-                <token>&lt;serviceInstance code="${#TestSuite#ticket}_SERVICE1" description="Service 1">
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
                      &lt;status>ACTIVE&lt;/status></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -16080,24 +16146,23 @@
             </con:assertion>
             <con:assertion type="Simple Contains" id="86555bc2-6c09-4631-b066-d4ce53e4a577" name="Contains 3">
               <con:configuration>
-                <token>&lt;serviceInstance code="${#TestSuite#ticket}_SERVICE2" description="Service 2">
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE2" description="Service 2">
                      &lt;status>ACTIVE&lt;/status></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="b01c8735-4081-471b-8dd9-731ee1bbfc78" name="XPath Match">
+            <con:assertion type="Simple Contains" id="eabba1c5-3b41-4dd4-96f3-f86774b4b059" name="Contains 4">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE2"]/quantity</path>
-                <content>1.000000000000</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE3" description="Service 3">
+                     &lt;status>ACTIVE&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE1"]/customFields/customField[@code="${#TestSuite#ticket}_SERVICE_CF_STRING"]/stringValue</path>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
                 <content>Service CF value</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -16106,8 +16171,8 @@
             </con:assertion>
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE1"]/customFields/customField[@code="${#TestSuite#ticket}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="TM_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -16136,8 +16201,8 @@
             </con:assertion>
             <con:assertion type="XPath Match" id="203ad7bd-1f91-4c11-a35d-8812a702bd87" name="XPath Match 3">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE2"]/customFields/customField[@code="${#TestSuite#ticket}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="TM_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <mapValue>
     <entry>
       <key>Third|Fourth</key>
@@ -16166,8 +16231,8 @@
             </con:assertion>
             <con:assertion type="XPath Match" id="03c33c85-73e9-4288-85fb-339bb9a55d76" name="XPath Match 4">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE2"]/customFields/customField[@code="${#TestSuite#ticket}_SERVICE_CF_STRING"]</path>
-                <content>&lt;customField code="TM_SERVICE_CF_STRING" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]</path>
+                <content>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   &lt;stringValue>Service CF value&lt;/stringValue>
 &lt;/customField></content>
                 <allowWildcards>false</allowWildcards>
@@ -16177,7 +16242,7 @@
             </con:assertion>
             <con:assertion type="XPath Match" id="b2e7cb8f-a6ac-48cf-a60a-d69c88b776a4" name="XPath Match 5">
               <con:configuration>
-                <path>//services/serviceInstance[@code='${#TestSuite#ticket}_SERVICE1']/subscriptionDate</path>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
                 <content>2016-01-27T00:00:00${#Project#timezone}:00</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -16186,8 +16251,89 @@
             </con:assertion>
             <con:assertion type="XPath Match" id="5568d806-b725-40e7-bb39-e36dc0b239bd" name="XPath Match 6">
               <con:configuration>
-                <path>//services/serviceInstance[@code='${#TestSuite#ticket}_SERVICE1']/quantity</path>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/quantity</path>
                 <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="b01c8735-4081-471b-8dd9-731ee1bbfc78" name="XPath Match">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/quantity</path>
+                <content>1.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 8">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE3"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
+                <content>Service 3 CF value</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 9">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE3"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>Fifth|Fourth</key>
+      <value>
+        <stringValue>150</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>Fifth|Second</key>
+      <value>
+        <stringValue>100</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="5568d806-b725-40e7-bb39-e36dc0b239bd" name="XPath Match 10">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE3']/quantity</path>
+                <content>5.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="0ea12bc7-33f3-4fb3-a960-861ad5a8360c" name="XPath Match">
+              <con:configuration>
+                <path>//subscription/customFields/customField[@code='${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP']</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP" xmlns:ns2="http://ws.api.meveo.org/" xmlns:ns3="http://wf.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>mm</key>
+      <value>
+        <stringValue>82</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>ll</key>
+      <value>
+        <stringValue>83</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -16203,7 +16349,7 @@
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="restrequest" name="Product order - terminate service" id="5639e534-f14b-4b99-9c7b-82229a1e8678">
+      <con:testStep type="restrequest" name="Modify ordered product (subscription) - terminate service" id="5639e534-f14b-4b99-9c7b-82229a1e8678">
         <con:settings/>
         <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/orderManagement/productOrder" methodName="POST - createProductOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Product order - terminate service" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
@@ -16212,65 +16358,31 @@
             </con:settings>
             <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
             <con:request>{
-   "description":"${#TestSuite#ticket}_${#TestSuite#index}_Product_Order",
-   "orderDate":"2015-10-25T15:50:48+08:00",
+   "description":"${#Project#entityPrefix}_${#TestSuite#index} subscription modification - service terination",
+   "orderDate":"2016-07-21T15:50:48+08",
    "orderItem":[
-      {
-         "id":"${#TestSuite#ticket}_${#TestSuite#index}_SUB1",
+      {      	
+         "id":"01",
+         "action":"modify",
          "billingAccount":[
             {
-               "id":"${#TestSuite#ticket}_UA"
+               "id":"${#Project#baseEntityPrefix}_UA"
             }
-         ],
+         ],                 
          "productOffering":{
-            "id":"${#TestSuite#ticket}_OFFER1"
+            "id":"${#Project#baseEntityPrefix}_OFFER1"
          },
          "product":{
-            "id":"${#TestSuite#ticket}_OFFER1",
-            "productCharacteristic":[
-               {
-                  "name":"subscriptionDate",
-                  "value":"2016-02-27"
-               },
-               {
-                  "name":"${#TestSuite#ticket}_SUB_CF_STRING",
-                  "value":"Subscription CF value"
-               },
-               {
-                  "name":"${#TestSuite#ticket}_SUB_CF_LONG_MAP",
-                  "value":"{'mm':81,'ll':80}"
-               }
-            ],
+         	  "id": "${#Project#entityPrefix}_${#TestSuite#index}_SUB1",
             "productRelationship":[
-               {
+               {       	
                   "type":"bundled",
-                  "product":{
-                     "id":"${#TestSuite#ticket}_SERVICE1",
+                  "product":{           
                      "productCharacteristic":[
                         {
-                           "name":"quantity",
-                           "value":"2"
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE3"
                         },
-                        {
-                           "name":"subscriptionDate",
-                           "value":"2016-01-27"
-                        },
-                        {
-                           "name":"${#TestSuite#ticket}_SERVICE_CF_STRING",
-                           "value":"Service CF value"
-                        },
-                        {
-                           "name":"${#TestSuite#ticket}_SERVICE_CF_LONG_MATRIX",
-                           "value":"{'Fifth|Fourth':150,'Fifth|Second':100}"
-                        }
-                     ]
-                  }
-               },
-               {
-                  "type":"bundled",
-                  "product":{
-                     "id":"${#TestSuite#ticket}_SERVICE2",
-                     "productCharacteristic":[
                         {
                            "name":"terminationDate",
                            "value":"2016-02-29"
@@ -16278,36 +16390,9 @@
                         {
                            "name":"terminationReason",
                            "value":"TERM_REASON_1"
-                        }
+                        }                        
                      ]
                   }
-               }
-            ]
-         }
-      },
-      {
-         "id":"${#TestSuite#ticket}_${#TestSuite#index}_SUB2",
-         "billingAccount":[
-            {
-               "id":"${#TestSuite#ticket}_UA"
-            }
-         ],
-         "productOffering":{
-            "id":"${#TestSuite#ticket}_OFFER1"
-         },
-         "product":{
-            "productCharacteristic":[
-               {
-                  "name":"service",
-                  "value":"${#TestSuite#ticket}_SERVICE1"
-               },
-               {
-                  "name":"terminationDate",
-                  "value":"2016-02-29"
-               },
-               {
-                  "name":"terminationReason",
-                  "value":"TERM_REASON_2"
                }
             ]
          }
@@ -16334,12 +16419,12 @@
           </con:restRequest>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Find Subscription 1 after terminate" id="f7ca2276-696a-454c-8dbc-daa9640b0573">
+      <con:testStep type="request" name="Find Subscription 1 after delete" id="e17d77e1-c467-4386-abc0-27d47140afd0">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SubscriptionWsSoapBinding</con:interface>
           <con:operation>findSubscription</con:operation>
-          <con:request name="Find Subscription 1 after terminate" id="03614745-d791-4187-a28a-da9833308ae7">
+          <con:request name="Find Subscription 1 after delete" id="03614745-d791-4187-a28a-da9833308ae7">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -16349,7 +16434,7 @@
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findSubscription>\r
-         <subscriptionCode>${#TestSuite#ticket}_${#TestSuite#index}_SUB1</subscriptionCode>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB1</subscriptionCode>\r
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -16363,9 +16448,9 @@
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#TestSuite#ticket}_${#TestSuite#index}_SUB1">
-               <userAccount>${#TestSuite#ticket}_UA</userAccount>
-               <offerTemplate>${#TestSuite#ticket}_OFFER1</offerTemplate>
+                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
+               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-02-27T00:00:00${#Project#timezone}:00</subscriptionDate>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -16373,7 +16458,7 @@
             </con:assertion>
             <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
               <con:configuration>
-                <token>&lt;serviceInstance code="${#TestSuite#ticket}_SERVICE1" description="Service 1">
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
                      &lt;status>ACTIVE&lt;/status></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -16381,24 +16466,23 @@
             </con:assertion>
             <con:assertion type="Simple Contains" id="86555bc2-6c09-4631-b066-d4ce53e4a577" name="Contains 3">
               <con:configuration>
-                <token>&lt;serviceInstance code="${#TestSuite#ticket}_SERVICE2" description="Service 2">
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE2" description="Service 2">
+                     &lt;status>ACTIVE&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="eabba1c5-3b41-4dd4-96f3-f86774b4b059" name="Contains 4">
+              <con:configuration>
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE3" description="Service 3">
                      &lt;status>TERMINATED&lt;/status></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="b01c8735-4081-471b-8dd9-731ee1bbfc78" name="XPath Match">
-              <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE2"]/quantity</path>
-                <content>1.000000000000</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE1"]/customFields/customField[@code="${#TestSuite#ticket}_SERVICE_CF_STRING"]/stringValue</path>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
                 <content>Service CF value</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -16407,8 +16491,8 @@
             </con:assertion>
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE1"]/customFields/customField[@code="${#TestSuite#ticket}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="TM_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -16437,8 +16521,8 @@
             </con:assertion>
             <con:assertion type="XPath Match" id="203ad7bd-1f91-4c11-a35d-8812a702bd87" name="XPath Match 3">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE2"]/customFields/customField[@code="${#TestSuite#ticket}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="TM_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <mapValue>
     <entry>
       <key>Third|Fourth</key>
@@ -16467,8 +16551,8 @@
             </con:assertion>
             <con:assertion type="XPath Match" id="03c33c85-73e9-4288-85fb-339bb9a55d76" name="XPath Match 4">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE2"]/customFields/customField[@code="${#TestSuite#ticket}_SERVICE_CF_STRING"]</path>
-                <content>&lt;customField code="TM_SERVICE_CF_STRING" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]</path>
+                <content>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   &lt;stringValue>Service CF value&lt;/stringValue>
 &lt;/customField></content>
                 <allowWildcards>false</allowWildcards>
@@ -16476,110 +16560,118 @@
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="0f630d4f-ceda-4be3-aa33-b3de290350f3" name="XPath Match 5">
+            <con:assertion type="XPath Match" id="b2e7cb8f-a6ac-48cf-a60a-d69c88b776a4" name="XPath Match 5">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE2"]/terminationReason</path>
-                <content>TERM_REASON_1</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="XPath Match" id="9bb5374b-df0e-4db3-a593-3aab608d9e51" name="XPath Match 6">
-              <con:configuration>
-                <path>//services/serviceInstance[@code='${#TestSuite#ticket}_SERVICE1']/subscriptionDate</path>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
                 <content>2016-01-27T00:00:00${#Project#timezone}:00</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="b30fcbe0-5993-47bf-9472-7df85420ab74" name="XPath Match 7">
+            <con:assertion type="XPath Match" id="5568d806-b725-40e7-bb39-e36dc0b239bd" name="XPath Match 6">
               <con:configuration>
-                <path>//services/serviceInstance[@code='${#TestSuite#ticket}_SERVICE1']/quantity</path>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/quantity</path>
                 <content>2.000000000000</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:credentials>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="Find Subscription 2 after terminate" id="cb2c6ca6-dea7-448e-92b1-bfac14e2e7bb">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SubscriptionWsSoapBinding</con:interface>
-          <con:operation>findSubscription</con:operation>
-          <con:request name="Find Subscription 2 after terminate" id="03614745-d791-4187-a28a-da9833308ae7">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:findSubscription>\r
-         <subscriptionCode>${#TestSuite#ticket}_${#TestSuite#index}_SUB2</subscriptionCode>\r
-      </ws:findSubscription>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
-            <con:assertion type="Simple Contains" id="4eac1304-44ea-4e7c-b9ce-a0261ed2772a" name="Contains">
+            <con:assertion type="XPath Match" id="b01c8735-4081-471b-8dd9-731ee1bbfc78" name="XPath Match">
               <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="edaed287-eb7a-4d06-bc02-d86f5ba350da" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<subscription code="${#TestSuite#ticket}_${#TestSuite#index}_SUB2">
-               <userAccount>${#TestSuite#ticket}_UA</userAccount>
-               <offerTemplate>${#TestSuite#ticket}_OFFER1</offerTemplate>
-               <subscriptionDate>2015-10-25T00:00:00${#Project#timezone}:00</subscriptionDate>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="ddfa8078-607f-41c5-b6f2-a067f4500477" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#TestSuite#ticket}_SERVICE1" description="Service 1">
-                     &lt;status>TERMINATED&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="XPath Match" id="09ea0bd8-3013-44d4-8311-35d75a5874fa" name="XPath Match">
-              <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE1"]/quantity</path>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/quantity</path>
                 <content>1.000000000000</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="12025b27-97ab-4ba9-9b45-e299a6fc7063" name="XPath Match 1">
+            <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 8">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE1"]/terminationDate</path>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE3"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
+                <content>Service 3 CF value</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 9">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE3"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>Fifth|Fourth</key>
+      <value>
+        <stringValue>150</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>Fifth|Second</key>
+      <value>
+        <stringValue>100</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="5568d806-b725-40e7-bb39-e36dc0b239bd" name="XPath Match 10">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE3']/quantity</path>
+                <content>5.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="0ea12bc7-33f3-4fb3-a960-861ad5a8360c" name="XPath Match">
+              <con:configuration>
+                <path>//subscription/customFields/customField[@code='${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP']</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP" xmlns:ns2="http://ws.api.meveo.org/" xmlns:ns3="http://wf.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>mm</key>
+      <value>
+        <stringValue>82</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>ll</key>
+      <value>
+        <stringValue>83</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="343b660b-dc01-44bf-b958-cb0b11dd46c5" name="XPath Match 11">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE3']/terminationDate</path>
                 <content>2016-02-29T00:00:00${#Project#timezone}:00</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="cf915fc3-136d-40ec-bdc2-ffc8f3204e15" name="XPath Match 2">
+            <con:assertion type="XPath Match" id="a8454fee-6b2a-4e3d-b262-da8382b66f76" name="XPath Match 12">
               <con:configuration>
-                <path>//serviceInstance[@code="${#TestSuite#ticket}_SERVICE1"]/terminationReason</path>
-                <content>TERM_REASON_2</content>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE3']/terminationReason</path>
+                <content>TERM_REASON_1</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -16600,11 +16692,7 @@
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>45</con:value>
-      </con:property>
-      <con:property>
-        <con:name>ticket</con:name>
-        <con:value>TM</con:value>
+        <con:value>49</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -16620,7 +16708,15 @@
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>+01</con:value>
+      <con:value>-03</con:value>
+    </con:property>
+    <con:property>
+      <con:name>baseEntityPrefix</con:name>
+      <con:value>TM_BASE</con:value>
+    </con:property>
+    <con:property>
+      <con:name>entityPrefix</con:name>
+      <con:value>TM</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>
