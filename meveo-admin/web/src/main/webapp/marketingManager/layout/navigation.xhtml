@@ -14,7 +14,7 @@
 		</c:if>
 	</c:forEach>
 
-	<p:menubar rendered="#{identity.loggedIn}">
+	<p:menubar styleClass="marketingManagerNavigation" rendered="#{identity.loggedIn}">
 		<p:submenu id="catalog" label="#{messages['menu.catalog']}"
 			rendered="#{identity.hasPermission('marketing','marketingCatalogManager')}">
 			<p:menuitem id="mmCatalogView" outcome="mmCatalogView"
