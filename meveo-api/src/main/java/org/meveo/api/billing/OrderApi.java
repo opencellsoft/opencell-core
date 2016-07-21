@@ -75,7 +75,7 @@ public class OrderApi extends BaseApi {
 
     @Inject
     private UserAccountService userAccountService;
-    
+
     @Inject
     private ProductInstanceService productInstanceService;
 
@@ -281,7 +281,8 @@ public class OrderApi extends BaseApi {
             // Just a simple case of ordering a single product
             if (primaryOffering instanceof ProductTemplate) {
 
-                ProductInstance productInstance = instantiateProduct((ProductTemplate) primaryOffering, productOrderItem.getProduct(),null, orderItem, productOrderItem, currentUser);
+                ProductInstance productInstance = instantiateProduct((ProductTemplate) primaryOffering, productOrderItem.getProduct(), null, orderItem, productOrderItem,
+                    currentUser);
                 if (productInstance != null) {
                     orderItem.addProductInstance(productInstance);
                     productOrderItem.getProduct().setId(productInstance.getCode());
@@ -310,7 +311,7 @@ public class OrderApi extends BaseApi {
                 index = 1;
                 for (Product product : products) {
                     ProductTemplate productOffering = (ProductTemplate) orderItem.getProductOfferings().get(index);
-                    ProductInstance productInstance = instantiateProduct(productOffering, product,(OfferTemplate) primaryOffering, orderItem, productOrderItem, currentUser);
+                    ProductInstance productInstance = instantiateProduct(productOffering, product, (OfferTemplate) primaryOffering, orderItem, productOrderItem, currentUser);
                     if (productInstance != null) {
                         orderItem.addProductInstance(productInstance);
                         product.setId(productInstance.getCode());
@@ -373,7 +374,7 @@ public class OrderApi extends BaseApi {
                     log.error("Failed to associate custom field instance to an entity", e);
                     throw new MeveoApiException("Failed to associate custom field instance to an entity");
                 }
-                
+
                 // Services are expressed as child products
                 // instantiate, activate and terminate services
                 List<Product> services = new ArrayList<>();
@@ -455,22 +456,29 @@ public class OrderApi extends BaseApi {
         return subscription;
     }
 
-    private ProductInstance instantiateProduct(ProductTemplate productTemplate, Product product,
-    		OfferTemplate offerTemplate,org.meveo.model.order.OrderItem orderItem, OrderItem productOrderItem,
-            User currentUser) throws BusinessException {
-    	ProductInstance result=null;
+    private ProductInstance instantiateProduct(ProductTemplate productTemplate, Product product, OfferTemplate offerTemplate, org.meveo.model.order.OrderItem orderItem,
+            OrderItem productOrderItem, User currentUser) throws BusinessException, MeveoApiException {
+
         log.debug("Instantiating product from product template {} for order {} line {}", productTemplate.getCode(), orderItem.getOrder().getCode(), orderItem.getItemId());
 
-        // Validate and populate customFields
-        //CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class, currentUser.getProvider());
-        //TODO set those CF on a productInstance
-        
-        BigDecimal quantity=((BigDecimal) getProductCharacteristic(product, CHARACTERISTIC_SERVICE_QUANTITY, BigDecimal.class, new BigDecimal(1)));
+        BigDecimal quantity = ((BigDecimal) getProductCharacteristic(product, CHARACTERISTIC_SERVICE_QUANTITY, BigDecimal.class, new BigDecimal(1)));
         Date chargeDate = ((Date) getProductCharacteristic(product, CHARACTERISTIC_SUBSCRIPTION_DATE, Date.class, DateUtils.setTimeToZero(new Date())));
-        
-        result = productInstanceService.applyProductReturnInstance(orderItem.getUserAccount(), productTemplate,
-        		quantity, chargeDate, null, null,null, offerTemplate, null,null, null, currentUser, true);
-        return result;
+
+        ProductInstance productInstance = productInstanceService.applyProductReturnInstance(orderItem.getUserAccount(), productTemplate, quantity, chargeDate, null, null, null,
+            offerTemplate, null, null, null, currentUser, true);
+
+        // Validate and populate customFields
+        try {
+            CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class, currentUser.getProvider());
+
+            populateCustomFields(customFields, productInstance, true, currentUser, true);
+
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
+
+        return productInstance;
     }
 
     @SuppressWarnings("rawtypes")
