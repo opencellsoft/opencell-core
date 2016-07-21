@@ -71,6 +71,7 @@ public class UnitWorkflowJobBean{
             			}            			
             		}
             		wfType.changeStatus(wfTransition.getToStatus());   
+            		result.registerSucces();
             		log.debug("wfType.changeStatus({}) done",wfTransition.getToStatus());
             		baseEntityService.update(entity, currentUser);
             		log.debug("entity updated");            		

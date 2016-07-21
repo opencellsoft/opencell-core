@@ -18,7 +18,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>WF1</td>
+	<td>FirstWF1</td>
 	<td>WFCode</td>
 </tr>
 <tr>
@@ -28,7 +28,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>WF1</td>
+	<td>FirstWF1</td>
 	<td>WFDescription</td>
 </tr>
 <tr>
@@ -43,12 +43,12 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>true</td>
+	<td>false</td>
 	<td>ExportLotBool</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>true</td>
+	<td>false</td>
 	<td>EnableHistoryBool</td>
 </tr>
 <tr>
@@ -63,13 +63,28 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>From test</td>
+	<td>R0</td>
 	<td>TFStatusValue</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>To test</td>
+	<td>//ul[@id='tabView:formDunningPlanTransition:toStatus_txt_items']/li[3]</td>
 	<td>TTStatusValue</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//ul[@id='tabView:formDunningPlanTransition:fromStatus_txt_items']/li[3]</td>
+	<td>TFStatusValue2</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>R1</td>
+	<td>TFStatus2Value</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//ul[@id='tabView:formDunningPlanTransition:toStatus_txt_items']/li[4]</td>
+	<td>TTStatusValue2</td>
 </tr>
 <tr>
 	<td>store</td>
@@ -78,7 +93,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>${}</td>
+	<td>#{'a' eq 'a'}</td>
 	<td>ConditionELValue</td>
 </tr>
 <tr>
@@ -93,12 +108,17 @@
 </tr>
 <tr>
 	<td>store</td>
+	<td>#{mv:executeScript(null,'SimpleScript',null,entity.creator)}</td>
+	<td>ActionELValue2</td>
+</tr>
+<tr>
+	<td>store</td>
 	<td>true</td>
 	<td>AcPriorityBool</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>4</td>
+	<td>1</td>
 	<td>AcPriorityValue</td>
 </tr>
 <tr>
@@ -110,6 +130,11 @@
 	<td>store</td>
 	<td></td>
 	<td>AcConditionELValue</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>#{'a' eq 'a'}</td>
+	<td>AcConditionELValue2</td>
 </tr>
 </tbody></table>
 </body>

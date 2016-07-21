@@ -984,6 +984,13 @@
                 </view-param>
             </redirect>
 		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>crmAccounts</from-outcome>
+			<to-view-id>/pages/crm/crmAccounts/crmAccounts.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
 
 		<navigation-case>
 			<from-outcome>addBillingAccount</from-outcome>

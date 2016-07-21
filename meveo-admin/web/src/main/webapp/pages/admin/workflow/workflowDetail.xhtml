@@ -84,17 +84,19 @@
 								backingBean="#{wfTransitionBean}"
 								entity="#{workflowBean.wfTransition}"
 								showFormButtons="false" ajaxSubmit="true">
-
+							
 								<hftl:formField
 									label="#{messages['dunningPlanTransition.fromStatus']}"
-									style="width: 100px" panelStyle="width: 100px"
 									field="fromStatus" required="true" isMessage="true"
-									edit="#{workflowBean.edit}" />
+									edit="#{workflowBean.edit}"
+					                listValues="#{workflowBean.transitionStatusFromWorkflowType}" />
+			                
 								<hftl:formField
 									label="#{messages['dunningPlanTransition.toStatus']}"
-									style="width: 100px" panelStyle="width: 100px"
 									field="toStatus" required="true" isMessage="true"
+									listValues="#{workflowBean.transitionStatusFromWorkflowType}"
 									edit="#{workflowBean.edit}" />
+									
 								<hftl:formField label="#{messages['dunningPlan.conditionEl']}"
 									field="conditionEl" textArea="true" rows="1" maxlength="2000"
 									edit="#{workflowBean.edit}" />
@@ -132,6 +134,7 @@
 									<h:link outcome="wfTransitionDetail" value="#{entity.fromStatus}">
                                        <f:param name="wfTransitionId" value="#{entity.id}"/>
                                        <f:param name="edit" value="true"/>
+                                       <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                                     </h:link>
 								</p:column>
 								<hftl:column

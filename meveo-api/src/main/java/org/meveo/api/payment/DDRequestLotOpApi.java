@@ -1,5 +1,6 @@
 package org.meveo.api.payment;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,7 +10,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
-import org.meveo.api.dto.payment.DDRequestLotOpsDto;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -59,12 +59,12 @@ public class DDRequestLotOpApi extends BaseApi {
 		ddrequestLotOpService.create(lot, currentUser);
 	}
 	
-	public DDRequestLotOpsDto listDDRequestLotOps(Date fromDueDate,Date toDueDate,DDRequestOpStatusEnum status,Provider currentProvider){
-		DDRequestLotOpsDto result=new DDRequestLotOpsDto();
+	public List<DDRequestLotOpDto> listDDRequestLotOps(Date fromDueDate,Date toDueDate,DDRequestOpStatusEnum status,Provider currentProvider){
+		List<DDRequestLotOpDto> result=new ArrayList<DDRequestLotOpDto>();
 		List<DDRequestLotOp> lots=ddrequestLotOpService.findByDateStatus(fromDueDate,toDueDate,status, currentProvider);
 		if(lots!=null&&!lots.isEmpty()){
 			for(DDRequestLotOp lot:lots){
-				result.getDdrequestLotOps().add(new DDRequestLotOpDto(lot));
+				result.add(new DDRequestLotOpDto(lot));
 			}
 		}
 		return result;
