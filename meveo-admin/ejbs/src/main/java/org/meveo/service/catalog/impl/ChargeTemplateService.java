@@ -44,22 +44,6 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends Multilangua
 	@Inject
     private CustomFieldInstanceService customFieldInstanceService;
 	
-	private String findDuplicateCode(ChargeTemplate chargeTemplate,User currentUser){
-		String code=chargeTemplate.getCode()+" - Copy";
-		int id=1;
-		String criteria=code;
-		ChargeTemplate entity=null;
-		while(true){
-			entity=findByCode(criteria, currentUser.getProvider());
-			if(entity==null){
-				break;
-			}
-			id++;
-			criteria=code+" "+id;
-		}
-		return criteria;
-	}
-
 	public void duplicate(P entity,User currentUser) throws BusinessException{
 		
 		entity = refreshOrRetrieve(entity);

@@ -102,21 +102,6 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 		}
 	}
 	
-	private String findDuplicateCode(ServiceTemplate service,User currentUser){
-		String code=service.getCode()+" - Copy";
-		int id=1;
-		String criteria=code;
-		ServiceTemplate entity=null;
-		while(true){
-			entity=findByCode(criteria, currentUser.getProvider());
-			if(entity==null){
-				break;
-			}
-			id++;
-			criteria=code+" "+id;
-		}
-		return criteria;
-	}
 	public void duplicate(ServiceTemplate entity,User currentUser) throws BusinessException{
 		entity = refreshOrRetrieve(entity);
         
