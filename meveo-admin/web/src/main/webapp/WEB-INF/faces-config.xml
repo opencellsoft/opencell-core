@@ -1921,14 +1921,14 @@
 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>mmCatalogView</from-outcome>
-			<to-view-id>/marketingManager/catalogView.xhtml
+			<from-outcome>mmOffers</from-outcome>
+			<to-view-id>/marketingManager/offers.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mmOfferDetail</from-outcome>
-			<to-view-id>/marketingManager/offerTemplateDetail.xhtml
+			<to-view-id>/marketingManager/offerDetail.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>

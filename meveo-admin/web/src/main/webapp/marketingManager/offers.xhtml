@@ -23,6 +23,7 @@
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem value="#{messages['menu.catalog.listOffers']}" />
 			</p:breadCrumb>
 		</h:form>
 
@@ -118,7 +119,7 @@
 									<p:panel>
 										<p:panel styleClass="TexAlRight">
 											<div class="FRight">
-												<p:inputSwitch value="#{entity.active}"
+												<p:inputSwitch value="#{entity.active}" disabled="true"
 													onLabel="#{messages['accountStatusEnum.active']}"
 													offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
 											</div>
@@ -135,7 +136,10 @@
 												<li class="Padding5 FRight"><p:commandLink
 														styleClass="fa fa-copy"></p:commandLink></li>
 												<li class="Padding5 FRight"><p:commandLink
-														styleClass="fa fa-edit"></p:commandLink></li>
+														styleClass="fa fa-edit" action="mmOfferDetail">
+														<f:param name="objectId" value="#{entity.id}"></f:param>
+														<f:param name="edit" value="true"></f:param>
+													</p:commandLink></li>
 												<li class="Padding5 FRight"><p:commandLink
 														action="mmOfferDetail" styleClass="fa fa-search-plus">
 														<f:param name="objectId" value="#{entity.id}"></f:param>
@@ -207,7 +211,7 @@
 							</hftl:column>
 							<p:column>
 								<f:facet name="header">#{messages['commons.status']}</f:facet>
-								<p:inputSwitch value="#{entity.active}"
+								<p:inputSwitch value="#{entity.active}" disabled="true"
 									onLabel="#{messages['accountStatusEnum.active']}"
 									offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
 							</p:column>

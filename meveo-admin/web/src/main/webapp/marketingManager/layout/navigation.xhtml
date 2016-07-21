@@ -15,10 +15,9 @@
 	</c:forEach>
 
 	<p:menubar styleClass="marketingManagerNavigation"
-		rendered="#{identity.loggedIn}">
-		<p:submenu id="catalog" label="#{messages['menu.catalog']}"
-			rendered="#{identity.hasPermission('marketing','marketingCatalogManager')}">
-			<p:menuitem id="mmCatalogView" outcome="mmCatalogView"
+		rendered="#{identity.hasPermission('marketing','marketingCatalogManager')}">
+		<p:submenu id="catalog" label="#{messages['menu.catalog']}">
+			<p:menuitem id="mmOffers" outcome="mmOffers"
 				value="#{messages['menu.marketingManager.catalogView']}" />
 
 			<p:menuitem id="mmProductTemplates" outcome="mmProductTemplates"
