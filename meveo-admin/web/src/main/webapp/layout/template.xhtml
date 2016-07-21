@@ -43,7 +43,11 @@
 
 			<ul >
 				<li><div class="top-bar-home"></div> <h:link
+						rendered="#{not identity.hasPermission('marketing', 'marketingCatalogManager')}"
 						outcome="/home.xhtml" value="#{messages['menutop.home']}"
+						styleClass="headerLink" /> <h:link
+						rendered="#{identity.hasPermission('marketing', 'marketingCatalogManager')}"
+						outcome="/marketingManager/index.xhtml" value="#{messages['menutop.home']}"
 						styleClass="headerLink" /></li>
 				<li>
 					<div class="top-bar-pass"></div> <h:link
