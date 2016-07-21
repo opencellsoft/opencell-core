@@ -48,7 +48,7 @@ public class OfferTemplateApi extends BaseApi {
 
 	@Inject
 	private OfferServiceTemplateService offerServiceTemplateService;
-	
+
 	@Inject
 	private OfferProductTemplateService offerProductTemplateService;
 
@@ -60,7 +60,7 @@ public class OfferTemplateApi extends BaseApi {
 
 	@Inject
 	private ProductTemplateService productTemplateService;
-	
+
 	public void create(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
@@ -364,11 +364,13 @@ public class OfferTemplateApi extends BaseApi {
 				offerProductTemplate.setOfferTemplate(offerTemplate);
 				newOfferProductTemplates.add(offerProductTemplate);
 			}
-			List<OfferProductTemplate> offerProductTemplatesForRemoval = new ArrayList<>(existingProductTemplates);
-			offerProductTemplatesForRemoval.removeAll(newOfferProductTemplates);
-			newOfferProductTemplates.removeAll(existingProductTemplates);
-			for (OfferProductTemplate offerProductTemplateForRemoval : offerProductTemplatesForRemoval) {
-				offerProductTemplateService.remove(offerProductTemplateForRemoval);
+			if (hasExistingProductTemplates) {
+				List<OfferProductTemplate> offerProductTemplatesForRemoval = new ArrayList<>(existingProductTemplates);
+				offerProductTemplatesForRemoval.removeAll(newOfferProductTemplates);
+				newOfferProductTemplates.removeAll(existingProductTemplates);
+				for (OfferProductTemplate offerProductTemplateForRemoval : offerProductTemplatesForRemoval) {
+					offerProductTemplateService.remove(offerProductTemplateForRemoval);
+				}
 			}
 			for (OfferProductTemplate newOfferProductTemplate : newOfferProductTemplates) {
 				newOfferProductTemplate.setOfferTemplate(offerTemplate);
@@ -380,15 +382,15 @@ public class OfferTemplateApi extends BaseApi {
 			}
 		}
 	}
-	
+
 	private OfferProductTemplate getOfferProductTemplatesFromDto(OfferProductTemplateDto offerProductTemplateDto, User currentUser) throws MeveoApiException, BusinessException {
 
 		ProductTemplateDto productTemplateDto = offerProductTemplateDto.getProductTemplate();
 		ProductTemplate productTemplate = null;
-		if(productTemplateDto != null){
+		if (productTemplateDto != null) {
 			productTemplate = productTemplateService.findByCode(productTemplateDto.getCode(), currentUser.getProvider());
 			if (productTemplate == null) {
-				throw new MeveoApiException("The OfferProductTemplate's ProductTemplate does not exist.");
+				throw new MeveoApiException(String.format("ProductTemplate[code = %s]does not exist.", productTemplateDto.getCode()));
 			}
 		}
 
@@ -399,7 +401,7 @@ public class OfferTemplateApi extends BaseApi {
 		offerProductTemplate.setProductTemplate(productTemplate);
 		offerProductTemplate.setMandatory(mandatory);
 		offerProductTemplate.setProvider(currentUser.getProvider());
-		
+
 		return offerProductTemplate;
 	}
 
@@ -414,26 +416,27 @@ public class OfferTemplateApi extends BaseApi {
 		if (offerTemplate == null) {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, code);
 		}
-		
+
 		OfferTemplateDto offerTemplateDto = new OfferTemplateDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate));
-		
+
 		List<OfferProductTemplate> childOfferProductTemplates = offerTemplate.getOfferProductTemplates();
-        if(childOfferProductTemplates != null && !childOfferProductTemplates.isEmpty()){
-        	List<OfferProductTemplateDto> offerProductTemplates = new ArrayList<>();
-        	OfferProductTemplateDto offerProductTemplateDto = null;
-        	ProductTemplateDto productTemplateDto = null;
-        	for (OfferProductTemplate offerProductTemplate : childOfferProductTemplates) {
-        		ProductTemplate productTemplate = offerProductTemplate.getProductTemplate();
-        		offerProductTemplateDto = new OfferProductTemplateDto();
-        		offerProductTemplateDto.setMandatory(offerProductTemplate.isMandatory());
-        		if(productTemplate != null){
-        			productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate));
-        			offerProductTemplateDto.setProductTemplate(productTemplateDto);
-        		}
-        		offerProductTemplates.add(offerProductTemplateDto);
+		if (childOfferProductTemplates != null && !childOfferProductTemplates.isEmpty()) {
+			List<OfferProductTemplateDto> offerProductTemplates = new ArrayList<>();
+			OfferProductTemplateDto offerProductTemplateDto = null;
+			ProductTemplateDto productTemplateDto = null;
+			ProductTemplate productTemplate = null;
+			for (OfferProductTemplate offerProductTemplate : childOfferProductTemplates) {
+				productTemplate = offerProductTemplate.getProductTemplate();
+				offerProductTemplateDto = new OfferProductTemplateDto();
+				offerProductTemplateDto.setMandatory(offerProductTemplate.isMandatory());
+				if (productTemplate != null) {
+					productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate));
+					offerProductTemplateDto.setProductTemplate(productTemplateDto);
+				}
+				offerProductTemplates.add(offerProductTemplateDto);
 			}
-        	offerTemplateDto.setOfferProductTemplates(offerProductTemplates);
-        }
+			offerTemplateDto.setOfferProductTemplates(offerProductTemplates);
+		}
 
 		return offerTemplateDto;
 

@@ -6,6 +6,7 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.BundleTemplateDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
@@ -22,6 +23,7 @@ import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
+import org.meveo.api.dto.response.catalog.GetBundleTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
@@ -319,5 +321,20 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     public ActionStatus removeProductChargeTemplate(@WebParam(name = "productChargeTemplateCode") String productChargeTemplateCode);
+    
+    @WebMethod
+    ActionStatus createBundleTemplate(@WebParam(name = "bundleTemplate") BundleTemplateDto postData);
+
+    @WebMethod
+    ActionStatus updateBundleTemplate(@WebParam(name = "bundleTemplate") BundleTemplateDto postData);
+
+    @WebMethod
+    ActionStatus createOrUpdateBundleTemplate(@WebParam(name = "bundleTemplate") BundleTemplateDto postData);
+
+    @WebMethod
+    ActionStatus removeBundleTemplate(@WebParam(name = "bundleTemplateCode") String code);
+
+    @WebMethod
+    GetBundleTemplateResponseDto findBundleTemplate(@WebParam(name = "bundleTemplateCode") String code);
 
 }
