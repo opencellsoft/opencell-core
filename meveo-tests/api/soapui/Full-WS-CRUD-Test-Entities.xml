@@ -57651,7 +57651,193 @@ and paste that invoice number in the next step.
       </con:testStep>
       <con:properties/>
     </con:testCase>
-    <con:properties>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Subscription instantiate/activate service NOT in Offer" searchProperties="true" id="68ce775a-d7ec-46cb-9775-440e9c8d7e93">
+      <con:settings/>
+      <con:testStep type="request" name="Create subscription" id="589f63a0-2b94-468c-a438-699e8ce2a6f6">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Create subscription" id="78b62f52-e128-4072-971f-02c3d4c4e3e8">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateSubscription>
+         <subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB" description="${#Project#entityPrefix}_${#TestSuite#index}_SUB">
+            <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+            <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+            <subscriptionDate>2015-02-01</subscriptionDate>
+            <endAgreementDate>2015-05-01</endAgreementDate>
+         </subscription>
+      </ws:createOrUpdateSubscription>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="Contains" id="a67c7e53-f712-404e-ba01-eaf27bb22b78">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create service with min req Vals" id="1574917f-8707-40ae-b66d-3d425f14feaf">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateServiceTemplate</con:operation>
+          <con:request name="Create service with min req Vals" id="cc2b2c13-1da0-4f94-ba22-741415a28a16">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createServiceTemplate>
+         <serviceTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE">
+            <invoicingCalendar>Multi period</invoicingCalendar>
+         </serviceTemplate>
+      </ws:createServiceTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="e902c64d-785c-4808-87ac-a7458bb0e273"/>
+            <con:assertion type="Simple Contains" id="b3b860d4-641b-4f81-9cbd-d0a2051e0676" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      
+      
+      <con:testStep type="request" name="Activate services with service not in Offer" id="152d7dac-1976-43ba-bd91-3725d8804b45">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>activateServices</con:operation>
+          <con:request name="Activate services with service not in Offer" id="488f6e2b-07dd-4013-9577-320ed6c6e59e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:activateServices>\r
+         <activateServices>\r
+            <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB</subscription>\r
+            <servicesToActivate>\r
+               <service code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE">\r
+                  <quantity>1</quantity>\r
+                  <subscriptionDate>2015-02-01</subscriptionDate>\r
+               </service>\r
+            </servicesToActivate>\r
+         </activateServices>\r
+      </ws:activateServices>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="89126986-a2b4-40d2-af62-adb80179fbd6"/>
+            <con:assertion type="Simple Contains" name="Contains" id="27042faa-671f-4d07-91e6-b5ce9b308d95">
+              <con:configuration><token><![CDATA[<status>FAIL</status>
+            <errorCode>BUSINESS_API_EXCEPTION</errorCode>
+            <message>Service ${#Project#entityPrefix}_${#TestSuite#index}_SERVICE is not associated with Offer</message>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep><con:testStep type="request" name="Instanticate services with service not in Offer" id="706624d0-947b-4914-8907-e7ae2c4b258d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>instantiateServices</con:operation>
+          <con:request name="Instanticate services with service not in Offer" id="488f6e2b-07dd-4013-9577-320ed6c6e59e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:instantiateServices>
+         <instantiateServices>
+            <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB</subscription>
+            <servicesToInstantiate>
+               <service code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE">
+                  <quantity>1</quantity>
+                  <subscriptionDate>2016-05-01</subscriptionDate>
+               </service>
+            </servicesToInstantiate>
+         </instantiateServices>
+      </ws:instantiateServices>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="89126986-a2b4-40d2-af62-adb80179fbd6"/>
+            <con:assertion type="Simple Contains" name="Contains" id="27042faa-671f-4d07-91e6-b5ce9b308d95">
+              <con:configuration><token><![CDATA[<status>FAIL</status>
+            <errorCode>BUSINESS_API_EXCEPTION</errorCode>
+            <message>Service ${#Project#entityPrefix}_${#TestSuite#index}_SERVICE is not associated with Offer</message>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep><con:properties>
+        <con:property>
+          <con:name>index</con:name>
+          <con:value>825</con:value>
+        </con:property>
+        <con:property>
+          <con:name>ticket</con:name>
+          <con:value>825</con:value>
+        </con:property>
+      </con:properties>
+    </con:testCase><con:properties>
       <con:property>
         <con:name>index</con:name>
         <con:value>84</con:value>
