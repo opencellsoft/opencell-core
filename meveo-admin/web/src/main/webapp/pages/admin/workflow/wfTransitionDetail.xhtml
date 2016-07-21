@@ -18,14 +18,31 @@
 
 	<ui:define name="body">
 	
-		<hftl:formPanel label="#{messages['dunningPlanTransition.panel']}" backingBean="#{wfTransitionBean}" showBackButton="false">
-			<hftl:formField label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus" required="true" isMessage="true"/>
-			<hftl:formField label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" required="true" isMessage="true"/>
-			<hftl:formField label="#{messages['dunningPlanTransition.conditionEl']}" field="conditionEl" isMessage="true"/>
-		</hftl:formPanel>
-		
 						<p:panel id="actionPlanItemsdiv"
 							rendered="#{workflowBean.edit}">
+							
+							<p:panel id="transitionSummarypanel" header="#{messages['dunningPlan.transition']}" >
+								<hftl:decorateFormField fieldId="fromStatus"
+								label="#{messages['dunningPlanTransition.fromStatus']}">
+								<h:outputText id="fromStatus" value="#{wfTransitionBean.entity.fromStatus}"
+									disabled="true" style="font-weight:bold;" />
+								</hftl:decorateFormField>
+		
+								<hftl:decorateFormField fieldId="toStatus"
+									label="#{messages['dunningPlanTransition.toStatus']}">
+									<h:outputText id="toStatus"
+										value="#{wfTransitionBean.entity.toStatus}"
+										disabled="true" style="font-weight:bold;" />
+								</hftl:decorateFormField>
+								
+								<hftl:decorateFormField fieldId="conditionEl"
+									label="#{messages['dunningPlanTransition.conditionEl']}">
+									<h:outputText id="conditionEl"
+										value="#{wfTransitionBean.entity.conditionEl}"
+										disabled="true" style="font-weight:bold;" />
+								</hftl:decorateFormField>
+						    </p:panel>
+							
 							<hftl:formPanel
 								formId="formActionPlanItems" edit="#{workflowBean.edit}"
 								label="#{messages['dunningPlan.actions']}"

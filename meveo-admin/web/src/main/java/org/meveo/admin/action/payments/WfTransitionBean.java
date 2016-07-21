@@ -135,7 +135,11 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         boolean isPriorityUnique = checkUnicityOfPriority();
         if(isPriorityUnique) {
             if (wfAction.getId() != null) {
-                wfActionService.update(wfAction, getCurrentUser());
+            	WFAction action = wfActionService.findById(wfAction.getId());
+            	action.setActionEl(wfAction.getActionEl());
+            	action.setConditionEl(wfAction.getActionEl());
+            	action.setPriority(wfAction.getPriority());
+                wfActionService.update(action, getCurrentUser());
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
                 wfAction.setWfTransition(entity);
