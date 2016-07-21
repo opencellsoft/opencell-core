@@ -16,6 +16,7 @@ import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
 import org.meveo.api.dto.catalog.PricePlanDto;
+import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
@@ -32,6 +33,7 @@ import org.meveo.api.dto.response.catalog.GetOfferTemplateCategoryResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
+import org.meveo.api.dto.response.catalog.GetProductChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetProductTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
@@ -302,5 +304,20 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     GetDigitalResourceResponseDto findDigitalResource(@WebParam(name = "digitalResourceCode") String code);
+    
+    @WebMethod
+    public ActionStatus createOrUpdateProductChargeTemplate(@WebParam(name = "productChargeTemplate") ProductChargeTemplateDto postData);
+
+    @WebMethod
+    public ActionStatus createProductChargeTemplate(@WebParam(name = "productChargeTemplate") ProductChargeTemplateDto postData);
+
+    @WebMethod
+    public ActionStatus updateProductChargeTemplate(@WebParam(name = "productChargeTemplate") ProductChargeTemplateDto postData);
+
+    @WebMethod
+    public GetProductChargeTemplateResponseDto findProductChargeTemplate(@WebParam(name = "productChargeTemplateCode") String productChargeTemplateCode);
+
+    @WebMethod
+    public ActionStatus removeProductChargeTemplate(@WebParam(name = "productChargeTemplateCode") String productChargeTemplateCode);
 
 }

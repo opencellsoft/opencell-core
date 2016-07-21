@@ -414,8 +414,28 @@ public class OfferTemplateApi extends BaseApi {
 		if (offerTemplate == null) {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, code);
 		}
+		
+		OfferTemplateDto offerTemplateDto = new OfferTemplateDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate));
+		
+		List<OfferProductTemplate> childOfferProductTemplates = offerTemplate.getOfferProductTemplates();
+        if(childOfferProductTemplates != null && !childOfferProductTemplates.isEmpty()){
+        	List<OfferProductTemplateDto> offerProductTemplates = new ArrayList<>();
+        	OfferProductTemplateDto offerProductTemplateDto = null;
+        	ProductTemplateDto productTemplateDto = null;
+        	for (OfferProductTemplate offerProductTemplate : childOfferProductTemplates) {
+        		ProductTemplate productTemplate = offerProductTemplate.getProductTemplate();
+        		offerProductTemplateDto = new OfferProductTemplateDto();
+        		offerProductTemplateDto.setMandatory(offerProductTemplate.isMandatory());
+        		if(productTemplate != null){
+        			productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate));
+        			offerProductTemplateDto.setProductTemplate(productTemplateDto);
+        		}
+        		offerProductTemplates.add(offerProductTemplateDto);
+			}
+        	offerTemplateDto.setOfferProductTemplates(offerProductTemplates);
+        }
 
-		return new OfferTemplateDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate));
+		return offerTemplateDto;
 
 	}
 

@@ -68,14 +68,6 @@ public class OfferTemplateDto implements Serializable {
                 offerServiceTemplates.add(new OfferServiceTemplateDto(st));
             }
         }
-        
-        List<OfferProductTemplate> childOfferProductTemplates = offerTemplate.getOfferProductTemplates();
-        if(childOfferProductTemplates != null && !childOfferProductTemplates.isEmpty()){
-        	offerProductTemplates = new ArrayList<>();
-        	for (OfferProductTemplate offerProductTemplate : childOfferProductTemplates) {
-				offerProductTemplates.add(new OfferProductTemplateDto(offerProductTemplate));
-			}
-        }
         customFields = customFieldInstances;
     }
 

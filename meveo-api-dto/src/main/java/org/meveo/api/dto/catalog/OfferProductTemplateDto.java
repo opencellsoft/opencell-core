@@ -6,8 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.catalog.OfferProductTemplate;
-
 @XmlRootElement(name = "OfferProductTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OfferProductTemplateDto implements Serializable {
@@ -21,11 +19,6 @@ public class OfferProductTemplateDto implements Serializable {
 	public OfferProductTemplateDto() {
 	}
 	
-	public OfferProductTemplateDto(OfferProductTemplate offerProductTemplate) {
-		this.mandatory = offerProductTemplate.isMandatory();
-		this.productTemplate = new ProductTemplateDto(offerProductTemplate.getProductTemplate());
-	}
-
 	public ProductTemplateDto getProductTemplate() {
 		return productTemplate;
 	}

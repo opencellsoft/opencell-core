@@ -13,6 +13,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.DigitalResourcesDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
+import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -22,10 +23,12 @@ import org.meveo.model.admin.User;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.DigitalResourceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
+import org.meveo.service.catalog.impl.ProductChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 
 public class ProductTemplateApi extends BaseApi {
@@ -40,7 +43,10 @@ public class ProductTemplateApi extends BaseApi {
 	private DigitalResourceService digitalResourceService;
 
 	@Inject
-	DigitalResourceApi digitalResourceApi;
+	private ProductChargeTemplateService productChargeTemplateService;
+
+	@Inject
+	private DigitalResourceApi digitalResourceApi;
 
 	public ProductTemplateDto find(String code, User currentUser) throws MeveoApiException {
 
@@ -54,7 +60,15 @@ public class ProductTemplateApi extends BaseApi {
 			throw new EntityDoesNotExistsException(ProductTemplate.class, code);
 		}
 
-		return new ProductTemplateDto(productTemplate);
+		ProductTemplateDto productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate));
+
+		ProductChargeTemplate productChargeTemplate = productTemplate.getProductChargeTemplate();
+		if (productChargeTemplate != null) {
+			ProductChargeTemplateDto productChargeTemplateDto = new ProductChargeTemplateDto(productChargeTemplate, entityToDtoConverter.getCustomFieldsDTO(productChargeTemplate));
+			productTemplateDto.setProductChargeTemplate(productChargeTemplateDto);
+		}
+
+		return productTemplateDto;
 	}
 
 	public void createOrUpdate(ProductTemplateDto productTemplateDto, User currentUser) throws MeveoApiException, BusinessException {
@@ -71,8 +85,14 @@ public class ProductTemplateApi extends BaseApi {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
-			handleMissingParameters();
 		}
+
+		ProductChargeTemplateDto productChargeTemplateDto = postData.getProductChargeTemplate();
+		if (productChargeTemplateDto == null || StringUtils.isBlank(productChargeTemplateDto.getCode())) {
+			missingParameters.add("productChargeTemplate");
+		}
+
+		handleMissingParameters();
 
 		Provider provider = currentUser.getProvider();
 
@@ -89,6 +109,8 @@ public class ProductTemplateApi extends BaseApi {
 		productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
 
 		processImage(postData, productTemplate);
+
+		processProductChargeTemplate(postData, productTemplate, provider);
 
 		// save product template now so that they can be referenced by the
 		// related entities below.
@@ -124,6 +146,8 @@ public class ProductTemplateApi extends BaseApi {
 		productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
 
 		processImage(postData, productTemplate);
+
+		processProductChargeTemplate(postData, productTemplate, provider);
 
 		processOfferTemplateCategories(postData, productTemplate, provider);
 
@@ -181,6 +205,15 @@ public class ProductTemplateApi extends BaseApi {
 		} else if (hasExistingAttachments) {
 			productTemplate.setAttachments(null);
 		}
+	}
+
+	private void processProductChargeTemplate(ProductTemplateDto postData, ProductTemplate productTemplate, Provider provider) throws BusinessException, MeveoApiException {
+		ProductChargeTemplateDto productChargeTemplateDto = postData.getProductChargeTemplate();
+		ProductChargeTemplate productChargeTemplate = productChargeTemplateService.findByCode(productChargeTemplateDto.getCode(), provider);
+		if (productChargeTemplate == null) {
+			throw new EntityDoesNotExistsException(ProductChargeTemplate.class, productChargeTemplateDto.getCode());
+		}
+		productTemplate.setProductChargeTemplate(productChargeTemplate);
 	}
 
 	public void remove(String code, User currentUser) throws MeveoApiException {

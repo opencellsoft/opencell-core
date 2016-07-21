@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplateCategory;
@@ -48,10 +49,13 @@ public class ProductOfferingDto implements Serializable {
 	private String imageValue;
 
 	private LifeCycleStatusEnum lifeCycleStatus;
-	
+
+	private CustomFieldsDto customFields = new CustomFieldsDto();
+
 	public ProductOfferingDto() {
 	}
-	public ProductOfferingDto(ProductOffering product) {
+
+	public ProductOfferingDto(ProductOffering product, CustomFieldsDto customFieldsDto) {
 		this.setCode(product.getCode());
 		this.setDescription(product.getDescription());
 		this.setName(product.getName());
@@ -62,19 +66,20 @@ public class ProductOfferingDto implements Serializable {
 			this.setImageValue(new String(product.getImageAsByteArr()));
 		}
 		List<OfferTemplateCategory> offerTemplateCategories = product.getOfferTemplateCategories();
-		if( offerTemplateCategories != null && !offerTemplateCategories.isEmpty() ){
+		if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
 			this.setOfferTemplateCategories(new ArrayList<OfferTemplateCategoryDto>());
 			for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
 				this.getOfferTemplateCategories().add(new OfferTemplateCategoryDto(offerTemplateCategory));
 			}
 		}
 		List<DigitalResource> attachments = product.getAttachments();
-		if(attachments != null && !attachments.isEmpty()){
+		if (attachments != null && !attachments.isEmpty()) {
 			this.setAttachments(new ArrayList<DigitalResourcesDto>());
 			for (DigitalResource digitalResource : attachments) {
 				this.getAttachments().add(new DigitalResourcesDto(digitalResource));
 			}
 		}
+		this.customFields = customFieldsDto;
 	}
 
 	public String getCode() {
@@ -155,6 +160,14 @@ public class ProductOfferingDto implements Serializable {
 
 	public void setLifeCycleStatus(LifeCycleStatusEnum lifeCycleStatus) {
 		this.lifeCycleStatus = lifeCycleStatus;
+	}
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 
 }

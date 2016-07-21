@@ -13,18 +13,18 @@ public class GetProductTemplateResponseDto extends BaseResponse {
 
 	private static final long serialVersionUID = -2801794466203329264L;
 
-	private ProductTemplateDto productTemplateDto;
+	private ProductTemplateDto productTemplate;
 
-	public ProductTemplateDto getProductTemplateDto() {
-		return productTemplateDto;
+	public ProductTemplateDto getProductTemplate() {
+		return productTemplate;
 	}
 
-	public void setProductTemplateDto(ProductTemplateDto productTemplateDto) {
-		this.productTemplateDto = productTemplateDto;
+	public void setProductTemplate(ProductTemplateDto productTemplate) {
+		this.productTemplate = productTemplate;
 	}
 
 	@Override
 	public String toString() {
-		return "GetProductTemplateResponseDto [productTemplate=" + productTemplateDto + "]";
+		return "GetProductTemplateResponseDto [productTemplate=" + productTemplate + "]";
 	}
 }

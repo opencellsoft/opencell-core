@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.ProductChargeTemplate;
 
 @XmlRootElement(name = "ProductChargeTemplate")
@@ -18,8 +19,8 @@ public class ProductChargeTemplateDto extends ChargeTemplateDto implements Seria
 		// TODO Auto-generated constructor stub
 	}
 	
-	public ProductChargeTemplateDto(ProductChargeTemplate productChargeTemplate) {
-		super(productChargeTemplate, null);
+	public ProductChargeTemplateDto(ProductChargeTemplate productChargeTemplate, CustomFieldsDto customFieldInstances) {
+		super(productChargeTemplate, customFieldInstances);
 	}
 
 	@Override

@@ -48,8 +48,8 @@ public class ProductTemplate extends ProductOffering {
 		return productChargeTemplate;
 	}
 
-	public void setProductChargeTemplate(ProductChargeTemplate oneShotChargeTemplate) {
-		this.productChargeTemplate = oneShotChargeTemplate;
+	public void setProductChargeTemplate(ProductChargeTemplate productChargeTemplate) {
+		this.productChargeTemplate = productChargeTemplate;
 	}
 
 	public BusinessProductModel getBusinessProductModel() {
