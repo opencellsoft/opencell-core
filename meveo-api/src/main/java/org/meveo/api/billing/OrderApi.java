@@ -24,7 +24,6 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
-import org.meveo.api.dto.billing.ProductDto;
 import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.exception.ActionForbiddenException;
@@ -46,6 +45,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
@@ -75,6 +75,9 @@ public class OrderApi extends BaseApi {
 
     @Inject
     private UserAccountService userAccountService;
+    
+    @Inject
+    private ProductInstanceService productInstanceService;
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
@@ -278,7 +281,7 @@ public class OrderApi extends BaseApi {
             // Just a simple case of ordering a single product
             if (primaryOffering instanceof ProductTemplate) {
 
-                ProductInstance productInstance = instantiateProduct((ProductTemplate) primaryOffering, productOrderItem.getProduct(), orderItem, productOrderItem, currentUser);
+                ProductInstance productInstance = instantiateProduct((ProductTemplate) primaryOffering, productOrderItem.getProduct(),null, orderItem, productOrderItem, currentUser);
                 if (productInstance != null) {
                     orderItem.addProductInstance(productInstance);
                     productOrderItem.getProduct().setId(productInstance.getCode());
@@ -307,7 +310,7 @@ public class OrderApi extends BaseApi {
                 index = 1;
                 for (Product product : products) {
                     ProductTemplate productOffering = (ProductTemplate) orderItem.getProductOfferings().get(index);
-                    ProductInstance productInstance = instantiateProduct(productOffering, product, orderItem, productOrderItem, currentUser);
+                    ProductInstance productInstance = instantiateProduct(productOffering, product,(OfferTemplate) primaryOffering, orderItem, productOrderItem, currentUser);
                     if (productInstance != null) {
                         orderItem.addProductInstance(productInstance);
                         product.setId(productInstance.getCode());
@@ -452,19 +455,22 @@ public class OrderApi extends BaseApi {
         return subscription;
     }
 
-    private ProductInstance instantiateProduct(ProductTemplate productTemplate, Product product, org.meveo.model.order.OrderItem orderItem, OrderItem productOrderItem,
+    private ProductInstance instantiateProduct(ProductTemplate productTemplate, Product product,
+    		OfferTemplate offerTemplate,org.meveo.model.order.OrderItem orderItem, OrderItem productOrderItem,
             User currentUser) throws BusinessException {
-
+    	ProductInstance result=null;
         log.debug("Instantiating product from product template {} for order {} line {}", productTemplate.getCode(), orderItem.getOrder().getCode(), orderItem.getItemId());
 
-        ProductDto productDto = new ProductDto();
-
         // Validate and populate customFields
-        CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class, currentUser.getProvider());
-
-        userAccountService.applyProduct(productDto);
-
-        return null;
+        //CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class, currentUser.getProvider());
+        //TODO set those CF on a productInstance
+        
+        BigDecimal quantity=((BigDecimal) getProductCharacteristic(product, CHARACTERISTIC_SERVICE_QUANTITY, BigDecimal.class, new BigDecimal(1)));
+        Date chargeDate = ((Date) getProductCharacteristic(product, CHARACTERISTIC_SUBSCRIPTION_DATE, Date.class, DateUtils.setTimeToZero(new Date())));
+        
+        result = productInstanceService.applyProductReturnInstance(orderItem.getUserAccount(), productTemplate,
+        		quantity, chargeDate, null, null,null, offerTemplate, null,null, null, currentUser, true);
+        return result;
     }
 
     @SuppressWarnings("rawtypes")

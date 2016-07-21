@@ -91,7 +91,7 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 		productChargeInstance.setCriteria1(criteria1);
 		productChargeInstance.setCriteria2(criteria2);
 		productChargeInstance.setCriteria3(criteria3);
-		List<WalletTemplate> walletTemplates = productChargeInstance.getProductChargeTemplate().getProductTemplate().getWalletTemplates();
+		List<WalletTemplate> walletTemplates = productChargeInstance.getProductInstance().getProductTemplate().getWalletTemplates();
 		productChargeInstance.setPrepaid(false);
 		if (walletTemplates != null && walletTemplates.size() > 0) {
 			log.debug("found {} wallets",walletTemplates.size());
