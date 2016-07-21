@@ -82,14 +82,19 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForValue</td>
-	<td>id=formId:fromStatus_txt</td>
+	<td>waitForText</td>
+	<td>id=fromStatus</td>
 	<td>${TFStatusValue}</td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>id=formId:fromStatus_txt</td>
-	<td></td>
+	<td>id=fromStatus</td>
+	<td>${TFStatusValue}</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>id=fromStatus</td>
+	<td>${TFStatusValue}</td>
 </tr>
 <tr>
 	<td>if</td>
