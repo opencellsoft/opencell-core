@@ -19,11 +19,11 @@ public class BundleProductTemplate extends BaseEntity {
 
 	private static final long serialVersionUID = -7043079148076022783L;
 
-	@ManyToOne
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUCT_TEMPLATE_ID")
 	private ProductTemplate productTemplate;
 
-	@ManyToOne
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "BUNDLE_TEMPLATE_ID")
 	private BundleTemplate bundleTemplate;
 
@@ -52,6 +52,38 @@ public class BundleProductTemplate extends BaseEntity {
 
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        } else if (!(obj instanceof BundleProductTemplate)) {
+            return false;
+        }
+
+        BundleProductTemplate that = (BundleProductTemplate) obj;
+
+        ProductTemplate thatProductTemplate = that.getProductTemplate();
+        if (productTemplate == null) {
+            if (thatProductTemplate != null) {
+                return false;
+            }
+        } else if (!productTemplate.equals(thatProductTemplate)) {
+            return false;
+        }
+        
+        BundleTemplate thatBundleTemplate = that.getBundleTemplate();
+        if (bundleTemplate == null && thatBundleTemplate != null) {
+                return false;
+        } else if (!bundleTemplate.equals(thatBundleTemplate)) {
+            return false;
+        }
+        
+        return true;
 	}
 
 }
