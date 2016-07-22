@@ -117,7 +117,7 @@ public class ElasticClient {
 		String index = user.getProvider().getCode().toLowerCase();
 		log.debug("Execute search query {} on index {}",query,index);
 		SearchRequestBuilder reqBuilder = client.prepareSearch(index);
-		if(classnames.length>0){
+		if(classnames!=null && classnames.length>0){
 			String[] classNameLc = new String[classnames.length];
 			for(int i=0;i<classnames.length;i++){
 				classNameLc[i]=classnames[i].toLowerCase();
