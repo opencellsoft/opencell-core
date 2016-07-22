@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import org.infinispan.api.BasicCache;
 import org.infinispan.manager.CacheContainer;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.CalendarTypeEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -28,11 +29,13 @@ import org.meveo.model.cache.CachedCounterPeriod;
 import org.meveo.model.cache.CachedUsageChargeInstance;
 import org.meveo.model.cache.CachedUsageChargeTemplate;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.CalendarYearly;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.service.billing.impl.CounterPeriodService;
 import org.meveo.service.billing.impl.UsageChargeInstanceService;
+import org.meveo.service.catalog.impl.CalendarYearlyService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.slf4j.Logger;
@@ -63,6 +66,9 @@ public class RatingCacheContainerProvider {
 
     @Inject
     private CounterPeriodService counterPeriodService;
+    
+    @Inject
+    private CalendarYearlyService calendarYearlyService;
 
     /**
      * Contains association between charge code and price plans. Key format: <provider id>_<charge template code, which is pricePlanMatrix.eventCode>
@@ -165,7 +171,16 @@ public class RatingCacheContainerProvider {
 
     private void preloadCache(Calendar calendar) {
         if (calendar != null) {
-            calendar.nextCalendarDate(new Date());
+        	if(CalendarTypeEnum.YEARLY.name().equals(calendar.getCalendarType())) {
+        		try {
+					CalendarYearly cal = calendarYearlyService.findById(calendar.getId());
+					cal.nextCalendarDate(new Date());
+    			} catch (Exception e) {
+    				log.error(e.getMessage(), e);
+    			}
+			} else {
+				calendar.nextCalendarDate(new Date());
+			}
         }
     }
 
