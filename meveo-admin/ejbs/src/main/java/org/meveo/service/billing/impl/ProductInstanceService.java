@@ -94,22 +94,6 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
         }
     }
     
-    public ProductInstance applyProductReturnInstance(UserAccount userAccount,ProductTemplate productTemplate, BigDecimal quantity,
-    		Date chargeDate,String description,BigDecimal amountWithoutTax, BigDecimal amountWithTax, 
-    		OfferTemplate offerTemplate,String criteria1, String criteria2, String criteria3,
-    		User user,boolean persist) throws BusinessException{
-    	ProductInstance productInstance = new ProductInstance(userAccount, productTemplate, quantity, chargeDate, description, user);
-    	if(persist){
-    		create(productInstance,user);
-    	}
-    	ProductChargeInstance pcInstance = new ProductChargeInstance(productInstance,user,persist);
-    	if(persist){
-    		productChargeInstanceService.create(pcInstance,user);
-    	}
-    	productChargeInstanceService.apply(pcInstance, description, offerTemplate, chargeDate, amountWithoutTax, amountWithTax, 
-    			criteria1, criteria2, criteria3,user,persist);
-    	return productInstance;
-    }
 
     
     public WalletOperation applyProduct(UserAccount userAccount,ProductTemplate productTemplate, BigDecimal quantity,
@@ -121,7 +105,7 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
     	if(persist){
     		create(productInstance,user);
     	}
-    	ProductChargeInstance pcInstance = new ProductChargeInstance(productInstance,user,persist);
+    	ProductChargeInstance pcInstance = new ProductChargeInstance(productInstance,user);
     	if(persist){
     		productChargeInstanceService.create(pcInstance,user);
     	}

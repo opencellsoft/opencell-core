@@ -51,7 +51,7 @@ public class ProductChargeInstance extends ChargeInstance {
     @Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal quantity = BigDecimal.ONE;
 
-	public ProductChargeInstance(ProductInstance productInstance, User user, boolean persist){
+	public ProductChargeInstance(ProductInstance productInstance, User user){
 		this.code = productInstance.getCode();
 		this.description = productInstance.getDescription();
 		this.chargeDate = productInstance.getApplicationDate();

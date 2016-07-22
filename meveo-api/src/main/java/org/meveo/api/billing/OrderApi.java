@@ -31,6 +31,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -45,6 +46,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.ProductChargeInstanceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -79,6 +81,10 @@ public class OrderApi extends BaseApi {
     @Inject
     private ProductInstanceService productInstanceService;
 
+    @Inject
+    private 
+    ProductChargeInstanceService productChargeInstanceService;
+    
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
@@ -464,10 +470,7 @@ public class OrderApi extends BaseApi {
         BigDecimal quantity = ((BigDecimal) getProductCharacteristic(product, CHARACTERISTIC_SERVICE_QUANTITY, BigDecimal.class, new BigDecimal(1)));
         Date chargeDate = ((Date) getProductCharacteristic(product, CHARACTERISTIC_SUBSCRIPTION_DATE, Date.class, DateUtils.setTimeToZero(new Date())));
 
-        ProductInstance productInstance = productInstanceService.applyProductReturnInstance(orderItem.getUserAccount(), productTemplate, quantity, chargeDate, null, null, null,
-            offerTemplate, null, null, null, currentUser, true);
-
-        // Validate and populate customFields
+        ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(), productTemplate, quantity, chargeDate, productTemplate.getDescription(), currentUser);
         try {
             CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class, currentUser.getProvider());
 
@@ -477,7 +480,12 @@ public class OrderApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
-
+        ProductChargeInstance pcInstance = new ProductChargeInstance(productInstance,currentUser);
+        List<ProductChargeInstance> list = new ArrayList<>();
+        list.add(pcInstance);
+        productInstance.setProductChargeInstances(list);
+        productInstanceService.create(productInstance,currentUser);
+        productChargeInstanceService.apply(pcInstance, null, offerTemplate, chargeDate, null, null, null, null, null, currentUser, true);
         return productInstance;
     }
 

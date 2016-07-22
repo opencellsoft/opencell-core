@@ -21,7 +21,9 @@ package org.meveo.service.billing.impl;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -84,6 +86,7 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 			String criteria1, String criteria2, String criteria3,User user,boolean persist) throws BusinessException {
 		ChargeTemplate chargeTemplate=productChargeInstance.getProductChargeTemplate();
 		productChargeInstance.setOfferTemplate(offerTemplate);
+		productChargeInstance.setDescription(description==null?productChargeInstance.getDescription():description);
 		productChargeInstance.setAmountWithoutTax(amountWithoutTax);
 		productChargeInstance.setAmountWithTax(amountWithTax);
 		productChargeInstance.setChargeDate(effetDate);
@@ -115,7 +118,10 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 		BigDecimal inputQuantity = productChargeInstance.getQuantity();
 		BigDecimal quantity = NumberUtil.getInChargeUnit(productChargeInstance.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(),
 				chargeTemplate.getRoundingMode());
-
-		return walletOperationService.rateProductApplication(productChargeInstance, inputQuantity, quantity, user);	
+		WalletOperation walletOperation =  walletOperationService.rateProductApplication(productChargeInstance, inputQuantity, quantity, user);
+		Set<WalletOperation> walletOperations = new HashSet<>();
+		walletOperations.add(walletOperation);
+		productChargeInstance.setWalletOperations(walletOperations);
+		return walletOperation;
 	}
 }
